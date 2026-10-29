@@ -291,7 +291,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		new SimplifyCtx({
 			grammar: normalizedGrammarView,
 			diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
-			wordMatcher: ctx?.wordMatcher,
+			wordMatcher: linked.wordMatcher,
 			inlineKinds,
 			builder: attributeBuilder,
 			slotGroupingCollector: ctx?.slotGroupingCollector
@@ -314,7 +314,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			new SimplifyCtx({
 				grammar: aliasBodiesGrammarView,
 				diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
-				wordMatcher: ctx?.wordMatcher,
+				wordMatcher: linked.wordMatcher,
 				inlineKinds,
 				builder: attributeBuilder,
 				slotGroupingCollector: ctx?.slotGroupingCollector

@@ -6141,6 +6141,7 @@ const table: PortableTable = {
 		[TSKindId.GenKeyword]: 'gen',
 		[TSKindId.TryKeyword]: 'try',
 		[TSKindId.At]: '@',
+		[TSKindId.StringClose]: '"',
 		[TSKindId.TrueKeyword]: 'true',
 		[TSKindId.FalseKeyword]: 'false',
 		[TSKindId.SlashSlash]: '//',

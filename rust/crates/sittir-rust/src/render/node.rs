@@ -522,8 +522,6 @@ pub enum AnyNode {
     ParametersElementsReceiver(ParametersElementsReceiverNode),
     #[kind(kind::PARAMETERS_ELEMENTS_RECEIVER_GROUP)]
     ParametersElementsReceiverGroup(ParametersElementsReceiverGroupNode),
-    #[kind(kind::STRING_CLOSE)]
-    StringClose(StringCloseNode),
     #[kind(kind::_ERROR_SENTINEL)]
     ErrorSentinel(ErrorSentinelNode),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
@@ -797,6 +795,8 @@ pub enum AnyNode {
     TryKeyword,
     #[kind(kind::AT)]
     At,
+    #[kind(kind::STRING_CLOSE)]
+    StringClose,
     #[kind(kind::TRUE_KEYWORD)]
     TrueKeyword,
     #[kind(kind::FALSE_KEYWORD)]
@@ -1110,7 +1110,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.prepare(ctx),
             AnyNode::ParametersElementsReceiver(t) => t.prepare(ctx),
             AnyNode::ParametersElementsReceiverGroup(t) => t.prepare(ctx),
-            AnyNode::StringClose(t) => t.prepare(ctx),
             AnyNode::ErrorSentinel(t) => t.prepare(ctx),
             AnyNode::TypeIdentifier(t) => t.prepare(ctx),
             AnyNode::FieldIdentifier(t) => t.prepare(ctx),
@@ -1243,6 +1242,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GenKeyword => Ok(()),
             AnyNode::TryKeyword => Ok(()),
             AnyNode::At => Ok(()),
+            AnyNode::StringClose => Ok(()),
             AnyNode::TrueKeyword => Ok(()),
             AnyNode::FalseKeyword => Ok(()),
             AnyNode::SlashSlash => Ok(()),
@@ -1525,7 +1525,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.gap_edges(),
             AnyNode::ParametersElementsReceiver(t) => t.gap_edges(),
             AnyNode::ParametersElementsReceiverGroup(t) => t.gap_edges(),
-            AnyNode::StringClose(t) => t.gap_edges(),
             AnyNode::ErrorSentinel(t) => t.gap_edges(),
             AnyNode::TypeIdentifier(t) => t.gap_edges(),
             AnyNode::FieldIdentifier(t) => t.gap_edges(),
@@ -1658,6 +1657,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GenKeyword => None,
             AnyNode::TryKeyword => None,
             AnyNode::At => None,
+            AnyNode::StringClose => None,
             AnyNode::TrueKeyword => None,
             AnyNode::FalseKeyword => None,
             AnyNode::SlashSlash => None,
@@ -1940,7 +1940,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.snapshot_edge(),
             AnyNode::ParametersElementsReceiver(t) => t.snapshot_edge(),
             AnyNode::ParametersElementsReceiverGroup(t) => t.snapshot_edge(),
-            AnyNode::StringClose(t) => t.snapshot_edge(),
             AnyNode::ErrorSentinel(t) => t.snapshot_edge(),
             AnyNode::TypeIdentifier(t) => t.snapshot_edge(),
             AnyNode::FieldIdentifier(t) => t.snapshot_edge(),
@@ -2073,6 +2072,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GenKeyword => None,
             AnyNode::TryKeyword => None,
             AnyNode::At => None,
+            AnyNode::StringClose => None,
             AnyNode::TrueKeyword => None,
             AnyNode::FalseKeyword => None,
             AnyNode::SlashSlash => None,
@@ -2355,7 +2355,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.source_coordinate(),
             AnyNode::ParametersElementsReceiver(t) => t.source_coordinate(),
             AnyNode::ParametersElementsReceiverGroup(t) => t.source_coordinate(),
-            AnyNode::StringClose(t) => t.source_coordinate(),
             AnyNode::ErrorSentinel(t) => t.source_coordinate(),
             AnyNode::TypeIdentifier(t) => t.source_coordinate(),
             AnyNode::FieldIdentifier(t) => t.source_coordinate(),
@@ -2488,6 +2487,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GenKeyword => None,
             AnyNode::TryKeyword => None,
             AnyNode::At => None,
+            AnyNode::StringClose => None,
             AnyNode::TrueKeyword => None,
             AnyNode::FalseKeyword => None,
             AnyNode::SlashSlash => None,
@@ -2770,7 +2770,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.source_separator(ctx),
             AnyNode::ParametersElementsReceiver(t) => t.source_separator(ctx),
             AnyNode::ParametersElementsReceiverGroup(t) => t.source_separator(ctx),
-            AnyNode::StringClose(t) => t.source_separator(ctx),
             AnyNode::ErrorSentinel(t) => t.source_separator(ctx),
             AnyNode::TypeIdentifier(t) => t.source_separator(ctx),
             AnyNode::FieldIdentifier(t) => t.source_separator(ctx),
@@ -2903,6 +2902,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GenKeyword => None,
             AnyNode::TryKeyword => None,
             AnyNode::At => None,
+            AnyNode::StringClose => None,
             AnyNode::TrueKeyword => None,
             AnyNode::FalseKeyword => None,
             AnyNode::SlashSlash => None,
@@ -31579,55 +31579,6 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverGroupNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CLOSE, text, words = 2)]
-pub struct StringCloseNode {
-    #[wire(key = "$_layout")]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "$text")]
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for StringCloseNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for StringCloseNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for StringCloseNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StringCloseNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.layout.prepare(ctx)?;
-        Ok(())
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::_ERROR_SENTINEL, text, words = 2)]
 pub struct ErrorSentinelNode {
     #[wire(key = "$_layout")]
@@ -34677,6 +34628,34 @@ impl ::sittir_core::prepare::Prepare for AtNode {
 impl ::sittir_core::render::Render for AtNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_at(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum StringCloseNode {
+    #[kind(kind::STRING_CLOSE)]
+    StringClose,
+}
+
+impl ::sittir_core::view::KindOf for StringCloseNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StringCloseNode {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for StringCloseNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_string_close(w)
     }
 }
 
@@ -38169,7 +38148,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AttributedArgument(t) => t.seat_target(table, ctx),
             Self::AttributedOrderedField(t) => t.seat_target(table, ctx),
             Self::TypeArgument(t) => t.seat_target(table, ctx),
-            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::TraitInterfaceDeclarationBody { .. } | Self::ExtensionDeclarationBody { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ClosureParameter { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::SelfModule { .. } | Self::CrateVisibilityModifier { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
+            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::TraitInterfaceDeclarationBody { .. } | Self::ExtensionDeclarationBody { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ClosureParameter { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::SelfModule { .. } | Self::CrateVisibilityModifier { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::StringClose { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -40109,7 +40088,6 @@ fn render_string_literal(node: &StringLiteralNode, w: &mut dyn ::sittir_core::re
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_open", ::sittir_core::types::ItemIndex(0), w, |w| string_open.render(w))?;
     elements.render(w)?;
-    w.site_at(options::SITE_STRING_LITERAL_STRING_CLOSE_BEFORE);
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -41978,10 +41956,6 @@ fn render_parameters_elements_receiver_group(node: &ParametersElementsReceiverGr
     Ok(())
 }
 
-fn render_string_close(t: &StringCloseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
 fn render_error_sentinel(t: &ErrorSentinelNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -42508,6 +42482,10 @@ fn render_try_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir
 
 fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
+}
+
+fn render_string_close(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\""))
 }
 
 fn render_true_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -43263,7 +43241,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::AttributedParameterReceiver(inner) => inner.kind_in(kinds),
             Self::ParametersElementsReceiver(inner) => inner.kind_in(kinds),
             Self::ParametersElementsReceiverGroup(inner) => inner.kind_in(kinds),
-            Self::StringClose(inner) => inner.kind_in(kinds),
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
@@ -43396,6 +43373,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::GenKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
             Self::TryKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
+            Self::StringClose => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
             Self::TrueKeyword => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
             Self::FalseKeyword => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
             Self::SlashSlash => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
@@ -43681,7 +43659,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::AttributedParameterReceiver(t) => t.render(w),
             AnyNode::ParametersElementsReceiver(t) => t.render(w),
             AnyNode::ParametersElementsReceiverGroup(t) => t.render(w),
-            AnyNode::StringClose(t) => t.render(w),
             AnyNode::ErrorSentinel(t) => t.render(w),
             AnyNode::TypeIdentifier(t) => t.render(w),
             AnyNode::FieldIdentifier(t) => t.render(w),
@@ -43814,6 +43791,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::GenKeyword => render_gen_keyword(w),
             AnyNode::TryKeyword => render_try_keyword(w),
             AnyNode::At => render_at(w),
+            AnyNode::StringClose => render_string_close(w),
             AnyNode::TrueKeyword => render_true_keyword(w),
             AnyNode::FalseKeyword => render_false_keyword(w),
             AnyNode::SlashSlash => render_slash_slash(w),
@@ -44071,7 +44049,6 @@ const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerNode>() <=
 const _: () = assert!(::core::mem::size_of::<SlicePatternNode>() <= 256, "SlicePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SourceFileNode>() <= 256, "SourceFileNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StaticItemNode>() > 256, "StaticItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
-const _: () = assert!(::core::mem::size_of::<StringCloseNode>() <= 256, "StringCloseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StringContentNode>() <= 256, "StringContentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StringLiteralNode>() <= 256, "StringLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StringOpenNode>() <= 256, "StringOpenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -44137,4 +44114,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);

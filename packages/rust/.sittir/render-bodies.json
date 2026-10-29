@@ -6680,10 +6680,6 @@
 			"name": "elements"
 		},
 		{
-			"kind": "seam",
-			"field": "string_close_before"
-		},
-		{
 			"kind": "text",
 			"text": "\""
 		},

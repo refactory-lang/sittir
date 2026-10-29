@@ -181,6 +181,7 @@ export type LeafStringMap = {
 	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.TryKeyword]: 'try';
 	[TSKindId.At]: '@';
+	[TSKindId.StringClose]: '"';
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
 	[TSKindId.SlashSlash]: '//';
@@ -11163,7 +11164,6 @@ export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
-export type StringClose = Terminal<TSKindId.StringClose, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 export type SelfModule = TSKindId.SelfModule;
 export type CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
@@ -13332,11 +13332,7 @@ export namespace NegativeLiteral {
 
 export namespace StringLiteral {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly stringClose?: { readonly before?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 
@@ -18263,7 +18259,6 @@ export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContent.Bound,
 	TSKindId.BlockCommentContent
 > {}
-export interface StringCloseNs extends LeafNs<StringClose, string, StringClose.Bound, TSKindId.StringClose> {}
 export interface ErrorSentinelNs extends LeafNs<ErrorSentinel, string, ErrorSentinel.Bound, TSKindId.ErrorSentinel> {}
 
 export interface NamespaceMap {
@@ -18542,7 +18537,6 @@ export interface NamespaceMap {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.DocComment]: DocCommentNs;
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
-	[TSKindId.StringClose]: StringCloseNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -18796,7 +18790,6 @@ export interface BoundByKindId {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Bound;
 	[TSKindId.DocComment]: DocComment.Bound;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Bound;
-	[TSKindId.StringClose]: StringClose.Bound;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Bound;
 }
 
@@ -19050,7 +19043,6 @@ export interface ParsedByKindId {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Parsed;
 	[TSKindId.DocComment]: DocComment.Parsed;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Parsed;
-	[TSKindId.StringClose]: StringClose.Parsed;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Parsed;
 }
 
@@ -19179,6 +19171,7 @@ export type FixedTextKindId =
 	| TSKindId.GenKeyword
 	| TSKindId.TryKeyword
 	| TSKindId.At
+	| TSKindId.StringClose
 	| TSKindId.TrueKeyword
 	| TSKindId.FalseKeyword
 	| TSKindId.SlashSlash
@@ -19485,7 +19478,6 @@ export interface TypeKeyOf {
 	[TSKindId.RawStringLiteralEnd]: 'rawStringLiteralEnd';
 	[TSKindId.DocComment]: 'docComment';
 	[TSKindId.BlockCommentContent]: 'blockCommentContent';
-	[TSKindId.StringClose]: 'stringClose';
 	[TSKindId.ErrorSentinel]: 'errorSentinel';
 }
 
@@ -27251,24 +27243,6 @@ export namespace BlockCommentContent {
 	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
 	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
 	export type Kind = TSKindId.BlockCommentContent;
-}
-export namespace StringClose {
-	export type Config = StringCloseNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.StringClose;
-		readonly $named: true;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.StringClose;
-		readonly $named: true;
-		$text(): string;
-	}
-	export type Loose = StringCloseNs['Loose'];
-	export type LooseConfig = StringCloseNs['LooseConfig'];
-	export type BuildArgs = StringCloseNs['BuildArgs'];
-	export type LooseArgs = StringCloseNs['LooseArgs'];
-	export type Kind = TSKindId.StringClose;
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];
