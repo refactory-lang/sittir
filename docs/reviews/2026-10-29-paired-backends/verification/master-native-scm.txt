@@ -1,3 +1,0 @@
-   Compiling sittir-scm v0.0.0 (/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/rust/crates/sittir-scm)
-   Compiling sittir-core v0.0.0 (/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/rust/crates/sittir-core)
-    Finished `gate` profile [optimized] target(s) in 2.85s

@@ -1,5 +1,7 @@
 # Adversarial review fixes
 
+> Files marked *local bundle* are not in the repository. They are kept, at the same path under `docs/reviews/`, in `scratch/review-artifacts/2026-10-29/in-repo-copies/` of the reviewing checkout.
+
 Implemented and verified in place in this checkout, on `chore/remove-eager-lane`, based on HEAD `34f51c91f4a28b3c303811b86359fe010c298793`. The evidence below was captured before committing, with the existing eager-lane retirement and three staged deletions present. No new branch, worktree, subagent or session operation was used.
 
 ## Changes
@@ -23,7 +25,7 @@ The three remaining failures expected the eager probe to run after regeneration 
 
 Removed the four cases dedicated to the retired step, including one passing negative-only case, and their unused mock/reset from [regen-all.test.ts](../../packages/tools/src/__tests__/regen-all.test.ts). The 24 retained tests are unchanged and pass. Generation, native-build, workspace-check and fixture-extraction failure propagation remain covered. No production behavior or test expectation for a live feature changed. The full suite has four fewer cases because that obsolete group is gone.
 
-[Cleanup evidence](./2026-10-29-adversarial-fixes/regeneration-cleanup.json) · [before](./2026-10-29-adversarial-fixes/regeneration-before.txt) · [pre-removal control](./2026-10-29-adversarial-fixes/regeneration-old-runner.txt) · [after](./2026-10-29-adversarial-fixes/regeneration-after.txt) · [full-suite result](./2026-10-29-adversarial-fixes/full-suite-summary.txt).
+Cleanup evidence (`2026-10-29-adversarial-fixes/regeneration-cleanup.json`, local bundle) · before (`2026-10-29-adversarial-fixes/regeneration-before.txt`, local bundle) · pre-removal control (`2026-10-29-adversarial-fixes/regeneration-old-runner.txt`, local bundle) · after (`2026-10-29-adversarial-fixes/regeneration-after.txt`, local bundle) · full-suite result (`2026-10-29-adversarial-fixes/full-suite-summary.txt`, local bundle).
 
 ## Scope and remaining limits
 
@@ -31,6 +33,6 @@ The final corpus capture changes exactly the eight confirmed Python outputs. All
 
 The earlier full performance benchmark belongs to the earlier tree. It was not rerun as a timed matrix for this patch, and its ratios are not asserted as current-fix measurements. The current checks establish correctness and the removed allocation, without default-cutover or release acceptance.
 
-Evidence: [output scope proof](./2026-10-29-adversarial-fixes/resolved-output-scope.json), [restored comments and remaining comparisons](./2026-10-29-adversarial-fixes/rrp-resolved-comparison.json), [validation history comparison](./2026-10-29-adversarial-fixes/validation-resolved-baseline-diff.txt), [native tests](./2026-10-29-adversarial-fixes/resolved-native-record-render.txt), [lifetime/cache tests](./2026-10-29-adversarial-fixes/fixed-compiled-regressions.tap), [churn](./2026-10-29-adversarial-fixes/churn-fixed.json), [allocation measurements](./2026-10-29-adversarial-fixes/prune-allocation-fixed.json).
+Evidence: output scope proof (`2026-10-29-adversarial-fixes/resolved-output-scope.json`, local bundle), restored comments and remaining comparisons (`2026-10-29-adversarial-fixes/rrp-resolved-comparison.json`, local bundle), validation history comparison (`2026-10-29-adversarial-fixes/validation-resolved-baseline-diff.txt`, local bundle), native tests (`2026-10-29-adversarial-fixes/resolved-native-record-render.txt`, local bundle), lifetime/cache tests (`2026-10-29-adversarial-fixes/fixed-compiled-regressions.tap`, local bundle), churn (`2026-10-29-adversarial-fixes/churn-fixed.json`, local bundle), allocation measurements (`2026-10-29-adversarial-fixes/prune-allocation-fixed.json`, local bundle).
 
-[Verification commands and results](./2026-10-29-adversarial-fixes/verification.json) · [initial runtime-fix provenance](./2026-10-29-adversarial-fixes/resolved-provenance.json).
+[Verification commands and results](./2026-10-29-adversarial-fixes/verification.json) · initial runtime-fix provenance (`2026-10-29-adversarial-fixes/resolved-provenance.json`, local bundle).

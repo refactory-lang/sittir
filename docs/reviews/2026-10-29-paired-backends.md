@@ -1,5 +1,7 @@
 # Paired node backends and master compatibility
 
+> Files marked *local bundle* are not in the repository. They are kept, at the same path under `docs/reviews/`, in `scratch/review-artifacts/2026-10-29/in-repo-copies/` of the reviewing checkout.
+
 The maintainer selected two supported modes: object storage with object construction, and arena storage with record construction. The retired arena/object hybrid is refused by types and runtime. This is an API simplification, not a claim that hybrid measurements proved it slower.
 
 Implementation and verification are complete in the existing `wt-2c-census` checkout on `chore/remove-eager-lane`. The work does not certify the wider Records migration, change its existing arena default, merge to master or release a package.
@@ -67,7 +69,7 @@ The comparison exposed a fresh root-getter closure on every diagnostic parse. Th
 
 Failed intermediate runs remain saved: they identified retired-hybrid fixture expectations, then a freshness-guard failure after formatting changed stamped source inputs. Final regeneration followed the last source edit; freshness checks were not bypassed. A source-text routing assertion now tolerates whitespace without changing its required call and argument sequence.
 
-The baseline validator requires real Git-visible files and a pinned HEAD. Its archive was verified through an external read-only Git object view and temporary index over the existing object database. No branch, checkout or registered worktree was created, and history output was redirected to prevent automatic history commits. The source snapshot's only tracked output change was its validation report. [Baseline verification provenance](./2026-10-29-paired-backends/validation/master-object-view-provenance.json).
+The baseline validator requires real Git-visible files and a pinned HEAD. Its archive was verified through an external read-only Git object view and temporary index over the existing object database. No branch, checkout or registered worktree was created, and history output was redirected to prevent automatic history commits. The source snapshot's only tracked output change was its validation report. Baseline verification provenance (`2026-10-29-paired-backends/validation/master-object-view-provenance.json`, local bundle).
 
 Repository-wide formatting already fails on unrelated files. Eighteen of the 21 affected tracked TypeScript files were unformatted at the previous head; changed TypeScript is formatted using the repository configuration, without a repository-wide sweep.
 
@@ -79,9 +81,9 @@ The [paired-mode tracker](https://github.com/refactory-lang/sittir/issues/999) r
 
 ## Saved artifacts and review
 
-- [Portable artifact manifest](./2026-10-29-paired-backends/manifest.json), including all final corpus samples, inputs, command receipts, compressed full test results and runtime fingerprints.
-- [Compatibility receipt](./2026-10-29-paired-backends/compatibility/object-compatibility-final.json).
-- [Unit summary](./2026-10-29-paired-backends/verification/full-unit-summary.json), [type-check receipt](./2026-10-29-paired-backends/verification/full-types-verified-receipt.json), and [runtime fingerprints](./2026-10-29-paired-backends/verification/runtime-fingerprints.json).
+- Portable artifact manifest (`2026-10-29-paired-backends/manifest.json`, local bundle), including all final corpus samples, inputs, command receipts, compressed full test results and runtime fingerprints.
+- Compatibility receipt (`2026-10-29-paired-backends/compatibility/object-compatibility-final.json`, local bundle).
+- Unit summary (`2026-10-29-paired-backends/verification/full-unit-summary.json`, local bundle), type-check receipt (`2026-10-29-paired-backends/verification/full-types-verified-receipt.json`, local bundle), and runtime fingerprints (`2026-10-29-paired-backends/verification/runtime-fingerprints.json`, local bundle).
 - Complete local review and benchmark bundle: `scratch/review-artifacts/2026-10-29/` in this same checkout. It preserves the original review/fix/benchmark artifacts, failed attempts, pinned source archive, measured native addons and compiled outputs. Rebuildable dependency and Cargo intermediate caches are excluded; lockfiles and build commands are saved. Its inventory identifies every preserved file.
 
 The final diff was reviewed inline. The review covered conflicting/construction-only options, default preservation, object allocation, worker metadata, historical report readability, getter depth/identity, generated consistency and the source-fidelity distinction. No subagent performed this review. The paired-mode change remains scoped independently of the wider Records acceptance gaps.

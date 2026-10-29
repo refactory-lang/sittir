@@ -1,6 +1,0 @@
-rows: base 195, head 195; +0 -0
-python: rows 64 -> 64 (+0 -0)
-regex: rows 8 -> 8 (+0 -0)
-rust: rows 23 -> 23 (+0 -0)
-scm: rows 3 -> 3 (+0 -0)
-typescript: rows 97 -> 97 (+0 -0)

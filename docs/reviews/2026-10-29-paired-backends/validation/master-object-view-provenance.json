@@ -1,9 +1,0 @@
-{
-	"sourceCommit": "7471447a24febcdae6f37b025cdb80a12a929209",
-	"sharedObjectDatabase": "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/.git",
-	"externalReadOnlyGitView": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-git-object-view",
-	"temporaryIndex": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-pinned.index",
-	"export": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
-	"trackedDifferences": ["packages/tools/validation-report.json"],
-	"notes": "No Git init, checkout, branch or worktree registration. Archive source files stay in the export. An external pinned-HEAD view and temporary index let real Git verify the baseline manifests against the actual pinned objects, without altering the working repository metadata. History recording is redirected outside both trees."
-}

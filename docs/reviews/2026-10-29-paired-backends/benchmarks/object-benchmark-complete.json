@@ -1,9 +1,0 @@
-{
-	"start": "2026-10-29T16:40:33.097538+00:00",
-	"end": "2026-10-29T16:43:48.052374+00:00",
-	"workers": 66,
-	"success": true,
-	"master": "7471447a24febcdae6f37b025cdb80a12a929209",
-	"featureBase": "8143ccafaad9a76dc39b37d688b07dfd4cf95b7b",
-	"featureUncommitted": true
-}

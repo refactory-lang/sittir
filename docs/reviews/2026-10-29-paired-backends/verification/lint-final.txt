@@ -1,6 +1,0 @@
-
-> sittir@0.1.0 lint /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
-> oxlint -c oxlint.config.ts .
-
-Found 0 warnings and 0 errors.
-Finished in 261ms on 2060 files with 94 rules using 14 threads.

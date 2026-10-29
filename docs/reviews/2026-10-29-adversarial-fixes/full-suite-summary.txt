@@ -1,6 +1,0 @@
- Test Files  929 passed (929)
-      Tests  11150 passed | 6 expected fail | 19 skipped | 4 todo (11179)
-   Start at  08:34:25
-   Duration  338.48s (transform 14.59s, setup 0ms, import 75.34s, tests 1163.97s, environment 38ms)
-
-JSON report written to local-verification/full-green.json
