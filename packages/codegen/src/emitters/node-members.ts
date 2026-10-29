@@ -93,7 +93,8 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 				]
 			: []),
 		'    $engine: handle && (() => handle.current),',
-		...(spec.tail ?? [])
+		...(spec.tail ?? []),
+		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'}`
 	);
 	return lines;
 }
@@ -157,12 +158,17 @@ export interface ListViewParts {
 	readonly postlude: string[];
 }
 
+function optionMember(key: string, value: string): string {
+	return key === 'separator' ? `    separator: () => ${value},` : `    ${key}: ${value},`;
+}
+
 export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
-	const options = plan.options
-		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
-		.map((option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`);
-	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
+	const options = plan.options.map((option) =>
+		environment !== 'factory' && option.key === 'separator'
+			? optionMember(option.key, `(node.${accessor}() as { readonly separator?: () => unknown } | null | undefined)?.separator?.()`)
+			: optionMember(option.key, `listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default})`)
+	);
 	return {
 		prelude:
 			environment === 'factory'
@@ -171,13 +177,9 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 						`  if (listView.length === undefined) refuseReadStub(${JSON.stringify(storage)});`
 					]
 				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
-		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options, ...(separator ? ['    separator: undefined as unknown,'] : [])],
+		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [
-			`  const listed = node.${accessor}();`,
-			`  holdListItems(node, listItems(ownerElements(listed, ${JSON.stringify(plan.elements)}), ${wrapper}));`,
-			...(separator ? ['  node.separator = (listed as { readonly separator?: unknown } | null | undefined)?.separator;'] : [])
-		]
+		postlude: [`  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}));`]
 	};
 }
 
@@ -194,17 +196,15 @@ export function listSelfViewParts(
 	environment: 'factory' | 'wrap'
 ): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
-	const options = plan.options
-		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
-		.map((option) => `    ${option.key}: ${selfListOption(option.key, environment)} ?? ${option.default},`);
-	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
+	const options = plan.options.map((option) =>
+		environment !== 'factory' && option.key === 'separator'
+			? optionMember(option.key, 'listSeparatorOf(node)')
+			: optionMember(option.key, `${selfListOption(option.key, environment)} ?? ${option.default}`)
+	);
 	return {
 		prelude: ['elements' in stored ? `  const listedLength = storedElements(${stored.elements}).length;` : `  const listedLength = ${stored.length};`],
-		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options, ...(separator ? ['    separator: undefined as unknown,'] : [])],
+		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [
-			`  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`,
-			...(separator ? ['  node.separator = listSeparatorOf(node);'] : [])
-		]
+		postlude: [`  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`]
 	};
 }

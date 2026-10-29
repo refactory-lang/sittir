@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryReadTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -46,7 +46,7 @@ describe('read trivia layout, rendered detached', () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = await readNodeOf('rust');
 		const source = 'fn f() { x = a + /* x */ b; }';
-		const data = materializeDetached(readNode(readNativeTree(engine, source).tree), await loadSlotAccessorOf('rust')) as never as {
+		const data = materializeDetached(readNode(parseNativeTree(engine, source)), await loadSlotAccessorOf('rust')) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
@@ -105,7 +105,7 @@ describe('in-line spacing the options do not write is a deviation, rendered deta
 		const readNode = await readNodeOf('rust');
 		const native = await nativeLanguageEngineOf('rust');
 		const source = "foo!($/';()*()+.);\n";
-		const { tree } = readNativeTree(engine, source);
+		const tree = parseNativeTree(engine, source);
 		expect(native.render(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, tree.options).toString()).toBe(source);
 	});
 

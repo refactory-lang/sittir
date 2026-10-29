@@ -42,13 +42,7 @@ export function portableTrees<Paths extends string, Guard extends (value: unknow
 		const cut = path.lastIndexOf('.');
 		const parent = cut < 0 ? '' : path.slice(0, cut);
 		if (!kinds.has(parent)) throw new Error(`portable path ${path} has no parent path ${parent}`);
-		for (const nodes of [kinds, guards])
-			Object.defineProperty(nodes.get(parent)!, path.slice(cut + 1), {
-				value: nodes.get(path),
-				enumerable: true,
-				configurable: false,
-				writable: false
-			});
+		for (const nodes of [kinds, guards]) (nodes.get(parent) as Record<string, object>)[path.slice(cut + 1)] = nodes.get(path)!;
 	}
 	for (const node of [...kinds.values(), ...guards.values()]) Object.freeze(node);
 	return Object.freeze({ kinds: kinds.get('') as PortableKindTree<Paths>, is: guards.get('') as PortableGuardTree<Paths, Guard> });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { KindMembership, StructureTable } from '@sittir/types';
 import { checkInput, verifyStructure } from '../src/verify-structure.ts';
-import { stampBuilt } from '../src/source-stamp.ts';
+import { factoryNode } from './support/factory-node.ts';
 
 const BLOCK = 1;
 const CALL = 2;
@@ -28,7 +28,7 @@ const table: StructureTable = {
 	}
 };
 
-const built = (type: number, slots: Record<string, unknown> = {}) => stampBuilt({ $type: type, ...slots });
+const built = (type: number, slots: Record<string, unknown> = {}) => factoryNode({ $type: type, ...slots });
 const name = () => built(NAME, { _text: 'f' });
 const verify = (node: unknown, seen = new WeakSet<object>()) => verifyStructure(node, table, membership, seen);
 

@@ -53,7 +53,7 @@ function arenaEngine() {
 	};
 }
 
-const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
+const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine())!;
 
 const recordEngine = () => rust.createEngine();
 

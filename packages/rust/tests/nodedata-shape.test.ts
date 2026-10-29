@@ -94,10 +94,12 @@ describe('Factory shape — branch node', () => {
 		expect(keys).not.toContain('$fields');
 	});
 
-	it('SC-004: sourceOf gives a read node, its $with rebuild and a spread copy Ts, and none has a $source member', () => {
+	it('SC-004: sourceOf gives a read node, the read child its $with rebuild keeps and a spread copy Ts, the rebuild Factory, and none has a $source member', () => {
 		const file = rs.parse('fn f() {}\n');
 		const rebuilt = file.$with.statements(...file.statements());
-		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0], { ...file }]) {
+		expect(sourceOf(rebuilt)).toBe(Source.Factory);
+		expect('$source' in rebuilt).toBe(false);
+		for (const read of [file, file.statements()[0], rebuilt.statements()[0], { ...file }]) {
 			if (typeof read !== 'object') throw new Error('`fn f() {}` reads a function item');
 			expect(sourceOf(read)).toBe(Source.Ts);
 			expect('$source' in read).toBe(false);

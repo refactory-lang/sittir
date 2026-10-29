@@ -488,15 +488,6 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-const diagnosticRootDepths = new WeakMap<TreeHandle, number>();
-const diagnosticRoot = {
-	enumerable: true,
-	configurable: true,
-	get(this: { readonly tree: TreeHandle }): unknown {
-		return this.tree.read!(0, diagnosticRootDepths.get(this.tree) ?? 1);
-	}
-};
-
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
 	const { readRecord, readCell, chunk, renderRecord, coordinate } = engine;
 	if (readRecord === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
@@ -591,6 +582,76 @@ export function createNativeEngine<
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
 		};
 
+		const parseTree = (source: string): TreeHandle => {
+			const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
+			const liveToken = mintTreeToken(parsed.treeId);
+			treeDisposalRegistry.register(liveToken, {
+				release: status.native.disposeTree,
+				treeId: parsed.treeId
+			});
+			const readObjectAt = (index: number, depth: number): TNode => {
+				const node = engine.read(parsed.treeId, index, depth);
+				holdReadTree(node, liveToken);
+				return node;
+			};
+			const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
+			const readAt =
+				records === undefined
+					? readObjectAt
+					: (index: number, depth: number): TNode => {
+							const at = records.record(index, depth);
+							if (at === undefined) return readObjectAt(index, depth);
+							const stub = recordStub(tree, at);
+							holdReadTree(stub, liveToken);
+							return stub as TNode;
+						};
+			const roots = new Map<number, unknown>();
+			const tree: TreeHandle = {
+				id: parsed.treeId,
+				token: liveToken,
+				text: (span) => engine.text(parsed.treeId, span),
+				...(records === undefined ? {} : { records }),
+				read: (index, depth = 1) => {
+					if (index !== 0) return readAt(index, depth);
+					let cached = roots.get(depth);
+					if (cached === undefined) {
+						cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
+							$errors: Object.freeze(parsed.errors)
+						});
+						roots.set(depth, cached);
+					}
+					return cached;
+				},
+				options: parsed.options,
+				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
+				triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
+				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+				unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
+				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
+				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
+				separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
+				editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
+				isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
+				siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,
+				query: {
+					descendants: (walk) =>
+						JSON.parse(
+							engine.descendants(
+								JSON.stringify(walk.from),
+								walk.kinds === undefined ? undefined : [...walk.kinds],
+								walk.resume === undefined ? undefined : [...walk.resume],
+								walk.limit,
+								walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
+								walk.depth
+							)
+						) as DescendantBatch,
+					planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
+				}
+			};
+			registerTree(liveToken, tree);
+			return tree;
+		};
+
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
@@ -657,79 +718,10 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					builtMemory: () => (cellFormat === undefined ? undefined : engine.builtMemory?.()),
+					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
-						const liveToken = mintTreeToken(parsed.treeId);
-						treeDisposalRegistry.register(liveToken, {
-							release: status.native.disposeTree,
-							treeId: parsed.treeId
-						});
-						const readObjectAt = (index: number, depth: number): TNode => {
-							const node = engine.read(parsed.treeId, index, depth);
-							holdReadTree(node, liveToken);
-							return node;
-						};
-						const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
-						const readAt =
-							records === undefined
-								? readObjectAt
-								: (index: number, depth: number): TNode => {
-										const at = records.record(index, depth);
-										if (at === undefined) return readObjectAt(index, depth);
-										const stub = recordStub(tree, at);
-										holdReadTree(stub, liveToken);
-										return stub as TNode;
-									};
-						const roots = new Map<number, unknown>();
-						const tree: TreeHandle = {
-							id: parsed.treeId,
-							token: liveToken,
-							text: (span) => engine.text(parsed.treeId, span),
-							...(records === undefined ? {} : { records }),
-							read: (index, depth = 1) => {
-								if (index !== 0) return readAt(index, depth);
-								let cached = roots.get(depth);
-								if (cached === undefined) {
-									cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
-										$errors: Object.freeze(parsed.errors)
-									});
-									roots.set(depth, cached);
-								}
-								return cached;
-							},
-							options: parsed.options,
-							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-							triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
-							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
-							unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
-							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
-							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
-							separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
-							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
-							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
-							siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,
-							query: {
-								descendants: (walk) =>
-									JSON.parse(
-										engine.descendants(
-											JSON.stringify(walk.from),
-											walk.kinds === undefined ? undefined : [...walk.kinds],
-											walk.resume === undefined ? undefined : [...walk.resume],
-											walk.limit,
-											walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
-											walk.depth
-										)
-									) as DescendantBatch,
-								planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
-							}
-						};
-						registerTree(liveToken, tree);
-						const depth = depthOf(parseOptions);
-						if (depth !== 1) diagnosticRootDepths.set(tree, depth);
-						return Object.defineProperty({ tree }, 'root', diagnosticRoot) as {
-							readonly root: TRoot & ParsedRoot;
-							readonly tree: TreeHandle;
-						};
+						const tree = parseTree(source);
+						return { tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot };
 					}
 				}
 			}
@@ -787,6 +779,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 	const language: NativeLanguageEngine<API> = {
 		render(node, options) {
 			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
+		},
+		parseTree(source) {
+			return engine.diagnostics.parseTree(source);
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);

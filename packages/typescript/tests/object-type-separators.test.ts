@@ -22,7 +22,7 @@ describe('object type and interface members separated by a line break', () => {
 		if (statement === undefined || typeof statement === 'number' || !ts.is.typeAliasDeclaration(statement)) throw new Error('expected a type alias');
 		const value = statement.value();
 		if (!ts.is.objectType(value)) throw new Error('expected an object type');
-		expect(value.members()?.separator).toBe(TSKindId.AutomaticSemicolon);
+		expect(value.members()?.separator()).toBe(TSKindId.AutomaticSemicolon);
 	});
 
 	it('renders a snapshot of a line-separated list with the line break, not the token name', () => {

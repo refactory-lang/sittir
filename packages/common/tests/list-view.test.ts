@@ -25,7 +25,7 @@ const sharedMembers = (view: ReturnType<typeof ownerView>) => ({
 	[Symbol.iterator]: listIterator,
 	[Symbol.isConcatSpreadable]: true,
 	delimiter: listOption(view.list, 'delimiter', Delimiter.None),
-	separator: listOption(view.list, 'separator', undefined)
+	separator: () => listOption(view.list, 'separator', undefined)
 });
 
 const wrappedOwner = (list: object | undefined, wrapper?: typeof wrapperSpec, tree?: never) => {
@@ -67,7 +67,7 @@ describe('a list owner', () => {
 		]);
 		expect(node.at(-1)).toBe('c');
 		expect(node.delimiter).toBe(Delimiter.Trailing);
-		expect(node.separator).toBe(7);
+		expect(node.separator()).toBe(7);
 		expect(node.items().elements()).toEqual(['a', 'b', 'c']);
 	});
 

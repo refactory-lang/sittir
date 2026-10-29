@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -11,6 +11,8 @@ import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLe
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
 import type { LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { Source } from './source.ts';
+import { sourceOf } from './source-stamp.ts';
 
 /** A leaf entry of a built arena: its packed address in a string chunk, 0 before its leaf is first placed, its kind once placed, its text, and the chunk it lies in. */
 export interface BuiltText {
@@ -324,7 +326,7 @@ export class BuiltArena {
 		}
 	}
 
-	get engine(): EngineIdentity {
+	engine(): EngineIdentity {
 		return this.#handle.current;
 	}
 
@@ -717,12 +719,6 @@ export class BuiltArena {
 		return this.#view(at);
 	}
 
-	/** Whether the record at `at` was rebuilt from a parsed node, which its side record names. */
-	rebuiltFromRead(at: number): boolean {
-		const side = this.words(at, 2)[wordOf(at, this.format) + 1]!;
-		return side !== 0 && (this.words(side, 1)[wordOf(side, this.format)]! & this.format.sideSides.bit) !== 0;
-	}
-
 	withOf(kind: number): BuiltWith | undefined {
 		return this.#views.withs[kind];
 	}
@@ -866,13 +862,13 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 }
 
 export function refuseForeignEntry(entry: object, holder: EngineIdentity | undefined): void {
-	const engine = builtArenaOf(entry)?.engine ?? engineOf(entry);
+	const engine = builtArenaOf(entry)?.engine() ?? engineOf(entry);
 	if (engine === undefined || holder === undefined || sameLanguage(engine, holder)) return;
 	throw new Error(`cannot write a ${engine.language.name} ${isBuiltNode(entry) ? 'record' : 'node'} into a side of a ${holder.language.name} node`);
 }
 
 function readCoordinateOf(entry: object): NodeCoordinate | undefined {
-	return isRead(entry) && !isRebuilt(entry) ? coordinateOf(entry) : undefined;
+	return isRead(entry) && sourceOf(entry) === Source.Ts ? coordinateOf(entry) : undefined;
 }
 
 export function refuseBuiltEntries(trivia: TriviaSides<unknown>): void {

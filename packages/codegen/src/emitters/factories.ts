@@ -1997,7 +1997,7 @@ function fieldCarryingFactoryText(
 		lines.push('  };');
 		lines.push(...(view?.postlude ?? []));
 		lines.push(...checks);
-		lines.push(`  return stampBuilt(node) as unknown as ${builtName};`);
+		lines.push(`  return node as unknown as ${builtName};`);
 	}
 	lines.push('}');
 
@@ -2214,7 +2214,7 @@ function emitRefineFormFactory(
 			})
 		);
 		lines.push('  };');
-		lines.push(`  return stampBuilt(node) as unknown as ${formBuiltName};`);
+		lines.push(`  return node as unknown as ${formBuiltName};`);
 	}
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
@@ -2879,7 +2879,7 @@ function emitSeparatedListFactory(
 			);
 			lines.push('  };');
 			lines.push(...view.postlude);
-			lines.push(`  return stampBuilt(node) as unknown as ${listBuiltName};`);
+			lines.push(`  return node as unknown as ${listBuiltName};`);
 		}
 		lines.push('}');
 		return [...lines, ...(after.length === 0 ? [] : ['', ...after])].join('\n');
@@ -2933,7 +2933,7 @@ function emitTextFactory(
 		...nodeMemberLines({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) })
 	];
 	if (backend === 'objects') {
-		body.push('  const node = {', ...members, '  };', `  return stampBuilt(node) as unknown as T.${node.typeName}.Bound;`, '}');
+		body.push('  const node = {', ...members, '  };', `  return node as unknown as T.${node.typeName}.Bound;`, '}');
 		return body.join('\n');
 	}
 	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, nodeMap));
@@ -2986,7 +2986,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

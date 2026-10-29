@@ -267,6 +267,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options']): Rendered;
+	parseTree: EngineDiagnostics<AnyUntypedNode>['parseTree'];
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	readonly builtMemory?: EngineDiagnostics['builtMemory'];
@@ -293,7 +294,9 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * it holds that are not yet released. `undefined` when the engine does not build into an arena.
 	 */
 	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number; readonly live: number } | undefined;
-	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
+	/** Parses and retains a tree without reading any of it. */
+	parseTree(source: string): TTree;
+	/** Parses and retains a tree, and reads its root to `options.depth`. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
 

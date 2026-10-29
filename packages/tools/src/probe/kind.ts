@@ -80,7 +80,7 @@ import {
 	loadStorageKindNameFromId,
 	loadWebTreeSitter,
 	loadNativeEngine,
-	readNativeTree,
+	parseNativeTree,
 	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
@@ -560,7 +560,7 @@ export async function probe(
 	// tree owns the id space — the per-handle dispatch keeps reads
 	// inside that engine. Wasm parser above is kept only so the
 	// (informational) `cst` dump is comparable across paths.
-	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
+	const handle = parseNativeTree(await loadNativeEngine(grammar), source);
 	const readNode = opts.noWrap
 		? null
 		: opts.baselineDir
@@ -809,7 +809,7 @@ async function readProbeLanes(
 	targetKind?: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): Promise<{ shallow: unknown; deep: unknown; deepTyped?: unknown; deepUntypedNode?: unknown }> {
-	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
+	const handle = parseNativeTree(await loadNativeEngine(grammar), source);
 	const readNode = await readNodeOf(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	let coordinate: NodeCoordinate | undefined;

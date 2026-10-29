@@ -248,6 +248,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		recordFfi(language.name, kind, dataBytes(target), performance.now() - before, text.length);
 		return text;
 	};
+	const parseAndBind = (source: string) => {
+		const tree = native.parseTree(source);
+		bindTree(tree, handle);
+		return tree;
+	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
 		const read = native.parseAndRead(source, parseOptions);
 		bindTree(read.tree, handle);
@@ -273,6 +278,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		diagnostics: {
 			buildProfile: native.buildProfile,
 			builtMemory: native.builtMemory,
+			parseTree: parseAndBind,
 			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),

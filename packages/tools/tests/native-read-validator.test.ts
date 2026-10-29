@@ -13,44 +13,36 @@ const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as R
 
 afterEach(() => vi.restoreAllMocks());
 
-it('defers the diagnostic root read and keeps its error stamp and cached identity', async () => {
+it('parses a diagnostic tree without reading it, and keeps its root error stamp and cached identity', async () => {
 	const read = vi.spyOn(native, 'read');
 	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'object' });
 	try {
-		const parsed = engine.diagnostics.parseAndRead('(identifier)');
+		const tree = engine.diagnostics.parseTree('(identifier)') as TreeHandle;
 		expect(read).not.toHaveBeenCalled();
-		const tree = parsed.tree as TreeHandle;
 		const root = tree.read!(0) as { $errors: readonly unknown[] };
 		expect(root.$errors).toEqual([]);
-		expect(parsed.root).toBe(root);
-		expect(parsed.root).toBe(root);
+		expect(tree.read!(0)).toBe(root);
 		expect(read).toHaveBeenCalledTimes(1);
 	} finally {
 		engine.dispose();
 	}
 });
 
-it('shares the diagnostic root reader while keeping each tree, depth, error stamp and cached identity', async () => {
+it('reads each diagnostic root at its own depth, keeping each tree, error stamp and cached identity', async () => {
 	const read = vi.spyOn(native, 'read');
 	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'object' });
 	try {
 		const first = engine.diagnostics.parseAndRead('(identifier)', { depth: 1 });
 		const second = engine.diagnostics.parseAndRead('(identifier) @name', { depth: Infinity });
-		expect(read).not.toHaveBeenCalled();
-		expect(Object.getOwnPropertyDescriptor(first, 'root')!.get).toBe(
-			Object.getOwnPropertyDescriptor(second, 'root')!.get
-		);
 		const firstTree = first.tree as TreeHandle;
 		const secondTree = second.tree as TreeHandle;
-		const firstRoot = first.root;
-		const secondRoot = second.root;
 		expect(firstTree.id).not.toBe(secondTree.id);
 		expect(read).toHaveBeenNthCalledWith(1, firstTree.id, 0, 1);
 		expect(read).toHaveBeenNthCalledWith(2, secondTree.id, 0, Infinity);
-		expect(firstRoot.$errors).toEqual([]);
-		expect(secondRoot.$errors).toEqual([]);
-		expect(first.root).toBe(firstRoot);
-		expect(second.root).toBe(secondRoot);
+		expect(first.root.$errors).toEqual([]);
+		expect(second.root.$errors).toEqual([]);
+		expect(firstTree.read!(0, 1)).toBe(first.root);
+		expect(secondTree.read!(0, Infinity)).toBe(second.root);
 		expect(read).toHaveBeenCalledTimes(2);
 	} finally {
 		engine.dispose();
@@ -70,7 +62,7 @@ it('hydrates and renders a diagnostic tree without exporting objects or record c
 	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'arena' });
 	try {
 		const source = '(identifier) @name';
-		const tree = engine.diagnostics.parseAndRead(source).tree as TreeHandle;
+		const tree = engine.diagnostics.parseTree(source) as TreeHandle;
 		const address = tree.records!.hydrate(0, Infinity);
 		expect(address).toBeDefined();
 		expect(tree.records!.render(address!, false, false)).toBe(source);

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
-import { isNode, Source, sourceOf } from '@sittir/common/utils';
-import { stampSource } from '../../../common/src/source-stamp.ts';
+import { isNode, SOURCE, Source, sourceOf } from '@sittir/common/utils';
 import {
 	buildReadHandle,
 	loadSlotAccessorOf,
@@ -30,17 +29,15 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 describe('wrapped tree materialization', () => {
 	it('keeps each node it copies a node with its provenance, the copy being made by string keys', () => {
-		const child = stampSource(leaf(21, 'child'), Source.Ts);
-		const root = stampSource(
-			{
-				$type: 1,
-				_items: child,
-				items() {
-					return child;
-				}
-			} satisfies TypedNode,
-			Source.Ts
-		);
+		const child = { ...leaf(21, 'child'), [SOURCE]: Source.Ts };
+		const root = {
+			$type: 1,
+			_items: child,
+			items() {
+				return child;
+			},
+			[SOURCE]: Source.Ts
+		} satisfies TypedNode;
 		const materialized = materialize(root, accessorOf);
 		expect(sourceOf(materialized)).toBe(Source.Ts);
 		expect(sourceOf(asRecord(materialized)._items as object)).toBe(Source.Ts);

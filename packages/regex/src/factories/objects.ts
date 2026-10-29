@@ -10,7 +10,8 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	stampBuilt,
+	SOURCE,
+	Source,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
 	triviaSide,
@@ -59,9 +60,10 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Pattern.Bound;
+	return node as unknown as T.Pattern.Bound;
 }
 
 export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
@@ -87,9 +89,10 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Alternation.Bound;
+	return node as unknown as T.Alternation.Bound;
 }
 
 export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
@@ -121,9 +124,10 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Term.Bound;
+	return node as unknown as T.Term.Bound;
 }
 
 export const buildAnyCharacter: TSKindId.AnyCharacter = TSKindId.AnyCharacter;
@@ -160,9 +164,10 @@ export function buildLookaroundAssertion(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.LookaroundAssertion.Bound;
+	return node as unknown as T.LookaroundAssertion.Bound;
 }
 
 export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion.Config['pattern']>(
@@ -193,9 +198,10 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.LookaheadAssertion.Bound;
+	return node as unknown as T.LookaheadAssertion.Bound;
 }
 
 export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAssertion.Config['pattern']>(
@@ -226,9 +232,10 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.LookbehindAssertion.Bound;
+	return node as unknown as T.LookbehindAssertion.Bound;
 }
 
 export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
@@ -247,9 +254,10 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.PatternCharacter.Bound;
+	return node as unknown as T.PatternCharacter.Bound;
 }
 
 export function buildCharacterClass(): T.EmptyCharacterClass;
@@ -301,9 +309,10 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CharacterClass.Bound;
+	return node as unknown as T.CharacterClass.Bound;
 }
 
 export function buildPosixCharacterClass<V extends Admit<T.PosixClassName>>(
@@ -327,9 +336,10 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.PosixCharacterClass.Bound;
+	return node as unknown as T.PosixCharacterClass.Bound;
 }
 
 export function buildPosixClassName(text: string): T.PosixClassName.Bound {
@@ -348,9 +358,10 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.PosixClassName.Bound;
+	return node as unknown as T.PosixClassName.Bound;
 }
 
 export function buildClassRange<
@@ -382,9 +393,10 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ClassRange.Bound;
+	return node as unknown as T.ClassRange.Bound;
 }
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
@@ -403,9 +415,10 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ClassCharacter.Bound;
+	return node as unknown as T.ClassCharacter.Bound;
 }
 
 export function buildAnonymousCapturingGroup<V extends Admit<T.Pattern>>(
@@ -447,9 +460,10 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AnonymousCapturingGroup.Bound;
+	return node as unknown as T.AnonymousCapturingGroup.Bound;
 }
 
 export function buildNamedCapturingGroup<
@@ -489,9 +503,10 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NamedCapturingGroup.Bound;
+	return node as unknown as T.NamedCapturingGroup.Bound;
 }
 
 export function buildNonCapturingGroup<V extends Admit<T.Pattern>>(
@@ -533,9 +548,10 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NonCapturingGroup.Bound;
+	return node as unknown as T.NonCapturingGroup.Bound;
 }
 
 export function buildFlags(text: string): T.Flags.Bound {
@@ -553,9 +569,10 @@ export function buildFlags(text: string): T.Flags.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Flags.Bound;
+	return node as unknown as T.Flags.Bound;
 }
 
 export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
@@ -578,9 +595,10 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ZeroOrMore.Bound;
+	return node as unknown as T.ZeroOrMore.Bound;
 }
 
 export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
@@ -603,9 +621,10 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.OneOrMore.Bound;
+	return node as unknown as T.OneOrMore.Bound;
 }
 
 export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
@@ -628,9 +647,10 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Optional.Bound;
+	return node as unknown as T.Optional.Bound;
 }
 
 export function buildCountQuantifier<ContentSlot extends T.CountQuantifier.Config['content']>(
@@ -661,9 +681,10 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CountQuantifier.Bound;
+	return node as unknown as T.CountQuantifier.Bound;
 }
 
 export function buildBackreferenceEscape<V extends Admit<T.GroupName>>(
@@ -687,9 +708,10 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.BackreferenceEscape.Bound;
+	return node as unknown as T.BackreferenceEscape.Bound;
 }
 
 export function buildNamedGroupBackreference<V extends Admit<T.GroupName>>(
@@ -713,9 +735,10 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NamedGroupBackreference.Bound;
+	return node as unknown as T.NamedGroupBackreference.Bound;
 }
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
@@ -734,9 +757,10 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DecimalEscape.Bound;
+	return node as unknown as T.DecimalEscape.Bound;
 }
 
 export function buildCharacterClassEscape<
@@ -763,9 +787,10 @@ export function buildCharacterClassEscape(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CharacterClassEscape.Bound;
+	return node as unknown as T.CharacterClassEscape.Bound;
 }
 
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
@@ -785,9 +810,10 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnicodeCharacterEscape.Bound;
+	return node as unknown as T.UnicodeCharacterEscape.Bound;
 }
 
 export function buildUnicodePropertyValueExpression<
@@ -836,9 +862,10 @@ export function buildUnicodePropertyValueExpression(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnicodePropertyValueExpression.Bound;
+	return node as unknown as T.UnicodePropertyValueExpression.Bound;
 }
 
 export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Bound {
@@ -858,9 +885,10 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnicodePropertyValue.Bound;
+	return node as unknown as T.UnicodePropertyValue.Bound;
 }
 
 export function buildControlEscape(text: string): T.ControlEscape.Bound {
@@ -879,9 +907,10 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ControlEscape.Bound;
+	return node as unknown as T.ControlEscape.Bound;
 }
 
 export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bound {
@@ -900,9 +929,10 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ControlLetterEscape.Bound;
+	return node as unknown as T.ControlLetterEscape.Bound;
 }
 
 export function buildIdentityEscape(content: string, affix?: true): T.IdentityEscape.Bound;
@@ -935,9 +965,10 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IdentityEscape.Bound;
+	return node as unknown as T.IdentityEscape.Bound;
 }
 
 export function buildGroupName(text: string): T.GroupName.Bound {
@@ -956,9 +987,10 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.GroupName.Bound;
+	return node as unknown as T.GroupName.Bound;
 }
 
 export function buildDecimalDigits<const N extends string | number | bigint>(
@@ -981,9 +1013,10 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DecimalDigits.Bound;
+	return node as unknown as T.DecimalDigits.Bound;
 }
 
 export function buildTermGroup<
@@ -1015,9 +1048,10 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TermGroup.Bound;
+	return node as unknown as T.TermGroup.Bound;
 }
 
 export function buildCountQuantifierGroup<V extends Admit<T.DecimalDigits>>(
@@ -1041,9 +1075,10 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CountQuantifierGroup.Bound;
+	return node as unknown as T.CountQuantifierGroup.Bound;
 }
 
 export function buildCountQuantifierArm<
@@ -1084,9 +1119,10 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CountQuantifierArm.Bound;
+	return node as unknown as T.CountQuantifierArm.Bound;
 }
 
 export function buildCharacterClassEscapeArm<
@@ -1132,9 +1168,10 @@ export function buildCharacterClassEscapeArm(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CharacterClassEscapeArm.Bound;
+	return node as unknown as T.CharacterClassEscapeArm.Bound;
 }
 
 export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyName>>(
@@ -1162,9 +1199,10 @@ export function buildUnicodePropertyValueExpressionGroup(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
+	return node as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
 }
 
 export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
@@ -1184,9 +1222,10 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CharacterClassEscapeText1.Bound;
+	return node as unknown as T.CharacterClassEscapeText1.Bound;
 }
 
 export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
@@ -1206,9 +1245,10 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CharacterClassEscapeText2.Bound;
+	return node as unknown as T.CharacterClassEscapeText2.Bound;
 }
 
 export const buildNegation: TSKindId.Negation = TSKindId.Negation;
@@ -1245,9 +1285,10 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.InlineFlagsGroupEnable.Bound;
+	return node as unknown as T.InlineFlagsGroupEnable.Bound;
 }
 
 export function buildInlineFlagsGroupToggle<
@@ -1291,9 +1332,10 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.InlineFlagsGroupToggle.Bound;
+	return node as unknown as T.InlineFlagsGroupToggle.Bound;
 }
 
 export function buildInlineFlagsGroupDisable<
@@ -1330,9 +1372,10 @@ export function buildInlineFlagsGroupDisable(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.InlineFlagsGroupDisable.Bound;
+	return node as unknown as T.InlineFlagsGroupDisable.Bound;
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -1361,9 +1404,10 @@ export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnicodePropertyName.Bound;
+	return node as unknown as T.UnicodePropertyName.Bound;
 }
 
 export type FluentKindMap = {
