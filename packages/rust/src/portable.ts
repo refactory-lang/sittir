@@ -596,6 +596,7 @@ export interface PortableIds {
 		| TSKindId.StringContent
 		| TSKindId.StringLiteral;
 	'literal.string.bytes': TSKindId.StringLiteral;
+	'literal.string.c': TSKindId.StringLiteral;
 	'literal.string.escape':
 		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
@@ -1442,11 +1443,13 @@ export interface PortableKindsAt {
 	'literal.string': {
 		readonly $path: 'literal.string';
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
+		readonly c: PortableKindsAt['literal.string.c'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
 	'literal.string.bytes': { readonly $path: 'literal.string.bytes' };
+	'literal.string.c': { readonly $path: 'literal.string.c' };
 	'literal.string.escape': { readonly $path: 'literal.string.escape' };
 	'literal.string.raw': { readonly $path: 'literal.string.raw' };
 	'literal.string.text': { readonly $path: 'literal.string.text' };
@@ -2583,11 +2586,13 @@ export interface PortableIsAt {
 	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], RustNode, TSKindId> & {};
 	'literal.string': PortableGuard<PortableIds['literal.string'], RustNode, TSKindId> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
+		readonly c: PortableIsAt['literal.string.c'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes'], RustNode, TSKindId> & {};
+	'literal.string.c': PortableGuard<PortableIds['literal.string.c'], RustNode, TSKindId> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], RustNode, TSKindId> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw'], RustNode, TSKindId> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], RustNode, TSKindId> & {};
@@ -3585,6 +3590,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'literal.string.bytes': { ids: [TSKindId.StringLiteral], exact: false },
+		'literal.string.c': { ids: [TSKindId.StringLiteral], exact: false },
 		'literal.string.escape': {
 			ids: [
 				TSKindId.EscapeSequence,
@@ -5391,9 +5397,19 @@ const table: PortableTable = {
 		[TSKindId.StringContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringLiteral]: [
 			{
+				path: 'literal.string',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '"', slots: { '332': 0 } } }]
+			},
+			{
 				path: 'literal.string.bytes',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^b"', self: true } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'b"', slots: { '332': 0 } } }]
+			},
+			{
+				path: 'literal.string.c',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'c"', slots: { '332': 0 } } }]
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],

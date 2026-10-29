@@ -162,6 +162,51 @@
             },
             {
               "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "abstract_class_declaration",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "class_heritage",
               "after": null,
               "anchor": null
@@ -1359,6 +1404,31 @@
             {
               "owner": "formal_parameters_elements",
               "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "call_signature",
+          "slot": "type_parameters",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "content"
+            },
+            {
+              "owner": "call_signature",
+              "slot": "type_parameters"
             }
           ]
         }
@@ -3225,6 +3295,51 @@
             },
             {
               "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "class_heritage",
               "after": null,
               "anchor": null
@@ -3280,7 +3395,23 @@
           "_method_definition_class_body_member_method"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": false,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "class_body_member_method_sig": {
@@ -3381,6 +3512,51 @@
             {
               "owner": "class_heritage_extends_clause",
               "slot": "extends_clause"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
             }
           ]
         },

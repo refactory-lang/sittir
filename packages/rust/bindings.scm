@@ -402,7 +402,9 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string
-((string_literal) @literal.string.bytes (#match? @literal.string.bytes "^b\""))
+((string_literal string_open: (_) @_open) @literal.string (#eq? @_open "\""))
+((string_literal string_open: (_) @_open) @literal.string.bytes (#eq? @_open "b\""))
+((string_literal string_open: (_) @_open) @literal.string.c (#eq? @_open "c\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape

@@ -15,6 +15,7 @@ import type * as asyncBlocks from './features/async-await/async-blocks/index.ts'
 import type * as attributes from './features/attributes/index.ts';
 import type * as boundedQuantification from './features/parametric-polymorphism/bounded-quantification/index.ts';
 import type * as byteStrings from './features/byte-strings/index.ts';
+import type * as cStrings from './features/c-strings/index.ts';
 import type * as characters from './features/characters/index.ts';
 import type * as classes from './features/methods/classes/index.ts';
 import type * as coerciveEquality from './features/coercive-equality/index.ts';
@@ -40,6 +41,7 @@ import type * as explicitOverrides from './features/methods/classes/explicit-ove
 import type * as explicitReceivers from './features/explicit-receivers/index.ts';
 import type * as foreignFunctionInterface from './features/foreign-function-interface/index.ts';
 import type * as generators from './features/coroutines/generators/index.ts';
+import type * as genericLambdas from './features/parametric-polymorphism/generic-lambdas/index.ts';
 import type * as higherRankPolymorphism from './features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';
 import type * as interfaceConformance from './features/interface-conformance/index.ts';
 import type * as interfaces from './features/interfaces/index.ts';
@@ -2152,6 +2154,11 @@ declare module './expression.ts' {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Expression.Lambda<G>['async']>;
 			readonly move?: gate.In<G, features.References, references.Expression.Lambda<G>['move']>;
 			readonly static?: gate.In<G, features.Coroutines, coroutines.Expression.Lambda<G>['static']>;
+			readonly typeParameters?: gate.In<
+				G,
+				features.GenericLambdas,
+				genericLambdas.Expression.Lambda<G>['typeParameters']
+			>;
 		}
 		interface Member<G extends GrammarContext<G>> {
 			readonly optionalChain?: gate.In<
@@ -2475,6 +2482,7 @@ declare module './literal.ts' {
 					| V.Literal.String.Bytes.Raw<G>
 					| V.Literal.String.Bytes.Raw.Multiline<G>;
 			}
+			interface C<G extends GrammarContext<G>> extends cStrings.Literal.String.C<G> {}
 			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
 			namespace Interpolated {
 				interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
@@ -2504,6 +2512,7 @@ declare module './literal.ts' {
 				| V.Literal.String.Bytes.Multiline<G>
 				| V.Literal.String.Bytes.Raw<G>
 				| V.Literal.String.Bytes.Raw.Multiline<G>
+				| V.Literal.String.C<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Interpolated<G>
@@ -2546,6 +2555,7 @@ declare module './literal.ts' {
 			| V.Literal.String.Bytes.Multiline<G>
 			| V.Literal.String.Bytes.Raw<G>
 			| V.Literal.String.Bytes.Raw.Multiline<G>
+			| V.Literal.String.C<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.Interpolated<G>

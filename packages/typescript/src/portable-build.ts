@@ -2067,7 +2067,26 @@ export const build: PortableBuildTable = {
 										},
 										{
 											builder: 'classBodyMemberMethod',
-											key: 'methodDefinition'
+											key: 'methodDefinition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [408, 'decorators'],
+															kinds: [284],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								},
@@ -2130,6 +2149,51 @@ export const build: PortableBuildTable = {
 									kinds: [309]
 								}
 							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									builder: 'classHeritage',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'implementsClause',
+									builder: 'implementsClause',
+									optional: true
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									many: true
+								}
+							],
+							requires: [['extends']]
 						},
 						{
 							name: 'implements',
@@ -2286,7 +2350,26 @@ export const build: PortableBuildTable = {
 										},
 										{
 											builder: 'classBodyMemberMethod',
-											key: 'methodDefinition'
+											key: 'methodDefinition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [408, 'decorators'],
+															kinds: [284],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								},
@@ -2349,6 +2432,51 @@ export const build: PortableBuildTable = {
 									kinds: [309]
 								}
 							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									builder: 'classHeritage',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'implementsClause',
+									builder: 'implementsClause',
+									optional: true
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									many: true
+								}
+							],
+							requires: [['extends']]
 						},
 						{
 							name: 'implements',
@@ -21743,7 +21871,26 @@ export const build: PortableBuildTable = {
 										},
 										{
 											builder: 'classBodyMemberMethod',
-											key: 'methodDefinition'
+											key: 'methodDefinition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [408, 'decorators'],
+															kinds: [284],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								},
@@ -21806,6 +21953,51 @@ export const build: PortableBuildTable = {
 									kinds: [309]
 								}
 							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									builder: 'classHeritage',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'implementsClause',
+									builder: 'implementsClause',
+									optional: true
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									many: true
+								}
+							],
+							requires: [['extends']]
 						},
 						{
 							name: 'implements',
@@ -22727,6 +22919,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [386, 'items'],
 									kinds: [327, 328],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'content',
+									builder: 'callSignature'
+								},
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [369, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
 									many: true
 								}
 							]

@@ -2849,7 +2849,23 @@
           "function_definition"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": true,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "decorated_definition_class_declaration": {
@@ -2861,7 +2877,23 @@
           "constructor_declaration"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": true,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "decorator": {

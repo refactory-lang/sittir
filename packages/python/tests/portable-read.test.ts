@@ -39,4 +39,11 @@ describe('the portable read', () => {
 	it('reads a slice step whose group holds no expression as absent', () => {
 		expect(roundTrip('c[::]')).toBe('c[:]\n');
 	});
+
+	it('reads the decorators of a decorated definition onto the definition, and builds them back around it', () => {
+		const decorators = [{ $path: 'attribute.decorator', content: 'd' }];
+		expect(firstOf('@d\ndef f():\n    pass\n')).toMatchObject({ $path: 'declaration.function', name: 'f', decorators });
+		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.class', name: 'C', decorators });
+		for (const source of ['@d\ndef f():\n    pass\n', '@d\nclass C:\n    pass\n', 'class C:\n    @staticmethod\n    def m():\n        pass\n']) expect(roundTrip(source)).toBe(source);
+	});
 });

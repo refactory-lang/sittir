@@ -10,11 +10,13 @@
 (generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
-(class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (abstract_class_declaration) @declaration.class
 (abstract_class_declaration "abstract" @abstract)
-(abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
+(abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
 (enum_declaration) @declaration.enum
@@ -335,6 +337,7 @@
 (arrow_function) @expression.arrow
 (arrow_function (arrow_function_parameter parameter: (_) @parameters))
 (arrow_function (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?)))
+(arrow_function (call_signature type_parameters: (_) @typeParameters))
 (function_expression) @expression.function
 (generator_function) @expression.function
 (generator_function "*" @generator)
@@ -357,7 +360,8 @@
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class
-(class (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(class (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class (class_heritage (implements_clause type: (_) @implements)))
 (decorator_member_expression) @attribute.content.member
 (decorator_call_expression) @attribute.content.call

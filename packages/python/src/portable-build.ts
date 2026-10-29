@@ -2164,7 +2164,8 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							text: '__init__'
+							text: '__init__',
+							builder: 'identifier'
 						}
 					],
 					flags: {},
@@ -8548,7 +8549,25 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'decoratedDefinition',
-											key: 'definition'
+											key: 'definition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [178, 'decorators'],
+															kinds: [179],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10818,7 +10837,25 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'decoratedDefinition',
-											key: 'definition'
+											key: 'definition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [178, 'decorators'],
+															kinds: [179],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10870,7 +10907,25 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'decoratedDefinitionClassDeclaration',
-											key: 'definition'
+											key: 'definition',
+											members: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [306, 'decorators'],
+															kinds: [179],
+															many: true
+														}
+													]
+												}
+											]
 										}
 									]
 								}

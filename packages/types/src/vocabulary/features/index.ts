@@ -11,6 +11,7 @@ export type { AsyncBlocks } from './async-await/async-blocks/index.ts';
 export type { Attributes } from './attributes/index.ts';
 export type { BoundedQuantification } from './parametric-polymorphism/bounded-quantification/index.ts';
 export type { ByteStrings } from './byte-strings/index.ts';
+export type { CStrings } from './c-strings/index.ts';
 export type { Characters } from './characters/index.ts';
 export type { Classes } from './methods/classes/index.ts';
 export type { CoerciveEquality } from './coercive-equality/index.ts';
@@ -38,6 +39,7 @@ export type { ExplicitOverrides } from './methods/classes/explicit-overrides/ind
 export type { ExplicitReceivers } from './explicit-receivers/index.ts';
 export type { ForeignFunctionInterface } from './foreign-function-interface/index.ts';
 export type { Generators } from './coroutines/generators/index.ts';
+export type { GenericLambdas } from './parametric-polymorphism/generic-lambdas/index.ts';
 export type { HigherRankPolymorphism } from './parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';
 export type { InterfaceConformance } from './interface-conformance/index.ts';
 export type { Interfaces } from './interfaces/index.ts';

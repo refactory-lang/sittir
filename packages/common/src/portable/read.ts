@@ -1,10 +1,10 @@
-import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortableSeat, PortableSlotStep } from '@sittir/types';
+import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
 import { nodeText } from '../node-data.ts';
 import { hasKind, type PortableClassifier } from './classify.ts';
 
 type Node = { readonly $type: number };
 
-export type PortableCarry = { readonly reason: 'unclaimed' | 'scalar' | 'text' } | { readonly reason: 'flags'; readonly flags: readonly string[] };
+export type PortableCarry = { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' } | { readonly reason: 'flags'; readonly flags: readonly string[] };
 
 export type PortableCarried = (node: Node, carry: PortableCarry) => void;
 
@@ -80,6 +80,15 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		readonly seat: PortableSeat;
 		readonly containers: readonly PortableContainer[];
 	}
+	const held = new WeakMap<object, readonly { readonly member: PortableMemberStep; readonly value: unknown }[]>();
+	const heldBy = (container: Node, element: unknown, members: readonly PortableMemberStep[]): void => {
+		if (members.length === 0 || element === null || typeof element !== 'object' || Array.isArray(element)) return;
+		const values = [...new Map(members.map((member) => [member.name, member])).values()].flatMap((member) => {
+			const found = routeValue(container, member);
+			return found === undefined || found.value === null ? [] : [{ member, value: found.value }];
+		});
+		if (values.length > 0) held.set(element, [...(held.get(element) ?? []), ...values]);
+	};
 	const resolve = (value: unknown, pending: readonly Pending[]): { readonly found: unknown; readonly many: boolean } | undefined => {
 		if (Array.isArray(value)) {
 			const parts = value.map((item) => resolve(item, pending) ?? { found: item, many: false });
@@ -103,7 +112,9 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 				return Array.isArray(next) && rest[0]?.builder !== undefined ? [{ seat, containers: rest }, { seat, containers: rest.slice(1) }] : [{ seat, containers: rest }];
 			});
 			const result = resolve(next, advanced);
-			if (result !== undefined) return Array.isArray(next) ? { ...result, many: true } : result;
+			if (result === undefined) continue;
+			if (!Array.isArray(next)) heldBy(value as Node, result.found, pending.flatMap(({ containers }) => (containers[0]?.key === key ? (containers[0].members ?? []) : [])));
+			return Array.isArray(next) ? { ...result, many: true } : result;
 		}
 		return empty ? { found: [], many: true } : vacant ? { found: undefined, many: false } : undefined;
 	};
@@ -146,6 +157,17 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		return arm.scalar === 'float' ? floatOf(text) : integerOf(text);
 	};
 	const armsAt = (path: string, kind: number): readonly PortableBuildArm[] => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === kind);
+	const contradicts = (node: Node, preset: PortablePreset): boolean => {
+		if ((preset.text === undefined && preset.kind === undefined) || preset.steps.at(-1)?.mounted !== undefined) return false;
+		const held = walk(node, stepHops(preset.steps));
+		if (held === undefined || Array.isArray(held)) return false;
+		if (preset.text !== undefined) {
+			const text = textOf(held);
+			return text !== undefined && text !== preset.text;
+		}
+		const kind = kindOfValue(held);
+		return kind !== undefined && kind !== preset.kind;
+	};
 	const booleanOf = (arms: readonly PortableBuildArm[]): boolean | undefined => {
 		for (const arm of arms) for (const test of arm.when) if ('boolean' in test) return test.boolean;
 		return undefined;
@@ -157,8 +179,10 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		const kind = kindOfValue(value);
 		if (kind === undefined) return value;
 		const path = classify(typeof value === 'number' ? value : (value as Node));
-		const arms = path === undefined ? [] : armsAt(path, kind);
-		if (path === undefined || arms.length === 0) return typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried);
+		const claimed = path === undefined ? [] : armsAt(path, kind);
+		if (path === undefined || claimed.length === 0) return typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried);
+		const arms = typeof value === 'number' ? claimed : claimed.filter((arm) => !arm.presets.some((preset) => contradicts(value as Node, preset)));
+		if (arms.length === 0) return kept(value as Node, { reason: 'preset' }, carried);
 		const truth = booleanOf(arms);
 		if (truth !== undefined) return { $path: path, $value: truth };
 		if (typeof value === 'number') return value;
@@ -202,6 +226,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 			const pick = chosen.get(name);
 			if (pick !== undefined) structure[name] = read(pick.value, carried, pick.member.seats);
 		}
+		for (const { member, value } of held.get(node) ?? []) if (!(member.name in structure)) structure[member.name] = read(value, carried, member.seats);
 		return structure;
 	};
 	return (value, carried) => read(value, carried);
