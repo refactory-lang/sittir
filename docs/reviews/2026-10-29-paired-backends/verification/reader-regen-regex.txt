@@ -1,0 +1,75 @@
+Full regenerate for regex: transpile + tree-sitter generate + compile-parser + sittir codegen
+Transpiling regex overrides...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/regex/.sittir/grammar.js
+Running 'tree-sitter generate' in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/regex/.sittir, deriving conflicts...
+{
+  "diagnostics": [],
+  "error": null
+}
+  conflicts: base 2 resolutions reused; bound 0 resolutions reused
+  → pruned 7 orphaned rule(s) from grammar.json
+Compiling regex parser to WASM...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/regex/.sittir/parser.wasm
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/regex/.sittir/upstream.wasm (current)
+[info] conflict-resolution  -.-
+  conflict between character_class, class_range on '-' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between character_class on '|' resolved by AddConflict (default)
+Generating regex IR...
+[codegen] '_class_atom' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_class_atom' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_character_escape' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_character_escape' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+  seam census: 61 template boundaries — 22 static (20 glued, 2 spaced), 1 runtime-derivable, 38 runtime-varying (residue); origin: 0 preference, 0 literal-default, 0 word-default, 0 cascade, 61 fallback
+    rust/crates/sittir-regex/src/render/kind_ids.rs
+    rust/crates/sittir-regex/src/render/field_ids.rs
+  → Rust render module regenerated for regex:
+    rust/crates/sittir-regex/src/render/hash.rs
+    packages/regex/src/hash.ts
+    rust/crates/sittir-regex/src/render/node.rs
+    rust/crates/sittir-regex/src/render/options.rs
+    rust/crates/sittir-regex/src/render/mod.rs
+    packages/regex/src/records.ts
+  → rebuilding grammar-owned N-API binding for regex (gate profile)…
+
+> sittir-regex@0.1.0 build:gate /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-regex
+> tsx ../../../scripts/build-native.mts regex --profile gate
+
+   Compiling sittir-core v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-core)
+   Compiling sittir-regex v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-regex)
+    Finished `gate` profile [optimized] target(s) in 5.40s
+  → cargo check --workspace --features napi-bindings (catches cross-grammar breakage)…
+   Compiling sittir-regex v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-regex)
+    Checking sittir-parity-tests v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-parity-tests)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.42s
+
+  v 55/55 kinds renderable (0 un-renderable)
+
+⚠ 17 unnamed choice slot(s) in regex — give each choice an explicit field name in packages/regex/grammar.sittir.ts:
+  rule:_lookahead_assertion:root
+  rule:_lookbehind_assertion:root
+  rule:character_class:members.3
+  rule:character_class_escape:root
+  rule:class_range:members.0
+  rule:class_range:members.2
+  rule:control_escape:root
+  rule:count_quantifier:root
+  rule:lookaround_assertion:members.0
+  rule:lookaround_assertion:root
+  rule:named_capturing_group:root
+  rule:pattern:root
+  rule:term:content/members.0
+  rule:term:content/members.1
+  rule:term_group:members.1
+  rule:term_group:root
+  rule:unicode_character_escape:root
+  → generation recorded in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/node_modules/.cache/sittir/generated-manifest/regex.json
+
+Regen diff vs HEAD — regex
+  (no generated changes vs HEAD)
+
+Done! Generated:
+  .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+
+    rust/crates/sittir-regex/test-fixtures.json (450 render + 450 roundtrip, 29 kinds)

@@ -20,7 +20,11 @@ const remade = {
 	leaf: 'y',
 	edited: 'z()',
 	sided: '{\n    y() /* c */;\n    x();\n}',
-	parsedName: { $type: TSKindId.Identifier, $text: 'f', $trivia: { trailing: [{ $type: TSKindId.BlockComment, $text: '/* kept */' }] } },
+	parsedName: {
+		$type: TSKindId.Identifier,
+		$text: 'f',
+		$trivia: { trailing: [{ $type: TSKindId.BlockComment, $text: '/* kept */' }] }
+	},
 	parsed: true,
 	snapshots: true,
 	namedRender: 'f /* kept */()',
@@ -32,9 +36,12 @@ const remade = {
 describe('a built view its arena makes anew once its builder is collected', () => {
 	it.each([
 		['objects', false],
-		['arena objects', false],
 		['records', true]
-	])('is the node its builder made, on %s', (construction, records) => {
-		expect(released(construction)).toEqual({ ...remade, editedBuilt: records });
-	}, 60_000);
+	])(
+		'is the node its builder made, on %s',
+		(construction, records) => {
+			expect(released(construction)).toEqual({ ...remade, editedBuilt: records });
+		},
+		60_000
+	);
 });

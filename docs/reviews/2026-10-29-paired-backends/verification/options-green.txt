@@ -1,0 +1,10 @@
+
+ RUN  v4.1.5 /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+
+[vitest-setup] CI detected — skipping redundant pnpm -r run build (workflow already built)
+ ✓ packages/common/tests/node-storage-options.test.ts (10 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  11:13:49
+   Duration  163ms (transform 9ms, setup 0ms, import 15ms, tests 2ms, environment 0ms)

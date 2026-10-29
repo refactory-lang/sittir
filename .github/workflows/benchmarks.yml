@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }}, ${{ inputs.construction }} construction)
+run-name: Arena benchmarks (${{ inputs.benchmark }}, paired node backends)
 
 on:
   workflow_dispatch:
@@ -9,11 +9,6 @@ on:
         type: choice
         default: all
         options: [all, corpus]
-      construction:
-        description: How the corpus job's arena arm builds nodes
-        type: choice
-        default: object
-        options: [object, record]
 
 permissions:
   contents: read
@@ -38,4 +33,3 @@ jobs:
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
-      construction: ${{ inputs.construction }}

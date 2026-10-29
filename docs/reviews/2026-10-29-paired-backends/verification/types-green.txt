@@ -1,0 +1,3 @@
+
+> sittir@0.1.0 type-check:cross-language /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p tests/types/tsconfig.json --noEmit

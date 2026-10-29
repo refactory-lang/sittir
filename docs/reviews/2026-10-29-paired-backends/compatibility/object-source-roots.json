@@ -1,0 +1,66 @@
+[
+	{
+		"grammar": "python",
+		"entries": 116,
+		"objectRootsEqualSource": 116,
+		"differences": [],
+		"masterBuilt": null,
+		"featureBuilt": null
+	},
+	{
+		"grammar": "rust",
+		"entries": 149,
+		"objectRootsEqualSource": 149,
+		"differences": [],
+		"masterBuilt": {
+			"rendered": "fn f() {}",
+			"engineRendered": "fn f() {}",
+			"sameName": true,
+			"edited": "fn g() {}",
+			"originalAfterEdit": "fn f() {}",
+			"namedProperty": true,
+			"json": {
+				"status": "ok",
+				"value": "{\"$type\":\"function_item\",\"name\":{\"$type\":\"identifier\",\"$text\":\"f\"},\"parameters\":{\"$type\":\"parameters\"},\"body\":{\"$type\":\"block\",\"statements\":[]}}"
+			},
+			"releaseAvailable": false
+		},
+		"featureBuilt": {
+			"rendered": "fn f() {}",
+			"engineRendered": "fn f() {}",
+			"sameName": true,
+			"edited": "fn g() {}",
+			"originalAfterEdit": "fn f() {}",
+			"namedProperty": false,
+			"json": {
+				"status": "refused",
+				"message": "toJSON: a node has no JSON form"
+			},
+			"releaseAvailable": true
+		}
+	},
+	{
+		"grammar": "typescript",
+		"entries": 119,
+		"objectRootsEqualSource": 119,
+		"differences": [],
+		"masterBuilt": null,
+		"featureBuilt": null
+	},
+	{
+		"grammar": "regex",
+		"entries": 37,
+		"objectRootsEqualSource": 37,
+		"differences": [],
+		"masterBuilt": null,
+		"featureBuilt": null
+	},
+	{
+		"grammar": "scm",
+		"entries": 19,
+		"objectRootsEqualSource": 19,
+		"differences": [],
+		"masterBuilt": null,
+		"featureBuilt": null
+	}
+]

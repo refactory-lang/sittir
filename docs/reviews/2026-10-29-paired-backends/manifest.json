@@ -1,0 +1,1066 @@
+{
+	"at": "2026-10-29T17:13:13.575141+00:00",
+	"localCompleteBundle": "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/scratch/review-artifacts/2026-10-29",
+	"items": [
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/corpus-python.json",
+			"sourceSha256": "da3bcbd805c1192adab1f79061f0d2d917673006a440d4c24be9c4e196272c1a",
+			"savedSha256": "ae480feb34778df4f7571e096d4084f4dc7d7fc8de8d2e429ba0683dce961641",
+			"bytes": 19568
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-master-python.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-master-python.json",
+			"sourceSha256": "fcb587d0c881d1c882acfa05f53e96f75528bc2dfd56148a41de6ed42ba5431a",
+			"savedSha256": "7ea2965ca46e5113b1d6d27ad3f110dfaf5f488898c79a12dbb44f2e8df809d2",
+			"bytes": 75348
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-feature-python.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-feature-python.json",
+			"sourceSha256": "3cdef69fe439626aff4d7cde4e83134bd5c21c792a3bb388b7281f0c39cfbc2b",
+			"savedSha256": "48d16166016978969cc673c8f730426a2233e8d5b6d80a50e43081c4f998ef6a",
+			"bytes": 75332
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-differences-python.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-differences-python.json",
+			"sourceSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"savedSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"bytes": 3
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/corpus-rust.json",
+			"sourceSha256": "3cdbd5626a9a6fda5baa1eb38e340fadd6eac97490b7e1878c3c9ec139d067db",
+			"savedSha256": "c815b6f3610b6950d7d194e48eeffc636c74c06b3b9170f86bfa11947ab7a051",
+			"bytes": 24456
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-master-rust.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-master-rust.json",
+			"sourceSha256": "5ac436363371266a2dbbeae3c4cd52d8ba9c59d5d8d50d178dd875e6555fa556",
+			"savedSha256": "eb8562381b7543018046ce58618ca484a466362fe8281b66fae907ded2491b4d",
+			"bytes": 121532
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-feature-rust.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-feature-rust.json",
+			"sourceSha256": "0bc0e79928633ed5dc07ed4d1868b68f0795f11a9004171640ab21fd6a0844b2",
+			"savedSha256": "5358c1cd9c0e5bd12249b1862e960653ed098d0b3b732135c81c4d081108575e",
+			"bytes": 121382
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-differences-rust.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-differences-rust.json",
+			"sourceSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"savedSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"bytes": 3
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/corpus-typescript.json",
+			"sourceSha256": "e6cb62543039348d97d75cd2c0cbfdd1c5cbc056ea49de99eb183267e342a9bc",
+			"savedSha256": "1e1d4ae1aff21872f226a2c5155c89b1a7c228eaa3ac591a52e431bce4fb846a",
+			"bytes": 21818
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-master-typescript.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-master-typescript.json",
+			"sourceSha256": "09b18335f8027562f932bdcd723563d8babf48fa789d84c90f597b47f9ba00f6",
+			"savedSha256": "4a9dc022fcb8a4f4c6b644618a129bd52e992a0e7090e714a31ab285dfc8d334",
+			"bytes": 104632
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-feature-typescript.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-feature-typescript.json",
+			"sourceSha256": "9b24ebba1b6fac45a9bb268065cf2a4273edae5fc68483fadb5885feebe7030c",
+			"savedSha256": "044917cfa4d431a220817ea71a87110474b7504134a9dbec431c970fb94d4cef",
+			"bytes": 104616
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-differences-typescript.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-differences-typescript.json",
+			"sourceSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"savedSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"bytes": 3
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/corpus-regex.json",
+			"sourceSha256": "4ada9979da748ac31c695eb8edf5ae0f1da062b3361395e0e00bd62cf75cf4f2",
+			"savedSha256": "e3c2734b4c76e5c7b900aa5bb388840c4be3ac9a965df9da9826f7d910080e6a",
+			"bytes": 3111
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-master-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-master-regex.json",
+			"sourceSha256": "854ba39e589c287ef914a7f2ac5c3ce6bb9d981f66e049e3172d1ed9554715b6",
+			"savedSha256": "76977842a46981ceec6219aa6b271cb1f761dd61aef6e051f8859b069c711248",
+			"bytes": 14223
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-feature-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-feature-regex.json",
+			"sourceSha256": "55dee9730495809a634b814f5cf7afc37fd013ec7dba53b257fd025c24c468c1",
+			"savedSha256": "4ff6664789d25bd2df45f1d6a92350645e46b608a17df7b78093feee3c5cd694",
+			"bytes": 14207
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-differences-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-differences-regex.json",
+			"sourceSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"savedSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"bytes": 3
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/corpus-scm.json",
+			"sourceSha256": "e152909fb0fc2ea40662c41389fbe5dd08ebc1cc8a0096ad854132b1f59c3c8b",
+			"savedSha256": "6bc3a96c0f7a788f95020566cad580c3bece92142e2c89c7a3d3f3b622bba814",
+			"bytes": 3539
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-master-scm.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-master-scm.json",
+			"sourceSha256": "5383b06bed164a4e675b14552d83c0fe6b2b4f03e50c75aa4f79b8608a7480d0",
+			"savedSha256": "0d0c09000158fc91d3dcddb12e6fc1a55db9ebfdbf99a153267d408d0eed4a5d",
+			"bytes": 13873
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-feature-scm.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-feature-scm.json",
+			"sourceSha256": "af65106534b8ee1ed7a0dc4bf65bb72f31b38fb323e35eb596e1878e7c025aad",
+			"savedSha256": "e799fb61c425dd4976aa550c096058480e9d44124591f5e37d7056d2a01b4fcf",
+			"bytes": 13857
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-differences-scm.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-differences-scm.json",
+			"sourceSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"savedSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+			"bytes": 3
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-compatibility-final.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-compatibility-final.json",
+			"sourceSha256": "ffff56ae31aa95349909db48fb39a9c18c66d59eb2c1639072e301c918f84ac7",
+			"savedSha256": "bae940fa4d9434a9e7b09a0ae3b4caabb36a5fb3fc80c519f502b819ba410747",
+			"bytes": 1012
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-source-roots.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-source-roots.json",
+			"sourceSha256": "95add3baa0f0d88c1c438b7b59a527ccdf6e0c6790638ff5d83068cc63f1b337",
+			"savedSha256": "31ef40e068bb39223364c75574e4868d7c1a7ec8d8cb65b853fde89392e7cf64",
+			"bytes": 1461
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-compat-worker.mjs",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/object-compat-worker.mjs",
+			"sourceSha256": "df416a447523db290273e92ec7789692d535c8488cbe8ff85addff4a0a86840c",
+			"savedSha256": "40b6432eb7ab3c59be5cb5569aa0b3a5f0d02aeb671afe43cf82a3cd1989d082",
+			"bytes": 2601
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/public-fixture-0.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/public-fixture-0.txt",
+			"sourceSha256": "0c43164c4316f54e94423c091849c229e3dac234ba9c45faee2501401d07cd9c",
+			"savedSha256": "0c43164c4316f54e94423c091849c229e3dac234ba9c45faee2501401d07cd9c",
+			"bytes": 483
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/public-fixture-1.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/compatibility/public-fixture-1.txt",
+			"sourceSha256": "05118c666d2787815c96670c866afa1d63820dd5d58b9047748945f8bde6acdd",
+			"savedSha256": "05118c666d2787815c96670c866afa1d63820dd5d58b9047748945f8bde6acdd",
+			"bytes": 467
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-benchmark-summary.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json",
+			"sourceSha256": "4632184e6fff5e4abdd73857b0a58176a4cf9f5e0d31bc8ea0c134f83d6cb85f",
+			"savedSha256": "09c13823db39e01317f35883eea146d25b0cf19ca72c971e7223da20b385b6fc",
+			"bytes": 29358
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-benchmark-complete.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-complete.json",
+			"sourceSha256": "2d9d0eef1fc113f85ac2a27e73f183a88be7bd080fe0369fc96dc570b6af27ad",
+			"savedSha256": "e14aef46336e2d73fb13e2392b33fd7cc1ed2d912157197c2e589420b1cfe8f7",
+			"bytes": 271
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-benchmark-receipts.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-receipts.json",
+			"sourceSha256": "b58d277d30400c3c6c5199dd5f3dbea8e52cb0aed1a76de7b9fa0449395b1e97",
+			"savedSha256": "705f154f4a6b2f2083d079cb2a4d32b7f168492324025953a9a7051a4f20ecae",
+			"bytes": 39032
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/object-corpus-worker.mjs",
+			"sourceSha256": "fce43b68894a02dcfbae04b26cc4d92d04acad5d4c5fc98a04843b04f945e153",
+			"savedSha256": "1eb0d616be394feac7866ba87aca723176f21925dc98acb499f0c914f56e3e3a",
+			"bytes": 3212
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/object-public-worker.mjs",
+			"sourceSha256": "7110fb9999cb8c944c545c43efca445d10aea3478234ddeb56fe0cce50b4c047",
+			"savedSha256": "e491facf42a667ef2317856ec6d4891969298018d874ab777a3015de3b04935c",
+			"bytes": 4150
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/run-object-baseline.py",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/run-object-baseline.py",
+			"sourceSha256": "fbc0db96fdf5f5a4ef30e1f9ad8ab791be9cc55d020347e9b58c6153e5ec14a4",
+			"savedSha256": "fbc0db96fdf5f5a4ef30e1f9ad8ab791be9cc55d020347e9b58c6153e5ec14a4",
+			"bytes": 2490
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/summarize-object-baseline.py",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/summarize-object-baseline.py",
+			"sourceSha256": "6b1e34c64e902725377c65cb256f5011ad5ed8ce92d25656435d296089bb64f2",
+			"savedSha256": "6b1e34c64e902725377c65cb256f5011ad5ed8ce92d25656435d296089bb64f2",
+			"bytes": 4173
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-master-4.json",
+			"sourceSha256": "8cb0f342f29965c5b1cd8bb2b116f4c5248b88c4867c8215fc104bfa2c5d3971",
+			"savedSha256": "4f8e483474cac3457421166ad52e7438813557ae8e0e416c5dfe35fa8a95f9f3",
+			"bytes": 11037
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-feature-1.json",
+			"sourceSha256": "5b472111b450fcce304795223c8d8b21bd607f39337273144091ef7da06ec52c",
+			"savedSha256": "d51d04b066ee8fa10fe8293ee1d21f43629e38725eb73998e9bff78a50506798",
+			"bytes": 1268
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-feature-4.json",
+			"sourceSha256": "af846ad69260a116811fc0bd9aac1bee63070d6113abeae45aa3da723e47d677",
+			"savedSha256": "f770830f5a2c803781eb377137b42650e9cf58569016b5c56936a6602c1e4c59",
+			"bytes": 11017
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-feature-1.json",
+			"sourceSha256": "3211da2de14da331e939b2469e2dc4eacf8572b6c1ced7f7c4dfd2934e8c91d8",
+			"savedSha256": "fa0db22f013f18c2da59f3fba43a100b177b5fba859a8313c47e3b9c1a09b947",
+			"bytes": 8216
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-feature-1.json",
+			"sourceSha256": "247bd446266f7786843b315026113bd174de8911baa3dd8973e5e72ae533c86c",
+			"savedSha256": "05c7eafba180e7983eb98c2ec8a051c38f1db166b15db44586be5ebd623b84c5",
+			"bytes": 8214
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-master-3.json",
+			"sourceSha256": "28beb63055b30c6382a0ba92fa011a9535bc907034e56ab3328b251e9a079229",
+			"savedSha256": "a2ba2091e303e3d055836798cd33a732ce8c40588ea0f55a2f302bdf9498f0b2",
+			"bytes": 8260
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-master-2.json",
+			"sourceSha256": "f3895509f8b36d750abf4e8df283e0e2b9e12d5879b79ddfcace64d5d0e8d3ce",
+			"savedSha256": "f05e92ff8b0f7b0e09249f8590d1bb36befcb1544c6654e6c3953874f17b0477",
+			"bytes": 8225
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-feature-0.json",
+			"sourceSha256": "e0267f68c8fb9cf63c775a11d3b2283a5a40c77363afdf112ce584d0881619be",
+			"savedSha256": "71b289e34ee2f2b149e92447c1d1a13f3d72afd0c7a54e1697dde18961aa3120",
+			"bytes": 8398
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-master-0.json",
+			"sourceSha256": "6a8f5221deebb973f6685169fc22dba4c6c5f97617256ba33e11c9ff17a67c6a",
+			"savedSha256": "e08f13ed56838df354fc669d8b44121390932e04dcb0f869b6bbb944d7de2955",
+			"bytes": 8459
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-master-4.json",
+			"sourceSha256": "e5b1de3b079468b2929f9e832b451ae3efebf150247db404e6d5e26082cb5084",
+			"savedSha256": "eb2c4c3d0bedb478e0e32d6f6d2fe73f9724504a3c6dca48a77f976e7c025479",
+			"bytes": 8237
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-feature-3.json",
+			"sourceSha256": "4443c933caf4e713c7c9e5678990cf1d91de529c09c88ce2431b66d83a0d4732",
+			"savedSha256": "c88c25bf6fc5c34fbed7c1b75c437452551cbbb96f5a5f55afc41b81da1d9cd7",
+			"bytes": 8239
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-feature-2.json",
+			"sourceSha256": "d4975bc18191d27a5c3f4b37fceb09207245215d41fe1083ba814ef396b6d56e",
+			"savedSha256": "1212573da9459758b51f8206fc8acd20cef1283a522960f4e2b7a1ecd10d2a28",
+			"bytes": 8237
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-feature-1.json",
+			"sourceSha256": "a0a476aefb8fac10c9bc103f1cd0808ec3dcb10b456aa9948363f78901e6d525",
+			"savedSha256": "bd1583d9a00dd99c196865dd0f07be7e9aacceb5f03a30c264f757a64a3a9361",
+			"bytes": 8401
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-master-1.json",
+			"sourceSha256": "88b98ba2380f6431d27a4f87b45b8e827578860566edaf36ccf5635d7113b326",
+			"savedSha256": "9896030c41f69c0a9483ff779abb8db41dce73aaad103b9981e112f00301d17e",
+			"bytes": 8454
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-master-3.json",
+			"sourceSha256": "e546046e82195799b8faf904fe180be7ad94b8317e9125cae052ddee12c53aeb",
+			"savedSha256": "17caaf4f88df7a7521fe66f49e467bc9be83043833478647c49d9f8a31c213e1",
+			"bytes": 8216
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-master-2.json",
+			"sourceSha256": "7d956390b20a9ec8df2eb76bd52650e0f8ca08885e43020e52834ab874b630dd",
+			"savedSha256": "a865b4b7f986aaf2f97572c82e1cef1f93dc722e4ec2375a936ebe1ba31c7d6b",
+			"bytes": 8236
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-feature-0.json",
+			"sourceSha256": "f4e22417c2cfc036fe2084d1ca8ee4489b257cc7e270f55f4b6cb0f68d907a4b",
+			"savedSha256": "b1c6817c5730cd385b6f2a79e4be6aa382eaab3457ada1a25eca58fa8bee6906",
+			"bytes": 8209
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-feature-4.json",
+			"sourceSha256": "9bfc3ca6c33e73085a2b97e18d9afbd916ef410b140a8a7402a479b9074b7641",
+			"savedSha256": "40c9bccfac9fbe651eedd88d1e7bc26f398f211e3ba3c0494a8a4e130686de51",
+			"bytes": 8389
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-feature-0.json",
+			"sourceSha256": "ef54be79ab43d9f418a56b0ad3ff97bce6ab9434644f922dc805e8f2ab9fecee",
+			"savedSha256": "b8e1667fb7b395e288ce1c6a2b116ec7f524e564218e3d355532ff6953ebe093",
+			"bytes": 8217
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-feature-0.json",
+			"sourceSha256": "b54ae54e708875616151ee3583fb31266c46f98c19d1fb63a73a31fe489b5d8a",
+			"savedSha256": "e0d85e843f12bf703e53e01d511f432ccc3f2d2ec13606455b5be4fb316e1c29",
+			"bytes": 1272
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-feature-3.json",
+			"sourceSha256": "28d0d2b9ff9d74c54a1ae604c944e291b7a95f75b5fd5580b36ce4e37e6b1bbf",
+			"savedSha256": "e0845e118192e650cf4345c36f72de9ffc497c0d73ea37b1d1802c989a76a61e",
+			"bytes": 8351
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-master-4.json",
+			"sourceSha256": "fa19892fd2248909f5069ada6c9418665758d21c05a445d1a53f1e40c2d273b9",
+			"savedSha256": "67ef602b66aa16c1d655096a06f73c2a3c3d9c95a7b2187a2704605efd38230e",
+			"bytes": 8257
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-master-0.json",
+			"sourceSha256": "be61052a2e22b22b08d0fc0eb9460ceb6260816906ea53bdf6b945e658954ce1",
+			"savedSha256": "931f9454b3b7373d8177f176ecb049e34c0dde0e23d56e4af9b7dfcc662b4bbd",
+			"bytes": 8410
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-master-2.json",
+			"sourceSha256": "d90cc74d0f6a2d88c5376c65a82565c246737e36f42f5cd19128ffe48cdbd682",
+			"savedSha256": "28719d4e0d493f98419db2a1e0dfa422a157bcc1643552bd970b66a9623559d5",
+			"bytes": 8236
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-master-2.json",
+			"sourceSha256": "17205361ca64397dfbbe8bdaf8801605b8d1fcd6730d33ce30c76c95550f6246",
+			"savedSha256": "943f91bb47493b5d03e4ad25802309a730a4b50505f930b2352174fb3ca2cb28",
+			"bytes": 11029
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-feature-2.json",
+			"sourceSha256": "2095ea062b0cfe89bca607bf0d8c959fea597abb78e53b25095ab304b97f1724",
+			"savedSha256": "6cef633b115cbefb873857d511e8df9c7dad2ad2eb1e9261c03d192d56c29058",
+			"bytes": 11013
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-master-2.json",
+			"sourceSha256": "e2a29a86e33b67d4db005fb7ec4e0102faa1d6cc2f079d0948c9e56b9712426a",
+			"savedSha256": "46f53b7c5ef8b28fde276b5a58d9b1b2f55c9be83094158b7341aea94f0d1d79",
+			"bytes": 1285
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-feature-3.json",
+			"sourceSha256": "b9f7484ee3d87839ef9dd01f564cc2478e1fcb491fd72389204f38f6822e1d6b",
+			"savedSha256": "c702d41bafbb8a65b9b55d167d800dd1c74c6f789df2a060650267865ad3a8b3",
+			"bytes": 11016
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-master-3.json",
+			"sourceSha256": "5ec545170225a4394b4935a475e55fc4959232dfee6be66186f9db472775766c",
+			"savedSha256": "22137253716f288203acd88dbcda0c39a24bb341a91a1499f316047f7ad899d8",
+			"bytes": 11025
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-master-3.json",
+			"sourceSha256": "f268fcf7837c7d46cffa0af0be60816a058d6c23b21d2ec1d32e57521ab46863",
+			"savedSha256": "6b7fcecab1bdffbf770374dfc76c64a1c2432ec976c9263b54446f6ba264c58e",
+			"bytes": 8247
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-feature-4.json",
+			"sourceSha256": "08b770b22176cdfe65a04a28d30f5011f19cf03ee81ebb92a95c8b99bbfac094",
+			"savedSha256": "3dbe5b96f32ded18664b601d59a54d9da43d40ceb0f5ccdd2a0eb5cee4860a13",
+			"bytes": 8219
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-master-1.json",
+			"sourceSha256": "b158d869cd9552ddc9646530812e2616c446708f620e6e12bcbd0d917d9e50e4",
+			"savedSha256": "1546da1b5cf387e6834843a37230434efd40a5ec685ea3ce4eec97ee49faa535",
+			"bytes": 8406
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-master-4.json",
+			"sourceSha256": "e8d35dd0d9bf385bc19a9fde4ce0c0d8bac0bcc48442ee2cd3e088adddd83442",
+			"savedSha256": "c42fa3af43c34fe9dc315bc916824c12402819d73c9a8440e9aa2e82e20c2a0d",
+			"bytes": 8249
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-feature-2.json",
+			"sourceSha256": "0a5f1c0dee58054ad8fbc9a0e62fabc7b0a6d16e02d373b7dfd447ef165c90ce",
+			"savedSha256": "71d6cd325298e1d27990e35c1f3e211e26cdef91530889033640a9ee7f67d6fd",
+			"bytes": 8381
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-master-0.json",
+			"sourceSha256": "322a4978543b2a2a6827db76bc573088193fb99c0f199bf079d6dc467fd9f550",
+			"savedSha256": "8e060f3c92e6460649667f18dc0cfdcab0a12d73a1767285092ae838de8070c9",
+			"bytes": 8228
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-master-4.json",
+			"sourceSha256": "c293fe9011d1609b62f7696992e5777f9d8493790a74cfe8927dd223131fa0da",
+			"savedSha256": "fb563b1493ad71e9ebe9521ed0b77a55e83465612ce17fcbbb67a37b4d34f1ab",
+			"bytes": 8423
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-feature-4.json",
+			"sourceSha256": "7de28aa0cf0c9a4e327424fb517b895611c5d76ccc1df505176ff6874bed0b48",
+			"savedSha256": "03e2ef112281208578fabd0283e4243e464eaec919e7d6bac2886b7bfcf6c569",
+			"bytes": 8394
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-master-2.json",
+			"sourceSha256": "3ffda3a94d8aa4e0b1f89ab1b95867e6705f0e6053541333bd0042c5ac3b6399",
+			"savedSha256": "e7ca0faad5c567638a0cee198e7adef3f3ef81bd5cbdc75067ffcbd18b798b7e",
+			"bytes": 8398
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-feature-1.json",
+			"sourceSha256": "4045e15dd1447eef00b858229dc7d71f6e0b3b48578efb027b3342d9bacb5ca3",
+			"savedSha256": "595678c1c669b562969a462f9fa4e8441ade5255fae8ad92def4769532102ea1",
+			"bytes": 8383
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-master-0.json",
+			"sourceSha256": "f50dc8a34964a0d831d8205f425abef758ae8953f42334b18eaae2106a05fb56",
+			"savedSha256": "84136ba508dc7b8a0278faf6c7244f76f87140fbd3bc4bcc16fb342b67cb7a6a",
+			"bytes": 1288
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-feature-0.json",
+			"sourceSha256": "d23104fca1896f46a85573dacb66642a15b5f74af39bcb2c3f07d511e29ae814",
+			"savedSha256": "3104e5469202a9c812359d37c757ec88540192e61e326ed68bc4f2094271f8c3",
+			"bytes": 11000
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-master-0.json",
+			"sourceSha256": "e58fffcd477d82905bbdd1fe6e76af5ee56c0017458d171003046145d3a85587",
+			"savedSha256": "4dbbaf80c3d19023d5357eb9969b4d2c4945dac793e104ca34532fb39df1b680",
+			"bytes": 11028
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-master-1.json",
+			"sourceSha256": "9678f2d9989396ea1f489fbc1fe4d0ea7cb4c417717e059a72449fd79c16b88f",
+			"savedSha256": "b01904b15db5431552dfe1970f5c8c30b5679343531eb954c5d0d797a6f4f3b7",
+			"bytes": 11018
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/timing-rust-feature-1.json",
+			"sourceSha256": "d358aea36444c6954ff6f64fa392881fb6a8ff907bb962eb890d0410215cb49d",
+			"savedSha256": "c3f7fd82bdfbf2dbf29a557ee85d70415692652bf31133e67cfa13e091dd15a3",
+			"bytes": 11010
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-master-1.json",
+			"sourceSha256": "77bd303a005e03c441232d96fb842d131a968633fc11a79e0cd2d76cee6900e9",
+			"savedSha256": "e6a50b6d38cb608660a68b4eb66ddfbb58da3b61e63c67141da5feecf7e1a7fc",
+			"bytes": 1284
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-feature-4.json",
+			"sourceSha256": "601c195debd351d6835ccd0356c208857cd5141895670b7c7bc659a97f42aac7",
+			"savedSha256": "147775046be6669794f175a19e7102ab9db3870588ef9382e9c98affbc281a38",
+			"bytes": 8236
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-feature-0.json",
+			"sourceSha256": "790104910be30557a22e506b4d70d505e7f47fccdb740a35ec01598f4a41407c",
+			"savedSha256": "ea72fd1c4516bc2450d8c60cba557dedcda28711721d8b18e60e3a12e68a5a00",
+			"bytes": 8401
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-feature-4.json",
+			"sourceSha256": "58d390741626ef1a2ae6147400abfc8b5fd234a534d8de3c751e6fc6e041af3a",
+			"savedSha256": "1fa79f2dc05d79ebcf50638719a9fe34facf554c3250c2806b371675b8d48fb3",
+			"bytes": 8219
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-master-3.json",
+			"sourceSha256": "7576391c4cfd07a8211b6c4d7b7d10800c73949fb27d66e60ab7023600579562",
+			"savedSha256": "9752d197d053eba2678274a704ed59759688c3811e295fcb488dd90a74f47b19",
+			"bytes": 8406
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-master-1.json",
+			"sourceSha256": "5e0ad6008abfbd5fa72050c298351471e5aab7a647c648ac7f8df7494490a415",
+			"savedSha256": "17ea0a5d1238ddecf0728c6eebfa3f1fe0ef5a5c4eff8cad9931470ce53aa63a",
+			"bytes": 8234
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-feature-3.json",
+			"sourceSha256": "c230b388033a4cf658c2e2741064493579ec70899dd45f95d770754c9482f1da",
+			"savedSha256": "faf31f150dc0a3869879c2269b0be7a144ccaf24d5a7e07ff6ae47ee9833210d",
+			"bytes": 8215
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-feature-1.json",
+			"sourceSha256": "07638755659b766a6684f8ce225bcc4d7b1d93fc283d0db45bb1854a975d4ef3",
+			"savedSha256": "2bdc41ff9a82f73a9c022a89d6fb00ebd1f4f4692b1fcf2bb0a8ddad01dfb387",
+			"bytes": 8237
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-master-2.json",
+			"sourceSha256": "0f75d9e18bf1865e30044957fb2c52b8b7caf396a7a1cbb2a60d5f380cbf7f32",
+			"savedSha256": "8befd886b34934bbe914551143b78e82594c3ed4869f414aa33bd46ce6626a4e",
+			"bytes": 8430
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-feature-2.json",
+			"sourceSha256": "b558d0858128994c2f6b923d8646fd2de42cae046a8d9f2ff270199cdc9e4dee",
+			"savedSha256": "26daee598d93ef2e15bf18c4025c28564c3bc4b1a4849dba32804388079f590b",
+			"bytes": 8398
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-4.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm-master-4.json",
+			"sourceSha256": "b9885a63e652816ca5997a63705cf87b4f892b9d513a92c59ce4872e25bc5327",
+			"savedSha256": "0cf75c47b883753cd9328df8ccb378d73f67e836745516eb8ef546066ecddca1",
+			"bytes": 8425
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-master-0.json",
+			"sourceSha256": "69129418e9583256f7c1ca884ee467ac9c1cb032763f82ba5a514fd1e091b1c5",
+			"savedSha256": "e0f521f184225aaa5aef68ad5eae7f34d8126307aa4885bd73d8c22ece534b27",
+			"bytes": 8221
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-master-1.json",
+			"sourceSha256": "24170b75903c699c27ff96d8fb30e424b8bf90fc389711d8ef7b5e6658d83a3c",
+			"savedSha256": "c28049b3da4f9b69613252ad5ddd0035a3dad23e59b838dd6a35ab7c21a74a65",
+			"bytes": 8249
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-feature-3.json",
+			"sourceSha256": "40b2faf083ee7ccf78c1a56ec024776c2f184037c5aef4647b181453f66ba2a8",
+			"savedSha256": "0a0f30b2b50adf36e65625560c2b6a2c61d7ca99616b317e3083fb6a88120603",
+			"bytes": 8210
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust-feature-2.json",
+			"sourceSha256": "0765a92c938b1aa1bee7bddb214064e252e46bfd86c6eb10efb9ea078bc0e97e",
+			"savedSha256": "08d8e934f8c5559814a7f29ed3b7f4121f4fbbb7685253854419bfba1c111343",
+			"bytes": 8178
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-master-0.json",
+			"sourceSha256": "d8e348edd6155851e267fb75f9d23a337cd452ea82143c1f9162055f115890ae",
+			"savedSha256": "99844de1e7d3a0cee5036150cc16e20c404222544ed9bc4221f9cd85bedf630e",
+			"bytes": 8250
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-1.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-master-1.json",
+			"sourceSha256": "627f55815ff965d7c1094a6780298e7e74c2b94f5ba7a2dc7ae2bb0c84ad9b4e",
+			"savedSha256": "2cdd499e74491ffb4aaf3bba3e8db5d57cce9e35cc20c486fb5f36c9ca4e1c2d",
+			"bytes": 8242
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-master-3.json",
+			"sourceSha256": "4c183ee429e654940bf61b168060b81b9b57ca13ea603b8b2f3140dc7779652c",
+			"savedSha256": "89217557015c05242ee7570cb40b9e7991bf34ba7fe76b5810e7d54e49e3d7c0",
+			"bytes": 8436
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-3.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex-feature-3.json",
+			"sourceSha256": "afbf27b4a11625a99ba4f0832376403af9490937eedca8f124bcbbe12e71263b",
+			"savedSha256": "0a09c3f6b220f8617d9b634b5f0da6f66497c16480aeaab048da471c2d7efc4e",
+			"bytes": 8395
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-0.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript-feature-0.json",
+			"sourceSha256": "34912949b3a86d4be9288e8e45949d3f143e76acbf739a80845a4b8aa04afc02",
+			"savedSha256": "5e2d74420e8a99e5a76440455f3522f35344433c7b8ae52f8eaf2057b9cf0865",
+			"bytes": 8227
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/memory-rust-feature-2.json",
+			"sourceSha256": "0f7926865a96c6b625a62a3ce584907c415e71663a86bddef5617adc04881702",
+			"savedSha256": "ec0aa74a3e9f923360040bf5b37f6d954fb9ff897580752a93be119e68f446f7",
+			"bytes": 1269
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-2.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python-feature-2.json",
+			"sourceSha256": "c1635df90946fcff1fd2b0e4c6872122929c664836c66c64b6305840e4d48734",
+			"savedSha256": "f5fb3786a5e42d83bcf799be91a701bae13cf51a89fc6abe6cf1620b50cdefe7",
+			"bytes": 8222
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-python.json",
+			"sourceSha256": "da3bcbd805c1192adab1f79061f0d2d917673006a440d4c24be9c4e196272c1a",
+			"savedSha256": "ae480feb34778df4f7571e096d4084f4dc7d7fc8de8d2e429ba0683dce961641",
+			"bytes": 19568
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-rust.json",
+			"sourceSha256": "3cdbd5626a9a6fda5baa1eb38e340fadd6eac97490b7e1878c3c9ec139d067db",
+			"savedSha256": "c815b6f3610b6950d7d194e48eeffc636c74c06b3b9170f86bfa11947ab7a051",
+			"bytes": 24456
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-typescript.json",
+			"sourceSha256": "e6cb62543039348d97d75cd2c0cbfdd1c5cbc056ea49de99eb183267e342a9bc",
+			"savedSha256": "1e1d4ae1aff21872f226a2c5155c89b1a7c228eaa3ac591a52e431bce4fb846a",
+			"bytes": 21818
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-regex.json",
+			"sourceSha256": "4ada9979da748ac31c695eb8edf5ae0f1da062b3361395e0e00bd62cf75cf4f2",
+			"savedSha256": "e3c2734b4c76e5c7b900aa5bb388840c4be3ac9a965df9da9826f7d910080e6a",
+			"bytes": 3111
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/benchmarks/corpus-scm.json",
+			"sourceSha256": "e152909fb0fc2ea40662c41389fbe5dd08ebc1cc8a0096ad854132b1f59c3c8b",
+			"savedSha256": "6bc3a96c0f7a788f95020566cad580c3bece92142e2c89c7a3d3f3b622bba814",
+			"bytes": 3539
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-master-object.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-master-object.json",
+			"sourceSha256": "93ce877c60893beb7412bec9f1f699f368051848d3be6fdd37523301a1d7fffb",
+			"savedSha256": "d0b9a492752332ef9530dff1604084edc5837d5a5a6fa8fc5f6d77a618c006dd",
+			"bytes": 28107
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-feature-object.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-feature-object.json",
+			"sourceSha256": "93ce877c60893beb7412bec9f1f699f368051848d3be6fdd37523301a1d7fffb",
+			"savedSha256": "d0b9a492752332ef9530dff1604084edc5837d5a5a6fa8fc5f6d77a618c006dd",
+			"bytes": 28107
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-feature-arena.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-feature-arena.json",
+			"sourceSha256": "93ce877c60893beb7412bec9f1f699f368051848d3be6fdd37523301a1d7fffb",
+			"savedSha256": "d0b9a492752332ef9530dff1604084edc5837d5a5a6fa8fc5f6d77a618c006dd",
+			"bytes": 28107
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-master-object-diff.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-master-object-diff.txt",
+			"sourceSha256": "34d3430ac0e6f8891ed868b0acf26c81895a2ef6bfb1025b7b24b17597dfeec5",
+			"savedSha256": "34d3430ac0e6f8891ed868b0acf26c81895a2ef6bfb1025b7b24b17597dfeec5",
+			"bytes": 176
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-paired-diff.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-paired-diff.txt",
+			"sourceSha256": "34d3430ac0e6f8891ed868b0acf26c81895a2ef6bfb1025b7b24b17597dfeec5",
+			"savedSha256": "34d3430ac0e6f8891ed868b0acf26c81895a2ef6bfb1025b7b24b17597dfeec5",
+			"bytes": 176
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-receipts.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-receipts.json",
+			"sourceSha256": "8735920a9fc524f967a4e95504f49cca84b63c64cc858683aaa0af64bcd43e39",
+			"savedSha256": "ceb371c95ffe5bf2cb9ebe65a5aff8596aaa5a55e075804142b31c5c9a53ebdd",
+			"bytes": 4983
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-isolated-arena-regex.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/validation-isolated-arena-regex.json",
+			"sourceSha256": "93ce877c60893beb7412bec9f1f699f368051848d3be6fdd37523301a1d7fffb",
+			"savedSha256": "d0b9a492752332ef9530dff1604084edc5837d5a5a6fa8fc5f6d77a618c006dd",
+			"bytes": 28107
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/paired-profiler-complete-corpus.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/paired-profiler-complete-corpus.json",
+			"sourceSha256": "71d3c1996aa4271f1e4a5971f2c43067a74ecd56927999bb2a8b3c1840126ae8",
+			"savedSha256": "7fe9efb4ae6a97b2850299f4889dd8ceb07b2d54d4e8f33764e5f64dc4194e1a",
+			"bytes": 78923
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/refuse-arena-object-cli.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/refuse-arena-object-cli.txt",
+			"sourceSha256": "7002fa55809dd58b33e1911b0f363d868b3367e6a6e737f97a5da9913073dea1",
+			"savedSha256": "7002fa55809dd58b33e1911b0f363d868b3367e6a6e737f97a5da9913073dea1",
+			"bytes": 1095
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/refuse-object-record-cli.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/refuse-object-record-cli.txt",
+			"sourceSha256": "3d61ada03acb9f9b0455bd33541eaaa2b0d724c27a4d9c04bca1e8d74fabbac3",
+			"savedSha256": "3d61ada03acb9f9b0455bd33541eaaa2b0d724c27a4d9c04bca1e8d74fabbac3",
+			"bytes": 1096
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/refuse-hybrid-benchmark-cli.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/refuse-hybrid-benchmark-cli.txt",
+			"sourceSha256": "d15afaff7bb25e4e7f3f02c86590357c95e6a9247b962a01bdcb6bb24c439f83",
+			"savedSha256": "d15afaff7bb25e4e7f3f02c86590357c95e6a9247b962a01bdcb6bb24c439f83",
+			"bytes": 1095
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-object-view-provenance.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/master-object-view-provenance.json",
+			"sourceSha256": "4f205d90eb872a816fcd3d6685e6d973994c0034e885266cca63a22cf85b0e92",
+			"savedSha256": "82794a5cea987e05b9eaded6a92dda4dee2203795f0e2396673f5659f33e7220",
+			"bytes": 892
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/run-validation-pairs.py",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/validation/run-validation-pairs.py",
+			"sourceSha256": "78e42b4254ce02018832c5fd6802d09c023a682c595f52959d8ba92acdc612f4",
+			"savedSha256": "78e42b4254ce02018832c5fd6802d09c023a682c595f52959d8ba92acdc612f4",
+			"bytes": 3093
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-tests-verified-receipt.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-tests-verified-receipt.json",
+			"sourceSha256": "474a3aee35b59bb4d62ec218d4a627fbf7955f113710befca98c7c435517cb6c",
+			"savedSha256": "5bb77d28468b1898a69b133d25f674a091ffa13c6e7f79af6a7b023fc6833a41",
+			"bytes": 345
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-tests-verified.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-tests-verified.txt",
+			"sourceSha256": "88175698f50f51a52c26f27fbc3afcf7c9885bed456d3922898f6cfe274bcf6d",
+			"savedSha256": "88175698f50f51a52c26f27fbc3afcf7c9885bed456d3922898f6cfe274bcf6d",
+			"bytes": 431980
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-types-verified-receipt.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-types-verified-receipt.json",
+			"sourceSha256": "5b3ae238ad394110891a1a505411f3f2d402e21ecd15f0bf25af8b0c27b258ce",
+			"savedSha256": "36dadc9976a04658e2f2b41fb84d6e095f467223df25dd7f9cdba5e3a452c7ff",
+			"bytes": 152
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-types-verified.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-types-verified.txt",
+			"sourceSha256": "5da000edf3977594feb8ef92ee580a667b663a74e340033f7f9738b2558feb0a",
+			"savedSha256": "cf9cb64e366dd6bba0c994c628b27bcc53cc50d1f1aa4b7cc276c7de287bcea9",
+			"bytes": 1626
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/reader-regeneration.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regeneration.json",
+			"sourceSha256": "eea8187c2f4c59e5211b8b0bff236f610719e5454024d2da3a5c97d879893942",
+			"savedSha256": "d6477f9b0caa97c0e58d0bb4a2d9782a4817eedf4e0a730ce72ac528bef6bd5d",
+			"bytes": 1552
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/root-reader-red.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/root-reader-red.txt",
+			"sourceSha256": "87b73deaab191e3ca09eb3b804b703ccee648b32cbdaa8e5acd4ff351f899051",
+			"savedSha256": "87b73deaab191e3ca09eb3b804b703ccee648b32cbdaa8e5acd4ff351f899051",
+			"bytes": 2321
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/root-reader-green.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/root-reader-green.txt",
+			"sourceSha256": "69f372f7b13b309ca07d82d8b2d7a998f0fc2f82a4b62fc9f8a77519b67b0c5c",
+			"savedSha256": "69f372f7b13b309ca07d82d8b2d7a998f0fc2f82a4b62fc9f8a77519b67b0c5c",
+			"bytes": 561
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-allocation-guard.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/object-allocation-guard.txt",
+			"sourceSha256": "aa47e830139c38ea071251ca87f60622ca40218001de5809246c85b4db933ac5",
+			"savedSha256": "aa47e830139c38ea071251ca87f60622ca40218001de5809246c85b4db933ac5",
+			"bytes": 562
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/changed-source-format-final.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/changed-source-format-final.txt",
+			"sourceSha256": "7c47ccb39b9c0268c05ff4db5e3d3754808e575ee6037886da8fc2c5a8d1c8b9",
+			"savedSha256": "7c47ccb39b9c0268c05ff4db5e3d3754808e575ee6037886da8fc2c5a8d1c8b9",
+			"bytes": 114
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/lint-final.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/lint-final.txt",
+			"sourceSha256": "11c04d845127efaba5d4dfa2dca146adce15d8b6ff83996e8be56b2bf7698504",
+			"savedSha256": "11c04d845127efaba5d4dfa2dca146adce15d8b6ff83996e8be56b2bf7698504",
+			"bytes": 222
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/benchmark-harness-tests.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/benchmark-harness-tests.txt",
+			"sourceSha256": "b53884bce77ab9e409aad84b48b4ef27eb28a3d4f512b7190b35124e3c36fa3f",
+			"savedSha256": "b53884bce77ab9e409aad84b48b4ef27eb28a3d4f512b7190b35124e3c36fa3f",
+			"bytes": 1175
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/options-red.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/options-red.json",
+			"sourceSha256": "adf5d93e576e0c91519d8b11f1938f8c0d18cb10649ff4fc3b034861cd0e403a",
+			"savedSha256": "7f12d71d7742e459ee4c1c3fa19454fc2fe76014c61d1ff9fe630c419aeba0d9",
+			"bytes": 8255
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/options-green.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/options-green.txt",
+			"sourceSha256": "dc52d47bbefa1f4ebe147539e965765c5eb8e635e7edb6837cf4d8958a922d8d",
+			"savedSha256": "1334bfe4499c64ca0d74b26133a2573795de139b84d5eb4a32c8afbf35fcecc5",
+			"bytes": 417
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/types-red-included.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/types-red-included.txt",
+			"sourceSha256": "b46e9387ba9621bce10364e56b0078c3b84ab0f5b62450b1dfbacd54559e2730",
+			"savedSha256": "b46e9387ba9621bce10364e56b0078c3b84ab0f5b62450b1dfbacd54559e2730",
+			"bytes": 409
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/types-green.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/types-green.txt",
+			"sourceSha256": "22dff13993ab115f4f686b68d0e4eaf6b6993593527b040360ad24824b89f3d8",
+			"savedSha256": "d154bade0d295af94763238ce83661aba2faf6ca49596c18b2c475a4dd45ac9c",
+			"bytes": 160
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-native-builds.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-builds.json",
+			"sourceSha256": "b2201cc4749d03f8f56deac579895d2f09f777128b02f2310b5cf5eab01fc037",
+			"savedSha256": "22283c7acb1ea177eb737b0b9d435439cd3d83629ae2338e3dae00cfa7466dc2",
+			"bytes": 934
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-install.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-install.txt",
+			"sourceSha256": "53b6e949828e6e5e5bc0e75184294dce3795e1580d92245e150eed99043ff7d7",
+			"savedSha256": "53b6e949828e6e5e5bc0e75184294dce3795e1580d92245e150eed99043ff7d7",
+			"bytes": 975
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-build-ts.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-build-ts.txt",
+			"sourceSha256": "2de1e02771025a0faa4337415685b3fe3c829ec14372f75582452f324682755d",
+			"savedSha256": "b41b41eae2412a73cc414ae085b71938474a28d7246c1acbb146e2399cddc411",
+			"bytes": 2200
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/changed-files-format-baseline.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/changed-files-format-baseline.json",
+			"sourceSha256": "86b043b18fd333235d604739a793343622cb138cd05aecaedbd9aa3571e76190",
+			"savedSha256": "f3a9235297ee741b4e3251afe15b043867dcbd8fbc1d99ab820192984c63bd87",
+			"bytes": 2336
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/root-reader-build.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/root-reader-build.txt",
+			"sourceSha256": "561790e5082392015d6e47210905c1c6e9c70690e949d7c941c27255250710b1",
+			"savedSha256": "561790e5082392015d6e47210905c1c6e9c70690e949d7c941c27255250710b1",
+			"bytes": 734
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-tests.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-tests.json.gz",
+			"sourceSha256": "78991d0c7879d9a76a68590225d849bdcf226d6b265ec230d7acc88cb1b467e9",
+			"savedSha256": "3490595afae42114b63178a11114c043e442fd68475f101990f17268d9a752f8",
+			"bytes": 401052
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-tests-final.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-tests-final.json.gz",
+			"sourceSha256": "220741c73e691cd832dc4bf5bd2072ab12058af172fb5e533b5194cc28c89d78",
+			"savedSha256": "bf530b31442b41db3a1d3c24f5e8b1caf7d2c3c53293fc6974d02fc658340eea",
+			"bytes": 415125
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/full-tests-verified.json",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-tests-verified.json.gz",
+			"sourceSha256": "c2176fd58348b560a2c291f213f5e5c8fcba6f147dca2c4431838a54de71f9a1",
+			"savedSha256": "dfbef99c9a92aa01df34834501c2e26cd0dd9df282357b1ff6c1ff94add0a89d",
+			"bytes": 402929
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/README.md",
+			"source": "generated artifact in this checkout",
+			"bytes": 1713,
+			"savedSha256": "0e70c427b1fcdf640939c0e6c779c5bf1af4c16f7c3093198787a5ff536399d6"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/full-unit-summary.json",
+			"source": "generated artifact in this checkout",
+			"bytes": 293,
+			"savedSha256": "1a501408caadd1649f98f4bf9de4c564921390c8a1d777c683fe84425893d46e"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-python.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 360,
+			"savedSha256": "8cdace335395689d920cecbe2aca87be7c35524a7cfa76d1829adba0f78d9b55"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-regex.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 357,
+			"savedSha256": "c5e2d1c58b20a1c5473c3ca55acce4aa4e342220b5d19b8dc100a9574bd65ec6"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-rust.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 2384,
+			"savedSha256": "1151140bd8280c16f0b69b7a5ef0704f9ef899ddf75baa59616a2d470aea4ab2"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-scm.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 353,
+			"savedSha256": "198a6064eb18788ace14ddfd47eceb5ed5a4d260f6df5125510873e55224162a"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/master-native-typescript.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 368,
+			"savedSha256": "2ff66c2f9582bb3fc7b57623dcf6a1552e6cd96918320e63d6914c96c87ae640"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regen-python.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 13814,
+			"savedSha256": "54b5ec2b21137bf4073509e6d32c34ac04f23958aad59a0c12d9d0cede1366c7"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regen-regex.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 4417,
+			"savedSha256": "3d75d165583d3b77572f12e6130a1e396e41d5b7ec5512c8a9df97b09d7eccc5"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regen-rust.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 11207,
+			"savedSha256": "19f9793cfe4bb036579bb2b04d402d782d04450bfa2539c24ac817ba38b4fc08"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regen-scm.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 3687,
+			"savedSha256": "b762da15dc7278a80a536e6235cd49448c3d48290584ad6ee6d62967f5a29a98"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/reader-regen-typescript.txt",
+			"source": "generated artifact in this checkout",
+			"bytes": 23717,
+			"savedSha256": "618d8c12dfd1259230593caecea6878d3fa04e2315015cf62f1702d7d2357b77"
+		},
+		{
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/runtime-fingerprints.json",
+			"source": "generated artifact in this checkout",
+			"bytes": 8448,
+			"savedSha256": "d096135f2518848a4899a1bc506d44a70c24c09c3a5e635df774601de54060e3"
+		},
+		{
+			"source": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/glossary-handoff.txt",
+			"savedAs": "docs/reviews/2026-10-29-paired-backends/verification/glossary-handoff.txt",
+			"bytes": 10502,
+			"sourceSha256": "d0485fda59463d5be0db38c718aa7e36e4cfe6dbfa4e60cbfb6fa656d351a216",
+			"savedSha256": "d0485fda59463d5be0db38c718aa7e36e4cfe6dbfa4e60cbfb6fa656d351a216"
+		}
+	],
+	"normalization": "Portable JSON/script formatting and log trailing whitespace are normalized. Parsed JSON values are asserted unchanged; exact original bytes remain in the complete local bundle.",
+	"finalizedAt": "2026-10-29T17:29:02.175274+00:00"
+}

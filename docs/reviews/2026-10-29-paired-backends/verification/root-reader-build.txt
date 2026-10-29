@@ -1,0 +1,11 @@
+Scope: 3 of 16 workspace projects
+packages/common build$ tsc -p tsconfig.build.json
+packages/common build: Done
+packages/tools build$ pnpm run clean && tsc -p tsconfig.build.json
+packages/tools build: > @sittir/tools@0.0.1 clean /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/tools
+packages/tools build: > rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo
+packages/tools build: Done
+packages/cli build$ pnpm run clean && tsc -p tsconfig.build.json
+packages/cli build: > @sittir/cli@0.1.0 clean /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli
+packages/cli build: > rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo
+packages/cli build: Done

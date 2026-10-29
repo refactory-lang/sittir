@@ -14,7 +14,7 @@
 
 ## Definitive-format decision and revised execution gate (2026-10-16)
 
-This plan implements the **canonical grammar-generated packed immutable AST** for arena storage and record construction. Object storage, its reader/codec and object construction remain permanent engine choices; accepting record defaults does not retire them. The original measurement results, hypotheses and tasks are retained for traceability.
+This plan implements the **canonical grammar-generated packed immutable AST** for arena storage and record construction. The object reader/codec/builders remain a supported backend beside arena views with record construction. Storage and construction are paired; accepting record defaults does not retire object mode. The original measurement results, hypotheses and tasks are retained for traceability.
 
 **Stage 3b-i is a measurement and correctness milestone, not an architectural referendum.** Complete Tasks 6–10 and publish all results even when a record variant loses. A failing performance row creates an optimization follow-up with the measured workload, regression size and suspected cost; it does not cancel 3b-ii or restore the object wire as the target. An incorrect or unsafe implementation must not ship, and a performance regression blocks cutover only when the maintainer rules it blocking on Task 10's numbers; resolve a blocking problem before cutover, keeping the existing node meanwhile.
 

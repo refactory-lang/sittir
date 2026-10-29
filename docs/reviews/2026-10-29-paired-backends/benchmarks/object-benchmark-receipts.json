@@ -1,0 +1,1190 @@
+[
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "python",
+		"start": "2026-10-29T16:40:33.097698+00:00",
+		"end": "2026-10-29T16:40:35.988608+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "python",
+		"start": "2026-10-29T16:40:35.989115+00:00",
+		"end": "2026-10-29T16:40:38.974407+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-feature-0.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "rust",
+		"start": "2026-10-29T16:40:38.974823+00:00",
+		"end": "2026-10-29T16:40:42.117428+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "rust",
+		"start": "2026-10-29T16:40:42.117964+00:00",
+		"end": "2026-10-29T16:40:45.344072+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-feature-0.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:40:45.344512+00:00",
+		"end": "2026-10-29T16:40:48.351610+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:40:48.352195+00:00",
+		"end": "2026-10-29T16:40:51.315228+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-feature-0.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "regex",
+		"start": "2026-10-29T16:40:51.315644+00:00",
+		"end": "2026-10-29T16:40:53.550756+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "regex",
+		"start": "2026-10-29T16:40:53.551230+00:00",
+		"end": "2026-10-29T16:40:55.771657+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-feature-0.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "scm",
+		"start": "2026-10-29T16:40:55.772154+00:00",
+		"end": "2026-10-29T16:40:58.007378+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 0,
+		"grammar": "scm",
+		"start": "2026-10-29T16:40:58.007843+00:00",
+		"end": "2026-10-29T16:41:00.233314+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-feature-0.json"
+	},
+	{
+		"version": "master",
+		"phase": "timing",
+		"round": 0,
+		"grammar": null,
+		"start": "2026-10-29T16:41:00.233827+00:00",
+		"end": "2026-10-29T16:41:04.586603+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "timing",
+		"round": 0,
+		"grammar": null,
+		"start": "2026-10-29T16:41:04.587083+00:00",
+		"end": "2026-10-29T16:41:08.984914+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-feature-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "python",
+		"start": "2026-10-29T16:41:08.985473+00:00",
+		"end": "2026-10-29T16:41:12.024201+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "python",
+		"start": "2026-10-29T16:41:12.024749+00:00",
+		"end": "2026-10-29T16:41:15.032629+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-master-1.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "rust",
+		"start": "2026-10-29T16:41:15.033848+00:00",
+		"end": "2026-10-29T16:41:18.284739+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "rust",
+		"start": "2026-10-29T16:41:18.285484+00:00",
+		"end": "2026-10-29T16:41:21.504456+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-master-1.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:41:21.505311+00:00",
+		"end": "2026-10-29T16:41:24.512918+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:41:24.513739+00:00",
+		"end": "2026-10-29T16:41:27.510552+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-master-1.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "regex",
+		"start": "2026-10-29T16:41:27.511060+00:00",
+		"end": "2026-10-29T16:41:29.728938+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "regex",
+		"start": "2026-10-29T16:41:29.729446+00:00",
+		"end": "2026-10-29T16:41:31.941706+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-master-1.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "scm",
+		"start": "2026-10-29T16:41:31.942264+00:00",
+		"end": "2026-10-29T16:41:34.169652+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 1,
+		"grammar": "scm",
+		"start": "2026-10-29T16:41:34.170222+00:00",
+		"end": "2026-10-29T16:41:36.392408+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-master-1.json"
+	},
+	{
+		"version": "feature",
+		"phase": "timing",
+		"round": 1,
+		"grammar": null,
+		"start": "2026-10-29T16:41:36.392951+00:00",
+		"end": "2026-10-29T16:41:40.728142+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "timing",
+		"round": 1,
+		"grammar": null,
+		"start": "2026-10-29T16:41:40.728742+00:00",
+		"end": "2026-10-29T16:41:45.009795+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-master-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "python",
+		"start": "2026-10-29T16:41:45.010357+00:00",
+		"end": "2026-10-29T16:41:47.929462+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "python",
+		"start": "2026-10-29T16:41:47.930067+00:00",
+		"end": "2026-10-29T16:41:50.884246+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-feature-2.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "rust",
+		"start": "2026-10-29T16:41:50.884814+00:00",
+		"end": "2026-10-29T16:41:54.080975+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "rust",
+		"start": "2026-10-29T16:41:54.081722+00:00",
+		"end": "2026-10-29T16:41:57.401195+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-feature-2.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:41:57.401815+00:00",
+		"end": "2026-10-29T16:42:00.387765+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:42:00.388396+00:00",
+		"end": "2026-10-29T16:42:03.371167+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-feature-2.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "regex",
+		"start": "2026-10-29T16:42:03.371765+00:00",
+		"end": "2026-10-29T16:42:05.591801+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "regex",
+		"start": "2026-10-29T16:42:05.592364+00:00",
+		"end": "2026-10-29T16:42:07.796012+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-feature-2.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "scm",
+		"start": "2026-10-29T16:42:07.796706+00:00",
+		"end": "2026-10-29T16:42:10.018255+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 2,
+		"grammar": "scm",
+		"start": "2026-10-29T16:42:10.018899+00:00",
+		"end": "2026-10-29T16:42:12.245295+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-feature-2.json"
+	},
+	{
+		"version": "master",
+		"phase": "timing",
+		"round": 2,
+		"grammar": null,
+		"start": "2026-10-29T16:42:12.245914+00:00",
+		"end": "2026-10-29T16:42:16.521522+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "timing",
+		"round": 2,
+		"grammar": null,
+		"start": "2026-10-29T16:42:16.522147+00:00",
+		"end": "2026-10-29T16:42:20.832335+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-feature-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "python",
+		"start": "2026-10-29T16:42:20.832944+00:00",
+		"end": "2026-10-29T16:42:23.781219+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "python",
+		"start": "2026-10-29T16:42:23.781857+00:00",
+		"end": "2026-10-29T16:42:26.693982+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-master-3.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "rust",
+		"start": "2026-10-29T16:42:26.700489+00:00",
+		"end": "2026-10-29T16:42:30.102892+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "rust",
+		"start": "2026-10-29T16:42:30.103565+00:00",
+		"end": "2026-10-29T16:42:33.263844+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-master-3.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:42:33.264617+00:00",
+		"end": "2026-10-29T16:42:36.262463+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:42:36.263133+00:00",
+		"end": "2026-10-29T16:42:39.275882+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-master-3.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "regex",
+		"start": "2026-10-29T16:42:39.276590+00:00",
+		"end": "2026-10-29T16:42:41.492722+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "regex",
+		"start": "2026-10-29T16:42:41.493448+00:00",
+		"end": "2026-10-29T16:42:43.718761+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-master-3.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "scm",
+		"start": "2026-10-29T16:42:43.719938+00:00",
+		"end": "2026-10-29T16:42:45.961436+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 3,
+		"grammar": "scm",
+		"start": "2026-10-29T16:42:45.962146+00:00",
+		"end": "2026-10-29T16:42:48.197791+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-master-3.json"
+	},
+	{
+		"version": "feature",
+		"phase": "timing",
+		"round": 3,
+		"grammar": null,
+		"start": "2026-10-29T16:42:48.198496+00:00",
+		"end": "2026-10-29T16:42:52.831388+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-3.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-feature-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "timing",
+		"round": 3,
+		"grammar": null,
+		"start": "2026-10-29T16:42:52.832221+00:00",
+		"end": "2026-10-29T16:42:57.251301+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-3.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-master-3.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "python",
+		"start": "2026-10-29T16:42:57.251998+00:00",
+		"end": "2026-10-29T16:43:00.234315+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "python",
+		"start": "2026-10-29T16:43:00.235093+00:00",
+		"end": "2026-10-29T16:43:03.305592+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"python",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-python-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-python-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "rust",
+		"start": "2026-10-29T16:43:03.306405+00:00",
+		"end": "2026-10-29T16:43:06.511516+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "rust",
+		"start": "2026-10-29T16:43:06.512345+00:00",
+		"end": "2026-10-29T16:43:09.814923+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"rust",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-rust-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-rust-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:43:09.815653+00:00",
+		"end": "2026-10-29T16:43:12.822964+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "typescript",
+		"start": "2026-10-29T16:43:12.823702+00:00",
+		"end": "2026-10-29T16:43:15.821994+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"typescript",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-typescript-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-typescript-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "regex",
+		"start": "2026-10-29T16:43:15.822790+00:00",
+		"end": "2026-10-29T16:43:18.046299+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "regex",
+		"start": "2026-10-29T16:43:18.047083+00:00",
+		"end": "2026-10-29T16:43:20.265938+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"regex",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-regex-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-regex-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "scm",
+		"start": "2026-10-29T16:43:20.266726+00:00",
+		"end": "2026-10-29T16:43:22.535825+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "corpus",
+		"round": 4,
+		"grammar": "scm",
+		"start": "2026-10-29T16:43:22.536697+00:00",
+		"end": "2026-10-29T16:43:24.789112+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-corpus-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"scm",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/corpus-scm-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "corpus-scm-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "timing",
+		"round": 4,
+		"grammar": null,
+		"start": "2026-10-29T16:43:24.790075+00:00",
+		"end": "2026-10-29T16:43:29.197039+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-master-4.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-master-4.json"
+	},
+	{
+		"version": "feature",
+		"phase": "timing",
+		"round": 4,
+		"grammar": null,
+		"start": "2026-10-29T16:43:29.197828+00:00",
+		"end": "2026-10-29T16:43:33.671135+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"timing",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/timing-rust-feature-4.json"
+		],
+		"exitCode": 0,
+		"result": "timing-rust-feature-4.json"
+	},
+	{
+		"version": "master",
+		"phase": "memory",
+		"round": 0,
+		"grammar": null,
+		"start": "2026-10-29T16:43:33.671996+00:00",
+		"end": "2026-10-29T16:43:36.075748+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-0.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-master-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "memory",
+		"round": 0,
+		"grammar": null,
+		"start": "2026-10-29T16:43:36.076530+00:00",
+		"end": "2026-10-29T16:43:38.477163+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-0.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-feature-0.json"
+	},
+	{
+		"version": "feature",
+		"phase": "memory",
+		"round": 1,
+		"grammar": null,
+		"start": "2026-10-29T16:43:38.478079+00:00",
+		"end": "2026-10-29T16:43:40.890162+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-1.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-feature-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "memory",
+		"round": 1,
+		"grammar": null,
+		"start": "2026-10-29T16:43:40.890910+00:00",
+		"end": "2026-10-29T16:43:43.269691+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-1.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-master-1.json"
+	},
+	{
+		"version": "master",
+		"phase": "memory",
+		"round": 2,
+		"grammar": null,
+		"start": "2026-10-29T16:43:43.270427+00:00",
+		"end": "2026-10-29T16:43:45.649442+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-master-2.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-master-2.json"
+	},
+	{
+		"version": "feature",
+		"phase": "memory",
+		"round": 2,
+		"grammar": null,
+		"start": "2026-10-29T16:43:45.650250+00:00",
+		"end": "2026-10-29T16:43:48.051546+00:00",
+		"command": [
+			"node",
+			"--expose-gc",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/object-public-worker.mjs",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census",
+			"memory",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/memory-rust-feature-2.json"
+		],
+		"exitCode": 0,
+		"result": "memory-rust-feature-2.json"
+	}
+]

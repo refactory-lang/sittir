@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 
-const REFUSED = "arena node storage needs external array buffers, which this runtime does not allow; use nodeStorage: 'object'";
+const REFUSED =
+	"arena node storage needs external array buffers, which this runtime does not allow; use nodeStorage: 'object'";
 
 describe('a runtime that does not allow external array buffers', () => {
 	afterEach(() => {
@@ -27,7 +28,7 @@ describe('a runtime that does not allow external array buffers', () => {
 		});
 		const rust = (await import('../src/index.ts')).default;
 		await expect(createEngine(rust)).rejects.toThrow(REFUSED);
-		await expect(createEngine(rust, { nodeConstruction: 'object' })).rejects.toThrow(REFUSED);
+		await expect(createEngine(rust, { nodeStorage: 'arena' })).rejects.toThrow(REFUSED);
 		const rs = await createEngine(rust, { nodeStorage: 'object' });
 		expect(rs.render(rs.parse('fn f() {}\n')).toString()).toBe('fn f() {}\n');
 		rs.dispose();

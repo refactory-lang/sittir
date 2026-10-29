@@ -1,5 +1,7 @@
 # Public eager record builders
 
+This original slice plan is historical where the later [paired-backend design](../specs/2026-10-29-paired-node-backends-design.md) and signed handle/native-chunk amendments supersede it. The supported public modes are object reading/building together, or arena views with record building. The private eager probe stays frozen.
+
 The packed AST and arena-tables documents govern this work: the shared-arena
 design (§ Packed AST is definitive, § The wire, § Render, § Trivia) and the
 arena-tables plan's cutover outline ("Eager immutable built records are
@@ -153,11 +155,12 @@ Every slice is measured with the `Arena benchmarks` workflow, not local runs:
 the dispatcher is on master, and each run is dispatched at the slice's branch
 (`gh workflow run benchmarks.yml --ref <branch>`).
 
-- **Corpus job.** `sittir tool bench-storage --validation` pairs object and
-  arena engines over complete validator round trips: construction, rendering,
-  reparsing and comparison. The workflow's `construction` input selects records
-  or objects for the arena arm. Factory and IR totals are not isolated
-  construction timings; settled memory samples show leftovers, not retained ASTs.
+- **Corpus job.** `sittir tool bench-storage --validation` compares object/object
+  and arena/record engines over complete validator round trips: construction,
+  rendering, reparsing and comparison. New workflow runs have no independent
+  construction choice. Ratios compare the two backend paths, not storage alone.
+  Factory and IR totals are not isolated construction timings; settled memory
+  samples show leftovers, not retained ASTs.
 - **Construction job, planned.** Measure the engine's compiled runtime under
   plain Node, separately reporting build, render and parse work. Report steady
   construction, post-GC construction and the whole pass including deferred
@@ -180,10 +183,10 @@ These must not be mistaken for completed builder integration:
 - Retained-memory evaluation must separate live records, open allocator reserve
   and native/external memory; post-validation leftovers are not a retained AST
   population.
-- Object storage, the object reader/codec and object construction remain permanent
-  engine choices. Object storage with record construction is refused. Selecting
-  defaults requires its own correctness and performance acceptance and does not
-  remove the other supported choices.
+- Object reading/building and arena reading/record building remain the two
+  supported backends. Independent hybrid selection is deprecated and conflicting
+  legacy settings refuse. Selecting defaults requires its own correctness and
+  performance acceptance; object mode is compared directly with pinned master.
 - A built leaf written as a side entry (typescript's `html_comment`, the one
   stamped trivia kind assembled as a pattern) crosses as its text, not as kind
   and address: its record is a header, and its text is a span of the arena's

@@ -63,37 +63,46 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 });
 
 describe('edits on a flat alias display', () => {
-	it.each(['object', 'arena'] as const)('%s: edits the display through its own setters and keeps the id it shows', async (nodeStorage) => {
-		const engine = await createEngine(typescript, { nodeStorage });
-		try {
-			const root = engine.parse('interface A { x: number }\nlet b = 1;\n');
-			const declaration = root.statements()[0];
-			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
-				throw new Error('expected an interface declaration');
-			const edited = declaration.body().$with.members();
-			expect(edited.$type).toBe(engine.kinds.InterfaceBody);
-			expect(edited.$render()).toBe('{}');
-			const out = declaration.$with.body(edited).$render();
-			expect(out).toBe('interface A {}');
-			expect(engine.parse(out).$errors).toEqual([]);
-			expect(root.$render()).toBe('interface A { x: number }\nlet b = 1;\n');
-		} finally {
-			engine.dispose();
+	it.each(['object', 'arena'] as const)(
+		'%s: edits the display through its own setters and keeps the id it shows',
+		async (nodeStorage) => {
+			const engine = await createEngine(typescript, { nodeStorage });
+			try {
+				const root = engine.parse('interface A { x: number }\nlet b = 1;\n');
+				const declaration = root.statements()[0];
+				if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
+					throw new Error('expected an interface declaration');
+				const edited = declaration.body().$with.members();
+				expect(edited.$type).toBe(engine.kinds.InterfaceBody);
+				expect(edited.$render()).toBe('{}');
+				const out = declaration.$with.body(edited).$render();
+				expect(out).toBe('interface A {}');
+				expect(engine.parse(out).$errors).toEqual([]);
+				expect(root.$render()).toBe('interface A { x: number }\nlet b = 1;\n');
+			} finally {
+				engine.dispose();
+			}
 		}
-	});
+	);
 
-	it.each(['objects', 'arena objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
-		const engine = await createEngine(typescript, construction === 'objects' ? { nodeStorage: 'object' } : construction === 'arena objects' ? { nodeConstruction: 'object' } : {});
-		try {
-			const declaration = engine.parse('interface A { x: number }\n').statements()[0];
-			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
-				throw new Error('expected an interface declaration');
-			const built = engine.build.interfaceBody.curly({ members: declaration.body().members() });
-			expect(built.$type).toBe(engine.kinds.InterfaceBody);
-			writeUnitSides(built, [{ slot: '_opening', item: 0, trailing: [engine.build.commentBlock(' c ')] }]);
-			expect(built.$render()).toBe('{ /* c */ x: number }');
-		} finally {
-			engine.dispose();
+	it.each(['objects', 'records'] as const)(
+		'%s: a built display keeps the sides written on its unit',
+		async (construction) => {
+			const engine = await createEngine(
+				typescript,
+				construction === 'objects' ? { nodeStorage: 'object' } : { nodeStorage: 'arena' }
+			);
+			try {
+				const declaration = engine.parse('interface A { x: number }\n').statements()[0];
+				if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
+					throw new Error('expected an interface declaration');
+				const built = engine.build.interfaceBody.curly({ members: declaration.body().members() });
+				expect(built.$type).toBe(engine.kinds.InterfaceBody);
+				writeUnitSides(built, [{ slot: '_opening', item: 0, trailing: [engine.build.commentBlock(' c ')] }]);
+				expect(built.$render()).toBe('{ /* c */ x: number }');
+			} finally {
+				engine.dispose();
+			}
 		}
-	});
+	);
 });

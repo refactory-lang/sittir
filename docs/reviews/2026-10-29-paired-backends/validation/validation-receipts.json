@@ -1,0 +1,209 @@
+[
+	{
+		"name": "refuse-arena-object-cli",
+		"start": "2026-10-29T16:50:04.857041+00:00",
+		"end": "2026-10-29T16:50:05.805941+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"regex",
+			"--node-storage",
+			"arena",
+			"--construction",
+			"object"
+		],
+		"exitCode": 1,
+		"expectedExitCode": 1
+	},
+	{
+		"name": "refuse-object-record-cli",
+		"start": "2026-10-29T16:50:05.806365+00:00",
+		"end": "2026-10-29T16:50:06.582870+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"regex",
+			"--node-storage",
+			"object",
+			"--construction",
+			"record"
+		],
+		"exitCode": 1,
+		"expectedExitCode": 1
+	},
+	{
+		"name": "refuse-hybrid-benchmark-cli",
+		"start": "2026-10-29T16:50:06.583233+00:00",
+		"end": "2026-10-29T16:50:07.362160+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"tool",
+			"bench-storage",
+			"regex",
+			"--validation",
+			"--construction",
+			"object"
+		],
+		"exitCode": 1,
+		"expectedExitCode": 1
+	},
+	{
+		"name": "validation-master-object",
+		"start": "2026-10-29T16:50:07.363039+00:00",
+		"end": "2026-10-29T16:50:56.100874+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"python",
+			"rust",
+			"typescript",
+			"regex",
+			"scm"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "validation-feature-object",
+		"start": "2026-10-29T16:50:56.101511+00:00",
+		"end": "2026-10-29T16:51:51.117982+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"python",
+			"rust",
+			"typescript",
+			"regex",
+			"scm",
+			"--node-storage",
+			"object"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "validation-feature-arena",
+		"start": "2026-10-29T16:51:51.118961+00:00",
+		"end": "2026-10-29T16:52:43.960248+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"python",
+			"rust",
+			"typescript",
+			"regex",
+			"scm",
+			"--node-storage",
+			"arena"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "validation-master-object-diff",
+		"start": "2026-10-29T16:52:43.960897+00:00",
+		"end": "2026-10-29T16:52:44.796672+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"history",
+			"--diff",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-master-object.json",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-feature-object.json"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "validation-paired-diff",
+		"start": "2026-10-29T16:52:44.797058+00:00",
+		"end": "2026-10-29T16:52:45.530492+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"history",
+			"--diff",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-feature-object.json",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/validation-feature-arena.json"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "validation-isolated-arena-regex",
+		"start": "2026-10-29T16:52:45.530900+00:00",
+		"end": "2026-10-29T16:52:49.335656+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"validate",
+			"counts",
+			"regex",
+			"--node-storage",
+			"arena",
+			"--isolate"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	},
+	{
+		"name": "paired-profiler-complete-corpus",
+		"start": "2026-10-29T16:52:49.336317+00:00",
+		"end": "2026-10-29T16:53:55.624292+00:00",
+		"command": [
+			"node",
+			"--import",
+			"tsx",
+			"/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/cli.js",
+			"tool",
+			"bench-storage",
+			"python",
+			"rust",
+			"typescript",
+			"regex",
+			"scm",
+			"--validation",
+			"--rounds",
+			"1",
+			"--warmup",
+			"0",
+			"--iterations",
+			"1",
+			"--output",
+			"/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/paired-profiler-complete-corpus.json"
+		],
+		"exitCode": 0,
+		"expectedExitCode": 0
+	}
+]

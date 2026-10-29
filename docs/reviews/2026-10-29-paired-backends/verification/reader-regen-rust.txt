@@ -1,0 +1,187 @@
+Full regenerate for rust: transpile + tree-sitter generate + compile-parser + sittir codegen
+Transpiling rust overrides...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/rust/.sittir/grammar.js
+Running 'tree-sitter generate' in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/rust/.sittir, deriving conflicts...
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+{
+  "diagnostics": [
+    {
+      "SupertypeInlined": {
+        "name": "_declaration_statement"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_declaration_statement_trait_item"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_declaration_statement_impl_item_body"
+      }
+    }
+  ],
+  "error": null
+}
+  conflicts: base 9 resolutions reused; bound 0 resolutions reused
+  → pruned 106 orphaned rule(s) from grammar.json
+Compiling rust parser to WASM...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/rust/.sittir/parser.wasm
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/rust/.sittir/upstream.wasm (current)
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+enrich: skipped choice-arm-field on range_expression (field 'expression' already exists)
+enrich: skipped choice-arm-field on or_pattern (field 'pattern' already exists)
+[info] conflict-resolution  -.-
+  conflict between _attributed_argument on ']' resolved by AddConflict (default)
+[info] conflict-resolution  -.-
+  conflict between _pattern, _primitive_type on ')' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between _type, _attributed_type_parameter on '>' resolved by AddConflict (default)
+[info] conflict-resolution  -.-
+  conflict between _type, _pattern on ')' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between function_modifiers, foreign_mod_item_semi, foreign_mod_item_body on 'extern' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between scoped_identifier, scoped_type_identifier on '(' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between unit_type, tuple_pattern on ')' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between visibility_modifier, scoped_identifier, scoped_type_identifier on '::' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between visibility_modifier_pub on '(' resolved by AddConflict (upstream-declared)
+[info] conflict-unnecessary-upstream  -.-
+  upstream declares the conflict parameters, _pattern, which the reshaped grammar never reports
+[info] conflict-unnecessary-upstream  -.-
+  upstream declares the conflict parameters, tuple_struct_pattern, which the reshaped grammar never reports
+[info] conflict-unnecessary-upstream  -.-
+  upstream declares the conflict array_expression, which the reshaped grammar never reports
+[error] rule-reauthored-without-cause  _non_special_token.-
+  rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is
+[error] rule-reauthored-without-cause  reference_expression.-
+  rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is
+[error] rule-reauthored-without-cause  impl_item.-
+  rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is
+[error] unclassifiable-shape  _let_chain.-
+  [collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule
+Generating rust IR...
+[naming] _range_expression_bare: type name 'RangeExpressionBare' → '_RangeExpressionBare' (visible sibling(s): 'range_expression_bare')
+[codegen] '_declaration_statement' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_declaration_statement' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_tokens' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_tokens' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_expression_ending_with_block' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_expression_ending_with_block' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_path' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_path' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_declaration_statement_trait_item' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_declaration_statement_trait_item' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_declaration_statement_impl_item_body' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_declaration_statement_impl_item_body' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+  seam census: 567 template boundaries — 49 static (30 glued, 19 spaced), 14 runtime-derivable, 504 runtime-varying (residue); origin: 47 preference, 193 literal-default, 118 word-default, 0 cascade, 209 fallback
+    rust/crates/sittir-rust/src/render/kind_ids.rs
+    rust/crates/sittir-rust/src/render/field_ids.rs
+  → Rust render module regenerated for rust:
+    rust/crates/sittir-rust/src/render/hash.rs
+    packages/rust/src/hash.ts
+    rust/crates/sittir-rust/src/render/node.rs
+    rust/crates/sittir-rust/src/render/options.rs
+    rust/crates/sittir-rust/src/render/mod.rs
+    packages/rust/src/records.ts
+  → rebuilding grammar-owned N-API binding for rust (gate profile)…
+
+> sittir-rust@0.1.0 build:gate /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-rust
+> tsx ../../../scripts/build-native.mts rust --profile gate
+
+   Compiling sittir-core v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-core)
+   Compiling sittir-rust v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-rust)
+    Finished `gate` profile [optimized] target(s) in 38.57s
+  → cargo check --workspace --features napi-bindings (catches cross-grammar breakage)…
+   Compiling sittir-rust v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-rust)
+    Checking sittir-parity-tests v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-parity-tests)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.04s
+
+  v 295/295 kinds renderable (0 un-renderable)
+
+⚠ 64 unnamed choice slot(s) in rust — give each choice an explicit field name in packages/rust/grammar.sittir.ts:
+  function_type
+  rule:_attributed_parameter:root
+  rule:_attributed_parameter_receiver:root
+  rule:_attributed_type_parameter:root
+  rule:_non_special_token:root
+  rule:_type_argument:root
+  rule:attribute:root
+  rule:block:members.2
+  rule:block_comment:members.1
+  rule:bounded_type:members.0
+  rule:bounded_type:members.2
+  rule:bracketed_type:root
+  rule:closure_parameters:members.1
+  rule:delim_token_tree:root
+  rule:else_clause:root
+  rule:expression_statement:root
+  rule:field_initializer_list:members.1
+  rule:function_modifiers:root
+  rule:generic_pattern:root
+  rule:last_match_arm:members.0
+  rule:line_comment:root
+  rule:macro_definition:root
+  rule:match_arm:members.0
+  rule:negative_literal:root
+  rule:parameters:members.1/content/members.1/content/members.1/members.1
+  rule:parameters_elements:members.1/content/members.1/content/members.1
+  rule:pointer_type:root
+  rule:range_expression:members.0
+  rule:range_pattern:members.0/members.1/members.0
+  rule:range_pattern:members.1
+  rule:range_pattern:root
+  rule:range_pattern_arm1:root
+  rule:range_pattern_arm2:root
+  rule:range_pattern_arm3:root
+  rule:range_pattern_prefix:root
+  rule:range_pattern_with_left:root
+  rule:range_pattern_with_left_with_right:root
+  rule:reference_expression:root
+  rule:reference_expression_arm:root
+  rule:source_file:members.1
+  rule:string_literal:members.1
+  rule:struct_item:root
+  rule:struct_pattern:members.2
+  rule:token_repetition:members.2
+  rule:token_repetition:root
+  rule:token_repetition_pattern:members.2
+  rule:token_repetition_pattern:root
+  rule:token_tree:root
+  rule:token_tree_pattern:root
+  rule:trait_bounds:members.1
+  rule:tuple_pattern:members.1
+  rule:type_arguments:members.1/members.1/content/members.1/members.0
+  rule:type_arguments_elements:members.1/content/members.1/content/members.0
+  rule:type_parameters:members.1/members.1/content/members.1/members.1
+  rule:type_parameters_elements:members.1/content/members.1/content/members.1
+  rule:unary_expression:root
+  rule:use_bounds:members.2
+  rule:use_list:members.1
+  rule:use_wildcard:members.0/content/members.0
+  rule:use_wildcard_group:members.0
+  rule:visibility_modifier:root
+  rule:visibility_modifier_group:root
+  rule:visibility_modifier_pub_scope:root
+  rule:visibility_modifier_pub_scope_in_path:root
+  → generation recorded in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/node_modules/.cache/sittir/generated-manifest/rust.json
+
+Regen diff vs HEAD — rust
+  (no generated changes vs HEAD)
+
+Done! Generated:
+  .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+
+    rust/crates/sittir-rust/test-fixtures.json (3808 render + 3808 roundtrip, 222 kinds)

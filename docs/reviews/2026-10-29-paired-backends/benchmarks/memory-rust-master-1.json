@@ -1,0 +1,44 @@
+{
+	"at": "2026-10-29T16:43:43.261Z",
+	"root": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+	"phase": "memory",
+	"buildProfile": "release",
+	"node": "v26.12.0",
+	"v8": "14.6.202.34-node.39",
+	"cpu": "Apple M4 Pro",
+	"loadAverage": [5.078125, 4.48095703125, 5.71142578125],
+	"mode": {
+		"storage": "object",
+		"construction": "object"
+	},
+	"protocol": "Public Rust function builders and name edits; seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.",
+	"warmupBatches": 1768,
+	"samples": [
+		{
+			"retainedBatches": 4,
+			"retainedFunctionRoots": 32000,
+			"baseline": {
+				"rss": 101331688,
+				"heapTotal": 72089600,
+				"heapUsed": 14516960,
+				"external": 2546671,
+				"arrayBuffers": 144047
+			},
+			"after": {
+				"rss": 247954632,
+				"heapTotal": 201326592,
+				"heapUsed": 144150664,
+				"external": 2546711,
+				"arrayBuffers": 144047
+			},
+			"delta": {
+				"rss": 146622944,
+				"heapTotal": 129236992,
+				"heapUsed": 129633704,
+				"external": 40,
+				"arrayBuffers": 0
+			}
+		}
+	],
+	"sink": 4842540
+}

@@ -1,0 +1,107 @@
+[
+	{
+		"file": "packages/cli/src/commands/tool/bench-storage.ts",
+		"baselineFormatted": true,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/cli/src/commands/validate/counts.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/common/src/engine-scope.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/common/tests/fixtures/built-view-release.mts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/built-view-release.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/constructions.mts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/external-buffers.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/parsed-with.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/record-construction.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/record-views.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/rust/tests/render-built.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/tools/src/commands.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/tools/src/profile/storage.ts",
+		"baselineFormatted": true,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/tools/src/profile/validation-storage-worker.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/tools/src/validate/common.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/tools/tests/cross-grammar-coordinate-identity.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/types/src/engine-api.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/typescript/tests/alias-envelope-identity.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/typescript/tests/built-leaf-side.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/typescript/tests/parsed-with.test.ts",
+		"baselineFormatted": true,
+		"exitCode": 0
+	},
+	{
+		"file": "packages/typescript/tests/record-list-options.test.ts",
+		"baselineFormatted": false,
+		"exitCode": 0
+	}
+]

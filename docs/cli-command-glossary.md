@@ -67,8 +67,8 @@ Per-grammar raw pass/total counts for all four validators
 **Options**
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
-- `--node-storage <storage>` — How the engine reads a parsed tree: as object nodes (object), or as record views (arena) (default: `object`)
-- `--construction <construction>` — How builders construct nodes: as objects (objects), or as records (records, with --node-storage arena) (default: `objects`)
+- `--node-storage <storage>` — Node backend: parsed/built objects (object), or arena views with record builders (arena) (default: `object`)
+- `--construction <construction>` — Deprecated: assert object construction for object storage, or record construction for arena storage
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -197,7 +197,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
 
 ### `tool bench-storage`
 
-Measure native workflows or object/arena validation buckets
+Measure native workflows or paired backend validation buckets
 
 **Arguments**
 
@@ -210,8 +210,8 @@ Measure native workflows or object/arena validation buckets
 - `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
-- `--validation` — Profile deep read, factory and IR render/parse validators with object and arena storage
-- `--construction <construction>` — How the arena arm's builders construct nodes in validation profiles: as objects (objects), or as records (records) (default: `objects`)
+- `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
+- `--construction <construction>` — Deprecated: validation profiles pair object storage/builders with arena storage/record builders; only record is accepted
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 

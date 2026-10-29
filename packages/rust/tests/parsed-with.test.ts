@@ -9,12 +9,11 @@ type Node = Record<string, unknown> & {
 };
 
 const object = await createEngine(rust, { nodeStorage: 'object' });
-const arenaObjects = await createEngine(rust, { nodeConstruction: 'object' });
 const arenaRecords = await createEngine(rust);
 type Engine = typeof object;
 
 const constructions: readonly (readonly [string, Engine])[] = [
-	['object construction', arenaObjects],
+	['object construction', object],
 	['record construction', arenaRecords]
 ];
 
@@ -29,7 +28,9 @@ function nth(node: Node, key: string, index: number): Node {
 function rebuiltThrough(node: Node, key: string): Node {
 	const value = slot(node, key);
 	const setter = node.$with[key]!;
-	return Array.isArray(value) && setter.length === 0 ? setter.call(node.$with, ...value) : setter.call(node.$with, value);
+	return Array.isArray(value) && setter.length === 0
+		? setter.call(node.$with, ...value)
+		: setter.call(node.$with, value);
 }
 
 function call(engine: Engine, name: string): unknown {
@@ -71,10 +72,30 @@ const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = 
 		},
 		'{\n    a();\n    b();\n}'
 	],
-	['an empty block, which keeps its inner layout', (engine) => rebuiltThrough(body(engine, 'fn f() {\n}\n'), 'statements'), '{\n}'],
-	['a list, which keeps its own spacing', (engine) => rebuiltThrough(slot(nth(root(engine, 'fn f(a: u8,b: u8) {}\n'), 'statements', 0), 'parameters') as Node, 'elements'), '(a: u8,b: u8)'],
-	['a padded statement, rendered without its padding as a render root', (engine) => rebuiltThrough(nth(body(engine, 'fn f() { a(); }\n'), 'statements', 0), 'content'), 'a();'],
-	['a block indented by two, which keeps its source indent', (engine) => rebuiltThrough(body(engine, 'fn f() {\n  if x {\n    a();\n  }\n}\n'), 'statements'), '{\n  if x {\n    a();\n  }\n}']
+	[
+		'an empty block, which keeps its inner layout',
+		(engine) => rebuiltThrough(body(engine, 'fn f() {\n}\n'), 'statements'),
+		'{\n}'
+	],
+	[
+		'a list, which keeps its own spacing',
+		(engine) =>
+			rebuiltThrough(
+				slot(nth(root(engine, 'fn f(a: u8,b: u8) {}\n'), 'statements', 0), 'parameters') as Node,
+				'elements'
+			),
+		'(a: u8,b: u8)'
+	],
+	[
+		'a padded statement, rendered without its padding as a render root',
+		(engine) => rebuiltThrough(nth(body(engine, 'fn f() { a(); }\n'), 'statements', 0), 'content'),
+		'a();'
+	],
+	[
+		'a block indented by two, which keeps its source indent',
+		(engine) => rebuiltThrough(body(engine, 'fn f() {\n  if x {\n    a();\n  }\n}\n'), 'statements'),
+		'{\n  if x {\n    a();\n  }\n}'
+	]
 ];
 
 describe('a parsed node rebuilt through $with renders as it does under object storage', () => {

@@ -1,0 +1,36 @@
+Scope: 10 of 16 workspace projects
+packages/types build$ tsc -p tsconfig.build.json && tsdown
+packages/types build: ℹ tsdown v0.23.0 powered by rolldown v1.2.14
+packages/types build: ℹ config file: /Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/packages/types/tsdown.config.ts
+packages/types build: ℹ entry: src/index.ts
+packages/types build: ℹ tsconfig: tsconfig.build.json
+packages/types build: ℹ Build start
+packages/types build: ℹ dist/index.js      0.01 kB │ gzip:  0.03 kB
+packages/types build: ℹ dist/index.d.ts  140.77 kB │ gzip: 41.07 kB
+packages/types build: ℹ 2 files, total: 140.78 kB
+packages/types build: ✔ Build complete in 230ms
+packages/types build: Done
+packages/common build$ tsc -p tsconfig.build.json
+packages/common build: Done
+packages/python build$ tsc -p tsconfig.build.json
+packages/rust build$ tsc -p tsconfig.build.json
+packages/regex build$ tsc -p tsconfig.build.json
+packages/scm build$ tsc -p tsconfig.build.json
+packages/scm build: Done
+packages/typescript build$ tsc -p tsconfig.build.json
+packages/regex build: Done
+packages/rust build: Done
+packages/python build: Done
+packages/typescript build: Done
+packages/codegen build$ pnpm run clean && tsc -p tsconfig.build.json
+packages/codegen build: > @sittir/codegen@0.1.0 clean /Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/packages/codegen
+packages/codegen build: > rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo
+packages/codegen build: Done
+packages/tools build$ pnpm run clean && tsc -p tsconfig.build.json
+packages/tools build: > @sittir/tools@0.0.1 clean /Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/packages/tools
+packages/tools build: > rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo
+packages/tools build: Done
+packages/cli build$ pnpm run clean && tsc -p tsconfig.build.json
+packages/cli build: > @sittir/cli@0.1.0 clean /Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe/packages/cli
+packages/cli build: > rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo
+packages/cli build: Done

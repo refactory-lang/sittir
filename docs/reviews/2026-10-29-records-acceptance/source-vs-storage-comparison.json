@@ -1,0 +1,74 @@
+{
+	"analyzedAt": "2026-10-29T14:46:22.313747+00:00",
+	"basis": "Saved per-candidate read-render-parse captures on the tested runtime; object construction fixed in both storage runs; no fresh corpus execution.",
+	"crossStorageComparison": "rendered arena text versus rendered object text for identical entry/kind/span/target/input",
+	"sourceComparison": "rendered text versus original candidate source slice, not a whole-file or semantic-equivalence gate",
+	"rows": [
+		{
+			"grammar": "python",
+			"candidateRenders": 3924,
+			"arenaVsObjectDifferent": 956,
+			"objectEqualsSourceSlice": 2949,
+			"arenaEqualsSourceSlice": 3734,
+			"amongCrossStorageDifferences": {
+				"objectEqualsSourceSlice": 1,
+				"arenaEqualsSourceSlice": 786,
+				"neitherEqualsSourceSlice": 169
+			}
+		},
+		{
+			"grammar": "rust",
+			"candidateRenders": 3808,
+			"arenaVsObjectDifferent": 49,
+			"objectEqualsSourceSlice": 3675,
+			"arenaEqualsSourceSlice": 3713,
+			"amongCrossStorageDifferences": {
+				"objectEqualsSourceSlice": 0,
+				"arenaEqualsSourceSlice": 38,
+				"neitherEqualsSourceSlice": 11
+			}
+		},
+		{
+			"grammar": "typescript",
+			"candidateRenders": 2993,
+			"arenaVsObjectDifferent": 325,
+			"objectEqualsSourceSlice": 2639,
+			"arenaEqualsSourceSlice": 2918,
+			"amongCrossStorageDifferences": {
+				"objectEqualsSourceSlice": 0,
+				"arenaEqualsSourceSlice": 279,
+				"neitherEqualsSourceSlice": 46
+			}
+		},
+		{
+			"grammar": "regex",
+			"candidateRenders": 453,
+			"arenaVsObjectDifferent": 15,
+			"objectEqualsSourceSlice": 438,
+			"arenaEqualsSourceSlice": 453,
+			"amongCrossStorageDifferences": {
+				"objectEqualsSourceSlice": 0,
+				"arenaEqualsSourceSlice": 15,
+				"neitherEqualsSourceSlice": 0
+			}
+		},
+		{
+			"grammar": "scm",
+			"candidateRenders": 450,
+			"arenaVsObjectDifferent": 3,
+			"objectEqualsSourceSlice": 436,
+			"arenaEqualsSourceSlice": 439,
+			"amongCrossStorageDifferences": {
+				"objectEqualsSourceSlice": 0,
+				"arenaEqualsSourceSlice": 3,
+				"neitherEqualsSourceSlice": 0
+			}
+		}
+	],
+	"totals": {
+		"candidateRenders": 11628,
+		"arenaVsObjectDifferent": 1348,
+		"objectEqualsSourceSlice": 10137,
+		"arenaEqualsSourceSlice": 11257
+	}
+}

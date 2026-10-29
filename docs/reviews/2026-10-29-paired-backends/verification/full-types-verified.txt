@@ -1,0 +1,40 @@
+
+> sittir@0.1.0 type-check /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> pnpm -r --no-bail run type-check && pnpm run type-check:cross-language && pnpm run type-check:tests && pnpm run type-check:examples && pnpm run type-check:native
+
+Scope: 15 of 16 workspace projects
+packages/types type-check$ tsc --noEmit
+packages/types type-check: Done
+packages/common type-check$ tsc --noEmit
+packages/common type-check: Done
+packages/scm type-check$ tsc --noEmit
+packages/regex type-check$ tsc --noEmit
+packages/rust type-check$ tsc --noEmit
+packages/python type-check$ tsc --noEmit
+packages/scm type-check: Done
+packages/typescript type-check$ tsc --noEmit
+packages/regex type-check: Done
+packages/typescript type-check: Done
+packages/rust type-check: Done
+packages/python type-check: Done
+packages/codegen type-check$ tsc --noEmit
+packages/codegen type-check: Done
+packages/tools type-check$ tsc --noEmit
+packages/tools type-check: Done
+packages/cli type-check$ tsc --noEmit
+packages/cli type-check: Done
+
+> sittir@0.1.0 type-check:cross-language /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p tests/types/tsconfig.json --noEmit
+
+
+> sittir@0.1.0 type-check:tests /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p tests/tsconfig.json --noEmit
+
+
+> sittir@0.1.0 type-check:examples /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p examples/tsconfig.json --noEmit
+
+
+> sittir@0.1.0 type-check:native /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p tsconfig.native.json

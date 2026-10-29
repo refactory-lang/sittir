@@ -1,0 +1,7 @@
+
+> sittir@0.1.0 type-check:cross-language /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+> tsc -p tests/types/tsconfig.json --noEmit
+
+tests/types/paired-node-storage.test-d.ts(7,1): error TS2578: Unused '@ts-expect-error' directive.
+tests/types/paired-node-storage.test-d.ts(9,1): error TS2578: Unused '@ts-expect-error' directive.
+ ELIFECYCLE  Command failed with exit code 1.

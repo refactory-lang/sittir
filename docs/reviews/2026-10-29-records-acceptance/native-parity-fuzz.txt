@@ -1,0 +1,23 @@
+   Compiling sittir-python v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-python)
+   Compiling sittir-parity-tests v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-parity-tests)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.15s
+     Running tests/record_fuzz.rs (target/debug/deps/record_fuzz-10f86887a2a67fec)
+
+running 6 tests
+test a_child_cell_naming_a_record_that_holds_it_is_refused ... ok
+test malformed_regex_records_are_refused_or_rendered ... ok
+test malformed_scm_records_are_refused_or_rendered ... ok
+test malformed_rust_records_are_refused_or_rendered ... ok
+test malformed_python_records_are_refused_or_rendered ... ok
+test malformed_typescript_records_are_refused_or_rendered ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.11s
+
+     Running tests/record_write.rs (target/debug/deps/record_write-9c6768c4f93cca1b)
+
+running 3 tests
+test every_typescript_source_hydrates_its_records ... ok
+test every_python_source_hydrates_its_records ... ok
+test every_rust_source_hydrates_its_records ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.50s

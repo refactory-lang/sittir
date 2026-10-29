@@ -1,0 +1,20 @@
+✔ idle sampling averages cumulative CPU time across cores (1.122166ms)
+✔ describes sampled allocator state without claiming an unreleased node population (4.631ms)
+✔ recomputes all corpus phase rows and known aggregate ratios (1.370416ms)
+✔ rejects reused workers and invented summaries (1.957ms)
+✔ refuses a changed corpus result and incomplete worker population (1.447292ms)
+✔ reports slower arena timings without a performance gate (1.465458ms)
+✔ interval verification rejects runtime or commit changes (0.294166ms)
+✔ reports corpus peak RSS and signed settled deltas without summing process memory fields (1.56425ms)
+✔ historical corpus reports mark absent memory rather than inventing zero usage (1.143792ms)
+✔ labels each corpus row as a whole validator round trip, not construction (1.377458ms)
+✔ independent grammar runners preserve complete coverage, paired statistics and runtime identity (12.362334ms)
+✔ runtime bundles preserve relative paths and reject a changed runtime or corrupted archive before extraction (21.909666ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.389

@@ -1,9 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { createRequire } from 'node:module';
+import { describe, expect, it, vi } from 'vitest';
+import type { NativeModuleLike } from '@sittir/common/engine';
 import { recordOf } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 import { expectGiven } from './constructions.mts';
 
-const objects = await rust.createEngine({ nodeConstruction: 'object' });
+const objects = await rust.createEngine({ nodeStorage: 'object' });
 const records = await rust.createEngine();
 
 type Built = Record<string, unknown> & { readonly $type: number };
@@ -14,15 +16,36 @@ function build(engine: typeof objects): Built {
 		name: b.identifier('process'),
 		parameters: b.parameters(b.parameter({ name: b.identifier('input'), type: 'u32' })),
 		body: b.block({
-			statements: [b.expressionStatement(b.callExpression({ function: b.identifier('run'), arguments: b.arguments(b.identifier('input')) }))]
+			statements: [
+				b.expressionStatement(
+					b.callExpression({ function: b.identifier('run'), arguments: b.arguments(b.identifier('input')) })
+				)
+			]
 		})
 	}) as unknown as Built;
 }
 
-const SKIP = new Set(['$with', '$trivia', '$render', 'toString', 'toJSON', '$engine', '$query', '$snapshot', '$text', ...Object.getOwnPropertyNames(Array.prototype)]);
+const SKIP = new Set([
+	'$with',
+	'$trivia',
+	'$render',
+	'toString',
+	'toJSON',
+	'$engine',
+	'$query',
+	'$snapshot',
+	'$text',
+	...Object.getOwnPropertyNames(Array.prototype)
+]);
 
 function accessorsOf(node: Built): string[] {
-	return Object.keys(node).filter((key) => !key.startsWith('$') && !SKIP.has(key) && typeof node[key] === 'function' && (node[key] as () => unknown).length === 0);
+	return Object.keys(node).filter(
+		(key) =>
+			!key.startsWith('$') &&
+			!SKIP.has(key) &&
+			typeof node[key] === 'function' &&
+			(node[key] as () => unknown).length === 0
+	);
 }
 
 function readBack(value: unknown, depth = 0): unknown {
@@ -35,11 +58,38 @@ function readBack(value: unknown, depth = 0): unknown {
 	return {
 		$type: node.$type,
 		...(text === undefined ? {} : { $text: text }),
-		...Object.fromEntries(accessorsOf(node).sort().map((key) => [key, readBack((node[key] as () => unknown)(), depth + 1)]))
+		...Object.fromEntries(
+			accessorsOf(node)
+				.sort()
+				.map((key) => [key, readBack((node[key] as () => unknown)(), depth + 1)])
+		)
 	};
 }
 
 describe('record construction', () => {
+	it('allocates record cells only under the arena backend', async () => {
+		const native = createRequire(import.meta.url)('../native/index.cjs') as Required<NativeModuleLike>;
+		const allocate = vi.spyOn(native, 'builtWords');
+		const engines: (typeof objects)[] = [];
+		try {
+			const objectEngine = await rust.createEngine({ nodeStorage: 'object' });
+			engines.push(objectEngine);
+			const object = build(objectEngine);
+			expect(recordOf(object)).toBeUndefined();
+			expect(String(object)).toContain('fn process(input: u32)');
+			expect(allocate).not.toHaveBeenCalled();
+			const recordEngine = await rust.createEngine({ nodeStorage: 'arena' });
+			engines.push(recordEngine);
+			const record = build(recordEngine);
+			expect(recordOf(record)).toBeTypeOf('number');
+			expect(allocate).toHaveBeenCalled();
+			expect(String(record)).toBe(String(object));
+		} finally {
+			for (const engine of engines) engine.dispose();
+			allocate.mockRestore();
+		}
+	});
+
 	it('builds a view of a record, and reads back the tree the object builders build', () => {
 		const object = build(objects);
 		const record = build(records);
@@ -72,9 +122,14 @@ describe('record construction', () => {
 	it('rebuilds a bounded child through $with as the object builders do', () => {
 		const rebuilt = (engine: typeof objects): unknown => {
 			const b = engine.build;
-			const call = b.callExpression({ function: b.identifier('run'), arguments: b.arguments(b.identifier('input')) }) as unknown as Built;
+			const call = b.callExpression({
+				function: b.identifier('run'),
+				arguments: b.arguments(b.identifier('input'))
+			}) as unknown as Built;
 			const args = (call.arguments as () => Built)();
-			return readBack((args.$with as { elements(...items: unknown[]): unknown }).elements(b.identifier('x'), b.identifier('y')));
+			return readBack(
+				(args.$with as { elements(...items: unknown[]): unknown }).elements(b.identifier('x'), b.identifier('y'))
+			);
 		};
 		expect(rebuilt(records)).toEqual(rebuilt(objects));
 	});
@@ -112,7 +167,11 @@ describe('record construction', () => {
 		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as Built;
 		const name = (parsed.name as () => unknown)();
 		const body = (parsed.body as () => unknown)();
-		const fn = records.build.functionItem({ name: name as never, parameters: records.build.parameters(), body: body as never }) as unknown as Built;
+		const fn = records.build.functionItem({
+			name: name as never,
+			parameters: records.build.parameters(),
+			body: body as never
+		}) as unknown as Built;
 		expect(recordOf(fn)).toBeTypeOf('number');
 		expect((fn.name as () => unknown)()).toBe(name);
 		expect((fn.body as () => unknown)()).toBe(body);
@@ -126,7 +185,11 @@ describe('record construction', () => {
 		const withParsedBody = (engine: typeof objects): unknown => {
 			const parsed = engine.parse('fn f() {\n    g(); // kept\n}\n').statements()[0] as unknown as Built;
 			const b = engine.build;
-			return b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: (parsed.body as () => unknown)() as never });
+			return b.functionItem({
+				name: b.identifier('h'),
+				parameters: b.parameters(),
+				body: (parsed.body as () => unknown)() as never
+			});
 		};
 		const rendered = records.render(withParsedBody(records) as never).toString();
 		expect(rendered).toBe(objects.render(withParsedBody(objects) as never).toString());
@@ -134,20 +197,46 @@ describe('record construction', () => {
 	});
 
 	it.each([
-		['its own comment', (engine: typeof objects) => {
-			const b = engine.build;
-			return b.callExpression({ function: (engine.parse('fn f /* kept */() {}\n').statements()[0] as unknown as Built & { name(): never }).name(), arguments: b.arguments() });
-		}, 'f /* kept */()'],
-		['as a list item', (engine: typeof objects) => {
-			const b = engine.build;
-			const name = (engine.parse('fn f() {}\n').statements()[0] as unknown as Built & { name(): never }).name();
-			return b.callExpression({ function: b.identifier('g'), arguments: b.arguments(name, b.identifier('x')) });
-		}, 'g(f, x)'],
-		['as alias content, in two holders', (engine: typeof objects) => {
-			const b = engine.build;
-			const content = (engine.parse('type A = Foo;\n').statements()[0] as unknown as { value(): { content(): never } }).value().content();
-			return b.block({ statements: [b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() })), b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() }))] });
-		}, '{\n    Foo();\n    Foo();\n}']
+		[
+			'its own comment',
+			(engine: typeof objects) => {
+				const b = engine.build;
+				return b.callExpression({
+					function: (
+						engine.parse('fn f /* kept */() {}\n').statements()[0] as unknown as Built & { name(): never }
+					).name(),
+					arguments: b.arguments()
+				});
+			},
+			'f /* kept */()'
+		],
+		[
+			'as a list item',
+			(engine: typeof objects) => {
+				const b = engine.build;
+				const name = (engine.parse('fn f() {}\n').statements()[0] as unknown as Built & { name(): never }).name();
+				return b.callExpression({ function: b.identifier('g'), arguments: b.arguments(name, b.identifier('x')) });
+			},
+			'g(f, x)'
+		],
+		[
+			'as alias content, in two holders',
+			(engine: typeof objects) => {
+				const b = engine.build;
+				const content = (
+					engine.parse('type A = Foo;\n').statements()[0] as unknown as { value(): { content(): never } }
+				)
+					.value()
+					.content();
+				return b.block({
+					statements: [
+						b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() })),
+						b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() }))
+					]
+				});
+			},
+			'{\n    Foo();\n    Foo();\n}'
+		]
 	])('renders a built record holding a parsed leaf with %s, through its tree', (_, holder, expected) => {
 		const rendered = records.render(holder(records) as never).toString();
 		expect(rendered).toBe(objects.render(holder(objects) as never).toString());
@@ -156,10 +245,18 @@ describe('record construction', () => {
 
 	it('renders a rebuild with its new child and its unchanged ones', () => {
 		const b = records.build;
-		const fn = b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: [] }) }) as unknown as Built;
+		const fn = b.functionItem({
+			name: b.identifier('f'),
+			parameters: b.parameters(),
+			body: b.block({ statements: [] })
+		}) as unknown as Built;
 		const renamed = (fn.$with as { name(value: unknown): Built }).name(b.identifier('g'));
 		const o = objects.build;
-		const expected = o.functionItem({ name: o.identifier('g'), parameters: o.parameters(), body: o.block({ statements: [] }) });
+		const expected = o.functionItem({
+			name: o.identifier('g'),
+			parameters: o.parameters(),
+			body: o.block({ statements: [] })
+		});
 		expect(records.render(renamed as never).toString()).toBe(objects.render(expected as never).toString());
 		expect(records.render(fn as never).toString()).toContain('fn f');
 	});
@@ -169,11 +266,17 @@ describe('record construction', () => {
 		const sides = (node: unknown): Sides => (node as { readonly $trivia: Sides }).$trivia;
 		const call = (engine: typeof objects, name: string): Built => {
 			const b = engine.build;
-			return b.expressionStatement(b.callExpression({ function: b.identifier(name), arguments: b.arguments() })) as unknown as Built;
+			return b.expressionStatement(
+				b.callExpression({ function: b.identifier(name), arguments: b.arguments() })
+			) as unknown as Built;
 		};
 		const fn = (engine: typeof objects, statements: readonly Built[]): unknown => {
 			const b = engine.build;
-			return b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: statements as never }) });
+			return b.functionItem({
+				name: b.identifier('f'),
+				parameters: b.parameters(),
+				body: b.block({ statements: statements as never })
+			});
 		};
 		const text = (engine: typeof objects, node: unknown): string => engine.render(node as never).toString();
 
@@ -228,7 +331,9 @@ describe('record construction', () => {
 		it("render a built comment entry on a parsed node as the object builders render it, and read it back as the builder's node", () => {
 			const written = (engine: typeof objects) => {
 				const file = engine.parse('fn g() {\n    go();\n}\n');
-				const statement = (file.statements()[0] as unknown as { body(): { statements(): readonly unknown[] } }).body().statements()[0];
+				const statement = (file.statements()[0] as unknown as { body(): { statements(): readonly unknown[] } })
+					.body()
+					.statements()[0];
 				const b = engine.build;
 				const note = b.blockComment(b.blockCommentRegular(' parsed '));
 				sides(statement).leading(note);
@@ -242,14 +347,22 @@ describe('record construction', () => {
 		});
 	});
 
-	it('refuses a child of an engine that stores its nodes differently', async () => {
-		const plain = await rust.createEngine({ nodeStorage: 'object' });
-		expect(() => objects.build.expressionStatement(plain.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);
-		expect(() => plain.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(/storing nodes as arena .* stores them as object/);
+	it('refuses a child of an engine that stores its nodes differently', () => {
+		expect(() => records.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(
+			/storing nodes as object .* stores them as arena/
+		);
+		expect(() => objects.build.expressionStatement(records.build.identifier('x') as never)).toThrow(
+			/storing nodes as arena .* stores them as object/
+		);
 	});
 
-	it('refuses a child another engine built', () => {
-		const foreign = objects.build.identifier('x');
-		expect(() => records.build.expressionStatement(foreign as never)).toThrow(/its own engine built/);
+	it('refuses a child another engine built', async () => {
+		const other = await rust.createEngine({ nodeStorage: 'arena' });
+		try {
+			const foreign = other.build.identifier('x');
+			expect(() => records.build.expressionStatement(foreign as never)).toThrow(/its own engine built/);
+		} finally {
+			other.dispose();
+		}
 	});
 });

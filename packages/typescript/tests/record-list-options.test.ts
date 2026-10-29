@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 
-const objects = await typescript.createEngine({ nodeConstruction: 'object' });
+const objects = await typescript.createEngine({ nodeStorage: 'object' });
 const records = await typescript.createEngine();
 
 type List = Iterable<unknown> & { readonly separator?: number; readonly $with: { items(...items: unknown[]): List } };
 
 function withComma(engine: typeof objects): List {
-	const alias = engine.parse('type T = { a: string; b: number };').statements()[0] as unknown as { value(): { members(): List } };
+	const alias = engine.parse('type T = { a: string; b: number };').statements()[0] as unknown as {
+		value(): { members(): List };
+	};
 	const build = engine.build as unknown as { objectTypeContent(options: object, ...items: unknown[]): List };
 	return build.objectTypeContent({ separator: engine.kinds.Comma }, ...alias.value().members());
 }
@@ -19,7 +21,9 @@ describe('a built list that chooses its separator', () => {
 	});
 
 	it('renders with it, as the object builders render the same list', () => {
-		expect(records.render(withComma(records) as never).toString()).toBe(objects.render(withComma(objects) as never).toString());
+		expect(records.render(withComma(records) as never).toString()).toBe(
+			objects.render(withComma(objects) as never).toString()
+		);
 	});
 
 	it('keeps it through a $with of its items, which reads it from the record', () => {

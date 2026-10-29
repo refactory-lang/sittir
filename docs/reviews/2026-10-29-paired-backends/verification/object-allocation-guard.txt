@@ -1,0 +1,12 @@
+
+ RUN  v4.1.5 /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census
+
+[vitest-setup] CI detected — skipping redundant pnpm -r run build (workflow already built)
+ ✓ packages/rust/tests/record-construction.test.ts (22 tests | 21 skipped) 29ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 21 skipped (22)
+   Start at  12:54:15
+   Duration  847ms (transform 539ms, setup 0ms, import 665ms, tests 29ms, environment 0ms)
+
+JSON report written to /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/.vitest-report.json

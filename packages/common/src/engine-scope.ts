@@ -56,13 +56,20 @@ export function foreignEngine(value: unknown, identity: EngineIdentity): EngineH
 const engineStorages = new WeakMap<object, NodeStorage>();
 
 export type ResolvedNodeStorage =
-	| { readonly nodeStorage: 'arena'; readonly nodeConstruction: NodeConstruction }
+	| { readonly nodeStorage: 'arena'; readonly nodeConstruction: 'record' }
 	| { readonly nodeStorage: 'object'; readonly nodeConstruction: 'object' };
 
-export function nodeStorageOf(options: { readonly nodeStorage?: NodeStorage; readonly nodeConstruction?: NodeConstruction } | undefined): ResolvedNodeStorage {
+export function nodeStorageOf(
+	options: { readonly nodeStorage?: NodeStorage; readonly nodeConstruction?: NodeConstruction } | undefined
+): ResolvedNodeStorage {
 	const nodeStorage = options?.nodeStorage ?? 'arena';
-	if (nodeStorage === 'arena') return { nodeStorage, nodeConstruction: options?.nodeConstruction ?? 'record' };
-	if (options?.nodeConstruction === 'record') throw new Error("nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena");
+	if (nodeStorage === 'arena') {
+		if (options?.nodeConstruction === 'object')
+			throw new Error("nodeConstruction 'object' needs nodeStorage 'object'; arena storage builds records");
+		return { nodeStorage, nodeConstruction: 'record' };
+	}
+	if (options?.nodeConstruction === 'record')
+		throw new Error("nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena");
 	return { nodeStorage, nodeConstruction: 'object' };
 }
 
@@ -84,12 +91,16 @@ function admitChild(current: EngineIdentity, kind: string, slot: string, child: 
 	const engine = engineOf(child);
 	if (engine === undefined || engine === current) return;
 	if (!sameLanguage(engine, current)) {
-		throw new Error(`cannot build a ${current.language.name} ${kind} with a ${engine.language.name} node in its ${slot}`);
+		throw new Error(
+			`cannot build a ${current.language.name} ${kind} with a ${engine.language.name} node in its ${slot}`
+		);
 	}
 	const ours = engineStorages.get(current);
 	const theirs = engineStorages.get(engine);
 	if (ours !== undefined && theirs !== undefined && theirs !== ours) {
-		throw new Error(`cannot build a ${kind} with a node of an engine storing nodes as ${theirs} in its ${slot}; this engine stores them as ${ours}`);
+		throw new Error(
+			`cannot build a ${kind} with a node of an engine storing nodes as ${theirs} in its ${slot}; this engine stores them as ${ours}`
+		);
 	}
 }
 

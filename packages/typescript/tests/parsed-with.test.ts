@@ -3,13 +3,11 @@ import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 
 const object = await createEngine(typescript, { nodeStorage: 'object' });
-const arenaObjects = await createEngine(typescript, { nodeConstruction: 'object' });
 const arenaRecords = await createEngine(typescript);
 type Engine = typeof object;
 
 const engines: readonly (readonly [string, Engine])[] = [
 	['object storage', object],
-	['arena storage, object construction', arenaObjects],
 	['arena storage, record construction', arenaRecords]
 ];
 

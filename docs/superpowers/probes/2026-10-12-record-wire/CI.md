@@ -1,5 +1,7 @@
 # Manual arena benchmarks
 
+New runs compare two complete backend pairs: object storage with object construction, and arena storage with record construction. The workflow has no independent construction selector. Historical reports may contain the retired arena/object hybrid; keep their recorded labels. Ratios between the paired modes measure end-to-end backend paths, not the isolated cost of storage.
+
 The **Arena benchmarks** workflow runs on request: it is dispatched for
 `corpus` or `all`, at the branch to measure. A push, a pull request
 or a schedule never runs it. It has no performance threshold and no required

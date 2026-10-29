@@ -1,0 +1,1750 @@
+{
+	"capturedAt": "2026-10-29T15:35:04.668Z",
+	"root": "/Users/pmouli/Documents/Codex/2026-10-13/task/paired-modes-2026-10-29/master-7471447a24fe",
+	"grammar": "python",
+	"storage": "object",
+	"construction": "object",
+	"entries": 116,
+	"cases": [
+		{
+			"entry": "Identifiers with Greek letters",
+			"status": "ok",
+			"sourceSha256": "04904e0850eca6b1cebfab9e0e44acd96ca54454aaf6ed6c47d84fc517b6f8fb",
+			"rendered": "\nψ1 = β_γ + Ψ_5\n",
+			"engineRendered": "\nψ1 = β_γ + Ψ_5\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nψ1 = β_γ + Ψ_5\n"
+				}
+			]
+		},
+		{
+			"entry": "Subscript expressions",
+			"status": "ok",
+			"sourceSha256": "f939c99576803bacd8e3fa94e4ad17fafc681a9f63753bb2fda28936277f274d",
+			"rendered": "\na[1]\nb[2, 3]\nc[4, 5,]\n",
+			"engineRendered": "\na[1]\nb[2, 3]\nc[4, 5,]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na[1]\nb[2, 3]\nc[4, 5,]\n"
+				}
+			]
+		},
+		{
+			"entry": "Subscript slice expressions",
+			"status": "ok",
+			"sourceSha256": "329a3c8ff9863f24dfba8dacd1df68f7568a3fc46f4345c51352076707c82937",
+			"rendered": "\na[:]\nb[5:]\nb[5:6, ...]\nc[::]\n",
+			"engineRendered": "\na[:]\nb[5:]\nb[5:6, ...]\nc[::]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na[:]\nb[5:]\nb[5:6, ...]\nc[::]\n"
+				}
+			]
+		},
+		{
+			"entry": "Attribute references",
+			"status": "ok",
+			"sourceSha256": "31e4f09ca29c6c9ce2c2bc1e45f313d67dbcfcd72f3b4fdea72fe9f94d0d1d9b",
+			"rendered": "\na.b.c\n",
+			"engineRendered": "\na.b.c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na.b.c\n"
+				}
+			]
+		},
+		{
+			"entry": "Await expressions",
+			"status": "ok",
+			"sourceSha256": "f0aab51d2d4553d388b1645ebf256bf83f568b677dc1b7ddd0928e4d413c96ee",
+			"rendered": "\nawait i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region: str) -> bool:\n    return region in await all_regions()\n\nassert await a(b) == c\n",
+			"engineRendered": "\nawait i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region: str) -> bool:\n    return region in await all_regions()\n\nassert await a(b) == c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nawait i(j, 5)\nreturn await i(j, 5)\nasync def region_exists(region: str) -> bool:\n    return region in await all_regions()\n\nassert await a(b) == c\n"
+				}
+			]
+		},
+		{
+			"entry": "Call expressions",
+			"status": "ok",
+			"sourceSha256": "75d456ab8858f728bcdac15b02b619449243d600db6f70f3d15620a96d1465c6",
+			"rendered": "\n__a__()\nb(1)\nc(e, f=g)\ni(j, 5,)\n",
+			"engineRendered": "\n__a__()\nb(1)\nc(e, f=g)\ni(j, 5,)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n__a__()\nb(1)\nc(e, f=g)\ni(j, 5,)\n"
+				}
+			]
+		},
+		{
+			"entry": "Print used as an identifier",
+			"status": "ok",
+			"sourceSha256": "0bae1638ee4b0a5cabb142be362d48513786d10742b961cd4ec7dab16df19070",
+			"rendered": "\nprint()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)\n",
+			"engineRendered": "\nprint()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)\n",
+			"parseErrors": 1,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nprint()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)\n"
+				}
+			]
+		},
+		{
+			"entry": "Print used as a parameter",
+			"status": "ok",
+			"sourceSha256": "e9ab7946669fb27b1de309f2082d7b73db423246a27e5a84051c8a60a6b5bcd8",
+			"rendered": "\ndef a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n",
+			"engineRendered": "\ndef a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef a(print):\n  b\ndef a(printer=print):\n  c\ndef a(*print):\n  b\ndef a(**print):\n  b\ndef print():\n  a\n"
+				}
+			]
+		},
+		{
+			"entry": "Exec used as an identifier",
+			"status": "ok",
+			"sourceSha256": "04932388f6e754f5f2e5cd4c430925fb0a657c40868746bb3388fdcbacc37185",
+			"rendered": "\nexec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)\nexec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")\n",
+			"engineRendered": "\nexec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)\nexec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nexec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)\nexec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Async / await used as identifiers",
+			"status": "ok",
+			"sourceSha256": "f34690ff1122f6c7e183ffaca578a9966f119f7880a0ad58c5e662e193546f8c",
+			"rendered": "\nasync = 4\nawait = 5\nprint async, await\n",
+			"engineRendered": "\nasync = 4\nawait = 5\nprint async, await\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nasync = 4\nawait = 5\nprint async, await\n"
+				}
+			]
+		},
+		{
+			"entry": "Calls with splats",
+			"status": "ok",
+			"sourceSha256": "ecb5aade6bbf14233271f8c5f111455fc07a7617714537a357d2466864b1c4fa",
+			"rendered": "\na(*())\na(**{})\na(*b)\nc(d, *e, **g)\n",
+			"engineRendered": "\na(*())\na(**{})\na(*b)\nc(d, *e, **g)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na(*())\na(**{})\na(*b)\nc(d, *e, **g)\n"
+				}
+			]
+		},
+		{
+			"entry": "Math operators",
+			"status": "ok",
+			"sourceSha256": "66c9a341fdb7b1b02880739b44d91850657feee3ed279b8d14f497d28dc0a53b",
+			"rendered": "\na + b * c ** d - e / 5\na // 2\n-5\n+x\n~x\n",
+			"engineRendered": "\na + b * c ** d - e / 5\na // 2\n-5\n+x\n~x\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na + b * c ** d - e / 5\na // 2\n-5\n+x\n~x\n"
+				}
+			]
+		},
+		{
+			"entry": "Binary Addition / Subtraction With Floats",
+			"status": "ok",
+			"sourceSha256": "d1cd02fb1059b645b712975bb58bb7ecb94138f8e14245294b4dc97e001a4469",
+			"rendered": "\n.1-.0\n.1+.0\n.1-0\n.1+0\n\n1-.0\n1+.0\n",
+			"engineRendered": "\n.1-.0\n.1+.0\n.1-0\n.1+0\n\n1-.0\n1+.0\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n.1-.0\n.1+.0\n.1-0\n.1+0\n\n1-.0\n1+.0\n"
+				}
+			]
+		},
+		{
+			"entry": "Power Operator Precedence",
+			"status": "ok",
+			"sourceSha256": "30390f69efd61c7a8594c50bbf8dbf3934012d02d325619104b46d8736078bad",
+			"rendered": "\n2**2**3\n-2**2\n",
+			"engineRendered": "\n2**2**3\n-2**2\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n2**2**3\n-2**2\n"
+				}
+			]
+		},
+		{
+			"entry": "Operator precedence",
+			"status": "ok",
+			"sourceSha256": "109ada302a711cd03a4569f73f48029691d51284bf8f75d3dc3e31fda642a9c7",
+			"rendered": "\na() + b[c] * c.d.e\n",
+			"engineRendered": "\na() + b[c] * c.d.e\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na() + b[c] * c.d.e\n"
+				}
+			]
+		},
+		{
+			"entry": "Bitwise operators",
+			"status": "ok",
+			"sourceSha256": "a69412e3c481279be4abbf93ee8cc1c22659dee14fc2ce2b004d4f4c7ff7b9b1",
+			"rendered": "\na << b | c >> d & e ^ f\n",
+			"engineRendered": "\na << b | c >> d & e ^ f\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na << b | c >> d & e ^ f\n"
+				}
+			]
+		},
+		{
+			"entry": "Boolean operators",
+			"status": "ok",
+			"sourceSha256": "86db75be6f83e90a3ec318fd49c74de341db0dbbe320ada511585215747e127c",
+			"rendered": "\na or b and c\nnot d\nnot a and b or c\na and not b and c\n",
+			"engineRendered": "\na or b and c\nnot d\nnot a and b or c\na and not b and c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na or b and c\nnot d\nnot a and b or c\na and not b and c\n"
+				}
+			]
+		},
+		{
+			"entry": "Comparison operators",
+			"status": "ok",
+			"sourceSha256": "cff35d98add32392f3764d7be611a84426cb7dd3e4cc452bc0f112b3713074d3",
+			"rendered": "\na < b <= c == d >= e > f\nnot a == b or c == d\na not in b\na is not b\na is b and c != d\na <> b\n",
+			"engineRendered": "\na < b <= c == d >= e > f\nnot a == b or c == d\na not in b\na is not b\na is b and c != d\na <> b\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na < b <= c == d >= e > f\nnot a == b or c == d\na not in b\na is not b\na is b and c != d\na <> b\n"
+				}
+			]
+		},
+		{
+			"entry": "Assignments",
+			"status": "ok",
+			"sourceSha256": "6fe5fd2d423b7b77b195dcbab561ec90a5aa5e6697019d075d5812b63de2792f",
+			"rendered": "\na = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d\n",
+			"engineRendered": "\na = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d\n"
+				}
+			]
+		},
+		{
+			"entry": "Assignments with type annotations",
+			"status": "ok",
+			"sourceSha256": "7f04eb1e1e17c97bd3d0d0313e98ef6fbd0a09a874def4f91b4f5c9cac770d62",
+			"rendered": "\ntail_leaves: List[Leaf] = []\n",
+			"engineRendered": "\ntail_leaves: List[Leaf] = []\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ntail_leaves: List[Leaf] = []\n"
+				}
+			]
+		},
+		{
+			"entry": "Augmented assignments",
+			"status": "ok",
+			"sourceSha256": "1cc624eafd304804f7ed32c817ad9118e236dbf2722c521747029667d9cc0035",
+			"rendered": "\na += 1\nb >>= 2\nc //= 1\nd @= e\nf -= 2\ng %= 2\nh /= 5\ni *= 2.2\nj &= 1\nk ^= 0\nl <<= 2\nm |= k\nn **= 3\n",
+			"engineRendered": "\na += 1\nb >>= 2\nc //= 1\nd @= e\nf -= 2\ng %= 2\nh /= 5\ni *= 2.2\nj &= 1\nk ^= 0\nl <<= 2\nm |= k\nn **= 3\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na += 1\nb >>= 2\nc //= 1\nd @= e\nf -= 2\ng %= 2\nh /= 5\ni *= 2.2\nj &= 1\nk ^= 0\nl <<= 2\nm |= k\nn **= 3\n"
+				}
+			]
+		},
+		{
+			"entry": "Named expressions",
+			"status": "ok",
+			"sourceSha256": "56713b7f9c31d4ebbdd527bc0dfa6a697106f31beecb690d5606d3935b11359a",
+			"rendered": "\na := x\n(y := f(x))\nfoo(x=(y := f(x)))\ny0 = (y1 := f(x))\ndef foo(answer=(p := 42)):\n  return answer;\ndef foo(answer: (p := 42) = 5):\n  return answer;\nfoo(x := 3, cat='vector')\n(z := (y := (x := 0)))\n",
+			"engineRendered": "\na := x\n(y := f(x))\nfoo(x=(y := f(x)))\ny0 = (y1 := f(x))\ndef foo(answer=(p := 42)):\n  return answer;\ndef foo(answer: (p := 42) = 5):\n  return answer;\nfoo(x := 3, cat='vector')\n(z := (y := (x := 0)))\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na := x\n(y := f(x))\nfoo(x=(y := f(x)))\ny0 = (y1 := f(x))\ndef foo(answer=(p := 42)):\n  return answer;\ndef foo(answer: (p := 42) = 5):\n  return answer;\nfoo(x := 3, cat='vector')\n(z := (y := (x := 0)))\n"
+				}
+			]
+		},
+		{
+			"entry": "Yield expressions",
+			"status": "ok",
+			"sourceSha256": "37aaeee5d020b82452a864a5ca1bcf4606a343fd4ec5ec33156b0f8f421d824c",
+			"rendered": "\ndef example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
+			"engineRendered": "\ndef example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n"
+				}
+			]
+		},
+		{
+			"entry": "lambdas",
+			"status": "ok",
+			"sourceSha256": "85f1b7c995c2bfc03d2ed8ecfd2bf42333637fd23404c11822b6f2f52f0d83ca",
+			"rendered": "\nlambda b, c: d(\"e\" % f)\nlambda: True\nlambda a, b = c, *d, **e: a\nlambda (a, b): (a, b)\n",
+			"engineRendered": "\nlambda b, c: d(\"e\" % f)\nlambda: True\nlambda a, b = c, *d, **e: a\nlambda (a, b): (a, b)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nlambda b, c: d(\"e\" % f)\nlambda: True\nlambda a, b = c, *d, **e: a\nlambda (a, b): (a, b)\n"
+				}
+			]
+		},
+		{
+			"entry": "Tuples with splats",
+			"status": "ok",
+			"sourceSha256": "8b9ea98c5c5b24a5efb6bf5be8b4af83102daadb60bc1b1d0230c9e413e3ce09",
+			"rendered": "\n(foo, *bar, *baz)\n",
+			"engineRendered": "\n(foo, *bar, *baz)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n(foo, *bar, *baz)\n"
+				}
+			]
+		},
+		{
+			"entry": "Tuples with yield",
+			"status": "ok",
+			"sourceSha256": "6ba8fdc0cd2dc7bb6a30fe456f72035aa89416ffd71fc861f201d3c7c335a495",
+			"rendered": "\n(a, yield a, b, c)\n",
+			"engineRendered": "\n(a, yield a, b, c)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n(a, yield a, b, c)\n"
+				}
+			]
+		},
+		{
+			"entry": "Default Tuple Arguments",
+			"status": "ok",
+			"sourceSha256": "f667ca2dc60bc459cb0d98315219a11eaddf203609abc2c1895305dcb0b81d77",
+			"rendered": "\ndef comp_args((a, b)=(3, 4)):\n    return a, b\n",
+			"engineRendered": "\ndef comp_args((a, b)=(3, 4)):\n    return a, b\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef comp_args((a, b)=(3, 4)):\n    return a, b\n"
+				}
+			]
+		},
+		{
+			"entry": "Conditional if expressions",
+			"status": "ok",
+			"sourceSha256": "4178fb2af151c191e8113f2b086b2869b0177e17606c50c5ee7702bdacea5610",
+			"rendered": "\na = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n",
+			"engineRendered": "\na = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n"
+				}
+			]
+		},
+		{
+			"entry": "Async context managers and iterators",
+			"status": "ok",
+			"sourceSha256": "4dab3fbece7d08be54f2a1367afe2c86739c02ed2c5e34e552381a53c53303c8",
+			"rendered": "\nasync with a as b:\n  async for c in d:\n     [e async for f in g]\n",
+			"engineRendered": "\nasync with a as b:\n  async for c in d:\n     [e async for f in g]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nasync with a as b:\n  async for c in d:\n     [e async for f in g]\n"
+				}
+			]
+		},
+		{
+			"entry": "Arbitrary indentation between brackets",
+			"status": "ok",
+			"sourceSha256": "6f8562ae93edbf2b5659fef6e6df2a14687e5b365782c534f18fe8b2808a770b",
+			"rendered": "\ndef a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n",
+			"engineRendered": "\ndef a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n"
+				}
+			]
+		},
+		{
+			"entry": "Splat Inside of Expression List",
+			"status": "ok",
+			"sourceSha256": "d4313c3f26a33681d6e185594f727d2f0fb7b29e12f256260d053233109d493f",
+			"rendered": "\na,c = [1,2],3\nw, x, y, z = 0, *a, c\n",
+			"engineRendered": "\na,c = [1,2],3\nw, x, y, z = 0, *a, c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na,c = [1,2],3\nw, x, y, z = 0, *a, c\n"
+				}
+			]
+		},
+		{
+			"entry": "A function called match",
+			"status": "ok",
+			"sourceSha256": "1cadb8055ab8dd8db9a9c24708eafc5d5fe52e9d7632c59f1b76a5834a4b092b",
+			"rendered": "\nmatch(r1, r2, r3)\n",
+			"engineRendered": "\nmatch(r1, r2, r3)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch(r1, r2, r3)\n"
+				}
+			]
+		},
+		{
+			"entry": "Type expressions",
+			"status": "ok",
+			"sourceSha256": "5b77b1a468bb62b6db60195a8eff531305c4016c2c538bcc6c8e1b12c1103cb5",
+			"rendered": "\na: A[T] | B\ny: type[int] = int\n",
+			"engineRendered": "\na: A[T] | B\ny: type[int] = int\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na: A[T] | B\ny: type[int] = int\n"
+				}
+			]
+		},
+		{
+			"entry": "Integers",
+			"status": "ok",
+			"sourceSha256": "73e1ed25e2ec6b2ac83bb5f1b192dfb97470787a0f872a1451e0d07bcff6bd96",
+			"rendered": "\n-1\n0xDEAD\n0XDEAD\n1j\n-1j\n0o123\n0O123\n0b001\n0B001\n1_1\n0B1_1\n0O1_1\n0L\n",
+			"engineRendered": "\n-1\n0xDEAD\n0XDEAD\n1j\n-1j\n0o123\n0O123\n0b001\n0B001\n1_1\n0B1_1\n0O1_1\n0L\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n-1\n0xDEAD\n0XDEAD\n1j\n-1j\n0o123\n0O123\n0b001\n0B001\n1_1\n0B1_1\n0O1_1\n0L\n"
+				}
+			]
+		},
+		{
+			"entry": "Floats",
+			"status": "ok",
+			"sourceSha256": "60fbfcfef112e33ffdc61b6d48732d63a27378447f65891a7059af2aaa47c8dd",
+			"rendered": "\n-.6_6\n+.1_1\n123.4123\n123.123J\n1_1.3_1\n1_1.\n1e+3_4j\n.3e1_4\n",
+			"engineRendered": "\n-.6_6\n+.1_1\n123.4123\n123.123J\n1_1.3_1\n1_1.\n1e+3_4j\n.3e1_4\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n-.6_6\n+.1_1\n123.4123\n123.123J\n1_1.3_1\n1_1.\n1e+3_4j\n.3e1_4\n"
+				}
+			]
+		},
+		{
+			"entry": "Scientific Notation Floats",
+			"status": "ok",
+			"sourceSha256": "12958bff0ca645cfb37b16377831b3ca0e1cc3d1f84e0682114c45d5c1a1395e",
+			"rendered": "\n1e322\n1e-3\n1e+3\n1.8e10\n1.e10\n-1e10\n",
+			"engineRendered": "\n1e322\n1e-3\n1e+3\n1.8e10\n1.e10\n-1e10\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n1e322\n1e-3\n1e+3\n1.8e10\n1.e10\n-1e10\n"
+				}
+			]
+		},
+		{
+			"entry": "Strings",
+			"status": "ok",
+			"sourceSha256": "77c89705443b858bccccc7765d4e5b5e7967c20de2831a6a646e9b56ddd68685",
+			"rendered": "\n\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"multiline \\\nstring\"\nb\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"\n\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"\n\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"\nf'\\N{GREEK CAPITAL LETTER DELTA}'\n",
+			"engineRendered": "\n\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"multiline \\\nstring\"\nb\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"\n\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"\n\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"\nf'\\N{GREEK CAPITAL LETTER DELTA}'\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"multiline \\\nstring\"\nb\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"\n\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"\n\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"\nf'\\N{GREEK CAPITAL LETTER DELTA}'\n"
+				}
+			]
+		},
+		{
+			"entry": "Raw strings",
+			"status": "ok",
+			"sourceSha256": "772904f143b3ffbe7070ece2ac86a89c7137abdf58efcd2450438ac134e6f65e",
+			"rendered": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nfr\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
+			"engineRendered": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nfr\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nfr\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n"
+				}
+			]
+		},
+		{
+			"entry": "Raw strings with escaped quotes",
+			"status": "ok",
+			"sourceSha256": "a6d2570665316c517cc1ac84478354586250408489e0adf721647cdb8b33b9c5",
+			"rendered": "\nre.compile(r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")\n",
+			"engineRendered": "\nre.compile(r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nre.compile(r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Format strings",
+			"status": "ok",
+			"sourceSha256": "f6a6f599dc392b60d8b658820c1993ce5b3fac3d2385752da51d2d1bd3e377bf",
+			"rendered": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')\n",
+			"engineRendered": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')\n"
+				}
+			]
+		},
+		{
+			"entry": "Format strings with format specifiers",
+			"status": "ok",
+			"sourceSha256": "2c53b36d35914a89f6ab623b5841308b361850b79e9e468cb3ecd3b829cb30d7",
+			"rendered": "\nf\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"\n",
+			"engineRendered": "\nf\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nf\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Template Strings",
+			"status": "ok",
+			"sourceSha256": "32ad38eff73ed9d142ee38d324c68cc0fefb904d5f3fbc25caf30d9fe38d027b",
+			"rendered": "\nt\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
+			"engineRendered": "\nt\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nt\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Unicode escape sequences",
+			"status": "ok",
+			"sourceSha256": "62818b28c3b7cb0921b8ec73790a544f44b90f5667707c209fee5e521ef4eab7",
+			"rendered": "\n\"\\x12 \\123 \\u1234\"\n",
+			"engineRendered": "\n\"\\x12 \\123 \\u1234\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n\"\\x12 \\123 \\u1234\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Other primitives",
+			"status": "ok",
+			"sourceSha256": "cbfb8b396e4357240a5434151a2a4339096fd336badd5837ca8aa3c4bbd4b95e",
+			"rendered": "\nTrue\nFalse\nNone\n",
+			"engineRendered": "\nTrue\nFalse\nNone\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nTrue\nFalse\nNone\n"
+				}
+			]
+		},
+		{
+			"entry": "Concatenated strings",
+			"status": "ok",
+			"sourceSha256": "be36a6697245a1edb0cee69ebc86a4e9423c3463ed9feecb09bf6dc134459cfd",
+			"rendered": "\n\"one\" \"two\" \"three\"\n",
+			"engineRendered": "\n\"one\" \"two\" \"three\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n\"one\" \"two\" \"three\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Multi-line strings",
+			"status": "ok",
+			"sourceSha256": "b1e4fd6b5676d09f959a768b64c7b09574f86aa26affcc057f14f27dff5ff6cf",
+			"rendered": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
+			"engineRendered": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Lists",
+			"status": "ok",
+			"sourceSha256": "e15dc4a9d1ab1d2c94c46e900beaafafd3c947af7e7601c1cfe58d461772efeb",
+			"rendered": "\n[a, b, [c, d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]\n",
+			"engineRendered": "\n[a, b, [c, d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n[a, b, [c, d]]\n[*()]\n[*[]]\n[*a]\n[*a.b]\n[*a[b].c]\n[*a()]\n"
+				}
+			]
+		},
+		{
+			"entry": "List comprehensions",
+			"status": "ok",
+			"sourceSha256": "9257ac50c14520d8925a3c37bf65408dd78e83df2ea05d5355cfedccd86c6277",
+			"rendered": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
+			"engineRendered": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n"
+				}
+			]
+		},
+		{
+			"entry": "Dictionaries",
+			"status": "ok",
+			"sourceSha256": "ae1133bc7eaf41a706f84638a2e7faf09db75d1ec1733529b631646015d05fc3",
+			"rendered": "\n{a: 1, b: 2}\n{}\n{**{}}\n{**a}\n{**a.b}\n{**a[b].c}\n{**a()}\n",
+			"engineRendered": "\n{a: 1, b: 2}\n{}\n{**{}}\n{**a}\n{**a.b}\n{**a[b].c}\n{**a()}\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n{a: 1, b: 2}\n{}\n{**{}}\n{**a}\n{**a.b}\n{**a[b].c}\n{**a()}\n"
+				}
+			]
+		},
+		{
+			"entry": "Dictionary comprehensions",
+			"status": "ok",
+			"sourceSha256": "63931f4c5247a35a7efaf3954fa6fe1ba697247bba5d65328675e49cb49e21ef",
+			"rendered": "\n{a: b for a, b in items}\n{a: b for c in d for e in items}\n",
+			"engineRendered": "\n{a: b for a, b in items}\n{a: b for c in d for e in items}\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n{a: b for a, b in items}\n{a: b for c in d for e in items}\n"
+				}
+			]
+		},
+		{
+			"entry": "Sets",
+			"status": "ok",
+			"sourceSha256": "5eb0da568d7731b71f69f6f05813f89f9650d7a02f132339a4186c1623a35996",
+			"rendered": "\n{a, b, c,}\n{*{}}\n",
+			"engineRendered": "\n{a, b, c,}\n{*{}}\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n{a, b, c,}\n{*{}}\n"
+				}
+			]
+		},
+		{
+			"entry": "Set comprehensions",
+			"status": "ok",
+			"sourceSha256": "ac0ae49f6fd220ef1aaceabcc86ef8b0f26ab02999706ed61654f3eaf5c08e4b",
+			"rendered": "\n{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}\n",
+			"engineRendered": "\n{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}\n"
+				}
+			]
+		},
+		{
+			"entry": "Simple Tuples",
+			"status": "ok",
+			"sourceSha256": "d9b4e961cd30f4818be7d3faad205c76c28355c5782c418ac5e69427dc3f7732",
+			"rendered": "\n()\n(a, b)\n(a, b, c,)\n(print, exec)\n",
+			"engineRendered": "\n()\n(a, b)\n(a, b, c,)\n(print, exec)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n()\n(a, b)\n(a, b, c,)\n(print, exec)\n"
+				}
+			]
+		},
+		{
+			"entry": "Generator expression",
+			"status": "ok",
+			"sourceSha256": "ee36957f0f168e66e83d870416e67c3932e07f6fba92fed1962e94f375b8e0e4",
+			"rendered": "\n(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
+			"engineRendered": "\n(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n"
+				}
+			]
+		},
+		{
+			"entry": "Matching specific values",
+			"status": "ok",
+			"sourceSha256": "8f7169d8ad499aa075a45f4b001a4f315d2ea8c63c27e151b5aac751d2421355",
+			"rendered": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
+			"engineRendered": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n"
+				}
+			]
+		},
+		{
+			"entry": "Matching multiple values",
+			"status": "ok",
+			"sourceSha256": "3f00d9a82f7fcd7712dad8f7038b3746a0e13a5b29aa23c69410551c04e400e1",
+			"rendered": "\nmatch command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n",
+			"engineRendered": "\nmatch command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n"
+				}
+			]
+		},
+		{
+			"entry": "Adding a wild card",
+			"status": "ok",
+			"sourceSha256": "339f3532b7ed712409616c6129830c88fd08048745a32b1008627e7c2a4c2994",
+			"rendered": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
+			"engineRendered": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Or patterns",
+			"status": "ok",
+			"sourceSha256": "35e7ced37eaf62c97cb247c0f5ccb07bf72a3f3085f25e3eaf93f0d05c8f6f3e",
+			"rendered": "\nmatch command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
+			"engineRendered": "\nmatch command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n"
+				}
+			]
+		},
+		{
+			"entry": "As patterns",
+			"status": "ok",
+			"sourceSha256": "67cd09bca366f75d583021cf4ff33dd47801a7aa3846cce1a27dfbf377b2afbb",
+			"rendered": "\nmatch command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)\n",
+			"engineRendered": "\nmatch command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)\n"
+				}
+			]
+		},
+		{
+			"entry": "Actually not match",
+			"status": "ok",
+			"sourceSha256": "13e7551e8e2cc55ab10fde7d9bf7aa8ac612f349aaa06803d3b30820125e2da5",
+			"rendered": "\nmatch = 2\nmatch, a = 2, 3\nmatch: int = secret\nx, match = 2, \"hey, what's up?\"\n*match, last = [1, 2, 3]\ndef foo(**match): pass\n",
+			"engineRendered": "\nmatch = 2\nmatch, a = 2, 3\nmatch: int = secret\nx, match = 2, \"hey, what's up?\"\n*match, last = [1, 2, 3]\ndef foo(**match): pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch = 2\nmatch, a = 2, 3\nmatch: int = secret\nx, match = 2, \"hey, what's up?\"\n*match, last = [1, 2, 3]\ndef foo(**match): pass\n"
+				}
+			]
+		},
+		{
+			"entry": "Match is match but not pattern matching",
+			"status": "ok",
+			"sourceSha256": "45cc376ea2ccca2f6c57d501aa8507b58dacfa2918a5c41cbfe00706dfe11bcc",
+			"rendered": "\na = [match]\nmatch = [match]\n",
+			"engineRendered": "\na = [match]\nmatch = [match]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na = [match]\nmatch = [match]\n"
+				}
+			]
+		},
+		{
+			"entry": "Match kwargs",
+			"status": "ok",
+			"sourceSha256": "a9718d747c2306aecc15406d08045073dbf6fa8e5a0e03830c5e2e79af895ccf",
+			"rendered": "\nfield = call(match=r\".*\\.txt$\")\n",
+			"engineRendered": "\nfield = call(match=r\".*\\.txt$\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfield = call(match=r\".*\\.txt$\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Match kwargs 2",
+			"status": "ok",
+			"sourceSha256": "2826b6b79f1ef442ac2ecfc45a16490a796ab71359f96423c3cd29fa98c26489",
+			"rendered": "\nfield = match(match=match, match)\n",
+			"engineRendered": "\nfield = match(match=match, match)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfield = match(match=match, match)\n"
+				}
+			]
+		},
+		{
+			"entry": "Case used as identifier",
+			"status": "ok",
+			"sourceSha256": "a2811f4b6251d8c831270f0337b1a2d815fb35145d066f8543a8c46732eafc9a",
+			"rendered": "\na = [case]\ncase = [case]\njust_in_case = call_me(case=True)\n",
+			"engineRendered": "\na = [case]\ncase = [case]\njust_in_case = call_me(case=True)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na = [case]\ncase = [case]\njust_in_case = call_me(case=True)\n"
+				}
+			]
+		},
+		{
+			"entry": "If guards",
+			"status": "ok",
+			"sourceSha256": "8eef9b0da1c883b07b7168fc3ac8c821c06de2cc25c7d26ec2a8657a63b5f43f",
+			"rendered": "\nmatch 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True\n",
+			"engineRendered": "\nmatch 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True\n"
+				}
+			]
+		},
+		{
+			"entry": "Literals",
+			"status": "ok",
+			"sourceSha256": "bb8115bbc5e2ab51e1bc00289860d8582de7f6396e00b24973bba39e5a9228e8",
+			"rendered": "\nmatch xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass\n",
+			"engineRendered": "\nmatch xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass\n"
+				}
+			]
+		},
+		{
+			"entry": "Comma separated cases",
+			"status": "ok",
+			"sourceSha256": "c0279059d7fefc6c60e2e7afdda486c6908da83c050077a3309dd1b60bbe8e24",
+			"rendered": "\nmatch (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0\n",
+			"engineRendered": "\nmatch (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0\n"
+				}
+			]
+		},
+		{
+			"entry": "Case terminating in comma",
+			"status": "ok",
+			"sourceSha256": "785c543da17832b1fdc234df001ae71252feaedee2cdf57c0b0ae27f9f435dd5",
+			"rendered": "\nmatch x,:\n    case *x,:\n        y = 0\n",
+			"engineRendered": "\nmatch x,:\n    case *x,:\n        y = 0\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch x,:\n    case *x,:\n        y = 0\n"
+				}
+			]
+		},
+		{
+			"entry": "Multiple match patterns",
+			"status": "ok",
+			"sourceSha256": "2e385e33c384df96ba650969f943406feaed3f5d2c352102faa9abf4f9717a43",
+			"rendered": "\nmatch ..., ...:\n    case a, b:\n        return locals()\n",
+			"engineRendered": "\nmatch ..., ...:\n    case a, b:\n        return locals()\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch ..., ...:\n    case a, b:\n        return locals()\n"
+				}
+			]
+		},
+		{
+			"entry": "Match match, case case",
+			"status": "ok",
+			"sourceSha256": "99388e8da36721a788bafe5c6b086acf89d4f215873a61840a66f1d4d5ea685d",
+			"rendered": "\nmatch = case = 0\nmatch match:\n    case case:\n        x = 0",
+			"engineRendered": "\nmatch = case = 0\nmatch match:\n    case case:\n        x = 0",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch = case = 0\nmatch match:\n    case case:\n        x = 0"
+				}
+			]
+		},
+		{
+			"entry": "Walrus match (Issue #150)",
+			"status": "ok",
+			"sourceSha256": "c190919c13d109602b4d8eb78e210da39ad5ba37543ba77f33c47dc7bfcb52d3",
+			"rendered": "\nif match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n",
+			"engineRendered": "\nif match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42\n"
+				}
+			]
+		},
+		{
+			"entry": "Matching objects",
+			"status": "ok",
+			"sourceSha256": "2818df15b51cf1bbe1c4db80a8f89c82f680151147cb7015880fb69b2d288877",
+			"rendered": "\nmatch event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n",
+			"engineRendered": "\nmatch event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Positional arguments",
+			"status": "ok",
+			"sourceSha256": "554c5269b29baf412af701f09fc8d41ab48ccd292b89d199557407c49593124d",
+			"rendered": "\nmatch event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n",
+			"engineRendered": "\nmatch event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n"
+				}
+			]
+		},
+		{
+			"entry": "Constants and enums",
+			"status": "ok",
+			"sourceSha256": "eaf65a130cefef141f11a5dd0fbc0d01592a885f02f025627bac557b3f5d6749",
+			"rendered": "\nmatch event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks\n",
+			"engineRendered": "\nmatch event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks\n"
+				}
+			]
+		},
+		{
+			"entry": "Dict mappings",
+			"status": "ok",
+			"sourceSha256": "9d616ba9a2e63d516218539187c0d99da03a2970fb37845e25e16cbc7c50e928",
+			"rendered": "\nfor action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
+			"engineRendered": "\nfor action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfor action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")"
+				}
+			]
+		},
+		{
+			"entry": "Builtin classes",
+			"status": "ok",
+			"sourceSha256": "5b272322de2de66df3cc886a25f2ed95d6a87207b484afcc4001f28b51d10af0",
+			"rendered": "\nfor action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
+			"engineRendered": "\nfor action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfor action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Complex case patterns on classes",
+			"status": "ok",
+			"sourceSha256": "3a25152dc9246e40de6edcd83abae8e7a9fc1186e5247514013aae3df250d659",
+			"rendered": "\nmatch x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()\n",
+			"engineRendered": "\nmatch x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()\n"
+				}
+			]
+		},
+		{
+			"entry": "Complex case patterns on complex numbers",
+			"status": "ok",
+			"sourceSha256": "568e169b4ed60612eb6e4e8c35dfd36e3d0e08b3a0ca6b5536e4b7b44d419b49",
+			"rendered": "\nmatch x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass\n",
+			"engineRendered": "\nmatch x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass\n"
+				}
+			]
+		},
+		{
+			"entry": "Maybe sequence pattern right hand side precedence validation",
+			"status": "ok",
+			"sourceSha256": "d3d8cff20a5e4189edacabd1e36e3cfc4cf4a9438a17769c107c222ab143810b",
+			"rendered": "\nmatch x:\n    case a1, *a2, a3:\n        pass\n",
+			"engineRendered": "\nmatch x:\n    case a1, *a2, a3:\n        pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nmatch x:\n    case a1, *a2, a3:\n        pass\n"
+				}
+			]
+		},
+		{
+			"entry": "Import statements",
+			"status": "ok",
+			"sourceSha256": "f14138b9e9be32084bb12d6a77b333bb519c883675a1d8cf241401cc193ede94",
+			"rendered": "\nimport a, b\nimport b.c as d\nimport a.b.c\n",
+			"engineRendered": "\nimport a, b\nimport b.c as d\nimport a.b.c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nimport a, b\nimport b.c as d\nimport a.b.c\n"
+				}
+			]
+		},
+		{
+			"entry": "Import-from statements",
+			"status": "ok",
+			"sourceSha256": "bfb5e2f9caa179eda9cd41b0e7e85935eac82570baa0d9931b494dd85d652426",
+			"rendered": "\nfrom a import b\nfrom a import *\nfrom a import (b, c)\nfrom a.b import c\nfrom . import b\nfrom .. import b\nfrom .a import b\nfrom ..a import b\n",
+			"engineRendered": "\nfrom a import b\nfrom a import *\nfrom a import (b, c)\nfrom a.b import c\nfrom . import b\nfrom .. import b\nfrom .a import b\nfrom ..a import b\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfrom a import b\nfrom a import *\nfrom a import (b, c)\nfrom a.b import c\nfrom . import b\nfrom .. import b\nfrom .a import b\nfrom ..a import b\n"
+				}
+			]
+		},
+		{
+			"entry": "Future import statements",
+			"status": "ok",
+			"sourceSha256": "9c6161e0be7fef0cef7620ab03a4c3fc5630f4db91c05fb7f8753f3cd38b52fe",
+			"rendered": "\nfrom __future__ import print_statement\nfrom __future__ import python4\nfrom __future__ import (absolute_import, division, print_function,\n                        unicode_literals)",
+			"engineRendered": "\nfrom __future__ import print_statement\nfrom __future__ import python4\nfrom __future__ import (absolute_import, division, print_function,\n                        unicode_literals)",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfrom __future__ import print_statement\nfrom __future__ import python4\nfrom __future__ import (absolute_import, division, print_function,\n                        unicode_literals)"
+				}
+			]
+		},
+		{
+			"entry": "Print statements",
+			"status": "ok",
+			"sourceSha256": "0725a8a6a3b2bfd79f865e198c05106105f91b414273c33d2488ededfc1ca78d",
+			"rendered": "\nprint a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True\n",
+			"engineRendered": "\nprint a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nprint a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True\n"
+				}
+			]
+		},
+		{
+			"entry": "Print statements with redirection",
+			"status": "ok",
+			"sourceSha256": "85246c6c0a038cdff68b480ae15956fddc08c54284b09eabc52f2cb59798314f",
+			"rendered": "\nprint >> a\nprint >> a, \"b\", \"c\"\n",
+			"engineRendered": "\nprint >> a\nprint >> a, \"b\", \"c\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nprint >> a\nprint >> a, \"b\", \"c\"\n"
+				}
+			]
+		},
+		{
+			"entry": "Assert statements",
+			"status": "ok",
+			"sourceSha256": "18e7fbc346cdab938d69d1a449b8514bf726c3a3524a8e559e0a66fb0b7fd67a",
+			"rendered": "\nassert a\nassert b, c\n",
+			"engineRendered": "\nassert a\nassert b, c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nassert a\nassert b, c\n"
+				}
+			]
+		},
+		{
+			"entry": "Expression statements",
+			"status": "ok",
+			"sourceSha256": "780b88d968c76b333c6470edd60b0be4d87467446e5ac8b3f043851b74bbbbb8",
+			"rendered": "\na\nb + c\n1, 2, 3\n1, 2, 3,\n",
+			"engineRendered": "\na\nb + c\n1, 2, 3\n1, 2, 3,\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\na\nb + c\n1, 2, 3\n1, 2, 3,\n"
+				}
+			]
+		},
+		{
+			"entry": "Delete statements",
+			"status": "ok",
+			"sourceSha256": "da27e4333506727affe61239b27208d5531137bd44b5fb08d1b0f5be2d4580d6",
+			"rendered": "\ndel a[1], b[2]\n",
+			"engineRendered": "\ndel a[1], b[2]\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndel a[1], b[2]\n"
+				}
+			]
+		},
+		{
+			"entry": "Control-flow statements",
+			"status": "ok",
+			"sourceSha256": "a9a370770de9ba1261554ff53c1f68e898f5b0221b50615175aa6a3435adc1f9",
+			"rendered": "\nwhile true:\n  pass\n  break\n  continue\n",
+			"engineRendered": "\nwhile true:\n  pass\n  break\n  continue\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nwhile true:\n  pass\n  break\n  continue\n"
+				}
+			]
+		},
+		{
+			"entry": "Return statements",
+			"status": "ok",
+			"sourceSha256": "22657b933657350a21103fdf5274b15fc6fa53cb277c5956dadd3a2e9943afb4",
+			"rendered": "\nreturn\nreturn a + b, c\nreturn not b\n",
+			"engineRendered": "\nreturn\nreturn a + b, c\nreturn not b\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nreturn\nreturn a + b, c\nreturn not b\n"
+				}
+			]
+		},
+		{
+			"entry": "If statements",
+			"status": "ok",
+			"sourceSha256": "0b86d6c4b0f29860fc1a6897e5d466a2fc12fcfde31b6dcf126e0d3e3625e1da",
+			"rendered": "\nif a:\n  b\n  c\n",
+			"engineRendered": "\nif a:\n  b\n  c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  b\n  c\n"
+				}
+			]
+		},
+		{
+			"entry": "If else statements",
+			"status": "ok",
+			"sourceSha256": "76f3b0859091be02ad8ecd7bae9dfac9509dc1c39d289267c2bcad3db48ae566",
+			"rendered": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n",
+			"engineRendered": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n"
+				}
+			]
+		},
+		{
+			"entry": "Nested if statements",
+			"status": "ok",
+			"sourceSha256": "b95793573f1fec90c47a3b6af7ab8c36ef9633fd375f6c2d44e9700f2be8a2c3",
+			"rendered": "\nif a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n",
+			"engineRendered": "\nif a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  if b:\n    c\n  else:\n    if e:\n      f\ng\n"
+				}
+			]
+		},
+		{
+			"entry": "While statements",
+			"status": "ok",
+			"sourceSha256": "848705b8c3ee61bf2cd1a308526009fc07147e87a629bc960feded9a621d6080",
+			"rendered": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n",
+			"engineRendered": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n"
+				}
+			]
+		},
+		{
+			"entry": "For statements",
+			"status": "ok",
+			"sourceSha256": "f1638f2dcad752a98f7d894214e2a4f85aad958b6c03492e0f768ca29e2f99c1",
+			"rendered": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
+			"engineRendered": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n"
+				}
+			]
+		},
+		{
+			"entry": "Try statements",
+			"status": "ok",
+			"sourceSha256": "3de363747186d0a8e23c53ad0921c21291a5d241d91db3303382bbb39d213fd7",
+			"rendered": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+			"engineRendered": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n"
+				}
+			]
+		},
+		{
+			"entry": "With statements",
+			"status": "ok",
+			"sourceSha256": "eef0cebe0feb746bafe2991ab49efe234e523e8face6e46f83e578ff203cea44",
+			"rendered": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
+			"engineRendered": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n"
+				}
+			]
+		},
+		{
+			"entry": "Async Function definitions",
+			"status": "ok",
+			"sourceSha256": "91178a6e69cc6f99bc1c0350bb7143e5297e8b6dc7b3e13b5835ee27514821a5",
+			"rendered": "\nasync def a():\n  b\n\nasync def c(d):\n  e\n\nasync def g(g, h,):\n  i\n\nasync def c(a: str):\n  a\n\nasync def c(a: b.c):\n  a\n\nasync def d(a: Sequence[T]) -> T:\n  a\n\nasync def i(a, b=c, *c, **d):\n  a\n\nasync def d(a: str) -> None:\n  return None\n\nasync def d(a:str=\"default\", b=c) -> None:\n  return None\n",
+			"engineRendered": "\nasync def a():\n  b\n\nasync def c(d):\n  e\n\nasync def g(g, h,):\n  i\n\nasync def c(a: str):\n  a\n\nasync def c(a: b.c):\n  a\n\nasync def d(a: Sequence[T]) -> T:\n  a\n\nasync def i(a, b=c, *c, **d):\n  a\n\nasync def d(a: str) -> None:\n  return None\n\nasync def d(a:str=\"default\", b=c) -> None:\n  return None\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nasync def a():\n  b\n\nasync def c(d):\n  e\n\nasync def g(g, h,):\n  i\n\nasync def c(a: str):\n  a\n\nasync def c(a: b.c):\n  a\n\nasync def d(a: Sequence[T]) -> T:\n  a\n\nasync def i(a, b=c, *c, **d):\n  a\n\nasync def d(a: str) -> None:\n  return None\n\nasync def d(a:str=\"default\", b=c) -> None:\n  return None\n"
+				}
+			]
+		},
+		{
+			"entry": "Function definitions",
+			"status": "ok",
+			"sourceSha256": "0c7cf2d3d8007fabaefd2ebf87236b91f1226e18a10e3cdf869e343dff973d8d",
+			"rendered": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
+			"engineRendered": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\n\\\n\\\n"
+				}
+			]
+		},
+		{
+			"entry": "Empty blocks",
+			"status": "ok",
+			"sourceSha256": "81e0863ae35681aad969fe0a7fa1370b87386dd0610d981d812652873bbad809",
+			"rendered": "\n# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():\n",
+			"engineRendered": "\n# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():\n"
+				}
+			]
+		},
+		{
+			"entry": "Class definitions",
+			"status": "ok",
+			"sourceSha256": "76956271d9526f841f126a633e10f9a5268b4fdcdf8529cc706774e4d2a775cd",
+			"rendered": "\nclass A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
+			"engineRendered": "\nclass A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nclass A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n"
+				}
+			]
+		},
+		{
+			"entry": "Class definitions with superclasses",
+			"status": "ok",
+			"sourceSha256": "d68ab50ea9dd948f40faf8e7ca3b53b73ceed9e7cab602e55c0d8c162b1ee740",
+			"rendered": "\nclass A(B, C):\n  def d():\n    e\n",
+			"engineRendered": "\nclass A(B, C):\n  def d():\n    e\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nclass A(B, C):\n  def d():\n    e\n"
+				}
+			]
+		},
+		{
+			"entry": "Decorated definitions",
+			"status": "ok",
+			"sourceSha256": "aa54245c136599b895dc6b2536e156deedc5e102807c0c54af4192038c290703",
+			"rendered": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
+			"engineRendered": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n"
+				}
+			]
+		},
+		{
+			"entry": "Raise statements",
+			"status": "ok",
+			"sourceSha256": "35823841910fa51cd1e3c9d6822865ae31d40f7ec6bb729ece1aaa62885e2469",
+			"rendered": "\nraise\nraise RuntimeError('NO')\nraise RunTimeError('NO') from e\n",
+			"engineRendered": "\nraise\nraise RuntimeError('NO')\nraise RunTimeError('NO') from e\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nraise\nraise RuntimeError('NO')\nraise RunTimeError('NO') from e\n"
+				}
+			]
+		},
+		{
+			"entry": "Comments",
+			"status": "ok",
+			"sourceSha256": "371b8642e1b4301db8e4754b70cdaa6050f5fac16fedd128da915056182abff6",
+			"rendered": "\nprint a\n# hi\nprint b # bye\nprint c\n",
+			"engineRendered": "\nprint a\n# hi\nprint b # bye\nprint c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nprint a\n# hi\nprint b # bye\nprint c\n"
+				}
+			]
+		},
+		{
+			"entry": "Comments at different indentation levels",
+			"status": "ok",
+			"sourceSha256": "7db5988502c43930d315756ccadcbf4b93f33639f74be5188a8b96771e57e196",
+			"rendered": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+			"engineRendered": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n"
+				}
+			]
+		},
+		{
+			"entry": "Comments after dedents",
+			"status": "ok",
+			"sourceSha256": "460c5c79dc8c7e537cae52bd6e10949aa07f51c487488e4947b340e2e0a150ef",
+			"rendered": "\nif a:\n  b\n\n# one\nc\n",
+			"engineRendered": "\nif a:\n  b\n\n# one\nc\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  b\n\n# one\nc\n"
+				}
+			]
+		},
+		{
+			"entry": "Comments at the ends of indented blocks",
+			"status": "ok",
+			"sourceSha256": "43c44f7bd814478cc757f8a696bd17f43dbf400b3c308f78e9620142818fb21c",
+			"rendered": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+			"engineRendered": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
+				}
+			]
+		},
+		{
+			"entry": "Newline tokens followed by comments",
+			"status": "ok",
+			"sourceSha256": "f8c42a4320cd9da28823c73006314677e5f715f7bdd5bf618fab6504f2e85844",
+			"rendered": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
+			"engineRendered": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it"
+				}
+			]
+		},
+		{
+			"entry": "Global statements",
+			"status": "ok",
+			"sourceSha256": "389b37b580e36b11f9a146a4dff56016234531d47887fcd00232879afd2972cc",
+			"rendered": "\nglobal a\nglobal a, b\n",
+			"engineRendered": "\nglobal a\nglobal a, b\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nglobal a\nglobal a, b\n"
+				}
+			]
+		},
+		{
+			"entry": "Exec statements",
+			"status": "ok",
+			"sourceSha256": "af327e78f81ce6ee7648fe19f7c6adadc943d2c5bfa15fe81bb4806a850f61c1",
+			"rendered": "\nexec '1+1'\nexec 'x+=1' in None\nexec 'x+=1' in a, b\nfunc = \"print\"\nexec func in {}\n",
+			"engineRendered": "\nexec '1+1'\nexec 'x+=1' in None\nexec 'x+=1' in a, b\nfunc = \"print\"\nexec func in {}\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nexec '1+1'\nexec 'x+=1' in None\nexec 'x+=1' in a, b\nfunc = \"print\"\nexec func in {}\n"
+				}
+			]
+		},
+		{
+			"entry": "Extra newlines",
+			"status": "ok",
+			"sourceSha256": "ac6c6859d1b305f5c12fba509beb58253cc2f1077e3a242491379b77a2114051",
+			"rendered": "\nif a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
+			"engineRendered": "\nif a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nif a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n"
+				}
+			]
+		},
+		{
+			"entry": "Escaped newline",
+			"status": "ok",
+			"sourceSha256": "779e1cf68ab82c3f27a35176bb0487e9a92dc81532daaa1f1faef63a0e3ac06a",
+			"rendered": "\nlen(\"a\") \\\nor len(\"aa\")\n",
+			"engineRendered": "\nlen(\"a\") \\\nor len(\"aa\")\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nlen(\"a\") \\\nor len(\"aa\")\n"
+				}
+			]
+		},
+		{
+			"entry": "Statements with semicolons",
+			"status": "ok",
+			"sourceSha256": "14ca3c19659d95fa97020ed71e355b1a2fac2cf0d331babc5309ebe99b64161f",
+			"rendered": "\nfoo;\nfoo; bar\nfoo; bar;\n",
+			"engineRendered": "\nfoo;\nfoo; bar\nfoo; bar;\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nfoo;\nfoo; bar\nfoo; bar;\n"
+				}
+			]
+		},
+		{
+			"entry": "Type Alias Statements",
+			"status": "ok",
+			"sourceSha256": "7d92301eb9032436a79087399e859719cb8eb7e0b644d0937f1ba567100777be",
+			"rendered": "\ntype Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints\n",
+			"engineRendered": "\ntype Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ntype Point = tuple[float, float]\ntype Point[T] = tuple[T, T]\ntype IntFunc[**P] = Callable[P, int]  # ParamSpec\ntype LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple\ntype HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound\ntype IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints\n"
+				}
+			]
+		},
+		{
+			"entry": "Generic Function Definitions",
+			"status": "ok",
+			"sourceSha256": "45510a575d868aeb1f0d2c5fa62a60b7b5e50a98f4a391cb65e930703e8fb580",
+			"rendered": "\ndef more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
+			"engineRendered": "\ndef more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\ndef more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n"
+				}
+			]
+		},
+		{
+			"entry": "Strings mixing text with escapes",
+			"status": "ok",
+			"sourceSha256": "f7b48d53a16ff53d205cd656120a209f762ebd03acecbfccb6bb07a7b6e32bd9",
+			"rendered": "\nx = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"\n",
+			"engineRendered": "\nx = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"\n",
+			"parseErrors": 0,
+			"edits": [
+				{
+					"key": "statements",
+					"status": "ok",
+					"value": "\nx = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"\n"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"recordedAt": "2026-10-29T14:04:17.831Z",
+	"source": "Saved exact-byte renders on the tested runtime tree; regular-expression evaluation performed now with both outputs.",
+	"entry": "a multiline url regex",
+	"objectPattern": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+	"arenaPattern": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+	"input": "ab\n.cd\nx\n",
+	"objectMatches": false,
+	"arenaMatches": true,
+	"sourceMatches": true,
+	"semanticScope": "ECMAScript RegExp constructed from these strings with no flags; not a certification of the Sittir/tree-sitter regex dialect."
+}

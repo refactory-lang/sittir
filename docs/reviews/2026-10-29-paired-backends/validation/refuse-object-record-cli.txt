@@ -1,0 +1,12 @@
+/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/common/src/engine-scope.ts:72
+		throw new Error("nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena");
+		      ^
+
+Error: nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena
+    at nodeStorageOf (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/common/src/engine-scope.ts:72:9)
+    at runCountsCli (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/tools/src/commands.ts:687:18)
+    at Command.<anonymous> (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/dist/commands/validate/counts.js:17:19)
+    at async Command.parseAsync (file:///Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/node_modules/.pnpm/commander@15.0.0-0/node_modules/commander/lib/command.js:1112:5)
+    at async <anonymous> (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/cli/src/cli.ts:34:2)
+
+Node.js v26.12.0

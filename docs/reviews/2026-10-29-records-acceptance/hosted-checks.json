@@ -1,0 +1,57 @@
+{
+	"headRefOid": "8143ccafaad9a76dc39b37d688b07dfd4cf95b7b",
+	"statusCheckRollup": [
+		{
+			"__typename": "CheckRun",
+			"completedAt": "0001-01-01T00:00:00Z",
+			"conclusion": "",
+			"detailsUrl": "https://github.com/refactory-lang/sittir/actions/runs/40886777910/job/123492515357",
+			"name": "CI (24.x)",
+			"startedAt": "2026-10-29T13:57:41Z",
+			"status": "IN_PROGRESS",
+			"workflowName": "CI"
+		},
+		{
+			"__typename": "CheckRun",
+			"completedAt": "0001-01-01T00:00:00Z",
+			"conclusion": "",
+			"detailsUrl": "https://github.com/refactory-lang/sittir/actions/runs/40886777910/job/123492515087",
+			"name": "cargo check --workspace",
+			"startedAt": "2026-10-29T13:57:41Z",
+			"status": "IN_PROGRESS",
+			"workflowName": "CI"
+		},
+		{
+			"__typename": "CheckRun",
+			"completedAt": "0001-01-01T00:00:00Z",
+			"conclusion": "",
+			"detailsUrl": "https://github.com/refactory-lang/sittir/actions/runs/40886777910/job/123492514986",
+			"name": "generated output drift",
+			"startedAt": "2026-10-29T13:57:41Z",
+			"status": "IN_PROGRESS",
+			"workflowName": "CI"
+		},
+		{
+			"__typename": "CheckRun",
+			"completedAt": "2026-10-29T13:57:39Z",
+			"conclusion": "SKIPPED",
+			"detailsUrl": "https://github.com/refactory-lang/sittir/actions/runs/40886777910/job/123492517364",
+			"name": "glossary key ratchet",
+			"startedAt": "2026-10-29T13:57:39Z",
+			"status": "COMPLETED",
+			"workflowName": "CI"
+		},
+		{
+			"__typename": "CheckRun",
+			"completedAt": "2026-10-29T13:57:50Z",
+			"conclusion": "SUCCESS",
+			"detailsUrl": "https://github.com/refactory-lang/sittir/actions/runs/40886777910/job/123492514974",
+			"name": "no tracked node_modules",
+			"startedAt": "2026-10-29T13:57:41Z",
+			"status": "COMPLETED",
+			"workflowName": "CI"
+		}
+	],
+	"url": "https://github.com/refactory-lang/sittir/pull/998",
+	"checkedAt": "2026-10-29T14:05:19.969405+00:00"
+}

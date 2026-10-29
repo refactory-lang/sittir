@@ -5,13 +5,17 @@ import rust from '../src/index.ts';
 
 const source = 'struct A { a: u8, pub b: u8, #[x] c: u8 }\n\nfn f(x: u8) -> u8 {\n    g(x, "héllo")\n}\n';
 
-const engines = { object: await rust.createEngine({ nodeStorage: 'object' }), arena: await rust.createEngine({ nodeConstruction: 'object' }) };
+const engines = {
+	object: await rust.createEngine({ nodeStorage: 'object' }),
+	arena: await rust.createEngine({ nodeStorage: 'arena' })
+};
 const wires = ['object', 'arena'] as const;
 type Wire = (typeof wires)[number];
 
 function structAt(wire: Wire) {
 	const item = engines[wire].parse(source).statements()[0];
-	if (item === undefined || !engines[wire].is.structItem(item) || !('body' in item)) throw new Error('expected a braced struct');
+	if (item === undefined || !engines[wire].is.structItem(item) || !('body' in item))
+		throw new Error('expected a braced struct');
 	return item;
 }
 
@@ -40,8 +44,14 @@ function shape(value: unknown): unknown {
 		.filter((key) => typeof value[key] === 'function' && (value[key] as () => unknown).length === 0)
 		.sort();
 	const text = typeof value.$text === 'function' ? (value.$text as () => unknown)() : undefined;
-	const items = typeof value.length === 'number' ? Array.from({ length: value.length }, (_, n) => shape(value[n])) : undefined;
-	return { $type: value.$type, text, items, ...Object.fromEntries(accessors.map((key) => [key, shape((value[key] as () => unknown).call(value))])) };
+	const items =
+		typeof value.length === 'number' ? Array.from({ length: value.length }, (_, n) => shape(value[n])) : undefined;
+	return {
+		$type: value.$type,
+		text,
+		items,
+		...Object.fromEntries(accessors.map((key) => [key, shape((value[key] as () => unknown).call(value))]))
+	};
 }
 
 describe('a tree read as records', () => {
@@ -67,7 +77,11 @@ describe('a tree read as records', () => {
 	it('reads a list wrapper that carries only its content as that content, on both wires', () => {
 		for (const wire of wires) {
 			const body = structAt(wire).body();
-			expect([...(body ?? [])].map((field) => (isNode(field) ? field.$type : field))).toEqual([TSKindId.FieldDeclaration, TSKindId.FieldDeclaration, TSKindId.AttributedFieldDeclaration]);
+			expect([...(body ?? [])].map((field) => (isNode(field) ? field.$type : field))).toEqual([
+				TSKindId.FieldDeclaration,
+				TSKindId.FieldDeclaration,
+				TSKindId.AttributedFieldDeclaration
+			]);
 		}
 	});
 
@@ -79,24 +93,33 @@ describe('a tree read as records', () => {
 		}
 	});
 
-	it("reads a kind that seats a group as a view: each key the group lends is there only while the group is, as on the object read", () => {
+	it('reads a kind that seats a group as a view: each key the group lends is there only while the group is, as on the object read', () => {
 		const seats = 'use a::*;\nuse *;\n\nfn f() {\n    match x {\n        y if z => 1,\n        _ => 2,\n    }\n}\n';
 		const keysOf = (wire: Wire) => {
 			const [withGroup, without] = engines[wire].parse(seats).statements() as unknown as Node[];
 			const wildcardOf = (item: Node | undefined) => (item!.argument as () => Node)();
-			return [wildcardOf(withGroup), wildcardOf(without)].map((wildcard) => ({ view: recordOf(wildcard) !== undefined, path: typeof wildcard.path, value: shape(wildcard) }));
+			return [wildcardOf(withGroup), wildcardOf(without)].map((wildcard) => ({
+				view: recordOf(wildcard) !== undefined,
+				path: typeof wildcard.path,
+				value: shape(wildcard)
+			}));
 		};
 		const views = keysOf('arena');
-		expect(views.map((read) => [read.view, read.path])).toEqual([[true, 'function'], [true, 'undefined']]);
-		expect(views.map(({ path, value }) => ({ path, value }))).toEqual(keysOf('object').map(({ path, value }) => ({ path, value })));
+		expect(views.map((read) => [read.view, read.path])).toEqual([
+			[true, 'function'],
+			[true, 'undefined']
+		]);
+		expect(views.map(({ path, value }) => ({ path, value }))).toEqual(
+			keysOf('object').map(({ path, value }) => ({ path, value }))
+		);
 		expect(shape(engines.arena.parse(seats))).toEqual(shape(engines.object.parse(seats)));
 	});
 
-	it('renders untouched as its source, and writes through its row', () => {
+	it('renders untouched as its source, and rebuilds through its row as a record', () => {
 		expect(String(engines.arena.parse(source))).toBe(source);
 		const item = functionAt('arena');
 		const renamed = item.$with.name(engines.arena.build.identifier('h'));
-		expect(recordOf(renamed)).toBeUndefined();
+		expect(recordOf(renamed)).toBeDefined();
 		expect(String(renamed)).toContain('fn h(x: u8)');
 		expect(String(item)).toContain('fn f(x: u8)');
 	});

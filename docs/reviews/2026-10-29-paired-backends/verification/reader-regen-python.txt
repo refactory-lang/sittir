@@ -1,0 +1,203 @@
+Full regenerate for python: transpile + tree-sitter generate + compile-parser + sittir codegen
+Transpiling python overrides...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/python/.sittir/grammar.js
+Running 'tree-sitter generate' in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/python/.sittir, deriving conflicts...
+enrich: field 'operator' on 'augmented_assignment' reuses existing rule '_augmented_assignment_operator' (identical member set) instead of minting a new one
+{
+  "diagnostics": [
+    {
+      "SupertypeInlined": {
+        "name": "_simple_statement"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_compound_statement"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_suite"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_compound_statement_class_definition"
+      }
+    },
+    {
+      "SupertypeInlined": {
+        "name": "_suite_class_definition"
+      }
+    }
+  ],
+  "error": null
+}
+  conflicts: base 11 resolutions reused; bound 0 resolutions reused
+  → pruned 87 orphaned rule(s) from grammar.json
+Compiling python parser to WASM...
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/python/.sittir/parser.wasm
+  → /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/packages/python/.sittir/upstream.wasm (current)
+enrich: field 'operator' on 'augmented_assignment' reuses existing rule '_augmented_assignment_operator' (identical member set) instead of minting a new one
+enrich: field 'operator' on 'augmented_assignment' reuses existing rule '_augmented_assignment_operator' (identical member set) instead of minting a new one
+[info] conflict-resolution  -.-
+  conflict between as_pattern, except_clause_exception_as on ':' resolved by AddConflict (default)
+[info] conflict-resolution  -.-
+  conflict between except_clause_exception_as, except_clause_exception_list on ':' resolved by AddConflict (default)
+[info] conflict-resolution  -.-
+  conflict between expression_statement, expression_statement_tuple on ';' resolved by AddConflict (default)
+[info] conflict-resolution  -.-
+  conflict between list_pattern, list on ',' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between list_splat_pattern, primary_expression on '.' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between match_statement, primary_expression on '*' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between named_expression, as_pattern on 'as' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between pattern, primary_expression on ',' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between tuple_pattern, tuple on ',' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between type_alias_statement, primary_expression on '*' resolved by AddConflict (upstream-declared)
+[info] conflict-resolution  -.-
+  conflict between with_item, _tuple_elements on ',' resolved by AddConflict (default)
+[info] conflict-unnecessary-upstream  -.-
+  upstream declares the conflict with_item, _collection_elements, which the reshaped grammar never reports
+[info] conflict-unnecessary-upstream  -.-
+  upstream declares the conflict print_statement, primary_expression, which the reshaped grammar never reports
+[info] conflict-dynamic-precedence-authored  primary_expression.-
+  the authored 'primary_expression' changes its dynamic precedence from [] upstream to [-1]
+[error] rule-reauthored-without-cause  primary_expression.-
+  rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is
+[error] rule-reauthored-without-cause  string_content.-
+  rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is
+[error] rule-reauthored-without-cause  print_statement.-
+  rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is
+[error] rule-reauthored-without-cause  _simple_pattern.-
+  rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is
+[error] patch-without-cause  dictionary_comprehension.-
+  edits: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands
+[error] patch-without-cause  generator_expression.-
+  edits: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands
+[error] patch-without-cause  list_comprehension.-
+  edits: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands
+[error] patch-without-cause  set_comprehension.-
+  edits: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands
+Generating python IR...
+templates: multi-slot multiplicity group (kind 'float_point', slots marker, sign, exponent) — should have been a visible group
+templates: multi-slot multiplicity group (kind 'float_leading_point', slots marker, sign, exponent) — should have been a visible group
+[codegen] '_simple_statement' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_simple_statement' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_expressions' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_expressions' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_compound_statement' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_compound_statement' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_suite' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_suite' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_left_hand_side' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_left_hand_side' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_compound_statement_class_definition' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_compound_statement_class_definition' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] '_suite_class_definition' is in inline: array — no parser symbol expected. Skipping factory emission. Future: map to decomposition.
+[codegen] '_suite_class_definition' is in inline: array — no parser symbol expected. Skipping wrap emission. Future: map to decomposition.
+[codegen] union_pattern: sub-factory classPattern skipped (ambiguous): class_pattern, class_pattern
+[codegen] union_pattern: sub-factory list skipped (ambiguous): splat_pattern_list, splat_pattern_list
+[codegen] union_pattern: sub-factory dictionary skipped (ambiguous): splat_pattern_dictionary, splat_pattern_dictionary
+[codegen] union_pattern: sub-factory unionPattern skipped (ambiguous): union_pattern, union_pattern
+[codegen] union_pattern: sub-factory caseListPattern skipped (ambiguous): case_list_pattern, case_list_pattern
+[codegen] union_pattern: sub-factory caseTuplePattern skipped (ambiguous): case_tuple_pattern, case_tuple_pattern
+[codegen] union_pattern: sub-factory dictPattern skipped (ambiguous): dict_pattern, dict_pattern
+[codegen] union_pattern: sub-factory string skipped (ambiguous): string, string
+[codegen] union_pattern: sub-factory concatenatedString skipped (ambiguous): concatenated_string, concatenated_string
+[codegen] union_pattern: sub-factory true skipped (ambiguous): 'True', 'True'
+[codegen] union_pattern: sub-factory false skipped (ambiguous): 'False', 'False'
+[codegen] union_pattern: sub-factory none skipped (ambiguous): 'None', 'None'
+[codegen] union_pattern: sub-factory hex skipped (ambiguous): integer_hex, integer_hex
+[codegen] union_pattern: sub-factory octal skipped (ambiguous): integer_octal, integer_octal
+[codegen] union_pattern: sub-factory binary skipped (ambiguous): integer_binary, integer_binary
+[codegen] union_pattern: sub-factory decimal skipped (ambiguous): integer_decimal, integer_decimal
+[codegen] union_pattern: sub-factory point skipped (ambiguous): float_point, float_point
+[codegen] union_pattern: sub-factory leadingPoint skipped (ambiguous): float_leading_point, float_leading_point
+[codegen] union_pattern: sub-factory scientific skipped (ambiguous): float_scientific, float_scientific
+[codegen] union_pattern: sub-factory negative skipped (ambiguous): simple_pattern_negative, simple_pattern_negative
+[codegen] union_pattern: sub-factory complexPattern skipped (ambiguous): complex_pattern, complex_pattern
+[codegen] union_pattern: sub-factory dottedName skipped (ambiguous): dotted_name, dotted_name
+[codegen] union_pattern: sub-factory wildcardPattern skipped (ambiguous): '_', '_'
+[codegen] keyword_pattern: sub-factory dottedName seated, not merged (shared-key: name): dotted_name
+  seam census: 311 template boundaries — 39 static (33 glued, 6 spaced), 8 runtime-derivable, 264 runtime-varying (residue); origin: 24 preference, 128 literal-default, 60 word-default, 0 cascade, 99 fallback
+    rust/crates/sittir-python/src/render/kind_ids.rs
+    rust/crates/sittir-python/src/render/field_ids.rs
+  → Rust render module regenerated for python:
+    rust/crates/sittir-python/src/render/hash.rs
+    packages/python/src/hash.ts
+    rust/crates/sittir-python/src/render/node.rs
+    rust/crates/sittir-python/src/render/options.rs
+    rust/crates/sittir-python/src/render/mod.rs
+    packages/python/src/records.ts
+  → rebuilding grammar-owned N-API binding for python (gate profile)…
+
+> sittir-python@0.1.0 build:gate /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-python
+> tsx ../../../scripts/build-native.mts python --profile gate
+
+   Compiling sittir-core v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-core)
+   Compiling sittir-python v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-python)
+    Finished `gate` profile [optimized] target(s) in 25.39s
+  → cargo check --workspace --features napi-bindings (catches cross-grammar breakage)…
+   Compiling sittir-python v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-python)
+    Checking sittir-parity-tests v0.0.0 (/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/rust/crates/sittir-parity-tests)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.51s
+
+  v 205/205 kinds renderable (0 un-renderable)
+
+⚠ 40 unnamed choice slot(s) in python — give each choice an explicit field name in packages/python/grammar.sittir.ts:
+  rule:_simple_pattern:root
+  rule:argument_list:members.1
+  rule:case_pattern:root
+  rule:complex_pattern:members.1
+  rule:complex_pattern:members.2
+  rule:complex_pattern:members.3
+  rule:delete_statement:root
+  rule:dictionary:members.1
+  rule:dictionary_comprehension:members.2/members.1
+  rule:dictionary_splat_pattern:root
+  rule:except_clause_exception:root
+  rule:expression_statement:root
+  rule:format_specifier:members.1
+  rule:future_import_statement:root
+  rule:generator_expression:members.2/members.1
+  rule:import_from_statement:root
+  rule:keyword_pattern:root
+  rule:list:members.1
+  rule:list_comprehension:members.2/members.1
+  rule:list_splat_pattern:root
+  rule:parenthesized_expression:root
+  rule:parenthesized_list_splat:root
+  rule:print_statement:root
+  rule:print_statement_chevron:members.2
+  rule:raise_statement:members.1
+  rule:return_statement:members.1
+  rule:set:members.1
+  rule:set_comprehension:members.2/members.1
+  rule:simple_pattern_arm:root
+  rule:splat_pattern:members.0
+  rule:splat_pattern:members.1
+  rule:splat_type:root
+  rule:string:members.1
+  rule:string_content:root
+  rule:tuple:members.1
+  rule:type:root
+  rule:typed_parameter:root
+  rule:union_pattern:root
+  rule:with_clause:root
+  rule:yield:root
+  → generation recorded in /Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/wt-2c-census/node_modules/.cache/sittir/generated-manifest/python.json
+
+Regen diff vs HEAD — python
+  (no generated changes vs HEAD)
+
+Done! Generated:
+  .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+
+    rust/crates/sittir-python/test-fixtures.json (3746 render + 3746 roundtrip, 152 kinds)
