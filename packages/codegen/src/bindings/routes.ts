@@ -195,7 +195,7 @@ export function isLayout(input: GrammarInput, owner: string, slot: ModelSlot): b
 const TRANSPARENT_MODEL_TYPES: ReadonlySet<string> = new Set(['envelope', 'alias', 'polymorph']);
 
 function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | undefined {
-	const declared = declaredContainerOf(input, node);
+	const declared = declaredContainersOf(input, node)[0];
 	if (declared === undefined && node.modelType === 'list') {
 		const items = node.slots.find((slot) => slot.multiple);
 		return items === undefined ? undefined : { slot: items.name, kinds: node.elementKinds, terminals: [], list: true };
@@ -211,14 +211,14 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 		: undefined;
 }
 
-function declaredContainerOf(input: GrammarInput, node: ModelNode): ContainerFact | undefined {
-	return input.bindings.containers.find((c) => c.kind === node.kind) ?? input.bindings.containers.find((c) => formsOf(input.model, c.kind).includes(node.kind));
+function declaredContainersOf(input: GrammarInput, node: ModelNode): readonly ContainerFact[] {
+	const { containers } = input.bindings;
+	return [...containers.filter((c) => c.kind === node.kind), ...containers.filter((c) => c.kind !== node.kind && formsOf(input.model, c.kind).includes(node.kind))];
 }
 
 function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['members']> {
-	const declared = input.bindings.containers.filter((c) => c.kind === node.kind || formsOf(input.model, c.kind).includes(node.kind));
 	const members = new Map<string, { readonly name: string; readonly slot: ModelSlot }>();
-	for (const container of declared) {
+	for (const container of declaredContainersOf(input, node)) {
 		const resolved = containerMembers(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
 		for (const { name, slot, flag } of resolved.members) {

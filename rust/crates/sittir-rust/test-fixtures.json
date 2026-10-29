@@ -22788,14 +22788,7 @@
                         "$text": "y"
                       }
                     },
-                    "_type": 63,
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          171
-                        ]
-                      }
-                    }
+                    "_type": 63
                   }
                 }
               ],
@@ -23436,14 +23429,7 @@
                     "$text": "y"
                   }
                 },
-                "_type": 63,
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      171
-                    ]
-                  }
-                }
+                "_type": 63
               }
             }
           ],
@@ -23653,14 +23639,7 @@
                   "$text": "y"
                 }
               },
-              "_type": 63,
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    171
-                  ]
-                }
-              }
+              "_type": 63
             }
           }
         ],
@@ -23828,14 +23807,7 @@
                 "$text": "y"
               }
             },
-            "_type": 63,
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  171
-                ]
-              }
-            }
+            "_type": 63
           }
         }
       ],
@@ -24035,14 +24007,7 @@
             "$text": "y"
           }
         },
-        "_type": 63,
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              171
-            ]
-          }
-        }
+        "_type": 63
       }
     },
     "expectedOutput": "#[attribute1]\ny: i32",
@@ -29295,13 +29260,6 @@
                         ],
                         "_delimiter": 0
                       }
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          171
-                        ]
-                      }
                     }
                   }
                 }
@@ -29660,13 +29618,6 @@
                       }
                     ],
                     "_delimiter": 0
-                  }
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      171
-                    ]
                   }
                 }
               }
@@ -30689,13 +30640,6 @@
                   ],
                   "_delimiter": 0
                 }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    171
-                  ]
-                }
               }
             }
           }
@@ -30956,13 +30900,6 @@
                   }
                 ],
                 "_delimiter": 0
-              }
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  171
-                ]
               }
             }
           }
@@ -31258,13 +31195,6 @@
               }
             ],
             "_delimiter": 0
-          }
-        },
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              171
-            ]
           }
         }
       }
@@ -51177,13 +51107,6 @@
                         ],
                         "_delimiter": 0
                       }
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          171
-                        ]
-                      }
                     }
                   }
                 },
@@ -51356,13 +51279,6 @@
                             }
                           ]
                         }
-                      }
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          171
-                        ]
                       }
                     }
                   }
@@ -53130,13 +53046,6 @@
                     ],
                     "_delimiter": 0
                   }
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      171
-                    ]
-                  }
                 }
               }
             },
@@ -53309,13 +53218,6 @@
                         }
                       ]
                     }
-                  }
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      171
-                    ]
                   }
                 }
               }
@@ -53582,13 +53484,6 @@
                   ],
                   "_delimiter": 0
                 }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    171
-                  ]
-                }
               }
             }
           },
@@ -53762,13 +53657,6 @@
                     ]
                   }
                 }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    171
-                  ]
-                }
               }
             }
           }
@@ -53890,13 +53778,6 @@
                   }
                 ],
                 "_delimiter": 0
-              }
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  171
-                ]
               }
             }
           }
@@ -54071,13 +53952,6 @@
                   ]
                 }
               }
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  171
-                ]
-              }
             }
           }
         }
@@ -54195,13 +54069,6 @@
               }
             ],
             "_delimiter": 0
-          }
-        },
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              171
-            ]
           }
         }
       }
@@ -54397,13 +54264,6 @@
                 }
               ]
             }
-          }
-        },
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              171
-            ]
           }
         }
       }

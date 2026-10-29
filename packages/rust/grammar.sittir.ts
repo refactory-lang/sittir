@@ -125,6 +125,8 @@ export default grammar(enrich(base), wire({
 		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		macro_invocation: { '"!"/before': preference('tight'), '"!"/after': preference('tight') },
 		inner_attribute_item: { '"!"/before': preference('tight') },
+		attributed_enum_variant: { 'attribute_item:/end': preference('newline') },
+		attributed_field_declaration: { 'attribute_item:/end': preference('newline') },
 		visibility_modifier_pub_scope: { before: preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },
 		variadic_parameter: { '"..."/before': preference('space') },
