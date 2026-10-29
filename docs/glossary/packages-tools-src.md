@@ -401,3 +401,23 @@ Importable surface: `checkRegression(base, head): RegressionVerdict`.
 The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
 and calls the same function.
 ```
+
+### `packages/tools/src/commands.ts::GrammarCounts::portableRoundTrip`
+
+The round-trip result for the grammar, when it ran.
+
+### `packages/tools/src/history.ts::ValidationRun::portableRoundTripPass`
+
+The number of round-trip entries that passed.
+
+### `packages/tools/src/history.ts::ValidationRun::portableRoundTripTotal`
+
+The number of round-trip entries.
+
+### `packages/tools/src/history.ts::ValidationRun::portableRoundTripAstMatchPass`
+
+The number of round-trip entries whose syntax tree matched.
+
+### `packages/tools/src/history.ts::ValidationRun::portableRoundTripCarried`
+
+The number of round-trip entries that carried something past the structure.
