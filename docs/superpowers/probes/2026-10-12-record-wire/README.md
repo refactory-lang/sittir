@@ -6,10 +6,10 @@ hydrates records to the requested depth in Rust, then renders using native
 record addresses. It never constructs JavaScript node views or requests node
 text or arena chunks. Built-node construction and edits need separate workloads.
 
-The [eager construction probe](eager/README.md#current-paired-measurements) compares direct
-immutable record construction with object construction using equivalent wrappers.
-Its small-function workload measures build, render, native deep reparse and
-sharing edits separately from the corpus validator comparisons below.
+The [eager construction probe](eager/README.md) is frozen. It compared direct
+immutable record construction with object construction through its own
+wrappers, not the engine's builders, so its figures do not describe
+`engine.build.*`.
 
 ## Running
 
@@ -243,7 +243,7 @@ Each cell below sums the five grammar medians for a complete corpus batch. This 
 | factory-render-parse | 10,397.063 | 10,440.357 | 1.004× |
 | ir-render-parse | 10,485.410 | 10,508.598 | 1.002× |
 
-Factory and IR construct object trees under both storage settings. Their ratios include the cost of reading parsed reference nodes under the selected storage; these runs do not measure eager packed builders. Deep read uses native hydration, typed-cell candidate enumeration and candidate rendering for arena storage, with normal source folding enabled. The object path retains its existing detached candidate rendering.
+Each row is its bucket's whole validator round trip: producing the nodes, rendering, reparsing and comparing. The factory and IR rows are not construction measurements. Factory and IR construct object trees under both storage settings. Their ratios include the cost of reading parsed reference nodes under the selected storage; these runs do not measure eager packed builders. Deep read uses native hydration, typed-cell candidate enumeration and candidate rendering for arena storage, with normal source folding enabled. The object path retains its existing detached candidate rendering.
 
 ### Per-grammar validator timings
 

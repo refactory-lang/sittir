@@ -256,6 +256,8 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// the row's record, which stays native, or, for a recordless leaf, the
     /// same coordinate cell as a slot holds. Every other lookup is
     /// `sources`', the call's table, as `render_record` reads it.
+    /// Only the candidate's own outer sides are omitted; the frames its
+    /// edge items hold remain part of its content.
     ///
     /// # Errors
     ///
@@ -394,11 +396,11 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
     }
 
     fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        let mut frames = self.sources.frames(coord);
         if self.is_root(coord) {
-            crate::trivia::Frames::default()
-        } else {
-            self.sources.frames(coord)
+            frames.own = self.sides(coord);
         }
+        frames
     }
 
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {

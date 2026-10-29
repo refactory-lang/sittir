@@ -1,0 +1,91 @@
+{
+  "at": "2026-10-29T12:09:03.049Z",
+  "fingerprints": [
+    {
+      "grammar": "python",
+      "objectUnchanged": true,
+      "arenaUnchanged": false,
+      "oldArena": {
+        "calls": 3924,
+        "bytes": 70578,
+        "sha256": "8074a154d7d99b4b31a8ad84b8169dd2804b3d4e92d81001f7a16bf80ee33002"
+      },
+      "newArena": {
+        "calls": 3924,
+        "bytes": 70714,
+        "sha256": "48ec50bd927fea12ca93fdfc6ec2c1376ec95fd3feff293423da77db8838faff"
+      }
+    },
+    {
+      "grammar": "rust",
+      "objectUnchanged": true,
+      "arenaUnchanged": true,
+      "oldArena": {
+        "calls": 3808,
+        "bytes": 67369,
+        "sha256": "951bf9b5d306f471e9109e06738ef319c5bfc92def52c8f1cef1c8ac85663877"
+      },
+      "newArena": {
+        "calls": 3808,
+        "bytes": 67369,
+        "sha256": "951bf9b5d306f471e9109e06738ef319c5bfc92def52c8f1cef1c8ac85663877"
+      }
+    },
+    {
+      "grammar": "typescript",
+      "objectUnchanged": true,
+      "arenaUnchanged": true,
+      "oldArena": {
+        "calls": 2993,
+        "bytes": 62192,
+        "sha256": "e2b29c984e6df1ba123d50a7516e4fefd2b3601db31e4b8a9e70b8fd920c71be"
+      },
+      "newArena": {
+        "calls": 2993,
+        "bytes": 62192,
+        "sha256": "e2b29c984e6df1ba123d50a7516e4fefd2b3601db31e4b8a9e70b8fd920c71be"
+      }
+    },
+    {
+      "grammar": "regex",
+      "objectUnchanged": true,
+      "arenaUnchanged": true,
+      "oldArena": {
+        "calls": 453,
+        "bytes": 3264,
+        "sha256": "887390a1fdf3ac1e54683589ef0646735eaedb5d8f1fb8ceaf62781634e150f3"
+      },
+      "newArena": {
+        "calls": 453,
+        "bytes": 3264,
+        "sha256": "887390a1fdf3ac1e54683589ef0646735eaedb5d8f1fb8ceaf62781634e150f3"
+      }
+    },
+    {
+      "grammar": "scm",
+      "objectUnchanged": true,
+      "arenaUnchanged": true,
+      "oldArena": {
+        "calls": 450,
+        "bytes": 9658,
+        "sha256": "d41441c725a7b1558c25c429f701a473798fa935ae7ed1ef28d9ae888fcf7cab"
+      },
+      "newArena": {
+        "calls": 450,
+        "bytes": 9658,
+        "sha256": "d41441c725a7b1558c25c429f701a473798fa935ae7ed1ef28d9ae888fcf7cab"
+      }
+    }
+  ],
+  "pythonChangedCandidateIndices": [
+    1707,
+    3587,
+    3636,
+    3637,
+    3749,
+    3750,
+    3751,
+    3752
+  ],
+  "onlyTheEightConfirmedCommentLossesChanged": true
+}

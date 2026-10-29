@@ -1,0 +1,164 @@
+{
+  "at": "2026-10-29T12:07:21.090Z",
+  "reports": [
+    {
+      "grammar": "python",
+      "calls": 3924,
+      "work": {
+        "cases": 3924,
+        "sha256": "440f70770e02187e00cb87e44526deead58870f14e975a2e247cd6bc3be85348"
+      },
+      "object": {
+        "calls": 3924,
+        "bytes": 70873,
+        "sha256": "df4f3c168f8db82e87406beb6b620649de0371361f9294a995c96dcd0cface61"
+      },
+      "arena": {
+        "calls": 3924,
+        "bytes": 70714,
+        "sha256": "48ec50bd927fea12ca93fdfc6ec2c1376ec95fd3feff293423da77db8838faff"
+      },
+      "differences": 956,
+      "nonWhitespaceDifferences": 0
+    },
+    {
+      "grammar": "rust",
+      "calls": 3808,
+      "work": {
+        "cases": 3808,
+        "sha256": "3b8f634b6991576af0f71aba04c015a8ef086c9066b80ed7c0cd706570c2f085"
+      },
+      "object": {
+        "calls": 3808,
+        "bytes": 67332,
+        "sha256": "3a029facf8baa96e7699ca70b34fb2305217b5ceca25514c39d6f185e98bd16a"
+      },
+      "arena": {
+        "calls": 3808,
+        "bytes": 67369,
+        "sha256": "951bf9b5d306f471e9109e06738ef319c5bfc92def52c8f1cef1c8ac85663877"
+      },
+      "differences": 49,
+      "nonWhitespaceDifferences": 0
+    },
+    {
+      "grammar": "typescript",
+      "calls": 2993,
+      "work": {
+        "cases": 2993,
+        "sha256": "36e2b3ae77722ed495e22f5e57647856382abb5e08c93fb60cd7eafed0ec24aa"
+      },
+      "object": {
+        "calls": 2993,
+        "bytes": 62068,
+        "sha256": "52a19727b84879b66d2635db71c204b48760e36630248c5e5805552b25074c03"
+      },
+      "arena": {
+        "calls": 2993,
+        "bytes": 62192,
+        "sha256": "e2b29c984e6df1ba123d50a7516e4fefd2b3601db31e4b8a9e70b8fd920c71be"
+      },
+      "differences": 325,
+      "nonWhitespaceDifferences": 4
+    },
+    {
+      "grammar": "regex",
+      "calls": 453,
+      "work": {
+        "cases": 453,
+        "sha256": "60081ef029cd88c51e46b5c4c4c40a0d21265c9846b890b239bca243fa092b0a"
+      },
+      "object": {
+        "calls": 453,
+        "bytes": 3290,
+        "sha256": "76ac542c86e591e7afb904b55b549aa137759f10f6c8fb4b986b115b473380fd"
+      },
+      "arena": {
+        "calls": 453,
+        "bytes": 3264,
+        "sha256": "887390a1fdf3ac1e54683589ef0646735eaedb5d8f1fb8ceaf62781634e150f3"
+      },
+      "differences": 15,
+      "nonWhitespaceDifferences": 0
+    },
+    {
+      "grammar": "scm",
+      "calls": 450,
+      "work": {
+        "cases": 450,
+        "sha256": "c10268b0143ec6095afe226ce18d22f6daca5e9941b5ef46c561103a0b717fe1"
+      },
+      "object": {
+        "calls": 450,
+        "bytes": 9648,
+        "sha256": "d4e22aee045e08be52f8eb9b493fdefa80607f170cec30baa556e1f4f36d68fc"
+      },
+      "arena": {
+        "calls": 450,
+        "bytes": 9658,
+        "sha256": "d41441c725a7b1558c25c429f701a473798fa935ae7ed1ef28d9ae888fcf7cab"
+      },
+      "differences": 3,
+      "nonWhitespaceDifferences": 0
+    }
+  ],
+  "priorLostComments": [
+    {
+      "index": 1707,
+      "entry": "Adding a wild card",
+      "kind": "simple_statements_elements",
+      "rendered": "... # Code omitted for brevity\n",
+      "byteExact": true
+    },
+    {
+      "index": 3587,
+      "entry": "Comments",
+      "kind": "simple_statements_elements",
+      "rendered": "print b # bye\n",
+      "byteExact": true
+    },
+    {
+      "index": 3636,
+      "entry": "Comments at the ends of indented blocks",
+      "kind": "simple_statements_elements",
+      "rendered": "b # comment\n",
+      "byteExact": true
+    },
+    {
+      "index": 3637,
+      "entry": "Comments at the ends of indented blocks",
+      "kind": "simple_statements_elements",
+      "rendered": "b # comment\n",
+      "byteExact": true
+    },
+    {
+      "index": 3749,
+      "entry": "Type Alias Statements",
+      "kind": "simple_statements_elements",
+      "rendered": "type IntFunc[**P] = Callable[P, int] # ParamSpec\n",
+      "byteExact": true
+    },
+    {
+      "index": 3750,
+      "entry": "Type Alias Statements",
+      "kind": "simple_statements_elements",
+      "rendered": "type LabeledTuple[*Ts] = tuple[str, *Ts] # TypeVarTuple\n",
+      "byteExact": true
+    },
+    {
+      "index": 3751,
+      "entry": "Type Alias Statements",
+      "kind": "simple_statements_elements",
+      "rendered": "type HashableSequence[T: Hashable] = Sequence[T] # TypeVar with bound\n",
+      "byteExact": true
+    },
+    {
+      "index": 3752,
+      "entry": "Type Alias Statements",
+      "kind": "simple_statements_elements",
+      "rendered": "type IntOrStrSequence[T: (int, str)] = Sequence[T] # TypeVar with constraints\n",
+      "byteExact": true
+    }
+  ],
+  "caveat": "Whitespace removal classifies remaining differences; it is not a byte-parity or semantic-equivalence gate."
+}

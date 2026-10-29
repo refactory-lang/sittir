@@ -6,9 +6,7 @@ import os from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const PHASES = ['build', 'render', 'parse', 'pipeline', 'edit'];
 const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'];
-const PROBE = 'docs/superpowers/probes/2026-10-12-record-wire/eager';
 const IDLE = 'docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const command = (name, args) => execFileSync(name, args, { encoding: 'utf8' }).trim();
@@ -66,10 +64,8 @@ export function capture() {
 	const source = tracked.filter(
 		(path) =>
 			/^(packages|rust|scripts)\//.test(path) ||
-			path.startsWith(`${PROBE}/`) ||
 			path === IDLE ||
 			path === 'Cargo.lock' ||
-			path === 'docs/superpowers/probes/2026-10-01-shared-arena/2026-10-01/encode-runtime.mts' ||
 			(!path.includes('/') && /\.(json|ya?ml|toml|[cm]?ts|[cm]?js)$/.test(path))
 	);
 	const compiled = readdirSync('packages').flatMap((name) => filesUnder(`packages/${name}/dist`));
@@ -78,7 +74,6 @@ export function capture() {
 		assert.equal(binaries.length, 1, `one host addon required for ${name}`);
 		return [...binaries, `packages/${name}/.sittir/parser.wasm`, `packages/${name}/.sittir/upstream.wasm`];
 	});
-	if (existsSync(`${PROBE}/native/eager-builder-probe.node`)) native.push(`${PROBE}/native/eager-builder-probe.node`);
 	const release = readFileSync('Cargo.toml', 'utf8')
 		.split(/(?=^\[)/m)
 		.find((part) => part.startsWith('[profile.release]'));
@@ -127,10 +122,10 @@ export function verify(before, after) {
 
 function checkWorkers(workers, rounds, modeOf) {
 	assert.equal(new Set(workers.map((worker) => worker.pid)).size, workers.length, 'workers must be fresh');
-	const groups = [...new Set(workers.map((worker) => worker.grammar ?? 'eager'))];
+	const groups = [...new Set(workers.map((worker) => worker.grammar))];
 	for (const group of groups) {
 		for (let round = 0; round < rounds; round++) {
-			const pair = workers.filter((worker) => (worker.grammar ?? 'eager') === group && worker.round === round);
+			const pair = workers.filter((worker) => (worker.grammar) === group && worker.round === round);
 			assert.deepEqual(
 				pair.map(modeOf),
 				round % 2 ? ['arena', 'object'] : ['object', 'arena'],
@@ -141,56 +136,6 @@ function checkWorkers(workers, rounds, modeOf) {
 	assert.equal(workers.length, groups.length * rounds * 2, 'incomplete worker population');
 	for (const worker of workers)
 		assert(Number(worker.idle?.match(/(\d+)%/)?.[1]) >= 75, 'worker did not pass the idle gate');
-}
-
-export function analyzeEager(data) {
-	assert.equal(data.rounds, 5);
-	assert.equal(data.warmup, 2);
-	assert.equal(data.iterations, 3);
-	assert.equal(data.count, 10000);
-	assert(data.idleGated);
-	checkWorkers(data.workers, data.rounds, (worker) => worker.mode);
-	const samples = data.workers.flatMap((worker) => worker.samples);
-	assert.equal(samples.length, 30);
-	assert(samples.every((sample) => sample.count === data.count));
-	for (const key of ['count', 'casesSha256', 'renderSha256', 'renderBytes'])
-		assert.equal(new Set(samples.map((sample) => sample[key])).size, 1, `changed ${key}`);
-	const result = { phases: {}, memoryMiB: {}, arenaStorage: {}, ratios: {}, workers: data.workers.length };
-	for (const mode of ['object', 'arena']) {
-		const workers = data.workers.filter((worker) => worker.mode === mode);
-		result.phases[mode] = {};
-		for (const phase of PHASES) {
-			const measured = stats(workers.map((worker) => median(worker.samples.map((sample) => sample.phases[phase]))));
-			const reported = data.summary[mode][phase];
-			near(measured.median, reported.medianMs);
-			near(measured.min, reported.minMs);
-			near(measured.max, reported.maxMs);
-			result.phases[mode][phase] = measured;
-		}
-		result.memoryMiB[mode] = {};
-		for (const population of ['renderedDelta', 'snapshotsDelta']) {
-			const field = (key) => workers.map((worker) => worker.memory[population][key]);
-			result.memoryMiB[mode][population] = {
-				heapUsed: median(field('heapUsed')) / 1048576,
-				external: median(field('external')) / 1048576,
-				rss: median(field('rss')) / 1048576,
-				heapPlusExternal:
-					median(workers.map((worker) => worker.memory[population].heapUsed + worker.memory[population].external)) /
-					1048576
-			};
-		}
-		if (mode === 'arena')
-			for (const population of ['builtStorage', 'editedStorage']) {
-				const value = workers[0].memory[population];
-				for (const worker of workers) assert.deepEqual(worker.memory[population], value);
-				result.arenaStorage[population] = value;
-			}
-	}
-	for (const phase of PHASES) {
-		result.ratios[phase] = result.phases.arena[phase].median / result.phases.object[phase].median;
-		near(result.ratios[phase], data.ratios[phase]);
-	}
-	return result;
 }
 
 export function mergeCorpusShards(shards, grammars) {
@@ -356,36 +301,24 @@ export function analyzeCorpus(data) {
 }
 
 export function summarize(data) {
-	const eager = Array.isArray(data.workers);
-	const analysis = eager ? analyzeEager(data) : analyzeCorpus(data);
-	const rows = eager
-		? PHASES.map((phase) => [
-				phase,
-				analysis.phases.object[phase].median,
-				analysis.phases.arena[phase].median,
-				analysis.ratios[phase]
-			])
-		: Object.entries(analysis.aggregates).map(([bucket, value]) => [
-				bucket,
-				value.objectMs,
-				value.arenaMs,
-				value.ratio
-			]);
+	const analysis = analyzeCorpus(data);
 	const lines = [
-		`# ${eager ? 'Eager construction' : 'Corpus storage'} benchmark`,
+		'# Corpus storage benchmark',
 		'',
 		'Descriptive measurements; no performance threshold is enforced. Arena/object below one favors arena.',
 		'',
-		'| Work | Object ms | Arena ms | Arena/object |',
+		'| Whole validator round trip | Object ms | Arena ms | Arena/object |',
 		'| --- | ---: | ---: | ---: |',
-		...rows.map(
-			([label, object, arena, ratio]) =>
-				`| ${label} | ${object.toFixed(3)} | ${arena.toFixed(3)} | ${ratio.toFixed(3)} |`
+		...Object.entries(analysis.aggregates).map(
+			([bucket, value]) =>
+				`| ${bucket} | ${value.objectMs.toFixed(3)} | ${value.arenaMs.toFixed(3)} | ${value.ratio.toFixed(3)} |`
 		),
 		'',
 		"Medians are computed from each worker's three batches, then across five workers. Ranges remain in analysis.json and raw samples.",
 		'',
-		`Native parsed hydration currently builds typed Rust nodes before record encoding. No intermediate JS AST crosses the bridge. ${
+		"Each row times its bucket's whole validator round trip: producing the nodes, rendering, reparsing and comparing. The factory and IR rows are therefore not construction measurements.",
+		'',
+		`${
 			constructionOf(data) === 'records'
 				? 'Factory and IR buckets build records on the arena arm and objects on the object arm.'
 				: 'Factory and IR buckets build objects under both storage settings.'
@@ -397,53 +330,39 @@ export function summarize(data) {
 			"Grammar shards ran on separate runners. Every object/arena pair and all five rounds for a grammar ran on that grammar's single runner; raw shard environments retain host details.",
 			''
 		);
-	if (eager) {
-		lines.push('| Retained population | Memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
-		for (const population of ['renderedDelta', 'snapshotsDelta'])
-			for (const [field, label] of [
-				['heapUsed', 'Heap delta'],
-				['external', 'External delta'],
-				['heapPlusExternal', 'Heap + external delta'],
-				['rss', 'RSS delta']
+	lines.push(
+		`Corpus rows sum ${data.options.grammars.length} grammar medians, rather than timing a combined run. Arena RRP performs native deep root hydration; no additional JS inspection benchmark is added.`,
+		''
+	);
+	if (Object.keys(analysis.memoryMiB).length) {
+		lines.push('| Grammar | Worker memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
+		for (const [grammar, modes] of Object.entries(analysis.memoryMiB))
+			for (const [label, field] of [
+				['Whole-worker peak RSS', (value) => value.peakRss.median],
+				['Leak check: settled heap delta', (value) => value.settledDelta.heapUsed],
+				['Leak check: settled external delta', (value) => value.settledDelta.external],
+				['Leak check: settled heap + external delta', (value) => value.heapPlusExternalDelta],
+				['Leak check: settled RSS delta', (value) => value.settledDelta.rss]
 			])
 				lines.push(
-					`| ${population} | ${label} | ${analysis.memoryMiB.object[population][field].toFixed(3)} | ${analysis.memoryMiB.arena[population][field].toFixed(3)} |`
+					`| ${grammar} | ${label} | ${field(modes.object).toFixed(3)} | ${field(modes.arena).toFixed(3)} |`
 				);
-	} else {
 		lines.push(
-			`Corpus rows sum ${data.options.grammars.length} grammar medians, rather than timing a combined run. Arena RRP performs native deep root hydration; no additional JS inspection benchmark is added.`,
+			'',
+			'Memory medians cover five fresh workers per mode. Peak RSS includes process startup, warmups and all three buckets; it is not a per-bucket peak and is not summed across grammars. The settled deltas are a leak check: they compare GC-settled snapshots after loading the engine/corpus and after all validation has finished, so they show what validation leaves behind, not the memory a retained AST population holds. Memory capture and GC stay outside timing.',
 			''
 		);
-		if (Object.keys(analysis.memoryMiB).length) {
-			lines.push('| Grammar | Worker memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
-			for (const [grammar, modes] of Object.entries(analysis.memoryMiB))
-				for (const [label, field] of [
-					['Whole-worker peak RSS', (value) => value.peakRss.median],
-					['Settled heap delta', (value) => value.settledDelta.heapUsed],
-					['Settled external delta', (value) => value.settledDelta.external],
-					['Settled heap + external delta', (value) => value.heapPlusExternalDelta],
-					['Settled RSS delta', (value) => value.settledDelta.rss]
-				])
-					lines.push(
-						`| ${grammar} | ${label} | ${field(modes.object).toFixed(3)} | ${field(modes.arena).toFixed(3)} |`
-					);
+		if (analysis.builtArena) {
+			lines.push('| Grammar | Built arena, MiB | Count tables, MiB | Count tables per chunk byte |', '| --- | ---: | ---: | ---: |');
+			for (const [grammar, row] of Object.entries(analysis.builtArena))
+				lines.push(`| ${grammar} | ${row.chunksMiB.toFixed(3)} | ${row.countsMiB.toFixed(3)} | ${(row.countShare * 100).toFixed(1)} % |`);
 			lines.push(
 				'',
-				'Memory medians cover five fresh workers per mode. Peak RSS includes process startup, warmups and all three buckets; it is not a per-bucket peak and is not summed across grammars. Settled deltas compare GC-settled snapshots after loading the engine/corpus and after all validation has finished; they do not measure retained AST populations. Memory capture and GC stay outside timing.',
+				"Built allocator state at sampling after all three buckets: chunks including count tables, and count tables against the chunks' own bytes. This is not a retained node population.",
 				''
 			);
-			if (analysis.builtArena) {
-				lines.push('| Grammar | Built arena, MiB | Count tables, MiB | Count tables per chunk byte |', '| --- | ---: | ---: | ---: |');
-				for (const [grammar, row] of Object.entries(analysis.builtArena))
-					lines.push(`| ${grammar} | ${row.chunksMiB.toFixed(3)} | ${row.countsMiB.toFixed(3)} | ${(row.countShare * 100).toFixed(1)} % |`);
-				lines.push(
-					'',
-					"The built arena as each arena worker left it after all three buckets, with nothing released: its chunks with their count tables, and the count tables against the chunks' own bytes.",
-					''
-				);
-			}
-		} else lines.push('Worker memory was not recorded in this historical report.', '');
-	}
+		}
+	} else lines.push('Worker memory was not recorded in this historical report.', '');
 	lines.push(
 		'',
 		'External memory includes array buffers; do not add them again. RSS overlaps heap and external memory, so do not sum these columns. These fields do not provide complete native retained-memory attribution.',

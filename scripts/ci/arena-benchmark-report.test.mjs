@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { analyzeCorpus, analyzeEager, mergeCorpusShards, summarize, verify } from './arena-benchmark-report.mjs';
+import { analyzeCorpus, mergeCorpusShards, summarize, verify } from './arena-benchmark-report.mjs';
 
 const result = (name) =>
 	JSON.parse(
@@ -10,14 +10,17 @@ const result = (name) =>
 			'utf8'
 		)
 	);
-const eager = () => result('2026-10-22-eager-literal-slots-storage-darwin-arm64.json');
 const corpus = () => result('2026-10-22-validation-storage-darwin-arm64.json');
 
-test('recomputes known eager medians and ratio from raw workers', () => {
-	const measured = analyzeEager(eager());
-	assert(Math.abs(measured.phases.object.build.median - 17.024625) < 1e-9);
-	assert(Math.abs(measured.phases.arena.build.median - 14.771125) < 1e-9);
-	assert(Math.abs(measured.ratios.build - 0.8676329140876831) < 1e-12);
+test('describes sampled allocator state without claiming an unreleased node population', () => {
+	const data = corpus();
+	const zero = { heapUsed: 0, heapTotal: 0, external: 0, arrayBuffers: 0, rss: 0 };
+	for (const worker of data.validationSamples)
+		worker.memory = { baseline: { ...zero }, after: { ...zero }, peakRssBytes: 0, built: { chunks: 8192, counts: 1024 } };
+	const { markdown } = summarize(data);
+	assert.doesNotMatch(markdown, /typed Rust nodes before record encoding|nothing released/);
+	assert.match(markdown, /allocator state/);
+	assert.match(markdown, /not a retained/);
 });
 
 test('recomputes all corpus phase rows and known aggregate ratios', () => {
@@ -27,16 +30,13 @@ test('recomputes all corpus phase rows and known aggregate ratios', () => {
 	assert(Math.abs(measured.aggregates['read-render-parse'].ratio - 0.7610036878105529) < 1e-12);
 });
 
-test('rejects reused workers, changed render fingerprints and invented summaries', () => {
-	const reused = eager();
-	reused.workers[1].pid = reused.workers[0].pid;
-	assert.throws(() => analyzeEager(reused), /workers must be fresh/);
-	const changed = eager();
-	changed.workers[0].samples[0].renderSha256 = '0'.repeat(64);
-	assert.throws(() => analyzeEager(changed), /changed renderSha256/);
-	const invented = eager();
-	invented.summary.arena.build.medianMs += 1;
-	assert.throws(() => analyzeEager(invented), /statistic differs/);
+test('rejects reused workers and invented summaries', () => {
+	const reused = corpus();
+	reused.validationSamples[1].pid = reused.validationSamples[0].pid;
+	assert.throws(() => analyzeCorpus(reused), /workers must be fresh/);
+	const invented = corpus();
+	invented.validationSummary[0].timings[0].arenaMs += 1;
+	assert.throws(() => analyzeCorpus(invented), /statistic differs/);
 });
 
 test('refuses a changed corpus result and incomplete worker population', () => {
@@ -48,19 +48,18 @@ test('refuses a changed corpus result and incomplete worker population', () => {
 	assert.throws(() => analyzeCorpus(incomplete));
 });
 
-test('accepts signed GC memory deltas', () => {
-	const data = eager();
-	for (const worker of data.workers) worker.memory.renderedDelta.heapUsed = -1048576;
-	assert.equal(analyzeEager(data).memoryMiB.arena.renderedDelta.heapUsed, -1);
-});
-
 test('reports slower arena timings without a performance gate', () => {
-	const data = eager();
-	for (const worker of data.workers.filter((value) => value.mode === 'arena'))
-		for (const sample of worker.samples) sample.phases.build *= 10;
-	for (const key of ['medianMs', 'minMs', 'maxMs', 'nsPerRoot']) data.summary.arena.build[key] *= 10;
-	data.ratios.build *= 10;
-	assert(summarize(data).analysis.ratios.build > 1);
+	const data = corpus();
+	for (const worker of data.validationSamples.filter((value) => value.storage === 'arena'))
+		for (const bucket of worker.buckets)
+			for (const phase of Object.keys(bucket.timings)) bucket.timings[phase] = bucket.timings[phase].map((ms) => ms * 10);
+	for (const summary of data.validationSummary)
+		for (const timing of summary.timings) {
+			timing.arenaMs *= 10;
+			timing.arenaRange = timing.arenaRange.map((ms) => ms * 10);
+			if (timing.arenaOverObject !== null) timing.arenaOverObject *= 10;
+		}
+	assert(Object.values(summarize(data).analysis.aggregates).every((value) => value.ratio > 1));
 });
 
 test('interval verification rejects runtime or commit changes', () => {
@@ -98,6 +97,8 @@ test('reports corpus peak RSS and signed settled deltas without summing process 
 	assert.match(markdown, /all three buckets/);
 	assert.match(markdown, /Object ms/);
 	assert.match(markdown, /MiB/);
+	assert.match(markdown, /Leak check: settled heap delta/);
+	assert.match(markdown, /settled deltas are a leak check/);
 	delete data.validationSamples[0].memory;
 	assert.throws(() => analyzeCorpus(data), /incomplete worker memory/);
 });
@@ -108,19 +109,11 @@ test('historical corpus reports mark absent memory rather than inventing zero us
 	assert.match(markdown, /Worker memory was not recorded/);
 });
 
-test('eager summary includes heap, external and RSS beside milliseconds', () => {
-	const data = eager();
-	const { analysis, markdown } = summarize(data);
-	assert.equal(
-		analysis.memoryMiB.arena.renderedDelta.rss,
-		data.workers
-			.filter((worker) => worker.mode === 'arena')
-			.map((worker) => worker.memory.renderedDelta.rss)
-			.sort((a, b) => a - b)[2] / 1048576
-	);
-	assert.match(markdown, /RSS delta/);
-	assert.match(markdown, /External delta/);
-	assert.match(markdown, /Object ms/);
+test('labels each corpus row as a whole validator round trip, not construction', () => {
+	const { markdown } = summarize(corpus());
+	assert.match(markdown, /\| Whole validator round trip \| Object ms \| Arena ms \| Arena\/object \|/);
+	assert.match(markdown, /\| factory-render-parse \|/);
+	assert.match(markdown, /not construction measurements/);
 });
 
 test('independent grammar runners preserve complete coverage, paired statistics and runtime identity', () => {

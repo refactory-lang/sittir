@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-29T11:54:46.253Z",
+  "rows": [
+    {
+      "opposite": false,
+      "refusals": 0,
+      "samples": [
+        {
+          "iterations": 1,
+          "live": 0
+        },
+        {
+          "iterations": 2,
+          "live": 0
+        },
+        {
+          "iterations": 4,
+          "live": 0
+        },
+        {
+          "iterations": 8,
+          "live": 0
+        },
+        {
+          "iterations": 16,
+          "live": 0
+        },
+        {
+          "iterations": 32,
+          "live": 0
+        },
+        {
+          "iterations": 64,
+          "live": 0
+        },
+        {
+          "iterations": 128,
+          "live": 0
+        }
+      ]
+    },
+    {
+      "opposite": true,
+      "refusals": 128,
+      "samples": [
+        {
+          "iterations": 1,
+          "live": 0
+        },
+        {
+          "iterations": 2,
+          "live": 0
+        },
+        {
+          "iterations": 4,
+          "live": 0
+        },
+        {
+          "iterations": 8,
+          "live": 0
+        },
+        {
+          "iterations": 16,
+          "live": 0
+        },
+        {
+          "iterations": 32,
+          "live": 0
+        },
+        {
+          "iterations": 64,
+          "live": 0
+        },
+        {
+          "iterations": 128,
+          "live": 0
+        }
+      ]
+    }
+  ]
+}

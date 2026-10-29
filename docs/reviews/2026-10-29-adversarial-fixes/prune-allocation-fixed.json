@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-29T11:54:47.106Z",
+  "method": "in-process array-copy instrumentation, not timing",
+  "rows": [
+    {
+      "holders": 16,
+      "extraFlatCopies": 0,
+      "extraNumbersCopied": 0,
+      "finalLive": 0
+    },
+    {
+      "holders": 128,
+      "extraFlatCopies": 0,
+      "extraNumbersCopied": 0,
+      "finalLive": 0
+    },
+    {
+      "holders": 1024,
+      "extraFlatCopies": 0,
+      "extraNumbersCopied": 0,
+      "finalLive": 0
+    }
+  ]
+}

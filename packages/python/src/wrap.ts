@@ -38,7 +38,6 @@ import {
 	textOf,
 	isRecordPosition,
 	positionWords,
-	recordSlot,
 	recordPresent,
 	recordFlag,
 	childSlot,
@@ -87,9 +86,9 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	role?: Role
+	aliasContent = false
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -12879,15 +12878,7 @@ function viewNames(data: RecordPosition, tree: TreeHandle): T.Names.Parsed {
 }
 
 function viewAsPatternTarget$content(this: RecordHandle) {
-	return viewSlot<T.Expression>(
-		this,
-		2,
-		4,
-		3,
-		0,
-		2,
-		contentRole(this, () => recordSlot(this, 2, 4, 3, 0, 2))
-	);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2, true);
 }
 function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatternTarget.Parsed {
 	const node = {

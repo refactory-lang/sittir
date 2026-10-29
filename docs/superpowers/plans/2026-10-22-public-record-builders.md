@@ -154,15 +154,19 @@ the dispatcher is on master, and each run is dispatched at the slice's branch
 (`gh workflow run benchmarks.yml --ref <branch>`).
 
 - **Corpus job.** `sittir tool bench-storage --validation` pairs object and
-  arena engines over the complete validation buckets. Its factory and IR
-  buckets time construction (`build`) and render on each storage. From the
-  render bridge until the switch, `--construction records` gives the arena
-  arm's engines the record backend, so the same buckets compare the record
-  builders with the object builders. The report names the construction
-  backend.
-- **Eager job.** It measures the probe's private builders. It is the
-  baseline the public builders must match or beat: build, render, immutable
-  edit, and heap plus external memory over 10,000 builds.
+  arena engines over complete validator round trips: construction, rendering,
+  reparsing and comparison. The workflow's `construction` input selects records
+  or objects for the arena arm. Factory and IR totals are not isolated
+  construction timings; settled memory samples show leftovers, not retained ASTs.
+- **Construction job, planned.** Measure the engine's compiled runtime under
+  plain Node, separately reporting build, render and parse work. Report steady
+  construction, post-GC construction and the whole pass including deferred
+  release/GC, with retained roots and all-handles-held populations distinguished.
+  Do not force GC before the steady build window. Move corpus timing off the
+  TypeScript loader as part of this measurement work.
+- The private eager probe is frozen and removed from CI. Its private wrappers
+  do not measure engine construction or memory and are not an acceptance baseline
+  for public builders.
 - A slice that moves a measured phase reports the workflow's paired summary
   in its PR, with the run link.
 
@@ -170,14 +174,16 @@ the dispatcher is on master, and each run is dispatched at the slice's branch
 
 These must not be mistaken for completed builder integration:
 
-- Native parsed hydration still creates typed Rust nodes before arena encoding;
-  direct Tree-sitter-to-record writing is unfinished.
-- Reclamation of unreferenced built records and chunks, and complete native
-  retained-memory attribution, are unfinished; append-only allocation is not
-  reclamation.
-- The final cutover retires the transitional object codec, the object
-  projection and the compatibility options, once correctness and performance
-  are accepted.
+- Direct parsed hydration and counted release are implemented. Their presence
+  does not establish completion of the remaining safety, parity and lifecycle
+  acceptance gates.
+- Retained-memory evaluation must separate live records, open allocator reserve
+  and native/external memory; post-validation leftovers are not a retained AST
+  population.
+- Object storage, the object reader/codec and object construction remain permanent
+  engine choices. Object storage with record construction is refused. Selecting
+  defaults requires its own correctness and performance acceptance and does not
+  remove the other supported choices.
 - A built leaf written as a side entry (typescript's `html_comment`, the one
   stamped trivia kind assembled as a pattern) crosses as its text, not as kind
   and address: its record is a header, and its text is a span of the arena's

@@ -1,0 +1,127 @@
+
+ RUN  v4.1.5 .
+
+[vitest-setup] CI detected — skipping redundant pnpm -r run build (workflow already built)
+[rust] regenerating: its sources changed since the last generation
+[typescript] regenerating: its sources changed since the last generation
+[python] regenerating: its sources changed since the last generation
+[rust] regenerated: its sources changed since the last generation · diagnostics: none
+[typescript] regenerated: its sources changed since the last generation · diagnostics: none
+[python] regenerated: its sources changed since the last generation · diagnostics: none
+[rust] regenerated: forced · diagnostics: none
+[typescript] regenerated: forced · diagnostics: none
+[python] regenerated: forced · diagnostics: none
+[rust] regenerated: its sources changed since the last generation · diagnostics: none
+[typescript] regenerated: its sources changed since the last generation · diagnostics: none
+[python] regenerated: its sources changed since the last generation · diagnostics: none
+[rust] regenerated: its sources changed since the last generation · diagnostics: none
+[typescript] regenerated: its sources changed since the last generation · diagnostics: none
+[python] regenerated: its sources changed since the last generation · diagnostics: none
+ ❯ packages/tools/src/__tests__/regen-all.test.ts (28 tests | 3 failed) 1185ms
+     ✓ generates every grammar at once, then builds each native binding without generating again 55ms
+     ✓ prefixes each generation's output with its grammar under --verbose 51ms
+     ✓ starts no native builds if a generation fails, and exits with its status 52ms
+     ✓ skips a grammar whose generated files and native binary are fresh, and says so 52ms
+     ✓ runs only the workspace check when every grammar is fresh 0ms
+     ✓ exits with the status of a failed workspace check when every grammar is fresh 0ms
+     ✓ leaves the workspace check to the last native build when a grammar regenerates 53ms
+     ✓ installs a missing wasm toolchain once, before any grammar's sources are fingerprinted 1ms
+     ✓ installs a missing wasm toolchain once, before any grammar's sources are fingerprinted, under SITTIR_REGEN_FORCE 50ms
+     ✓ writes the vocabulary path list once, before any grammar's sources are fingerprinted, when every grammar is fresh 0ms
+     ✓ writes the vocabulary path list once, before any grammar's sources are fingerprinted, when a grammar is stale 53ms
+     ✓ regenerates every grammar under SITTIR_REGEN_FORCE, fresh or not 52ms
+     ✓ regenerates a grammar whose last regeneration did not finish, however fresh its files are 53ms
+     ✓ records each regenerated grammar only once the whole run, workspace check included, has succeeded 52ms
+     ✓ records the sources and fixture inputs as they were when the run started, so an edit during it reads as stale next time 54ms
+     ✓ leaves every grammar to regenerate after a failed workspace check, so a retry cannot pass by skipping 53ms
+     ✓ stops on an unsuccessful native build 54ms
+     ✓ keeps a successful generation's stdout to itself and passes its stderr through, prefixed 53ms
+     ✓ prints the whole stdout of a failed generation, so a quiet run never hides the cause 54ms
+     ✓ builds each native binding with cargo quiet and its stdout kept, and prints that stdout when the build fails 61ms
+     ✓ ends with one status line per grammar, with its diagnostic counts by severity 51ms
+     ✓ re-extracts only the fixtures of that grammar, and says why 51ms
+     ✓ re-extracts the fixtures of a grammar recorded before fixtures were 54ms
+     ✓ records nothing and exits with its status when the extraction fails 53ms
+     × regenerates the probe once every grammar is generated and built natively 61ms
+     × regenerates the probe after the workspace check when every grammar is fresh 2ms
+     ✓ leaves the probe alone when a generation fails 53ms
+     × exits with the status of a failed probe 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/src/__tests__/regen-all.test.ts > regen:all and the eager probe > regenerates the probe once every grammar is generated and built natively
+AssertionError: expected [] to deeply equal [ [ '/repo', true ] ]
+
+- Expected
++ Received
+
+- [
+-   [
+-     "/repo",
+-     true,
+-   ],
+- ]
++ []
+
+ ❯ packages/tools/src/__tests__/regen-all.test.ts:449:43
+    447|   for (const child of children) child.finish(0);
+    448|   await run;
+    449|   expect(regenerateEagerProbe.mock.calls).toEqual([['/repo', true]]);
+       |                                           ^
+    450|   expect(regenerateEagerProbe.mock.invocationCallOrder[0]).toBeGreater…
+    451|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  packages/tools/src/__tests__/regen-all.test.ts > regen:all and the eager probe > regenerates the probe after the workspace check when every grammar is fresh
+AssertionError: expected [] to deeply equal [ [ '/repo', false ] ]
+
+- Expected
++ Received
+
+- [
+-   [
+-     "/repo",
+-     false,
+-   ],
+- ]
++ []
+
+ ❯ packages/tools/src/__tests__/regen-all.test.ts:457:43
+    455|   vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    456|   await import('../scripts/regen-all.ts');
+    457|   expect(regenerateEagerProbe.mock.calls).toEqual([['/repo', false]]);
+       |                                           ^
+    458|   expect(regenerateEagerProbe.mock.invocationCallOrder[0]).toBeGreater…
+    459|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  packages/tools/src/__tests__/regen-all.test.ts > regen:all and the eager probe > exits with the status of a failed probe
+AssertionError: promise resolved "{ [Symbol(Symbol.toStringTag)]: 'Mod…' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
+- }
++ {}
+
+ ❯ packages/tools/src/__tests__/regen-all.test.ts:481:67
+    479|    throw new Error('exit');
+    480|   });
+    481|   await expect(import('../scripts/regen-all.ts')).rejects.toThrow('exi…
+       |                                                                   ^
+    482|   expect(exit).toHaveBeenCalledWith(5);
+    483|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 25 passed (28)
+   Start at  08:32:04
+   Duration  1.37s (transform 21ms, setup 0ms, import 25ms, tests 1.18s, environment 0ms)
+
+JSON report written to local-verification/current-red.json

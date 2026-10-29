@@ -311,7 +311,7 @@ function handleAccessorBody({ slot, config }: AccessorSlot, places: RecordPlaces
 	if (!storesNodes(config.storageInfo)) return place.run === undefined ? `return childSlot(this, ${cellArgs(place)})` : `return childItems(this, ${cellArgs(place, true)})`;
 	if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, ${cellArgs(place, true)})`;
 	const args = cellArgs(place);
-	const role = config.aliasContent === true ? `, contentRole(this, () => recordSlot(this, ${args}))` : '';
+	const role = config.aliasContent === true ? ', true' : '';
 	return `return viewSlot<${one}>(this, ${args}${role})`;
 }
 
@@ -681,8 +681,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
 			'  return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
-			'function viewSlot<T>(view: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, role?: Role): ParsedOfData<T> {',
-			'  return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;',
+			'function viewSlot<T>(view: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, aliasContent = false): ParsedOfData<T> {',
+			'  return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;',
 			'}',
 			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly ParsedOfData<T>[] {',
 			'  return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];',

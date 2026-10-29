@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.82s
+     Running tests/record_render.rs (target/debug/deps/record_render-cddd6b3fecb9d38a)
+
+running 24 tests
+test an_error_node_has_no_record ... ok
+test an_address_inside_a_side_record_is_refused_before_source_folding ... ok
+test a_chunk_is_copied_out_as_its_records_fill_it ... ok
+test a_node_s_record_is_written_on_its_first_read_and_answered_by_every_later_one ... ok
+test a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged ... ok
+test an_untouched_parsed_record_a_built_record_links_renders_as_its_source ... ok
+test a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it ... ok
+test a_candidate_keeps_line_breaks_between_unmodified_control_flow_children ... ok
+test an_address_that_names_no_record_of_the_arena_is_refused ... ok
+test a_node_framed_by_errors_on_both_sides_leaves_no_seam_past_its_holder ... ok
+test native_hydration_deepens_a_cached_record_without_rewriting_it ... ok
+test a_list_child_renders_with_the_extras_and_errors_its_edge_items_hold ... ok
+test a_list_candidate_keeps_the_trailing_comment_of_its_child ... ok
+test native_hydration_keeps_envelope_content_unindexed_and_writes_it_once ... ok
+test a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_natively ... ok
+test native_hydration_uses_the_readers_depth_boundary ... ok
+test an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_comment_as_its_source ... ok
+test payload_words_never_render_as_node_records ... ok
+test where_a_parsed_record_renders_never_depends_on_what_was_read ... ok
+test every_regex_source_renders_alike_from_its_records ... ok
+test every_scm_source_renders_alike_from_its_records ... ok
+test every_typescript_source_renders_alike_from_its_records ... ok
+test every_rust_source_renders_alike_from_its_records ... ok
+test every_python_source_renders_alike_from_its_records ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.65s

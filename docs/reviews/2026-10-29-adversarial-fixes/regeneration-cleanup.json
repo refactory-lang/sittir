@@ -1,0 +1,96 @@
+{
+  "recordedAt": "2026-10-29T12:36:54.830Z",
+  "head": "34f51c91f4a28b3c303811b86359fe010c298793",
+  "branch": "chore/remove-eager-lane",
+  "before": {
+    "passed": 25,
+    "failed": 3,
+    "total": 28
+  },
+  "preRemovalControl": {
+    "method": "Vite transform loads the exact HEAD runner in memory; working-tree source left intact",
+    "runnerPath": "packages/tools/src/scripts/regen-all.ts",
+    "runnerBlob": "ea4407999a8378055afaffa7f87ca1aaa88aa4f6",
+    "passed": 28,
+    "failed": 0
+  },
+  "retiredCases": [
+    {
+      "name": "regen:all and the eager probe regenerates the probe once every grammar is generated and built natively",
+      "previousStatus": "failed"
+    },
+    {
+      "name": "regen:all and the eager probe regenerates the probe after the workspace check when every grammar is fresh",
+      "previousStatus": "failed"
+    },
+    {
+      "name": "regen:all and the eager probe leaves the probe alone when a generation fails",
+      "previousStatus": "passed"
+    },
+    {
+      "name": "regen:all and the eager probe exits with the status of a failed probe",
+      "previousStatus": "failed"
+    }
+  ],
+  "after": {
+    "passed": 24,
+    "failed": 0,
+    "total": 24
+  },
+  "allRetainedCasesHaveIdenticalNamesAndPass": true,
+  "retainedFailureCoverage": [
+    "regen:all console, quiet by default builds each native binding with cargo quiet and its stdout kept, and prints that stdout when the build fails",
+    "regen:all console, quiet by default prints the whole stdout of a failed generation, so a quiet run never hides the cause",
+    "regen:all sequencing exits with the status of a failed workspace check when every grammar is fresh",
+    "regen:all sequencing leaves every grammar to regenerate after a failed workspace check, so a retry cannot pass by skipping",
+    "regen:all sequencing starts no native builds if a generation fails, and exits with its status",
+    "regen:all sequencing stops on an unsuccessful native build",
+    "regen:all when only what the fixtures come from changed records nothing and exits with its status when the extraction fails"
+  ],
+  "completedAt": "2026-10-29T12:41:09.667Z",
+  "finalFullSuite": {
+    "passed": 11150,
+    "expectedFailures": 6,
+    "failed": 0,
+    "skipped": 19,
+    "todo": 4,
+    "filesPassed": 929,
+    "filesFailed": 0,
+    "total": 11179
+  },
+  "testSourceTypeCheck": {
+    "command": "pnpm run type-check:tests",
+    "exitCode": 0
+  },
+  "lint": {
+    "command": "pnpm exec oxlint -c oxlint.config.ts packages/tools/src/__tests__/regen-all.test.ts",
+    "exitCode": 0
+  },
+  "provenance": {
+    "head": "34f51c91f4a28b3c303811b86359fe010c298793",
+    "branch": "chore/remove-eager-lane",
+    "staged": [
+      "D\t.github/workflows/benchmark-eager.yml",
+      "D\tpackages/tools/src/__tests__/eager-probe.test.ts",
+      "D\tpackages/tools/src/eager-probe.ts"
+    ],
+    "sections": {
+      "runtimeSource": {
+        "files": 2452,
+        "changes": [
+          "packages/tools/src/__tests__/regen-all.test.ts"
+        ]
+      },
+      "compiledRuntime": {
+        "files": 2566,
+        "changes": []
+      },
+      "nativeAndWasm": {
+        "files": 15,
+        "changes": []
+      }
+    },
+    "testDiffSha256": "e91ca3c8822208f21c299c0dac3f15255b4ac87660e73556df511d5ac16f60b0"
+  },
+  "productionBehaviorChanged": false
+}

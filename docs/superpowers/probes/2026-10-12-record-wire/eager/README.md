@@ -1,5 +1,19 @@
 # Eager immutable construction probe
 
+> **Frozen.** This probe is no longer regenerated or run in CI. Its generated
+> builders last matched the grammars at `34f51c91f` (`generate.mts --check`
+> passed there), and its last committed measurement is the inline run below,
+> at `566e90fbe`. Later grammar, layout and engine changes are not followed,
+> so its scripts may not run at later commits.
+>
+> Its views are the probe's own: literals with a closure per member, a weak
+> registry, and an interning map. They are not the engine's record handles or
+> object nodes, so its build and memory figures do not describe
+> `engine.build.*` under either construction. Measured on the engine's own
+> builders, records build 1.07–1.21× slower than objects in steady state and
+> 1.4–1.7× right after a full GC. They retain 20–94 B of heap per node with only
+> roots held, against 730–1,010 B for object nodes.
+
 This is the eager-builder measurement step in the [arena tables implementation
 plan](../../../plans/2026-10-10-arena-tables.md), following the [shared arena
 design](../../../specs/2026-10-01-shared-arena-design.md). It reuses the older
@@ -32,17 +46,16 @@ readiness or replace the full corpus validator comparisons.
 
 ## Build and verify
 
-From the repository root:
+From the repository root, at `34f51c91f`:
 
 ```sh
 pnpm run regen:all --force
-pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
+pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts
 pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts
 pnpm exec tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts
 ```
 
-`regen:all` runs the generator after the grammars, so the builders follow
-every regeneration, and a stale copy shows as a path regeneration writes.
+`generate.mts --check` reports a stale copy instead of writing it.
 The generator consumes the source compiler and source emitters together so
 their model classes have one identity. It checks its record layout against
 the generated `records.ts` and consumes the existing `slotStoredIds`

@@ -8,7 +8,7 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, eager, corpus]
+        options: [all, corpus]
       construction:
         description: How the corpus job's arena arm builds nodes
         type: choice
@@ -31,19 +31,6 @@ jobs:
     with:
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.prepare.outputs.prefix }}
-  eager-native:
-    needs: prepare
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
-    uses: ./.github/workflows/benchmark-native.yml
-    with:
-      grammar: eager
-      prefix: ${{ needs.prepare.outputs.prefix }}
-  eager:
-    needs: [prepare, native, eager-native]
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
-    uses: ./.github/workflows/benchmark-eager.yml
-    with:
-      runtime-prefix: ${{ needs.prepare.outputs.prefix }}
   corpus:
     needs: [prepare, native]
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
