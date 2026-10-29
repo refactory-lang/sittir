@@ -167,7 +167,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	const linkCtx = new LinkCtx({
 		grammar: raw,
 		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
-		wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
+		wordMatcher: wordMatcherRegex,
 		supertypes,
 		externalRoles,
 		inline: raw.inline,
@@ -1763,7 +1763,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				typeof rule.value === 'string' &&
 				rule.value.length > 0 &&
 				!isParserHiddenKind(rule.value, ctx.kindEntries) &&
-				!(ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined))
+				!ctx.isWordShaped(rule.value)
 			) {
 				const literal: StringRule<'link'> = { type: STRING, value: rule.value };
 				return aliasesImmediateToken(rule.content, ctx) ? { type: TOKEN, content: literal, immediate: true } : literal;
@@ -1966,10 +1966,7 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				}
 				return;
 			case STRING: {
-				const isWordShape = ctx.wordMatcher
-					? ctx.wordMatcher(current.value)
-					: matchesWordShape(current.value, undefined);
-				if (isWordShape) return;
+				if (ctx.isWordShaped(current.value)) return;
 				const entry = findEntryForLiteralText(ctx.kindEntries, current.value);
 				subtypes.push({ type: SYMBOL, name: entry?.kind ?? current.value, literal: current.value });
 				return;

@@ -119,7 +119,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
-			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
+			wordMatcher: normalized.wordMatcher,
 			generatedIdTables: normalized.generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
 			leafTextPatterns: normalized.leafTextPatterns
@@ -671,7 +671,7 @@ function resolveHiddenRuleContent(
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
 		case STRING: {
-			const isWordShape = ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined);
+			const isWordShape = ctx.isWordShaped(rule.value);
 			if (isWordShape) return [];
 			const entry = findEntryForLiteralText(kindEntries, rule.value);
 			return [{ name: entry?.kind ?? rule.value, storageKindId: rule.resolvedKindId ?? entry?.id }];
