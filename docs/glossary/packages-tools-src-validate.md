@@ -1747,3 +1747,115 @@ The entries whose syntax tree did not match.
 ### `packages/tools/src/validate/portable-round-trip.ts::runPortableRoundTrip`
 
 Runs the round trip over a grammar's corpus entries and returns the result.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause`
+
+One cause of conformance errors: its name, what it means, how many errors it accounts for, and one example error when there is one.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::name`
+
+The cause's short name, as the report prints it.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::why`
+
+What the cause means, in one line.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::count`
+
+How many errors the cause accounts for.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::example`
+
+One error's text that falls under the cause, when there is one.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport`
+
+The conformance result for one grammar: its causes, the reads the emitter skipped, and the total error count.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::grammar`
+
+The grammar the report covers.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::causes`
+
+Every cause, including those with no errors.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::unemitted`
+
+The reads the emitter skipped, each with its reason.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::total`
+
+The number of errors across all causes.
+
+### `packages/tools/src/portable/conformance.ts::CAUSES`
+
+The causes of type errors in the typed module, each a test over one diagnostic. A diagnostic that no test claims is unclassified. The order of the list is the order of the report.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE`
+
+The cause that counts reads the emitter skipped. It has no test of its own: its count comes from the typed module's unemitted list.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE::name`
+
+The unemitted cause's name.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE::why`
+
+What the unemitted cause means.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE`
+
+The cause for an error in the typed module that no cause claims.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE::name`
+
+The unclassified cause's name.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE::why`
+
+What the unclassified cause means.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE`
+
+The cause for an error reported outside the typed module, such as in another file the checker loaded.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE::name`
+
+The outside cause's name.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE::why`
+
+What the outside cause means.
+
+### `packages/tools/src/portable/conformance.ts::portableTypedPath`
+
+The path of a grammar's typed module, under its typed directory.
+
+### `packages/tools/src/portable/conformance.ts::classify`
+
+Sorts the type checker's diagnostics for one module into causes and counts them, and adds the unemitted reads as their own cause. Errors outside the module count as outside errors.
+
+### `packages/tools/src/portable/conformance.ts::writeTypedModule`
+
+Generates a grammar's typed module, writes it into the typed directory, and returns the emitter's output. Returns undefined when the grammar has no typed module.
+
+### `packages/tools/src/portable/conformance.ts::portableConformance`
+
+Computes one grammar's conformance report. It writes the typed module, type-checks it with the typed tsconfig, and classifies the errors. Returns undefined when the grammar has no typed module.
+
+### `packages/tools/src/portable/conformance.ts::formatConformance`
+
+Formats a report as plain text: a header with the error total, then each non-empty cause with its count, why and example. The skipped reads print under the unemitted cause.
+
+### `packages/tools/src/portable/conformance.ts::PortableConformanceOptions`
+
+Options for the conformance run. The grammars to check default to every grammar that has bindings.
+
+### `packages/tools/src/portable/conformance.ts::PortableConformanceOptions::grammars`
+
+The grammars to check. When absent, every grammar that has bindings is checked.
+
+### `packages/tools/src/portable/conformance.ts::run`
+
+Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.
