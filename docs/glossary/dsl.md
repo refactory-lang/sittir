@@ -8729,6 +8729,14 @@ True for an optional sequence of exactly two members: a string token, then an op
 
 Promotes a reference to a hidden separated-list rule and records the rewrite as a `hidden-list-reference` shape under the parent kind, when the promotion changed the member.
 
+### `packages/codegen/src/dsl/enrich.ts::getEnrichWordMatcher`
+
+Reads the word matcher an evaluated grammar carries under `ENRICH_WORD_MATCHER_KEY`. It is `undefined` when the value is not an object, or when the grammar carries no matcher.
+
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_WORD_MATCHER_KEY`
+
+The key under which an evaluated grammar carries its word matcher: `'__enrichedWordMatcher__'`.
+
 ### `packages/codegen/src/dsl/layer.ts::LayerConfig::contexts`
 
 The contexts the layer declares (`ContextsConfig`).
