@@ -870,9 +870,17 @@ The synonyms the `Declaration` vocabulary resolves: each canonical kind mapped t
 
 The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
+### `packages/types/src/vocabulary/element.ts::Legacy`
+
+The legacy form of the element not-equal comparison: a sub-kind of `NotEqual`, with the `$kind` `element.comparator.comparison.not_equal.legacy`, claimed by the `p` pattern.
+
 ### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms`
 
 The synonyms the `Expression` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/expression.ts::Legacy`
+
+The legacy form of the binary not-equal comparison: a sub-kind of `Binary.Comparison.NotEqual`, with the `$kind` `expression.binary.comparison.not_equal.legacy` and the operator `<>`.
 
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms`
 
@@ -1397,3 +1405,31 @@ The kinds the member reads.
 ### `packages/types/src/portable.ts::PortableBuildTable::options`
 
 The options each builder takes, by name.
+
+### `packages/types/src/portable.ts::PortableContainer::members`
+
+The container's member steps, each naming a member and the slot steps it takes.
+
+### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
+
+The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.
+
+### `packages/types/src/vocabulary/features/range-expressions/pattern.ts::Legacy`
+
+The legacy form of the inclusive range pattern: a sub-kind of `Pattern.Range.Inclusive`, with the `$kind` `pattern.range.inclusive.legacy`, claimed by the `r` pattern.
+
+### `packages/types/src/vocabulary/features/c-strings/index.ts::CStrings`
+
+The C-strings vocabulary feature, a namespace of the C-string kinds.
+
+### `packages/types/src/vocabulary/features/c-strings/literal.ts::Literal`
+
+The C-string literal namespace: the literal kinds the C-strings feature defines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/expression.ts::Expression`
+
+The generic-lambda expression namespace: the expression kinds the generic-lambdas feature defines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas`
+
+The generic-lambdas vocabulary feature, a namespace of the generic-lambda kinds.
