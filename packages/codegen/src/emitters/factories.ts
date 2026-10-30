@@ -2629,7 +2629,10 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_METHODS', 'listIterator', 'listItems', 'holdListItems', 'storedElements', 'ownerElements'] : ['LIST_METHODS', 'listIterator', 'listItems', 'holdListItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored'];
+			const names_ =
+				plan.viewPlan.owner === undefined
+					? ['LIST_METHODS', 'listIterator', 'holdListItems', 'storedElements', ...(plan.viewPlan.wrapper === undefined ? [] : ['listItems', 'ownerElements'])]
+					: ['LIST_METHODS', 'listIterator', 'holdListItems', 'heldItems', 'ownerView', 'listOption', 'refuseReadStub', 'hydrateStored'];
 			for (const name of names_) names.add(name);
 		}
 	}

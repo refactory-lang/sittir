@@ -21,10 +21,9 @@ import {
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
-	listItems,
 	holdListItems,
+	heldItems,
 	ownerView,
-	ownerElements,
 	listOption,
 	refuseReadStub,
 	hydrateStored,
@@ -32,6 +31,8 @@ import {
 	groupField,
 	storedElements,
 	elementsWith,
+	listItems,
+	ownerElements,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -1232,14 +1233,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedEnumVariant,
-			content: 'enumVariant',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.EnumVariantList.Bound;
 }
 
@@ -1398,14 +1392,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedFieldDeclaration,
-			content: 'fieldDeclaration',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.FieldDeclarationList.Bound;
 }
 
@@ -1561,14 +1548,7 @@ function _buildOrderedFieldDeclarationList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.attributes(), 'items'), {
-			kind: TSKindId.AttributedOrderedField,
-			content: 'type',
-			decorations: ['attributeItems', 'visibilityModifier']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.OrderedFieldDeclarationList.Bound;
 }
 
@@ -2226,7 +2206,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.wherePredicates(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.WhereClause.Bound;
 }
 
@@ -2666,14 +2646,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedTypeParameter,
-			content: 'content',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameters.Bound;
 }
 
@@ -3083,7 +3056,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.useClauses(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.UseList.Bound;
 }
 
@@ -3642,7 +3615,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.lifetimes(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ForLifetimes.Bound;
 }
 
@@ -3798,7 +3771,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.types(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TupleType.Bound;
 }
 
@@ -4084,7 +4057,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.bounds(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.UseBounds.Bound;
 }
 
@@ -4188,14 +4161,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.TypeArgument,
-			content: 'content',
-			decorations: ['traitBounds']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeArguments.Bound;
 }
 
@@ -5032,14 +4998,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedArgument,
-			content: 'expression',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Arguments.Bound;
 }
 
@@ -5262,7 +5221,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.initializers(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.FieldInitializerList.Bound;
 }
 
@@ -6543,7 +6502,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TuplePattern.Bound;
 }
 
@@ -6636,7 +6595,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SlicePattern.Bound;
 }
 
@@ -7155,7 +7114,8 @@ function _buildMacroRules(
 	currentHandle()?.admit(TSKindId.MacroRules, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'macro_rules', { items: _item });
 	const node = {
@@ -7210,7 +7170,7 @@ function _buildMacroRules(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.MacroRules.Bound;
 }
 
@@ -7251,7 +7211,8 @@ function _buildEnumVariantListElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'enum_variant_list_elements', { items: _item });
 	const node = {
@@ -7367,7 +7328,8 @@ function _buildFieldDeclarationListElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'field_declaration_list_elements', { items: _item });
 	const node = {
@@ -7483,7 +7445,8 @@ function _buildOrderedFieldDeclarationListElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list_elements', { items: _item });
 	const node = {
@@ -7588,7 +7551,8 @@ function _buildWherePredicates(
 	currentHandle()?.admit(TSKindId.WherePredicates, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'where_predicates', { items: _item });
 	const node = {
@@ -7644,7 +7608,7 @@ function _buildWherePredicates(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.WherePredicates.Bound;
 }
 
@@ -7696,7 +7660,8 @@ function _buildTypeParametersElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_parameters_elements', { items: _item });
 	const node = {
@@ -7870,7 +7835,8 @@ function _buildUseClauses(
 	currentHandle()?.admit(TSKindId.UseClauses, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'use_clauses', { items: _item });
 	const node = {
@@ -7940,7 +7906,7 @@ function _buildUseClauses(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.UseClauses.Bound;
 }
 
@@ -8007,7 +7973,8 @@ function _buildParametersElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
 	const node = {
@@ -8116,7 +8083,8 @@ function _buildLifetimes(
 	currentHandle()?.admit(TSKindId.Lifetimes, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'lifetimes', { items: _item });
 	const node = {
@@ -8171,7 +8139,7 @@ function _buildLifetimes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Lifetimes.Bound;
 }
 
@@ -8206,7 +8174,8 @@ function _buildTypes(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
@@ -8262,7 +8231,7 @@ function _buildTypes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -8302,7 +8271,8 @@ function _buildUseBoundsElements(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'use_bounds_elements', { items: _item });
 	const node = {
@@ -8358,7 +8328,7 @@ function _buildUseBoundsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.UseBoundsElements.Bound;
 }
 
@@ -8408,7 +8378,8 @@ function _buildTypeArgumentsElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_arguments_elements', { items: _item });
 	const node = {
@@ -8524,7 +8495,8 @@ function _buildArgumentsElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'arguments_elements', { items: _item });
 	const node = {
@@ -8624,7 +8596,8 @@ function _buildExpressions(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
 	const node = {
@@ -8680,7 +8653,7 @@ function _buildExpressions(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Expressions.Bound;
 }
 
@@ -8718,7 +8691,8 @@ function _buildFieldInitializerListElements(
 	currentHandle()?.admit(TSKindId.FieldInitializerListElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'field_initializer_list_elements', { items: _item });
 	const node = {
@@ -8774,7 +8748,7 @@ function _buildFieldInitializerListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.FieldInitializerListElements.Bound;
 }
 
@@ -8807,7 +8781,8 @@ function _buildTuplePatternElements(
 	currentHandle()?.admit(TSKindId.TuplePatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
 	const node = {
@@ -8863,7 +8838,7 @@ function _buildTuplePatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -8892,7 +8867,8 @@ function _buildPatterns(
 	currentHandle()?.admit(TSKindId.Patterns, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
 	const node = {
@@ -8947,7 +8923,7 @@ function _buildPatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -8985,7 +8961,8 @@ function _buildStructPatternElements(
 	currentHandle()?.admit(TSKindId.StructPatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'struct_pattern_elements', { items: _item });
 	const node = {
@@ -9041,7 +9018,7 @@ function _buildStructPatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.StructPatternElements.Bound;
 }
 
@@ -13232,14 +13209,7 @@ function _buildParametersElementsReceiverGroup(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedParameter,
-			content: 'content',
-			decorations: ['attributeItem']
-		})
-	);
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ParametersElementsReceiverGroup.Bound;
 }
 

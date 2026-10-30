@@ -488,9 +488,15 @@ export const LIST_METHODS = Object.fromEntries(
 /** The iterator member of a list node. */
 export const listIterator: (this: ArrayLike<unknown>) => ArrayIterator<unknown> = Array.prototype.values;
 
-export function holdListItems(node: object, items: readonly unknown[]): void {
+export function holdListItems(node: object, items: ArrayLike<unknown>): void {
 	const held = node as Record<number, unknown>;
 	for (let index = 0; index < items.length; index++) held[index] = items[index];
+}
+
+const NO_ITEMS: readonly unknown[] = Object.freeze([]);
+
+export function heldItems(list: object | undefined): ArrayLike<unknown> {
+	return list === undefined ? NO_ITEMS : (list as ArrayLike<unknown>);
 }
 
 /** What an owner knows of the list it holds: the list itself, hydrated by `hydrate` when it is a read stub, and its stored elements (undefined while the stub cannot be read). */

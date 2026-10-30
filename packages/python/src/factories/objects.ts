@@ -21,10 +21,9 @@ import {
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
-	listItems,
 	holdListItems,
+	heldItems,
 	ownerView,
-	ownerElements,
 	listOption,
 	refuseReadStub,
 	hydrateStored,
@@ -261,7 +260,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SimpleStatements.Bound;
 }
 
@@ -352,7 +351,7 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.names(), 'names'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ImportStatement.Bound;
 }
 
@@ -510,7 +509,8 @@ function _buildImportList(
 	currentHandle()?.admit(TSKindId.ImportList, elements);
 	const _name = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_name).length;
+	const listedItems = storedElements(_name);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'import_list', { names: _name });
 	const node = {
@@ -566,7 +566,7 @@ function _buildImportList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'names'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ImportList.Bound;
 }
 
@@ -1555,7 +1555,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -1648,7 +1648,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.parametersElements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.LambdaParameters.Bound;
 }
 
@@ -1989,7 +1989,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.types(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameter.Bound;
 }
 
@@ -2118,7 +2118,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.arguments(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ArgumentList.Bound;
 }
 
@@ -2241,7 +2241,8 @@ function _buildExpressionList(
 	currentHandle()?.admit(TSKindId.ExpressionList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_list', { items: _item });
 	const node = {
@@ -2297,7 +2298,7 @@ function _buildExpressionList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ExpressionList.Bound;
 }
 
@@ -2629,7 +2630,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.DictPattern.Bound;
 }
 
@@ -2840,7 +2841,8 @@ function _buildParametersElements(
 	currentHandle()?.admit(TSKindId.ParametersElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
 	const node = {
@@ -2896,7 +2898,7 @@ function _buildParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ParametersElements.Bound;
 }
 
@@ -2925,7 +2927,8 @@ function _buildPatterns(
 	currentHandle()?.admit(TSKindId.Patterns, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
 	const node = {
@@ -2980,7 +2983,7 @@ function _buildPatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -3073,7 +3076,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TuplePattern.Bound;
 }
 
@@ -3166,7 +3169,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ListPattern.Bound;
 }
 
@@ -3694,7 +3697,8 @@ function _buildPatternList(
 	currentHandle()?.admit(TSKindId.PatternList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'pattern_list', { items: _item });
 	const node = {
@@ -3749,7 +3753,7 @@ function _buildPatternList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.PatternList.Bound;
 }
 
@@ -4321,7 +4325,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.List.Bound;
 }
 
@@ -4412,7 +4416,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Set.Bound;
 }
 
@@ -4505,7 +4509,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Tuple.Bound;
 }
 
@@ -4598,7 +4602,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.Dictionary.Bound;
 }
 
@@ -4848,7 +4852,8 @@ function _buildCollectionElements(
 	currentHandle()?.admit(TSKindId.CollectionElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'collection_elements', { items: _item });
 	const node = {
@@ -4904,7 +4909,7 @@ function _buildCollectionElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.CollectionElements.Bound;
 }
 
@@ -5386,7 +5391,8 @@ function _buildSimpleStatementsElements(
 	currentHandle()?.admit(TSKindId.SimpleStatementsElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'simple_statements_elements', { items: _item });
 	const node = {
@@ -5442,7 +5448,7 @@ function _buildSimpleStatementsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
@@ -5471,7 +5477,8 @@ function _buildSubjects(
 	currentHandle()?.admit(TSKindId.Subjects, elements);
 	const _subject = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_subject).length;
+	const listedItems = storedElements(_subject);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subjects', { subjects: _subject });
 	const node = {
@@ -5527,7 +5534,7 @@ function _buildSubjects(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'subjects'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Subjects.Bound;
 }
 
@@ -5558,7 +5565,8 @@ function _buildWithClauseWithItems(
 	currentHandle()?.admit(TSKindId.WithClauseWithItems, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_with_items', { items: _item });
 	const node = {
@@ -5614,7 +5622,7 @@ function _buildWithClauseWithItems(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
@@ -5643,7 +5651,8 @@ function _buildTypes(
 	currentHandle()?.admit(TSKindId.Types, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
@@ -5698,7 +5707,7 @@ function _buildTypes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -5742,7 +5751,8 @@ function _buildArgumentListElements(
 	currentHandle()?.admit(TSKindId.ArgumentListElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'argument_list_elements', { items: _item });
 	const node = {
@@ -5801,7 +5811,7 @@ function _buildArgumentListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
@@ -5832,7 +5842,8 @@ function _buildListPatternCasePatterns(
 	currentHandle()?.admit(TSKindId.ListPatternCasePatterns, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'list_pattern_case_patterns', { items: _item });
 	const node = {
@@ -5888,7 +5899,7 @@ function _buildListPatternCasePatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
@@ -5921,7 +5932,8 @@ function _buildDictPatternElements(
 	currentHandle()?.admit(TSKindId.DictPatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dict_pattern_elements', { items: _item });
 	const node = {
@@ -5977,7 +5989,7 @@ function _buildDictPatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.DictPatternElements.Bound;
 }
 
@@ -6008,7 +6020,8 @@ function _buildSubscripts(
 	currentHandle()?.admit(TSKindId.Subscripts, elements);
 	const _subscript = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_subscript).length;
+	const listedItems = storedElements(_subscript);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subscripts', { subscripts: _subscript });
 	const node = {
@@ -6064,7 +6077,7 @@ function _buildSubscripts(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'subscripts'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Subscripts.Bound;
 }
 
@@ -6095,7 +6108,8 @@ function _buildDictionaryElements(
 	currentHandle()?.admit(TSKindId.DictionaryElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dictionary_elements', { items: _item });
 	const node = {
@@ -6151,7 +6165,7 @@ function _buildDictionaryElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.DictionaryElements.Bound;
 }
 
@@ -6231,7 +6245,8 @@ function _buildTuplePatternElements(
 	currentHandle()?.admit(TSKindId.TuplePatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
 	const node = {
@@ -6287,7 +6302,7 @@ function _buildTuplePatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -6318,7 +6333,8 @@ function _buildCasePatternList(
 	currentHandle()?.admit(TSKindId.CasePatternList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'case_pattern_list', { items: _item });
 	const node = {
@@ -6374,7 +6390,7 @@ function _buildCasePatternList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.CasePatternList.Bound;
 }
 
@@ -6412,7 +6428,8 @@ function _buildTupleElements(
 	currentHandle()?.admit(TSKindId.TupleElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_elements', { items: _item });
 	const node = {
@@ -6468,7 +6485,7 @@ function _buildTupleElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.TupleElements.Bound;
 }
 
@@ -6602,7 +6619,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.CaseTuplePattern.Bound;
 }
 
@@ -6697,7 +6714,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.CaseListPattern.Bound;
 }
 
@@ -6728,7 +6745,8 @@ function _buildPrintArguments(
 	currentHandle()?.admit(TSKindId.PrintArguments, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_arguments', { items: _item });
 	const node = {
@@ -6784,7 +6802,7 @@ function _buildPrintArguments(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.PrintArguments.Bound;
 }
 
@@ -6815,7 +6833,8 @@ function _buildPrintChevronArguments(
 	currentHandle()?.admit(TSKindId.PrintChevronArguments, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_chevron_arguments', { items: _item });
 	const node = {
@@ -6871,7 +6890,7 @@ function _buildPrintChevronArguments(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
@@ -7017,7 +7036,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.printArguments(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.PrintStatementPlain.Bound;
 }
 
@@ -7112,7 +7131,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.importList(), 'names'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ParenthesizedImportList.Bound;
 }
 
@@ -8259,7 +8278,8 @@ function _buildExpressionStatementTuple(
 	currentHandle()?.admit(TSKindId.ExpressionStatementTuple, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_statement_tuple', { items: _item });
 	const node = {
@@ -8315,7 +8335,7 @@ function _buildExpressionStatementTuple(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
@@ -8346,7 +8366,8 @@ function _buildWithClauseBare(
 	currentHandle()?.admit(TSKindId.WithClauseBare, elements);
 	const _items = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_items).length;
+	const listedItems = storedElements(_items);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_bare', { items: _items });
 	const node = {
@@ -8402,7 +8423,7 @@ function _buildWithClauseBare(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'items'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.WithClauseBare.Bound;
 }
 
@@ -8495,7 +8516,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.items(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.WithClauseParen.Bound;
 }
 
@@ -8666,7 +8687,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), undefined));
+	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SuiteInline.Bound;
 }
 
@@ -9172,7 +9193,8 @@ function _buildNames(
 	currentHandle()?.admit(TSKindId.Names, elements);
 	const _name = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_name).length;
+	const listedItems = storedElements(_name);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'names', { names: _name });
 	const node = {
@@ -9228,7 +9250,7 @@ function _buildNames(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listItems(ownerElements(node, 'names'), undefined));
+	holdListItems(node, listedItems);
 	return node as unknown as T.Names.Bound;
 }
 

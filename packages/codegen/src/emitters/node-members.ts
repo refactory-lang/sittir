@@ -184,7 +184,11 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [`  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}));`]
+		postlude: [
+			environment === 'factory'
+				? '  holdListItems(node, heldItems(listView.list));'
+				: `  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}));`
+		]
 	};
 }
 
@@ -206,10 +210,16 @@ export function listSelfViewParts(
 			? optionMember(option.key, 'listSeparatorOf(node)')
 			: optionMember(option.key, `${selfListOption(option.key, environment)} ?? ${option.default}`)
 	);
+	const holdsStored = environment === 'factory' && plan.wrapper === undefined && 'elements' in stored;
 	return {
-		prelude: ['elements' in stored ? `  const listedLength = storedElements(${stored.elements}).length;` : `  const listedLength = ${stored.length};`],
+		prelude:
+			'elements' in stored
+				? [`  const listedItems = storedElements(${stored.elements});`, '  const listedLength = listedItems.length;']
+				: [`  const listedLength = ${stored.length};`],
 		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [`  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`]
+		postlude: [
+			holdsStored ? '  holdListItems(node, listedItems);' : `  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`
+		]
 	};
 }

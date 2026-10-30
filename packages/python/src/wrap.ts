@@ -402,7 +402,8 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 
 export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportList.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._name).length;
+	const listedItems = storedElements(data._name);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ImportList as const,
@@ -2140,7 +2141,8 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 
 export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.ExpressionList.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ExpressionList as const,
@@ -2760,7 +2762,8 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 
 export function wrapParametersElements(data: T.ParametersElements, tree: TreeHandle): T.ParametersElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ParametersElements as const,
@@ -2829,7 +2832,8 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 
 export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Patterns as const,
@@ -3595,7 +3599,8 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 
 export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.PatternList.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.PatternList as const,
@@ -4691,7 +4696,8 @@ export function wrapParenthesizedExpression(
 
 export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHandle): T.CollectionElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.CollectionElements as const,
@@ -5178,7 +5184,8 @@ export function wrapSimpleStatementsElements(
 	tree: TreeHandle
 ): T.SimpleStatementsElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.SimpleStatementsElements as const,
@@ -5250,7 +5257,8 @@ export function wrapSimpleStatementsElements(
 
 export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._subject).length;
+	const listedItems = storedElements(data._subject);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Subjects as const,
@@ -5319,7 +5327,8 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 
 export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeHandle): T.WithClauseWithItems.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseWithItems as const,
@@ -5388,7 +5397,8 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 
 export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Types as const,
@@ -5457,7 +5467,8 @@ export function wrapArgumentListElements(
 	tree: TreeHandle
 ): T.ArgumentListElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ArgumentListElements as const,
@@ -5531,7 +5542,8 @@ export function wrapListPatternCasePatterns(
 	tree: TreeHandle
 ): T.ListPatternCasePatterns.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ListPatternCasePatterns as const,
@@ -5603,7 +5615,8 @@ export function wrapListPatternCasePatterns(
 
 export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeHandle): T.DictPatternElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.DictPatternElements as const,
@@ -5672,7 +5685,8 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 
 export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscripts.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._subscript).length;
+	const listedItems = storedElements(data._subscript);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Subscripts as const,
@@ -5741,7 +5755,8 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 
 export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHandle): T.DictionaryElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.DictionaryElements as const,
@@ -5843,7 +5858,8 @@ export function wrapTuplePatternElements(
 	tree: TreeHandle
 ): T.TuplePatternElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.TuplePatternElements as const,
@@ -5912,7 +5928,8 @@ export function wrapTuplePatternElements(
 
 export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): T.CasePatternList.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.CasePatternList as const,
@@ -5981,7 +5998,8 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 
 export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.TupleElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.TupleElements as const,
@@ -6242,7 +6260,8 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 
 export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.PrintArguments.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.PrintArguments as const,
@@ -6314,7 +6333,8 @@ export function wrapPrintChevronArguments(
 	tree: TreeHandle
 ): T.PrintChevronArguments.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.PrintChevronArguments as const,
@@ -7491,7 +7511,8 @@ export function wrapExpressionStatementTuple(
 	tree: TreeHandle
 ): T.ExpressionStatementTuple.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ExpressionStatementTuple as const,
@@ -7563,7 +7584,8 @@ export function wrapExpressionStatementTuple(
 
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.WithClauseBare.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._items).length;
+	const listedItems = storedElements(data._items);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseBare as const,
@@ -8228,7 +8250,8 @@ export function wrapDecoratedDefinitionClassDeclaration(
 
 export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._name).length;
+	const listedItems = storedElements(data._name);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Names as const,

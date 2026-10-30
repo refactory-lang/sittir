@@ -7172,7 +7172,8 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 
 export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle): T.ExportSpecifiers.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ExportSpecifiers as const,
@@ -7248,7 +7249,8 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 
 export function wrapImportSpecifiers(data: T.ImportSpecifiers, tree: TreeHandle): T.ImportSpecifiers.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifiers as const,
@@ -7320,7 +7322,8 @@ export function wrapFormalParametersElements(
 	tree: TreeHandle
 ): T.FormalParametersElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.FormalParametersElements as const,
@@ -7427,7 +7430,8 @@ export function wrapEnumBodyElementName(data: T.EnumBodyElementName, tree: TreeH
 
 export function wrapEnumBodyElements(data: T.EnumBodyElements, tree: TreeHandle): T.EnumBodyElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.EnumBodyElements as const,
@@ -7496,7 +7500,8 @@ export function wrapEnumBodyElements(data: T.EnumBodyElements, tree: TreeHandle)
 
 export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.Types as const,
@@ -7565,7 +7570,8 @@ export function wrapTypeParametersElements(
 	tree: TreeHandle
 ): T.TypeParametersElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.TypeParametersElements as const,
@@ -7641,7 +7647,8 @@ export function wrapTypeParametersElements(
 
 export function wrapTupleTypeMembers(data: T.TupleTypeMembers, tree: TreeHandle): T.TupleTypeMembers.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.TupleTypeMembers as const,
@@ -7922,7 +7929,8 @@ export function wrapAmbientDeclarationModule(
 
 export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandle): T.ObjectTypeContent.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedItems = storedElements(data._item);
+	const listedLength = listedItems.length;
 	const node = {
 		...data,
 		$type: TSKindId.ObjectTypeContent as const,
