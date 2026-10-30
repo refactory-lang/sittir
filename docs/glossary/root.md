@@ -697,6 +697,10 @@ The allow set a preflight ends with, and the compilation that passed the gate wi
 
 One gated compile for the preflight, with the generated top layer's fixpoint checked (`compiler/compile.ts::compileGrammar`'s `checkGeneratedLayers`), so every regeneration checks the layer it compiles: the compilation when it passes, or the blocked records and every record the gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` into the package's `.sittir/` either way.
 
+### `packages/codegen/src/run-codegen.ts::writePortableTyped`
+
+Writes the typed portable module and its tsconfig into a `.sittir` directory. When the source is undefined it removes both files instead.
+
 ### `packages/codegen/src/index.ts::module`
 
 ```text
