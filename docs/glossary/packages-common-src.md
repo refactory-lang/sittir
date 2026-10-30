@@ -1276,6 +1276,10 @@ The text of a value, or undefined.
 
 Returns the portable reader that turns a node into a structure, given the read context.
 
+### `packages/common/src/portable/read.ts::Hop`
+
+One step of a portable read route: the key it reads and the build it names, when it names one.
+
 ### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
 
 Reads a node into the structure that builds it back, with the carried callback for what the read leaves out.
