@@ -71,6 +71,15 @@ describe('the portable read', () => {
 		for (const source of ['class C extends B implements I {}', 'class C implements I, J {}']) expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
+	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+		expect(firstOf('function f() {}')).toMatchObject({ $path: 'declaration.function', parameters: [] });
+		expect(firstOf('class C { m() {} }')).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });
+		const built = runtime.build(firstOf('function f() {}') as Read) as { readonly $type: number };
+		expect((runtime.read(built) as Read).parameters).toEqual([]);
+		for (const source of ['function f() {}', 'class C {\n  m() {}\n}']) expect(roundTrip(source)).toBe(`${source}\n`);
+		expect(firstOf('function f(a) {}')).toMatchObject({ parameters: [{ $path: 'declaration.parameter', name: 'a' }] });
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

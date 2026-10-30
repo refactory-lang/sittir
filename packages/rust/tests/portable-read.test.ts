@@ -41,6 +41,14 @@ describe('the portable read', () => {
 		expect(roundTrip('f();')).toBe('f();\n');
 	});
 
+	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } });
+		const built = runtime.build(readFirst('fn f() {}')) as { readonly $type: number };
+		expect((runtime.read(built) as Read).parameters).toEqual([]);
+		expect(roundTrip('fn f() {}')).toBe('fn f() {}\n');
+		expect(readFirst('fn f(&self, a: u8) {}')).toMatchObject({ parameters: [{ $path: 'declaration.parameter', name: 'a' }], receiver: { $path: 'declaration.parameter.receiver' } });
+	});
+
 	it('reads a receiver and the parameters after it, and a scope through the containers its mount stands in for', () => {
 		expect(roundTrip('impl S { fn f(&self, a: u8) {} }')).toBe('impl S {\n    fn f(&self, a: u8) {}\n}\n');
 		expect(roundTrip('pub(in a::b) struct S {}')).toBe('pub(in a::b) struct S {}\n');

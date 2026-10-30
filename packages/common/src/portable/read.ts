@@ -227,6 +227,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 			if (pick !== undefined) structure[name] = read(pick.value, carried, pick.member.seats);
 		}
 		for (const { member, value } of held.get(node) ?? []) if (!(member.name in structure)) structure[member.name] = read(value, carried, member.seats);
+		for (const member of arms.flatMap((arm) => arm.members)) if (member.multiple && !(member.name in structure)) structure[member.name] = [];
 		return structure;
 	};
 	return (value, carried) => read(value, carried);
