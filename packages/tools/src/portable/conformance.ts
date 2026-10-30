@@ -1,5 +1,5 @@
 import { join, relative } from 'node:path';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
 import { REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 
@@ -24,31 +24,42 @@ interface Cause {
 	readonly test: (d: TypeCheckDiagnostic, reason: string) => boolean;
 }
 
-const NOT_ASSIGNABLE = /^Type '(.*)' is not assignable to type '(.*)'\.?$/;
+const PAIRS: readonly RegExp[] = [
+	/^Type '(.*)' is not assignable to type '(.*)'\.?$/,
+	/^Type '(.*)' is missing the following properties from type '(.*)': .*$/,
+	/^Property '[^']+' is missing in type '(.*)' but required in type '(.*)'\.?$/
+];
 
-const reasonOf = (d: TypeCheckDiagnostic): string => [d.message, ...d.detail].filter((line) => line.includes(' is not assignable to type ') || line.includes(' is missing ')).at(-1) ?? d.message;
+const reasonOf = (d: TypeCheckDiagnostic): string => [d.message, ...d.detail].filter((line) => PAIRS.some((pair) => pair.test(line))).at(-1) ?? d.message;
 
 const sides = (reason: string): readonly [source: string, target: string] | undefined => {
-	const match = NOT_ASSIGNABLE.exec(reason);
-	return match === null ? undefined : [match[1]!, match[2]!];
+	for (const pair of PAIRS) {
+		const match = pair.exec(reason);
+		if (match !== null) return [match[1]!, match[2]!];
+	}
+	return undefined;
 };
 
-const isList = (type: string): boolean => type.startsWith('readonly ') && type.endsWith('[]');
+const isList = (type: string): boolean => {
+	const shape = type.replace(/ \| undefined$/, '');
+	return shape.startsWith('readonly ') && shape.endsWith('[]');
+};
+
+const source = (reason: string): string => sides(reason)?.[0] ?? '';
 
 export const CAUSES: readonly Cause[] = [
-	{ name: 'context fill', why: "the grammar's own slot fill holds an arm the namespace map's fill does not admit", test: (d) => d.code === 'TS2344' },
+	{ name: 'context fill', why: "an arm of the grammar's own context fill that the namespace map's fill does not admit", test: (d) => d.code === 'TS2344' },
 	{ name: 'extra member', why: 'a member the bindings route that the interface does not declare', test: (d) => d.code === 'TS2353' || d.code === 'TS2561' },
 	{ name: 'unreadable route', why: "a route step the grammar's typed surface has no reader for", test: (d) => d.code === 'TS2339' },
-	{ name: 'missing member', why: 'a member the interface requires that the read entry has no route for', test: (d, reason) => d.code === 'TS2741' || /^Property '[^']+' is missing in type /.test(reason) || /is missing the following properties from type '(?!PortableHandle')/.test(reason) },
 	{
 		name: 'arity',
 		why: 'a list read where the member holds one value, or one value where it holds a list',
 		test: (_, reason) => {
-			if (reason.includes("is missing the following properties from type 'PortableHandle'")) return true;
 			const pair = sides(reason);
 			return pair !== undefined && pair[0] !== 'undefined' && isList(pair[0]) !== isList(pair[1]);
 		}
 	},
+	{ name: 'missing member', why: 'a member the interface requires that the read entry has no route for', test: (d, reason) => d.code === 'TS2741' || (/ is missing /.test(reason) && sides(reason)?.[1] !== 'PortableHandle') },
 	{
 		name: 'refinement',
 		why: "a refinement where its parent is admitted: the read gives a sub-path of the member's kind",
@@ -57,11 +68,18 @@ export const CAUSES: readonly Cause[] = [
 			return pair !== undefined && /^"[a-z_.]+"$/.test(pair[0]) && /^"[a-z_.]+"$/.test(pair[1]) && pair[0].slice(1, -1).startsWith(`${pair[1].slice(1, -1)}.`);
 		}
 	},
-	{ name: 'absent', why: 'the read can be absent where the member is required', test: (_, reason) => sides(reason)?.[0] === 'undefined' },
-	{ name: 'token text', why: 'a token read as its const string that the member type does not admit', test: (_, reason) => /^"[^"]*"$/.test(sides(reason)?.[0] ?? '') },
-	{ name: 'unmapped', why: 'the member type is an unmapped marker where the read gives a mapped kind', test: (_, reason) => (sides(reason)?.[1] ?? '').includes('Unmapped<') && !(sides(reason)?.[0] ?? '').includes('Unmapped<') },
-	{ name: 'text leaf', why: 'text read where the member admits only kinds', test: (_, reason) => sides(reason)?.[0] === 'string' },
-	{ name: 'untyped reader', why: 'the low-level reader is typed unknown or as a bare number', test: (_, reason) => ['unknown', 'number'].includes(sides(reason)?.[0] ?? '') },
+	{ name: 'absent', why: 'the read can be absent where the member is required', test: (_, reason) => source(reason) === 'undefined' },
+	{ name: 'token text', why: 'a token read as its const string that the member type does not admit', test: (_, reason) => /^"[^"]*"$/.test(source(reason)) },
+	{
+		name: 'unmapped',
+		why: 'an unmapped marker on one side where the other is a mapped kind',
+		test: (_, reason) => {
+			const pair = sides(reason);
+			return pair !== undefined && pair[0].includes('Unmapped<') !== pair[1].includes('Unmapped<');
+		}
+	},
+	{ name: 'text leaf', why: 'text read where the member admits only kinds', test: (_, reason) => source(reason) === 'string' },
+	{ name: 'untyped reader', why: 'the low-level reader is typed unknown, as a bare number, or with a $type every kind shares', test: (_, reason) => ['unknown', 'number'].includes(source(reason)) },
 	{ name: 'kind', why: 'a vocabulary kind the member type does not admit', test: (_, reason) => sides(reason) !== undefined }
 ];
 
@@ -94,13 +112,17 @@ export function classify(diagnostics: readonly TypeCheckDiagnostic[], module: st
 	return { causes, total: causes.reduce((n, c) => n + c.count, 0) };
 }
 
-export async function portableConformance(grammar: string): Promise<ConformanceReport | undefined> {
+export async function writeTypedModule(grammar: string): Promise<PortableTypedOutput | undefined> {
 	const generated = await generate({ grammar, outputDir: join(grammarPackageDir(grammar as GrammarName), 'src') });
 	await writePortableTyped(typedDir(grammar), generated.portableTyped?.source);
-	if (generated.portableTyped === undefined) return undefined;
-	const { unemitted } = generated.portableTyped;
+	return generated.portableTyped;
+}
+
+export async function portableConformance(grammar: string): Promise<ConformanceReport | undefined> {
+	const typed = await writeTypedModule(grammar);
+	if (typed === undefined) return undefined;
 	const diagnostics = parseTypeCheckDiagnostics(typeCheckOutput('pnpm', ['exec', 'tsrs', '-p', join(typedDir(grammar), PORTABLE_TYPED_TSCONFIG), '--noEmit'], REPO_ROOT));
-	return { grammar, ...classify(diagnostics, portableTypedPath(grammar), unemitted), unemitted };
+	return { grammar, ...classify(diagnostics, portableTypedPath(grammar), typed.unemitted), unemitted: typed.unemitted };
 }
 
 export function formatConformance(report: ConformanceReport): string {
