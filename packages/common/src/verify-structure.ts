@@ -1,7 +1,6 @@
 import type { KindMembership, StructureRow, StructureTable } from '@sittir/types';
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
-import { isRebuilt } from './node-data.ts';
 import { isNodeValue } from './utils.ts';
 import { isCoordinate } from './read.ts';
 import { sourceOf } from './source-stamp.ts';
@@ -27,7 +26,7 @@ function verifyBuilt(value: unknown, table: StructureTable, membership: KindMemb
 	}
 	if (typeof value !== 'object' || value === null || seen.has(value)) return;
 	const node = value as Record<string, unknown>;
-	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, membership, seen);
+	if (sourceOf(node) === Source.Factory) verifyNode(node, table, membership, seen);
 }
 
 export function checkInput(row: StructureRow, args: readonly unknown[], declared: readonly string[] | undefined = row.config): void {

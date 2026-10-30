@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { loadIsLeafKind, loadSlotAccessorOf, loadNativeEngine, readNodeOf, materializeDetached, readNativeTree, kindViewOf, nativeLanguageEngineOf } from '../../common.ts';
+import { loadIsLeafKind, loadSlotAccessorOf, loadNativeEngine, readNodeOf, materializeDetached, parseNativeTree, kindViewOf, nativeLanguageEngineOf } from '../../common.ts';
 import { selfContainedRenderInput } from '../../read-render-parse.ts';
 
 export async function detachedRenderer(grammar: string): Promise<(source: string) => string> {
@@ -9,7 +9,7 @@ export async function detachedRenderer(grammar: string): Promise<(source: string
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const native = await nativeLanguageEngineOf(grammar);
 	return (source) => {
-		const { tree } = readNativeTree(engine, source);
+		const tree = parseNativeTree(engine, source);
 		const data = materializeDetached(readNode(tree), accessorOf);
 		return native.render(selfContainedRenderInput(data, source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode, tree.options).toString();
 	};

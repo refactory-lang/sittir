@@ -26,7 +26,9 @@ import { nodeStorageOf, scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
-	carrySourceStamp,
+	SOURCE,
+	Source,
+	sourceOf,
 	holdTree,
 	sideOf,
 	sidesOf,
@@ -284,8 +286,12 @@ export function readNativeTree(
 	return engine.diagnostics.parseAndRead(source, options) as { root: AnyUntypedNode; tree: TreeHandle };
 }
 
+export function parseNativeTree(engine: NativeEngine, source: string): TreeHandle {
+	return engine.diagnostics.parseTree(source) as TreeHandle;
+}
+
 export async function buildReadHandle(grammar: string, source: string): Promise<TreeHandle> {
-	return readNativeTree(await loadNativeEngine(grammar), source).tree;
+	return parseNativeTree(await loadNativeEngine(grammar), source);
 }
 
 export function nativeNodeIsKind(
@@ -917,7 +923,8 @@ function materializeValue(
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
 	}
 	carryPlace(value, materialized);
-	carrySourceStamp(value, materialized);
+	const source = sourceOf(value);
+	if (source !== undefined) (materialized as { [SOURCE]?: Source })[SOURCE] = source;
 	return carryRead(value, materialized);
 }
 

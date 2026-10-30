@@ -1,6 +1,7 @@
 import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
+import { undoIfFillFails } from './list-fills.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
 import { decodeBuiltCell } from './built-arena.ts';
@@ -128,6 +129,7 @@ export function rowOf(node: RecordPosition, wrap: (data: object, tree: TreeHandl
 	const known = rows.get(node);
 	if (known !== undefined) return known;
 	const row = wrap(rowData(node) as object, node.$tree) as Record<string, unknown>;
+	undoIfFillFails(rows, node, undefined);
 	rows.set(node, row);
 	return row;
 }

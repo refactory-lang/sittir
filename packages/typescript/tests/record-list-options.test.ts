@@ -4,7 +4,7 @@ import typescript from '../src/index.ts';
 const objects = await typescript.createEngine({ nodeStorage: 'object' });
 const records = await typescript.createEngine();
 
-type List = Iterable<unknown> & { readonly separator?: number; readonly $with: { items(...items: unknown[]): List } };
+type List = Iterable<unknown> & { separator(): number | undefined; readonly $with: { items(...items: unknown[]): List } };
 
 function withComma(engine: typeof objects): List {
 	const alias = engine.parse('type T = { a: string; b: number };').statements()[0] as unknown as { value(): { members(): List } };
@@ -14,8 +14,8 @@ function withComma(engine: typeof objects): List {
 
 describe('a built list that chooses its separator', () => {
 	it('reads back the separator it was built with, as the object builders do', () => {
-		expect(withComma(records).separator).toBe(records.kinds.Comma);
-		expect(withComma(objects).separator).toBe(objects.kinds.Comma);
+		expect(withComma(records).separator()).toBe(records.kinds.Comma);
+		expect(withComma(objects).separator()).toBe(objects.kinds.Comma);
 	});
 
 	it('renders with it, as the object builders render the same list', () => {

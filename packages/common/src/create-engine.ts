@@ -24,6 +24,7 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type ResolvedNodeStorage, type TreeEngineHandle } from './engine-scope.ts';
+import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
@@ -200,6 +201,12 @@ function settlerOf(
 	};
 }
 
+function keepingBuilt(settle: EngineHandle['settle'], keeps: boolean): EngineHandle['settle'] {
+	if (!keeps) return settle;
+	const layouts: object[] = [];
+	return (node) => settle(typeof node === 'object' && node !== null ? keepLayout(layouts, node) : node);
+}
+
 function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
 	if (mode !== 'runtime') return () => undefined;
 	return (kindId, args, declared) => {
@@ -230,7 +237,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		hydrate: hooks.hydrate,
 		querySlots: hooks.querySlots,
 		structure: hooks.structure,
-		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
+		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, hooks.membership), records === undefined),
 		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
@@ -247,6 +254,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		const text = rendered.toString();
 		recordFfi(language.name, kind, dataBytes(target), performance.now() - before, text.length);
 		return text;
+	};
+	const parseAndBind = (source: string) => {
+		const tree = native.parseTree(source);
+		bindTree(tree, handle);
+		return tree;
 	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
 		const read = native.parseAndRead(source, parseOptions);
@@ -273,6 +285,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		diagnostics: {
 			buildProfile: native.buildProfile,
 			builtMemory: native.builtMemory,
+			parseTree: parseAndBind,
 			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),

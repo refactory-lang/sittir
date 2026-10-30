@@ -261,7 +261,7 @@ function buildDelimitedConsts(
 	}
 }
 
-function delimitedCheckLine(
+function delimitedCheckCall(
 	node: AssembledNode,
 	slots: readonly AssembledNonterminal[],
 	leafReConsts: ReadonlyMap<string, string>
@@ -278,7 +278,7 @@ function delimitedCheckLine(
 	const [openKey, closeKey] = [storageOf(open), storageOf(close)];
 	const content = slots.map((f) => f.storageKey).filter((key) => key !== openKey && key !== closeKey);
 	const ends = closeKey === undefined ? (openKey === undefined ? '' : `, ${openKey}`) : `, ${openKey ?? 'undefined'}, ${closeKey}`;
-	return `  checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends});`;
+	return `checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends})`;
 }
 
 function buildLeafReConsts(
@@ -1956,14 +1956,13 @@ function fieldCarryingFactoryText(
 			);
 		}
 	}
-	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
+	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	lines.push(...(view?.prelude ?? []), ...(backend === 'records' ? [] : groups.prelude));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(setters, plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
-	const delimitedCheck = delimitedCheckLine(node, slotsToEmit, leafReConsts);
-	const checks = delimitedCheck === undefined ? [] : [delimitedCheck];
+	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	if (backend === 'records') {
 		const optionsType = leadingOptions?.type ?? `T.${node.typeName}.Options`;
@@ -1975,7 +1974,7 @@ function fieldCarryingFactoryText(
 			...(takesOptions ? [`  const options = inputs.options as ${optionsType};`] : []),
 			...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude
 		];
-		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, checks, result: builtName }, nodeMap, viewTable(views));
+		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
 		after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
 		after.push(...parts.after);
@@ -1990,13 +1989,14 @@ function fieldCarryingFactoryText(
 				setters: seated,
 				accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 				extra: [...(view?.members ?? []), ...groups.members],
+				tail: view?.tail,
 				trivia
 			})
 		);
 		lines.push('  };');
 		lines.push(...(view?.postlude ?? []));
-		lines.push(...checks);
-		lines.push(`  return stampBuilt(node) as unknown as ${builtName};`);
+		if (check !== undefined) lines.push(`  ${check};`);
+		lines.push(`  return node as unknown as ${builtName};`);
 	}
 	lines.push('}');
 
@@ -2198,7 +2198,7 @@ function emitRefineFormFactory(
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
 	if (backend === 'records') {
-		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', checks: [], result: formBuiltName }, nodeMap, viewTable(views)).tail);
+		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', result: formBuiltName }, nodeMap, viewTable(views)).tail);
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2213,7 +2213,7 @@ function emitRefineFormFactory(
 			})
 		);
 		lines.push('  };');
-		lines.push(`  return stampBuilt(node) as unknown as ${formBuiltName};`);
+		lines.push(`  return node as unknown as ${formBuiltName};`);
 	}
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
@@ -2628,7 +2628,10 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'ownerElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored', 'defineListIndices'];
+			const names_ =
+				plan.viewPlan.owner === undefined
+					? ['LIST_METHODS', 'listIterator', 'holdBuiltItems', 'storedElements']
+					: ['LIST_METHODS', 'listIterator', 'holdListItems', 'heldItems', 'ownerView', 'listOption', 'refuseReadStub', 'hydrateStored'];
 			for (const name of names_) names.add(name);
 		}
 	}
@@ -2819,7 +2822,7 @@ function emitSeparatedListFactory(
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	{
-		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey }, contentAccessorName, 'factory');
+		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey, ...(w === undefined ? {} : { listed: 'elements' }) }, contentAccessorName, 'factory', fn);
 		const optionsArg = hasOptions ? 'options, ' : '';
 		const impl = hasOptions ? `_${fn}` : fn;
 		const optionsSet = (option: string): string =>
@@ -2832,7 +2835,10 @@ function emitSeparatedListFactory(
 		if (hasDelimiterOption) {
 			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: optionsSet('delimiter') });
 		}
-		if (backend === 'objects') lines.push(...view.prelude);
+		if (backend === 'objects') {
+			lines.unshift(...view.hoisted);
+			lines.push(...view.prelude);
+		}
 		lines.push(...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]));
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 		const seated = seatedSetters(setters, plan);
@@ -2852,7 +2858,6 @@ function emitSeparatedListFactory(
 						...(hasSeparatorKindOption || hasDelimiterOption ? [`  const elements = inputs.elements as ${elementsType};`] : []),
 						...(hasOptions ? [`  const options = inputs.options as ${optionsType};`] : [])
 					],
-					checks: [],
 					result: listBuiltName
 				},
 				nodeMap,
@@ -2872,12 +2877,13 @@ function emitSeparatedListFactory(
 					setters: seated,
 					accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 					extra: view.members,
+					tail: view.tail,
 					trivia
 				})
 			);
 			lines.push('  };');
 			lines.push(...view.postlude);
-			lines.push(`  return stampBuilt(node) as unknown as ${listBuiltName};`);
+			lines.push(`  return node as unknown as ${listBuiltName};`);
 		}
 		lines.push('}');
 		return [...lines, ...(after.length === 0 ? [] : ['', ...after])].join('\n');
@@ -2931,7 +2937,7 @@ function emitTextFactory(
 		...nodeMemberLines({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) })
 	];
 	if (backend === 'objects') {
-		body.push('  const node = {', ...members, '  };', `  return stampBuilt(node) as unknown as T.${node.typeName}.Bound;`, '}');
+		body.push('  const node = {', ...members, '  };', `  return node as unknown as T.${node.typeName}.Bound;`, '}');
 		return body.join('\n');
 	}
 	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, nodeMap));
@@ -2984,7 +2990,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

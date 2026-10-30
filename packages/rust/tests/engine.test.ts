@@ -85,18 +85,18 @@ describe('engine', () => {
 		}));
 
 		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
-		const parsed = native.parseAndRead('pub fn main');
+		const tree = native.parseTree('pub fn main') as TreeHandle;
 		expect(reads).toEqual([]);
-		expect(parsed.root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
+		const root = tree.read?.(0);
+		expect(root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
 		expect(reads).toEqual([[3, 0, 1]]);
 
-		const tree = parsed.tree as TreeHandle;
 		expect(tree.read?.(1)).toMatchObject({ $type: TSKindId.Identifier, $text: 'main' });
 		expect(reads).toEqual([
 			[3, 0, 1],
 			[3, 1, 1]
 		]);
-		expect(tree.read?.(0)).toBe(parsed.root);
+		expect(tree.read?.(0)).toBe(root);
 		expect(reads).toHaveLength(2);
 	});
 

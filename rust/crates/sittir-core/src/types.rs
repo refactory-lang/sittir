@@ -292,10 +292,10 @@ id_newtype! {
     RunId(u32)
 }
 
-/// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
-/// ast-grep path; `Factory` = constructed on the TS side.
+/// Where a node originated. `Ts` = read from a tree-sitter tree;
+/// `Factory` = constructed on the TS side.
 ///
-/// Wire shape is a numeric u8: 0 = Ts, 1 = Sg, 2 = Factory.
+/// Wire shape is a numeric u8: 0 = Ts, 2 = Factory.
 /// Eliminates the napi `string_enum` `PascalCase` casing mismatch that caused
 /// `value "ts" does not match any variant of enum Source` errors.
 ///
@@ -306,7 +306,6 @@ id_newtype! {
 #[repr(u8)]
 pub enum Source {
     Ts = 0,
-    Sg = 1,
     Factory = 2,
 }
 
@@ -321,7 +320,6 @@ impl<'de> Deserialize<'de> for Source {
         let v = u8::deserialize(d)?;
         match v {
             0 => Ok(Source::Ts),
-            1 => Ok(Source::Sg),
             2 => Ok(Source::Factory),
             _ => Err(serde::de::Error::custom(format!("invalid source: {v}"))),
         }
@@ -338,7 +336,6 @@ impl napi::bindgen_prelude::FromNapiValue for Source {
         let n: u8 = crate::napi_engine::checked_whole(unsafe { f64::from_napi_value(env, val) }?, "Source")?;
         match n {
             0 => Ok(Source::Ts),
-            1 => Ok(Source::Sg),
             2 => Ok(Source::Factory),
             _ => Err(napi::Error::from_reason(format!("invalid source: {n}"))),
         }

@@ -2,10 +2,8 @@ import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, 
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carrySourceStamp, stampSource } from './source-stamp.ts';
 import { builtRefOf, siteOf } from './built-ref.ts';
 import { HANDLE_FIELDS, isLeafHandle, isParsedPosition, type LeafHandle } from './handle.ts';
-import { Source } from './source.ts';
 import { hydrateOn } from './engine-scope.ts';
 import { storedSlotValues } from './record-view.ts';
 
@@ -117,7 +115,6 @@ export function holdTree(value: unknown, token: TreeToken): void {
 export function holdReadTree(value: unknown, token: TreeToken): void {
 	forEachParsedObject(value, (node) => {
 		holdTreeOn(node, token);
-		stampSource(node, Source.Ts);
 		readObjects.add(node);
 	});
 }
@@ -129,29 +126,20 @@ export function isRead(node: object): boolean {
 	return readObjects.has(node) || isParsedPosition(node);
 }
 
+export function isHeldRead(node: object): boolean {
+	return readObjects.has(node);
+}
+
 /** Make `to` count as read when `from` does, and return `to`: for a read node a wrap or a materialization rebuilds. */
 export function carryRead<T>(from: object, to: T): T {
 	if (isRead(from) && to !== null && typeof to === 'object') readObjects.add(to);
 	return to;
 }
 
-/** `holdReadTree` for one object a read of `from` produced: `to` holds `from`'s tree, provenance and read, and is returned. */
+/** `holdReadTree` for one object a read of `from` produced: `to` holds `from`'s tree and read, and is returned. */
 export function carryReadTree<T extends object>(from: object, to: T): T {
 	carryTree(from, to);
-	carrySourceStamp(from, to);
 	return carryRead(from, to);
-}
-
-const rebuiltObjects = new WeakSet<object>();
-
-/** Record that a `$with` rebuild returned `node`: a builder wrote its slots, whether or not it counts as read. */
-export function markRebuilt(node: object): void {
-	rebuiltObjects.add(node);
-}
-
-/** Whether a `$with` rebuild returned `node` (`markRebuilt`). */
-export function isRebuilt(node: object): boolean {
-	return rebuiltObjects.has(node);
 }
 
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
@@ -253,7 +241,7 @@ export interface SourceIdentity {
 	readonly kind: number;
 }
 
-const PLACE = Symbol('sittir.place');
+const places = new WeakMap<object, SourceIdentity>();
 
 /**
  * The source identity of a node: a read node's own coordinate and tree, or
@@ -261,7 +249,7 @@ const PLACE = Symbol('sittir.place');
  * (`carryPlace`). Evidence of layout only; nothing slices it.
  */
 export function placeOf(node: object): SourceIdentity | undefined {
-	const carried = (node as { [PLACE]?: SourceIdentity })[PLACE];
+	const carried = places.get(node);
 	if (carried !== undefined) return carried;
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
@@ -282,7 +270,7 @@ export function envelopeKindOf(node: object): number | undefined {
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
 export function carryPlace(from: object, to: object): void {
 	const source = placeOf(from);
-	if (source !== undefined) Object.defineProperty(to, PLACE, { value: source, enumerable: false, configurable: true });
+	if (source !== undefined) places.set(to, source);
 }
 
 /** A tree whose trivia table answers for a node: the tree and the node's index in it. */

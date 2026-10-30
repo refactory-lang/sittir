@@ -33,7 +33,7 @@ export interface HoldsTree {
 
 /** A node: an object a factory built or a parse read, stamped with which of them produced it; a copy keeps its stamp. Every `.Bound` and `.Parsed` node is one. */
 export interface HoldsSource {
-	readonly [SourceMember]: 0 | 1 | 2;
+	readonly [SourceMember]: 0 | 2;
 }
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
@@ -148,7 +148,9 @@ export type FormsHolding<Union, Slot extends string, Value> = [Refusals<Value, n
 		: never
 	: never;
 
-export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
+export type ListView<E, O> = ReadonlyArray<E> & Readonly<ListOptionMembers<O>>;
+
+type ListOptionMembers<O> = Pick<O, Exclude<keyof O, 'separator'>> & { [K in Extract<keyof O, 'separator'>]: () => O[K] };
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
 type Accessors<N, ByKindId> = {

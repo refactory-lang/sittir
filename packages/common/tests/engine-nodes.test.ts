@@ -6,7 +6,7 @@ import { inTreeEngine } from '../src/engine-scope.ts';
 import { languageGuards } from '../src/language.ts';
 import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
-import { stampBuilt } from '../src/source-stamp.ts';
+import { factoryNode } from './support/factory-node.ts';
 import { withMembers as withMethods } from './support/members.ts';
 import { asRead, triviaFacts } from './support/fake-engine.ts';
 
@@ -21,7 +21,7 @@ const trivia: TriviaFacts = {
 };
 
 const node = (data: Record<string, unknown>): AnyUntypedNode => withMethods(data as unknown as AnyUntypedNode);
-const built = (data: Record<string, unknown>): AnyUntypedNode => stampBuilt(node(data));
+const built = (data: Record<string, unknown>): AnyUntypedNode => factoryNode(node(data));
 
 function fakeLanguage(name: string) {
 	const trees: object[] = [];

@@ -70,12 +70,12 @@ describe('a parameter branch keeps its ordinary list as a ReadonlyArray of the i
 		expect(params.$render()).toBe('()');
 	});
 
-	it('writes the view as enumerable members, with the index getters of a parsed owner off the keys', () => {
+	it('writes the view as enumerable members and its items as its own elements', () => {
 		const params = functionOf('fn f(a: i32) {}\n').parameters();
 		const list = listOf(params);
 		const keys = Object.keys(list);
-		for (const member of ['length', 'map', 'delimiter']) expect(keys).toContain(member);
-		expect(keys).not.toContain('0');
+		for (const member of ['length', 'map', 'delimiter', '0']) expect(keys).toContain(member);
+		expect(keys).not.toContain('1');
 		expect(Object.keys(params)).not.toContain('0');
 	});
 });

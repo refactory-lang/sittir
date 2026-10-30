@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
-import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, readNativeTree, readNodeOf } from '../src/validate/common.ts';
+import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, parseNativeTree, readNodeOf } from '../src/validate/common.ts';
 import { selfContainedRenderInput } from '../src/validate/read-render-parse.ts';
 
 const parsed = await createEngine(rust);
@@ -14,7 +14,7 @@ const accessorOf = await loadSlotAccessorOf('rust');
 const readNode = await readNodeOf('rust');
 
 function detachedInput(source: string): { readonly input: AnyUntypedNode; readonly options: Readonly<Record<string, unknown>> } {
-	const { tree } = readNativeTree(engine, source, { depth: Infinity });
+	const tree = parseNativeTree(engine, source);
 	const input = selfContainedRenderInput(materializeDetached(readNode(tree), accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
 	return { input, options: tree.options ?? {} };
 }

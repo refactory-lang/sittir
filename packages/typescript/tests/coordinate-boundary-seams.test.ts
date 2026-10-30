@@ -6,7 +6,7 @@ import typescript from '../src/index.ts';
 const ts = await createEngine(typescript);
 
 const edited = (source: string, text: string) => {
-	const tree = ts.diagnostics.parseAndRead(source).tree as TreeHandle;
+	const tree = ts.diagnostics.parseTree(source) as TreeHandle;
 	const end = (tree.read!(0, 1) as { $_layout: { at: { $end: number } } }).$_layout.at.$end;
 	const index = Array.from({ length: end }, (_, at) => at).find((at) => {
 		const read = tree.read!(at, 1) as { $_layout?: { at?: { $span: { start: number; end: number } } } };

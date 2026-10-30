@@ -1,12 +1,13 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
+import { undoIfFillFails } from './list-fills.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
@@ -108,7 +109,6 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	let result = built;
 	try {
 		result = sourcedRecord(node, built, true);
-		markRebuilt(result);
 		carryRead(node, result);
 		carryPlace(node, result);
 		carryUnitSides(node, result);
@@ -234,7 +234,7 @@ function entryWire(node: object): (entry: TriviaEntry) => unknown {
 	const tree = treeOf(node);
 	const built = builtRefOf(node)?.arena;
 	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));
-	const holder = built?.engine ?? engineOf(node);
+	const holder = built?.engine() ?? engineOf(node);
 	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
 }
 
@@ -464,7 +464,7 @@ void readonlyArrayCovered;
 
 export const LIST_VIEW_MEMBERS: readonly string[] = [...READONLY_ARRAY_METHODS, 'length'];
 
-const holdsDecoration = (value: unknown): boolean => value !== undefined && !(Array.isArray(value) && value.length === 0);
+const holdsDecoration = (value: unknown): boolean => value !== undefined && value !== false && !(Array.isArray(value) && value.length === 0);
 
 const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): unknown => {
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
@@ -479,29 +479,27 @@ export function listItems(elements: readonly unknown[], wrapper: ListViewWrapper
 	return Object.freeze(elements.map((element) => collapseWrapper(element, wrapper)));
 }
 
-/** The key a wrapped list node keeps its reader of the items under: it hydrates them on the first read. */
-export const LIST_READ: unique symbol = Symbol('sittir.listRead');
+/** The `ReadonlyArray` methods of a list node but `toString`: `Array.prototype`'s own, which read the node's own elements. */
+type ListMethod = (this: ArrayLike<unknown>, ...args: never[]) => unknown;
 
-type ListItemsHolder = { [LIST_ITEMS]?: readonly unknown[]; readonly [LIST_READ]?: () => readonly unknown[] };
-
-/** The items of a list node: the ones it holds, or, for a wrapped list, the ones its reader hydrates and keeps on the first read. */
-export function listItemsOf(node: ListItemsHolder): readonly unknown[] {
-	return (node[LIST_ITEMS] ??= node[LIST_READ]!());
-}
-
-/** The `ReadonlyArray` methods of a list node but `toString`, written once; each reads the items the node holds under `LIST_ITEMS`. */
 export const LIST_METHODS = Object.fromEntries(
-	READONLY_ARRAY_METHODS.filter((name) => name !== 'toString').map((name) => [
-		name,
-		function (this: ListItemsHolder, ...args: unknown[]): unknown {
-			return (listItemsOf(this) as unknown as Members)[name]!(...args);
-		}
-	])
-) as Readonly<Record<Exclude<(typeof READONLY_ARRAY_METHODS)[number], 'toString'>, (this: ListItemsHolder, ...args: unknown[]) => unknown>>;
+	READONLY_ARRAY_METHODS.filter((name) => name !== 'toString').map((name) => [name, Array.prototype[name] as ListMethod] as const)
+) as Readonly<Record<Exclude<(typeof READONLY_ARRAY_METHODS)[number], 'toString'>, ListMethod>>;
 
 /** The iterator member of a list node. */
-export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
-	return listItemsOf(this)[Symbol.iterator]();
+export const listIterator: (this: ArrayLike<unknown>) => ArrayIterator<unknown> = Array.prototype.values;
+
+export { holdListItems, holdReadItems } from './list-fills.ts';
+
+export function holdBuiltItems(node: object, items: readonly unknown[], wrapper?: ListViewWrapper): void {
+	const held = node as Record<number, unknown>;
+	for (let index = 0; index < items.length; index++) held[index] = collapseWrapper(hydrateStored(items[index]), wrapper);
+}
+
+const NO_ITEMS: readonly unknown[] = Object.freeze([]);
+
+export function heldItems(list: object | undefined): ArrayLike<unknown> {
+	return list === undefined ? NO_ITEMS : (list as ArrayLike<unknown>);
 }
 
 /** What an owner knows of the list it holds: the list itself, hydrated by `hydrate` when it is a read stub, and its stored elements (undefined while the stub cannot be read). */
@@ -540,43 +538,18 @@ export function listOption(list: unknown, key: string, fallback: unknown): unkno
 	return (recordOf(held) === undefined ? held?.[`_${key}`] : held?.[key]) ?? fallback;
 }
 
-const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
-
-const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
-
 export function listSeparatorOf(node: object): unknown {
 	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
 }
 
-export function defineListSeparator(node: object, accessor?: string): void {
-	let getter = SEPARATOR_GETTERS.get(accessor);
-	if (getter === undefined) {
-		getter = function (this: Record<string, unknown>) {
-			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			return listSeparatorOf(this);
-		};
-		SEPARATOR_GETTERS.set(accessor, getter);
-	}
-	Object.defineProperty(node, 'separator', { get: getter, enumerable: false, configurable: true });
-}
-
-/** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
-export function defineListIndices(node: object, count: number): void {
-	for (let index = 0; index < count; index++) {
-		INDEX_GETTERS[index] ??= function (this: ListItemsHolder) {
-			return listItemsOf(this)[index];
-		};
-		Object.defineProperty(node, index, { get: INDEX_GETTERS[index], enumerable: false, configurable: true });
-	}
+export function listSeparator(this: object): unknown {
+	return listSeparatorOf(this);
 }
 
 /** The refusal of a list owner built over a read stub: a stub is a parsed list that cannot be counted without its tree, which a raw factory does not have, so the build names the stub as `engine.build` does. */
 export function refuseReadStub(storage: string): never {
 	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`);
 }
-
-/** The key a list node keeps its frozen items under. */
-export const LIST_ITEMS: unique symbol = Symbol('sittir.listItems');
 
 export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean =>
 	typeof value === 'object' &&
@@ -795,7 +768,10 @@ const hydratedLists = new WeakSet<readonly unknown[]>();
 function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
 	const slots = node as Record<string, unknown>;
 	const child = hydrateOne(slots[key]);
-	if (child !== slots[key]) slots[key] = child;
+	if (child !== slots[key]) {
+		undoIfFillFails(slots, key, slots[key]);
+		slots[key] = child;
+	}
 	return child;
 }
 
@@ -807,6 +783,7 @@ function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): read
 	if (hydratedLists.has(stored)) return stored;
 	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
 	hydratedLists.add(children);
+	undoIfFillFails(slots, key, stored);
 	slots[key] = children;
 	return children;
 }
@@ -826,13 +803,16 @@ export function childSlot(node: RecordHandle, word: number, width: number, forms
 	if (word in cache) return cache[word];
 	const value = recordSlot(node, word, width, forms, inline, built);
 	const role = aliasContent ? contentRole(node, () => value) : 'node';
-	return (cache[word] = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role));
+	const child = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role);
+	undoIfFillFails(cache, word, undefined);
+	return (cache[word] = child);
 }
 
 export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
 	const items = recordSlots(node, word, width, run, forms, inline, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
+	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
 
@@ -867,8 +847,8 @@ export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
-export { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
+export { TREE, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	interiorPattern,

@@ -19,17 +19,15 @@ import {
 	admitChildren,
 	checkDelimited,
 	listSlotWith,
-	LIST_ITEMS,
-	LIST_READ,
 	LIST_METHODS,
 	listIterator,
-	listItems,
+	holdListItems,
+	heldItems,
 	ownerView,
-	ownerElements,
 	listOption,
 	refuseReadStub,
 	hydrateStored,
-	defineListIndices,
+	holdBuiltItems,
 	storedElements,
 	elementsWith,
 	seatWith,
@@ -37,7 +35,8 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	stampBuilt,
+	SOURCE,
+	Source,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
 	triviaSide,
@@ -154,6 +153,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 	const node = {
 		$type: TSKindId.Module as const,
 		_statements,
+		$_layout: undefined,
 		$with: {
 			statements: (...vs: Admit<T.Statement>[]) =>
 				rebuilt(node, handle, () => buildModule(...restItems('statements', vs)))
@@ -167,9 +167,10 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Module.Bound;
+	return node as unknown as T.Module.Bound;
 }
 
 export function buildSimpleStatements<V extends Admit<T.SimpleStatementsElements>>(
@@ -208,6 +209,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 	const node = {
 		$type: TSKindId.SimpleStatements as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -220,12 +222,34 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -234,10 +258,13 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.SimpleStatements.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.SimpleStatements.Bound;
 }
 
 export function buildImportStatement<V extends Admit<T.Names>>(
@@ -274,6 +301,7 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 	const node = {
 		$type: TSKindId.ImportStatement as const,
 		_names,
+		$_layout: undefined,
 		$with: {
 			names: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -286,12 +314,34 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 		},
 		names: () => hydrateStoredSlot(node, '_names'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.names(), 'names'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -300,10 +350,13 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.ImportStatement.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.ImportStatement.Bound;
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
@@ -314,6 +367,7 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportPrefix as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -322,9 +376,10 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ImportPrefix.Bound;
+	return node as unknown as T.ImportPrefix.Bound;
 }
 
 export function buildRelativeImport<
@@ -341,6 +396,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 		$type: TSKindId.RelativeImport as const,
 		_prefix,
 		_name,
+		$_layout: undefined,
 		$with: {
 			prefix: (value: Admit<T.ImportPrefix>) =>
 				rebuilt(node, handle, () => buildRelativeImport({ ...config, prefix: value })),
@@ -356,9 +412,10 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.RelativeImport.Bound;
+	return node as unknown as T.RelativeImport.Bound;
 }
 
 export function buildFutureImportStatement<V extends Admit<T.ImportList | T.ParenthesizedImportList>>(
@@ -373,6 +430,7 @@ export function buildFutureImportStatement(
 	const node = {
 		$type: TSKindId.FutureImportStatement as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.ImportList | T.ParenthesizedImportList>) =>
 				rebuilt(node, handle, () => buildFutureImportStatement(value))
@@ -385,9 +443,10 @@ export function buildFutureImportStatement(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FutureImportStatement.Bound;
+	return node as unknown as T.FutureImportStatement.Bound;
 }
 
 export function buildImportFromStatement<
@@ -407,6 +466,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		$type: TSKindId.ImportFromStatement as const,
 		_module_name,
 		_content,
+		$_layout: undefined,
 		$with: {
 			moduleName: (value: Admit<T.RelativeImport | T.DottedName>) =>
 				rebuilt(node, handle, () => buildImportFromStatement({ ...config, moduleName: value })),
@@ -422,9 +482,10 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ImportFromStatement.Bound;
+	return node as unknown as T.ImportFromStatement.Bound;
 }
 
 export function buildImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -456,13 +517,15 @@ function _buildImportList(
 	currentHandle()?.admit(TSKindId.ImportList, elements);
 	const _name = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_name).length;
+	const listedItems = storedElements(_name);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'import_list', { names: _name });
 	const node = {
 		$type: TSKindId.ImportList as const,
 		_name,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			names: (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
 				rebuilt(node, handle, () => buildImportList(options, ...vs)),
@@ -471,12 +534,34 @@ function _buildImportList(
 		},
 		names: () => hydrateStoredSlots(node, '_name'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'names'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -485,10 +570,13 @@ function _buildImportList(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ImportList.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ImportList.Bound;
 }
 
 export function buildAliasedImport<
@@ -505,6 +593,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 		$type: TSKindId.AliasedImport as const,
 		_name,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildAliasedImport({ ...config, name: value })),
 			alias: (value: Admit<T.Identifier>) =>
@@ -519,9 +608,10 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AliasedImport.Bound;
+	return node as unknown as T.AliasedImport.Bound;
 }
 
 export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImport;
@@ -538,6 +628,7 @@ export function buildPrintStatement(
 	const node = {
 		$type: TSKindId.PrintStatement as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>) =>
 				rebuilt(node, handle, () => buildPrintStatement(value))
@@ -550,9 +641,10 @@ export function buildPrintStatement(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.PrintStatement.Bound;
+	return node as unknown as T.PrintStatement.Bound;
 }
 
 export function buildChevron<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Chevron.Bound;
@@ -563,6 +655,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 	const node = {
 		$type: TSKindId.Chevron as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildChevron(value))
 		},
@@ -574,9 +667,10 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Chevron.Bound;
+	return node as unknown as T.Chevron.Bound;
 }
 
 export function buildAssertStatement<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -590,6 +684,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 	const node = {
 		$type: TSKindId.AssertStatement as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildAssertStatement(...restItems('expressions', vs)))
@@ -602,9 +697,10 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AssertStatement.Bound;
+	return node as unknown as T.AssertStatement.Bound;
 }
 
 export function buildExpressionStatement<
@@ -619,6 +715,7 @@ export function buildExpressionStatement(
 	const node = {
 		$type: TSKindId.ExpressionStatement as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -634,9 +731,10 @@ export function buildExpressionStatement(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExpressionStatement.Bound;
+	return node as unknown as T.ExpressionStatement.Bound;
 }
 
 export function buildNamedExpression<
@@ -653,6 +751,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		$type: TSKindId.NamedExpression as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, left: value })),
@@ -668,9 +767,10 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NamedExpression.Bound;
+	return node as unknown as T.NamedExpression.Bound;
 }
 
 export function buildNamedExpressionLhs<IdentifierSlot extends T.NamedExpressionLhs.Config['identifier']>(
@@ -684,6 +784,7 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 	const node = {
 		$type: TSKindId.NamedExpressionLhs as const,
 		_identifier,
+		$_layout: undefined,
 		$with: {
 			identifier: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedExpressionLhs({ ...config, identifier: value }))
@@ -696,9 +797,10 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NamedExpressionLhs.Bound;
+	return node as unknown as T.NamedExpressionLhs.Bound;
 }
 
 export function buildReturnStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -711,6 +813,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 	const node = {
 		$type: TSKindId.ReturnStatement as const,
 		_expressions,
+		$_layout: undefined,
 		$with: {
 			expressions: (value?: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildReturnStatement(value))
@@ -723,9 +826,10 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ReturnStatement.Bound;
+	return node as unknown as T.ReturnStatement.Bound;
 }
 
 export function buildDeleteStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -738,6 +842,7 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 	const node = {
 		$type: TSKindId.DeleteStatement as const,
 		_expressions,
+		$_layout: undefined,
 		$with: {
 			expressions: (value: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildDeleteStatement(value))
@@ -750,9 +855,10 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DeleteStatement.Bound;
+	return node as unknown as T.DeleteStatement.Bound;
 }
 
 export function buildRaiseStatement<
@@ -771,6 +877,7 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 		$type: TSKindId.RaiseStatement as const,
 		_expressions,
 		_cause,
+		$_layout: undefined,
 		$with: {
 			expressions: (value?: Admit<NonNullable<T.RaiseStatement.Config>['expressions']>) =>
 				rebuilt(node, handle, () => buildRaiseStatement({ ...config, expressions: value })),
@@ -786,9 +893,10 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.RaiseStatement.Bound;
+	return node as unknown as T.RaiseStatement.Bound;
 }
 
 export const buildPassStatement: TSKindId.PassStatement = TSKindId.PassStatement;
@@ -824,6 +932,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		_condition,
 		_consequence,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			condition: (value: Admit<NonNullable<T.IfStatement.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value })),
@@ -842,9 +951,10 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IfStatement.Bound;
+	return node as unknown as T.IfStatement.Bound;
 }
 
 export function buildElifClause<
@@ -863,6 +973,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 		$type: TSKindId.ElifClause as const,
 		_condition,
 		_consequence,
+		$_layout: undefined,
 		$with: {
 			condition: (value: Admit<NonNullable<T.ElifClause.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildElifClause({ ...config, condition: value })),
@@ -878,9 +989,10 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ElifClause.Bound;
+	return node as unknown as T.ElifClause.Bound;
 }
 
 export function buildElseClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.ElseClause.Bound;
@@ -891,6 +1003,7 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 	const node = {
 		$type: TSKindId.ElseClause as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildElseClause(value))
 		},
@@ -902,9 +1015,10 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ElseClause.Bound;
+	return node as unknown as T.ElseClause.Bound;
 }
 
 export function buildMatchStatement<
@@ -921,6 +1035,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		$type: TSKindId.MatchStatement as const,
 		_subjects,
 		_body,
+		$_layout: undefined,
 		$with: {
 			subjects: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -941,9 +1056,10 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
+	return node as unknown as T.MatchStatement.Bound;
 }
 
 export function buildCaseClause<
@@ -965,6 +1081,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 		_pattern,
 		_guard,
 		_body,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<T.CasePattern | T.CasePatternList>) =>
 				rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
@@ -981,9 +1098,10 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CaseClause.Bound;
+	return node as unknown as T.CaseClause.Bound;
 }
 
 export function buildForStatement<
@@ -1020,6 +1138,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		_right,
 		_body,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.ForStatement.Config>['async']>) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, async: value })),
@@ -1043,9 +1162,10 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ForStatement.Bound;
+	return node as unknown as T.ForStatement.Bound;
 }
 
 export function buildWhileStatement<
@@ -1071,6 +1191,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		_condition,
 		_body,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			condition: (value: Admit<NonNullable<T.WhileStatement.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value })),
@@ -1088,9 +1209,10 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.WhileStatement.Bound;
+	return node as unknown as T.WhileStatement.Bound;
 }
 
 export function buildTryStatement<
@@ -1124,6 +1246,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 		_handlers,
 		_alternative,
 		_finalizer,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
 			handlers: (...values: Admit<T.ExceptClause[]>) =>
@@ -1144,9 +1267,10 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TryStatement.Bound;
+	return node as unknown as T.TryStatement.Bound;
 }
 
 export function buildExceptClause<
@@ -1166,6 +1290,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		_group,
 		_exception,
 		_body,
+		$_layout: undefined,
 		$with: {
 			group: (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
@@ -1183,9 +1308,10 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExceptClause.Bound;
+	return node as unknown as T.ExceptClause.Bound;
 }
 
 export function buildFinallyClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.FinallyClause.Bound;
@@ -1196,6 +1322,7 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 	const node = {
 		$type: TSKindId.FinallyClause as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value))
 		},
@@ -1207,9 +1334,10 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FinallyClause.Bound;
+	return node as unknown as T.FinallyClause.Bound;
 }
 
 export function buildWithStatement<
@@ -1231,6 +1359,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		_async,
 		_with_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.WithStatement.Config>['async']>) =>
 				rebuilt(node, handle, () => buildWithStatement({ ...config, async: value })),
@@ -1248,9 +1377,10 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.WithStatement.Bound;
+	return node as unknown as T.WithStatement.Bound;
 }
 
 export function buildWithItem<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.WithItem.Bound;
@@ -1261,6 +1391,7 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 	const node = {
 		$type: TSKindId.WithItem as const,
 		_value,
+		$_layout: undefined,
 		$with: {
 			value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildWithItem(value))
 		},
@@ -1272,9 +1403,10 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.WithItem.Bound;
+	return node as unknown as T.WithItem.Bound;
 }
 
 export function buildFunctionDefinition<
@@ -1321,6 +1453,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 		_parameters,
 		_return_type,
 		_body,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.FunctionDefinition.Config>['async']>) =>
 				rebuilt(node, handle, () => buildFunctionDefinition({ ...config, async: value })),
@@ -1359,9 +1492,10 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FunctionDefinition.Bound;
+	return node as unknown as T.FunctionDefinition.Bound;
 }
 
 export function buildParameters(): T.EmptyParameters;
@@ -1399,6 +1533,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	const node = {
 		$type: TSKindId.Parameters as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1411,12 +1546,34 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1426,10 +1583,13 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.Parameters.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.Parameters.Bound;
 }
 
 export function buildLambdaParameters<V extends Admit<T.ParametersElements>>(
@@ -1468,6 +1628,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 	const node = {
 		$type: TSKindId.LambdaParameters as const,
 		_parameters_elements,
+		$_layout: undefined,
 		$with: {
 			parametersElements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1480,12 +1641,34 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		},
 		parametersElements: () => hydrateStoredSlot(node, '_parameters_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.parametersElements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1494,10 +1677,13 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.LambdaParameters.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.LambdaParameters.Bound;
 }
 
 export function buildListSplat<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.ListSplat.Bound;
@@ -1508,6 +1694,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 	const node = {
 		$type: TSKindId.ListSplat as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildListSplat(value))
 		},
@@ -1519,9 +1706,10 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ListSplat.Bound;
+	return node as unknown as T.ListSplat.Bound;
 }
 
 export function buildDictionarySplat<V extends Admit<T.Expression>>(
@@ -1534,6 +1722,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 	const node = {
 		$type: TSKindId.DictionarySplat as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDictionarySplat(value))
 		},
@@ -1545,9 +1734,10 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DictionarySplat.Bound;
+	return node as unknown as T.DictionarySplat.Bound;
 }
 
 export function buildGlobalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1561,6 +1751,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 	const node = {
 		$type: TSKindId.GlobalStatement as const,
 		_names,
+		$_layout: undefined,
 		$with: {
 			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
 				rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs)))
@@ -1573,9 +1764,10 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.GlobalStatement.Bound;
+	return node as unknown as T.GlobalStatement.Bound;
 }
 
 export function buildNonlocalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1589,6 +1781,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 	const node = {
 		$type: TSKindId.NonlocalStatement as const,
 		_names,
+		$_layout: undefined,
 		$with: {
 			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
 				rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs)))
@@ -1601,9 +1794,10 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NonlocalStatement.Bound;
+	return node as unknown as T.NonlocalStatement.Bound;
 }
 
 export function buildExecStatement<
@@ -1620,6 +1814,7 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 		$type: TSKindId.ExecStatement as const,
 		_code,
 		_in_clause,
+		$_layout: undefined,
 		$with: {
 			code: (value: Admit<T.String | T.Identifier>) =>
 				rebuilt(node, handle, () => buildExecStatement({ ...config, code: value })),
@@ -1635,9 +1830,10 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExecStatement.Bound;
+	return node as unknown as T.ExecStatement.Bound;
 }
 
 export function buildTypeAliasStatement<
@@ -1656,6 +1852,7 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 		$type: TSKindId.TypeAliasStatement as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value })),
 			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value }))
@@ -1669,9 +1866,10 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TypeAliasStatement.Bound;
+	return node as unknown as T.TypeAliasStatement.Bound;
 }
 
 export function buildClassDefinition<
@@ -1705,6 +1903,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 		_type_parameters,
 		_bases,
 		_body,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildClassDefinition({ ...config, name: value })),
@@ -1738,9 +1937,10 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ClassDefinition.Bound;
+	return node as unknown as T.ClassDefinition.Bound;
 }
 
 export function buildTypeParameter<V extends Admit<T.Types>>(
@@ -1777,6 +1977,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 	const node = {
 		$type: TSKindId.TypeParameter as const,
 		_types,
+		$_layout: undefined,
 		$with: {
 			types: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1789,12 +1990,34 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		},
 		types: () => hydrateStoredSlot(node, '_types'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1803,10 +2026,13 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.TypeParameter.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.TypeParameter.Bound;
 }
 
 export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListSplat | T.ListSplat>>(
@@ -1821,6 +2047,7 @@ export function buildParenthesizedListSplat(
 	const node = {
 		$type: TSKindId.ParenthesizedListSplat as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat(value))
@@ -1833,9 +2060,10 @@ export function buildParenthesizedListSplat(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ParenthesizedListSplat.Bound;
+	return node as unknown as T.ParenthesizedListSplat.Bound;
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;
@@ -1879,6 +2107,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 	const node = {
 		$type: TSKindId.ArgumentList as const,
 		_arguments,
+		$_layout: undefined,
 		$with: {
 			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1891,12 +2120,34 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		},
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.arguments(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1906,10 +2157,13 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.ArgumentList.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.ArgumentList.Bound;
 }
 
 export function buildDecoratedDefinition<
@@ -1929,6 +2183,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 		$type: TSKindId.DecoratedDefinition as const,
 		_decorator,
 		_definition,
+		$_layout: undefined,
 		$with: {
 			decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
 				rebuilt(node, handle, () =>
@@ -1946,9 +2201,10 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DecoratedDefinition.Bound;
+	return node as unknown as T.DecoratedDefinition.Bound;
 }
 
 export function buildDecorator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Decorator.Bound;
@@ -1959,6 +2215,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 	const node = {
 		$type: TSKindId.Decorator as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDecorator(value))
 		},
@@ -1970,9 +2227,10 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Decorator.Bound;
+	return node as unknown as T.Decorator.Bound;
 }
 
 export function buildBlock<A extends Admit<T.Statement[]>>(...children: A & RefuseUndeclared<A>): T.Block.Bound;
@@ -1984,6 +2242,7 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 	const node = {
 		$type: TSKindId.Block as const,
 		_statements,
+		$_layout: undefined,
 		$with: {
 			statements: (...vs: Admit<T.Statement>[]) =>
 				rebuilt(node, handle, () => buildBlock(...restItems('statements', vs)))
@@ -1996,9 +2255,10 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Block.Bound;
+	return node as unknown as T.Block.Bound;
 }
 
 export function buildExpressionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -2028,13 +2288,15 @@ function _buildExpressionList(
 	currentHandle()?.admit(TSKindId.ExpressionList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_list', { items: _item });
 	const node = {
 		$type: TSKindId.ExpressionList as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
@@ -2043,12 +2305,34 @@ function _buildExpressionList(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2057,10 +2341,13 @@ function _buildExpressionList(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ExpressionList.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ExpressionList.Bound;
 }
 
 export function buildDottedName<
@@ -2077,6 +2364,7 @@ export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound
 		$type: TSKindId.DottedName as const,
 		_qualifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			qualifier: (value?: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value })),
@@ -2091,9 +2379,10 @@ export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DottedName.Bound;
+	return node as unknown as T.DottedName.Bound;
 }
 
 export function buildCasePattern<V extends Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>>(
@@ -2108,6 +2397,7 @@ export function buildCasePattern(
 	const node = {
 		$type: TSKindId.CasePattern as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) =>
 				rebuilt(node, handle, () => buildCasePattern(value))
@@ -2120,9 +2410,10 @@ export function buildCasePattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CasePattern.Bound;
+	return node as unknown as T.CasePattern.Bound;
 }
 
 export function buildSimplePattern<
@@ -2173,6 +2464,7 @@ export function buildSimplePattern(
 	const node = {
 		$type: TSKindId.SimplePattern as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -2206,9 +2498,10 @@ export function buildSimplePattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SimplePattern.Bound;
+	return node as unknown as T.SimplePattern.Bound;
 }
 
 export function buildCaseAsPattern<
@@ -2228,6 +2521,7 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 		$type: TSKindId.CaseAsPattern as const,
 		_case_pattern,
 		_identifier,
+		$_layout: undefined,
 		$with: {
 			casePattern: (value: Admit<T.CasePattern>) =>
 				rebuilt(node, handle, () => buildCaseAsPattern({ ...config, casePattern: value })),
@@ -2243,9 +2537,10 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.CaseAsPattern.Bound;
+	return node as unknown as T.CaseAsPattern.Bound;
 }
 
 export function buildUnionPattern<
@@ -2277,6 +2572,7 @@ export function buildUnionPattern(
 		$type: TSKindId.UnionPattern as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.UnionPattern.Config>['left']>) =>
 				rebuilt(node, handle, () => buildUnionPattern({ ...config, left: value })),
@@ -2292,9 +2588,10 @@ export function buildUnionPattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnionPattern.Bound;
+	return node as unknown as T.UnionPattern.Bound;
 }
 
 export function buildDictPattern(): T.EmptyDictPattern;
@@ -2332,6 +2629,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 	const node = {
 		$type: TSKindId.DictPattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2344,12 +2642,34 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2359,10 +2679,13 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.DictPattern.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.DictPattern.Bound;
 }
 
 export function buildKeyValuePattern<
@@ -2390,6 +2713,7 @@ export function buildKeyValuePattern(
 		$type: TSKindId.KeyValuePattern as const,
 		_key,
 		_value,
+		$_layout: undefined,
 		$with: {
 			key: (value: Admit<NonNullable<T.KeyValuePattern.Config>['key']>) =>
 				rebuilt(node, handle, () => buildKeyValuePattern({ ...config, key: value })),
@@ -2405,9 +2729,10 @@ export function buildKeyValuePattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.KeyValuePattern.Bound;
+	return node as unknown as T.KeyValuePattern.Bound;
 }
 
 export function buildKeywordPattern<
@@ -2435,6 +2760,7 @@ export function buildKeywordPattern(
 		$type: TSKindId.KeywordPattern as const,
 		_name,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value })),
@@ -2450,9 +2776,10 @@ export function buildKeywordPattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.KeywordPattern.Bound;
+	return node as unknown as T.KeywordPattern.Bound;
 }
 
 export function buildClassPattern<
@@ -2469,6 +2796,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 		$type: TSKindId.ClassPattern as const,
 		_type,
 		_fields,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, type: value })),
 			fields: (...args: unknown[]) =>
@@ -2489,9 +2817,10 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ClassPattern.Bound;
+	return node as unknown as T.ClassPattern.Bound;
 }
 
 export function buildComplexPattern<
@@ -2515,6 +2844,7 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 		_real,
 		_operator,
 		_imaginary,
+		$_layout: undefined,
 		$with: {
 			sign: (value?: Admit<NonNullable<T.ComplexPattern.Config>['sign']>) =>
 				rebuilt(node, handle, () => buildComplexPattern({ ...config, sign: value })),
@@ -2536,9 +2866,10 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ComplexPattern.Bound;
+	return node as unknown as T.ComplexPattern.Bound;
 }
 
 export function buildParametersElements<A extends NonEmptyArray<Admit<T.Parameter>>>(
@@ -2568,13 +2899,15 @@ function _buildParametersElements(
 	currentHandle()?.admit(TSKindId.ParametersElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
 	const node = {
 		$type: TSKindId.ParametersElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Parameter>>) =>
 				rebuilt(node, handle, () => buildParametersElements(options, ...vs)),
@@ -2583,12 +2916,34 @@ function _buildParametersElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2597,10 +2952,13 @@ function _buildParametersElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ParametersElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ParametersElements.Bound;
 }
 
 export function buildPatterns<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -2628,13 +2986,15 @@ function _buildPatterns(
 	currentHandle()?.admit(TSKindId.Patterns, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
 	const node = {
 		$type: TSKindId.Patterns as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatterns(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -2642,12 +3002,34 @@ function _buildPatterns(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2656,10 +3038,13 @@ function _buildPatterns(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.Patterns.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.Patterns.Bound;
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
@@ -2697,6 +3082,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const node = {
 		$type: TSKindId.TuplePattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2709,12 +3095,34 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2724,10 +3132,13 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.TuplePattern.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.TuplePattern.Bound;
 }
 
 export function buildListPattern(): T.EmptyListPattern;
@@ -2765,6 +3176,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 	const node = {
 		$type: TSKindId.ListPattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2777,12 +3189,34 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2792,10 +3226,13 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.ListPattern.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.ListPattern.Bound;
 }
 
 export function buildDefaultParameter<
@@ -2814,6 +3251,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 		$type: TSKindId.DefaultParameter as const,
 		_name,
 		_default,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier | T.TuplePattern>) =>
 				rebuilt(node, handle, () => buildDefaultParameter({ ...config, name: value })),
@@ -2829,9 +3267,10 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DefaultParameter.Bound;
+	return node as unknown as T.DefaultParameter.Bound;
 }
 
 export function buildTypedDefaultParameter<
@@ -2854,6 +3293,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 		_name,
 		_type,
 		_default,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, name: value })),
@@ -2872,9 +3312,10 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TypedDefaultParameter.Bound;
+	return node as unknown as T.TypedDefaultParameter.Bound;
 }
 
 export function buildListSplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -2889,6 +3330,7 @@ export function buildListSplatPattern(
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
 				rebuilt(node, handle, () => buildListSplatPattern(value))
@@ -2901,9 +3343,10 @@ export function buildListSplatPattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ListSplatPattern.Bound;
+	return node as unknown as T.ListSplatPattern.Bound;
 }
 
 export function buildDictionarySplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -2918,6 +3361,7 @@ export function buildDictionarySplatPattern(
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
 				rebuilt(node, handle, () => buildDictionarySplatPattern(value))
@@ -2930,9 +3374,10 @@ export function buildDictionarySplatPattern(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DictionarySplatPattern.Bound;
+	return node as unknown as T.DictionarySplatPattern.Bound;
 }
 
 export function buildAsPattern<
@@ -2957,6 +3402,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		$type: TSKindId.AsPattern as const,
 		_expression,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.AsPattern.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildAsPattern({ ...config, expression: value })),
@@ -2972,9 +3418,10 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AsPattern.Bound;
+	return node as unknown as T.AsPattern.Bound;
 }
 
 export function buildNotOperator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.NotOperator.Bound;
@@ -2985,6 +3432,7 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 	const node = {
 		$type: TSKindId.NotOperator as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNotOperator(value))
 		},
@@ -2996,9 +3444,10 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.NotOperator.Bound;
+	return node as unknown as T.NotOperator.Bound;
 }
 
 export function buildBooleanOperator<
@@ -3018,6 +3467,7 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 		_left,
 		_operator,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.BooleanOperator.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBooleanOperator({ ...config, left: value })),
@@ -3036,9 +3486,10 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.BooleanOperator.Bound;
+	return node as unknown as T.BooleanOperator.Bound;
 }
 
 export function buildBinaryOperator<
@@ -3058,6 +3509,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		_left,
 		_operator,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.BinaryOperator.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBinaryOperator({ ...config, left: value })),
@@ -3076,9 +3528,10 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.BinaryOperator.Bound;
+	return node as unknown as T.BinaryOperator.Bound;
 }
 
 export function buildUnaryOperator<ArgumentSlot extends T.UnaryOperator.Config['argument']>(
@@ -3094,6 +3547,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		$type: TSKindId.UnaryOperator as const,
 		_operator,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			operator: (value: Admit<NonNullable<T.UnaryOperator.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUnaryOperator({ ...config, operator: value })),
@@ -3109,9 +3563,10 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnaryOperator.Bound;
+	return node as unknown as T.UnaryOperator.Bound;
 }
 
 export function buildComparisonOperator<
@@ -3130,6 +3585,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		$type: TSKindId.ComparisonOperator as const,
 		_left,
 		_comparators,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.ComparisonOperator.Config>['left']>) =>
 				rebuilt(node, handle, () => buildComparisonOperator({ ...config, left: value })),
@@ -3152,9 +3608,10 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ComparisonOperator.Bound;
+	return node as unknown as T.ComparisonOperator.Bound;
 }
 
 export function buildLambda<
@@ -3171,6 +3628,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 		$type: TSKindId.Lambda as const,
 		_parameters,
 		_body,
+		$_layout: undefined,
 		$with: {
 			parameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3192,9 +3650,10 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Lambda.Bound;
+	return node as unknown as T.Lambda.Bound;
 }
 
 export function buildLambdaWithinForInClause<
@@ -3216,6 +3675,7 @@ export function buildLambdaWithinForInClause(
 		$type: TSKindId.LambdaWithinForInClause as const,
 		_parameters,
 		_body,
+		$_layout: undefined,
 		$with: {
 			parameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3237,9 +3697,10 @@ export function buildLambdaWithinForInClause(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.LambdaWithinForInClause.Bound;
+	return node as unknown as T.LambdaWithinForInClause.Bound;
 }
 
 export function buildAugmentedAssignment<
@@ -3261,6 +3722,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		_left,
 		_operator,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Pattern | T.PatternList>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, left: value })),
@@ -3279,9 +3741,10 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AugmentedAssignment.Bound;
+	return node as unknown as T.AugmentedAssignment.Bound;
 }
 
 export function buildPatternList<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -3309,13 +3772,15 @@ function _buildPatternList(
 	currentHandle()?.admit(TSKindId.PatternList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'pattern_list', { items: _item });
 	const node = {
 		$type: TSKindId.PatternList as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatternList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -3323,12 +3788,34 @@ function _buildPatternList(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3337,10 +3824,13 @@ function _buildPatternList(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.PatternList.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.PatternList.Bound;
 }
 
 export function buildYield<V extends Admit<T.YieldFromClause | T.Expression | T.ExpressionList>>(
@@ -3353,6 +3843,7 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 	const node = {
 		$type: TSKindId.Yield as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value?: Admit<NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildYield(value))
@@ -3365,9 +3856,10 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Yield.Bound;
+	return node as unknown as T.Yield.Bound;
 }
 
 export function buildAttribute<
@@ -3384,6 +3876,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		$type: TSKindId.Attribute as const,
 		_object,
 		_property,
+		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.Attribute.Config>['object']>) =>
 				rebuilt(node, handle, () => buildAttribute({ ...config, object: value })),
@@ -3399,9 +3892,10 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Attribute.Bound;
+	return node as unknown as T.Attribute.Bound;
 }
 
 export function buildSubscript<
@@ -3418,6 +3912,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 		$type: TSKindId.Subscript as const,
 		_object,
 		_subscripts,
+		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
 				rebuilt(node, handle, () => buildSubscript({ ...config, object: value })),
@@ -3439,9 +3934,10 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Subscript.Bound;
+	return node as unknown as T.Subscript.Bound;
 }
 
 export function buildSlice<
@@ -3464,6 +3960,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		_start,
 		_stop,
 		_step,
+		$_layout: undefined,
 		$with: {
 			start: (value?: Admit<NonNullable<T.Slice.Config>['start']>) =>
 				rebuilt(node, handle, () => buildSlice({ ...config, start: value })),
@@ -3492,9 +3989,10 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Slice.Bound;
+	return node as unknown as T.Slice.Bound;
 }
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
@@ -3513,6 +4011,7 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 		$type: TSKindId.Call as const,
 		_function,
 		_arguments,
+		$_layout: undefined,
 		$with: {
 			function: (value: Admit<NonNullable<T.Call.Config>['function']>) =>
 				rebuilt(node, handle, () => buildCall({ ...config, function: value })),
@@ -3528,9 +4027,10 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Call.Bound;
+	return node as unknown as T.Call.Bound;
 }
 
 export function buildTypedParameter<
@@ -3547,6 +4047,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 		$type: TSKindId.TypedParameter as const,
 		_name,
 		_type,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>) =>
 				rebuilt(node, handle, () => buildTypedParameter({ ...config, name: value })),
@@ -3561,9 +4062,10 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TypedParameter.Bound;
+	return node as unknown as T.TypedParameter.Bound;
 }
 
 export function buildType<
@@ -3578,6 +4080,7 @@ export function buildType(
 	const node = {
 		$type: TSKindId.Type as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -3593,9 +4096,10 @@ export function buildType(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Type.Bound;
+	return node as unknown as T.Type.Bound;
 }
 
 export function buildSplatType<TypeSlot extends T.SplatType.Config['type']>(
@@ -3611,6 +4115,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 		$type: TSKindId.SplatType as const,
 		_operator,
 		_type,
+		$_layout: undefined,
 		$with: {
 			operator: (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildSplatType({ ...config, operator: value })),
@@ -3625,9 +4130,10 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SplatType.Bound;
+	return node as unknown as T.SplatType.Bound;
 }
 
 export function buildGenericType<
@@ -3646,6 +4152,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$type: TSKindId.GenericType as const,
 		_name,
 		_type_parameter,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
 			typeParameter: (...args: unknown[]) =>
@@ -3666,9 +4173,10 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.GenericType.Bound;
+	return node as unknown as T.GenericType.Bound;
 }
 
 export function buildUnionType<
@@ -3685,6 +4193,7 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		$type: TSKindId.UnionType as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
 			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
@@ -3698,9 +4207,10 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.UnionType.Bound;
+	return node as unknown as T.UnionType.Bound;
 }
 
 export function buildConstrainedType<
@@ -3720,6 +4230,7 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 		$type: TSKindId.ConstrainedType as const,
 		_base_type,
 		_constraint,
+		$_layout: undefined,
 		$with: {
 			baseType: (value: Admit<T.Type>) =>
 				rebuilt(node, handle, () => buildConstrainedType({ ...config, baseType: value })),
@@ -3735,9 +4246,10 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ConstrainedType.Bound;
+	return node as unknown as T.ConstrainedType.Bound;
 }
 
 export function buildMemberType<
@@ -3754,6 +4266,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 		$type: TSKindId.MemberType as const,
 		_qualifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			qualifier: (value: Admit<T.Type>) =>
 				rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value })),
@@ -3768,9 +4281,10 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.MemberType.Bound;
+	return node as unknown as T.MemberType.Bound;
 }
 
 export function buildKeywordArgument<
@@ -3787,6 +4301,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		$type: TSKindId.KeywordArgument as const,
 		_name,
 		_value,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, name: value })),
@@ -3802,9 +4317,10 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.KeywordArgument.Bound;
+	return node as unknown as T.KeywordArgument.Bound;
 }
 
 export function buildList(): T.EmptyList;
@@ -3844,6 +4360,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 	const node = {
 		$type: TSKindId.List as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3856,12 +4373,34 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3871,10 +4410,13 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.List.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.List.Bound;
 }
 
 export function buildSet<V extends Admit<T.CollectionElements>>(
@@ -3911,6 +4453,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 	const node = {
 		$type: TSKindId.Set as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3923,12 +4466,34 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3937,10 +4502,13 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.Set.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.Set.Bound;
 }
 
 export function buildTuple(): T.EmptyTuple;
@@ -3978,6 +4546,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 	const node = {
 		$type: TSKindId.Tuple as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3990,12 +4559,34 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4005,10 +4596,13 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.Tuple.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.Tuple.Bound;
 }
 
 export function buildDictionary(): T.EmptyDictionary;
@@ -4046,6 +4640,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 	const node = {
 		$type: TSKindId.Dictionary as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -4058,12 +4653,34 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4073,10 +4690,13 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.Dictionary.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.Dictionary.Bound;
 }
 
 export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extends T.Pair.Config['value']>(
@@ -4092,6 +4712,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		$type: TSKindId.Pair as const,
 		_key,
 		_value,
+		$_layout: undefined,
 		$with: {
 			key: (value: Admit<NonNullable<T.Pair.Config>['key']>) =>
 				rebuilt(node, handle, () => buildPair({ ...config, key: value })),
@@ -4107,9 +4728,10 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Pair.Bound;
+	return node as unknown as T.Pair.Bound;
 }
 
 export function buildListComprehension<
@@ -4128,6 +4750,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		$type: TSKindId.ListComprehension as const,
 		_body,
 		_clauses,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<NonNullable<T.ListComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildListComprehension({ ...config, body: value })),
@@ -4143,9 +4766,10 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ListComprehension.Bound;
+	return node as unknown as T.ListComprehension.Bound;
 }
 
 export function buildDictionaryComprehension<
@@ -4166,6 +4790,7 @@ export function buildDictionaryComprehension(
 		$type: TSKindId.DictionaryComprehension as const,
 		_body,
 		_clauses,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Pair>) =>
 				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, body: value })),
@@ -4181,9 +4806,10 @@ export function buildDictionaryComprehension(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DictionaryComprehension.Bound;
+	return node as unknown as T.DictionaryComprehension.Bound;
 }
 
 export function buildSetComprehension<
@@ -4202,6 +4828,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		$type: TSKindId.SetComprehension as const,
 		_body,
 		_clauses,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<NonNullable<T.SetComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildSetComprehension({ ...config, body: value })),
@@ -4217,9 +4844,10 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SetComprehension.Bound;
+	return node as unknown as T.SetComprehension.Bound;
 }
 
 export function buildGeneratorExpression<
@@ -4238,6 +4866,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		$type: TSKindId.GeneratorExpression as const,
 		_body,
 		_clauses,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<NonNullable<T.GeneratorExpression.Config>['body']>) =>
 				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, body: value })),
@@ -4253,9 +4882,10 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.GeneratorExpression.Bound;
+	return node as unknown as T.GeneratorExpression.Bound;
 }
 
 export function buildParenthesizedExpression<V extends Admit<T.Expression | T.Yield>>(
@@ -4268,6 +4898,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 	const node = {
 		$type: TSKindId.ParenthesizedExpression as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression | T.Yield>>) =>
 				rebuilt(node, handle, () => buildParenthesizedExpression(value))
@@ -4280,9 +4911,10 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ParenthesizedExpression.Bound;
+	return node as unknown as T.ParenthesizedExpression.Bound;
 }
 
 export function buildCollectionElements<
@@ -4319,13 +4951,15 @@ function _buildCollectionElements(
 	currentHandle()?.admit(TSKindId.CollectionElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'collection_elements', { items: _item });
 	const node = {
 		$type: TSKindId.CollectionElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
 				rebuilt(node, handle, () => buildCollectionElements(options, ...vs)),
@@ -4334,12 +4968,34 @@ function _buildCollectionElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4348,10 +5004,13 @@ function _buildCollectionElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.CollectionElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.CollectionElements.Bound;
 }
 
 export function buildForInClause<
@@ -4384,6 +5043,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 		_left,
 		_right,
 		_trailing_comma,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.ForInClause.Config>['async']>) =>
 				rebuilt(node, handle, () => buildForInClause({ ...config, async: value }, options)),
@@ -4405,9 +5065,10 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ForInClause.Bound;
+	return node as unknown as T.ForInClause.Bound;
 }
 
 export function buildIfClause<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.IfClause.Bound;
@@ -4418,6 +5079,7 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 	const node = {
 		$type: TSKindId.IfClause as const,
 		_condition,
+		$_layout: undefined,
 		$with: {
 			condition: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildIfClause(value))
 		},
@@ -4429,9 +5091,10 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IfClause.Bound;
+	return node as unknown as T.IfClause.Bound;
 }
 
 export function buildConditionalExpression<
@@ -4461,6 +5124,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 		_consequence,
 		_condition,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			consequence: (value: Admit<NonNullable<T.ConditionalExpression.Config>['consequence']>) =>
 				rebuilt(node, handle, () => buildConditionalExpression({ ...config, consequence: value })),
@@ -4479,9 +5143,10 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ConditionalExpression.Bound;
+	return node as unknown as T.ConditionalExpression.Bound;
 }
 
 export function buildConcatenatedString<A extends NonEmptyArray<Admit<T.String>>>(
@@ -4495,6 +5160,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 	const node = {
 		$type: TSKindId.ConcatenatedString as const,
 		_string,
+		$_layout: undefined,
 		$with: {
 			strings: (...vs: NonEmptyArray<Admit<T.String>>) =>
 				rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs)))
@@ -4507,9 +5173,10 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ConcatenatedString.Bound;
+	return node as unknown as T.ConcatenatedString.Bound;
 }
 
 export function buildString<
@@ -4535,6 +5202,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		_string_start,
 		_content,
 		_string_end,
+		$_layout: undefined,
 		$with: {
 			stringStart: (value: Admit<T.StringStart>) =>
 				rebuilt(node, handle, () => buildString({ ...config, stringStart: value })),
@@ -4553,10 +5221,11 @@ export function buildString(config: T.String.Config): T.String.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
 	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
-	return stampBuilt(node) as unknown as T.String.Bound;
+	return node as unknown as T.String.Bound;
 }
 
 export function buildStringContent<
@@ -4576,6 +5245,7 @@ export function buildStringContent(
 	const node = {
 		$type: TSKindId.StringContent as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (
 				...vs: NonEmptyArray<
@@ -4591,9 +5261,10 @@ export function buildStringContent(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.StringContent.Bound;
+	return node as unknown as T.StringContent.Bound;
 }
 
 export function buildInterpolation<
@@ -4626,6 +5297,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		_debug,
 		_type_conversion,
 		_format_specifier,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Interpolation.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, expression: value })),
@@ -4647,9 +5319,10 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Interpolation.Bound;
+	return node as unknown as T.Interpolation.Bound;
 }
 
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
@@ -4667,6 +5340,7 @@ export function buildFormatSpecifier(
 	const node = {
 		$type: TSKindId.FormatSpecifier as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...vs: Admit<T.FormatSpecifierText | T.FormatExpression>[]) =>
 				rebuilt(node, handle, () => buildFormatSpecifier(...restItems('elements', vs)))
@@ -4679,9 +5353,10 @@ export function buildFormatSpecifier(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FormatSpecifier.Bound;
+	return node as unknown as T.FormatSpecifier.Bound;
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
@@ -4692,6 +5367,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeConversion as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4700,9 +5376,10 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.TypeConversion.Bound;
+	return node as unknown as T.TypeConversion.Bound;
 }
 
 export function buildIdentifier<const W extends string>(
@@ -4716,6 +5393,7 @@ export function buildIdentifier<const W extends string>(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Identifier as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4724,9 +5402,10 @@ export function buildIdentifier<const W extends string>(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Identifier.Bound;
+	return node as unknown as T.Identifier.Bound;
 }
 
 export const buildTrue: TSKindId.True = TSKindId.True;
@@ -4743,6 +5422,7 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 	const node = {
 		$type: TSKindId.Await as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.PrimaryExpression>>) => rebuilt(node, handle, () => buildAwait(value))
 		},
@@ -4754,9 +5434,10 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Await.Bound;
+	return node as unknown as T.Await.Bound;
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -4777,6 +5458,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	const node = {
 		$type: TSKindId.Comment as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
 		},
@@ -4784,9 +5466,10 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.Comment.Bound;
+	return node as unknown as T.Comment.Bound;
 }
 
 export const buildPositionalSeparator: TSKindId.PositionalSeparator = TSKindId.PositionalSeparator;
@@ -4820,13 +5503,15 @@ function _buildSimpleStatementsElements(
 	currentHandle()?.admit(TSKindId.SimpleStatementsElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'simple_statements_elements', { items: _item });
 	const node = {
 		$type: TSKindId.SimpleStatementsElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.SimpleStatement>>) =>
 				rebuilt(node, handle, () => buildSimpleStatementsElements(options, ...vs)),
@@ -4835,12 +5520,34 @@ function _buildSimpleStatementsElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4849,10 +5556,13 @@ function _buildSimpleStatementsElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.SimpleStatementsElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
 export function buildSubjects<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -4880,13 +5590,15 @@ function _buildSubjects(
 	currentHandle()?.admit(TSKindId.Subjects, elements);
 	const _subject = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_subject).length;
+	const listedItems = storedElements(_subject);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subjects', { subjects: _subject });
 	const node = {
 		$type: TSKindId.Subjects as const,
 		_subject,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			subjects: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildSubjects(options, ...vs)),
@@ -4895,12 +5607,34 @@ function _buildSubjects(
 		},
 		subjects: () => hydrateStoredSlots(node, '_subject'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subjects'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4909,10 +5643,13 @@ function _buildSubjects(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.Subjects.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.Subjects.Bound;
 }
 
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -4942,13 +5679,15 @@ function _buildWithClauseWithItems(
 	currentHandle()?.admit(TSKindId.WithClauseWithItems, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_with_items', { items: _item });
 	const node = {
 		$type: TSKindId.WithClauseWithItems as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
 				rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs)),
@@ -4957,12 +5696,34 @@ function _buildWithClauseWithItems(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4971,10 +5732,13 @@ function _buildWithClauseWithItems(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.WithClauseWithItems.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type>>>(
@@ -5002,13 +5766,15 @@ function _buildTypes(
 	currentHandle()?.admit(TSKindId.Types, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
 		$type: TSKindId.Types as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Type>>) => rebuilt(node, handle, () => buildTypes(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -5016,12 +5782,34 @@ function _buildTypes(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5030,10 +5818,13 @@ function _buildTypes(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.Types.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.Types.Bound;
 }
 
 export function buildArgumentListElements<
@@ -5076,13 +5867,15 @@ function _buildArgumentListElements(
 	currentHandle()?.admit(TSKindId.ArgumentListElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'argument_list_elements', { items: _item });
 	const node = {
 		$type: TSKindId.ArgumentListElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (
 				...vs: NonEmptyArray<
@@ -5094,12 +5887,34 @@ function _buildArgumentListElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5108,10 +5923,13 @@ function _buildArgumentListElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ArgumentListElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ArgumentListElements.Bound;
 }
 
 export function buildListPatternCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -5141,13 +5959,15 @@ function _buildListPatternCasePatterns(
 	currentHandle()?.admit(TSKindId.ListPatternCasePatterns, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'list_pattern_case_patterns', { items: _item });
 	const node = {
 		$type: TSKindId.ListPatternCasePatterns as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
 				rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs)),
@@ -5156,12 +5976,34 @@ function _buildListPatternCasePatterns(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5170,10 +6012,13 @@ function _buildListPatternCasePatterns(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ListPatternCasePatterns.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
 export function buildDictPatternElements<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
@@ -5205,13 +6050,15 @@ function _buildDictPatternElements(
 	currentHandle()?.admit(TSKindId.DictPatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dict_pattern_elements', { items: _item });
 	const node = {
 		$type: TSKindId.DictPatternElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>) =>
 				rebuilt(node, handle, () => buildDictPatternElements(options, ...vs)),
@@ -5220,12 +6067,34 @@ function _buildDictPatternElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5234,10 +6103,13 @@ function _buildDictPatternElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.DictPatternElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.DictPatternElements.Bound;
 }
 
 export function buildSubscripts<A extends NonEmptyArray<Admit<T.Expression | T.Slice>>>(
@@ -5267,13 +6139,15 @@ function _buildSubscripts(
 	currentHandle()?.admit(TSKindId.Subscripts, elements);
 	const _subscript = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_subscript).length;
+	const listedItems = storedElements(_subscript);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subscripts', { subscripts: _subscript });
 	const node = {
 		$type: TSKindId.Subscripts as const,
 		_subscript,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			subscripts: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
 				rebuilt(node, handle, () => buildSubscripts(options, ...vs)),
@@ -5282,12 +6156,34 @@ function _buildSubscripts(
 		},
 		subscripts: () => hydrateStoredSlots(node, '_subscript'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subscripts'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5296,10 +6192,13 @@ function _buildSubscripts(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.Subscripts.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.Subscripts.Bound;
 }
 
 export function buildDictionaryElements<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
@@ -5329,13 +6228,15 @@ function _buildDictionaryElements(
 	currentHandle()?.admit(TSKindId.DictionaryElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dictionary_elements', { items: _item });
 	const node = {
 		$type: TSKindId.DictionaryElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>) =>
 				rebuilt(node, handle, () => buildDictionaryElements(options, ...vs)),
@@ -5344,12 +6245,34 @@ function _buildDictionaryElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5358,10 +6281,13 @@ function _buildDictionaryElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.DictionaryElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.DictionaryElements.Bound;
 }
 
 export function buildSliceGroup<V extends Admit<T.Expression>>(
@@ -5374,6 +6300,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 	const node = {
 		$type: TSKindId.SliceGroup as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value?: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSliceGroup(value))
 		},
@@ -5385,9 +6312,10 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SliceGroup.Bound;
+	return node as unknown as T.SliceGroup.Bound;
 }
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
@@ -5398,6 +6326,7 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatSpecifierText as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5406,9 +6335,10 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FormatSpecifierText.Bound;
+	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
 export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -5438,13 +6368,15 @@ function _buildTuplePatternElements(
 	currentHandle()?.admit(TSKindId.TuplePatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
 	const node = {
 		$type: TSKindId.TuplePatternElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
 				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
@@ -5453,12 +6385,34 @@ function _buildTuplePatternElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5467,10 +6421,13 @@ function _buildTuplePatternElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.TuplePatternElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.TuplePatternElements.Bound;
 }
 
 export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -5500,13 +6457,15 @@ function _buildCasePatternList(
 	currentHandle()?.admit(TSKindId.CasePatternList, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'case_pattern_list', { items: _item });
 	const node = {
 		$type: TSKindId.CasePatternList as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
 				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
@@ -5515,12 +6474,34 @@ function _buildCasePatternList(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5529,10 +6510,13 @@ function _buildCasePatternList(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.CasePatternList.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.CasePatternList.Bound;
 }
 
 export function buildTupleElements<
@@ -5569,13 +6553,15 @@ function _buildTupleElements(
 	currentHandle()?.admit(TSKindId.TupleElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_elements', { items: _item });
 	const node = {
 		$type: TSKindId.TupleElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
 				rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
@@ -5584,12 +6570,34 @@ function _buildTupleElements(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5598,10 +6606,13 @@ function _buildTupleElements(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.TupleElements.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.TupleElements.Bound;
 }
 
 export function buildExceptClauseExceptionAs<
@@ -5622,6 +6633,7 @@ export function buildExceptClauseExceptionAs(
 		$type: TSKindId.ExceptClauseExceptionAs as const,
 		_value,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			value: (value: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['value']>) =>
 				rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, value: value })),
@@ -5637,9 +6649,10 @@ export function buildExceptClauseExceptionAs(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExceptClauseExceptionAs.Bound;
+	return node as unknown as T.ExceptClauseExceptionAs.Bound;
 }
 
 export function buildCaseTuplePattern(): T.EmptyCaseTuplePattern;
@@ -5679,6 +6692,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 	const node = {
 		$type: TSKindId.CaseTuplePattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -5691,12 +6705,34 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5706,10 +6742,13 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.CaseTuplePattern.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.CaseTuplePattern.Bound;
 }
 
 export function buildCaseListPattern(): T.EmptyCaseListPattern;
@@ -5749,6 +6788,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 	const node = {
 		$type: TSKindId.CaseListPattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -5761,12 +6801,34 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5776,10 +6838,13 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.CaseListPattern.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.CaseListPattern.Bound;
 }
 
 export function buildPrintArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -5809,13 +6874,15 @@ function _buildPrintArguments(
 	currentHandle()?.admit(TSKindId.PrintArguments, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_arguments', { items: _item });
 	const node = {
 		$type: TSKindId.PrintArguments as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildPrintArguments(options, ...vs)),
@@ -5824,12 +6891,34 @@ function _buildPrintArguments(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5838,10 +6927,13 @@ function _buildPrintArguments(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.PrintArguments.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.PrintArguments.Bound;
 }
 
 export function buildPrintChevronArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -5871,13 +6963,15 @@ function _buildPrintChevronArguments(
 	currentHandle()?.admit(TSKindId.PrintChevronArguments, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_chevron_arguments', { items: _item });
 	const node = {
 		$type: TSKindId.PrintChevronArguments as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildPrintChevronArguments(options, ...vs)),
@@ -5886,12 +6980,34 @@ function _buildPrintChevronArguments(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5900,10 +7016,13 @@ function _buildPrintChevronArguments(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.PrintChevronArguments.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
 export function buildPrintStatementChevron<
@@ -5931,6 +7050,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 		$type: TSKindId.PrintStatementChevron as const,
 		_chevron,
 		_print_chevron_arguments,
+		$_layout: undefined,
 		$with: {
 			chevron: (value: Admit<T.Chevron>) =>
 				rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value })),
@@ -5953,9 +7073,10 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.PrintStatementChevron.Bound;
+	return node as unknown as T.PrintStatementChevron.Bound;
 }
 
 export function buildPrintStatementPlain<V extends Admit<T.PrintArguments>>(
@@ -5994,6 +7115,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 	const node = {
 		$type: TSKindId.PrintStatementPlain as const,
 		_print_arguments,
+		$_layout: undefined,
 		$with: {
 			printArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -6006,12 +7128,34 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		},
 		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6020,10 +7164,13 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.PrintStatementPlain.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.PrintStatementPlain.Bound;
 }
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
@@ -6064,6 +7211,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 	const node = {
 		$type: TSKindId.ParenthesizedImportList as const,
 		_import_list,
+		$_layout: undefined,
 		$with: {
 			importList: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -6076,12 +7224,34 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		},
 		importList: () => hydrateStoredSlot(node, '_import_list'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.importList(), 'names'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6090,10 +7260,13 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.ParenthesizedImportList.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.ParenthesizedImportList.Bound;
 }
 
 export function buildComprehensionClauses<A extends NonEmptyArray<Admit<T.ForInClause | T.IfClause>>>(
@@ -6109,6 +7282,7 @@ export function buildComprehensionClauses(
 	const node = {
 		$type: TSKindId.ComprehensionClauses as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			contents: (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
 				rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs)))
@@ -6121,9 +7295,10 @@ export function buildComprehensionClauses(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ComprehensionClauses.Bound;
+	return node as unknown as T.ComprehensionClauses.Bound;
 }
 
 export function buildIntegerHex<const N extends string | number | bigint>(
@@ -6150,6 +7325,7 @@ export function buildIntegerHex(
 		$type: TSKindId.IntegerHex as const,
 		_prefix,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildIntegerHex(value, options)),
 			prefix: (spelling: '0x' | '0X') =>
@@ -6164,9 +7340,10 @@ export function buildIntegerHex(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerHex.Bound;
+	return node as unknown as T.IntegerHex.Bound;
 }
 
 export function buildIntegerOctal<const N extends string | number | bigint>(
@@ -6193,6 +7370,7 @@ export function buildIntegerOctal(
 		$type: TSKindId.IntegerOctal as const,
 		_prefix,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerOctal(value, options)),
@@ -6208,9 +7386,10 @@ export function buildIntegerOctal(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerOctal.Bound;
+	return node as unknown as T.IntegerOctal.Bound;
 }
 
 export function buildIntegerBinary<const N extends string | number | bigint>(
@@ -6237,6 +7416,7 @@ export function buildIntegerBinary(
 		$type: TSKindId.IntegerBinary as const,
 		_prefix,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerBinary(value, options)),
@@ -6252,9 +7432,10 @@ export function buildIntegerBinary(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerBinary.Bound;
+	return node as unknown as T.IntegerBinary.Bound;
 }
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
@@ -6265,6 +7446,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalLong as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6273,9 +7455,10 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerDecimalLong.Bound;
+	return node as unknown as T.IntegerDecimalLong.Bound;
 }
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
@@ -6287,6 +7470,7 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalImaginary as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6295,9 +7479,10 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerDecimalImaginary.Bound;
+	return node as unknown as T.IntegerDecimalImaginary.Bound;
 }
 
 export function buildIntegerDecimalPlain<const N extends string | number | bigint>(
@@ -6312,6 +7497,7 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalPlain as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6320,9 +7506,10 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.IntegerDecimalPlain.Bound;
+	return node as unknown as T.IntegerDecimalPlain.Bound;
 }
 
 export function buildFloatPoint<
@@ -6410,6 +7597,7 @@ export function buildFloatPoint(
 		_sign,
 		_exponent,
 		_imaginary,
+		$_layout: undefined,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value }, options)),
@@ -6437,9 +7625,10 @@ export function buildFloatPoint(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FloatPoint.Bound;
+	return node as unknown as T.FloatPoint.Bound;
 }
 
 export function buildFloatLeadingPoint<
@@ -6527,6 +7716,7 @@ export function buildFloatLeadingPoint(
 		_sign,
 		_exponent,
 		_imaginary,
+		$_layout: undefined,
 		$with: {
 			integer: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value }, options)),
@@ -6554,9 +7744,10 @@ export function buildFloatLeadingPoint(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FloatLeadingPoint.Bound;
+	return node as unknown as T.FloatLeadingPoint.Bound;
 }
 
 export function buildFloatScientific<
@@ -6621,6 +7812,7 @@ export function buildFloatScientific(
 		_sign,
 		_exponent,
 		_imaginary,
+		$_layout: undefined,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value }, options)),
@@ -6645,9 +7837,10 @@ export function buildFloatScientific(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FloatScientific.Bound;
+	return node as unknown as T.FloatScientific.Bound;
 }
 
 export function buildEscapeSequenceUnicodeFixed(content: string, affix?: true): T.EscapeSequenceUnicodeFixed.Bound;
@@ -6672,6 +7865,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value))
 		},
@@ -6683,9 +7877,10 @@ export function buildEscapeSequenceUnicodeFixed(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceUnicodeFixed.Bound;
+	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
 export function buildEscapeSequenceUnicodeWide(content: string, affix?: true): T.EscapeSequenceUnicodeWide.Bound;
@@ -6710,6 +7905,7 @@ export function buildEscapeSequenceUnicodeWide(
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeWide as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeWide(value))
 		},
@@ -6721,9 +7917,10 @@ export function buildEscapeSequenceUnicodeWide(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceUnicodeWide.Bound;
+	return node as unknown as T.EscapeSequenceUnicodeWide.Bound;
 }
 
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
@@ -6745,6 +7942,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	const node = {
 		$type: TSKindId.EscapeSequenceHex as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceHex(value))
 		},
@@ -6756,9 +7954,10 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceHex.Bound;
+	return node as unknown as T.EscapeSequenceHex.Bound;
 }
 
 export function buildEscapeSequenceOctal<const N extends string | number | bigint>(
@@ -6786,6 +7985,7 @@ export function buildEscapeSequenceOctal(
 	const node = {
 		$type: TSKindId.EscapeSequenceOctal as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildEscapeSequenceOctal(value))
 		},
@@ -6797,9 +7997,10 @@ export function buildEscapeSequenceOctal(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceOctal.Bound;
+	return node as unknown as T.EscapeSequenceOctal.Bound;
 }
 
 export function buildEscapeSequenceLineBreak(content: string, affix?: true): T.EscapeSequenceLineBreak.Bound;
@@ -6821,6 +8022,7 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 	const node = {
 		$type: TSKindId.EscapeSequenceLineBreak as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceLineBreak(value))
 		},
@@ -6832,9 +8034,10 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceLineBreak.Bound;
+	return node as unknown as T.EscapeSequenceLineBreak.Bound;
 }
 
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
@@ -6856,6 +8059,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 	const node = {
 		$type: TSKindId.EscapeSequenceSimple as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value))
 		},
@@ -6867,9 +8071,10 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceSimple.Bound;
+	return node as unknown as T.EscapeSequenceSimple.Bound;
 }
 
 export function buildEscapeSequenceNamed(content: string, affix?: true): T.EscapeSequenceNamed.Bound;
@@ -6891,6 +8096,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 	const node = {
 		$type: TSKindId.EscapeSequenceNamed as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceNamed(value))
 		},
@@ -6902,9 +8108,10 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeSequenceNamed.Bound;
+	return node as unknown as T.EscapeSequenceNamed.Bound;
 }
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
@@ -6916,13 +8123,15 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LineContinuationNewline as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.LineContinuationNewline.Bound;
+	return node as unknown as T.LineContinuationNewline.Bound;
 }
 
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
@@ -6937,6 +8146,7 @@ export function buildSimplePatternNegative(value: Admit<T.Integer | T.Float>): T
 	const node = {
 		$type: TSKindId.SimplePatternNegative as const,
 		_value,
+		$_layout: undefined,
 		$with: {
 			value: (value: Admit<T.Integer | T.Float>) => rebuilt(node, handle, () => buildSimplePatternNegative(value))
 		},
@@ -6948,9 +8158,10 @@ export function buildSimplePatternNegative(value: Admit<T.Integer | T.Float>): T
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SimplePatternNegative.Bound;
+	return node as unknown as T.SimplePatternNegative.Bound;
 }
 
 export function buildExceptClauseExceptionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -6966,6 +8177,7 @@ export function buildExceptClauseExceptionList(
 	const node = {
 		$type: TSKindId.ExceptClauseExceptionList as const,
 		_value,
+		$_layout: undefined,
 		$with: {
 			values: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExceptClauseExceptionList(...restItems('values', vs)))
@@ -6978,9 +8190,10 @@ export function buildExceptClauseExceptionList(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExceptClauseExceptionList.Bound;
+	return node as unknown as T.ExceptClauseExceptionList.Bound;
 }
 
 export function buildExceptClauseException<V extends Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>>(
@@ -6995,6 +8208,7 @@ export function buildExceptClauseException(
 	const node = {
 		$type: TSKindId.ExceptClauseException as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>) =>
 				rebuilt(node, handle, () => buildExceptClauseException(value))
@@ -7007,9 +8221,10 @@ export function buildExceptClauseException(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ExceptClauseException.Bound;
+	return node as unknown as T.ExceptClauseException.Bound;
 }
 
 export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
@@ -7027,6 +8242,7 @@ export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Under
 	const node = {
 		$type: TSKindId.SplatPatternList as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
 				rebuilt(node, handle, () => buildSplatPatternList(value))
@@ -7039,9 +8255,10 @@ export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Under
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SplatPatternList.Bound;
+	return node as unknown as T.SplatPatternList.Bound;
 }
 
 export function buildSplatPatternDictionary<V extends Admit<T.Identifier | TSKindId.Underscore>>(
@@ -7061,6 +8278,7 @@ export function buildSplatPatternDictionary(
 	const node = {
 		$type: TSKindId.SplatPatternDictionary as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
 				rebuilt(node, handle, () => buildSplatPatternDictionary(value))
@@ -7073,9 +8291,10 @@ export function buildSplatPatternDictionary(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SplatPatternDictionary.Bound;
+	return node as unknown as T.SplatPatternDictionary.Bound;
 }
 
 export function buildAssignmentEq<
@@ -7092,6 +8311,7 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 		$type: TSKindId.AssignmentEq as const,
 		_name,
 		_value,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Pattern | T.PatternList>) =>
 				rebuilt(node, handle, () => buildAssignmentEq({ ...config, name: value })),
@@ -7107,9 +8327,10 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AssignmentEq.Bound;
+	return node as unknown as T.AssignmentEq.Bound;
 }
 
 export function buildAssignmentType<
@@ -7126,6 +8347,7 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 		$type: TSKindId.AssignmentType as const,
 		_name,
 		_type,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Pattern | T.PatternList>) =>
 				rebuilt(node, handle, () => buildAssignmentType({ ...config, name: value })),
@@ -7140,9 +8362,10 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AssignmentType.Bound;
+	return node as unknown as T.AssignmentType.Bound;
 }
 
 export function buildAssignmentTyped<
@@ -7164,6 +8387,7 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 		_name,
 		_type,
 		_value,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Pattern | T.PatternList>) =>
 				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, name: value })),
@@ -7181,9 +8405,10 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AssignmentTyped.Bound;
+	return node as unknown as T.AssignmentTyped.Bound;
 }
 
 export function buildExpressionStatementTuple<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -7213,13 +8438,15 @@ function _buildExpressionStatementTuple(
 	currentHandle()?.admit(TSKindId.ExpressionStatementTuple, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_statement_tuple', { items: _item });
 	const node = {
 		$type: TSKindId.ExpressionStatementTuple as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
@@ -7228,12 +8455,34 @@ function _buildExpressionStatementTuple(
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7242,10 +8491,13 @@ function _buildExpressionStatementTuple(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.ExpressionStatementTuple.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
 export function buildWithClauseBare<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -7275,13 +8527,15 @@ function _buildWithClauseBare(
 	currentHandle()?.admit(TSKindId.WithClauseBare, elements);
 	const _items = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_items).length;
+	const listedItems = storedElements(_items);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_bare', { items: _items });
 	const node = {
 		$type: TSKindId.WithClauseBare as const,
 		_items,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
 				rebuilt(node, handle, () => buildWithClauseBare(options, ...vs)),
@@ -7290,12 +8544,34 @@ function _buildWithClauseBare(
 		},
 		items: () => hydrateStoredSlots(node, '_items'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7304,10 +8580,13 @@ function _buildWithClauseBare(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.WithClauseBare.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.WithClauseBare.Bound;
 }
 
 export function buildWithClauseParen<V extends Admit<T.WithClauseWithItems>>(
@@ -7346,6 +8625,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 	const node = {
 		$type: TSKindId.WithClauseParen as const,
 		_items,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7358,12 +8638,34 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		},
 		items: () => hydrateStoredSlot(node, '_items'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7372,10 +8674,13 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.WithClauseParen.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.WithClauseParen.Bound;
 }
 
 export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
@@ -7390,6 +8695,7 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 	const node = {
 		$type: TSKindId.MatchBlockBlock as const,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			alternatives: (...vs: Admit<T.CaseClause>[]) =>
 				rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs)))
@@ -7403,9 +8709,10 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.MatchBlockBlock.Bound;
+	return node as unknown as T.MatchBlockBlock.Bound;
 }
 
 export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
@@ -7434,6 +8741,7 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 	const node = {
 		$type: TSKindId.MatchBlockEmpty as const,
 		_newline,
+		$_layout: undefined,
 		$with: {
 			newline: (value: Admit<NonNullable<TSKindId.Newline>>) =>
 				rebuilt(node, handle, () => _buildMatchBlockEmpty(value))
@@ -7446,9 +8754,10 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.MatchBlockEmpty.Bound;
+	return node as unknown as T.MatchBlockEmpty.Bound;
 }
 
 export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>(
@@ -7490,6 +8799,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 	const node = {
 		$type: TSKindId.SuiteInline as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7502,12 +8812,34 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7516,10 +8848,13 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listView.length ?? 0);
-	return stampBuilt(node) as unknown as T.SuiteInline.Bound;
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.SuiteInline.Bound;
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(
@@ -7551,6 +8886,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 	const node = {
 		$type: TSKindId.SuiteBlock as const,
 		_block,
+		$_layout: undefined,
 		$with: {
 			block: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildSuiteBlock(value))
 		},
@@ -7562,9 +8898,10 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SuiteBlock.Bound;
+	return node as unknown as T.SuiteBlock.Bound;
 }
 
 export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
@@ -7593,6 +8930,7 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 	const node = {
 		$type: TSKindId.SuiteEmpty as const,
 		_newline,
+		$_layout: undefined,
 		$with: {
 			newline: (value: Admit<NonNullable<TSKindId.Newline>>) => rebuilt(node, handle, () => _buildSuiteEmpty(value))
 		},
@@ -7604,9 +8942,10 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SuiteEmpty.Bound;
+	return node as unknown as T.SuiteEmpty.Bound;
 }
 
 export function buildComparisonOperatorComparator<
@@ -7632,6 +8971,7 @@ export function buildComparisonOperatorComparator(
 		$type: TSKindId.ComparisonOperatorComparator as const,
 		_operators,
 		_primary_expression,
+		$_layout: undefined,
 		$with: {
 			operators: (value: Admit<NonNullable<T.ComparisonOperatorComparator.Config>['operators']>) =>
 				rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, operators: value })),
@@ -7647,9 +8987,10 @@ export function buildComparisonOperatorComparator(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ComparisonOperatorComparator.Bound;
+	return node as unknown as T.ComparisonOperatorComparator.Bound;
 }
 
 export function buildYieldFromClause<V extends Admit<T.Expression>>(
@@ -7662,6 +9003,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 	const node = {
 		$type: TSKindId.YieldFromClause as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildYieldFromClause(value))
 		},
@@ -7673,9 +9015,10 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.YieldFromClause.Bound;
+	return node as unknown as T.YieldFromClause.Bound;
 }
 
 export function buildStringStart(text: string): T.StringStart.Bound {
@@ -7686,6 +9029,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringStart as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7694,9 +9038,10 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.StringStart.Bound;
+	return node as unknown as T.StringStart.Bound;
 }
 
 export function buildStringFragment(text: string): T.StringFragment.Bound {
@@ -7707,6 +9052,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringFragment as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7715,9 +9061,10 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.StringFragment.Bound;
+	return node as unknown as T.StringFragment.Bound;
 }
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bound {
@@ -7728,6 +9075,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeInterpolation as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7736,9 +9084,10 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.EscapeInterpolation.Bound;
+	return node as unknown as T.EscapeInterpolation.Bound;
 }
 
 export function buildStringEnd(text: string): T.StringEnd.Bound {
@@ -7749,6 +9098,7 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringEnd as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7757,9 +9107,10 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.StringEnd.Bound;
+	return node as unknown as T.StringEnd.Bound;
 }
 
 export const buildIndent: TSKindId.Indent = TSKindId.Indent;
@@ -7812,6 +9163,7 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 		_parameters,
 		_return_type,
 		_body,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['async']>) =>
 				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, async: value })),
@@ -7848,9 +9200,10 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.ConstructorDeclaration.Bound;
+	return node as unknown as T.ConstructorDeclaration.Bound;
 }
 
 export function buildBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
@@ -7866,6 +9219,7 @@ export function buildBlockClassDeclaration(
 	const node = {
 		$type: TSKindId.BlockClassDeclaration as const,
 		_statements,
+		$_layout: undefined,
 		$with: {
 			statements: (...vs: Admit<T.StatementClassDefinition>[]) =>
 				rebuilt(node, handle, () => buildBlockClassDeclaration(...restItems('statements', vs)))
@@ -7878,9 +9232,10 @@ export function buildBlockClassDeclaration(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.BlockClassDeclaration.Bound;
+	return node as unknown as T.BlockClassDeclaration.Bound;
 }
 
 export function buildSuiteBlockClassDeclaration<V extends Admit<T.BlockClassDeclaration>>(
@@ -7919,6 +9274,7 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 	const node = {
 		$type: TSKindId.SuiteBlockClassDeclaration as const,
 		_block_class_declaration,
+		$_layout: undefined,
 		$with: {
 			blockClassDeclaration: (value: Admit<T.BlockClassDeclaration>) =>
 				rebuilt(node, handle, () => _buildSuiteBlockClassDeclaration(value))
@@ -7931,9 +9287,10 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.SuiteBlockClassDeclaration.Bound;
+	return node as unknown as T.SuiteBlockClassDeclaration.Bound;
 }
 
 export function buildDecoratedDefinitionClassDeclaration<
@@ -7961,6 +9318,7 @@ export function buildDecoratedDefinitionClassDeclaration(
 		$type: TSKindId.DecoratedDefinitionClassDeclaration as const,
 		_decorator,
 		_definition,
+		$_layout: undefined,
 		$with: {
 			decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
 				rebuilt(node, handle, () =>
@@ -7978,9 +9336,10 @@ export function buildDecoratedDefinitionClassDeclaration(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
+	return node as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
 }
 
 export function buildNames<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -8012,13 +9371,15 @@ function _buildNames(
 	currentHandle()?.admit(TSKindId.Names, elements);
 	const _name = elements;
 	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_name).length;
+	const listedItems = storedElements(_name);
+	const listedLength = listedItems.length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'names', { names: _name });
 	const node = {
 		$type: TSKindId.Names as const,
 		_name,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			names: (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
 				rebuilt(node, handle, () => buildNames(options, ...vs)),
@@ -8027,12 +9388,34 @@ function _buildNames(
 		},
 		names: () => hydrateStoredSlots(node, '_name'),
 		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'names'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8041,10 +9424,13 @@ function _buildNames(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory
 	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.Names.Bound;
+	holdBuiltItems(node, listedItems);
+	return node as unknown as T.Names.Bound;
 }
 
 export function buildAsPatternTarget<V extends Admit<T.Expression>>(
@@ -8057,6 +9443,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 	const node = {
 		$type: TSKindId.AsPatternTarget as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAsPatternTarget(value))
 		},
@@ -8068,9 +9455,10 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.AsPatternTarget.Bound;
+	return node as unknown as T.AsPatternTarget.Bound;
 }
 
 export function buildFormatExpression<
@@ -8103,6 +9491,7 @@ export function buildFormatExpression(config: T.FormatExpression.Config): T.Form
 		_debug,
 		_type_conversion,
 		_format_specifier,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.FormatExpression.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildFormatExpression({ ...config, expression: value })),
@@ -8124,9 +9513,10 @@ export function buildFormatExpression(config: T.FormatExpression.Config): T.Form
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.FormatExpression.Bound;
+	return node as unknown as T.FormatExpression.Bound;
 }
 
 export function buildMethodDeclaration<
@@ -8173,6 +9563,7 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 		_parameters,
 		_return_type,
 		_body,
+		$_layout: undefined,
 		$with: {
 			async: (value?: Admit<NonNullable<T.MethodDeclaration.Config>['async']>) =>
 				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, async: value })),
@@ -8211,9 +9602,10 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$engine: handle && (() => handle.current)
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory
 	};
-	return stampBuilt(node) as unknown as T.MethodDeclaration.Bound;
+	return node as unknown as T.MethodDeclaration.Bound;
 }
 
 export type FluentKindMap = {

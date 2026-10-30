@@ -23,6 +23,7 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'leafLeading',
 	'leafTrailing',
 	'leafInner',
+	'LEAF_SITES',
 	'handleRender',
 	'handleToString',
 	'handleEngine',
@@ -54,7 +55,7 @@ export interface RecordConstruction {
 	readonly listOptions?: { readonly delimiter: boolean; readonly separator: boolean };
 	readonly setters: readonly SetterEntry[] | undefined;
 	readonly inputs: readonly string[] | 'kind';
-	readonly checks: readonly string[];
+	readonly check?: string;
 	readonly result: string;
 }
 
@@ -100,8 +101,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		`  const record = ${record};`,
 		...placed.map(store),
 		...(listOptions === undefined ? [] : [`  ${storeOptions}(${listOptions});`]),
-		'  const node = arena.view(record);',
-		...spec.checks,
+		`  const node = ${spec.check === undefined ? 'arena.view(record)' : `arena.checkedView(record, (node) => ${spec.check})`};`,
 		`  return node as unknown as ${spec.result};`
 	];
 	const tail = tailOf(`arena.record(${spec.kind})`, slotStore, 'storeListOptions');
@@ -137,12 +137,14 @@ function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions 
 		'    $tree: tree,',
 		'    $entry: entry,',
 		'    $site: site,',
+		'    $_layout: undefined,',
 		'    $text: leafText,',
 		'    $render: handleRender,',
 		'    toString: handleToString,',
 		'    toJSON: refuseJSON,',
 		...(trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
 		'    $engine: handleEngine,',
+		'    [LEAF_SITES]: null,',
 		'    [Symbol.dispose]: handleDispose',
 		'  };',
 		...(trivia === undefined ? [] : [`  node.$trivia = { node, leading: leafLeading, trailing: leafTrailing${trivia.inner ? ', inner: leafInner' : ''} };`]),

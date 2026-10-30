@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -10,7 +10,10 @@ import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellF
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
 import type { LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
+import { keepExemplar } from './exemplars.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { Source } from './source.ts';
+import { sourceOf } from './source-stamp.ts';
 
 /** A leaf entry of a built arena: its packed address in a string chunk, 0 before its leaf is first placed, its kind once placed, its text, and the chunk it lies in. */
 export interface BuiltText {
@@ -240,6 +243,7 @@ export class BuiltArena {
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
+	readonly #exemplars: object[] = [];
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 
@@ -324,7 +328,7 @@ export class BuiltArena {
 		}
 	}
 
-	get engine(): EngineIdentity {
+	engine(): EngineIdentity {
 		return this.#handle.current;
 	}
 
@@ -647,7 +651,7 @@ export class BuiltArena {
 
 	#view(at: number): object {
 		const position: RecordPosition = { $type: this.kindAt(at), $tree: this.tree, $at: at, $_layout: undefined };
-		return this.#wrap(position, this.tree) as object;
+		return keepExemplar(this.#exemplars, this.#wrap(position, this.tree) as object);
 	}
 
 	/** The handle of the drafted `record`, placed past every record its cells name. Each built leaf it holds is placed at its site there. */
@@ -657,14 +661,34 @@ export class BuiltArena {
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
 		if (record.copyOf !== undefined) this.#copySites(record.copyOf, place.at, record.patched ?? []);
-		const node = this.#view(place.at);
+		const node = this.#owned(place.at);
 		this.#placedLast = placed === undefined ? undefined : { node, placed };
 		return node;
 	}
 
+	checkedView(record: BuiltDraft, check: (node: object) => void): object {
+		const node = this.view(record);
+		try {
+			check(node);
+			return node;
+		} catch (error) {
+			this.releaseHandle(node);
+			throw error;
+		}
+	}
+
+	#owned(at: number): object {
+		try {
+			return this.#view(at);
+		} catch (error) {
+			this.release(at);
+			throw error;
+		}
+	}
+
 	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
 	leaf(maker: LeafMaker, text: string): object {
-		return maker(this.tree, { at: 0, text }, undefined);
+		return keepExemplar(this.#exemplars, maker(this.tree, { at: 0, text }, undefined));
 	}
 
 	/**
@@ -675,7 +699,7 @@ export class BuiltArena {
 	leafAt(kind: number, at: number, holder: number, word: number, item: number): object {
 		const maker = this.#views.leaves[kind];
 		if (maker === undefined) throw new Error(`no builder writes leaves of kind ${kind}, so the arena has no leaf handle for one`);
-		return maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item));
+		return keepExemplar(this.#exemplars, maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item)));
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
@@ -715,12 +739,6 @@ export class BuiltArena {
 	/** The handle of the compound record at `at`. */
 	node(at: number): object {
 		return this.#view(at);
-	}
-
-	/** Whether the record at `at` was rebuilt from a parsed node, which its side record names. */
-	rebuiltFromRead(at: number): boolean {
-		const side = this.words(at, 2)[wordOf(at, this.format) + 1]!;
-		return side !== 0 && (this.words(side, 1)[wordOf(side, this.format)]! & this.format.sideSides.bit) !== 0;
 	}
 
 	withOf(kind: number): BuiltWith | undefined {
@@ -764,7 +782,7 @@ export class BuiltArena {
 		this.#copySites(at, place.at, []);
 		const last = this.#placedLast;
 		if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, place.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
-		return this.#view(place.at);
+		return this.#owned(place.at);
 	}
 
 	#sidesNaming(side: number, sides: readonly number[]): number {
@@ -866,13 +884,13 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 }
 
 export function refuseForeignEntry(entry: object, holder: EngineIdentity | undefined): void {
-	const engine = builtArenaOf(entry)?.engine ?? engineOf(entry);
+	const engine = builtArenaOf(entry)?.engine() ?? engineOf(entry);
 	if (engine === undefined || holder === undefined || sameLanguage(engine, holder)) return;
 	throw new Error(`cannot write a ${engine.language.name} ${isBuiltNode(entry) ? 'record' : 'node'} into a side of a ${holder.language.name} node`);
 }
 
 function readCoordinateOf(entry: object): NodeCoordinate | undefined {
-	return isRead(entry) && !isRebuilt(entry) ? coordinateOf(entry) : undefined;
+	return isRead(entry) && sourceOf(entry) === Source.Ts ? coordinateOf(entry) : undefined;
 }
 
 export function refuseBuiltEntries(trivia: TriviaSides<unknown>): void {
