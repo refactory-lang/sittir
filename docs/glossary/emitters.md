@@ -9598,7 +9598,7 @@ The alias envelopes built from their content's text (the `alias` form of `builtF
  */
 ```
 
-### `packages/codegen/src/emitters/emit.ts::EmitAllResult.rootTreeTypeName`
+### `packages/codegen/src/emitters/emit.ts::EmitAllResult::rootTreeTypeName`
 
 ```text
 /** Name of the `wrap.ts` alias for the root kind's wrapped surface — the
@@ -9660,14 +9660,14 @@ The `trivia` member of the language hooks: the generated facts, the default comm
 
 The factory imports the language hooks need, one line per module: the coercer module's `buildByKind` (the hook the node reviver builds through), and the trivia hook's builders: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
 
-### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig::rootTypeName`
 
 ```text
 /** The grammar's root kind interface name (e.g. `SourceFile`) — types
 	 *  `createEngine`'s diagnostics so `parseAndRead(...).root` needs no cast. */
 ```
 
-### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTreeTypeName`
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig::rootTreeTypeName`
 
 ```text
 /** The `wrap.ts` alias for the root kind's wrapped surface (e.g.
@@ -9679,22 +9679,22 @@ The factory imports the language hooks need, one line per module: the coercer mo
 
 Emits `node-model.json5`: a structural dump of the assembled `NodeMap` (each kind's model type, slots with per-value multiplicities, supertype subtypes, polymorph forms), so tools read a grammar's shape without re-running codegen. It writes each fact once: no field a reader derives from another (`node-model-read.ts`) and no field nothing reads. Nodes are sorted by kind so diffs are stable.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.forwardsTo`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::forwardsTo`
 
 ```text
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.renamedFrom`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::renamedFrom`
 
 The node's `renamedFrom`, written only when the kind was renamed. Tools read the base-to-bound name mapping from it rather than evaluating the grammar again.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.splitFrom`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::splitFrom`
 
 The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::variantOf`
 
 The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
 
@@ -9758,7 +9758,7 @@ The grammar's `index.ts`: the descriptor module (`emitDescriptor`) as the defaul
 
 The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge with a `const`, so the descriptor is a module: its values are `name`, `fileTypes` (the model's file types, an empty list for a grammar with none), `kinds` (the grammar's `TSKindId`; a bound grammar's adds `portable`, the shared portable kinds typed by its `PortableKinds`), `is` (the grammar's guards, built by its `guardsWith` with the language's kind test against the module itself, `languageGuards`; a bound grammar's adds `portable`, the language's view of the portable guards, typed by its `PortableIs` and built by `languageGuards`' `shared` builder (`portableGuardsOf`), which reads a node of the language or a bare kind id of it and checks the language itself), `load`, which imports `./api.js` on demand, and `createEngine`, which imports `@sittir/common` on the first call and delegates to the one `createEngine` there. Its types are the grammar's types, its options, `IsGuards`, the language API type and `Engine`, the engine type for a surface. At import it loads only the kind-id module, the guards, `@sittir/common/language` and, for a bound grammar, `@sittir/common/portable` (the grammar's `portable.ts` is imported for its types only), so naming the language loads no factories, no wrap, no 824 KB types module and no native binding; `rust.is` and `rust.kinds` work before any engine exists, and every engine's `is` and `kinds` are these objects. The module checks itself against `Language` (`satisfies`).
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral.immediate`
+### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral::immediate`
 
 ```text
 /** Grammar-immediacy stamp of an INLINE terminal value (`token.immediate`
@@ -9786,7 +9786,7 @@ The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge
 		   isSlotBearingCompound's doc comment (shared.ts). */
 ```
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeProjection.wireIds`
+### `packages/codegen/src/emitters/node-projection.ts::NodeProjection::wireIds`
 
 Every id a kind's values are stored under, by kind, gathered from every
 literal component before the literal list dedupes by kind and text. A
@@ -10085,13 +10085,13 @@ A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it ta
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.strictType`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::strictType`
 
 ```text
 /** The type the builder itself declares. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.looseType`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::looseType`
 
 ```text
 /** The type a coercing caller may pass for the same position. */
