@@ -728,7 +728,7 @@ function concreteKindsOf(model: SlotModel, kind: string, seen: Set<string>): str
 	return subtypes.length === 0 ? [kind] : subtypes.flatMap((subtype) => concreteKindsOf(model, subtype, seen));
 }
 
-function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
+export function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
 	const seen = new Set<string>();
 	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();
 }

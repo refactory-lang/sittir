@@ -23,11 +23,10 @@ Its views have the shape of a portable node (an object literal of closures), so 
 | --- | --- |
 | `generate.mts` | The generator prototype. Writes `out/<grammar>.vocab.ts` (the context `Ctx` with its slot table filled from the grammar's own routes, `ViewForm`, `VocabViews`, the kind-id view types, `Backward`, one literal factory per read entry, the internal `view()`/`viewEnum()` dispatch, `viewNode()` and `builder()`) and `out/<grammar>.engine.ts` (a typed re-export of the engine). Every interface member gets a closure, read from the vocabulary's own files (`VOCAB_DIR`, inherited members included); a member with no route returns `undefined`. Prints what it emitted and every entry it skipped, with the reason. |
 | `lock-vocabulary.mts` | Writes `locked/`, a stand-in for the locked vocabulary: today's vocabulary with the bindings spec's §3.4 kind rule applied, so each level's `kind` admits every path beneath it. Generate with `VOCAB_DIR=<this folder>/locked` to check against it. |
-| `conformance.py` | Sorts the type errors of a generated module by cause (spec §4) and names one location per cause. Reads `tsc` output on stdin. |
 | `demo.mts` | Reads a rust function through the views, builds a structure and the view back, renders both, and times the views against the low-level reader. It is type-checked with the module, so it also shows the consumer's typing. |
 | `tsconfig.json` | Type-checks `out/*.ts` and the `.mts` files. |
 
-`out/` and `locked/` are generated and not committed.
+`out/` and `locked/` are generated and not committed. The generator's modules are counted by cause with `sittir tool portable-conformance`.
 
 ## Commands
 
@@ -36,13 +35,13 @@ Run from the root of a checkout whose natives match its sources.
 ```bash
 P=docs/superpowers/probes/2026-10-06-binding-generator
 pnpm exec tsx $P/generate.mts rust
-pnpm exec tsc -p $P/tsconfig.json --noEmit | python3 $P/conformance.py
+pnpm exec tsc -p $P/tsconfig.json --noEmit
 pnpm exec tsx $P/demo.mts
 
 # against the §3.4 stand-in
 pnpm exec tsx $P/lock-vocabulary.mts
 VOCAB_DIR=$PWD/$P/locked pnpm exec tsx $P/generate.mts rust
-pnpm exec tsc -p $P/tsconfig.json --noEmit | python3 $P/conformance.py
+pnpm exec tsc -p $P/tsconfig.json --noEmit
 ```
 
 ## Results
