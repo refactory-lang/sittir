@@ -2475,66 +2475,6 @@ ordinary union.
 // is correct for link-minted literals but wrong for this shape.
 ```
 
-### `packages/codegen/src/compiler/link.ts::classifyHiddenChoiceRule`
-
-Classifies a hidden choice rule. The decision is `hiddenChoiceClass`
-(`dsl/rule-patterns.ts`), the same predicate the automatic stamp's
-`isSupertypeOwner` asks, fed the rule, a storage lookup into the rules map
-under construction, and the named-arm fact from
-`collectHiddenNamedArmChoices`. What remains here is construction and the
-declared-supertype override:
-- `'enum'` and not a declared supertype: the members become an enum rule
-  (`normalizeEnumMembers` when all are strings, else a choice of literal
-  symbols). A declared supertype (`_layout`, a
-  choice over fixed-text tokens) stays a supertype.
-- `'named-arms'` and not a declared supertype: the rule unchanged.
-- `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
-  subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
-  members `isAliasMintedRef` marks as mints, and `declared: true` when the
-  grammar's `supertypes` names it. A `'supertype'` over aliased hidden
-  storage (`isAliasedHiddenStorage`) that the grammar does not declare a
-  supertype is not one: the parser shows it as a node, so it stays a choice
-  rule and assemble makes it an envelope (`compoundModelTypeFor`).
-- Otherwise the rule unchanged; assemble classifies it by shape. A hidden
-  choice of structural members (seqs, fields) is a real alternative, not an
-  abstract kind union.
-
-Neither supertype case applies to a kind the parser shows as a concrete node
-(`isShownConcreteKind`): a declared supertype that a default alias displays
-(python `match_block`) keeps its choice rule, so the surface has the node the
-tree has.
-
-### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
-
-```text
-/**
- * Extract concrete kind names from a choice for supertype subtypes.
- * Handles bare `symbol` members directly and `alias(_, $.foo)`
- * members by emitting the alias's SOURCE name (the storage kind whose
- * rule body models the arm). `seq` members are walked for the rare
- * hybrid case where a supertype branch wraps a single symbol in a seq.
- *
- * Aliased arms additionally record their storage→parse name pair in
- * `parseNames`: the subtype identity stays the STORAGE name (`SymbolRule.name`,
- * the kind whose rule body/slots/template model the arm — and the name
- * `variantArms` / assemble's node map key on), while the PARSE name is the
- * visible label tree-sitter actually emits at that position
- * (`alias($._expression_except_range, $.expression_group1)` → storage
- * `_expression_except_range`, parse `expression_group1`). The parse name
- * carries its own runtime symbol id (`alias_sym_expression_group1`) —
- * dropping it here (the old behavior) orphaned enrich-minted arms: the
- * supertype's dispatch arms only ever accepted the storage id, so every
- * runtime node arriving with the alias occurrence's id was "unknown kind
- * id" to the node enum. Consumed by `classifyHiddenChoiceRule`, which
- * stamps the pairs on `SupertypeRule.subtypeParseNames` at the flatten —
- * the same stamp-at-destruction-site pattern as `variantArms`.
- *
- * @param rule - The rule subtree to walk for subtype names.
- * @param ctx - Link phase context; `ctx.wordMatcher` decides whether a bare
- *   string-literal member lexes as a word (keyword) vs punctuation.
- */
-```
-
 ### `packages/codegen/src/compiler/link.ts::liftSeq`
 
 Lifts a seq: every run of members that is a separated list becomes one repeat,
@@ -6460,76 +6400,6 @@ whose choice holds none of the children's own members (typescript's
 // do we call this token in TypeScript identifier space".
 ```
 
-### `packages/codegen/src/compiler/link.ts::resolveRule`
-
-```text
-// ---------------------------------------------------------------------------
-// resolveRule — recursive resolution of all reference types
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// The wrapper survives link like every other wrapper; normalize's
-// `token`/`tokenImmediate` builders consume it into the leaf's
-// `tokenized`/`immediate` stamps.
-```
-
-#### body
-
-```text
-// Every named alias whose content resolves to a bare symbol (or one
-// under a transparent VARIANT/GROUP/TOKEN) is handled uniformly by
-// KEEPING the ALIAS wrapper — not reducing it to a bespoke stamped
-// symbol — whether its content is a clause-hoist/visible-group mint's
-// freshly-synthesized `_<name>` rule or an authored relabel of a
-// pre-existing rule. Both are
-// `alias(symbol(_<name>), $<value>)` with no independent rule under
-// `<value>` — structurally indistinguishable — and the OLD special-case
-// here (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
-// apart by checking only whether `<value>` had a rule body, which can't
-// actually distinguish "content is itself a fresh mint" from "content is
-// a real pre-existing rule being relabeled" — both produce that same
-// signature.
-//
-// It doesn't need to: whether `content.name`'s rule gets its own
-// independent top-level `AssembledNode` is decided separately, by
-// whether it's a `rules` bag key at all — completely unaffected by
-// whether this ALIAS wrapper survives or how `aliasedTo` eventually gets
-// stamped on it. The wrapper's content still names the rule by its own
-// (storage) `name`; render/read dispatch resolves the correct numeric id
-// via the ALIAS node's own `alias_sym_<value>` symbol (its stamped
-// `kindId`), independent of whether the source rule survives as its own
-// addressable parser symbol.
-```
-
-#### body
-
-```text
-// Unnamed alias with a non-word literal value (e.g. typescript
-// `alias(_ternary_qmark, '?')` — relabels a hidden external-
-// scanner symbol as the literal punctuation it represents).
-// The inner symbol resolves to an empty-pattern stub during
-// simplify, stranding the walker with nothing to emit. The
-// alias's `value` IS the rendered text — preserve it as a
-// string literal so the template walker surfaces `?` / `:` /
-// whatever the alias relabels to. Only fires for unnamed
-// aliases (named aliases become their own visible kind).
-```
-
-#### body
-
-```text
-// These pass through unchanged
-```
-
-#### body
-
-```text
-// ENUM case removed — enum-shaped choices are CHOICE type now.
-```
-
 ### `packages/codegen/src/compiler/link.ts::classifyHiddenRule`
 
 #### body
@@ -6565,55 +6435,6 @@ every root rebuild so the assembled node can compute `seated` from it.
 // time — choice-of-choice is parse-equivalent to one flat choice — so
 // supertype-compatibility and variant-arm extraction must see the flat leaf
 // list, not the authored nesting.
-```
-
-### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
-
-#### body
-
-```text
-// `name` = the alias SOURCE (storage kind), `aliasedTo` = the
-// alias target (parse kind). Kept as the real ref; kindId/
-// aliasedToId stamp onto it later (canonicalizeRuleLiterals'
-// SUPERTYPE case).
-```
-
-#### body
-
-```text
-// Live today, not a defensive fallback: link's `resolveRule` keeps
-// a bare-symbol-content named alias as the ALIAS wrapper (see the
-// matching note on `classifyHiddenChoiceRule`'s variantArms
-// computation), so a raw ALIAS arm is the common shape reaching
-// this walk — mirror the SYMBOL branch's storage/parse handling.
-```
-
-#### body
-
-```text
-// Grammar-token shape (name vs punctuation) — routed through the
-// grammar's own word-matcher (Camp A); single source of truth via
-// matchesWordShape, replacing the former hardcoded
-// identifier-shape regex.
-```
-
-#### body
-
-```text
-// Catalog-first: key this subtype by the same name
-// `collectAnonymousNodes` (assemble.ts) mints the anonymous
-// node under, not the literal's raw text — tree-sitter often
-// sanitizes or dedupes the literal under a different name. No
-// natural SymbolRule exists for a bare literal arm, so synthesize
-// one carrying the literal — canonicalizeRuleLiterals' SYMBOL
-// literal branch stamps its kindId the same way it does for any
-// other link-minted literal symbol.
-```
-
-#### body
-
-```text
-// ENUM case removed — handled by CHOICE arm above.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::enrichPositions`
@@ -6781,107 +6602,6 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 ```text
 // target.separator already carries trailing/leading nested — rides
 // along for free (same pattern as flatten.ts's REPEAT case).
-```
-
-### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
-
-```text
-// ---------------------------------------------------------------------------
-// stampStaticRenderAs — inline string() renderAs bodies into rule trees
-// ---------------------------------------------------------------------------
-```
-
-```text
-/**
- * Stamp static renderAs entries into rule bodies.
- *
- * For each renderAs entry with a `string(lit)` body, walk the rule map
- * and replace every occurrence of:
- *   - `SYMBOL(x)` (bare)
- *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
- * with `STRING(lit)` at the same position. Pure transform — input rule
- * map not mutated. An alias site over a renderAs external arrives here
- * already folded to `SYMBOL(<alias name>)` (link renames the external
- * to the alias it is only ever seen through, renderAs key included), so
- * it is stamped as a bare or field-wrapped symbol.
- *
- * `kindEntries` decides what the literal displays as: a literal standing
- * in for a parser-visible symbol carries that symbol as `aliasedTo`,
- * because the parser still issues a node of that kind at the site.
- *
- * Symbol resolution is transitive: when `x` itself is not in `renderAs`
- * but `rules[x]` is a `StringRule<'link'>` whose value matches a renderAs literal,
- * the stamp fires. This handles post-evaluate renaming — evaluate's
- * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(renderAs))` with
- * `field(n, SYMBOL(_parentKind_fieldName))` where the new hidden rule
- * has the same `string` body as the original renderAs entry.
- *
- * After this pass, downstream phases (slot derivation, template walker,
- * factory emitter, from emitter) see bare string literals at those
- * positions and treat them as inline mandatory literals in seq context —
- * the same as how `seq('mod', $.name)` renders `mod {{ name }}` with
- * `mod` stamped inline.
- */
-```
-
-#### body
-
-```text
-// Build the stamp lookup: renderAs-key → literal value, for entries
-// that are single string() bodies.
-```
-
-#### body
-
-```text
-// Blank-bodied renderAs entries: zero-width-equivalent. References
-// get replaced with `{ type: 'CHOICE', members: [] }` (the blank
-// sentinel), which the choice() collapse in `rewriteRuleForStamp`
-// lowers to `optional(other)` when paired with another member. Use
-// case: tree-sitter externals that fire invisibly at runtime (e.g.
-// ASI's `_automatic_semicolon`). The slot-model look-through in
-// node-map.ts propagates this optionality up to any SYMBOL ref
-// pointing at the now-optional-bodied wrapper rule (`_semicolon`).
-```
-
-#### body
-
-```text
-// Build symToLit: symbol-name → literal to stamp.
-// Includes:
-//   1. The original renderAs key names (exact match).
-//   2. Names whose string body matches a renderAs value AND whose
-//      name ends with the renderAs key (handling evaluate's
-//      synthesized renames: `synthesizeFieldEnumRules` creates
-//      `_<parent>_<fieldName>` where `<fieldName>` corresponds to the
-//      field that referenced the renderAs symbol — the renderAs key
-//      itself ends with `_<fieldName>`).
-// This is deliberately conservative: we do NOT match all string rules
-// by value alone, to avoid stamping unrelated `_kw_*` helpers that
-// happen to share a character with a renderAs literal (e.g.
-// `_kw_negative` has body `'!'` which clashes with the
-// `_inner_*_doc_comment_marker` renderAs values).
-```
-
-```text
-// Already included via exact match.
-```
-
-#### body
-
-```text
-// Check whether any renderAs key is a suffix of this symbol name.
-```
-
-#### body
-
-```text
-// Blank-stamped entries are removed from the rules map: their
-// references have been replaced inline with the blank sentinel
-// (which `rewriteRuleForStamp` collapses to `optional(...)` in
-// containing choices). Keeping the entry would cause assemble to
-// classify an empty `choice` body as an empty AssembledEnum and
-// throw.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::RenderAsStampCtx`
@@ -8159,6 +7879,28 @@ The symbols whose render-as body is a literal string, each with its literal text
 ### `packages/codegen/src/compiler/link.ts::renderAsStampsOf`
 
 Builds the render-as stamps from the grammar's render-as bodies. A string body, or a token wrapping one, becomes a literal entry, and a blank body is recorded as blank.
+
+### `packages/codegen/src/compiler/link.ts::classifyHiddenChoiceRule`
+
+Classifies a hidden choice rule. The decision is `hiddenChoiceClass` (`dsl/rule-patterns.ts`), the same predicate the automatic stamp's `isSupertypeOwner` asks, fed the rule, a storage lookup into the rules map under construction, and the named-arm fact from `collectHiddenNamedArmChoices`. What remains here is construction and the declared-supertype override:
+- `'enum'` and not a declared supertype: the members become an enum rule (`normalizeEnumMembers` when all are strings, else a choice of literal symbols). A declared supertype (`_layout`, a choice over fixed-text tokens) stays a supertype.
+- `'named-arms'` and not a declared supertype: the rule unchanged.
+- `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the members `isAliasMintedRef` marks as mints, and `declared: true` when the grammar's `supertypes` names it. A `'supertype'` over aliased hidden storage (`isAliasedHiddenStorage`) that the grammar does not declare a supertype is not one: the parser shows it as a node, so it stays a choice rule and assemble makes it an envelope (`compoundModelTypeFor`).
+- Otherwise the rule unchanged; assemble classifies it by shape. A hidden choice of structural members (seqs, fields) is a real alternative, not an abstract kind union.
+
+Neither supertype case applies to a kind the parser shows as a concrete node (`isShownConcreteKind`): a declared supertype that a default alias displays (python `match_block`) keeps its choice rule, so the surface has the node the tree has.
+
+### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
+
+Collects the subtypes of a choice, as symbol refs. A bare symbol is its own subtype. A named alias over a symbol becomes a ref to that symbol's storage kind, with the alias's value as `aliasedTo` when it differs from the storage name, so the parse name the parser emits at that position is kept on the subtype. A named alias over a string becomes a symbol whose name is the matching kind (or the literal text), carrying `literal` and `aliasedTo`. An unnamed alias is skipped. A string member becomes a symbol unless `ctx.isWordShaped` says it is a word, in which case it is not a subtype. Choice, sequence, token, optional and repeat wrappers are walked through. Other rules yield nothing.
+
+### `packages/codegen/src/compiler/link.ts::resolveRule`
+
+Resolves a rule's references at link, recursively. SEQ, CHOICE, OPTIONAL, REPEAT, FIELD and TOKEN resolve their members or content. REPEAT1 goes through `resolveRepeat1PreservingNonEmpty`. A named ALIAS whose value is not a parser-hidden kind keeps its ALIAS wrapper when its content is a string or wraps an aliased symbol, or when the value has no rule of its own; otherwise it becomes a SYMBOL reference to the value. An unnamed alias whose value is a non-empty, not-hidden string that `ctx.isWordShaped` does not accept becomes that STRING, wrapped in a TOKEN with `immediate` when `aliasesImmediateToken` says so; other unnamed aliases resolve their content. A SYMBOL with `inline` set resolves through `resolveSymbolRoleOrPass`. STRING, PATTERN, SUPERTYPE, INDENT, DEDENT and NEWLINE pass through unchanged.
+
+### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
+
+Stamps the grammar's render-as literals and blanks into the rule map. It takes the `RenderAsStamps` table, which `LinkCtx` derives once from the render-as bodies (`literals` and `blanks`), and the kind entries. A symbol is a literal stamp when its name is a literal key, or when its string body matches a literal and its name ends with that key; this covers the names an evaluate-time rename gives a field's hidden rule. Each rule is rewritten through `rewriteRuleForStamp`: a stamped SYMBOL, or a FIELD around one, becomes the literal; a blank stamp becomes an empty CHOICE, and a choice member that is blank collapses to an OPTIONAL. Blank rules are dropped from the map. When the table has no literals and no blanks, the input is returned unchanged.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::reownedRuleId`
 
