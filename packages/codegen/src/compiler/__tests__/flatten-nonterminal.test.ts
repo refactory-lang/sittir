@@ -177,4 +177,16 @@ describe('flattenRules terminality stamps', () => {
 		const members = (out['owner'] as { members: Rule[] }).members;
 		expect(members[1]).toMatchObject({ fieldName: 'operator', nonterminal: false });
 	});
+
+	it('a body that is one layout token keeps it as a slot; beside other parts it is fixed text', () => {
+		const out = flattenRules({
+			_layout: { type: 'CHOICE', members: [sym('_space'), sym('_newline')] } as Rule,
+			_space: str(' '),
+			_newline: str('\n'),
+			empty: sym('_newline'),
+			terminated: { type: SEQ, members: [sym('statement'), sym('_newline')] }
+		});
+		expect(out['empty']).toMatchObject({ type: SYMBOL, name: '_newline', nonterminal: true });
+		expect((out['terminated'] as { members: Rule[] }).members.map((m) => m.nonterminal)).toEqual([true, false]);
+	});
 });

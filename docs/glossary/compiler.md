@@ -4000,6 +4000,13 @@ The rule's annotation payload, when it has one.
  */
 ```
 
+A rule whose whole body is one reference to a layout member (a symbol the
+grammar's `_layout` supertype lists, read with `supertypeArmsOf`) is left
+untouched: the token's bytes come from the source or the engine's layout, so
+it is not template text. Beside other parts it is still stamped and stripped,
+since the engine writes it as the gap between them; as the whole body there is
+no other part, and the token stays the kind's own child.
+
 The literal test joins a fixed SEQ with the grammar's own word matcher
 (`flattenRules` hands `linked.wordMatcher` through), so a grammar whose word
 token admits a character `\w` does not (typescript's `$`) joins two word

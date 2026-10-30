@@ -21697,7 +21697,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::MATCH_BLOCK_EMPTY, words = 7)]
 pub struct MatchBlockEmptyNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -21852,7 +21852,7 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::SUITE_EMPTY, words = 7)]
 pub struct SuiteEmptyNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -29408,7 +29408,8 @@ fn render_match_block_block(node: &MatchBlockBlockNode, w: &mut dyn ::sittir_cor
 }
 
 fn render_match_block_empty(node: &MatchBlockEmptyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
+    let newline = &node.newline;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_newline", ::sittir_core::types::ItemIndex(0), w, |w| newline.render(w))?;
     Ok(())
 }
 
@@ -29433,7 +29434,8 @@ fn render_suite_block(node: &SuiteBlockNode, w: &mut dyn ::sittir_core::render::
 }
 
 fn render_suite_empty(node: &SuiteEmptyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
+    let newline = &node.newline;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_newline", ::sittir_core::types::ItemIndex(0), w, |w| newline.render(w))?;
     Ok(())
 }
 

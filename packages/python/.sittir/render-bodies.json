@@ -3233,8 +3233,8 @@
 	],
 	"match_block_empty": [
 		{
-			"kind": "tokenSeam",
-			"text": "\n"
+			"kind": "slot",
+			"name": "newline"
 		}
 	],
 	"match_statement": [
@@ -4261,8 +4261,8 @@
 	],
 	"suite_empty": [
 		{
-			"kind": "tokenSeam",
-			"text": "\n"
+			"kind": "slot",
+			"name": "newline"
 		}
 	],
 	"suite_inline": [

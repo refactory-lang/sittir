@@ -10765,7 +10765,7 @@ Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf`
 
 ### `packages/codegen/src/emitters/test.ts::rendersText`
 
-True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
+True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A layout member (`layoutSymbolsOf`) writes none: its text is whitespace, and at a node's edge the engine writes it as a gap. Any other kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
 
 ### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 
