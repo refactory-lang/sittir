@@ -316,7 +316,7 @@ function whitespaceChoice(part: SpacingPart, arms: readonly Layout[], symbols: S
 	} as unknown as RenderRule;
 }
 
-function isWhitespaceChoice(rule: RenderRule): boolean {
+export function isWhitespaceChoice(rule: RenderRule): boolean {
 	const r = bag(rule);
 	return (
 		r.type === CHOICE &&

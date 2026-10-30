@@ -34,6 +34,7 @@ import {
 	flanksOf,
 	hasArmEdgeSeams,
 	isSeamChoice,
+	isWhitespaceChoice,
 	slotPunctuationTokenOfNode,
 	keywordKindOfLiteral,
 	seamChoiceDefault,
@@ -1003,7 +1004,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' 
 }
 
 function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefined {
-	if (isSeamChoice(content)) return undefined;
+	if (isWhitespaceChoice(content)) return undefined;
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
 		const key = contentFieldName;

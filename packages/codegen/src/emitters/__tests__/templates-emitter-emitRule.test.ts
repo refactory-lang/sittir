@@ -702,4 +702,14 @@ describe('emitRule — token seams', () => {
 		} as unknown as SeqRule;
 		expect(shown(rule, makeCtx())).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
 	});
+
+	it('never picks a list flank as the conditional key of an optional seq', () => {
+		const flank = (side: string) => {
+			const choice = seamChoice(`bounds_${side}`) as unknown as { members: { annotations: object }[] };
+			return { ...choice, members: choice.members.map((m) => ({ ...m, annotations: { ...m.annotations, spacing: { at: 'flank', side } } })) };
+		};
+		const list = { type: SEQ, nonterminal: true, members: [flank('start'), { type: SYMBOL, name: 'bound', fieldName: 'bounds', nonterminal: true, multiplicity: 'array' }, flank('end')] };
+		const rule = { type: SEQ, multiplicity: 'optional', members: [{ type: STRING, value: ':' }, list] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toMatch(/^⟨if bounds⟩/);
+	});
 });
