@@ -1433,3 +1433,19 @@ The generic-lambda expression namespace: the expression kinds the generic-lambda
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas`
 
 The generic-lambdas vocabulary feature, a namespace of the generic-lambda kinds.
+
+### `packages/types/src/vocabulary/features/c-strings/index.ts::CStrings::c-strings`
+
+The `c-strings` feature key of the C-strings vocabulary.
+
+### `packages/types/src/vocabulary/features/c-strings/literal.ts::Literal::String`
+
+The string member of the C-string literal namespace.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/expression.ts::Expression::Lambda`
+
+The lambda member of the generic-lambda expression namespace.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas::generic-lambdas`
+
+The `generic-lambdas` feature key of the generic-lambdas vocabulary.
