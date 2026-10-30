@@ -1283,3 +1283,11 @@ One step of a portable read route: the key it reads and the build it names, when
 ### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
 
 Reads a node into the structure that builds it back, with the carried callback for what the read leaves out.
+
+### `packages/common/src/blank-arm.ts::blankArmStored`
+
+Stores a value in a slot whose blank arm is `null`. A `null` becomes the `BLANK_KIND_ID` marker, so a stored slot value is never `null`.
+
+### `packages/common/src/blank-arm.ts::blankArmRead`
+
+Reads a stored slot value back. The `BLANK_KIND_ID` marker becomes `null`, and any other value is returned unchanged. It is the inverse of `blankArmStored`.
