@@ -614,6 +614,10 @@ A rule's patches as keys that read in path mode. A set whose keys are all plain 
 
 Whether the owner's model node holds a child kind in a slot that holds other kinds too: a union slot, which collect-slots routes by kind. The model is the grammar evaluated without the bindings, so the answer does not depend on the fields the bindings add.
 
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput::wordMatcher`
+
+The grammar's word matcher, passed in with the other inputs. It is `undefined` when the grammar declares no `word`.
+
 ### `packages/codegen/src/bindings/module.ts::bindingsModulePath`
 
 Where `bindings-inventory --write` writes a grammar's generated layer: `grammars.ts::BINDINGS_MODULE` in the grammar's package, beside its `grammar.sittir.ts`.
