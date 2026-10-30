@@ -1978,6 +1978,38 @@ The seat of a node-model value: the call shape its builder takes.
 
 The slot a container unwraps through.
 
+### `packages/codegen/src/bindings/routes.ts::containerCaptureSlot`
+
+The slot a container capture reads. When the capture has a token, it is the slot whose terminals include that token; otherwise it is the slot `slotFor` picks for the capture.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember`
+
+One capture of a container: the capture, its camel-cased name, the slot it reads when it reads one, and whether it is a flag.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::capture`
+
+The container capture the member was made from.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::flag`
+
+Whether the member is a flag: the capture has a token, or its name is a flag at every target that carries it.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::name`
+
+The camel-cased name the capture is given.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::slot`
+
+The slot the capture reads, or undefined when no slot does.
+
+### `packages/codegen/src/bindings/routes.ts::containerMembers`
+
+The members of a container's captures, with the envelope targets they reach. A capture whose name is a flag at some targets and data at others is refused, since one name must name one thing.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::members`
+
+The container members the unwrap reads, one per capture, each with its name and slot.
+
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
 
 The flag paths of a vocabulary: each path with its segment and flag.
