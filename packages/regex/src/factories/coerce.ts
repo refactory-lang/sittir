@@ -732,9 +732,9 @@ export const coerceToLookaroundAssertion: ConfigSeat<
 	);
 };
 
-export function resolveLookaheadAssertion_content(
-	value: T.LookaheadAssertion.LooseConfig['content']
-): Admit<T.LookaheadAssertion['_content']> {
+export function resolveLookaheadAssertion_operator(
+	value: T.LookaheadAssertion.LooseConfig['operator']
+): Admit<T.LookaheadAssertion['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'=' | '!'>(value, _K0, _K0)),
 		[['=', TSKindId.Eq] as const, ['!', TSKindId.Bang] as const]
@@ -755,14 +755,14 @@ export const coerceToLookaheadAssertion: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLookaheadAssertion>;
 	currentHandle()?.admit(TSKindId.LookaheadAssertion, [input]);
 	return F.buildLookaheadAssertion({
-		content: resolveLookaheadAssertion_content(input.content),
+		operator: resolveLookaheadAssertion_operator(input.operator),
 		pattern: resolveLookaheadAssertion_pattern(input.pattern)
 	});
 };
 
-export function resolveLookbehindAssertion_content(
-	value: T.LookbehindAssertion.LooseConfig['content']
-): Admit<T.LookbehindAssertion['_content']> {
+export function resolveLookbehindAssertion_operator(
+	value: T.LookbehindAssertion.LooseConfig['operator']
+): Admit<T.LookbehindAssertion['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'=' | '!'>(value, _K0, _K0)),
 		[['=', TSKindId.Eq] as const, ['!', TSKindId.Bang] as const]
@@ -783,7 +783,7 @@ export const coerceToLookbehindAssertion: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLookbehindAssertion>;
 	currentHandle()?.admit(TSKindId.LookbehindAssertion, [input]);
 	return F.buildLookbehindAssertion({
-		content: resolveLookbehindAssertion_content(input.content),
+		operator: resolveLookbehindAssertion_operator(input.operator),
 		pattern: resolveLookbehindAssertion_pattern(input.pattern)
 	});
 };
@@ -934,9 +934,9 @@ export const coerceToAnonymousCapturingGroup: ConfigSeat<
 	);
 };
 
-export function resolveNamedCapturingGroup_content(
-	value: T.NamedCapturingGroup.LooseConfig['content']
-): Admit<T.NamedCapturingGroup['_content']> {
+export function resolveNamedCapturingGroup_operator(
+	value: T.NamedCapturingGroup.LooseConfig['operator']
+): Admit<T.NamedCapturingGroup['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'(?<' | '(?P<'>(value, _K0, _K0)),
 		[['(?<', TSKindId.LparenQmarkLt] as const, ['(?P<', TSKindId.LparenQmarkPLt] as const]
@@ -963,7 +963,7 @@ export const coerceToNamedCapturingGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildNamedCapturingGroup>;
 	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [input]);
 	return F.buildNamedCapturingGroup({
-		content: resolveNamedCapturingGroup_content(input.content),
+		operator: resolveNamedCapturingGroup_operator(input.operator),
 		groupName: resolveNamedCapturingGroup_groupName(input.groupName),
 		pattern: resolveNamedCapturingGroup_pattern(input.pattern)
 	});

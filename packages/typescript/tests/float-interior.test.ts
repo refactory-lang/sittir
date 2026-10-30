@@ -10,7 +10,7 @@ describe('typescript float number arms name their parts', () => {
 		expect(tsStrict.build.number.floatPoint({ integer: '1', fraction: '5' }).$render()).toBe('1.5');
 		expect(ts.build.number.floatPoint({ integer: '1' }).$render()).toBe('1.');
 		expect(
-			ts.build.number.floatPoint({ integer: '1', fraction: '5', sign: '-', exponent: '3' }).$render()
+			ts.build.number.floatPoint({ integer: '1', fraction: '5', exponentSign: '-', exponent: '3' }).$render()
 		).toBe('1.5e-3');
 	});
 
@@ -21,7 +21,7 @@ describe('typescript float number arms name their parts', () => {
 
 	it('a scientific float takes an integer part and a marker with its exponent', () => {
 		expect(ts.build.number.floatScientific({ integer: '1', exponent: '5' }, { marker: 'E' }).$render()).toBe('1E5');
-		expect(ts.build.number.floatScientific({ integer: '2', sign: '+', exponent: '10' }).$render()).toBe('2e+10');
+		expect(ts.build.number.floatScientific({ integer: '2', exponentSign: '+', exponent: '10' }).$render()).toBe('2e+10');
 	});
 
 	it('the marker is written only when the exponent group is, and its option chooses the case', () => {

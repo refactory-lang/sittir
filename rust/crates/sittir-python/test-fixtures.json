@@ -42603,7 +42603,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 90,
-                  "_prefix": "0x",
+                  "_radix_prefix": "0x",
                   "_content": "DEAD"
                 }
               }
@@ -42620,7 +42620,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 90,
-                  "_prefix": "0X",
+                  "_radix_prefix": "0X",
                   "_content": "DEAD"
                 }
               }
@@ -42673,7 +42673,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 91,
-                  "_prefix": "0o",
+                  "_radix_prefix": "0o",
                   "_content": "123"
                 }
               }
@@ -42690,7 +42690,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 91,
-                  "_prefix": "0O",
+                  "_radix_prefix": "0O",
                   "_content": "123"
                 }
               }
@@ -42707,7 +42707,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 92,
-                  "_prefix": "0b",
+                  "_radix_prefix": "0b",
                   "_content": "001"
                 }
               }
@@ -42724,7 +42724,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 92,
-                  "_prefix": "0B",
+                  "_radix_prefix": "0B",
                   "_content": "001"
                 }
               }
@@ -42757,7 +42757,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 92,
-                  "_prefix": "0B",
+                  "_radix_prefix": "0B",
                   "_content": "1_1"
                 }
               }
@@ -42774,7 +42774,7 @@
                 "$type": 142,
                 "_content": {
                   "$type": 91,
-                  "_prefix": "0O",
+                  "_radix_prefix": "0O",
                   "_content": "1_1"
                 }
               }
@@ -42874,7 +42874,7 @@
             "$type": 142,
             "_content": {
               "$type": 90,
-              "_prefix": "0x",
+              "_radix_prefix": "0x",
               "_content": "DEAD"
             }
           }
@@ -42913,7 +42913,7 @@
             "$type": 142,
             "_content": {
               "$type": 90,
-              "_prefix": "0X",
+              "_radix_prefix": "0X",
               "_content": "DEAD"
             }
           }
@@ -43032,7 +43032,7 @@
             "$type": 142,
             "_content": {
               "$type": 91,
-              "_prefix": "0o",
+              "_radix_prefix": "0o",
               "_content": "123"
             }
           }
@@ -43071,7 +43071,7 @@
             "$type": 142,
             "_content": {
               "$type": 91,
-              "_prefix": "0O",
+              "_radix_prefix": "0O",
               "_content": "123"
             }
           }
@@ -43110,7 +43110,7 @@
             "$type": 142,
             "_content": {
               "$type": 92,
-              "_prefix": "0b",
+              "_radix_prefix": "0b",
               "_content": "001"
             }
           }
@@ -43149,7 +43149,7 @@
             "$type": 142,
             "_content": {
               "$type": 92,
-              "_prefix": "0B",
+              "_radix_prefix": "0B",
               "_content": "001"
             }
           }
@@ -43226,7 +43226,7 @@
             "$type": 142,
             "_content": {
               "$type": 92,
-              "_prefix": "0B",
+              "_radix_prefix": "0B",
               "_content": "1_1"
             }
           }
@@ -43265,7 +43265,7 @@
             "$type": 142,
             "_content": {
               "$type": 91,
-              "_prefix": "0O",
+              "_radix_prefix": "0O",
               "_content": "1_1"
             }
           }
@@ -43379,7 +43379,7 @@
           "$type": 142,
           "_content": {
             "$type": 90,
-            "_prefix": "0x",
+            "_radix_prefix": "0x",
             "_content": "DEAD"
           }
         }
@@ -43415,7 +43415,7 @@
           "$type": 142,
           "_content": {
             "$type": 90,
-            "_prefix": "0X",
+            "_radix_prefix": "0X",
             "_content": "DEAD"
           }
         }
@@ -43525,7 +43525,7 @@
           "$type": 142,
           "_content": {
             "$type": 91,
-            "_prefix": "0o",
+            "_radix_prefix": "0o",
             "_content": "123"
           }
         }
@@ -43561,7 +43561,7 @@
           "$type": 142,
           "_content": {
             "$type": 91,
-            "_prefix": "0O",
+            "_radix_prefix": "0O",
             "_content": "123"
           }
         }
@@ -43597,7 +43597,7 @@
           "$type": 142,
           "_content": {
             "$type": 92,
-            "_prefix": "0b",
+            "_radix_prefix": "0b",
             "_content": "001"
           }
         }
@@ -43633,7 +43633,7 @@
           "$type": 142,
           "_content": {
             "$type": 92,
-            "_prefix": "0B",
+            "_radix_prefix": "0B",
             "_content": "001"
           }
         }
@@ -43704,7 +43704,7 @@
           "$type": 142,
           "_content": {
             "$type": 92,
-            "_prefix": "0B",
+            "_radix_prefix": "0B",
             "_content": "1_1"
           }
         }
@@ -43740,7 +43740,7 @@
           "$type": 142,
           "_content": {
             "$type": 91,
-            "_prefix": "0O",
+            "_radix_prefix": "0O",
             "_content": "1_1"
           }
         }
@@ -43841,7 +43841,7 @@
       "$type": 142,
       "_content": {
         "$type": 90,
-        "_prefix": "0x",
+        "_radix_prefix": "0x",
         "_content": "DEAD"
       }
     },
@@ -43871,7 +43871,7 @@
       "$type": 142,
       "_content": {
         "$type": 90,
-        "_prefix": "0X",
+        "_radix_prefix": "0X",
         "_content": "DEAD"
       }
     },
@@ -43963,7 +43963,7 @@
       "$type": 142,
       "_content": {
         "$type": 91,
-        "_prefix": "0o",
+        "_radix_prefix": "0o",
         "_content": "123"
       }
     },
@@ -43993,7 +43993,7 @@
       "$type": 142,
       "_content": {
         "$type": 91,
-        "_prefix": "0O",
+        "_radix_prefix": "0O",
         "_content": "123"
       }
     },
@@ -44023,7 +44023,7 @@
       "$type": 142,
       "_content": {
         "$type": 92,
-        "_prefix": "0b",
+        "_radix_prefix": "0b",
         "_content": "001"
       }
     },
@@ -44053,7 +44053,7 @@
       "$type": 142,
       "_content": {
         "$type": 92,
-        "_prefix": "0B",
+        "_radix_prefix": "0B",
         "_content": "001"
       }
     },
@@ -44112,7 +44112,7 @@
       "$type": 142,
       "_content": {
         "$type": 92,
-        "_prefix": "0B",
+        "_radix_prefix": "0B",
         "_content": "1_1"
       }
     },
@@ -44142,7 +44142,7 @@
       "$type": 142,
       "_content": {
         "$type": 91,
-        "_prefix": "0O",
+        "_radix_prefix": "0O",
         "_content": "1_1"
       }
     },
@@ -44259,7 +44259,7 @@
     "pattern": "integer_hex",
     "input": {
       "$type": 90,
-      "_prefix": "0x",
+      "_radix_prefix": "0x",
       "_content": "DEAD"
     },
     "expectedOutput": "0xDEAD",
@@ -44286,7 +44286,7 @@
     "pattern": "integer_hex",
     "input": {
       "$type": 90,
-      "_prefix": "0X",
+      "_radix_prefix": "0X",
       "_content": "DEAD"
     },
     "expectedOutput": "0XDEAD",
@@ -44313,7 +44313,7 @@
     "pattern": "integer_octal",
     "input": {
       "$type": 91,
-      "_prefix": "0o",
+      "_radix_prefix": "0o",
       "_content": "123"
     },
     "expectedOutput": "0o123",
@@ -44340,7 +44340,7 @@
     "pattern": "integer_octal",
     "input": {
       "$type": 91,
-      "_prefix": "0O",
+      "_radix_prefix": "0O",
       "_content": "123"
     },
     "expectedOutput": "0O123",
@@ -44367,7 +44367,7 @@
     "pattern": "integer_octal",
     "input": {
       "$type": 91,
-      "_prefix": "0O",
+      "_radix_prefix": "0O",
       "_content": "1_1"
     },
     "expectedOutput": "0O1_1",
@@ -44394,7 +44394,7 @@
     "pattern": "integer_binary",
     "input": {
       "$type": 92,
-      "_prefix": "0b",
+      "_radix_prefix": "0b",
       "_content": "001"
     },
     "expectedOutput": "0b001",
@@ -44421,7 +44421,7 @@
     "pattern": "integer_binary",
     "input": {
       "$type": 92,
-      "_prefix": "0B",
+      "_radix_prefix": "0B",
       "_content": "001"
     },
     "expectedOutput": "0B001",
@@ -44448,7 +44448,7 @@
     "pattern": "integer_binary",
     "input": {
       "$type": 92,
-      "_prefix": "0B",
+      "_radix_prefix": "0B",
       "_content": "1_1"
     },
     "expectedOutput": "0B1_1",
@@ -44595,7 +44595,7 @@
                   "$type": 98,
                   "_integer": "1",
                   "_marker": "e",
-                  "_sign": "+",
+                  "_exponent_sign": "+",
                   "_exponent": "3_4",
                   "_imaginary": "j"
                 }
@@ -44898,7 +44898,7 @@
               "$type": 98,
               "_integer": "1",
               "_marker": "e",
-              "_sign": "+",
+              "_exponent_sign": "+",
               "_exponent": "3_4",
               "_imaginary": "j"
             }
@@ -45200,7 +45200,7 @@
             "$type": 98,
             "_integer": "1",
             "_marker": "e",
-            "_sign": "+",
+            "_exponent_sign": "+",
             "_exponent": "3_4",
             "_imaginary": "j"
           }
@@ -45459,7 +45459,7 @@
         "$type": 98,
         "_integer": "1",
         "_marker": "e",
-        "_sign": "+",
+        "_exponent_sign": "+",
         "_exponent": "3_4",
         "_imaginary": "j"
       }
@@ -45769,7 +45769,7 @@
       "$type": 98,
       "_integer": "1",
       "_marker": "e",
-      "_sign": "+",
+      "_exponent_sign": "+",
       "_exponent": "3_4",
       "_imaginary": "j"
     },
@@ -45827,7 +45827,7 @@
                   "$type": 98,
                   "_integer": "1",
                   "_marker": "e",
-                  "_sign": "-",
+                  "_exponent_sign": "-",
                   "_exponent": "3"
                 }
               }
@@ -45846,7 +45846,7 @@
                   "$type": 98,
                   "_integer": "1",
                   "_marker": "e",
-                  "_sign": "+",
+                  "_exponent_sign": "+",
                   "_exponent": "3"
                 }
               }
@@ -45989,7 +45989,7 @@
               "$type": 98,
               "_integer": "1",
               "_marker": "e",
-              "_sign": "-",
+              "_exponent_sign": "-",
               "_exponent": "3"
             }
           }
@@ -46030,7 +46030,7 @@
               "$type": 98,
               "_integer": "1",
               "_marker": "e",
-              "_sign": "+",
+              "_exponent_sign": "+",
               "_exponent": "3"
             }
           }
@@ -46231,7 +46231,7 @@
             "$type": 98,
             "_integer": "1",
             "_marker": "e",
-            "_sign": "-",
+            "_exponent_sign": "-",
             "_exponent": "3"
           }
         }
@@ -46269,7 +46269,7 @@
             "$type": 98,
             "_integer": "1",
             "_marker": "e",
-            "_sign": "+",
+            "_exponent_sign": "+",
             "_exponent": "3"
           }
         }
@@ -46451,7 +46451,7 @@
         "$type": 98,
         "_integer": "1",
         "_marker": "e",
-        "_sign": "-",
+        "_exponent_sign": "-",
         "_exponent": "3"
       }
     },
@@ -46483,7 +46483,7 @@
         "$type": 98,
         "_integer": "1",
         "_marker": "e",
-        "_sign": "+",
+        "_exponent_sign": "+",
         "_exponent": "3"
       }
     },
@@ -46639,7 +46639,7 @@
       "$type": 98,
       "_integer": "1",
       "_marker": "e",
-      "_sign": "-",
+      "_exponent_sign": "-",
       "_exponent": "3"
     },
     "expectedOutput": "1e-3",
@@ -46668,7 +46668,7 @@
       "$type": 98,
       "_integer": "1",
       "_marker": "e",
-      "_sign": "+",
+      "_exponent_sign": "+",
       "_exponent": "3"
     },
     "expectedOutput": "1e+3",

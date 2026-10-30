@@ -215,6 +215,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildSubscriptExpression']>,
 		ReturnType<typeof F.buildLhsExpression>
 	>;
+	readonly lhsExpression$undefined: (
+		options?: OptionsArg<Table['buildLhsExpression']>
+	) => ReturnType<Table['buildLhsExpression']>;
+	readonly lhsExpression$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildLhsExpression>>;
 	readonly lhsExpression$nonNullExpression: Seat<
 		ArgsOf<Table['buildNonNullExpression']>,
 		ReturnType<typeof F.buildLhsExpression>
@@ -222,6 +226,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly lhsExpression: Table['buildLhsExpression'] & {
 		readonly memberExpression: Routes<Table>['lhsExpression$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['lhsExpression$subscriptExpression'];
+		readonly undefined: Routes<Table>['lhsExpression$undefined'];
+		readonly identifier: Routes<Table>['lhsExpression$identifier'];
 		readonly nonNullExpression: Routes<Table>['lhsExpression$nonNullExpression'];
 	};
 	readonly restPattern$memberExpression: Seat<
@@ -232,6 +238,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildSubscriptExpression']>,
 		ReturnType<typeof F.buildRestPattern>
 	>;
+	readonly restPattern$undefined: (
+		options?: OptionsArg<Table['buildRestPattern']>
+	) => ReturnType<Table['buildRestPattern']>;
+	readonly restPattern$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildRestPattern>>;
 	readonly restPattern$nonNullExpression: Seat<
 		ArgsOf<Table['buildNonNullExpression']>,
 		ReturnType<typeof F.buildRestPattern>
@@ -239,6 +249,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly restPattern: Table['buildRestPattern'] & {
 		readonly memberExpression: Routes<Table>['restPattern$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['restPattern$subscriptExpression'];
+		readonly undefined: Routes<Table>['restPattern$undefined'];
+		readonly identifier: Routes<Table>['restPattern$identifier'];
 		readonly nonNullExpression: Routes<Table>['restPattern$nonNullExpression'];
 	};
 	readonly ambientDeclaration$function: Seat<
@@ -331,15 +343,15 @@ export interface Routes<Table extends AnyTable> {
 		readonly module: Table['buildAmbientDeclarationModule'];
 	};
 	readonly typeQueryMemberExpression$dot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression$qmarkDot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression: Table['buildTypeQueryMemberExpression'] & {
@@ -2730,12 +2742,22 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.lhsExpression$memberExpression(F.buildLhsExpression, $at('buildMemberExpression'));
 	const lhsExpression$subscriptExpression: Routes<Table>['lhsExpression$subscriptExpression'] =
 		K.lhsExpression$subscriptExpression(F.buildLhsExpression, $at('buildSubscriptExpression'));
+	const lhsExpression$undefined: Routes<Table>['lhsExpression$undefined'] = K.lhsExpression$undefined(
+		$at('buildLhsExpression'),
+		TSKindId.Undefined
+	);
+	const lhsExpression$identifier: Routes<Table>['lhsExpression$identifier'] = K.lhsExpression$identifier(
+		F.buildLhsExpression,
+		$at('buildIdentifier')
+	);
 	const lhsExpression$nonNullExpression: Routes<Table>['lhsExpression$nonNullExpression'] =
 		K.lhsExpression$nonNullExpression(F.buildLhsExpression, $at('buildNonNullExpression'));
 	const lhsExpression: Routes<Table>['lhsExpression'] = Object.freeze(
 		Object.assign(delegate($at('buildLhsExpression')), {
 			memberExpression: lhsExpression$memberExpression,
 			subscriptExpression: lhsExpression$subscriptExpression,
+			undefined: lhsExpression$undefined,
+			identifier: lhsExpression$identifier,
 			nonNullExpression: lhsExpression$nonNullExpression
 		} as const)
 	);
@@ -2745,6 +2767,14 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const restPattern$subscriptExpression: Routes<Table>['restPattern$subscriptExpression'] =
 		K.restPattern$subscriptExpression(F.buildRestPattern, $at('buildSubscriptExpression'));
+	const restPattern$undefined: Routes<Table>['restPattern$undefined'] = K.restPattern$undefined(
+		$at('buildRestPattern'),
+		TSKindId.Undefined
+	);
+	const restPattern$identifier: Routes<Table>['restPattern$identifier'] = K.restPattern$identifier(
+		F.buildRestPattern,
+		$at('buildIdentifier')
+	);
 	const restPattern$nonNullExpression: Routes<Table>['restPattern$nonNullExpression'] = K.restPattern$nonNullExpression(
 		F.buildRestPattern,
 		$at('buildNonNullExpression')
@@ -2753,6 +2783,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		Object.assign(delegate($at('buildRestPattern')), {
 			memberExpression: restPattern$memberExpression,
 			subscriptExpression: restPattern$subscriptExpression,
+			undefined: restPattern$undefined,
+			identifier: restPattern$identifier,
 			nonNullExpression: restPattern$nonNullExpression
 		} as const)
 	);

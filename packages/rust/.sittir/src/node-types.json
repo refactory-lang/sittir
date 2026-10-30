@@ -5107,7 +5107,7 @@
     "type": "ordered_field_declaration_list",
     "named": true,
     "fields": {
-      "attributes": {
+      "elements": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6539,22 +6539,22 @@
     "type": "token_binding_pattern",
     "named": true,
     "fields": {
+      "fragment": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fragment_specifier",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
             "type": "metavariable",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "fragment_specifier",
             "named": true
           }
         ]

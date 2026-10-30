@@ -68,6 +68,97 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExpressionStatementWithSemi);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('unsafeBlock builds the parent', () => {
+		const node = ir.expressionStatement.unsafeBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.UnsafeBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('asyncBlock builds the parent', () => {
+		const node = ir.expressionStatement.asyncBlock({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.AsyncBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('genBlock builds the parent', () => {
+		const node = ir.expressionStatement.genBlock({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.GenBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('tryBlock builds the parent', () => {
+		const node = ir.expressionStatement.tryBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.TryBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('block builds the parent', () => {
+		const node = ir.expressionStatement.block({});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Block);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ifExpression builds the parent', () => {
+		const node = ir.expressionStatement.ifExpression({
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.IfExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('matchExpression builds the parent', () => {
+		const node = ir.expressionStatement.matchExpression({
+			subject: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.MatchBlock, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.MatchExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('whileExpression builds the parent', () => {
+		const node = ir.expressionStatement.whileExpression({
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.WhileExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('loopExpression builds the parent', () => {
+		const node = ir.expressionStatement.loopExpression({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.LoopExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('forExpression builds the parent', () => {
+		const node = ir.expressionStatement.forExpression({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('constBlock builds the parent', () => {
+		const node = ir.expressionStatement.constBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ConstBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('macro_rule', () => {
@@ -103,7 +194,7 @@ describe('token_binding_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tokenBindingPattern({
 			name: stampBuilt({ $type: TSKindId.Metavariable, $text: 'test', $named: true, _name: 'test' }) as any,
-			type: 'block'
+			fragment: 'block'
 		});
 		expect(node.$type).toBe(TSKindId.TokenBindingPattern);
 		expectBuiltNode(node);
@@ -111,7 +202,7 @@ describe('token_binding_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.tokenBindingPattern({
 			name: stampBuilt({ $type: TSKindId.Metavariable, $text: 'test', $named: true, _name: 'test' }) as any,
-			type: 'block'
+			fragment: 'block'
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -1143,6 +1234,44 @@ describe('visibility_modifier sub-factories', () => {
 		const node = ir.visibilityModifier.pub.scope.inPath(
 			stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		);
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.self builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.self();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.metavariable builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.metavariable('test');
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.super builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.super();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.crate builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.crate();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.identifier builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.identifier('test');
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.scopedIdentifier builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.scopedIdentifier({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4210,19 +4339,13 @@ describe('range_expression_prefix', () => {
 
 describe('range_expression_bare', () => {
 	it('factory produces correct type', () => {
-		const node = ir.rangeExpressionBare(
-			stampBuilt({ $type: TSKindId._RangeExpressionBare, $text: '..', $named: true }) as any
-		);
+		const node = ir.rangeExpressionBare({});
 		expect(node.$type).toBe(TSKindId.RangeExpressionBare);
 		expectBuiltNode(node);
 	});
-	it('render produces non-empty string', () => {
-		const node = ir.rangeExpressionBare(
-			stampBuilt({ $type: TSKindId._RangeExpressionBare, $text: '..', $named: true }) as any
-		);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('..');
+	it('render does not throw on minimal config', () => {
+		const node = ir.rangeExpressionBare({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -4575,7 +4698,7 @@ describe('macro_definition_brace', () => {
 describe('range_pattern_prefix', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangePatternPrefix({
-			content: '..=',
+			operator: '..=',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
@@ -4583,7 +4706,7 @@ describe('range_pattern_prefix', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.rangePatternPrefix({
-			content: '..=',
+			operator: '..=',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		const rendered = node.$render!();
@@ -4597,7 +4720,7 @@ describe('range_pattern_prefix sub-factories', () => {
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -4606,7 +4729,7 @@ describe('range_pattern_prefix sub-factories', () => {
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -4641,7 +4764,7 @@ describe('range_pattern_with_left sub-factories', () => {
 	it('withRight builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight({
 			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
-			content: '...',
+			operator: '...',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);

@@ -224,7 +224,7 @@ describe('lookaround_assertion', () => {
 				$type: TSKindId.LookaheadAssertion,
 				$text: 'test',
 				$named: true,
-				_content: TSKindId.Eq as never,
+				_operator: TSKindId.Eq as never,
 				_pattern: stampBuilt({
 					$type: TSKindId.Pattern,
 					$text: 'test',
@@ -261,7 +261,7 @@ describe('lookaround_assertion', () => {
 				$type: TSKindId.LookaheadAssertion,
 				$text: 'test',
 				$named: true,
-				_content: TSKindId.Eq as never,
+				_operator: TSKindId.Eq as never,
 				_pattern: stampBuilt({
 					$type: TSKindId.Pattern,
 					$text: 'test',
@@ -298,7 +298,7 @@ describe('lookaround_assertion', () => {
 describe('lookaround_assertion sub-factories', () => {
 	it('lookaheadAssertion builds the parent', () => {
 		const node = ir.lookaroundAssertion.lookaheadAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -331,7 +331,7 @@ describe('lookaround_assertion sub-factories', () => {
 	});
 	it('lookbehindAssertion builds the parent', () => {
 		const node = ir.lookaroundAssertion.lookbehindAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -495,7 +495,7 @@ describe('lookaround_assertion sub-factories', () => {
 describe('lookahead_assertion', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lookaheadAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -527,7 +527,7 @@ describe('lookahead_assertion', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.lookaheadAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -589,7 +589,7 @@ describe('lookahead_assertion sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -622,7 +622,7 @@ describe('lookahead_assertion sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -631,7 +631,7 @@ describe('lookahead_assertion sub-factories', () => {
 describe('lookbehind_assertion', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lookbehindAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -663,7 +663,7 @@ describe('lookbehind_assertion', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.lookbehindAssertion({
-			content: '=',
+			operator: '=',
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
 				$text: 'test',
@@ -725,7 +725,7 @@ describe('lookbehind_assertion sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -758,7 +758,7 @@ describe('lookbehind_assertion sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -909,7 +909,7 @@ describe('anonymous_capturing_group', () => {
 describe('named_capturing_group', () => {
 	it('factory produces correct type', () => {
 		const node = ir.namedCapturingGroup({
-			content: '(?<',
+			operator: '(?<',
 			groupName: stampBuilt({ $type: TSKindId.GroupName, $text: 'test', $named: true }) as any,
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
@@ -942,7 +942,7 @@ describe('named_capturing_group', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.namedCapturingGroup({
-			content: '(?<',
+			operator: '(?<',
 			groupName: stampBuilt({ $type: TSKindId.GroupName, $text: 'test', $named: true }) as any,
 			pattern: stampBuilt({
 				$type: TSKindId.Pattern,
@@ -1006,7 +1006,7 @@ describe('named_capturing_group sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -1040,7 +1040,7 @@ describe('named_capturing_group sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkPLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

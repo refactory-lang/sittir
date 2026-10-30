@@ -14,8 +14,60 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildExpressionStatementWithSemi']>,
 		ReturnType<typeof F.buildExpressionStatement>
 	>;
+	readonly expressionStatement$unsafeBlock: Seat<
+		ArgsOf<Table['buildUnsafeBlock']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$asyncBlock: Seat<
+		ArgsOf<Table['buildAsyncBlock']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$genBlock: Seat<
+		ArgsOf<Table['buildGenBlock']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$tryBlock: Seat<
+		ArgsOf<Table['buildTryBlock']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$block: Seat<ArgsOf<Table['buildBlock']>, ReturnType<typeof F.buildExpressionStatement>>;
+	readonly expressionStatement$ifExpression: Seat<
+		ArgsOf<Table['buildIfExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$matchExpression: Seat<
+		ArgsOf<Table['buildMatchExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$whileExpression: Seat<
+		ArgsOf<Table['buildWhileExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$loopExpression: Seat<
+		ArgsOf<Table['buildLoopExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$forExpression: Seat<
+		ArgsOf<Table['buildForExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$constBlock: Seat<
+		ArgsOf<Table['buildConstBlock']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
 	readonly expressionStatement: Table['buildExpressionStatement'] & {
 		readonly withSemi: Routes<Table>['expressionStatement$withSemi'];
+		readonly unsafeBlock: Routes<Table>['expressionStatement$unsafeBlock'];
+		readonly asyncBlock: Routes<Table>['expressionStatement$asyncBlock'];
+		readonly genBlock: Routes<Table>['expressionStatement$genBlock'];
+		readonly tryBlock: Routes<Table>['expressionStatement$tryBlock'];
+		readonly block: Routes<Table>['expressionStatement$block'];
+		readonly ifExpression: Routes<Table>['expressionStatement$ifExpression'];
+		readonly matchExpression: Routes<Table>['expressionStatement$matchExpression'];
+		readonly whileExpression: Routes<Table>['expressionStatement$whileExpression'];
+		readonly loopExpression: Routes<Table>['expressionStatement$loopExpression'];
+		readonly forExpression: Routes<Table>['expressionStatement$forExpression'];
+		readonly constBlock: Routes<Table>['expressionStatement$constBlock'];
 	};
 	readonly attribute$input: <
 		const V extends OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Table['buildAttributeInput']>[0]
@@ -37,6 +89,35 @@ export interface Routes<Table extends AnyTable> {
 	readonly typeParametersElements: Table['typeParametersElements$seated'];
 	readonly typeParameters: Table['typeParameters$seated'];
 	readonly useWildcard: Table['useWildcard$seated'];
+	readonly visibilityModifierPubScopeInPath$self: (
+		options?: OptionsArg<Table['buildVisibilityModifierPubScopeInPath']>
+	) => ReturnType<Table['buildVisibilityModifierPubScopeInPath']>;
+	readonly visibilityModifierPubScopeInPath$metavariable: Seat<
+		ArgsOf<typeof F.buildMetavariable>,
+		ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>
+	>;
+	readonly visibilityModifierPubScopeInPath$super: (
+		options?: OptionsArg<Table['buildVisibilityModifierPubScopeInPath']>
+	) => ReturnType<Table['buildVisibilityModifierPubScopeInPath']>;
+	readonly visibilityModifierPubScopeInPath$crate: (
+		options?: OptionsArg<Table['buildVisibilityModifierPubScopeInPath']>
+	) => ReturnType<Table['buildVisibilityModifierPubScopeInPath']>;
+	readonly visibilityModifierPubScopeInPath$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>
+	>;
+	readonly visibilityModifierPubScopeInPath$scopedIdentifier: Seat<
+		ArgsOf<Table['buildScopedIdentifier']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>
+	>;
+	readonly visibilityModifierPubScopeInPath: {
+		readonly self: Routes<Table>['visibilityModifierPubScopeInPath$self'];
+		readonly metavariable: Routes<Table>['visibilityModifierPubScopeInPath$metavariable'];
+		readonly super: Routes<Table>['visibilityModifierPubScopeInPath$super'];
+		readonly crate: Routes<Table>['visibilityModifierPubScopeInPath$crate'];
+		readonly identifier: Routes<Table>['visibilityModifierPubScopeInPath$identifier'];
+		readonly scopedIdentifier: Routes<Table>['visibilityModifierPubScopeInPath$scopedIdentifier'];
+	};
 	readonly visibilityModifierPubScope$self: (
 		options?: OptionsArg<Table['buildVisibilityModifierPubScope']>
 	) => ReturnType<Table['buildVisibilityModifierPubScope']>;
@@ -50,11 +131,42 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildVisibilityModifierPubScopeInPath']>,
 		ReturnType<typeof F.buildVisibilityModifierPubScope>
 	>;
+	readonly visibilityModifierPubScope$inPath$self: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$self']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
+	readonly visibilityModifierPubScope$inPath$metavariable: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$metavariable']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
+	readonly visibilityModifierPubScope$inPath$super: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$super']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
+	readonly visibilityModifierPubScope$inPath$crate: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$crate']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
+	readonly visibilityModifierPubScope$inPath$identifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$identifier']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
+	readonly visibilityModifierPubScope$inPath$scopedIdentifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScopeInPath$scopedIdentifier']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
 	readonly visibilityModifierPubScope: {
 		readonly self: Routes<Table>['visibilityModifierPubScope$self'];
 		readonly super: Routes<Table>['visibilityModifierPubScope$super'];
 		readonly crate: Routes<Table>['visibilityModifierPubScope$crate'];
-		readonly inPath: Routes<Table>['visibilityModifierPubScope$inPath'];
+		readonly inPath: Routes<Table>['visibilityModifierPubScope$inPath'] & {
+			readonly self: Routes<Table>['visibilityModifierPubScope$inPath$self'];
+			readonly metavariable: Routes<Table>['visibilityModifierPubScope$inPath$metavariable'];
+			readonly super: Routes<Table>['visibilityModifierPubScope$inPath$super'];
+			readonly crate: Routes<Table>['visibilityModifierPubScope$inPath$crate'];
+			readonly identifier: Routes<Table>['visibilityModifierPubScope$inPath$identifier'];
+			readonly scopedIdentifier: Routes<Table>['visibilityModifierPubScope$inPath$scopedIdentifier'];
+		};
 	};
 	readonly visibilityModifierPub$scope: Seat<
 		ArgsOf<Table['buildVisibilityModifierPubScope']>,
@@ -73,7 +185,40 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildVisibilityModifierPub>
 	>;
 	readonly visibilityModifierPub$scope$inPath: Seat<
-		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath']>,
+		ArgsOf<
+			Routes<Table>['visibilityModifierPubScope$inPath'] & {
+				readonly self: Routes<Table>['visibilityModifierPubScope$inPath$self'];
+				readonly metavariable: Routes<Table>['visibilityModifierPubScope$inPath$metavariable'];
+				readonly super: Routes<Table>['visibilityModifierPubScope$inPath$super'];
+				readonly crate: Routes<Table>['visibilityModifierPubScope$inPath$crate'];
+				readonly identifier: Routes<Table>['visibilityModifierPubScope$inPath$identifier'];
+				readonly scopedIdentifier: Routes<Table>['visibilityModifierPubScope$inPath$scopedIdentifier'];
+			}
+		>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$self: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$self']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$metavariable: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$metavariable']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$super: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$super']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$crate: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$crate']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$identifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$identifier']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath$scopedIdentifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath$scopedIdentifier']>,
 		ReturnType<typeof F.buildVisibilityModifierPub>
 	>;
 	readonly visibilityModifierPub: {
@@ -81,7 +226,14 @@ export interface Routes<Table extends AnyTable> {
 			readonly self: Routes<Table>['visibilityModifierPub$scope$self'];
 			readonly super: Routes<Table>['visibilityModifierPub$scope$super'];
 			readonly crate: Routes<Table>['visibilityModifierPub$scope$crate'];
-			readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'];
+			readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'] & {
+				readonly self: Routes<Table>['visibilityModifierPub$scope$inPath$self'];
+				readonly metavariable: Routes<Table>['visibilityModifierPub$scope$inPath$metavariable'];
+				readonly super: Routes<Table>['visibilityModifierPub$scope$inPath$super'];
+				readonly crate: Routes<Table>['visibilityModifierPub$scope$inPath$crate'];
+				readonly identifier: Routes<Table>['visibilityModifierPub$scope$inPath$identifier'];
+				readonly scopedIdentifier: Routes<Table>['visibilityModifierPub$scope$inPath$scopedIdentifier'];
+			};
 		};
 	};
 	readonly visibilityModifier$crate: (
@@ -97,7 +249,14 @@ export interface Routes<Table extends AnyTable> {
 				readonly self: Routes<Table>['visibilityModifierPub$scope$self'];
 				readonly super: Routes<Table>['visibilityModifierPub$scope$super'];
 				readonly crate: Routes<Table>['visibilityModifierPub$scope$crate'];
-				readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'];
+				readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'] & {
+					readonly self: Routes<Table>['visibilityModifierPub$scope$inPath$self'];
+					readonly metavariable: Routes<Table>['visibilityModifierPub$scope$inPath$metavariable'];
+					readonly super: Routes<Table>['visibilityModifierPub$scope$inPath$super'];
+					readonly crate: Routes<Table>['visibilityModifierPub$scope$inPath$crate'];
+					readonly identifier: Routes<Table>['visibilityModifierPub$scope$inPath$identifier'];
+					readonly scopedIdentifier: Routes<Table>['visibilityModifierPub$scope$inPath$scopedIdentifier'];
+				};
 			}
 		>,
 		ReturnType<typeof F.buildVisibilityModifier>
@@ -115,7 +274,40 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildVisibilityModifier>
 	>;
 	readonly visibilityModifier$pub$scope$inPath: Seat<
-		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath']>,
+		ArgsOf<
+			Routes<Table>['visibilityModifierPub$scope$inPath'] & {
+				readonly self: Routes<Table>['visibilityModifierPub$scope$inPath$self'];
+				readonly metavariable: Routes<Table>['visibilityModifierPub$scope$inPath$metavariable'];
+				readonly super: Routes<Table>['visibilityModifierPub$scope$inPath$super'];
+				readonly crate: Routes<Table>['visibilityModifierPub$scope$inPath$crate'];
+				readonly identifier: Routes<Table>['visibilityModifierPub$scope$inPath$identifier'];
+				readonly scopedIdentifier: Routes<Table>['visibilityModifierPub$scope$inPath$scopedIdentifier'];
+			}
+		>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$self: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$self']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$metavariable: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$metavariable']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$super: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$super']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$crate: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$crate']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$identifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$identifier']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath$scopedIdentifier: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath$scopedIdentifier']>,
 		ReturnType<typeof F.buildVisibilityModifier>
 	>;
 	readonly visibilityModifier: Table['buildVisibilityModifier'] & {
@@ -125,7 +317,14 @@ export interface Routes<Table extends AnyTable> {
 				readonly self: Routes<Table>['visibilityModifier$pub$scope$self'];
 				readonly super: Routes<Table>['visibilityModifier$pub$scope$super'];
 				readonly crate: Routes<Table>['visibilityModifier$pub$scope$crate'];
-				readonly inPath: Routes<Table>['visibilityModifier$pub$scope$inPath'];
+				readonly inPath: Routes<Table>['visibilityModifier$pub$scope$inPath'] & {
+					readonly self: Routes<Table>['visibilityModifier$pub$scope$inPath$self'];
+					readonly metavariable: Routes<Table>['visibilityModifier$pub$scope$inPath$metavariable'];
+					readonly super: Routes<Table>['visibilityModifier$pub$scope$inPath$super'];
+					readonly crate: Routes<Table>['visibilityModifier$pub$scope$inPath$crate'];
+					readonly identifier: Routes<Table>['visibilityModifier$pub$scope$inPath$identifier'];
+					readonly scopedIdentifier: Routes<Table>['visibilityModifier$pub$scope$inPath$scopedIdentifier'];
+				};
 			};
 		};
 	};
@@ -272,15 +471,15 @@ export interface Routes<Table extends AnyTable> {
 	readonly macroDefinitionBracket: Table['macroDefinitionBracket$seated'];
 	readonly macroDefinitionBrace: Table['macroDefinitionBrace$seated'];
 	readonly rangePatternPrefix$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternPrefix']>
 	) => ReturnType<Table['buildRangePatternPrefix']>;
 	readonly rangePatternPrefix$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternPrefix']>
 	) => ReturnType<Table['buildRangePatternPrefix']>;
 	readonly rangePatternPrefix: Table['buildRangePatternPrefix'] & {
@@ -288,21 +487,21 @@ export interface Routes<Table extends AnyTable> {
 		readonly dotDot: Routes<Table>['rangePatternPrefix$dotDot'];
 	};
 	readonly rangePatternWithLeftWithRight$dotDotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight: {
@@ -969,8 +1168,49 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildExpressionStatement,
 		$at('buildExpressionStatementWithSemi')
 	);
+	const expressionStatement$unsafeBlock: Routes<Table>['expressionStatement$unsafeBlock'] =
+		K.expressionStatement$unsafeBlock(F.buildExpressionStatement, $at('buildUnsafeBlock'));
+	const expressionStatement$asyncBlock: Routes<Table>['expressionStatement$asyncBlock'] =
+		K.expressionStatement$asyncBlock(F.buildExpressionStatement, $at('buildAsyncBlock'));
+	const expressionStatement$genBlock: Routes<Table>['expressionStatement$genBlock'] = K.expressionStatement$genBlock(
+		F.buildExpressionStatement,
+		$at('buildGenBlock')
+	);
+	const expressionStatement$tryBlock: Routes<Table>['expressionStatement$tryBlock'] = K.expressionStatement$tryBlock(
+		F.buildExpressionStatement,
+		$at('buildTryBlock')
+	);
+	const expressionStatement$block: Routes<Table>['expressionStatement$block'] = K.expressionStatement$block(
+		F.buildExpressionStatement,
+		$at('buildBlock')
+	);
+	const expressionStatement$ifExpression: Routes<Table>['expressionStatement$ifExpression'] =
+		K.expressionStatement$ifExpression(F.buildExpressionStatement, $at('buildIfExpression'));
+	const expressionStatement$matchExpression: Routes<Table>['expressionStatement$matchExpression'] =
+		K.expressionStatement$matchExpression(F.buildExpressionStatement, $at('buildMatchExpression'));
+	const expressionStatement$whileExpression: Routes<Table>['expressionStatement$whileExpression'] =
+		K.expressionStatement$whileExpression(F.buildExpressionStatement, $at('buildWhileExpression'));
+	const expressionStatement$loopExpression: Routes<Table>['expressionStatement$loopExpression'] =
+		K.expressionStatement$loopExpression(F.buildExpressionStatement, $at('buildLoopExpression'));
+	const expressionStatement$forExpression: Routes<Table>['expressionStatement$forExpression'] =
+		K.expressionStatement$forExpression(F.buildExpressionStatement, $at('buildForExpression'));
+	const expressionStatement$constBlock: Routes<Table>['expressionStatement$constBlock'] =
+		K.expressionStatement$constBlock(F.buildExpressionStatement, $at('buildConstBlock'));
 	const expressionStatement: Routes<Table>['expressionStatement'] = Object.freeze(
-		Object.assign(delegate($at('buildExpressionStatement')), { withSemi: expressionStatement$withSemi } as const)
+		Object.assign(delegate($at('buildExpressionStatement')), {
+			withSemi: expressionStatement$withSemi,
+			unsafeBlock: expressionStatement$unsafeBlock,
+			asyncBlock: expressionStatement$asyncBlock,
+			genBlock: expressionStatement$genBlock,
+			tryBlock: expressionStatement$tryBlock,
+			block: expressionStatement$block,
+			ifExpression: expressionStatement$ifExpression,
+			matchExpression: expressionStatement$matchExpression,
+			whileExpression: expressionStatement$whileExpression,
+			loopExpression: expressionStatement$loopExpression,
+			forExpression: expressionStatement$forExpression,
+			constBlock: expressionStatement$constBlock
+		} as const)
 	);
 	const attribute$input: Routes<Table>['attribute$input'] = K.attribute$input(
 		$at('buildAttribute'),
@@ -994,6 +1234,29 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const typeParametersElements: Routes<Table>['typeParametersElements'] = $at('typeParametersElements$seated');
 	const typeParameters: Routes<Table>['typeParameters'] = $at('typeParameters$seated');
 	const useWildcard: Routes<Table>['useWildcard'] = $at('useWildcard$seated');
+	const visibilityModifierPubScopeInPath$self: Routes<Table>['visibilityModifierPubScopeInPath$self'] =
+		K.visibilityModifierPubScopeInPath$self($at('buildVisibilityModifierPubScopeInPath'), TSKindId.SelfModule);
+	const visibilityModifierPubScopeInPath$metavariable: Routes<Table>['visibilityModifierPubScopeInPath$metavariable'] =
+		K.visibilityModifierPubScopeInPath$metavariable(F.buildVisibilityModifierPubScopeInPath, F.buildMetavariable);
+	const visibilityModifierPubScopeInPath$super: Routes<Table>['visibilityModifierPubScopeInPath$super'] =
+		K.visibilityModifierPubScopeInPath$super($at('buildVisibilityModifierPubScopeInPath'), TSKindId.Super);
+	const visibilityModifierPubScopeInPath$crate: Routes<Table>['visibilityModifierPubScopeInPath$crate'] =
+		K.visibilityModifierPubScopeInPath$crate($at('buildVisibilityModifierPubScopeInPath'), TSKindId.Crate);
+	const visibilityModifierPubScopeInPath$identifier: Routes<Table>['visibilityModifierPubScopeInPath$identifier'] =
+		K.visibilityModifierPubScopeInPath$identifier(F.buildVisibilityModifierPubScopeInPath, $at('buildIdentifier'));
+	const visibilityModifierPubScopeInPath$scopedIdentifier: Routes<Table>['visibilityModifierPubScopeInPath$scopedIdentifier'] =
+		K.visibilityModifierPubScopeInPath$scopedIdentifier(
+			F.buildVisibilityModifierPubScopeInPath,
+			$at('buildScopedIdentifier')
+		);
+	const visibilityModifierPubScopeInPath: Routes<Table>['visibilityModifierPubScopeInPath'] = Object.freeze({
+		self: visibilityModifierPubScopeInPath$self,
+		metavariable: visibilityModifierPubScopeInPath$metavariable,
+		super: visibilityModifierPubScopeInPath$super,
+		crate: visibilityModifierPubScopeInPath$crate,
+		identifier: visibilityModifierPubScopeInPath$identifier,
+		scopedIdentifier: visibilityModifierPubScopeInPath$scopedIdentifier
+	} as const);
 	const visibilityModifierPubScope$self: Routes<Table>['visibilityModifierPubScope$self'] =
 		K.visibilityModifierPubScope$self($at('buildVisibilityModifierPubScope'), TSKindId.SelfModule);
 	const visibilityModifierPubScope$super: Routes<Table>['visibilityModifierPubScope$super'] =
@@ -1005,11 +1268,47 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			F.buildVisibilityModifierPubScope,
 			$at('buildVisibilityModifierPubScopeInPath')
 		);
+	const visibilityModifierPubScope$inPath$self: Routes<Table>['visibilityModifierPubScope$inPath$self'] =
+		K.visibilityModifierPubScope$inPath$self(F.buildVisibilityModifierPubScope, visibilityModifierPubScopeInPath.self);
+	const visibilityModifierPubScope$inPath$metavariable: Routes<Table>['visibilityModifierPubScope$inPath$metavariable'] =
+		K.visibilityModifierPubScope$inPath$metavariable(
+			F.buildVisibilityModifierPubScope,
+			visibilityModifierPubScopeInPath.metavariable
+		);
+	const visibilityModifierPubScope$inPath$super: Routes<Table>['visibilityModifierPubScope$inPath$super'] =
+		K.visibilityModifierPubScope$inPath$super(
+			F.buildVisibilityModifierPubScope,
+			visibilityModifierPubScopeInPath.super
+		);
+	const visibilityModifierPubScope$inPath$crate: Routes<Table>['visibilityModifierPubScope$inPath$crate'] =
+		K.visibilityModifierPubScope$inPath$crate(
+			F.buildVisibilityModifierPubScope,
+			visibilityModifierPubScopeInPath.crate
+		);
+	const visibilityModifierPubScope$inPath$identifier: Routes<Table>['visibilityModifierPubScope$inPath$identifier'] =
+		K.visibilityModifierPubScope$inPath$identifier(
+			F.buildVisibilityModifierPubScope,
+			visibilityModifierPubScopeInPath.identifier
+		);
+	const visibilityModifierPubScope$inPath$scopedIdentifier: Routes<Table>['visibilityModifierPubScope$inPath$scopedIdentifier'] =
+		K.visibilityModifierPubScope$inPath$scopedIdentifier(
+			F.buildVisibilityModifierPubScope,
+			visibilityModifierPubScopeInPath.scopedIdentifier
+		);
 	const visibilityModifierPubScope: Routes<Table>['visibilityModifierPubScope'] = Object.freeze({
 		self: visibilityModifierPubScope$self,
 		super: visibilityModifierPubScope$super,
 		crate: visibilityModifierPubScope$crate,
-		inPath: visibilityModifierPubScope$inPath
+		inPath: Object.freeze(
+			Object.assign(visibilityModifierPubScope$inPath, {
+				self: visibilityModifierPubScope$inPath$self,
+				metavariable: visibilityModifierPubScope$inPath$metavariable,
+				super: visibilityModifierPubScope$inPath$super,
+				crate: visibilityModifierPubScope$inPath$crate,
+				identifier: visibilityModifierPubScope$inPath$identifier,
+				scopedIdentifier: visibilityModifierPubScope$inPath$scopedIdentifier
+			} as const)
+		)
 	} as const);
 	const visibilityModifierPub$scope: Routes<Table>['visibilityModifierPub$scope'] = K.visibilityModifierPub$scope(
 		F.buildVisibilityModifierPub,
@@ -1023,13 +1322,43 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.visibilityModifierPub$scope$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.crate);
 	const visibilityModifierPub$scope$inPath: Routes<Table>['visibilityModifierPub$scope$inPath'] =
 		K.visibilityModifierPub$scope$inPath(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath);
+	const visibilityModifierPub$scope$inPath$self: Routes<Table>['visibilityModifierPub$scope$inPath$self'] =
+		K.visibilityModifierPub$scope$inPath$self(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath.self);
+	const visibilityModifierPub$scope$inPath$metavariable: Routes<Table>['visibilityModifierPub$scope$inPath$metavariable'] =
+		K.visibilityModifierPub$scope$inPath$metavariable(
+			F.buildVisibilityModifierPub,
+			visibilityModifierPubScope.inPath.metavariable
+		);
+	const visibilityModifierPub$scope$inPath$super: Routes<Table>['visibilityModifierPub$scope$inPath$super'] =
+		K.visibilityModifierPub$scope$inPath$super(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath.super);
+	const visibilityModifierPub$scope$inPath$crate: Routes<Table>['visibilityModifierPub$scope$inPath$crate'] =
+		K.visibilityModifierPub$scope$inPath$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath.crate);
+	const visibilityModifierPub$scope$inPath$identifier: Routes<Table>['visibilityModifierPub$scope$inPath$identifier'] =
+		K.visibilityModifierPub$scope$inPath$identifier(
+			F.buildVisibilityModifierPub,
+			visibilityModifierPubScope.inPath.identifier
+		);
+	const visibilityModifierPub$scope$inPath$scopedIdentifier: Routes<Table>['visibilityModifierPub$scope$inPath$scopedIdentifier'] =
+		K.visibilityModifierPub$scope$inPath$scopedIdentifier(
+			F.buildVisibilityModifierPub,
+			visibilityModifierPubScope.inPath.scopedIdentifier
+		);
 	const visibilityModifierPub: Routes<Table>['visibilityModifierPub'] = Object.freeze({
 		scope: Object.freeze(
 			Object.assign(visibilityModifierPub$scope, {
 				self: visibilityModifierPub$scope$self,
 				super: visibilityModifierPub$scope$super,
 				crate: visibilityModifierPub$scope$crate,
-				inPath: visibilityModifierPub$scope$inPath
+				inPath: Object.freeze(
+					Object.assign(visibilityModifierPub$scope$inPath, {
+						self: visibilityModifierPub$scope$inPath$self,
+						metavariable: visibilityModifierPub$scope$inPath$metavariable,
+						super: visibilityModifierPub$scope$inPath$super,
+						crate: visibilityModifierPub$scope$inPath$crate,
+						identifier: visibilityModifierPub$scope$inPath$identifier,
+						scopedIdentifier: visibilityModifierPub$scope$inPath$scopedIdentifier
+					} as const)
+				)
 			} as const)
 		)
 	} as const);
@@ -1053,6 +1382,27 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.visibilityModifier$pub$scope$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.crate);
 	const visibilityModifier$pub$scope$inPath: Routes<Table>['visibilityModifier$pub$scope$inPath'] =
 		K.visibilityModifier$pub$scope$inPath(F.buildVisibilityModifier, visibilityModifierPub.scope.inPath);
+	const visibilityModifier$pub$scope$inPath$self: Routes<Table>['visibilityModifier$pub$scope$inPath$self'] =
+		K.visibilityModifier$pub$scope$inPath$self(F.buildVisibilityModifier, visibilityModifierPub.scope.inPath.self);
+	const visibilityModifier$pub$scope$inPath$metavariable: Routes<Table>['visibilityModifier$pub$scope$inPath$metavariable'] =
+		K.visibilityModifier$pub$scope$inPath$metavariable(
+			F.buildVisibilityModifier,
+			visibilityModifierPub.scope.inPath.metavariable
+		);
+	const visibilityModifier$pub$scope$inPath$super: Routes<Table>['visibilityModifier$pub$scope$inPath$super'] =
+		K.visibilityModifier$pub$scope$inPath$super(F.buildVisibilityModifier, visibilityModifierPub.scope.inPath.super);
+	const visibilityModifier$pub$scope$inPath$crate: Routes<Table>['visibilityModifier$pub$scope$inPath$crate'] =
+		K.visibilityModifier$pub$scope$inPath$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.inPath.crate);
+	const visibilityModifier$pub$scope$inPath$identifier: Routes<Table>['visibilityModifier$pub$scope$inPath$identifier'] =
+		K.visibilityModifier$pub$scope$inPath$identifier(
+			F.buildVisibilityModifier,
+			visibilityModifierPub.scope.inPath.identifier
+		);
+	const visibilityModifier$pub$scope$inPath$scopedIdentifier: Routes<Table>['visibilityModifier$pub$scope$inPath$scopedIdentifier'] =
+		K.visibilityModifier$pub$scope$inPath$scopedIdentifier(
+			F.buildVisibilityModifier,
+			visibilityModifierPub.scope.inPath.scopedIdentifier
+		);
 	const visibilityModifier: Routes<Table>['visibilityModifier'] = Object.freeze(
 		Object.assign(delegate($at('buildVisibilityModifier')), {
 			crate: visibilityModifier$crate,
@@ -1063,7 +1413,16 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 							self: visibilityModifier$pub$scope$self,
 							super: visibilityModifier$pub$scope$super,
 							crate: visibilityModifier$pub$scope$crate,
-							inPath: visibilityModifier$pub$scope$inPath
+							inPath: Object.freeze(
+								Object.assign(visibilityModifier$pub$scope$inPath, {
+									self: visibilityModifier$pub$scope$inPath$self,
+									metavariable: visibilityModifier$pub$scope$inPath$metavariable,
+									super: visibilityModifier$pub$scope$inPath$super,
+									crate: visibilityModifier$pub$scope$inPath$crate,
+									identifier: visibilityModifier$pub$scope$inPath$identifier,
+									scopedIdentifier: visibilityModifier$pub$scope$inPath$scopedIdentifier
+								} as const)
+							)
 						} as const)
 					)
 				} as const)

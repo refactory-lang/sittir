@@ -2654,11 +2654,6 @@ export enum ParenthesizedExpressionKind {
 	ParenthesizedExpressionSequence = 'parenthesized_expression_sequence'
 }
 
-export enum ExpressionsKind {
-	Expression = 'expression',
-	SequenceExpression = 'sequence_expression'
-}
-
 export enum ExpressionKind {
 	AsExpression = 'as_expression',
 	SatisfiesExpression = 'satisfies_expression',
@@ -2751,11 +2746,6 @@ export enum NumberKind {
 	NumberBinary = 'number_binary',
 	NumberOctal = 'number_octal',
 	NumberBigint = 'number_bigint'
-}
-
-export enum _IdentifierKind {
-	Undefined = 'undefined',
-	Identifier = 'identifier'
 }
 
 export enum MetaPropertyKind {
@@ -2961,52 +2951,52 @@ export interface ExportClause {
 
 export interface ExportSpecifier {
 	readonly $type: TSKindId.ExportSpecifier;
-	readonly _type_only?: number;
+	readonly _type_keyword?: number;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias?: Identifier | String | TSKindId.DefaultKeyword;
 	readonly __slotNames__?: {
-		readonly _type_only: 'typeOnly';
+		readonly _type_keyword: 'typeKeyword';
 		readonly _name: 'name';
 		readonly _alias: 'alias';
 	};
 	readonly __inputHints__?: {
-		readonly type_only?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+		readonly type_keyword?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
 		readonly alias?: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
 	};
 	readonly __slotHints__?: {
-		readonly typeOnly: SlotHint<NonNullable<T.ExportSpecifier.Config>['typeOnly'], true>;
+		readonly typeKeyword: SlotHint<NonNullable<T.ExportSpecifier.Config>['typeKeyword'], true>;
 		readonly name: SlotHint<NonNullable<T.ExportSpecifier.Config>['name']>;
 		readonly alias: SlotHint<NonNullable<T.ExportSpecifier.Config>['alias'], true>;
 	};
-	readonly typeOnly: () => number | undefined;
+	readonly typeKeyword: () => number | undefined;
 	readonly name: () => Identifier | String | TSKindId.DefaultKeyword;
 	readonly alias: () => Identifier | String | TSKindId.DefaultKeyword | undefined;
 }
 
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
-	readonly _type_only?: number;
+	readonly _type_keyword?: number;
 	readonly _from_clause: ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
 	readonly _terminator: number;
 	readonly __slotNames__?: {
-		readonly _type_only: 'typeOnly';
+		readonly _type_keyword: 'typeKeyword';
 		readonly _from_clause: 'fromClause';
 		readonly _import_attribute: 'importAttribute';
 		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
-		readonly type_only?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+		readonly type_keyword?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	readonly __slotHints__?: {
-		readonly typeOnly: SlotHint<NonNullable<T.ImportStatement.Config>['typeOnly'], true>;
+		readonly typeKeyword: SlotHint<NonNullable<T.ImportStatement.Config>['typeKeyword'], true>;
 		readonly fromClause: SlotHint<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>;
 		readonly importAttribute: SlotHint<T.ImportAttribute, true>;
 		readonly terminator: SlotHint<NonNullable<T.ImportStatement.Options>['terminator']>;
 	};
-	readonly typeOnly: () => number | undefined;
+	readonly typeKeyword: () => number | undefined;
 	readonly fromClause: () => ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly importAttribute: () => ImportAttribute | undefined;
 	readonly terminator: () => number;
@@ -4294,11 +4284,11 @@ export interface AwaitExpression {
 export interface MemberExpression {
 	readonly $type: TSKindId.MemberExpression;
 	readonly _object: Expression | PrimaryExpression | TSKindId.Import;
-	readonly _optional_chain: number;
+	readonly _operator: number;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
 	readonly __slotNames__?: {
 		readonly _object: 'object';
-		readonly _optional_chain: 'optionalChain';
+		readonly _operator: 'operator';
 		readonly _property: 'property';
 	};
 	readonly __inputHints__?: {
@@ -4316,15 +4306,15 @@ export interface MemberExpression {
 			  >
 			| Expression
 			| PrimaryExpression;
-		readonly optional_chain: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
+		readonly operator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.MemberExpression.Config>['object']>;
-		readonly optionalChain: SlotHint<NonNullable<T.MemberExpression.Config>['optionalChain']>;
+		readonly operator: SlotHint<NonNullable<T.MemberExpression.Config>['operator']>;
 		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	readonly object: () => Expression | PrimaryExpression | TSKindId.Import;
-	readonly optionalChain: () => number;
+	readonly operator: () => number;
 	readonly property: () => PrivatePropertyIdentifier | PropertyIdentifier;
 }
 
@@ -6776,11 +6766,11 @@ export interface TypeQueryMemberExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
 	readonly __slotNames__?: {
 		readonly _object: 'object';
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _property: 'property';
 	};
 	readonly __inputHints__?: {
@@ -6790,11 +6780,11 @@ export interface TypeQueryMemberExpression {
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
-		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
+		readonly operator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['object']>;
-		readonly content: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>;
 		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	readonly object: () =>
@@ -6803,7 +6793,7 @@ export interface TypeQueryMemberExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly property: () => PrivatePropertyIdentifier | PropertyIdentifier;
 }
 
@@ -7589,14 +7579,14 @@ export interface DefaultType {
 
 export interface Constraint {
 	readonly $type: TSKindId.Constraint;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _bounds: Type;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _bounds: 'bounds';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'extends' | ':', TSKindId.ExtendsKeyword | TSKindId.Colon>;
+		readonly operator: KindEnum<'extends' | ':', TSKindId.ExtendsKeyword | TSKindId.Colon>;
 		readonly bounds:
 			| KindEnum<
 					| 'any'
@@ -7628,9 +7618,9 @@ export interface Constraint {
 	};
 	readonly __slotHints__?: {
 		readonly bounds: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
-		readonly content: SlotHint<NonNullable<T.Constraint.Options>['content']>;
+		readonly operator: SlotHint<NonNullable<T.Constraint.Options>['operator']>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly bounds: () => Type;
 }
 
@@ -8375,17 +8365,17 @@ export interface LiteralTypeNegativeNumber {
 
 export interface NumberHex {
 	readonly $type: TSKindId.NumberHex;
-	readonly _prefix: '0x' | '0X';
+	readonly _radix_prefix: '0x' | '0X';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0x' | '0X'>;
+		readonly radixPrefix: SlotHint<'0x' | '0X'>;
 	};
-	readonly prefix: () => '0x' | '0X';
+	readonly radixPrefix: () => '0x' | '0X';
 	readonly content: () => string;
 }
 
@@ -8394,26 +8384,26 @@ export interface NumberFloatPoint {
 	readonly _integer: string;
 	readonly _fraction?: string;
 	readonly _marker?: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly __slotNames__?: {
 		readonly _integer: 'integer';
 		readonly _fraction: 'fraction';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly fraction: SlotHint<string | number | bigint, true>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
 	readonly marker: () => 'e' | 'E' | undefined;
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 }
 
@@ -8421,23 +8411,23 @@ export interface NumberFloatLeadingPoint {
 	readonly $type: TSKindId.NumberFloatLeadingPoint;
 	readonly _fraction: string;
 	readonly _marker?: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly __slotNames__?: {
 		readonly _fraction: 'fraction';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 	};
 	readonly __slotHints__?: {
 		readonly fraction: SlotHint<string | number | bigint>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
 	};
 	readonly fraction: () => string;
 	readonly marker: () => 'e' | 'E' | undefined;
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 }
 
@@ -8445,55 +8435,55 @@ export interface NumberFloatScientific {
 	readonly $type: TSKindId.NumberFloatScientific;
 	readonly _integer: string;
 	readonly _marker: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent: string;
 	readonly __slotNames__?: {
 		readonly _integer: 'integer';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint>;
 		readonly marker: SlotHint<'e' | 'E'>;
 	};
 	readonly integer: () => string;
 	readonly marker: () => 'e' | 'E';
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string;
 }
 
 export interface NumberBinary {
 	readonly $type: TSKindId.NumberBinary;
-	readonly _prefix: '0b' | '0B';
+	readonly _radix_prefix: '0b' | '0B';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0b' | '0B'>;
+		readonly radixPrefix: SlotHint<'0b' | '0B'>;
 	};
-	readonly prefix: () => '0b' | '0B';
+	readonly radixPrefix: () => '0b' | '0B';
 	readonly content: () => string;
 }
 
 export interface NumberOctal {
 	readonly $type: TSKindId.NumberOctal;
-	readonly _prefix: '0o' | '0O';
+	readonly _radix_prefix: '0o' | '0O';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0o' | '0O'>;
+		readonly radixPrefix: SlotHint<'0o' | '0O'>;
 	};
-	readonly prefix: () => '0o' | '0O';
+	readonly radixPrefix: () => '0o' | '0O';
 	readonly content: () => string;
 }
 
@@ -8787,43 +8777,43 @@ export interface YieldExpressionDelegate {
 
 export interface ImportSpecifierName {
 	readonly $type: TSKindId.ImportSpecifierName;
-	readonly _type_only?: number;
+	readonly _type_keyword?: number;
 	readonly _name: Identifier;
 	readonly __slotNames__?: {
-		readonly _type_only: 'typeOnly';
+		readonly _type_keyword: 'typeKeyword';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly type_only?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+		readonly type_keyword?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 	};
 	readonly __slotHints__?: {
-		readonly typeOnly: SlotHint<NonNullable<T.ImportSpecifierName.Config>['typeOnly'], true>;
+		readonly typeKeyword: SlotHint<NonNullable<T.ImportSpecifierName.Config>['typeKeyword'], true>;
 		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly typeOnly: () => number | undefined;
+	readonly typeKeyword: () => number | undefined;
 	readonly name: () => Identifier;
 }
 
 export interface ImportSpecifierAs {
 	readonly $type: TSKindId.ImportSpecifierAs;
-	readonly _type_only?: number;
+	readonly _type_keyword?: number;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias: Identifier;
 	readonly __slotNames__?: {
-		readonly _type_only: 'typeOnly';
+		readonly _type_keyword: 'typeKeyword';
 		readonly _name: 'name';
 		readonly _alias: 'alias';
 	};
 	readonly __inputHints__?: {
-		readonly type_only?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+		readonly type_keyword?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
 	};
 	readonly __slotHints__?: {
-		readonly typeOnly: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['typeOnly'], true>;
+		readonly typeKeyword: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['typeKeyword'], true>;
 		readonly name: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['name']>;
 		readonly alias: SlotHint<T.Identifier>;
 	};
-	readonly typeOnly: () => number | undefined;
+	readonly typeKeyword: () => number | undefined;
 	readonly name: () => Identifier | String | TSKindId.DefaultKeyword;
 	readonly alias: () => Identifier;
 }
@@ -9468,7 +9458,7 @@ export interface ForHeaderUsingKind {
 	readonly $type: TSKindId.ForHeaderUsingKind;
 	readonly _kind: number;
 	readonly _left: Identifier | ObjectPattern | ArrayPattern;
-	readonly _terminator: boolean;
+	readonly _terminator?: number;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
 	readonly __slotNames__?: {
@@ -9480,7 +9470,7 @@ export interface ForHeaderUsingKind {
 	};
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'using' | 'await using', TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm>;
-		readonly terminator?: BaseBooleanKeyword<'\n'>;
+		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 		readonly operator: KindEnum<'in' | 'of', TSKindId.InKeyword | TSKindId.OfKeyword>;
 		readonly right:
 			| KindEnum<
@@ -9498,13 +9488,13 @@ export interface ForHeaderUsingKind {
 	readonly __slotHints__?: {
 		readonly kind: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['kind']>;
 		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
-		readonly terminator: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['terminator'], true>;
 		readonly operator: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['operator']>;
 		readonly right: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['right']>;
+		readonly terminator: SlotHint<NonNullable<T.ForHeaderUsingKind.Options>['terminator'], true>;
 	};
 	readonly kind: () => number;
 	readonly left: () => Identifier | ObjectPattern | ArrayPattern;
-	readonly terminator: () => boolean;
+	readonly terminator: () => NonNullable<T.ForHeaderUsingKind.Options>['terminator'] | undefined;
 	readonly operator: () => number;
 	readonly right: () => Expression | SequenceExpression;
 }
@@ -13051,8 +13041,8 @@ export namespace Constraint {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly content?: TSKindId.ExtendsKeyword | TSKindId.Colon;
 			readonly extendsKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly operator?: TSKindId.ExtendsKeyword | TSKindId.Colon;
 		};
 	}
 }
@@ -13797,6 +13787,7 @@ export namespace ForHeaderUsingKind {
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly operator?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
+			readonly terminator?: TSKindId.AutomaticSemicolon | null;
 			readonly usingKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
@@ -22656,8 +22647,8 @@ export namespace DefaultType {
 	export type Kind = TSKindId.DefaultType;
 }
 export namespace Constraint {
-	export type Config = OmitEach<ConfigFor<TSKindId.Constraint>, 'content'>;
-	export type Options = { readonly content?: TSKindId.ExtendsKeyword | TSKindId.Colon };
+	export type Config = OmitEach<ConfigFor<TSKindId.Constraint>, 'operator'>;
+	export type Options = { readonly operator?: TSKindId.ExtendsKeyword | TSKindId.Colon };
 	export interface Bound extends BoundOf<T.Constraint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Constraint['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -22674,8 +22665,8 @@ export namespace Constraint {
 		>;
 		readonly $snapshot: () => Snapshot<T.Constraint['$type']>;
 	}
-	export type Loose = OmitEach<LooseFor<TSKindId.Constraint>, 'content'>;
-	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.Constraint>, 'content'>;
+	export type Loose = OmitEach<LooseFor<TSKindId.Constraint>, 'operator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.Constraint>, 'operator'>;
 	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>, options?: T.Constraint.Options];
 	export type LooseArgs = [value: T.Constraint.Loose, options?: T.Constraint.Options];
 	export type Kind = TSKindId.Constraint;
@@ -23698,8 +23689,8 @@ export namespace LiteralTypeNegativeNumber {
 	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0x' | '0X' };
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberHex>, 'radixPrefix'>, { content: number | bigint }>;
+	export type Options = { readonly radixPrefix?: '0x' | '0X' };
 	export interface Bound extends BoundOf<T.NumberHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23717,12 +23708,12 @@ export namespace NumberHex {
 		readonly $snapshot: () => Snapshot<T.NumberHex['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.NumberHex>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.NumberHex>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.NumberHex.Options];
@@ -23864,8 +23855,11 @@ export namespace NumberFloatScientific {
 	export type Kind = TSKindId.NumberFloatScientific;
 }
 export namespace NumberBinary {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0b' | '0B' };
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.NumberBinary>, 'radixPrefix'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0b' | '0B' };
 	export interface Bound extends BoundOf<T.NumberBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23883,12 +23877,12 @@ export namespace NumberBinary {
 		readonly $snapshot: () => Snapshot<T.NumberBinary['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.NumberBinary>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.NumberBinary>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.NumberBinary.Options];
@@ -23896,8 +23890,11 @@ export namespace NumberBinary {
 	export type Kind = TSKindId.NumberBinary;
 }
 export namespace NumberOctal {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0o' | '0O' };
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.NumberOctal>, 'radixPrefix'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0o' | '0O' };
 	export interface Bound extends BoundOf<T.NumberOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23915,12 +23912,12 @@ export namespace NumberOctal {
 		readonly $snapshot: () => Snapshot<T.NumberOctal['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.NumberOctal>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.NumberOctal>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.NumberOctal.Options];
@@ -24976,7 +24973,8 @@ export namespace ForHeaderLetConstKind {
 	export type Kind = TSKindId.ForHeaderLetConstKind;
 }
 export namespace ForHeaderUsingKind {
-	export type Config = ConfigFor<TSKindId.ForHeaderUsingKind>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | null };
 	export interface Bound extends BoundOf<T.ForHeaderUsingKind, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ForHeaderUsingKind['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24994,10 +24992,13 @@ export namespace ForHeaderUsingKind {
 		>;
 		readonly $snapshot: () => Snapshot<T.ForHeaderUsingKind['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ForHeaderUsingKind>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderUsingKind>;
-	export type BuildArgs = [config: ConfigOf<T.ForHeaderUsingKind>];
-	export type LooseArgs = [config: T.ForHeaderUsingKind.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
+		options?: T.ForHeaderUsingKind.Options
+	];
+	export type LooseArgs = [config: T.ForHeaderUsingKind.Loose, options?: T.ForHeaderUsingKind.Options];
 	export type Kind = TSKindId.ForHeaderUsingKind;
 }
 export namespace FormalParametersSetAccessorSignature {

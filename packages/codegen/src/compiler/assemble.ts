@@ -152,6 +152,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 		if (ctx.topLevelAliasBodies.has(kind)) continue;
+		if (normalized.splicedNames.has(kind) && findOwnKindEntry(kindEntries, kind) === undefined) continue;
 		const simplifiedRule = normalized.rules[kind]!;
 		const seated = seatedOf(renderRule.annotations, findOwnKindEntry(kindEntries, kind));
 		const modelType = classifyNode(kind, simplifiedRule, {

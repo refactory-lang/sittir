@@ -1437,6 +1437,14 @@ export interface Routes<Table extends AnyTable> {
 		readonly as: Routes<Table>['yieldFromClause$as'];
 	};
 	readonly yield_$fromClause: Seat<ArgsOf<Table['buildYieldFromClause']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$comparison: Seat<ArgsOf<Routes<Table>['comparisonOperator']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$boolean: Seat<ArgsOf<Table['buildBooleanOperator']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$lambda: Seat<ArgsOf<Table['buildLambda']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$conditional: Seat<ArgsOf<Table['buildConditionalExpression']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$named: Seat<ArgsOf<Table['buildNamedExpression']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$expressionList: Seat<ArgsOf<Table['buildExpressionList']>, ReturnType<typeof F.buildYield>>;
 	readonly yield_$fromClause$comparison: Seat<
 		ArgsOf<Routes<Table>['yieldFromClause$comparison']>,
 		ReturnType<typeof F.buildYield>
@@ -1551,6 +1559,46 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['yieldFromClause$named$identifier']>,
 		ReturnType<typeof F.buildYield>
 	>;
+	readonly yield_$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$binary: Seat<ArgsOf<Table['buildBinaryOperator']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$primary$integer: Seat<ArgsOf<Routes<Table>['integer']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$float: Seat<ArgsOf<Routes<Table>['float']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$unary: Seat<ArgsOf<Table['buildUnaryOperator']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$attribute: Seat<ArgsOf<Table['buildAttribute']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$subscript: Seat<ArgsOf<Routes<Table>['subscript']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$call: Seat<ArgsOf<Table['buildCall']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$list: Seat<ArgsOf<Table['buildList']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$primary$dictionary: Seat<ArgsOf<Table['buildDictionary']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$primary$set: Seat<ArgsOf<Table['buildSet']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$setComprehension: Seat<
+		ArgsOf<Table['buildSetComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$primary$tuple: Seat<ArgsOf<Table['buildTuple']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$primary$generator: Seat<ArgsOf<Table['buildGeneratorExpression']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$primary$listSplat: Seat<ArgsOf<Table['buildListSplatPattern']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildYield>
+	>;
 	readonly yield_: Table['buildYield'] & {
 		readonly fromClause: Routes<Table>['yield_$fromClause'] & {
 			readonly comparison: Routes<Table>['yield_$fromClause$comparison'];
@@ -1586,6 +1634,37 @@ export interface Routes<Table extends AnyTable> {
 			};
 			readonly as: Routes<Table>['yield_$fromClause$as'];
 		};
+		readonly comparison: Routes<Table>['yield_$comparison'];
+		readonly not: Routes<Table>['yield_$not'];
+		readonly boolean: Routes<Table>['yield_$boolean'];
+		readonly lambda: Routes<Table>['yield_$lambda'];
+		readonly primary: {
+			readonly await: Routes<Table>['yield_$primary$await'];
+			readonly binary: Routes<Table>['yield_$primary$binary'];
+			readonly identifier: Routes<Table>['yield_$primary$identifier'];
+			readonly string: Routes<Table>['yield_$primary$string'];
+			readonly concatenatedString: Routes<Table>['yield_$primary$concatenatedString'];
+			readonly integer: Routes<Table>['yield_$primary$integer'];
+			readonly float: Routes<Table>['yield_$primary$float'];
+			readonly unary: Routes<Table>['yield_$primary$unary'];
+			readonly attribute: Routes<Table>['yield_$primary$attribute'];
+			readonly subscript: Routes<Table>['yield_$primary$subscript'];
+			readonly call: Routes<Table>['yield_$primary$call'];
+			readonly list: Routes<Table>['yield_$primary$list'];
+			readonly listComprehension: Routes<Table>['yield_$primary$listComprehension'];
+			readonly dictionary: Routes<Table>['yield_$primary$dictionary'];
+			readonly dictionaryComprehension: Routes<Table>['yield_$primary$dictionaryComprehension'];
+			readonly set: Routes<Table>['yield_$primary$set'];
+			readonly setComprehension: Routes<Table>['yield_$primary$setComprehension'];
+			readonly tuple: Routes<Table>['yield_$primary$tuple'];
+			readonly parenthesized: Routes<Table>['yield_$primary$parenthesized'];
+			readonly generator: Routes<Table>['yield_$primary$generator'];
+			readonly listSplat: Routes<Table>['yield_$primary$listSplat'];
+		};
+		readonly conditional: Routes<Table>['yield_$conditional'];
+		readonly named: Routes<Table>['yield_$named'] & { readonly identifier: Routes<Table>['yield_$named$identifier'] };
+		readonly as: Routes<Table>['yield_$as'];
+		readonly expressionList: Routes<Table>['yield_$expressionList'];
 	};
 	readonly expressionStatement$comparison: Seat<
 		ArgsOf<Routes<Table>['comparisonOperator']>,
@@ -1760,6 +1839,38 @@ export interface Routes<Table extends AnyTable> {
 		>,
 		ReturnType<typeof F.buildExpressionStatement>
 	>;
+	readonly expressionStatement$yield$comparison: Seat<
+		ArgsOf<Routes<Table>['yield_$comparison']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$not: Seat<
+		ArgsOf<Routes<Table>['yield_$not']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$boolean: Seat<
+		ArgsOf<Routes<Table>['yield_$boolean']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$lambda: Seat<
+		ArgsOf<Routes<Table>['yield_$lambda']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$conditional: Seat<
+		ArgsOf<Routes<Table>['yield_$conditional']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$named: Seat<
+		ArgsOf<Routes<Table>['yield_$named'] & { readonly identifier: Routes<Table>['yield_$named$identifier'] }>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$as: Seat<
+		ArgsOf<Routes<Table>['yield_$as']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$expressionList: Seat<
+		ArgsOf<Routes<Table>['yield_$expressionList']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
 	readonly expressionStatement$yield$fromClause$comparison: Seat<
 		ArgsOf<Routes<Table>['yield_$fromClause$comparison']>,
 		ReturnType<typeof F.buildExpressionStatement>
@@ -1880,6 +1991,94 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['yield_$fromClause$named$identifier']>,
 		ReturnType<typeof F.buildExpressionStatement>
 	>;
+	readonly expressionStatement$yield$primary$await: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$await']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$binary: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$binary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$identifier: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$identifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$string: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$string']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$concatenatedString: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$concatenatedString']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$integer: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$integer']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$float: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$float']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$unary: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$unary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$attribute: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$attribute']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$subscript']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$call: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$call']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$list: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$list']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$listComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$listComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$dictionary: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$dictionary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$dictionaryComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$dictionaryComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$set: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$set']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$setComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$setComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$tuple: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$tuple']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$parenthesized: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$parenthesized']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$generator: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$generator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$primary$listSplat: Seat<
+		ArgsOf<Routes<Table>['yield_$primary$listSplat']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$named$identifier: Seat<
+		ArgsOf<Routes<Table>['yield_$named$identifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
 	readonly expressionStatement: Table['buildExpressionStatement'] & {
 		readonly comparison: Routes<Table>['expressionStatement$comparison'];
 		readonly not: Routes<Table>['expressionStatement$not'];
@@ -1953,7 +2152,728 @@ export interface Routes<Table extends AnyTable> {
 				};
 				readonly as: Routes<Table>['expressionStatement$yield$fromClause$as'];
 			};
+			readonly comparison: Routes<Table>['expressionStatement$yield$comparison'];
+			readonly not: Routes<Table>['expressionStatement$yield$not'];
+			readonly boolean: Routes<Table>['expressionStatement$yield$boolean'];
+			readonly lambda: Routes<Table>['expressionStatement$yield$lambda'];
+			readonly primary: {
+				readonly await: Routes<Table>['expressionStatement$yield$primary$await'];
+				readonly binary: Routes<Table>['expressionStatement$yield$primary$binary'];
+				readonly identifier: Routes<Table>['expressionStatement$yield$primary$identifier'];
+				readonly string: Routes<Table>['expressionStatement$yield$primary$string'];
+				readonly concatenatedString: Routes<Table>['expressionStatement$yield$primary$concatenatedString'];
+				readonly integer: Routes<Table>['expressionStatement$yield$primary$integer'];
+				readonly float: Routes<Table>['expressionStatement$yield$primary$float'];
+				readonly unary: Routes<Table>['expressionStatement$yield$primary$unary'];
+				readonly attribute: Routes<Table>['expressionStatement$yield$primary$attribute'];
+				readonly subscript: Routes<Table>['expressionStatement$yield$primary$subscript'];
+				readonly call: Routes<Table>['expressionStatement$yield$primary$call'];
+				readonly list: Routes<Table>['expressionStatement$yield$primary$list'];
+				readonly listComprehension: Routes<Table>['expressionStatement$yield$primary$listComprehension'];
+				readonly dictionary: Routes<Table>['expressionStatement$yield$primary$dictionary'];
+				readonly dictionaryComprehension: Routes<Table>['expressionStatement$yield$primary$dictionaryComprehension'];
+				readonly set: Routes<Table>['expressionStatement$yield$primary$set'];
+				readonly setComprehension: Routes<Table>['expressionStatement$yield$primary$setComprehension'];
+				readonly tuple: Routes<Table>['expressionStatement$yield$primary$tuple'];
+				readonly parenthesized: Routes<Table>['expressionStatement$yield$primary$parenthesized'];
+				readonly generator: Routes<Table>['expressionStatement$yield$primary$generator'];
+				readonly listSplat: Routes<Table>['expressionStatement$yield$primary$listSplat'];
+			};
+			readonly conditional: Routes<Table>['expressionStatement$yield$conditional'];
+			readonly named: Routes<Table>['expressionStatement$yield$named'] & {
+				readonly identifier: Routes<Table>['expressionStatement$yield$named$identifier'];
+			};
+			readonly as: Routes<Table>['expressionStatement$yield$as'];
+			readonly expressionList: Routes<Table>['expressionStatement$yield$expressionList'];
 		};
+	};
+	readonly returnStatement$comparison: Seat<
+		ArgsOf<Routes<Table>['comparisonOperator']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$boolean: Seat<
+		ArgsOf<Table['buildBooleanOperator']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$lambda: Seat<ArgsOf<Table['buildLambda']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$conditional: Seat<
+		ArgsOf<Table['buildConditionalExpression']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$named: Seat<
+		ArgsOf<Table['buildNamedExpression']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$expressionList: Seat<
+		ArgsOf<Table['buildExpressionList']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$primary$binary: Seat<
+		ArgsOf<Table['buildBinaryOperator']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$string: Seat<
+		ArgsOf<Table['buildString']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$integer: Seat<
+		ArgsOf<Routes<Table>['integer']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$float: Seat<
+		ArgsOf<Routes<Table>['float']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$unary: Seat<
+		ArgsOf<Table['buildUnaryOperator']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$attribute: Seat<
+		ArgsOf<Table['buildAttribute']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['subscript']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$call: Seat<ArgsOf<Table['buildCall']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$primary$list: Seat<ArgsOf<Table['buildList']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$dictionary: Seat<
+		ArgsOf<Table['buildDictionary']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$set: Seat<ArgsOf<Table['buildSet']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$primary$setComprehension: Seat<
+		ArgsOf<Table['buildSetComprehension']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$tuple: Seat<ArgsOf<Table['buildTuple']>, ReturnType<typeof F.buildReturnStatement>>;
+	readonly returnStatement$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$generator: Seat<
+		ArgsOf<Table['buildGeneratorExpression']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$primary$listSplat: Seat<
+		ArgsOf<Table['buildListSplatPattern']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildReturnStatement>
+	>;
+	readonly returnStatement: Table['buildReturnStatement'] & {
+		readonly comparison: Routes<Table>['returnStatement$comparison'];
+		readonly not: Routes<Table>['returnStatement$not'];
+		readonly boolean: Routes<Table>['returnStatement$boolean'];
+		readonly lambda: Routes<Table>['returnStatement$lambda'];
+		readonly primary: {
+			readonly await: Routes<Table>['returnStatement$primary$await'];
+			readonly binary: Routes<Table>['returnStatement$primary$binary'];
+			readonly identifier: Routes<Table>['returnStatement$primary$identifier'];
+			readonly string: Routes<Table>['returnStatement$primary$string'];
+			readonly concatenatedString: Routes<Table>['returnStatement$primary$concatenatedString'];
+			readonly integer: Routes<Table>['returnStatement$primary$integer'];
+			readonly float: Routes<Table>['returnStatement$primary$float'];
+			readonly unary: Routes<Table>['returnStatement$primary$unary'];
+			readonly attribute: Routes<Table>['returnStatement$primary$attribute'];
+			readonly subscript: Routes<Table>['returnStatement$primary$subscript'];
+			readonly call: Routes<Table>['returnStatement$primary$call'];
+			readonly list: Routes<Table>['returnStatement$primary$list'];
+			readonly listComprehension: Routes<Table>['returnStatement$primary$listComprehension'];
+			readonly dictionary: Routes<Table>['returnStatement$primary$dictionary'];
+			readonly dictionaryComprehension: Routes<Table>['returnStatement$primary$dictionaryComprehension'];
+			readonly set: Routes<Table>['returnStatement$primary$set'];
+			readonly setComprehension: Routes<Table>['returnStatement$primary$setComprehension'];
+			readonly tuple: Routes<Table>['returnStatement$primary$tuple'];
+			readonly parenthesized: Routes<Table>['returnStatement$primary$parenthesized'];
+			readonly generator: Routes<Table>['returnStatement$primary$generator'];
+			readonly listSplat: Routes<Table>['returnStatement$primary$listSplat'];
+		};
+		readonly conditional: Routes<Table>['returnStatement$conditional'];
+		readonly named: Routes<Table>['returnStatement$named'] & {
+			readonly identifier: Routes<Table>['returnStatement$named$identifier'];
+		};
+		readonly as: Routes<Table>['returnStatement$as'];
+		readonly expressionList: Routes<Table>['returnStatement$expressionList'];
+	};
+	readonly deleteStatement$comparison: Seat<
+		ArgsOf<Routes<Table>['comparisonOperator']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$boolean: Seat<
+		ArgsOf<Table['buildBooleanOperator']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$lambda: Seat<ArgsOf<Table['buildLambda']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$conditional: Seat<
+		ArgsOf<Table['buildConditionalExpression']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$named: Seat<
+		ArgsOf<Table['buildNamedExpression']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$expressionList: Seat<
+		ArgsOf<Table['buildExpressionList']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$primary$binary: Seat<
+		ArgsOf<Table['buildBinaryOperator']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$string: Seat<
+		ArgsOf<Table['buildString']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$integer: Seat<
+		ArgsOf<Routes<Table>['integer']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$float: Seat<
+		ArgsOf<Routes<Table>['float']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$unary: Seat<
+		ArgsOf<Table['buildUnaryOperator']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$attribute: Seat<
+		ArgsOf<Table['buildAttribute']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['subscript']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$call: Seat<ArgsOf<Table['buildCall']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$primary$list: Seat<ArgsOf<Table['buildList']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$dictionary: Seat<
+		ArgsOf<Table['buildDictionary']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$set: Seat<ArgsOf<Table['buildSet']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$primary$setComprehension: Seat<
+		ArgsOf<Table['buildSetComprehension']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$tuple: Seat<ArgsOf<Table['buildTuple']>, ReturnType<typeof F.buildDeleteStatement>>;
+	readonly deleteStatement$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$generator: Seat<
+		ArgsOf<Table['buildGeneratorExpression']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$primary$listSplat: Seat<
+		ArgsOf<Table['buildListSplatPattern']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildDeleteStatement>
+	>;
+	readonly deleteStatement: Table['buildDeleteStatement'] & {
+		readonly comparison: Routes<Table>['deleteStatement$comparison'];
+		readonly not: Routes<Table>['deleteStatement$not'];
+		readonly boolean: Routes<Table>['deleteStatement$boolean'];
+		readonly lambda: Routes<Table>['deleteStatement$lambda'];
+		readonly primary: {
+			readonly await: Routes<Table>['deleteStatement$primary$await'];
+			readonly binary: Routes<Table>['deleteStatement$primary$binary'];
+			readonly identifier: Routes<Table>['deleteStatement$primary$identifier'];
+			readonly string: Routes<Table>['deleteStatement$primary$string'];
+			readonly concatenatedString: Routes<Table>['deleteStatement$primary$concatenatedString'];
+			readonly integer: Routes<Table>['deleteStatement$primary$integer'];
+			readonly float: Routes<Table>['deleteStatement$primary$float'];
+			readonly unary: Routes<Table>['deleteStatement$primary$unary'];
+			readonly attribute: Routes<Table>['deleteStatement$primary$attribute'];
+			readonly subscript: Routes<Table>['deleteStatement$primary$subscript'];
+			readonly call: Routes<Table>['deleteStatement$primary$call'];
+			readonly list: Routes<Table>['deleteStatement$primary$list'];
+			readonly listComprehension: Routes<Table>['deleteStatement$primary$listComprehension'];
+			readonly dictionary: Routes<Table>['deleteStatement$primary$dictionary'];
+			readonly dictionaryComprehension: Routes<Table>['deleteStatement$primary$dictionaryComprehension'];
+			readonly set: Routes<Table>['deleteStatement$primary$set'];
+			readonly setComprehension: Routes<Table>['deleteStatement$primary$setComprehension'];
+			readonly tuple: Routes<Table>['deleteStatement$primary$tuple'];
+			readonly parenthesized: Routes<Table>['deleteStatement$primary$parenthesized'];
+			readonly generator: Routes<Table>['deleteStatement$primary$generator'];
+			readonly listSplat: Routes<Table>['deleteStatement$primary$listSplat'];
+		};
+		readonly conditional: Routes<Table>['deleteStatement$conditional'];
+		readonly named: Routes<Table>['deleteStatement$named'] & {
+			readonly identifier: Routes<Table>['deleteStatement$named$identifier'];
+		};
+		readonly as: Routes<Table>['deleteStatement$as'];
+		readonly expressionList: Routes<Table>['deleteStatement$expressionList'];
+	};
+	readonly raiseStatement$comparison: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+			ArgsOf<Routes<Table>['comparisonOperator']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+					ArgsOf<Routes<Table>['comparisonOperator']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$not: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildNotOperator']>[0];
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildNotOperator']>[0];
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$boolean: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+			ArgsOf<Table['buildBooleanOperator']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & ArgsOf<Table['buildBooleanOperator']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$lambda: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & ArgsOf<Table['buildLambda']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & ArgsOf<Table['buildLambda']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$conditional: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+			ArgsOf<Table['buildConditionalExpression']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+					ArgsOf<Table['buildConditionalExpression']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$named: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+			ArgsOf<Table['buildNamedExpression']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & ArgsOf<Table['buildNamedExpression']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$as: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> &
+			ArgsOf<Table['buildAsPattern']>[0]
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & ArgsOf<Table['buildAsPattern']>[0]
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$expressionList: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildExpressionList']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildExpressionList']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$await: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildAwait']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildAwait']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$binary: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildBinaryOperator']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildBinaryOperator']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$identifier: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildIdentifier']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildIdentifier']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$string: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildString']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildString']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$concatenatedString: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildConcatenatedString']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildConcatenatedString']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$integer: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Routes<Table>['integer']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Routes<Table>['integer']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$float: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Routes<Table>['float']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Routes<Table>['float']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$unary: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildUnaryOperator']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildUnaryOperator']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$attribute: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildAttribute']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildAttribute']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$subscript: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Routes<Table>['subscript']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Routes<Table>['subscript']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$call: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildCall']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildCall']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$list: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildList']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildList']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$listComprehension: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildListComprehension']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildListComprehension']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$dictionary: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildDictionary']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildDictionary']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$dictionaryComprehension: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildDictionaryComprehension']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildDictionaryComprehension']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$set: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildSet']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildSet']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$setComprehension: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildSetComprehension']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildSetComprehension']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$tuple: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildTuple']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & { expressions: ArgsOf<Table['buildTuple']> }
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$parenthesized: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildParenthesizedExpression']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildParenthesizedExpression']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$generator: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildGeneratorExpression']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildGeneratorExpression']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$primary$listSplat: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Table['buildListSplatPattern']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Table['buildListSplatPattern']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement$named$identifier: <
+		const V extends OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+			expressions: ArgsOf<Routes<Table>['namedExpression$identifier']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildRaiseStatement']>[0], 'expressions'> & {
+					expressions: ArgsOf<Routes<Table>['namedExpression$identifier']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildRaiseStatement']>
+	) => ReturnType<Table['buildRaiseStatement']>;
+	readonly raiseStatement: Table['buildRaiseStatement'] & {
+		readonly comparison: Routes<Table>['raiseStatement$comparison'];
+		readonly not: Routes<Table>['raiseStatement$not'];
+		readonly boolean: Routes<Table>['raiseStatement$boolean'];
+		readonly lambda: Routes<Table>['raiseStatement$lambda'];
+		readonly primary: {
+			readonly await: Routes<Table>['raiseStatement$primary$await'];
+			readonly binary: Routes<Table>['raiseStatement$primary$binary'];
+			readonly identifier: Routes<Table>['raiseStatement$primary$identifier'];
+			readonly string: Routes<Table>['raiseStatement$primary$string'];
+			readonly concatenatedString: Routes<Table>['raiseStatement$primary$concatenatedString'];
+			readonly integer: Routes<Table>['raiseStatement$primary$integer'];
+			readonly float: Routes<Table>['raiseStatement$primary$float'];
+			readonly unary: Routes<Table>['raiseStatement$primary$unary'];
+			readonly attribute: Routes<Table>['raiseStatement$primary$attribute'];
+			readonly subscript: Routes<Table>['raiseStatement$primary$subscript'];
+			readonly call: Routes<Table>['raiseStatement$primary$call'];
+			readonly list: Routes<Table>['raiseStatement$primary$list'];
+			readonly listComprehension: Routes<Table>['raiseStatement$primary$listComprehension'];
+			readonly dictionary: Routes<Table>['raiseStatement$primary$dictionary'];
+			readonly dictionaryComprehension: Routes<Table>['raiseStatement$primary$dictionaryComprehension'];
+			readonly set: Routes<Table>['raiseStatement$primary$set'];
+			readonly setComprehension: Routes<Table>['raiseStatement$primary$setComprehension'];
+			readonly tuple: Routes<Table>['raiseStatement$primary$tuple'];
+			readonly parenthesized: Routes<Table>['raiseStatement$primary$parenthesized'];
+			readonly generator: Routes<Table>['raiseStatement$primary$generator'];
+			readonly listSplat: Routes<Table>['raiseStatement$primary$listSplat'];
+		};
+		readonly conditional: Routes<Table>['raiseStatement$conditional'];
+		readonly named: Routes<Table>['raiseStatement$named'] & {
+			readonly identifier: Routes<Table>['raiseStatement$named$identifier'];
+		};
+		readonly as: Routes<Table>['raiseStatement$as'];
+		readonly expressionList: Routes<Table>['raiseStatement$expressionList'];
 	};
 	readonly type$comparison: Seat<ArgsOf<Routes<Table>['comparisonOperator']>, ReturnType<typeof F.buildType>>;
 	readonly type$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildType>>;
@@ -2048,9 +2968,9 @@ export interface Routes<Table extends AnyTable> {
 		readonly print: Routes<Table>['printStatement'];
 		readonly assert: Table['buildAssertStatement'];
 		readonly expression: Routes<Table>['expressionStatement'];
-		readonly return: Table['buildReturnStatement'];
-		readonly delete: Table['buildDeleteStatement'];
-		readonly raise: Table['buildRaiseStatement'];
+		readonly return: Routes<Table>['returnStatement'];
+		readonly delete: Routes<Table>['deleteStatement'];
+		readonly raise: Routes<Table>['raiseStatement'];
 		readonly pass: typeof F.buildPassStatement;
 		readonly break: typeof F.buildBreakStatement;
 		readonly continue: typeof F.buildContinueStatement;
@@ -2085,9 +3005,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly assertStatement: Table['buildAssertStatement'];
 	readonly expressionStatement: Routes<Table>['expressionStatement'];
 	readonly namedExpression: Routes<Table>['namedExpression'];
-	readonly returnStatement: Table['buildReturnStatement'];
-	readonly deleteStatement: Table['buildDeleteStatement'];
-	readonly raiseStatement: Table['buildRaiseStatement'];
+	readonly returnStatement: Routes<Table>['returnStatement'];
+	readonly deleteStatement: Routes<Table>['deleteStatement'];
+	readonly raiseStatement: Routes<Table>['raiseStatement'];
 	readonly ifStatement: Table['buildIfStatement'];
 	readonly elifClause: Table['buildElifClause'];
 	readonly elseClause: Table['buildElseClause'];
@@ -3219,6 +4139,20 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildYield,
 		$at('buildYieldFromClause')
 	);
+	const yield_$comparison: Routes<Table>['yield_$comparison'] = K.yield_$comparison(F.buildYield, comparisonOperator);
+	const yield_$not: Routes<Table>['yield_$not'] = K.yield_$not(F.buildYield, $at('buildNotOperator'));
+	const yield_$boolean: Routes<Table>['yield_$boolean'] = K.yield_$boolean(F.buildYield, $at('buildBooleanOperator'));
+	const yield_$lambda: Routes<Table>['yield_$lambda'] = K.yield_$lambda(F.buildYield, $at('buildLambda'));
+	const yield_$conditional: Routes<Table>['yield_$conditional'] = K.yield_$conditional(
+		F.buildYield,
+		$at('buildConditionalExpression')
+	);
+	const yield_$named: Routes<Table>['yield_$named'] = K.yield_$named(F.buildYield, $at('buildNamedExpression'));
+	const yield_$as: Routes<Table>['yield_$as'] = K.yield_$as(F.buildYield, $at('buildAsPattern'));
+	const yield_$expressionList: Routes<Table>['yield_$expressionList'] = K.yield_$expressionList(
+		F.buildYield,
+		$at('buildExpressionList')
+	);
 	const yield_$fromClause$comparison: Routes<Table>['yield_$fromClause$comparison'] = K.yield_$fromClause$comparison(
 		F.buildYield,
 		yieldFromClause.comparison
@@ -3293,6 +4227,86 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.yield_$fromClause$primary$listSplat(F.buildYield, yieldFromClause.primary.listSplat);
 	const yield_$fromClause$named$identifier: Routes<Table>['yield_$fromClause$named$identifier'] =
 		K.yield_$fromClause$named$identifier(F.buildYield, yieldFromClause.named.identifier);
+	const yield_$primary$await: Routes<Table>['yield_$primary$await'] = K.yield_$primary$await(
+		F.buildYield,
+		primaryExpression.await
+	);
+	const yield_$primary$binary: Routes<Table>['yield_$primary$binary'] = K.yield_$primary$binary(
+		F.buildYield,
+		primaryExpression.binary
+	);
+	const yield_$primary$identifier: Routes<Table>['yield_$primary$identifier'] = K.yield_$primary$identifier(
+		F.buildYield,
+		$at('buildIdentifier')
+	);
+	const yield_$primary$string: Routes<Table>['yield_$primary$string'] = K.yield_$primary$string(
+		F.buildYield,
+		primaryExpression.string
+	);
+	const yield_$primary$concatenatedString: Routes<Table>['yield_$primary$concatenatedString'] =
+		K.yield_$primary$concatenatedString(F.buildYield, primaryExpression.concatenatedString);
+	const yield_$primary$integer: Routes<Table>['yield_$primary$integer'] = K.yield_$primary$integer(
+		F.buildYield,
+		primaryExpression.integer
+	);
+	const yield_$primary$float: Routes<Table>['yield_$primary$float'] = K.yield_$primary$float(
+		F.buildYield,
+		primaryExpression.float
+	);
+	const yield_$primary$unary: Routes<Table>['yield_$primary$unary'] = K.yield_$primary$unary(
+		F.buildYield,
+		primaryExpression.unary
+	);
+	const yield_$primary$attribute: Routes<Table>['yield_$primary$attribute'] = K.yield_$primary$attribute(
+		F.buildYield,
+		primaryExpression.attribute
+	);
+	const yield_$primary$subscript: Routes<Table>['yield_$primary$subscript'] = K.yield_$primary$subscript(
+		F.buildYield,
+		primaryExpression.subscript
+	);
+	const yield_$primary$call: Routes<Table>['yield_$primary$call'] = K.yield_$primary$call(
+		F.buildYield,
+		primaryExpression.call
+	);
+	const yield_$primary$list: Routes<Table>['yield_$primary$list'] = K.yield_$primary$list(
+		F.buildYield,
+		primaryExpression.list
+	);
+	const yield_$primary$listComprehension: Routes<Table>['yield_$primary$listComprehension'] =
+		K.yield_$primary$listComprehension(F.buildYield, primaryExpression.listComprehension);
+	const yield_$primary$dictionary: Routes<Table>['yield_$primary$dictionary'] = K.yield_$primary$dictionary(
+		F.buildYield,
+		primaryExpression.dictionary
+	);
+	const yield_$primary$dictionaryComprehension: Routes<Table>['yield_$primary$dictionaryComprehension'] =
+		K.yield_$primary$dictionaryComprehension(F.buildYield, primaryExpression.dictionaryComprehension);
+	const yield_$primary$set: Routes<Table>['yield_$primary$set'] = K.yield_$primary$set(
+		F.buildYield,
+		primaryExpression.set
+	);
+	const yield_$primary$setComprehension: Routes<Table>['yield_$primary$setComprehension'] =
+		K.yield_$primary$setComprehension(F.buildYield, primaryExpression.setComprehension);
+	const yield_$primary$tuple: Routes<Table>['yield_$primary$tuple'] = K.yield_$primary$tuple(
+		F.buildYield,
+		primaryExpression.tuple
+	);
+	const yield_$primary$parenthesized: Routes<Table>['yield_$primary$parenthesized'] = K.yield_$primary$parenthesized(
+		F.buildYield,
+		primaryExpression.parenthesized
+	);
+	const yield_$primary$generator: Routes<Table>['yield_$primary$generator'] = K.yield_$primary$generator(
+		F.buildYield,
+		primaryExpression.generator
+	);
+	const yield_$primary$listSplat: Routes<Table>['yield_$primary$listSplat'] = K.yield_$primary$listSplat(
+		F.buildYield,
+		primaryExpression.listSplat
+	);
+	const yield_$named$identifier: Routes<Table>['yield_$named$identifier'] = K.yield_$named$identifier(
+		F.buildYield,
+		namedExpression.identifier
+	);
 	const yield_: Routes<Table>['yield_'] = Object.freeze(
 		Object.assign(delegate($at('buildYield')), {
 			fromClause: Object.freeze(
@@ -3330,7 +4344,38 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					),
 					as: yield_$fromClause$as
 				} as const)
-			)
+			),
+			comparison: yield_$comparison,
+			not: yield_$not,
+			boolean: yield_$boolean,
+			lambda: yield_$lambda,
+			primary: Object.freeze({
+				await: yield_$primary$await,
+				binary: yield_$primary$binary,
+				identifier: yield_$primary$identifier,
+				string: yield_$primary$string,
+				concatenatedString: yield_$primary$concatenatedString,
+				integer: yield_$primary$integer,
+				float: yield_$primary$float,
+				unary: yield_$primary$unary,
+				attribute: yield_$primary$attribute,
+				subscript: yield_$primary$subscript,
+				call: yield_$primary$call,
+				list: yield_$primary$list,
+				listComprehension: yield_$primary$listComprehension,
+				dictionary: yield_$primary$dictionary,
+				dictionaryComprehension: yield_$primary$dictionaryComprehension,
+				set: yield_$primary$set,
+				setComprehension: yield_$primary$setComprehension,
+				tuple: yield_$primary$tuple,
+				parenthesized: yield_$primary$parenthesized,
+				generator: yield_$primary$generator,
+				listSplat: yield_$primary$listSplat
+			} as const),
+			conditional: yield_$conditional,
+			named: Object.freeze(Object.assign(yield_$named, { identifier: yield_$named$identifier } as const)),
+			as: yield_$as,
+			expressionList: yield_$expressionList
 		} as const)
 	);
 	const expressionStatement$comparison: Routes<Table>['expressionStatement$comparison'] =
@@ -3428,6 +4473,26 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.expressionStatement$named$identifier(F.buildExpressionStatement, namedExpression.identifier);
 	const expressionStatement$yield$fromClause: Routes<Table>['expressionStatement$yield$fromClause'] =
 		K.expressionStatement$yield$fromClause(F.buildExpressionStatement, yield_.fromClause);
+	const expressionStatement$yield$comparison: Routes<Table>['expressionStatement$yield$comparison'] =
+		K.expressionStatement$yield$comparison(F.buildExpressionStatement, yield_.comparison);
+	const expressionStatement$yield$not: Routes<Table>['expressionStatement$yield$not'] = K.expressionStatement$yield$not(
+		F.buildExpressionStatement,
+		yield_.not
+	);
+	const expressionStatement$yield$boolean: Routes<Table>['expressionStatement$yield$boolean'] =
+		K.expressionStatement$yield$boolean(F.buildExpressionStatement, yield_.boolean);
+	const expressionStatement$yield$lambda: Routes<Table>['expressionStatement$yield$lambda'] =
+		K.expressionStatement$yield$lambda(F.buildExpressionStatement, yield_.lambda);
+	const expressionStatement$yield$conditional: Routes<Table>['expressionStatement$yield$conditional'] =
+		K.expressionStatement$yield$conditional(F.buildExpressionStatement, yield_.conditional);
+	const expressionStatement$yield$named: Routes<Table>['expressionStatement$yield$named'] =
+		K.expressionStatement$yield$named(F.buildExpressionStatement, yield_.named);
+	const expressionStatement$yield$as: Routes<Table>['expressionStatement$yield$as'] = K.expressionStatement$yield$as(
+		F.buildExpressionStatement,
+		yield_.as
+	);
+	const expressionStatement$yield$expressionList: Routes<Table>['expressionStatement$yield$expressionList'] =
+		K.expressionStatement$yield$expressionList(F.buildExpressionStatement, yield_.expressionList);
 	const expressionStatement$yield$fromClause$comparison: Routes<Table>['expressionStatement$yield$fromClause$comparison'] =
 		K.expressionStatement$yield$fromClause$comparison(F.buildExpressionStatement, yield_.fromClause.comparison);
 	const expressionStatement$yield$fromClause$not: Routes<Table>['expressionStatement$yield$fromClause$not'] =
@@ -3525,6 +4590,56 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			F.buildExpressionStatement,
 			yield_.fromClause.named.identifier
 		);
+	const expressionStatement$yield$primary$await: Routes<Table>['expressionStatement$yield$primary$await'] =
+		K.expressionStatement$yield$primary$await(F.buildExpressionStatement, yield_.primary.await);
+	const expressionStatement$yield$primary$binary: Routes<Table>['expressionStatement$yield$primary$binary'] =
+		K.expressionStatement$yield$primary$binary(F.buildExpressionStatement, yield_.primary.binary);
+	const expressionStatement$yield$primary$identifier: Routes<Table>['expressionStatement$yield$primary$identifier'] =
+		K.expressionStatement$yield$primary$identifier(F.buildExpressionStatement, yield_.primary.identifier);
+	const expressionStatement$yield$primary$string: Routes<Table>['expressionStatement$yield$primary$string'] =
+		K.expressionStatement$yield$primary$string(F.buildExpressionStatement, yield_.primary.string);
+	const expressionStatement$yield$primary$concatenatedString: Routes<Table>['expressionStatement$yield$primary$concatenatedString'] =
+		K.expressionStatement$yield$primary$concatenatedString(
+			F.buildExpressionStatement,
+			yield_.primary.concatenatedString
+		);
+	const expressionStatement$yield$primary$integer: Routes<Table>['expressionStatement$yield$primary$integer'] =
+		K.expressionStatement$yield$primary$integer(F.buildExpressionStatement, yield_.primary.integer);
+	const expressionStatement$yield$primary$float: Routes<Table>['expressionStatement$yield$primary$float'] =
+		K.expressionStatement$yield$primary$float(F.buildExpressionStatement, yield_.primary.float);
+	const expressionStatement$yield$primary$unary: Routes<Table>['expressionStatement$yield$primary$unary'] =
+		K.expressionStatement$yield$primary$unary(F.buildExpressionStatement, yield_.primary.unary);
+	const expressionStatement$yield$primary$attribute: Routes<Table>['expressionStatement$yield$primary$attribute'] =
+		K.expressionStatement$yield$primary$attribute(F.buildExpressionStatement, yield_.primary.attribute);
+	const expressionStatement$yield$primary$subscript: Routes<Table>['expressionStatement$yield$primary$subscript'] =
+		K.expressionStatement$yield$primary$subscript(F.buildExpressionStatement, yield_.primary.subscript);
+	const expressionStatement$yield$primary$call: Routes<Table>['expressionStatement$yield$primary$call'] =
+		K.expressionStatement$yield$primary$call(F.buildExpressionStatement, yield_.primary.call);
+	const expressionStatement$yield$primary$list: Routes<Table>['expressionStatement$yield$primary$list'] =
+		K.expressionStatement$yield$primary$list(F.buildExpressionStatement, yield_.primary.list);
+	const expressionStatement$yield$primary$listComprehension: Routes<Table>['expressionStatement$yield$primary$listComprehension'] =
+		K.expressionStatement$yield$primary$listComprehension(F.buildExpressionStatement, yield_.primary.listComprehension);
+	const expressionStatement$yield$primary$dictionary: Routes<Table>['expressionStatement$yield$primary$dictionary'] =
+		K.expressionStatement$yield$primary$dictionary(F.buildExpressionStatement, yield_.primary.dictionary);
+	const expressionStatement$yield$primary$dictionaryComprehension: Routes<Table>['expressionStatement$yield$primary$dictionaryComprehension'] =
+		K.expressionStatement$yield$primary$dictionaryComprehension(
+			F.buildExpressionStatement,
+			yield_.primary.dictionaryComprehension
+		);
+	const expressionStatement$yield$primary$set: Routes<Table>['expressionStatement$yield$primary$set'] =
+		K.expressionStatement$yield$primary$set(F.buildExpressionStatement, yield_.primary.set);
+	const expressionStatement$yield$primary$setComprehension: Routes<Table>['expressionStatement$yield$primary$setComprehension'] =
+		K.expressionStatement$yield$primary$setComprehension(F.buildExpressionStatement, yield_.primary.setComprehension);
+	const expressionStatement$yield$primary$tuple: Routes<Table>['expressionStatement$yield$primary$tuple'] =
+		K.expressionStatement$yield$primary$tuple(F.buildExpressionStatement, yield_.primary.tuple);
+	const expressionStatement$yield$primary$parenthesized: Routes<Table>['expressionStatement$yield$primary$parenthesized'] =
+		K.expressionStatement$yield$primary$parenthesized(F.buildExpressionStatement, yield_.primary.parenthesized);
+	const expressionStatement$yield$primary$generator: Routes<Table>['expressionStatement$yield$primary$generator'] =
+		K.expressionStatement$yield$primary$generator(F.buildExpressionStatement, yield_.primary.generator);
+	const expressionStatement$yield$primary$listSplat: Routes<Table>['expressionStatement$yield$primary$listSplat'] =
+		K.expressionStatement$yield$primary$listSplat(F.buildExpressionStatement, yield_.primary.listSplat);
+	const expressionStatement$yield$named$identifier: Routes<Table>['expressionStatement$yield$named$identifier'] =
+		K.expressionStatement$yield$named$identifier(F.buildExpressionStatement, yield_.named.identifier);
 	const expressionStatement: Routes<Table>['expressionStatement'] = Object.freeze(
 		Object.assign(delegate($at('buildExpressionStatement')), {
 			comparison: expressionStatement$comparison,
@@ -3603,9 +4718,434 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 							),
 							as: expressionStatement$yield$fromClause$as
 						} as const)
-					)
+					),
+					comparison: expressionStatement$yield$comparison,
+					not: expressionStatement$yield$not,
+					boolean: expressionStatement$yield$boolean,
+					lambda: expressionStatement$yield$lambda,
+					primary: Object.freeze({
+						await: expressionStatement$yield$primary$await,
+						binary: expressionStatement$yield$primary$binary,
+						identifier: expressionStatement$yield$primary$identifier,
+						string: expressionStatement$yield$primary$string,
+						concatenatedString: expressionStatement$yield$primary$concatenatedString,
+						integer: expressionStatement$yield$primary$integer,
+						float: expressionStatement$yield$primary$float,
+						unary: expressionStatement$yield$primary$unary,
+						attribute: expressionStatement$yield$primary$attribute,
+						subscript: expressionStatement$yield$primary$subscript,
+						call: expressionStatement$yield$primary$call,
+						list: expressionStatement$yield$primary$list,
+						listComprehension: expressionStatement$yield$primary$listComprehension,
+						dictionary: expressionStatement$yield$primary$dictionary,
+						dictionaryComprehension: expressionStatement$yield$primary$dictionaryComprehension,
+						set: expressionStatement$yield$primary$set,
+						setComprehension: expressionStatement$yield$primary$setComprehension,
+						tuple: expressionStatement$yield$primary$tuple,
+						parenthesized: expressionStatement$yield$primary$parenthesized,
+						generator: expressionStatement$yield$primary$generator,
+						listSplat: expressionStatement$yield$primary$listSplat
+					} as const),
+					conditional: expressionStatement$yield$conditional,
+					named: Object.freeze(
+						Object.assign(expressionStatement$yield$named, {
+							identifier: expressionStatement$yield$named$identifier
+						} as const)
+					),
+					as: expressionStatement$yield$as,
+					expressionList: expressionStatement$yield$expressionList
 				} as const)
 			)
+		} as const)
+	);
+	const returnStatement$comparison: Routes<Table>['returnStatement$comparison'] = K.returnStatement$comparison(
+		F.buildReturnStatement,
+		comparisonOperator
+	);
+	const returnStatement$not: Routes<Table>['returnStatement$not'] = K.returnStatement$not(
+		F.buildReturnStatement,
+		$at('buildNotOperator')
+	);
+	const returnStatement$boolean: Routes<Table>['returnStatement$boolean'] = K.returnStatement$boolean(
+		F.buildReturnStatement,
+		$at('buildBooleanOperator')
+	);
+	const returnStatement$lambda: Routes<Table>['returnStatement$lambda'] = K.returnStatement$lambda(
+		F.buildReturnStatement,
+		$at('buildLambda')
+	);
+	const returnStatement$conditional: Routes<Table>['returnStatement$conditional'] = K.returnStatement$conditional(
+		F.buildReturnStatement,
+		$at('buildConditionalExpression')
+	);
+	const returnStatement$named: Routes<Table>['returnStatement$named'] = K.returnStatement$named(
+		F.buildReturnStatement,
+		$at('buildNamedExpression')
+	);
+	const returnStatement$as: Routes<Table>['returnStatement$as'] = K.returnStatement$as(
+		F.buildReturnStatement,
+		$at('buildAsPattern')
+	);
+	const returnStatement$expressionList: Routes<Table>['returnStatement$expressionList'] =
+		K.returnStatement$expressionList(F.buildReturnStatement, $at('buildExpressionList'));
+	const returnStatement$primary$await: Routes<Table>['returnStatement$primary$await'] = K.returnStatement$primary$await(
+		F.buildReturnStatement,
+		primaryExpression.await
+	);
+	const returnStatement$primary$binary: Routes<Table>['returnStatement$primary$binary'] =
+		K.returnStatement$primary$binary(F.buildReturnStatement, primaryExpression.binary);
+	const returnStatement$primary$identifier: Routes<Table>['returnStatement$primary$identifier'] =
+		K.returnStatement$primary$identifier(F.buildReturnStatement, $at('buildIdentifier'));
+	const returnStatement$primary$string: Routes<Table>['returnStatement$primary$string'] =
+		K.returnStatement$primary$string(F.buildReturnStatement, primaryExpression.string);
+	const returnStatement$primary$concatenatedString: Routes<Table>['returnStatement$primary$concatenatedString'] =
+		K.returnStatement$primary$concatenatedString(F.buildReturnStatement, primaryExpression.concatenatedString);
+	const returnStatement$primary$integer: Routes<Table>['returnStatement$primary$integer'] =
+		K.returnStatement$primary$integer(F.buildReturnStatement, primaryExpression.integer);
+	const returnStatement$primary$float: Routes<Table>['returnStatement$primary$float'] = K.returnStatement$primary$float(
+		F.buildReturnStatement,
+		primaryExpression.float
+	);
+	const returnStatement$primary$unary: Routes<Table>['returnStatement$primary$unary'] = K.returnStatement$primary$unary(
+		F.buildReturnStatement,
+		primaryExpression.unary
+	);
+	const returnStatement$primary$attribute: Routes<Table>['returnStatement$primary$attribute'] =
+		K.returnStatement$primary$attribute(F.buildReturnStatement, primaryExpression.attribute);
+	const returnStatement$primary$subscript: Routes<Table>['returnStatement$primary$subscript'] =
+		K.returnStatement$primary$subscript(F.buildReturnStatement, primaryExpression.subscript);
+	const returnStatement$primary$call: Routes<Table>['returnStatement$primary$call'] = K.returnStatement$primary$call(
+		F.buildReturnStatement,
+		primaryExpression.call
+	);
+	const returnStatement$primary$list: Routes<Table>['returnStatement$primary$list'] = K.returnStatement$primary$list(
+		F.buildReturnStatement,
+		primaryExpression.list
+	);
+	const returnStatement$primary$listComprehension: Routes<Table>['returnStatement$primary$listComprehension'] =
+		K.returnStatement$primary$listComprehension(F.buildReturnStatement, primaryExpression.listComprehension);
+	const returnStatement$primary$dictionary: Routes<Table>['returnStatement$primary$dictionary'] =
+		K.returnStatement$primary$dictionary(F.buildReturnStatement, primaryExpression.dictionary);
+	const returnStatement$primary$dictionaryComprehension: Routes<Table>['returnStatement$primary$dictionaryComprehension'] =
+		K.returnStatement$primary$dictionaryComprehension(
+			F.buildReturnStatement,
+			primaryExpression.dictionaryComprehension
+		);
+	const returnStatement$primary$set: Routes<Table>['returnStatement$primary$set'] = K.returnStatement$primary$set(
+		F.buildReturnStatement,
+		primaryExpression.set
+	);
+	const returnStatement$primary$setComprehension: Routes<Table>['returnStatement$primary$setComprehension'] =
+		K.returnStatement$primary$setComprehension(F.buildReturnStatement, primaryExpression.setComprehension);
+	const returnStatement$primary$tuple: Routes<Table>['returnStatement$primary$tuple'] = K.returnStatement$primary$tuple(
+		F.buildReturnStatement,
+		primaryExpression.tuple
+	);
+	const returnStatement$primary$parenthesized: Routes<Table>['returnStatement$primary$parenthesized'] =
+		K.returnStatement$primary$parenthesized(F.buildReturnStatement, primaryExpression.parenthesized);
+	const returnStatement$primary$generator: Routes<Table>['returnStatement$primary$generator'] =
+		K.returnStatement$primary$generator(F.buildReturnStatement, primaryExpression.generator);
+	const returnStatement$primary$listSplat: Routes<Table>['returnStatement$primary$listSplat'] =
+		K.returnStatement$primary$listSplat(F.buildReturnStatement, primaryExpression.listSplat);
+	const returnStatement$named$identifier: Routes<Table>['returnStatement$named$identifier'] =
+		K.returnStatement$named$identifier(F.buildReturnStatement, namedExpression.identifier);
+	const returnStatement: Routes<Table>['returnStatement'] = Object.freeze(
+		Object.assign(delegate($at('buildReturnStatement')), {
+			comparison: returnStatement$comparison,
+			not: returnStatement$not,
+			boolean: returnStatement$boolean,
+			lambda: returnStatement$lambda,
+			primary: Object.freeze({
+				await: returnStatement$primary$await,
+				binary: returnStatement$primary$binary,
+				identifier: returnStatement$primary$identifier,
+				string: returnStatement$primary$string,
+				concatenatedString: returnStatement$primary$concatenatedString,
+				integer: returnStatement$primary$integer,
+				float: returnStatement$primary$float,
+				unary: returnStatement$primary$unary,
+				attribute: returnStatement$primary$attribute,
+				subscript: returnStatement$primary$subscript,
+				call: returnStatement$primary$call,
+				list: returnStatement$primary$list,
+				listComprehension: returnStatement$primary$listComprehension,
+				dictionary: returnStatement$primary$dictionary,
+				dictionaryComprehension: returnStatement$primary$dictionaryComprehension,
+				set: returnStatement$primary$set,
+				setComprehension: returnStatement$primary$setComprehension,
+				tuple: returnStatement$primary$tuple,
+				parenthesized: returnStatement$primary$parenthesized,
+				generator: returnStatement$primary$generator,
+				listSplat: returnStatement$primary$listSplat
+			} as const),
+			conditional: returnStatement$conditional,
+			named: Object.freeze(
+				Object.assign(returnStatement$named, { identifier: returnStatement$named$identifier } as const)
+			),
+			as: returnStatement$as,
+			expressionList: returnStatement$expressionList
+		} as const)
+	);
+	const deleteStatement$comparison: Routes<Table>['deleteStatement$comparison'] = K.deleteStatement$comparison(
+		F.buildDeleteStatement,
+		comparisonOperator
+	);
+	const deleteStatement$not: Routes<Table>['deleteStatement$not'] = K.deleteStatement$not(
+		F.buildDeleteStatement,
+		$at('buildNotOperator')
+	);
+	const deleteStatement$boolean: Routes<Table>['deleteStatement$boolean'] = K.deleteStatement$boolean(
+		F.buildDeleteStatement,
+		$at('buildBooleanOperator')
+	);
+	const deleteStatement$lambda: Routes<Table>['deleteStatement$lambda'] = K.deleteStatement$lambda(
+		F.buildDeleteStatement,
+		$at('buildLambda')
+	);
+	const deleteStatement$conditional: Routes<Table>['deleteStatement$conditional'] = K.deleteStatement$conditional(
+		F.buildDeleteStatement,
+		$at('buildConditionalExpression')
+	);
+	const deleteStatement$named: Routes<Table>['deleteStatement$named'] = K.deleteStatement$named(
+		F.buildDeleteStatement,
+		$at('buildNamedExpression')
+	);
+	const deleteStatement$as: Routes<Table>['deleteStatement$as'] = K.deleteStatement$as(
+		F.buildDeleteStatement,
+		$at('buildAsPattern')
+	);
+	const deleteStatement$expressionList: Routes<Table>['deleteStatement$expressionList'] =
+		K.deleteStatement$expressionList(F.buildDeleteStatement, $at('buildExpressionList'));
+	const deleteStatement$primary$await: Routes<Table>['deleteStatement$primary$await'] = K.deleteStatement$primary$await(
+		F.buildDeleteStatement,
+		primaryExpression.await
+	);
+	const deleteStatement$primary$binary: Routes<Table>['deleteStatement$primary$binary'] =
+		K.deleteStatement$primary$binary(F.buildDeleteStatement, primaryExpression.binary);
+	const deleteStatement$primary$identifier: Routes<Table>['deleteStatement$primary$identifier'] =
+		K.deleteStatement$primary$identifier(F.buildDeleteStatement, $at('buildIdentifier'));
+	const deleteStatement$primary$string: Routes<Table>['deleteStatement$primary$string'] =
+		K.deleteStatement$primary$string(F.buildDeleteStatement, primaryExpression.string);
+	const deleteStatement$primary$concatenatedString: Routes<Table>['deleteStatement$primary$concatenatedString'] =
+		K.deleteStatement$primary$concatenatedString(F.buildDeleteStatement, primaryExpression.concatenatedString);
+	const deleteStatement$primary$integer: Routes<Table>['deleteStatement$primary$integer'] =
+		K.deleteStatement$primary$integer(F.buildDeleteStatement, primaryExpression.integer);
+	const deleteStatement$primary$float: Routes<Table>['deleteStatement$primary$float'] = K.deleteStatement$primary$float(
+		F.buildDeleteStatement,
+		primaryExpression.float
+	);
+	const deleteStatement$primary$unary: Routes<Table>['deleteStatement$primary$unary'] = K.deleteStatement$primary$unary(
+		F.buildDeleteStatement,
+		primaryExpression.unary
+	);
+	const deleteStatement$primary$attribute: Routes<Table>['deleteStatement$primary$attribute'] =
+		K.deleteStatement$primary$attribute(F.buildDeleteStatement, primaryExpression.attribute);
+	const deleteStatement$primary$subscript: Routes<Table>['deleteStatement$primary$subscript'] =
+		K.deleteStatement$primary$subscript(F.buildDeleteStatement, primaryExpression.subscript);
+	const deleteStatement$primary$call: Routes<Table>['deleteStatement$primary$call'] = K.deleteStatement$primary$call(
+		F.buildDeleteStatement,
+		primaryExpression.call
+	);
+	const deleteStatement$primary$list: Routes<Table>['deleteStatement$primary$list'] = K.deleteStatement$primary$list(
+		F.buildDeleteStatement,
+		primaryExpression.list
+	);
+	const deleteStatement$primary$listComprehension: Routes<Table>['deleteStatement$primary$listComprehension'] =
+		K.deleteStatement$primary$listComprehension(F.buildDeleteStatement, primaryExpression.listComprehension);
+	const deleteStatement$primary$dictionary: Routes<Table>['deleteStatement$primary$dictionary'] =
+		K.deleteStatement$primary$dictionary(F.buildDeleteStatement, primaryExpression.dictionary);
+	const deleteStatement$primary$dictionaryComprehension: Routes<Table>['deleteStatement$primary$dictionaryComprehension'] =
+		K.deleteStatement$primary$dictionaryComprehension(
+			F.buildDeleteStatement,
+			primaryExpression.dictionaryComprehension
+		);
+	const deleteStatement$primary$set: Routes<Table>['deleteStatement$primary$set'] = K.deleteStatement$primary$set(
+		F.buildDeleteStatement,
+		primaryExpression.set
+	);
+	const deleteStatement$primary$setComprehension: Routes<Table>['deleteStatement$primary$setComprehension'] =
+		K.deleteStatement$primary$setComprehension(F.buildDeleteStatement, primaryExpression.setComprehension);
+	const deleteStatement$primary$tuple: Routes<Table>['deleteStatement$primary$tuple'] = K.deleteStatement$primary$tuple(
+		F.buildDeleteStatement,
+		primaryExpression.tuple
+	);
+	const deleteStatement$primary$parenthesized: Routes<Table>['deleteStatement$primary$parenthesized'] =
+		K.deleteStatement$primary$parenthesized(F.buildDeleteStatement, primaryExpression.parenthesized);
+	const deleteStatement$primary$generator: Routes<Table>['deleteStatement$primary$generator'] =
+		K.deleteStatement$primary$generator(F.buildDeleteStatement, primaryExpression.generator);
+	const deleteStatement$primary$listSplat: Routes<Table>['deleteStatement$primary$listSplat'] =
+		K.deleteStatement$primary$listSplat(F.buildDeleteStatement, primaryExpression.listSplat);
+	const deleteStatement$named$identifier: Routes<Table>['deleteStatement$named$identifier'] =
+		K.deleteStatement$named$identifier(F.buildDeleteStatement, namedExpression.identifier);
+	const deleteStatement: Routes<Table>['deleteStatement'] = Object.freeze(
+		Object.assign(delegate($at('buildDeleteStatement')), {
+			comparison: deleteStatement$comparison,
+			not: deleteStatement$not,
+			boolean: deleteStatement$boolean,
+			lambda: deleteStatement$lambda,
+			primary: Object.freeze({
+				await: deleteStatement$primary$await,
+				binary: deleteStatement$primary$binary,
+				identifier: deleteStatement$primary$identifier,
+				string: deleteStatement$primary$string,
+				concatenatedString: deleteStatement$primary$concatenatedString,
+				integer: deleteStatement$primary$integer,
+				float: deleteStatement$primary$float,
+				unary: deleteStatement$primary$unary,
+				attribute: deleteStatement$primary$attribute,
+				subscript: deleteStatement$primary$subscript,
+				call: deleteStatement$primary$call,
+				list: deleteStatement$primary$list,
+				listComprehension: deleteStatement$primary$listComprehension,
+				dictionary: deleteStatement$primary$dictionary,
+				dictionaryComprehension: deleteStatement$primary$dictionaryComprehension,
+				set: deleteStatement$primary$set,
+				setComprehension: deleteStatement$primary$setComprehension,
+				tuple: deleteStatement$primary$tuple,
+				parenthesized: deleteStatement$primary$parenthesized,
+				generator: deleteStatement$primary$generator,
+				listSplat: deleteStatement$primary$listSplat
+			} as const),
+			conditional: deleteStatement$conditional,
+			named: Object.freeze(
+				Object.assign(deleteStatement$named, { identifier: deleteStatement$named$identifier } as const)
+			),
+			as: deleteStatement$as,
+			expressionList: deleteStatement$expressionList
+		} as const)
+	);
+	const raiseStatement$comparison: Routes<Table>['raiseStatement$comparison'] = K.raiseStatement$comparison(
+		$at('buildRaiseStatement'),
+		comparisonOperator
+	);
+	const raiseStatement$not: Routes<Table>['raiseStatement$not'] = K.raiseStatement$not(
+		$at('buildRaiseStatement'),
+		$at('buildNotOperator')
+	);
+	const raiseStatement$boolean: Routes<Table>['raiseStatement$boolean'] = K.raiseStatement$boolean(
+		$at('buildRaiseStatement'),
+		$at('buildBooleanOperator')
+	);
+	const raiseStatement$lambda: Routes<Table>['raiseStatement$lambda'] = K.raiseStatement$lambda(
+		$at('buildRaiseStatement'),
+		$at('buildLambda')
+	);
+	const raiseStatement$conditional: Routes<Table>['raiseStatement$conditional'] = K.raiseStatement$conditional(
+		$at('buildRaiseStatement'),
+		$at('buildConditionalExpression')
+	);
+	const raiseStatement$named: Routes<Table>['raiseStatement$named'] = K.raiseStatement$named(
+		$at('buildRaiseStatement'),
+		$at('buildNamedExpression')
+	);
+	const raiseStatement$as: Routes<Table>['raiseStatement$as'] = K.raiseStatement$as(
+		$at('buildRaiseStatement'),
+		$at('buildAsPattern')
+	);
+	const raiseStatement$expressionList: Routes<Table>['raiseStatement$expressionList'] = K.raiseStatement$expressionList(
+		$at('buildRaiseStatement'),
+		$at('buildExpressionList')
+	);
+	const raiseStatement$primary$await: Routes<Table>['raiseStatement$primary$await'] = K.raiseStatement$primary$await(
+		$at('buildRaiseStatement'),
+		primaryExpression.await
+	);
+	const raiseStatement$primary$binary: Routes<Table>['raiseStatement$primary$binary'] = K.raiseStatement$primary$binary(
+		$at('buildRaiseStatement'),
+		primaryExpression.binary
+	);
+	const raiseStatement$primary$identifier: Routes<Table>['raiseStatement$primary$identifier'] =
+		K.raiseStatement$primary$identifier($at('buildRaiseStatement'), $at('buildIdentifier'));
+	const raiseStatement$primary$string: Routes<Table>['raiseStatement$primary$string'] = K.raiseStatement$primary$string(
+		$at('buildRaiseStatement'),
+		primaryExpression.string
+	);
+	const raiseStatement$primary$concatenatedString: Routes<Table>['raiseStatement$primary$concatenatedString'] =
+		K.raiseStatement$primary$concatenatedString($at('buildRaiseStatement'), primaryExpression.concatenatedString);
+	const raiseStatement$primary$integer: Routes<Table>['raiseStatement$primary$integer'] =
+		K.raiseStatement$primary$integer($at('buildRaiseStatement'), primaryExpression.integer);
+	const raiseStatement$primary$float: Routes<Table>['raiseStatement$primary$float'] = K.raiseStatement$primary$float(
+		$at('buildRaiseStatement'),
+		primaryExpression.float
+	);
+	const raiseStatement$primary$unary: Routes<Table>['raiseStatement$primary$unary'] = K.raiseStatement$primary$unary(
+		$at('buildRaiseStatement'),
+		primaryExpression.unary
+	);
+	const raiseStatement$primary$attribute: Routes<Table>['raiseStatement$primary$attribute'] =
+		K.raiseStatement$primary$attribute($at('buildRaiseStatement'), primaryExpression.attribute);
+	const raiseStatement$primary$subscript: Routes<Table>['raiseStatement$primary$subscript'] =
+		K.raiseStatement$primary$subscript($at('buildRaiseStatement'), primaryExpression.subscript);
+	const raiseStatement$primary$call: Routes<Table>['raiseStatement$primary$call'] = K.raiseStatement$primary$call(
+		$at('buildRaiseStatement'),
+		primaryExpression.call
+	);
+	const raiseStatement$primary$list: Routes<Table>['raiseStatement$primary$list'] = K.raiseStatement$primary$list(
+		$at('buildRaiseStatement'),
+		primaryExpression.list
+	);
+	const raiseStatement$primary$listComprehension: Routes<Table>['raiseStatement$primary$listComprehension'] =
+		K.raiseStatement$primary$listComprehension($at('buildRaiseStatement'), primaryExpression.listComprehension);
+	const raiseStatement$primary$dictionary: Routes<Table>['raiseStatement$primary$dictionary'] =
+		K.raiseStatement$primary$dictionary($at('buildRaiseStatement'), primaryExpression.dictionary);
+	const raiseStatement$primary$dictionaryComprehension: Routes<Table>['raiseStatement$primary$dictionaryComprehension'] =
+		K.raiseStatement$primary$dictionaryComprehension(
+			$at('buildRaiseStatement'),
+			primaryExpression.dictionaryComprehension
+		);
+	const raiseStatement$primary$set: Routes<Table>['raiseStatement$primary$set'] = K.raiseStatement$primary$set(
+		$at('buildRaiseStatement'),
+		primaryExpression.set
+	);
+	const raiseStatement$primary$setComprehension: Routes<Table>['raiseStatement$primary$setComprehension'] =
+		K.raiseStatement$primary$setComprehension($at('buildRaiseStatement'), primaryExpression.setComprehension);
+	const raiseStatement$primary$tuple: Routes<Table>['raiseStatement$primary$tuple'] = K.raiseStatement$primary$tuple(
+		$at('buildRaiseStatement'),
+		primaryExpression.tuple
+	);
+	const raiseStatement$primary$parenthesized: Routes<Table>['raiseStatement$primary$parenthesized'] =
+		K.raiseStatement$primary$parenthesized($at('buildRaiseStatement'), primaryExpression.parenthesized);
+	const raiseStatement$primary$generator: Routes<Table>['raiseStatement$primary$generator'] =
+		K.raiseStatement$primary$generator($at('buildRaiseStatement'), primaryExpression.generator);
+	const raiseStatement$primary$listSplat: Routes<Table>['raiseStatement$primary$listSplat'] =
+		K.raiseStatement$primary$listSplat($at('buildRaiseStatement'), primaryExpression.listSplat);
+	const raiseStatement$named$identifier: Routes<Table>['raiseStatement$named$identifier'] =
+		K.raiseStatement$named$identifier($at('buildRaiseStatement'), namedExpression.identifier);
+	const raiseStatement: Routes<Table>['raiseStatement'] = Object.freeze(
+		Object.assign(delegate($at('buildRaiseStatement')), {
+			comparison: raiseStatement$comparison,
+			not: raiseStatement$not,
+			boolean: raiseStatement$boolean,
+			lambda: raiseStatement$lambda,
+			primary: Object.freeze({
+				await: raiseStatement$primary$await,
+				binary: raiseStatement$primary$binary,
+				identifier: raiseStatement$primary$identifier,
+				string: raiseStatement$primary$string,
+				concatenatedString: raiseStatement$primary$concatenatedString,
+				integer: raiseStatement$primary$integer,
+				float: raiseStatement$primary$float,
+				unary: raiseStatement$primary$unary,
+				attribute: raiseStatement$primary$attribute,
+				subscript: raiseStatement$primary$subscript,
+				call: raiseStatement$primary$call,
+				list: raiseStatement$primary$list,
+				listComprehension: raiseStatement$primary$listComprehension,
+				dictionary: raiseStatement$primary$dictionary,
+				dictionaryComprehension: raiseStatement$primary$dictionaryComprehension,
+				set: raiseStatement$primary$set,
+				setComprehension: raiseStatement$primary$setComprehension,
+				tuple: raiseStatement$primary$tuple,
+				parenthesized: raiseStatement$primary$parenthesized,
+				generator: raiseStatement$primary$generator,
+				listSplat: raiseStatement$primary$listSplat
+			} as const),
+			conditional: raiseStatement$conditional,
+			named: Object.freeze(
+				Object.assign(raiseStatement$named, { identifier: raiseStatement$named$identifier } as const)
+			),
+			as: raiseStatement$as,
+			expressionList: raiseStatement$expressionList
 		} as const)
 	);
 	const type$comparison: Routes<Table>['type$comparison'] = K.type$comparison(F.buildType, comparisonOperator);
@@ -3751,9 +5291,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		print: printStatement,
 		assert: $at('buildAssertStatement'),
 		expression: expressionStatement,
-		return: $at('buildReturnStatement'),
-		delete: $at('buildDeleteStatement'),
-		raise: $at('buildRaiseStatement'),
+		return: returnStatement,
+		delete: deleteStatement,
+		raise: raiseStatement,
 		pass: F.buildPassStatement,
 		break: F.buildBreakStatement,
 		continue: F.buildContinueStatement,
@@ -3786,9 +5326,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		assertStatement: $at('buildAssertStatement'),
 		expressionStatement: expressionStatement,
 		namedExpression: namedExpression,
-		returnStatement: $at('buildReturnStatement'),
-		deleteStatement: $at('buildDeleteStatement'),
-		raiseStatement: $at('buildRaiseStatement'),
+		returnStatement: returnStatement,
+		deleteStatement: deleteStatement,
+		raiseStatement: raiseStatement,
 		ifStatement: $at('buildIfStatement'),
 		elifClause: $at('buildElifClause'),
 		elseClause: $at('buildElseClause'),

@@ -1,5 +1,5 @@
 {
-	"grammarHash": "20dea697391ccaa59b115f5c682c109cb287475f5003b7351733ad3d6116025a",
+	"grammarHash": "86f3eb3f4f3b90a3e6180d7520eeee412bd633f53b5a96a4d7d7ed917a90ce73",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_call_signature","constructor_type"]},"step":"upstream-declared","sourceChains":[["_call_signature"],["constructor_type"]],"conflict":{"symbolSequence":["'<'","'('","'new'","formal_parameters"],"lookahead":"'=>'","interpretations":["_call_signature","constructor_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_call_signature","function_type"]},"step":"upstream-declared","sourceChains":[["_call_signature"],["function_type"]],"conflict":{"symbolSequence":["'<'","'('","formal_parameters"],"lookahead":"'=>'","interpretations":["_call_signature","function_type","function_type","function_type"]}},
@@ -73,7 +73,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["variable_declarator_plain","for_header_let_const_kind"]},"step":"upstream-declared","sourceChains":[["variable_declarator_plain","variable_declarator"],["for_header_let_const_kind","_for_header"]],"conflict":{"symbolSequence":["'for'","'('","'let'","identifier"],"lookahead":"_automatic_semicolon","interpretations":["variable_declarator_plain","for_header_let_const_kind"]}}
 	],
 	"bound": {
-		"grammarHash": "abbc7c41c92058cab0b65f220309af019d610c9d149a52d793bb1a08bbb552f2",
+		"grammarHash": "8ed3e7390dc80fa9f62f6aebe56fd1f17ea24fdc06613936e82f8023bb2bebe7",
 		"resolutions": [
 			{"resolution":{"kind":"AddConflict","symbols":["_property_name","_method_definition_plain_class_body_member_method"]},"step":"default","sourceChains":[["_property_name"],["_method_definition_plain_class_body_member_method","method_definition_plain","method_definition"]],"conflict":{"symbolSequence":["'class'","'{'","'constructor'"],"lookahead":"'('","interpretations":["_property_name","_method_definition_plain_class_body_member_method"]}},
 			{"resolution":{"kind":"AddConflict","symbols":["primary_expression","_parameter_name","_parameter_name_formal_parameter"]},"step":"default","sourceChains":[["primary_expression"],["_parameter_name"],["_parameter_name_formal_parameter"]],"conflict":{"symbolSequence":["'('","'readonly'"],"lookahead":"'('","interpretations":["primary_expression","_parameter_name","_parameter_name_formal_parameter"]}},

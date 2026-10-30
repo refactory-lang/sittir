@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
-import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
+import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
@@ -155,10 +155,7 @@ export async function grammarInput(
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(
-					facts,
-					effects.filter((effect) => effect.kind === 'lead')
-				),
+				projectLeadFacts(facts, leadEffectsOf(effects)),
 				known,
 				model
 			),

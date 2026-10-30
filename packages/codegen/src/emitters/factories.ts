@@ -1081,11 +1081,12 @@ function fieldCarryingBuiltTypeSurface(
 		surface.leadingOptions === undefined
 			? paramsToTuple(params)
 			: `${paramsToTuple(params)} | ${paramsToTuple(withLeadingOptions(surface.leadingOptions.type, params))}`;
-	const arrayArgs = spreadFacts?.multiple
-		? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
-		: '';
+	const arrayArgs =
+		surface.spreadFacts !== null && surface.spreadFacts.multiple
+			? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
+			: '';
 	return {
-		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
+		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
@@ -1109,11 +1110,10 @@ function ownTextArgs(leaf: OwnTextLeaf, contentType: string): string {
 
 function rowParamOf(
 	node: FieldCarryingNode,
-	surface: FactorySurface,
+	param: FactoryParam,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): RowParam {
-	const { param } = surface;
 	const strictType = param.rowStrictType ?? param.strictType;
 	return {
 		label: param.label,
@@ -1234,10 +1234,9 @@ interface FactoryParam {
 }
 
 
-interface FactorySurface {
+interface FactorySurfaceFields {
 	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
-	readonly param: FactoryParam;
 	readonly params: string;
 	readonly looseParams: string;
 	readonly rowParams: string;
@@ -1253,6 +1252,20 @@ interface FactorySurface {
 	readonly spellingType?: string;
 	readonly leadingOptions?: LeadingOptions;
 }
+
+interface ParamFactorySurface extends FactorySurfaceFields {
+	readonly nullary?: undefined;
+	readonly param: FactoryParam;
+}
+
+interface NullaryFactorySurface extends FactorySurfaceFields {
+	readonly nullary: true;
+	readonly param?: undefined;
+	readonly spreadFacts: null;
+	readonly leadingOptions?: undefined;
+}
+
+type FactorySurface = ParamFactorySurface | NullaryFactorySurface;
 
 export function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = [^,]+/, '$1?: $2');
@@ -1376,6 +1389,7 @@ function resolveFactorySurface(
 	kindEntries: readonly KindEnumEntry[]
 ): FactorySurface {
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
+	if (surface.nullary === true) return surface;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spellingType === undefined) return surface;
 	const leadingOptions = leadingOptionsOf(node, nodeMap);
@@ -1491,9 +1505,12 @@ function resolveConfigFactorySurface(
 			opt: optional ? '?' : ''
 		};
 	}
+	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
+	if (classifyFactoryShape(node, nodeMap) === 'nullary') {
+		return { nullary: true, spreadFacts: null, singleField, params: '', looseParams: '', rowParams: '', rowLooseParams: `input?: T.${node.typeName}.Loose`, arity: 0, args: '', configType, directParamOptional: false, opt: '' };
+	}
 	const slots = node.slots;
 	const opt = node.argumentOptional(nodeMap) ? '?' : '';
-	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
 	const widen = (type: string): string => widenSlotInputs(type, node, nodeMap);
@@ -1879,8 +1896,8 @@ function emitFieldCarryingFactory(
 					`    value = unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`,
 					'  }'
 				];
-	if (leadingOptions !== undefined) {
-		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));
+	if (surface.leadingOptions !== undefined) {
+		lines.push(...leadingOptionsSplit(surface.leadingOptions, 'children', strictParamType(surface.param)));
 	}
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	const owner = plan.viewPlan?.owner;
@@ -2829,7 +2846,7 @@ interface MapEntry {
 	factory: string;
 	typeName: string;
 	fluent: boolean;
-	shape: 'config' | 'children' | 'text' | 'constant' | 'direct' | 'forwarded';
+	shape: 'config' | 'children' | 'text' | 'constant' | 'nullary' | 'direct' | 'forwarded';
 }
 
 export class FactoryEmitter implements CodegenEmitter<string> {

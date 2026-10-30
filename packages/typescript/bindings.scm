@@ -193,8 +193,8 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
-(import_statement import_clause: "type" @typeOnly)
-(import_statement import_clause: "typeof") @statement.import.typeof
+(import_statement type_keyword: "type" @typeOnly)
+(import_statement type_keyword: "typeof") @statement.import.typeof
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
@@ -236,16 +236,16 @@
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
-(import_specifier_name import_kind: "type" @typeOnly)
-(import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
-(import_specifier_as import_kind: "type" @typeOnly)
-(import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
+(import_specifier_name type_keyword: "type" @typeOnly)
+(import_specifier_name type_keyword: "typeof") @clause.import.specifier.typeof
+(import_specifier_as type_keyword: "type" @typeOnly)
+(import_specifier_as type_keyword: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
 (import_alias) @statement.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
-(export_specifier export_kind: "type" @typeOnly)
-(export_specifier export_kind: "typeof") @clause.export.specifier.typeof
+(export_specifier type_keyword: "type" @typeOnly)
+(export_specifier type_keyword: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
 (constraint) @clause.constraint

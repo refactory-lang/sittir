@@ -3,7 +3,6 @@
 import type {
 	TokenBindingPattern,
 	TokenRepetitionPattern,
-	TokenRepetition,
 	NonSpecialToken,
 	ScopedUseList,
 	UseList,
@@ -50,7 +49,6 @@ import type {
 	Crate,
 	SelfModule,
 	TokenTreePattern,
-	TokenTree,
 	Expression,
 	DelimTokenTree,
 	ReferenceExpression,
@@ -68,8 +66,6 @@ export type TokenPattern =
 	| TokenBindingPattern
 	| Metavariable
 	| NonSpecialToken;
-
-export type Tokens = TokenTree | TokenRepetition | Metavariable | NonSpecialToken;
 
 export type UseClause =
 	| SelfModule
@@ -124,33 +120,14 @@ export type ExpressionExceptRange =
 	| ForExpression
 	| ConstBlock;
 
-export type ExpressionEndingWithBlock =
-	| UnsafeBlock
-	| AsyncBlock
-	| GenBlock
-	| TryBlock
-	| Block
-	| IfExpression
-	| MatchExpression
-	| WhileExpression
-	| LoopExpression
-	| ForExpression
-	| ConstBlock;
-
 export type DelimTokens = NonSpecialToken | Dollar | DelimTokenTree;
 
 export type NonDelimToken = NonSpecialToken | Dollar;
 
 export type Condition = Expression | LetCondition | LetChain;
 
-export type Path = SelfModule | Metavariable | Super | Crate | Identifier | ScopedIdentifier;
-
 export namespace TokenPattern {
 	export type Kind = '_token_pattern';
-}
-
-export namespace Tokens {
-	export type Kind = '_tokens';
 }
 
 export namespace UseClause {
@@ -159,10 +136,6 @@ export namespace UseClause {
 
 export namespace ExpressionExceptRange {
 	export type Kind = '_expression_except_range';
-}
-
-export namespace ExpressionEndingWithBlock {
-	export type Kind = '_expression_ending_with_block';
 }
 
 export namespace DelimTokens {
@@ -175,10 +148,6 @@ export namespace NonDelimToken {
 
 export namespace Condition {
 	export type Kind = '_condition';
-}
-
-export namespace Path {
-	export type Kind = '_path';
 }
 
 export interface SubBuilderRowKind {

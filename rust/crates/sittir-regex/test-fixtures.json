@@ -3904,7 +3904,7 @@
               "$type": 55,
               "_content": {
                 "$type": 56,
-                "_content": 8,
+                "_operator": 8,
                 "_pattern": {
                   "$type": 51,
                   "_content": {
@@ -4069,7 +4069,7 @@
             "$type": 55,
             "_content": {
               "$type": 56,
-              "_content": 8,
+              "_operator": 8,
               "_pattern": {
                 "$type": 51,
                 "_content": {
@@ -4294,7 +4294,7 @@
         "$type": 55,
         "_content": {
           "$type": 56,
-          "_content": 8,
+          "_operator": 8,
           "_pattern": {
             "$type": 51,
             "_content": {
@@ -4482,7 +4482,7 @@
       "$type": 55,
       "_content": {
         "$type": 56,
-        "_content": 8,
+        "_operator": 8,
         "_pattern": {
           "$type": 51,
           "_content": {
@@ -4547,7 +4547,7 @@
     "pattern": "lookahead_assertion",
     "input": {
       "$type": 56,
-      "_content": 8,
+      "_operator": 8,
       "_pattern": {
         "$type": 51,
         "_content": {
@@ -4648,7 +4648,7 @@
               "$type": 55,
               "_content": {
                 "$type": 56,
-                "_content": 9,
+                "_operator": 9,
                 "_pattern": {
                   "$type": 51,
                   "_content": {
@@ -4813,7 +4813,7 @@
             "$type": 55,
             "_content": {
               "$type": 56,
-              "_content": 9,
+              "_operator": 9,
               "_pattern": {
                 "$type": 51,
                 "_content": {
@@ -5038,7 +5038,7 @@
         "$type": 55,
         "_content": {
           "$type": 56,
-          "_content": 9,
+          "_operator": 9,
           "_pattern": {
             "$type": 51,
             "_content": {
@@ -5226,7 +5226,7 @@
       "$type": 55,
       "_content": {
         "$type": 56,
-        "_content": 9,
+        "_operator": 9,
         "_pattern": {
           "$type": 51,
           "_content": {
@@ -5291,7 +5291,7 @@
     "pattern": "lookahead_assertion",
     "input": {
       "$type": 56,
-      "_content": 9,
+      "_operator": 9,
       "_pattern": {
         "$type": 51,
         "_content": {
@@ -5364,7 +5364,7 @@
               "$type": 55,
               "_content": {
                 "$type": 57,
-                "_content": 8,
+                "_operator": 8,
                 "_pattern": {
                   "$type": 51,
                   "_content": {
@@ -5522,7 +5522,7 @@
             "$type": 55,
             "_content": {
               "$type": 57,
-              "_content": 8,
+              "_operator": 8,
               "_pattern": {
                 "$type": 51,
                 "_content": {
@@ -5672,7 +5672,7 @@
         "$type": 55,
         "_content": {
           "$type": 57,
-          "_content": 8,
+          "_operator": 8,
           "_pattern": {
             "$type": 51,
             "_content": {
@@ -5949,7 +5949,7 @@
       "$type": 55,
       "_content": {
         "$type": 57,
-        "_content": 8,
+        "_operator": 8,
         "_pattern": {
           "$type": 51,
           "_content": {
@@ -6007,7 +6007,7 @@
     "pattern": "lookbehind_assertion",
     "input": {
       "$type": 57,
-      "_content": 8,
+      "_operator": 8,
       "_pattern": {
         "$type": 51,
         "_content": {
@@ -6073,7 +6073,7 @@
               "$type": 55,
               "_content": {
                 "$type": 57,
-                "_content": 9,
+                "_operator": 9,
                 "_pattern": {
                   "$type": 51,
                   "_content": {
@@ -6231,7 +6231,7 @@
             "$type": 55,
             "_content": {
               "$type": 57,
-              "_content": 9,
+              "_operator": 9,
               "_pattern": {
                 "$type": 51,
                 "_content": {
@@ -6381,7 +6381,7 @@
         "$type": 55,
         "_content": {
           "$type": 57,
-          "_content": 9,
+          "_operator": 9,
           "_pattern": {
             "$type": 51,
             "_content": {
@@ -6658,7 +6658,7 @@
       "$type": 55,
       "_content": {
         "$type": 57,
-        "_content": 9,
+        "_operator": 9,
         "_pattern": {
           "$type": 51,
           "_content": {
@@ -6716,7 +6716,7 @@
     "pattern": "lookbehind_assertion",
     "input": {
       "$type": 57,
-      "_content": 9,
+      "_operator": 9,
       "_pattern": {
         "$type": 51,
         "_content": {
@@ -10662,7 +10662,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 11,
+              "_operator": 11,
               "_group_name": {
                 "$type": 38,
                 "$text": "the_world"
@@ -10689,7 +10689,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 22,
+              "_operator": 22,
               "_group_name": {
                 "$type": 38,
                 "$text": "python"
@@ -10813,7 +10813,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 11,
+            "_operator": 11,
             "_group_name": {
               "$type": 38,
               "$text": "the_world"
@@ -10840,7 +10840,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 22,
+            "_operator": 22,
             "_group_name": {
               "$type": 38,
               "$text": "python"
@@ -10953,7 +10953,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 11,
+        "_operator": 11,
         "_group_name": {
           "$type": 38,
           "$text": "the_world"
@@ -11022,7 +11022,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 22,
+        "_operator": 22,
         "_group_name": {
           "$type": 38,
           "$text": "python"
@@ -11089,7 +11089,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 11,
+      "_operator": 11,
       "_group_name": {
         "$type": 38,
         "$text": "the_world"
@@ -11130,7 +11130,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 22,
+      "_operator": 22,
       "_group_name": {
         "$type": 38,
         "$text": "python"
@@ -11220,7 +11220,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 11,
+              "_operator": 11,
               "_group_name": {
                 "$type": 38,
                 "$text": "the_world"
@@ -11257,7 +11257,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 22,
+              "_operator": 22,
               "_group_name": {
                 "$type": 38,
                 "$text": "python"
@@ -11391,7 +11391,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 11,
+            "_operator": 11,
             "_group_name": {
               "$type": 38,
               "$text": "the_world"
@@ -11428,7 +11428,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 22,
+            "_operator": 22,
             "_group_name": {
               "$type": 38,
               "$text": "python"
@@ -11551,7 +11551,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 11,
+        "_operator": 11,
         "_group_name": {
           "$type": 38,
           "$text": "the_world"
@@ -11647,7 +11647,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 22,
+        "_operator": 22,
         "_group_name": {
           "$type": 38,
           "$text": "python"
@@ -11741,7 +11741,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 11,
+      "_operator": 11,
       "_group_name": {
         "$type": 38,
         "$text": "the_world"
@@ -11782,7 +11782,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 22,
+      "_operator": 22,
       "_group_name": {
         "$type": 38,
         "$text": "python"
@@ -11920,7 +11920,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 11,
+              "_operator": 11,
               "_group_name": {
                 "$type": 38,
                 "$text": "year"
@@ -11979,7 +11979,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 11,
+              "_operator": 11,
               "_group_name": {
                 "$type": 38,
                 "$text": "month"
@@ -12038,7 +12038,7 @@
             "$type": 77,
             "_content": {
               "$type": 63,
-              "_content": 11,
+              "_operator": 11,
               "_group_name": {
                 "$type": 38,
                 "$text": "day"
@@ -12288,7 +12288,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 11,
+            "_operator": 11,
             "_group_name": {
               "$type": 38,
               "$text": "year"
@@ -12347,7 +12347,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 11,
+            "_operator": 11,
             "_group_name": {
               "$type": 38,
               "$text": "month"
@@ -12406,7 +12406,7 @@
           "$type": 77,
           "_content": {
             "$type": 63,
-            "_content": 11,
+            "_operator": 11,
             "_group_name": {
               "$type": 38,
               "$text": "day"
@@ -12642,7 +12642,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 11,
+        "_operator": 11,
         "_group_name": {
           "$type": 38,
           "$text": "year"
@@ -12785,7 +12785,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 11,
+        "_operator": 11,
         "_group_name": {
           "$type": 38,
           "$text": "month"
@@ -12928,7 +12928,7 @@
       "$type": 77,
       "_content": {
         "$type": 63,
-        "_content": 11,
+        "_operator": 11,
         "_group_name": {
           "$type": 38,
           "$text": "day"
@@ -13045,7 +13045,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 11,
+      "_operator": 11,
       "_group_name": {
         "$type": 38,
         "$text": "year"
@@ -13111,7 +13111,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 11,
+      "_operator": 11,
       "_group_name": {
         "$type": 38,
         "$text": "month"
@@ -13177,7 +13177,7 @@
     "pattern": "named_capturing_group",
     "input": {
       "$type": 63,
-      "_content": 11,
+      "_operator": 11,
       "_group_name": {
         "$type": 38,
         "$text": "day"

@@ -39,7 +39,7 @@ export const triviaFacts = Object.freeze({
 		[195, ['_declarations']],
 		[199, ['_elements']],
 		[201, ['_elements']],
-		[203, ['_attributes']],
+		[203, ['_elements']],
 		[227, ['_use_clauses']],
 		[230, ['_elements']],
 		[249, ['_bounds']],
@@ -124,7 +124,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	184: [
 		['name', 0, undefined, '_name'],
-		['type', 1, undefined, '_type']
+		['fragment', 1, undefined, '_fragment']
 	],
 	185: [
 		['tokenPatterns', 0, undefined, '_token_patterns'],
@@ -171,7 +171,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', 1, undefined, '_name'],
 		['type', 2, undefined, '_type']
 	],
-	203: [['attributes', 0, undefined, '_attributes']],
+	203: [['elements', 0, undefined, '_elements']],
 	204: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
 		['name', 1, undefined, '_name'],
@@ -623,7 +623,6 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	391: [['start', 0, undefined, '_start']],
 	392: [['end', 0, undefined, '_end']],
-	393: [['rangeExpressionBare', 0, undefined, '_range_expression_bare']],
 	394: [['expression', 0, undefined, '_expression']],
 	395: [
 		['unsafe', 0, 'unsafe', '_unsafe', 111],
@@ -681,11 +680,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['macroRules', 1, undefined, '_macro_rules']
 	],
 	419: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['right', 1, undefined, '_right']
 	],
 	420: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['right', 1, undefined, '_right']
 	],
 	422: [
@@ -963,12 +962,14 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'token_binding_pattern',
 		required: [
 			['_name', 'name'],
-			['_type', 'type']
+			['_fragment', 'fragment']
 		],
 		single: [['_name', 'TokenBindingPattern.name']],
 		nodeOnly: [['_name', 'TokenBindingPattern.name', 'a built Metavariable', [127]]],
-		kindIds: [['_type', 'TokenBindingPattern.type', [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]]],
-		config: ['name', 'type']
+		kindIds: [
+			['_fragment', 'TokenBindingPattern.fragment', [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]]
+		],
+		config: ['name', 'fragment']
 	},
 	185: {
 		kind: 'token_repetition_pattern',
@@ -1131,9 +1132,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	203: {
 		kind: 'ordered_field_declaration_list',
-		single: [['_attributes', 'OrderedFieldDeclarationList.attributes']],
+		single: [['_elements', 'OrderedFieldDeclarationList.elements']],
 		nodeOnly: [
-			['_attributes', 'OrderedFieldDeclarationList.attributes', 'a built OrderedFieldDeclarationListElements', [345]]
+			['_elements', 'OrderedFieldDeclarationList.elements', 'a built OrderedFieldDeclarationListElements', [345]]
 		]
 	},
 	204: {
@@ -2875,11 +2876,6 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_end', 'RangeExpressionPrefix.end']],
 		nodeOnly: [['_end', 'RangeExpressionPrefix.end', 'a built Expression', [258]]]
 	},
-	393: {
-		kind: 'range_expression_bare',
-		required: [['_range_expression_bare', 'rangeExpressionBare']],
-		kindIds: [['_range_expression_bare', 'RangeExpressionBare.rangeExpressionBare', [100]]]
-	},
 	394: {
 		kind: 'expression_statement_with_semi',
 		required: [['_expression', 'expression']],
@@ -3134,24 +3130,24 @@ export const structure: StructureTable = Object.freeze({
 	419: {
 		kind: 'range_pattern_prefix',
 		required: [
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_right', 'right']
 		],
 		single: [['_right', 'RangePatternPrefix.right']],
 		nodeOnly: [['_right', 'RangePatternPrefix.right', 'buildIdentifier(…)']],
-		kindIds: [['_content', 'RangePatternPrefix.content', [100, 137]]],
-		config: ['content', 'right']
+		kindIds: [['_operator', 'RangePatternPrefix.operator', [100, 137]]],
+		config: ['operator', 'right']
 	},
 	420: {
 		kind: 'range_pattern_with_left_with_right',
 		required: [
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_right', 'right']
 		],
 		single: [['_right', 'RangePatternWithLeftWithRight.right']],
 		nodeOnly: [['_right', 'RangePatternWithLeftWithRight.right', 'buildIdentifier(…)']],
-		kindIds: [['_content', 'RangePatternWithLeftWithRight.content', [48, 100, 137]]],
-		config: ['content', 'right']
+		kindIds: [['_operator', 'RangePatternWithLeftWithRight.operator', [48, 100, 137]]],
+		config: ['operator', 'right']
 	},
 	422: {
 		kind: 'range_pattern_with_left',

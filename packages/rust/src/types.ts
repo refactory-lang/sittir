@@ -2610,13 +2610,6 @@ export enum TokenTreePatternKind {
 	TokenTreePatternBrace = 'token_tree_pattern_brace'
 }
 
-export enum TokensKind {
-	TokenTree = 'token_tree',
-	TokenRepetition = 'token_repetition',
-	Metavariable = 'metavariable',
-	NonSpecialToken = 'non_special_token'
-}
-
 export enum TokenTreeKind {
 	TokenTreeParen = 'token_tree_paren',
 	TokenTreeBracket = 'token_tree_bracket',
@@ -2767,20 +2760,6 @@ export enum ExpressionKind {
 	RangeExpression = 'range_expression'
 }
 
-export enum ExpressionEndingWithBlockKind {
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block'
-}
-
 export enum DelimTokenTreeKind {
 	DelimTokenTreeParen = 'delim_token_tree_paren',
 	DelimTokenTreeBracket = 'delim_token_tree_bracket',
@@ -2911,15 +2890,6 @@ export enum EscapeSequenceKind {
 export enum CommentKind {
 	LineComment = 'line_comment',
 	BlockComment = 'block_comment'
-}
-
-export enum PathKind {
-	SelfModule = 'self_module',
-	Metavariable = 'metavariable',
-	Super = 'super',
-	Crate = 'crate',
-	Identifier = 'identifier',
-	ScopedIdentifier = 'scoped_identifier'
 }
 
 export enum CharLiteralEscapedKind {
@@ -3076,13 +3046,13 @@ export interface MacroRule {
 export interface TokenBindingPattern {
 	readonly $type: TSKindId.TokenBindingPattern;
 	readonly _name: Metavariable;
-	readonly _type: number;
+	readonly _fragment: number;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
-		readonly _type: 'type';
+		readonly _fragment: 'fragment';
 	};
 	readonly __inputHints__?: {
-		readonly type: KindEnum<
+		readonly fragment: KindEnum<
 			| 'block'
 			| 'expr'
 			| 'expr_2021'
@@ -3117,10 +3087,10 @@ export interface TokenBindingPattern {
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Metavariable>;
-		readonly type: SlotHint<NonNullable<T.TokenBindingPattern.Config>['type']>;
+		readonly fragment: SlotHint<NonNullable<T.TokenBindingPattern.Config>['fragment']>;
 	};
 	readonly name: () => Metavariable;
-	readonly type: () => number;
+	readonly fragment: () => number;
 }
 
 export interface TokenRepetitionPattern {
@@ -4003,28 +3973,28 @@ export interface FieldDeclaration {
 
 export interface OrderedFieldDeclarationList {
 	readonly $type: TSKindId.OrderedFieldDeclarationList;
-	readonly _attributes?: OrderedFieldDeclarationListElements;
+	readonly _elements?: OrderedFieldDeclarationListElements;
 	readonly __slotNames__?: {
-		readonly _attributes: 'attributes';
+		readonly _elements: 'elements';
 	};
 	readonly __looseHints__?: {
-		readonly attributes?: readonly AttributedOrderedField[];
+		readonly elements?: readonly AttributedOrderedField[];
 	};
 	readonly __slotHints__?: {
-		readonly attributes: SlotHint<T.OrderedFieldDeclarationListElements, true>;
+		readonly elements: SlotHint<T.OrderedFieldDeclarationListElements, true>;
 		readonly $listView: ListViewHint<
 			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly attributes: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing },
 				T.AttributedOrderedField.Config
 			>;
 		};
 	};
-	readonly attributes: () => OrderedFieldDeclarationListElements | undefined;
+	readonly elements: () => OrderedFieldDeclarationListElements | undefined;
 }
 
 export interface ExternCrateDeclaration {
@@ -9513,17 +9483,6 @@ export interface RangeExpressionPrefix {
 
 export interface RangeExpressionBare {
 	readonly $type: TSKindId.RangeExpressionBare;
-	readonly _range_expression_bare: number;
-	readonly __slotNames__?: {
-		readonly _range_expression_bare: 'rangeExpressionBare';
-	};
-	readonly __inputHints__?: {
-		readonly range_expression_bare: KindEnum<'..', TSKindId.DotDot>;
-	};
-	readonly __slotHints__?: {
-		readonly rangeExpressionBare: SlotHint<NonNullable<TSKindId.DotDot>>;
-	};
-	readonly rangeExpressionBare: () => number;
 }
 
 export interface ExpressionStatementWithSemi {
@@ -10032,7 +9991,7 @@ export interface MacroDefinitionBrace {
 
 export interface RangePatternPrefix {
 	readonly $type: TSKindId.RangePatternPrefix;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10042,11 +10001,11 @@ export interface RangePatternPrefix {
 		| Identifier
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _right: 'right';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
+		readonly operator: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
@@ -10063,10 +10022,10 @@ export interface RangePatternPrefix {
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.RangePatternPrefix.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.RangePatternPrefix.Config>['operator']>;
 		readonly right: SlotHint<NonNullable<T.RangePatternPrefix.Config>['right']>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly right: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10079,7 +10038,7 @@ export interface RangePatternPrefix {
 
 export interface RangePatternWithLeftWithRight {
 	readonly $type: TSKindId.RangePatternWithLeftWithRight;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10089,11 +10048,11 @@ export interface RangePatternWithLeftWithRight {
 		| Identifier
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _right: 'right';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
+		readonly operator: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
@@ -10110,10 +10069,10 @@ export interface RangePatternWithLeftWithRight {
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>;
 		readonly right: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly right: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -11610,7 +11569,6 @@ export namespace DeclarationStatementImplItemBody {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type _RangeExpressionBare = TSKindId._RangeExpressionBare;
 export type Dollar = TSKindId.Dollar;
 
 export type RustNode = NodeOfNamespaces<NamespaceMap>;
@@ -11899,7 +11857,7 @@ export namespace TokenBindingPattern {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly type?: { readonly before?: LayoutKindId };
+			readonly fragment?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -15091,7 +15049,7 @@ export interface OrderedFieldDeclarationListNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	OrderedFieldDeclarationList.Bound,
-	'attributes',
+	'elements',
 	TSKindId.OrderedFieldDeclarationList,
 	OrderedFieldDeclarationList.Parsed,
 	EmptyOrderedFieldDeclarationList
@@ -17443,7 +17401,7 @@ export interface RangeExpressionBareNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	RangeExpressionBare.Bound,
-	'range_expression_bare',
+	never,
 	TSKindId.RangeExpressionBare,
 	RangeExpressionBare.Parsed,
 	never
@@ -25172,8 +25130,8 @@ export namespace RangeExpressionBare {
 	}
 	export type Loose = LooseFor<TSKindId.RangeExpressionBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBare>;
-	export type BuildArgs = [value?: Admit<TSKindId.DotDot>];
-	export type LooseArgs = [value?: T.RangeExpressionBare.Loose];
+	export type BuildArgs = [];
+	export type LooseArgs = [input?: T.RangeExpressionBare.Loose];
 	export type Kind = TSKindId.RangeExpressionBare;
 }
 export namespace ExpressionStatementWithSemi {

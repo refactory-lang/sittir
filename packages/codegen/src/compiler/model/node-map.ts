@@ -1459,7 +1459,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		slot.fieldName ??
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
-			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
+			: slot.inlinedFrom?.replace(/^_+/, '') || (slot.values.length > 0 && slot.values.every(isTerminalValue) ? 'operator' : 'content'));
 	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
@@ -1619,6 +1619,10 @@ export function layoutDisplaysOf(node: AssembledNode): readonly AssembledNode[] 
 
 export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isFixedTextLeaf(node) && node.factoryName !== undefined;
+}
+
+export function suppliesNoContent(node: AssembledNode): boolean {
+	return node instanceof AbstractAssembledCompound ? node.slots.length === 0 : isBuilderTextLeaf(node);
 }
 
 export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {

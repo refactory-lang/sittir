@@ -37590,7 +37590,7 @@
                           "_content": {
                             "$type": 258,
                             "_object": 278,
-                            "_optional_chain": 63,
+                            "_operator": 63,
                             "_property": {
                               "$type": 128,
                               "_content": "bar"
@@ -37621,7 +37621,7 @@
                         "_function": {
                           "$type": 258,
                           "_object": 278,
-                          "_optional_chain": 63,
+                          "_operator": 63,
                           "_property": {
                             "$type": 499,
                             "_content": {
@@ -37699,7 +37699,7 @@
                       "_content": {
                         "$type": 258,
                         "_object": 278,
-                        "_optional_chain": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 128,
                           "_content": "bar"
@@ -37730,7 +37730,7 @@
                     "_function": {
                       "$type": 258,
                       "_object": 278,
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -37824,7 +37824,7 @@
                     "_content": {
                       "$type": 258,
                       "_object": 278,
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 128,
                         "_content": "bar"
@@ -37855,7 +37855,7 @@
                   "_function": {
                     "$type": 258,
                     "_object": 278,
-                    "_optional_chain": 63,
+                    "_operator": 63,
                     "_property": {
                       "$type": 499,
                       "_content": {
@@ -37915,7 +37915,7 @@
                 "_content": {
                   "$type": 258,
                   "_object": 278,
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 128,
                     "_content": "bar"
@@ -37968,7 +37968,7 @@
               "_function": {
                 "$type": 258,
                 "_object": 278,
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -38023,7 +38023,7 @@
               "_content": {
                 "$type": 258,
                 "_object": 278,
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 128,
                   "_content": "bar"
@@ -38072,7 +38072,7 @@
             "_function": {
               "$type": 258,
               "_object": 278,
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -38123,7 +38123,7 @@
           "_content": {
             "$type": 258,
             "_object": 278,
-            "_optional_chain": 63,
+            "_operator": 63,
             "_property": {
               "$type": 128,
               "_content": "bar"
@@ -38166,7 +38166,7 @@
         "_function": {
           "$type": 258,
           "_object": 278,
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -38212,7 +38212,7 @@
         "_content": {
           "$type": 258,
           "_object": 278,
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 128,
             "_content": "bar"
@@ -38251,7 +38251,7 @@
       "_content": {
         "$type": 258,
         "_object": 278,
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 128,
           "_content": "bar"
@@ -38283,7 +38283,7 @@
     "input": {
       "$type": 258,
       "_object": 278,
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 128,
         "_content": "bar"
@@ -38314,7 +38314,7 @@
     "input": {
       "$type": 258,
       "_object": 278,
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -38402,7 +38402,7 @@
       "_function": {
         "$type": 258,
         "_object": 278,
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -38854,7 +38854,7 @@
                               "$type": 1,
                               "$text": "console"
                             },
-                            "_optional_chain": 63,
+                            "_operator": 63,
                             "_property": {
                               "$type": 499,
                               "_content": {
@@ -39169,7 +39169,7 @@
                           "$type": 1,
                           "$text": "console"
                         },
-                        "_optional_chain": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 499,
                           "_content": {
@@ -39585,7 +39585,7 @@
                         "$type": 1,
                         "$text": "console"
                       },
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -40682,7 +40682,7 @@
                     "$type": 1,
                     "$text": "console"
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -40774,7 +40774,7 @@
                   "$type": 1,
                   "$text": "console"
                 },
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -40842,7 +40842,7 @@
                 "$type": 1,
                 "$text": "console"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -40906,7 +40906,7 @@
             "$type": 1,
             "$text": "console"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -40965,7 +40965,7 @@
           "$type": 1,
           "$text": "console"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -41020,7 +41020,7 @@
         "$type": 1,
         "$text": "console"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -54843,7 +54843,7 @@
                     "$type": 1,
                     "$text": "module"
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -54987,7 +54987,7 @@
                 "$type": 1,
                 "$text": "module"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -55115,7 +55115,7 @@
               "$type": 1,
               "$text": "module"
             },
-            "_optional_chain": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -55213,7 +55213,7 @@
             "$type": 1,
             "$text": "module"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -55329,7 +55329,7 @@
           "$type": 1,
           "$text": "module"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -55516,7 +55516,7 @@
         "$type": 1,
         "$text": "module"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -56163,7 +56163,7 @@
                 "$type": 1,
                 "$text": "foo"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -56190,7 +56190,7 @@
                 "$type": 1,
                 "$text": "type"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -56217,7 +56217,7 @@
                 "$type": 1,
                 "$text": "string"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -56269,7 +56269,7 @@
             "$type": 1,
             "$text": "foo"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -56318,7 +56318,7 @@
             "$type": 1,
             "$text": "type"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -56367,7 +56367,7 @@
             "$type": 1,
             "$text": "string"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -56414,7 +56414,7 @@
           "$type": 1,
           "$text": "foo"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -56459,7 +56459,7 @@
           "$type": 1,
           "$text": "type"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -56504,7 +56504,7 @@
           "$type": 1,
           "$text": "string"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -56542,7 +56542,7 @@
         "$type": 1,
         "$text": "foo"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -56579,7 +56579,7 @@
         "$type": 1,
         "$text": "type"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -56616,7 +56616,7 @@
         "$type": 1,
         "$text": "string"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -56787,7 +56787,7 @@
                         }
                       }
                     },
-                    "_optional_chain": 63,
+                    "_operator": 63,
                     "_property": {
                       "$type": 499,
                       "_content": {
@@ -56885,7 +56885,7 @@
                     }
                   }
                 },
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -57003,7 +57003,7 @@
                   }
                 }
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -57075,7 +57075,7 @@
               }
             }
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -57142,7 +57142,7 @@
             }
           }
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -57205,7 +57205,7 @@
           }
         }
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -60384,7 +60384,7 @@
                 "$type": 1,
                 "$text": "e"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -60529,7 +60529,7 @@
             "$type": 1,
             "$text": "e"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -60665,7 +60665,7 @@
           "$type": 1,
           "$text": "e"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -61102,7 +61102,7 @@
         "$type": 1,
         "$text": "e"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -61993,7 +61993,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": 43
                   }
                 }
@@ -62613,7 +62613,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": 43
               }
             }
@@ -64901,7 +64901,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": 43
             }
           }
@@ -65096,7 +65096,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": 43
           }
         }
@@ -65335,7 +65335,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": 43
       }
     },
@@ -66159,7 +66159,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": 43
     },
     "expectedOutput": "extends string",
@@ -66562,7 +66562,7 @@
                 "$type": 1,
                 "$text": "a"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -66679,7 +66679,7 @@
             "$type": 1,
             "$text": "a"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -66813,7 +66813,7 @@
           "$type": 1,
           "$text": "a"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -66939,7 +66939,7 @@
         "$type": 1,
         "$text": "a"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -70695,7 +70695,7 @@
                               "_function": {
                                 "$type": 258,
                                 "_object": 279,
-                                "_optional_chain": 63,
+                                "_operator": 63,
                                 "_property": {
                                   "$type": 499,
                                   "_content": {
@@ -70724,7 +70724,7 @@
                           "_right": {
                             "$type": 258,
                             "_object": 278,
-                            "_optional_chain": 63,
+                            "_operator": 63,
                             "_property": {
                               "$type": 499,
                               "_content": {
@@ -70915,7 +70915,7 @@
                           "_function": {
                             "$type": 258,
                             "_object": 279,
-                            "_optional_chain": 63,
+                            "_operator": 63,
                             "_property": {
                               "$type": 499,
                               "_content": {
@@ -70944,7 +70944,7 @@
                       "_right": {
                         "$type": 258,
                         "_object": 278,
-                        "_optional_chain": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 499,
                           "_content": {
@@ -71288,7 +71288,7 @@
                         "_function": {
                           "$type": 258,
                           "_object": 279,
-                          "_optional_chain": 63,
+                          "_operator": 63,
                           "_property": {
                             "$type": 499,
                             "_content": {
@@ -71317,7 +71317,7 @@
                     "_right": {
                       "$type": 258,
                       "_object": 278,
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -71497,7 +71497,7 @@
                     "_function": {
                       "$type": 258,
                       "_object": 279,
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -71526,7 +71526,7 @@
                 "_right": {
                   "$type": 258,
                   "_object": 278,
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -72092,7 +72092,7 @@
                 "_function": {
                   "$type": 258,
                   "_object": 279,
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -72121,7 +72121,7 @@
             "_right": {
               "$type": 258,
               "_object": 278,
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -72246,7 +72246,7 @@
       "_function": {
         "$type": 258,
         "_object": 279,
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -72381,7 +72381,7 @@
                   "_function": {
                     "$type": 258,
                     "_object": 279,
-                    "_optional_chain": 63,
+                    "_operator": 63,
                     "_property": {
                       "$type": 499,
                       "_content": {
@@ -72410,7 +72410,7 @@
               "_right": {
                 "$type": 258,
                 "_object": 278,
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -72558,7 +72558,7 @@
             "_function": {
               "$type": 258,
               "_object": 279,
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -72587,7 +72587,7 @@
         "_right": {
           "$type": 258,
           "_object": 278,
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -72633,7 +72633,7 @@
           "_function": {
             "$type": 258,
             "_object": 279,
-            "_optional_chain": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -72662,7 +72662,7 @@
       "_right": {
         "$type": 258,
         "_object": 278,
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -72704,7 +72704,7 @@
         "_function": {
           "$type": 258,
           "_object": 279,
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -72757,7 +72757,7 @@
     "input": {
       "$type": 258,
       "_object": 279,
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -72794,7 +72794,7 @@
     "input": {
       "$type": 258,
       "_object": 278,
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -86292,7 +86292,7 @@
                     "$type": 1,
                     "$text": "Symbol"
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -86428,7 +86428,7 @@
                 "$type": 1,
                 "$text": "Symbol"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -86550,7 +86550,7 @@
             "$type": 1,
             "$text": "Symbol"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -86700,7 +86700,7 @@
           "$type": 1,
           "$text": "Symbol"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -86886,7 +86886,7 @@
         "$type": 1,
         "$text": "Symbol"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -86976,7 +86976,7 @@
                         "_type": 40
                       }
                     },
-                    "_optional_chain": 63,
+                    "_operator": 63,
                     "_property": {
                       "$type": 499,
                       "_content": {
@@ -86985,7 +86985,7 @@
                       }
                     }
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -87055,7 +87055,7 @@
                     "_type": 40
                   }
                 },
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -87064,7 +87064,7 @@
                   }
                 }
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -87127,7 +87127,7 @@
                 "_type": 40
               }
             },
-            "_optional_chain": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -87136,7 +87136,7 @@
               }
             }
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -87190,7 +87190,7 @@
               "_type": 40
             }
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -87199,7 +87199,7 @@
             }
           }
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -87250,7 +87250,7 @@
             "_type": 40
           }
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -87259,7 +87259,7 @@
           }
         }
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -87303,7 +87303,7 @@
           "_type": 40
         }
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -87985,7 +87985,7 @@
       "_statements": [
         {
           "$type": 197,
-          "_type_only": 7,
+          "_type_keyword": 7,
           "_from_clause": {
             "$type": 413,
             "_import_clause": {
@@ -88049,7 +88049,7 @@
                   "_item": [
                     {
                       "$type": 416,
-                      "_type_only": 7,
+                      "_type_keyword": 7,
                       "_name": {
                         "$type": 1,
                         "$text": "UserID"
@@ -88057,7 +88057,7 @@
                     },
                     {
                       "$type": 416,
-                      "_type_only": 7,
+                      "_type_keyword": 7,
                       "_name": {
                         "$type": 1,
                         "$text": "User"
@@ -88092,7 +88092,7 @@
         },
         {
           "$type": 197,
-          "_type_only": 8,
+          "_type_keyword": 8,
           "_from_clause": {
             "$type": 413,
             "_import_clause": {
@@ -88142,7 +88142,7 @@
         },
         {
           "$type": 197,
-          "_type_only": 7,
+          "_type_keyword": 7,
           "_from_clause": {
             "$type": 413,
             "_import_clause": {
@@ -88566,7 +88566,7 @@
                         },
                         {
                           "$type": 416,
-                          "_type_only": 7,
+                          "_type_keyword": 7,
                           "_name": {
                             "$type": 1,
                             "$text": "User"
@@ -88628,7 +88628,7 @@
     "pattern": "import_statement",
     "input": {
       "$type": 197,
-      "_type_only": 7,
+      "_type_keyword": 7,
       "_from_clause": {
         "$type": 413,
         "_import_clause": {
@@ -88714,7 +88714,7 @@
               "_item": [
                 {
                   "$type": 416,
-                  "_type_only": 7,
+                  "_type_keyword": 7,
                   "_name": {
                     "$type": 1,
                     "$text": "UserID"
@@ -88722,7 +88722,7 @@
                 },
                 {
                   "$type": 416,
-                  "_type_only": 7,
+                  "_type_keyword": 7,
                   "_name": {
                     "$type": 1,
                     "$text": "User"
@@ -88779,7 +88779,7 @@
     "pattern": "import_statement",
     "input": {
       "$type": 197,
-      "_type_only": 8,
+      "_type_keyword": 8,
       "_from_clause": {
         "$type": 413,
         "_import_clause": {
@@ -88851,7 +88851,7 @@
     "pattern": "import_statement",
     "input": {
       "$type": 197,
-      "_type_only": 7,
+      "_type_keyword": 7,
       "_from_clause": {
         "$type": 413,
         "_import_clause": {
@@ -89444,7 +89444,7 @@
                     },
                     {
                       "$type": 416,
-                      "_type_only": 7,
+                      "_type_keyword": 7,
                       "_name": {
                         "$type": 1,
                         "$text": "User"
@@ -89582,7 +89582,7 @@
             "_item": [
               {
                 "$type": 416,
-                "_type_only": 7,
+                "_type_keyword": 7,
                 "_name": {
                   "$type": 1,
                   "$text": "UserID"
@@ -89590,7 +89590,7 @@
               },
               {
                 "$type": 416,
-                "_type_only": 7,
+                "_type_keyword": 7,
                 "_name": {
                   "$type": 1,
                   "$text": "User"
@@ -90270,7 +90270,7 @@
                   },
                   {
                     "$type": 416,
-                    "_type_only": 7,
+                    "_type_keyword": 7,
                     "_name": {
                       "$type": 1,
                       "$text": "User"
@@ -90392,7 +90392,7 @@
           "_item": [
             {
               "$type": 416,
-              "_type_only": 7,
+              "_type_keyword": 7,
               "_name": {
                 "$type": 1,
                 "$text": "UserID"
@@ -90400,7 +90400,7 @@
             },
             {
               "$type": 416,
-              "_type_only": 7,
+              "_type_keyword": 7,
               "_name": {
                 "$type": 1,
                 "$text": "User"
@@ -90960,7 +90960,7 @@
                 },
                 {
                   "$type": 416,
-                  "_type_only": 7,
+                  "_type_keyword": 7,
                   "_name": {
                     "$type": 1,
                     "$text": "User"
@@ -91067,7 +91067,7 @@
         "_item": [
           {
             "$type": 416,
-            "_type_only": 7,
+            "_type_keyword": 7,
             "_name": {
               "$type": 1,
               "$text": "UserID"
@@ -91075,7 +91075,7 @@
           },
           {
             "$type": 416,
-            "_type_only": 7,
+            "_type_keyword": 7,
             "_name": {
               "$type": 1,
               "$text": "User"
@@ -91548,7 +91548,7 @@
           },
           {
             "$type": 416,
-            "_type_only": 7,
+            "_type_keyword": 7,
             "_name": {
               "$type": 1,
               "$text": "User"
@@ -91637,7 +91637,7 @@
       "_item": [
         {
           "$type": 416,
-          "_type_only": 7,
+          "_type_keyword": 7,
           "_name": {
             "$type": 1,
             "$text": "UserID"
@@ -91645,7 +91645,7 @@
         },
         {
           "$type": 416,
-          "_type_only": 7,
+          "_type_keyword": 7,
           "_name": {
             "$type": 1,
             "$text": "User"
@@ -92001,7 +92001,7 @@
         },
         {
           "$type": 416,
-          "_type_only": 7,
+          "_type_keyword": 7,
           "_name": {
             "$type": 1,
             "$text": "User"
@@ -92092,7 +92092,7 @@
     "pattern": "import_specifier_name",
     "input": {
       "$type": 416,
-      "_type_only": 7,
+      "_type_keyword": 7,
       "_name": {
         "$type": 1,
         "$text": "UserID"
@@ -92122,7 +92122,7 @@
     "pattern": "import_specifier_name",
     "input": {
       "$type": 416,
-      "_type_only": 7,
+      "_type_keyword": 7,
       "_name": {
         "$type": 1,
         "$text": "User"
@@ -92413,7 +92413,7 @@
     "pattern": "import_specifier_name",
     "input": {
       "$type": 416,
-      "_type_only": 7,
+      "_type_keyword": 7,
       "_name": {
         "$type": 1,
         "$text": "User"
@@ -92807,7 +92807,7 @@
               },
               {
                 "$type": 416,
-                "_type_only": 7,
+                "_type_keyword": 7,
                 "_name": {
                   "$type": 1,
                   "$text": "User"
@@ -92976,7 +92976,7 @@
             },
             {
               "$type": 416,
-              "_type_only": 7,
+              "_type_keyword": 7,
               "_name": {
                 "$type": 1,
                 "$text": "User"
@@ -96718,7 +96718,7 @@
                         "$type": 1,
                         "$text": "Math"
                       },
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -96740,7 +96740,7 @@
                                 "$type": 1,
                                 "$text": "Math"
                               },
-                              "_optional_chain": 63,
+                              "_operator": 63,
                               "_property": {
                                 "$type": 499,
                                 "_content": {
@@ -96991,7 +96991,7 @@
                     "$type": 1,
                     "$text": "Math"
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -97013,7 +97013,7 @@
                             "$type": 1,
                             "$text": "Math"
                           },
-                          "_optional_chain": 63,
+                          "_operator": 63,
                           "_property": {
                             "$type": 499,
                             "_content": {
@@ -97279,7 +97279,7 @@
                   "$type": 1,
                   "$text": "Math"
                 },
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -97301,7 +97301,7 @@
                           "$type": 1,
                           "$text": "Math"
                         },
-                        "_optional_chain": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 499,
                           "_content": {
@@ -97556,7 +97556,7 @@
                 "$type": 1,
                 "$text": "Math"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -97578,7 +97578,7 @@
                         "$type": 1,
                         "$text": "Math"
                       },
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -98331,7 +98331,7 @@
             "$type": 1,
             "$text": "Math"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -98353,7 +98353,7 @@
                     "$type": 1,
                     "$text": "Math"
                   },
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -98699,7 +98699,7 @@
           "$type": 1,
           "$text": "Math"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -98721,7 +98721,7 @@
                   "$type": 1,
                   "$text": "Math"
                 },
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -98777,7 +98777,7 @@
           "$type": 1,
           "$text": "Math"
         },
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -98822,7 +98822,7 @@
         "$type": 1,
         "$text": "Math"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -98862,7 +98862,7 @@
         "$type": 1,
         "$text": "Math"
       },
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -98909,7 +98909,7 @@
                 "$type": 1,
                 "$text": "Math"
               },
-              "_optional_chain": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -98995,7 +98995,7 @@
             "$type": 1,
             "$text": "Math"
           },
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -99321,7 +99321,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": {
                       "$type": 504,
                       "_content": {
@@ -99921,7 +99921,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": {
                   "$type": 504,
                   "_content": {
@@ -102353,7 +102353,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": {
                 "$type": 504,
                 "_content": {
@@ -102415,7 +102415,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": {
               "$type": 504,
               "_content": {
@@ -102495,7 +102495,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": {
           "$type": 504,
           "_content": {
@@ -102529,7 +102529,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": {
         "$type": 504,
         "_content": {
@@ -107500,7 +107500,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 55,
+                    "_operator": 55,
                     "_bounds": {
                       "$type": 504,
                       "_content": {
@@ -107568,7 +107568,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 55,
+                "_operator": 55,
                 "_bounds": {
                   "$type": 504,
                   "_content": {
@@ -107711,7 +107711,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 55,
+              "_operator": 55,
               "_bounds": {
                 "$type": 504,
                 "_content": {
@@ -107762,7 +107762,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 55,
+            "_operator": 55,
             "_bounds": {
               "$type": 504,
               "_content": {
@@ -107809,7 +107809,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 55,
+        "_operator": 55,
         "_bounds": {
           "$type": 504,
           "_content": {
@@ -107843,7 +107843,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 55,
+      "_operator": 55,
       "_bounds": {
         "$type": 504,
         "_content": {
@@ -111735,7 +111735,7 @@
                 "$type": 1,
                 "$text": "Person"
               },
-              "_content": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -112182,7 +112182,7 @@
             "$type": 1,
             "$text": "Person"
           },
-          "_content": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -113491,7 +113491,7 @@
           "$type": 1,
           "$text": "Person"
         },
-        "_content": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -113630,7 +113630,7 @@
         "$type": 1,
         "$text": "Person"
       },
-      "_content": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -132433,7 +132433,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": 43
                   }
                 }
@@ -132578,7 +132578,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": 43
                   }
                 }
@@ -133133,7 +133133,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": 43
               }
             }
@@ -133324,7 +133324,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": 43
               }
             }
@@ -134539,7 +134539,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": 43
             }
           }
@@ -134587,7 +134587,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": 43
             }
           }
@@ -134735,7 +134735,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": 43
           }
         }
@@ -134780,7 +134780,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": 43
           }
         }
@@ -134958,7 +134958,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": 43
       }
     },
@@ -134997,7 +134997,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": 43
       }
     },
@@ -137181,7 +137181,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": 43
     },
     "expectedOutput": "extends string",
@@ -137209,7 +137209,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": 43
     },
     "expectedOutput": "extends string",
@@ -140594,7 +140594,7 @@
                                 "$type": 1,
                                 "$text": "bar"
                               },
-                              "_content": 63,
+                              "_operator": 63,
                               "_property": {
                                 "$type": 499,
                                 "_content": {
@@ -140835,7 +140835,7 @@
                             "$type": 1,
                             "$text": "bar"
                           },
-                          "_content": 63,
+                          "_operator": 63,
                           "_property": {
                             "$type": 499,
                             "_content": {
@@ -141384,7 +141384,7 @@
                           "$type": 1,
                           "$text": "bar"
                         },
-                        "_content": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 499,
                           "_content": {
@@ -141448,7 +141448,7 @@
                   "$type": 1,
                   "$text": "bar"
                 },
-                "_content": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -141752,7 +141752,7 @@
                         "$type": 1,
                         "$text": "bar"
                       },
-                      "_content": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -141806,7 +141806,7 @@
                 "$type": 1,
                 "$text": "bar"
               },
-              "_content": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -142081,7 +142081,7 @@
                       "$type": 1,
                       "$text": "bar"
                     },
-                    "_content": 63,
+                    "_operator": 63,
                     "_property": {
                       "$type": 499,
                       "_content": {
@@ -142132,7 +142132,7 @@
               "$type": 1,
               "$text": "bar"
             },
-            "_content": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -142323,7 +142323,7 @@
           "$type": 1,
           "$text": "bar"
         },
-        "_content": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -142390,7 +142390,7 @@
         "$type": 1,
         "$text": "bar"
       },
-      "_content": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -143294,7 +143294,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": {
                       "$type": 344,
                       "_abstract": true,
@@ -143367,7 +143367,7 @@
                   },
                   "_constraint": {
                     "$type": 374,
-                    "_content": 70,
+                    "_operator": 70,
                     "_bounds": {
                       "$type": 344,
                       "_abstract": false,
@@ -143465,7 +143465,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": {
                   "$type": 344,
                   "_abstract": true,
@@ -143560,7 +143560,7 @@
               },
               "_constraint": {
                 "$type": 374,
-                "_content": 70,
+                "_operator": 70,
                 "_bounds": {
                   "$type": 344,
                   "_abstract": false,
@@ -143820,7 +143820,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": {
                 "$type": 344,
                 "_abstract": true,
@@ -143897,7 +143897,7 @@
             },
             "_constraint": {
               "$type": 374,
-              "_content": 70,
+              "_operator": 70,
               "_bounds": {
                 "$type": 344,
                 "_abstract": false,
@@ -143972,7 +143972,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": {
               "$type": 344,
               "_abstract": true,
@@ -144046,7 +144046,7 @@
           },
           "_constraint": {
             "$type": 374,
-            "_content": 70,
+            "_operator": 70,
             "_bounds": {
               "$type": 344,
               "_abstract": false,
@@ -144117,7 +144117,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": {
           "$type": 344,
           "_abstract": true,
@@ -144185,7 +144185,7 @@
       },
       "_constraint": {
         "$type": 374,
-        "_content": 70,
+        "_operator": 70,
         "_bounds": {
           "$type": 344,
           "_abstract": false,
@@ -144243,7 +144243,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": {
         "$type": 344,
         "_abstract": true,
@@ -144300,7 +144300,7 @@
     "pattern": "constraint",
     "input": {
       "$type": 374,
-      "_content": 70,
+      "_operator": 70,
       "_bounds": {
         "$type": 344,
         "_abstract": false,
@@ -146340,7 +146340,7 @@
                           "_expression": {
                             "$type": 353,
                             "_object": 278,
-                            "_content": 63,
+                            "_operator": 63,
                             "_property": {
                               "$type": 499,
                               "_content": {
@@ -146359,7 +146359,7 @@
                     "_object": {
                       "$type": 258,
                       "_object": 278,
-                      "_optional_chain": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -146575,7 +146575,7 @@
                       "_expression": {
                         "$type": 353,
                         "_object": 278,
-                        "_content": 63,
+                        "_operator": 63,
                         "_property": {
                           "$type": 499,
                           "_content": {
@@ -146594,7 +146594,7 @@
                 "_object": {
                   "$type": 258,
                   "_object": 278,
-                  "_optional_chain": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -146826,7 +146826,7 @@
                     "_expression": {
                       "$type": 353,
                       "_object": 278,
-                      "_content": 63,
+                      "_operator": 63,
                       "_property": {
                         "$type": 499,
                         "_content": {
@@ -146845,7 +146845,7 @@
               "_object": {
                 "$type": 258,
                 "_object": 278,
-                "_optional_chain": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -147065,7 +147065,7 @@
                 "_expression": {
                   "$type": 353,
                   "_object": 278,
-                  "_content": 63,
+                  "_operator": 63,
                   "_property": {
                     "$type": 499,
                     "_content": {
@@ -147084,7 +147084,7 @@
           "_object": {
             "$type": 258,
             "_object": 278,
-            "_optional_chain": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -147296,7 +147296,7 @@
               "_expression": {
                 "$type": 353,
                 "_object": 278,
-                "_content": 63,
+                "_operator": 63,
                 "_property": {
                   "$type": 499,
                   "_content": {
@@ -147315,7 +147315,7 @@
         "_object": {
           "$type": 258,
           "_object": 278,
-          "_optional_chain": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -147742,7 +147742,7 @@
             "_expression": {
               "$type": 353,
               "_object": 278,
-              "_content": 63,
+              "_operator": 63,
               "_property": {
                 "$type": 499,
                 "_content": {
@@ -148463,7 +148463,7 @@
           "_expression": {
             "$type": 353,
             "_object": 278,
-            "_content": 63,
+            "_operator": 63,
             "_property": {
               "$type": 499,
               "_content": {
@@ -148505,7 +148505,7 @@
         "_expression": {
           "$type": 353,
           "_object": 278,
-          "_content": 63,
+          "_operator": 63,
           "_property": {
             "$type": 499,
             "_content": {
@@ -148543,7 +148543,7 @@
       "_expression": {
         "$type": 353,
         "_object": 278,
-        "_content": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -148578,7 +148578,7 @@
     "input": {
       "$type": 353,
       "_object": 278,
-      "_content": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {
@@ -148614,7 +148614,7 @@
       "_object": {
         "$type": 258,
         "_object": 278,
-        "_optional_chain": 63,
+        "_operator": 63,
         "_property": {
           "$type": 499,
           "_content": {
@@ -148654,7 +148654,7 @@
     "input": {
       "$type": 258,
       "_object": 278,
-      "_optional_chain": 63,
+      "_operator": 63,
       "_property": {
         "$type": 499,
         "_content": {

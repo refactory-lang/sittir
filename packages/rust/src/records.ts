@@ -9,7 +9,7 @@ export const records = {
 	SourceFileNode: { words: 9, shebang: { word: 2, width: 5 }, statements: { word: 7, width: 2, run: 5 } },
 	ExpressionStatementNode: { words: 7, content: { word: 2, width: 5 } },
 	MacroRuleNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	TokenBindingPatternNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	TokenBindingPatternNode: { words: 12, name: { word: 2, width: 5 }, fragment: { word: 7, width: 5 } },
 	TokenRepetitionPatternNode: {
 		words: 14,
 		token_patterns: { word: 2, width: 2, run: 5 },
@@ -58,7 +58,7 @@ export const records = {
 		name: { word: 7, width: 5 },
 		type_: { word: 12, width: 5 }
 	},
-	OrderedFieldDeclarationListNode: { words: 7, attributes: { word: 2, width: 5 } },
+	OrderedFieldDeclarationListNode: { words: 7, elements: { word: 2, width: 5 } },
 	ExternCrateDeclarationNode: {
 		words: 17,
 		visibility_modifier: { word: 2, width: 5 },
@@ -425,7 +425,7 @@ export const records = {
 	},
 	RangeExpressionPostfixNode: { words: 7, start: { word: 2, width: 5 } },
 	RangeExpressionPrefixNode: { words: 7, end: { word: 2, width: 5 } },
-	RangeExpressionBareNode: { words: 7, range_expression_bare: { word: 2, width: 5 } },
+	RangeExpressionBareNode: { words: 2 },
 	ExpressionStatementWithSemiNode: { words: 7, expression: { word: 2, width: 5 } },
 	ForeignModItemSemiNode: { words: 8, unsafe_: { word: 2, bit: 0 }, extern_modifier: { word: 3, width: 5 } },
 	ForeignModItemBodyNode: {
@@ -478,8 +478,8 @@ export const records = {
 	MacroDefinitionParenNode: { words: 12, name: { word: 2, width: 5 }, macro_rules: { word: 7, width: 5 } },
 	MacroDefinitionBracketNode: { words: 12, name: { word: 2, width: 5 }, macro_rules: { word: 7, width: 5 } },
 	MacroDefinitionBraceNode: { words: 12, name: { word: 2, width: 5 }, macro_rules: { word: 7, width: 5 } },
-	RangePatternPrefixNode: { words: 12, content: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	RangePatternWithLeftWithRightNode: { words: 12, content: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
+	RangePatternPrefixNode: { words: 12, operator: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
+	RangePatternWithLeftWithRightNode: { words: 12, operator: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	RangePatternWithLeftNode: { words: 12, left: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
 	StructItemBraceNode: {
 		words: 27,

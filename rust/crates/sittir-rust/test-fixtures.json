@@ -22822,7 +22822,7 @@
           },
           "_body": {
             "$type": 203,
-            "_attributes": {
+            "_elements": {
               "$type": 345,
               "_item": [
                 {
@@ -22869,7 +22869,7 @@
           },
           "_body": {
             "$type": 203,
-            "_attributes": {
+            "_elements": {
               "$type": 345,
               "_item": [
                 {
@@ -22893,7 +22893,7 @@
           },
           "_body": {
             "$type": 203,
-            "_attributes": {
+            "_elements": {
               "$type": 345,
               "_item": [
                 {
@@ -22932,7 +22932,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
-    "expectedReparseTree": "(source_file statements: (struct_item_unit name: (type_identifier)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item content: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))))",
+    "expectedReparseTree": "(source_file statements: (struct_item_unit name: (type_identifier)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item content: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))))",
     "wrappedText": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "wrappedOffset": 0
   },
@@ -24639,7 +24639,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -24685,7 +24685,7 @@
     "pattern": "struct_item_tuple",
     "edits": [],
     "expectedSourceOut": "struct Color(pub i32, i32, i32);",
-    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)))))",
+    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)))))",
     "wrappedText": "struct Color(pub i32, i32, i32);",
     "wrappedOffset": 0
   },
@@ -24704,7 +24704,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -24734,7 +24734,7 @@
     "pattern": "struct_item_tuple",
     "edits": [],
     "expectedSourceOut": "struct Inches(i32);",
-    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type)))))",
+    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type)))))",
     "wrappedText": "struct Inches(i32);",
     "wrappedOffset": 0
   },
@@ -24753,7 +24753,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -24789,7 +24789,7 @@
     "pattern": "struct_item_tuple",
     "edits": [],
     "expectedSourceOut": "struct Empty(pub ());",
-    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type)))))",
+    "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type)))))",
     "wrappedText": "struct Empty(pub ());",
     "wrappedOffset": 0
   },
@@ -24799,7 +24799,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -24844,7 +24844,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(pub i32, i32, i32)",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))",
     "wrappedText": "struct Color(pub i32, i32, i32);",
     "wrappedOffset": 12
   },
@@ -24854,7 +24854,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -24883,7 +24883,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(i32)",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))",
     "wrappedText": "struct Color(i32);",
     "wrappedOffset": 12
   },
@@ -24893,7 +24893,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -24928,7 +24928,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(pub ())",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))",
     "wrappedText": "struct Color(pub ());",
     "wrappedOffset": 12
   },
@@ -29021,7 +29021,7 @@
                     },
                     "_body": {
                       "$type": 203,
-                      "_attributes": {
+                      "_elements": {
                         "$type": 345,
                         "_item": [
                           {
@@ -29285,7 +29285,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\npub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
-    "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier))) (attribute_item content: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier))) (attribute_item content: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "\npub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -29358,7 +29358,7 @@
                 },
                 "_body": {
                   "$type": 203,
-                  "_attributes": {
+                  "_elements": {
                     "$type": 345,
                     "_item": [
                       {
@@ -29397,7 +29397,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))))",
     "wrappedText": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 0
   },
@@ -30430,7 +30430,7 @@
               },
               "_body": {
                 "$type": 203,
-                "_attributes": {
+                "_elements": {
                   "$type": 345,
                   "_item": [
                     {
@@ -30468,7 +30468,7 @@
     "pattern": "enum_variant_list",
     "edits": [],
     "expectedSourceOut": "{\n    None,\n    Some(T),\n}",
-    "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))))",
+    "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))))",
     "wrappedText": "pub enum Error {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 15
   },
@@ -30694,7 +30694,7 @@
             },
             "_body": {
               "$type": 203,
-              "_attributes": {
+              "_elements": {
                 "$type": 345,
                 "_item": [
                   {
@@ -30731,7 +30731,7 @@
     "pattern": "enum_variant_list_elements",
     "edits": [],
     "expectedSourceOut": "None,\nSome(T),",
-    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))",
     "wrappedText": "pub enum Error {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 21
   },
@@ -30973,7 +30973,7 @@
         },
         "_body": {
           "$type": 203,
-          "_attributes": {
+          "_elements": {
             "$type": 345,
             "_item": [
               {
@@ -31007,7 +31007,7 @@
     "pattern": "attributed_enum_variant",
     "edits": [],
     "expectedSourceOut": "Some(T)",
-    "expectedReparseTree": "(attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))",
+    "expectedReparseTree": "(attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))",
     "wrappedText": "pub enum Error {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 31
   },
@@ -31258,7 +31258,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -31291,7 +31291,7 @@
     "pattern": "enum_variant",
     "edits": [],
     "expectedSourceOut": "Some(T)",
-    "expectedReparseTree": "(enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))",
+    "expectedReparseTree": "(enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))",
     "wrappedText": "pub enum Error {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 31
   },
@@ -31478,7 +31478,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -31510,7 +31510,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(T)",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))",
     "wrappedText": "struct Color(T);",
     "wrappedOffset": 12
   },
@@ -51090,7 +51090,7 @@
                     },
                     "_body": {
                       "$type": 203,
-                      "_attributes": {
+                      "_elements": {
                         "$type": 345,
                         "_item": [
                           {
@@ -51305,7 +51305,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
-    "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) statements: (use_declaration argument: (qualified_identifier qualifier: (identifier) name: (identifier))) statements: (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) statements: (use_declaration argument: (qualified_identifier qualifier: (identifier) name: (identifier))) statements: (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "wrappedOffset": 0
   },
@@ -53029,7 +53029,7 @@
                 },
                 "_body": {
                   "$type": 203,
-                  "_attributes": {
+                  "_elements": {
                     "$type": 345,
                     "_item": [
                       {
@@ -53241,7 +53241,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
     "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 0
   },
@@ -53467,7 +53467,7 @@
               },
               "_body": {
                 "$type": 203,
-                "_attributes": {
+                "_elements": {
                   "$type": 345,
                   "_item": [
                     {
@@ -53678,7 +53678,7 @@
     "pattern": "enum_variant_list",
     "edits": [],
     "expectedSourceOut": "{\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
-    "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))",
+    "expectedReparseTree": "(enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))",
     "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 15
   },
@@ -53762,7 +53762,7 @@
             },
             "_body": {
               "$type": 203,
-              "_attributes": {
+              "_elements": {
                 "$type": 345,
                 "_item": [
                   {
@@ -53972,7 +53972,7 @@
     "pattern": "enum_variant_list_elements",
     "edits": [],
     "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\nWrongCase(String),\n#[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\nOutOfBounds { idx: usize, limits: Limits },",
-    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))",
+    "expectedReparseTree": "(enum_variant_list_elements item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))",
     "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 21
   },
@@ -54053,7 +54053,7 @@
         },
         "_body": {
           "$type": 203,
-          "_attributes": {
+          "_elements": {
             "$type": 345,
             "_item": [
               {
@@ -54087,7 +54087,7 @@
     "pattern": "attributed_enum_variant",
     "edits": [],
     "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\nWrongCase(String)",
-    "expectedReparseTree": "(attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))",
+    "expectedReparseTree": "(attributed_enum_variant (attribute_item content: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))",
     "wrappedText": "pub enum Error {\n    None,\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n}",
     "wrappedOffset": 31
   },
@@ -54394,7 +54394,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -54427,7 +54427,7 @@
     "pattern": "enum_variant",
     "edits": [],
     "expectedSourceOut": "WrongCase(String)",
-    "expectedReparseTree": "(enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))",
+    "expectedReparseTree": "(enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))",
     "wrappedText": "pub enum Error {\n    None,\n    WrongCase(String),\n}",
     "wrappedOffset": 31
   },
@@ -54527,7 +54527,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -54559,7 +54559,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(String)",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))",
     "wrappedText": "struct Color(String);",
     "wrappedOffset": 12
   },
@@ -95607,7 +95607,7 @@
           },
           "_body": {
             "$type": 203,
-            "_attributes": {
+            "_elements": {
               "$type": 345,
               "_item": [
                 {
@@ -95699,7 +95699,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\ncrate mod foo;\ncrate struct Foo(crate crate::Bar);\ncrate fn foo() { }\ncrate const X: u32 = 0;\n",
-    "expectedReparseTree": "(source_file statements: (mod_item_external visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier)) statements: (struct_item_tuple visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier)))))) statements: (function_item visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier) parameters: (parameters) body: (block)) statements: (const_item visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier) type: (primitive_type) value: (integer_literal_decimal)))",
+    "expectedReparseTree": "(source_file statements: (mod_item_external visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier)) statements: (struct_item_tuple visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier)))))) statements: (function_item visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier) parameters: (parameters) body: (block)) statements: (const_item visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (identifier) type: (primitive_type) value: (integer_literal_decimal)))",
     "wrappedText": "\ncrate mod foo;\ncrate struct Foo(crate crate::Bar);\ncrate fn foo() { }\ncrate const X: u32 = 0;\n",
     "wrappedOffset": 0
   },
@@ -95885,7 +95885,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -95926,7 +95926,7 @@
     "pattern": "struct_item_tuple",
     "edits": [],
     "expectedSourceOut": "crate struct Foo(crate crate::Bar);",
-    "expectedReparseTree": "(struct_item_tuple visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier))))))",
+    "expectedReparseTree": "(struct_item_tuple visibility_modifier: (visibility_modifier (crate_visibility_modifier)) name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier))))))",
     "wrappedText": "crate struct Foo(crate crate::Bar);",
     "wrappedOffset": 0
   },
@@ -95994,7 +95994,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -96034,7 +96034,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "(crate crate::Bar)",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier)))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (crate_visibility_modifier)) type: (qualified_identifier qualifier: (crate) name: (type_identifier)))))",
     "wrappedText": "struct Color(crate crate::Bar);",
     "wrappedOffset": 12
   },
@@ -98551,7 +98551,7 @@
           },
           "_body": {
             "$type": 203,
-            "_attributes": {
+            "_elements": {
               "$type": 345,
               "_item": [
                 {
@@ -98594,7 +98594,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\npub struct Loaf<T: Sized, const N: usize = 1>([T; N]);\n",
-    "expectedReparseTree": "(source_file statements: (struct_item_tuple visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))) item: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type) default: (integer_literal_decimal))))) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (struct_item_tuple visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))) item: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type) default: (integer_literal_decimal))))) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier)))))))",
     "wrappedText": "\npub struct Loaf<T: Sized, const N: usize = 1>([T; N]);\n",
     "wrappedOffset": 0
   },
@@ -98670,7 +98670,7 @@
       },
       "_body": {
         "$type": 203,
-        "_attributes": {
+        "_elements": {
           "$type": 345,
           "_item": [
             {
@@ -98710,7 +98710,7 @@
     "pattern": "struct_item_tuple",
     "edits": [],
     "expectedSourceOut": "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
-    "expectedReparseTree": "(struct_item_tuple visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))) item: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type) default: (integer_literal_decimal))))) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier))))))",
+    "expectedReparseTree": "(struct_item_tuple visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))) item: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type) default: (integer_literal_decimal))))) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier))))))",
     "wrappedText": "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
     "wrappedOffset": 0
   },
@@ -99256,7 +99256,7 @@
     "pattern": "ordered_field_declaration_list",
     "input": {
       "$type": 203,
-      "_attributes": {
+      "_elements": {
         "$type": 345,
         "_item": [
           {
@@ -99295,7 +99295,7 @@
     "pattern": "ordered_field_declaration_list",
     "edits": [],
     "expectedSourceOut": "([T; N])",
-    "expectedReparseTree": "(ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier)))))",
+    "expectedReparseTree": "(ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (array_type element: (type_identifier) length: (identifier)))))",
     "wrappedText": "struct Color([T; N]);",
     "wrappedOffset": 12
   },
@@ -103625,8 +103625,7 @@
           "_content": {
             "$type": 394,
             "_expression": {
-              "$type": 393,
-              "_range_expression_bare": 100
+              "$type": 393
             }
           }
         },
@@ -103932,8 +103931,7 @@
       "_content": {
         "$type": 394,
         "_expression": {
-          "$type": 393,
-          "_range_expression_bare": 100
+          "$type": 393
         }
       }
     },
@@ -104379,8 +104377,7 @@
     "input": {
       "$type": 394,
       "_expression": {
-        "$type": 393,
-        "_range_expression_bare": 100
+        "$type": 393
       }
     },
     "expectedOutput": "..;",
@@ -105369,8 +105366,7 @@
     "grammar": "rust",
     "pattern": "range_expression_bare",
     "input": {
-      "$type": 393,
-      "_range_expression_bare": 100
+      "$type": 393
     },
     "expectedOutput": "..",
     "options": {
@@ -156106,7 +156102,7 @@
                         "$type": 127,
                         "_name": "e"
                       },
-                      "_type": 12
+                      "_fragment": 12
                     }
                   ]
                 },
@@ -156185,7 +156181,7 @@
                         "$type": 127,
                         "_name": "e"
                       },
-                      "_type": 12
+                      "_fragment": 12
                     }
                   ]
                 },
@@ -156294,7 +156290,7 @@
                             "$type": 127,
                             "_name": "x"
                           },
-                          "_type": 12
+                          "_fragment": 12
                         },
                         {
                           "$type": 189,
@@ -156319,7 +156315,7 @@
                                     "$type": 127,
                                     "_name": "y"
                                   },
-                                  "_type": 12,
+                                  "_fragment": 12,
                                   "$_layout": {
                                     "trivia": {
                                       "leading": [
@@ -156484,7 +156480,7 @@
                             "$type": 127,
                             "_name": "e"
                           },
-                          "_type": 12
+                          "_fragment": 12
                         }
                       ],
                       "_separator": {
@@ -156617,7 +156613,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
-    "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
+    "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
     "wrappedText": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "wrappedOffset": 0
   },
@@ -156851,7 +156847,7 @@
                     "$type": 127,
                     "_name": "e"
                   },
-                  "_type": 12
+                  "_fragment": 12
                 }
               ]
             },
@@ -156930,7 +156926,7 @@
                     "$type": 127,
                     "_name": "e"
                   },
-                  "_type": 12
+                  "_fragment": 12
                 }
               ]
             },
@@ -157023,7 +157019,7 @@
     "pattern": "macro_definition_brace",
     "edits": [],
     "expectedSourceOut": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
-    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))",
+    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
     "wrappedOffset": 0
   },
@@ -157054,7 +157050,7 @@
                         "$type": 127,
                         "_name": "x"
                       },
-                      "_type": 12
+                      "_fragment": 12
                     },
                     {
                       "$type": 189,
@@ -157079,7 +157075,7 @@
                                 "$type": 127,
                                 "_name": "y"
                               },
-                              "_type": 12,
+                              "_fragment": 12,
                               "$_layout": {
                                 "trivia": {
                                   "leading": [
@@ -157228,7 +157224,7 @@
     "pattern": "macro_definition_brace",
     "edits": [],
     "expectedSourceOut": "macro_rules! o_O {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}",
-    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))))",
+    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))))",
     "wrappedText": "macro_rules! o_O {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}",
     "wrappedOffset": 0
   },
@@ -157259,7 +157255,7 @@
                         "$type": 127,
                         "_name": "e"
                       },
-                      "_type": 12
+                      "_fragment": 12
                     }
                   ],
                   "_separator": {
@@ -157332,7 +157328,7 @@
     "pattern": "macro_definition_brace",
     "edits": [],
     "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
-    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))))",
+    "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))))",
     "wrappedText": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
     "wrappedOffset": 0
   },
@@ -157522,7 +157518,7 @@
                   "$type": 127,
                   "_name": "e"
                 },
-                "_type": 12
+                "_fragment": 12
               }
             ]
           },
@@ -157601,7 +157597,7 @@
                   "$type": 127,
                   "_name": "e"
                 },
-                "_type": 12
+                "_fragment": 12
               }
             ]
           },
@@ -157683,7 +157679,7 @@
     "pattern": "macro_rules",
     "edits": [],
     "expectedSourceOut": "(x => $e:expr) => (println!(\"mode X: {}\", $e));\n(y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
+    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
     "wrappedOffset": 23
   },
@@ -157708,7 +157704,7 @@
                       "$type": 127,
                       "_name": "x"
                     },
-                    "_type": 12
+                    "_fragment": 12
                   },
                   {
                     "$type": 189,
@@ -157733,7 +157729,7 @@
                               "$type": 127,
                               "_name": "y"
                             },
-                            "_type": 12,
+                            "_fragment": 12,
                             "$_layout": {
                               "trivia": {
                                 "leading": [
@@ -157869,7 +157865,7 @@
     "pattern": "macro_rules",
     "edits": [],
     "expectedSourceOut": "(\n$($x:expr; [ $( $y:expr ),* ]);*\n) => {\n$($($x + $e),*),*\n}",
-    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))",
+    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))",
     "wrappedText": "macro_rules! foo {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}",
     "wrappedOffset": 23
   },
@@ -157894,7 +157890,7 @@
                       "$type": 127,
                       "_name": "e"
                     },
-                    "_type": 12
+                    "_fragment": 12
                   }
                 ],
                 "_separator": {
@@ -157954,7 +157950,7 @@
     "pattern": "macro_rules",
     "edits": [],
     "expectedSourceOut": "($($e:expr),?) => {\n    $($e),?\n};",
-    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))",
+    "expectedReparseTree": "(macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))",
     "wrappedText": "macro_rules! foo {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
     "wrappedOffset": 23
   },
@@ -158168,7 +158164,7 @@
               "$type": 127,
               "_name": "e"
             },
-            "_type": 12
+            "_fragment": 12
           }
         ]
       },
@@ -158239,7 +158235,7 @@
     "pattern": "macro_rule",
     "edits": [],
     "expectedSourceOut": "(x => $e:expr) => (println!(\"mode X: {}\", $e))",
-    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))",
+    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e))\n}",
     "wrappedOffset": 23
   },
@@ -158269,7 +158265,7 @@
               "$type": 127,
               "_name": "e"
             },
-            "_type": 12
+            "_fragment": 12
           }
         ]
       },
@@ -158340,7 +158336,7 @@
     "pattern": "macro_rule",
     "edits": [],
     "expectedSourceOut": "(y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))",
+    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))",
     "wrappedText": "macro_rules! foo {\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
     "wrappedOffset": 23
   },
@@ -158362,7 +158358,7 @@
                   "$type": 127,
                   "_name": "x"
                 },
-                "_type": 12
+                "_fragment": 12
               },
               {
                 "$type": 189,
@@ -158387,7 +158383,7 @@
                           "$type": 127,
                           "_name": "y"
                         },
-                        "_type": 12,
+                        "_fragment": 12,
                         "$_layout": {
                           "trivia": {
                             "leading": [
@@ -158520,7 +158516,7 @@
     "pattern": "macro_rule",
     "edits": [],
     "expectedSourceOut": "(\n$($x:expr; [ $( $y:expr ),* ]);*\n) => {\n$($($x + $e),*),*\n}",
-    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))",
+    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))",
     "wrappedText": "macro_rules! foo {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}",
     "wrappedOffset": 23
   },
@@ -158542,7 +158538,7 @@
                   "$type": 127,
                   "_name": "e"
                 },
-                "_type": 12
+                "_fragment": 12
               }
             ],
             "_separator": {
@@ -158599,7 +158595,7 @@
     "pattern": "macro_rule",
     "edits": [],
     "expectedSourceOut": "($($e:expr),?) => {\n    $($e),?\n}",
-    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))",
+    "expectedReparseTree": "(macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))",
     "wrappedText": "macro_rules! foo {\n    ($($e:expr),?) => {\n        $($e),?\n    }\n}",
     "wrappedOffset": 23
   },
@@ -158712,7 +158708,7 @@
             "$type": 127,
             "_name": "e"
           },
-          "_type": 12
+          "_fragment": 12
         }
       ]
     },
@@ -158730,7 +158726,7 @@
     "pattern": "token_tree_pattern_paren",
     "edits": [],
     "expectedSourceOut": "(x => $e:expr)",
-    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))",
+    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => {}\n}",
     "wrappedOffset": 23
   },
@@ -158758,7 +158754,7 @@
             "$type": 127,
             "_name": "e"
           },
-          "_type": 12
+          "_fragment": 12
         }
       ]
     },
@@ -158776,7 +158772,7 @@
     "pattern": "token_tree_pattern_paren",
     "edits": [],
     "expectedSourceOut": "(y => $e:expr)",
-    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)))",
+    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)))",
     "wrappedText": "macro_rules! foo {\n    (y => $e:expr) => {}\n}",
     "wrappedOffset": 23
   },
@@ -158796,7 +158792,7 @@
                 "$type": 127,
                 "_name": "x"
               },
-              "_type": 12
+              "_fragment": 12
             },
             {
               "$type": 189,
@@ -158821,7 +158817,7 @@
                         "$type": 127,
                         "_name": "y"
                       },
-                      "_type": 12,
+                      "_fragment": 12,
                       "$_layout": {
                         "trivia": {
                           "leading": [
@@ -158892,7 +158888,7 @@
     "pattern": "token_tree_pattern_paren",
     "edits": [],
     "expectedSourceOut": "(\n$($x:expr; [ $( $y:expr ),* ]);*\n)",
-    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text)))",
+    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text)))",
     "wrappedText": "macro_rules! foo {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {}\n}",
     "wrappedOffset": 23
   },
@@ -158912,7 +158908,7 @@
                 "$type": 127,
                 "_name": "e"
               },
-              "_type": 12
+              "_fragment": 12
             }
           ],
           "_separator": {
@@ -158937,7 +158933,7 @@
     "pattern": "token_tree_pattern_paren",
     "edits": [],
     "expectedSourceOut": "($($e:expr),?)",
-    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text)))",
+    "expectedReparseTree": "(token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text)))",
     "wrappedText": "macro_rules! foo {\n    ($($e:expr),?) => {}\n}",
     "wrappedOffset": 23
   },
@@ -160302,7 +160298,7 @@
         "$type": 127,
         "_name": "e"
       },
-      "_type": 12
+      "_fragment": 12
     },
     "expectedOutput": "$e:expr",
     "options": {
@@ -160318,7 +160314,7 @@
     "pattern": "token_binding_pattern",
     "edits": [],
     "expectedSourceOut": "$e:expr",
-    "expectedReparseTree": "(token_binding_pattern name: (metavariable) type: (fragment_specifier))",
+    "expectedReparseTree": "(token_binding_pattern name: (metavariable) fragment: (fragment_specifier))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => {}\n}",
     "wrappedOffset": 29
   },
@@ -160332,7 +160328,7 @@
         "$type": 127,
         "_name": "e"
       },
-      "_type": 12
+      "_fragment": 12
     },
     "expectedOutput": "$e:expr",
     "options": {
@@ -160348,7 +160344,7 @@
     "pattern": "token_binding_pattern",
     "edits": [],
     "expectedSourceOut": "$e:expr",
-    "expectedReparseTree": "(token_binding_pattern name: (metavariable) type: (fragment_specifier))",
+    "expectedReparseTree": "(token_binding_pattern name: (metavariable) fragment: (fragment_specifier))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => {}\n}",
     "wrappedOffset": 29
   },
@@ -160362,7 +160358,7 @@
         "$type": 127,
         "_name": "x"
       },
-      "_type": 12
+      "_fragment": 12
     },
     "expectedOutput": "$x:expr",
     "options": {
@@ -160378,7 +160374,7 @@
     "pattern": "token_binding_pattern",
     "edits": [],
     "expectedSourceOut": "$x:expr",
-    "expectedReparseTree": "(token_binding_pattern name: (metavariable) type: (fragment_specifier))",
+    "expectedReparseTree": "(token_binding_pattern name: (metavariable) fragment: (fragment_specifier))",
     "wrappedText": "macro_rules! foo {\n    (x => $x:expr) => {}\n}",
     "wrappedOffset": 29
   },
@@ -160392,7 +160388,7 @@
         "$type": 127,
         "_name": "y"
       },
-      "_type": 12
+      "_fragment": 12
     },
     "expectedOutput": "$y:expr",
     "options": {
@@ -160408,7 +160404,7 @@
     "pattern": "token_binding_pattern",
     "edits": [],
     "expectedSourceOut": "$y:expr",
-    "expectedReparseTree": "(token_binding_pattern name: (metavariable) type: (fragment_specifier))",
+    "expectedReparseTree": "(token_binding_pattern name: (metavariable) fragment: (fragment_specifier))",
     "wrappedText": "macro_rules! foo {\n    (x => $y:expr) => {}\n}",
     "wrappedOffset": 29
   },
@@ -160422,7 +160418,7 @@
         "$type": 127,
         "_name": "e"
       },
-      "_type": 12
+      "_fragment": 12
     },
     "expectedOutput": "$e:expr",
     "options": {
@@ -160438,7 +160434,7 @@
     "pattern": "token_binding_pattern",
     "edits": [],
     "expectedSourceOut": "$e:expr",
-    "expectedReparseTree": "(token_binding_pattern name: (metavariable) type: (fragment_specifier))",
+    "expectedReparseTree": "(token_binding_pattern name: (metavariable) fragment: (fragment_specifier))",
     "wrappedText": "macro_rules! foo {\n    (x => $e:expr) => {}\n}",
     "wrappedOffset": 29
   },
@@ -160715,7 +160711,7 @@
             "$type": 127,
             "_name": "x"
           },
-          "_type": 12
+          "_fragment": 12
         },
         {
           "$type": 189,
@@ -160740,7 +160736,7 @@
                     "$type": 127,
                     "_name": "y"
                   },
-                  "_type": 12,
+                  "_fragment": 12,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -160799,7 +160795,7 @@
     "pattern": "token_repetition_pattern",
     "edits": [],
     "expectedSourceOut": "$($x:expr; [ $( $y:expr ),* ]);*",
-    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))",
+    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))",
     "wrappedText": "macro_rules! foo {\n    ($($x:expr; [ $( $y:expr ),* ]);*) => {}\n}",
     "wrappedOffset": 24
   },
@@ -160816,7 +160812,7 @@
             "$type": 127,
             "_name": "y"
           },
-          "_type": 12,
+          "_fragment": 12,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -160849,7 +160845,7 @@
     "pattern": "token_repetition_pattern",
     "edits": [],
     "expectedSourceOut": "$( $y:expr ),*",
-    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))",
+    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))",
     "wrappedText": "macro_rules! foo {\n    ($( $y:expr ),*) => {}\n}",
     "wrappedOffset": 24
   },
@@ -160866,7 +160862,7 @@
             "$type": 127,
             "_name": "e"
           },
-          "_type": 12
+          "_fragment": 12
         }
       ],
       "_separator": {
@@ -160889,7 +160885,7 @@
     "pattern": "token_repetition_pattern",
     "edits": [],
     "expectedSourceOut": "$($e:expr),?",
-    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))",
+    "expectedReparseTree": "(token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))",
     "wrappedText": "macro_rules! foo {\n    ($($e:expr),?) => {}\n}",
     "wrappedOffset": 24
   },
@@ -160909,7 +160905,7 @@
                 "$type": 127,
                 "_name": "y"
               },
-              "_type": 12,
+              "_fragment": 12,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -160954,7 +160950,7 @@
     "pattern": "token_tree_pattern_bracket",
     "edits": [],
     "expectedSourceOut": "[ $( $y:expr ),* ]",
-    "expectedReparseTree": "(token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text)))",
+    "expectedReparseTree": "(token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text)))",
     "wrappedText": "macro_rules! foo {\n    ($($x:expr; [ $( $y:expr ),* ]);*) => {}\n}",
     "wrappedOffset": 35
   },
@@ -169270,7 +169266,7 @@
                           },
                           "_content": {
                             "$type": 420,
-                            "_content": 48,
+                            "_operator": 48,
                             "_right": {
                               "$type": 141,
                               "_content": "5",
@@ -169320,7 +169316,7 @@
                               },
                               "_content": {
                                 "$type": 420,
-                                "_content": 48,
+                                "_operator": 48,
                                 "_right": {
                                   "$type": 141,
                                   "_content": "5",
@@ -169370,7 +169366,7 @@
                           },
                           "_content": {
                             "$type": 420,
-                            "_content": 48,
+                            "_operator": 48,
                             "_right": {
                               "$type": 1,
                               "$text": "c"
@@ -169403,7 +169399,7 @@
                           },
                           "_content": {
                             "$type": 420,
-                            "_content": 137,
+                            "_operator": 137,
                             "_right": {
                               "$type": 1,
                               "$text": "c"
@@ -169443,7 +169439,7 @@
                       "$type": 296,
                       "_pattern": {
                         "$type": 419,
-                        "_content": 100,
+                        "_operator": 100,
                         "_right": {
                           "$type": 1,
                           "$text": "d"
@@ -169469,7 +169465,7 @@
                       },
                       "_pattern": {
                         "$type": 419,
-                        "_content": 137,
+                        "_operator": 137,
                         "_right": {
                           "$type": 141,
                           "_content": "5"
@@ -169715,7 +169711,7 @@
                       },
                       "_content": {
                         "$type": 420,
-                        "_content": 48,
+                        "_operator": 48,
                         "_right": {
                           "$type": 141,
                           "_content": "5",
@@ -169765,7 +169761,7 @@
                           },
                           "_content": {
                             "$type": 420,
-                            "_content": 48,
+                            "_operator": 48,
                             "_right": {
                               "$type": 141,
                               "_content": "5",
@@ -169815,7 +169811,7 @@
                       },
                       "_content": {
                         "$type": 420,
-                        "_content": 48,
+                        "_operator": 48,
                         "_right": {
                           "$type": 1,
                           "$text": "c"
@@ -169848,7 +169844,7 @@
                       },
                       "_content": {
                         "$type": 420,
-                        "_content": 137,
+                        "_operator": 137,
                         "_right": {
                           "$type": 1,
                           "$text": "c"
@@ -169888,7 +169884,7 @@
                   "$type": 296,
                   "_pattern": {
                     "$type": 419,
-                    "_content": 100,
+                    "_operator": 100,
                     "_right": {
                       "$type": 1,
                       "$text": "d"
@@ -169914,7 +169910,7 @@
                   },
                   "_pattern": {
                     "$type": 419,
-                    "_content": 137,
+                    "_operator": 137,
                     "_right": {
                       "$type": 141,
                       "_content": "5"
@@ -170173,7 +170169,7 @@
                     },
                     "_content": {
                       "$type": 420,
-                      "_content": 48,
+                      "_operator": 48,
                       "_right": {
                         "$type": 141,
                         "_content": "5",
@@ -170223,7 +170219,7 @@
                         },
                         "_content": {
                           "$type": 420,
-                          "_content": 48,
+                          "_operator": 48,
                           "_right": {
                             "$type": 141,
                             "_content": "5",
@@ -170273,7 +170269,7 @@
                     },
                     "_content": {
                       "$type": 420,
-                      "_content": 48,
+                      "_operator": 48,
                       "_right": {
                         "$type": 1,
                         "$text": "c"
@@ -170306,7 +170302,7 @@
                     },
                     "_content": {
                       "$type": 420,
-                      "_content": 137,
+                      "_operator": 137,
                       "_right": {
                         "$type": 1,
                         "$text": "c"
@@ -170346,7 +170342,7 @@
                 "$type": 296,
                 "_pattern": {
                   "$type": 419,
-                  "_content": 100,
+                  "_operator": 100,
                   "_right": {
                     "$type": 1,
                     "$text": "d"
@@ -170372,7 +170368,7 @@
                 },
                 "_pattern": {
                   "$type": 419,
-                  "_content": 137,
+                  "_operator": 137,
                   "_right": {
                     "$type": 141,
                     "_content": "5"
@@ -170621,7 +170617,7 @@
                   },
                   "_content": {
                     "$type": 420,
-                    "_content": 48,
+                    "_operator": 48,
                     "_right": {
                       "$type": 141,
                       "_content": "5",
@@ -170671,7 +170667,7 @@
                       },
                       "_content": {
                         "$type": 420,
-                        "_content": 48,
+                        "_operator": 48,
                         "_right": {
                           "$type": 141,
                           "_content": "5",
@@ -170721,7 +170717,7 @@
                   },
                   "_content": {
                     "$type": 420,
-                    "_content": 48,
+                    "_operator": 48,
                     "_right": {
                       "$type": 1,
                       "$text": "c"
@@ -170754,7 +170750,7 @@
                   },
                   "_content": {
                     "$type": 420,
-                    "_content": 137,
+                    "_operator": 137,
                     "_right": {
                       "$type": 1,
                       "$text": "c"
@@ -170794,7 +170790,7 @@
               "$type": 296,
               "_pattern": {
                 "$type": 419,
-                "_content": 100,
+                "_operator": 100,
                 "_right": {
                   "$type": 1,
                   "$text": "d"
@@ -170820,7 +170816,7 @@
               },
               "_pattern": {
                 "$type": 419,
-                "_content": 137,
+                "_operator": 137,
                 "_right": {
                   "$type": 141,
                   "_content": "5"
@@ -171059,7 +171055,7 @@
                 },
                 "_content": {
                   "$type": 420,
-                  "_content": 48,
+                  "_operator": 48,
                   "_right": {
                     "$type": 141,
                     "_content": "5",
@@ -171109,7 +171105,7 @@
                     },
                     "_content": {
                       "$type": 420,
-                      "_content": 48,
+                      "_operator": 48,
                       "_right": {
                         "$type": 141,
                         "_content": "5",
@@ -171159,7 +171155,7 @@
                 },
                 "_content": {
                   "$type": 420,
-                  "_content": 48,
+                  "_operator": 48,
                   "_right": {
                     "$type": 1,
                     "$text": "c"
@@ -171192,7 +171188,7 @@
                 },
                 "_content": {
                   "$type": 420,
-                  "_content": 137,
+                  "_operator": 137,
                   "_right": {
                     "$type": 1,
                     "$text": "c"
@@ -171232,7 +171228,7 @@
             "$type": 296,
             "_pattern": {
               "$type": 419,
-              "_content": 100,
+              "_operator": 100,
               "_right": {
                 "$type": 1,
                 "$text": "d"
@@ -171258,7 +171254,7 @@
             },
             "_pattern": {
               "$type": 419,
-              "_content": 137,
+              "_operator": 137,
               "_right": {
                 "$type": 141,
                 "_content": "5"
@@ -171515,7 +171511,7 @@
             },
             "_content": {
               "$type": 420,
-              "_content": 48,
+              "_operator": 48,
               "_right": {
                 "$type": 141,
                 "_content": "5",
@@ -171590,7 +171586,7 @@
                 },
                 "_content": {
                   "$type": 420,
-                  "_content": 48,
+                  "_operator": 48,
                   "_right": {
                     "$type": 141,
                     "_content": "5",
@@ -171665,7 +171661,7 @@
             },
             "_content": {
               "$type": 420,
-              "_content": 48,
+              "_operator": 48,
               "_right": {
                 "$type": 1,
                 "$text": "c"
@@ -171723,7 +171719,7 @@
             },
             "_content": {
               "$type": 420,
-              "_content": 137,
+              "_operator": 137,
               "_right": {
                 "$type": 1,
                 "$text": "c"
@@ -171813,7 +171809,7 @@
         "$type": 296,
         "_pattern": {
           "$type": 419,
-          "_content": 100,
+          "_operator": 100,
           "_right": {
             "$type": 1,
             "$text": "d"
@@ -172034,7 +172030,7 @@
           },
           "_content": {
             "$type": 420,
-            "_content": 48,
+            "_operator": 48,
             "_right": {
               "$type": 141,
               "_content": "5",
@@ -172101,7 +172097,7 @@
               },
               "_content": {
                 "$type": 420,
-                "_content": 48,
+                "_operator": 48,
                 "_right": {
                   "$type": 141,
                   "_content": "5",
@@ -172168,7 +172164,7 @@
           },
           "_content": {
             "$type": 420,
-            "_content": 48,
+            "_operator": 48,
             "_right": {
               "$type": 1,
               "$text": "c"
@@ -172218,7 +172214,7 @@
           },
           "_content": {
             "$type": 420,
-            "_content": 137,
+            "_operator": 137,
             "_right": {
               "$type": 1,
               "$text": "c"
@@ -172292,7 +172288,7 @@
       "$type": 296,
       "_pattern": {
         "$type": 419,
-        "_content": 100,
+        "_operator": 100,
         "_right": {
           "$type": 1,
           "$text": "d"
@@ -172334,7 +172330,7 @@
         },
         "_pattern": {
           "$type": 419,
-          "_content": 137,
+          "_operator": 137,
           "_right": {
             "$type": 141,
             "_content": "5"
@@ -172820,7 +172816,7 @@
         },
         "_content": {
           "$type": 420,
-          "_content": 48,
+          "_operator": 48,
           "_right": {
             "$type": 141,
             "_content": "5",
@@ -172881,7 +172877,7 @@
         },
         "_content": {
           "$type": 420,
-          "_content": 48,
+          "_operator": 48,
           "_right": {
             "$type": 1,
             "$text": "c"
@@ -172928,7 +172924,7 @@
         },
         "_content": {
           "$type": 420,
-          "_content": 137,
+          "_operator": 137,
           "_right": {
             "$type": 1,
             "$text": "c"
@@ -172969,7 +172965,7 @@
       },
       "_pattern": {
         "$type": 419,
-        "_content": 137,
+        "_operator": 137,
         "_right": {
           "$type": 141,
           "_content": "5"
@@ -173103,7 +173099,7 @@
             },
             "_content": {
               "$type": 420,
-              "_content": 48,
+              "_operator": 48,
               "_right": {
                 "$type": 141,
                 "_content": "5",
@@ -173228,7 +173224,7 @@
           },
           "_content": {
             "$type": 420,
-            "_content": 48,
+            "_operator": 48,
             "_right": {
               "$type": 141,
               "_content": "5",
@@ -173285,7 +173281,7 @@
       },
       "_content": {
         "$type": 420,
-        "_content": 48,
+        "_operator": 48,
         "_right": {
           "$type": 141,
           "_content": "5",
@@ -173339,7 +173335,7 @@
       },
       "_content": {
         "$type": 420,
-        "_content": 48,
+        "_operator": 48,
         "_right": {
           "$type": 141,
           "_content": "5",
@@ -173393,7 +173389,7 @@
       },
       "_content": {
         "$type": 420,
-        "_content": 48,
+        "_operator": 48,
         "_right": {
           "$type": 1,
           "$text": "c"
@@ -173433,7 +173429,7 @@
       },
       "_content": {
         "$type": 420,
-        "_content": 137,
+        "_operator": 137,
         "_right": {
           "$type": 1,
           "$text": "c"
@@ -173645,7 +173641,7 @@
     "pattern": "range_pattern_with_left_with_right",
     "input": {
       "$type": 420,
-      "_content": 48,
+      "_operator": 48,
       "_right": {
         "$type": 141,
         "_content": "5",
@@ -173685,7 +173681,7 @@
     "pattern": "range_pattern_with_left_with_right",
     "input": {
       "$type": 420,
-      "_content": 48,
+      "_operator": 48,
       "_right": {
         "$type": 141,
         "_content": "5",
@@ -173725,7 +173721,7 @@
     "pattern": "range_pattern_with_left_with_right",
     "input": {
       "$type": 420,
-      "_content": 48,
+      "_operator": 48,
       "_right": {
         "$type": 1,
         "$text": "c"
@@ -173758,7 +173754,7 @@
     "pattern": "range_pattern_with_left_with_right",
     "input": {
       "$type": 420,
-      "_content": 137,
+      "_operator": 137,
       "_right": {
         "$type": 1,
         "$text": "c"
@@ -173791,7 +173787,7 @@
     "pattern": "range_pattern_prefix",
     "input": {
       "$type": 419,
-      "_content": 100,
+      "_operator": 100,
       "_right": {
         "$type": 1,
         "$text": "d"
@@ -173824,7 +173820,7 @@
     "pattern": "range_pattern_prefix",
     "input": {
       "$type": 419,
-      "_content": 137,
+      "_operator": 137,
       "_right": {
         "$type": 141,
         "_content": "5"
@@ -173868,7 +173864,7 @@
           },
           "_pattern": {
             "$type": 419,
-            "_content": 137,
+            "_operator": 137,
             "_right": {
               "$type": 141,
               "_content": "5"

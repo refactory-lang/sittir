@@ -1819,11 +1819,6 @@ export enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
-export enum ExpressionsKind {
-	Expression = 'expression',
-	ExpressionList = 'expression_list'
-}
-
 export enum CompoundStatementKind {
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
@@ -1926,11 +1921,6 @@ export enum AssignmentKind {
 	AssignmentEq = 'assignment_eq',
 	AssignmentType = 'assignment_type',
 	AssignmentTyped = 'assignment_typed'
-}
-
-export enum LeftHandSideKind {
-	Pattern = 'pattern',
-	PatternList = 'pattern_list'
 }
 
 export enum RightHandSideKind {
@@ -4959,49 +4949,49 @@ export interface ComprehensionClauses {
 
 export interface IntegerHex {
 	readonly $type: TSKindId.IntegerHex;
-	readonly _prefix: '0x' | '0X';
+	readonly _radix_prefix: '0x' | '0X';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0x' | '0X'>;
+		readonly radixPrefix: SlotHint<'0x' | '0X'>;
 	};
-	readonly prefix: () => '0x' | '0X';
+	readonly radixPrefix: () => '0x' | '0X';
 	readonly content: () => string;
 }
 
 export interface IntegerOctal {
 	readonly $type: TSKindId.IntegerOctal;
-	readonly _prefix: '0o' | '0O';
+	readonly _radix_prefix: '0o' | '0O';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0o' | '0O'>;
+		readonly radixPrefix: SlotHint<'0o' | '0O'>;
 	};
-	readonly prefix: () => '0o' | '0O';
+	readonly radixPrefix: () => '0o' | '0O';
 	readonly content: () => string;
 }
 
 export interface IntegerBinary {
 	readonly $type: TSKindId.IntegerBinary;
-	readonly _prefix: '0b' | '0B';
+	readonly _radix_prefix: '0b' | '0B';
 	readonly _content: string;
 	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
+		readonly _radix_prefix: 'radixPrefix';
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
-		readonly prefix: SlotHint<'0b' | '0B'>;
+		readonly radixPrefix: SlotHint<'0b' | '0B'>;
 	};
-	readonly prefix: () => '0b' | '0B';
+	readonly radixPrefix: () => '0b' | '0B';
 	readonly content: () => string;
 }
 
@@ -5010,21 +5000,21 @@ export interface FloatPoint {
 	readonly _integer: string;
 	readonly _fraction?: string;
 	readonly _marker?: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
 	readonly __slotNames__?: {
 		readonly _integer: 'integer';
 		readonly _fraction: 'fraction';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 		readonly _imaginary: 'imaginary';
 	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly fraction: SlotHint<string | number | bigint, true>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
@@ -5032,7 +5022,7 @@ export interface FloatPoint {
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
 	readonly marker: () => 'e' | 'E' | undefined;
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 	readonly imaginary: () => string | undefined;
 }
@@ -5042,21 +5032,21 @@ export interface FloatLeadingPoint {
 	readonly _integer?: string;
 	readonly _fraction: string;
 	readonly _marker?: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
 	readonly __slotNames__?: {
 		readonly _integer: 'integer';
 		readonly _fraction: 'fraction';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 		readonly _imaginary: 'imaginary';
 	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint, true>;
 		readonly fraction: SlotHint<string | number | bigint>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
@@ -5064,7 +5054,7 @@ export interface FloatLeadingPoint {
 	readonly integer: () => string | undefined;
 	readonly fraction: () => string;
 	readonly marker: () => 'e' | 'E' | undefined;
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 	readonly imaginary: () => string | undefined;
 }
@@ -5073,26 +5063,26 @@ export interface FloatScientific {
 	readonly $type: TSKindId.FloatScientific;
 	readonly _integer: string;
 	readonly _marker: 'e' | 'E';
-	readonly _sign?: '-' | '+';
+	readonly _exponent_sign?: '-' | '+';
 	readonly _exponent: string;
 	readonly _imaginary?: string;
 	readonly __slotNames__?: {
 		readonly _integer: 'integer';
 		readonly _marker: 'marker';
-		readonly _sign: 'sign';
+		readonly _exponent_sign: 'exponentSign';
 		readonly _exponent: 'exponent';
 		readonly _imaginary: 'imaginary';
 	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
-		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E'>;
 	};
 	readonly integer: () => string;
 	readonly marker: () => 'e' | 'E';
-	readonly sign: () => '-' | '+' | undefined;
+	readonly exponentSign: () => '-' | '+' | undefined;
 	readonly exponent: () => string;
 	readonly imaginary: () => string | undefined;
 }
@@ -15643,8 +15633,11 @@ export namespace ComprehensionClauses {
 	>;
 }
 export namespace IntegerHex {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0x' | '0X' };
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0x' | '0X' };
 	export interface Bound extends BoundOf<T.IntegerHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -15662,12 +15655,12 @@ export namespace IntegerHex {
 		readonly $snapshot: () => Snapshot<T.IntegerHex['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerHex.Options];
@@ -15675,8 +15668,11 @@ export namespace IntegerHex {
 	export type Kind = TSKindId.IntegerHex;
 }
 export namespace IntegerOctal {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0o' | '0O' };
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0o' | '0O' };
 	export interface Bound extends BoundOf<T.IntegerOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -15694,12 +15690,12 @@ export namespace IntegerOctal {
 		readonly $snapshot: () => Snapshot<T.IntegerOctal['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerOctal.Options];
@@ -15707,8 +15703,11 @@ export namespace IntegerOctal {
 	export type Kind = TSKindId.IntegerOctal;
 }
 export namespace IntegerBinary {
-	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>;
-	export type Options = { readonly prefix?: '0b' | '0B' };
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0b' | '0B' };
 	export interface Bound extends BoundOf<T.IntegerBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -15726,12 +15725,12 @@ export namespace IntegerBinary {
 		readonly $snapshot: () => Snapshot<T.IntegerBinary['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'prefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerBinary.Options];

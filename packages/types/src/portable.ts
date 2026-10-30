@@ -43,7 +43,7 @@ export interface PortableRows {
 }
 
 /** How a strict builder takes its input: a config object (`config`), one value (`direct`, `forwarded`), its elements as arguments (`spread`, `elements`), its text (`text`, `placed`), or nothing (`constant`). */
-export type PortableCallShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded' | 'placed';
+export type PortableCallShape = 'config' | 'spread' | 'text' | 'constant' | 'nullary' | 'direct' | 'elements' | 'forwarded' | 'placed';
 
 /**
  * How a mount's builder takes its input: nothing (`none`), the holder's own input (`holder`), the seated kind's input (`child`), the holder's
@@ -164,7 +164,7 @@ export interface PortableDecimalParts {
 	readonly fraction?: string;
 	readonly exponent?: string;
 	readonly marker?: string;
-	readonly sign?: string;
+	readonly exponentSign?: string;
 }
 
 /**

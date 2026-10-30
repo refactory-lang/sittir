@@ -56,22 +56,22 @@ export const triviaFacts = Object.freeze({
 export const querySlots: QuerySlots = Object.freeze({
 	72: [['content', 0, undefined, '_content']],
 	90: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	91: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	92: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	96: [
 		['integer', 0, undefined, '_integer'],
 		['fraction', 1, undefined, '_fraction'],
 		['marker', 2, undefined, '_marker'],
-		['sign', 3, undefined, '_sign'],
+		['exponentSign', 3, undefined, '_exponent_sign'],
 		['exponent', 4, undefined, '_exponent'],
 		['imaginary', 5, undefined, '_imaginary']
 	],
@@ -79,14 +79,14 @@ export const querySlots: QuerySlots = Object.freeze({
 		['integer', 0, undefined, '_integer'],
 		['fraction', 1, undefined, '_fraction'],
 		['marker', 2, undefined, '_marker'],
-		['sign', 3, undefined, '_sign'],
+		['exponentSign', 3, undefined, '_exponent_sign'],
 		['exponent', 4, undefined, '_exponent'],
 		['imaginary', 5, undefined, '_imaginary']
 	],
 	98: [
 		['integer', 0, undefined, '_integer'],
 		['marker', 1, undefined, '_marker'],
-		['sign', 2, undefined, '_sign'],
+		['exponentSign', 2, undefined, '_exponent_sign'],
 		['exponent', 3, undefined, '_exponent'],
 		['imaginary', 4, undefined, '_imaginary']
 	],
@@ -509,9 +509,9 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		112, 113, 114, 115, 116, 117, 118, 123, 124, 125, 126, 127, 138, 148, 149, 150, 211, 212, 253, 258, 259, 280
 	]),
 	options: Object.freeze<NodeJSONFacts['options']>({
-		90: ['prefix'],
-		91: ['prefix'],
-		92: ['prefix'],
+		90: ['radixPrefix'],
+		91: ['radixPrefix'],
+		92: ['radixPrefix'],
 		96: ['marker'],
 		97: ['marker'],
 		98: ['marker'],
@@ -525,19 +525,19 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'integer_hex',
 		required: [['_content', 'content']],
 		single: [['_content', 'IntegerHex.content']],
-		texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]]
+		texts: [['_radix_prefix', 'IntegerHex.radixPrefix', ['0x', '0X']]]
 	},
 	91: {
 		kind: 'integer_octal',
 		required: [['_content', 'content']],
 		single: [['_content', 'IntegerOctal.content']],
-		texts: [['_prefix', 'IntegerOctal.prefix', ['0o', '0O']]]
+		texts: [['_radix_prefix', 'IntegerOctal.radixPrefix', ['0o', '0O']]]
 	},
 	92: {
 		kind: 'integer_binary',
 		required: [['_content', 'content']],
 		single: [['_content', 'IntegerBinary.content']],
-		texts: [['_prefix', 'IntegerBinary.prefix', ['0b', '0B']]]
+		texts: [['_radix_prefix', 'IntegerBinary.radixPrefix', ['0b', '0B']]]
 	},
 	96: {
 		kind: 'float_point',
@@ -550,9 +550,9 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'FloatPoint.marker', ['e', 'E']],
-			['_sign', 'FloatPoint.sign', ['-', '+']]
+			['_exponent_sign', 'FloatPoint.exponentSign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'fraction', 'marker', 'exponentSign', 'exponent', 'imaginary']
 	},
 	97: {
 		kind: 'float_leading_point',
@@ -565,9 +565,9 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'FloatLeadingPoint.marker', ['e', 'E']],
-			['_sign', 'FloatLeadingPoint.sign', ['-', '+']]
+			['_exponent_sign', 'FloatLeadingPoint.exponentSign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'fraction', 'marker', 'exponentSign', 'exponent', 'imaginary']
 	},
 	98: {
 		kind: 'float_scientific',
@@ -582,9 +582,9 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'FloatScientific.marker', ['e', 'E']],
-			['_sign', 'FloatScientific.sign', ['-', '+']]
+			['_exponent_sign', 'FloatScientific.exponentSign', ['-', '+']]
 		],
-		config: ['integer', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'marker', 'exponentSign', 'exponent', 'imaginary']
 	},
 	99: {
 		kind: 'escape_sequence_unicode_fixed',

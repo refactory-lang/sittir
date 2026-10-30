@@ -237,7 +237,7 @@ export const build: PortableBuildTable = {
 		classBodyMemberMethodSig: ['terminator'],
 		classDeclaration: ['terminator'],
 		classStaticBlock: ['terminator'],
-		constraint: ['content'],
+		constraint: ['operator'],
 		continueStatement: ['terminator'],
 		debuggerStatement: ['terminator'],
 		doStatement: ['terminator'],
@@ -251,12 +251,12 @@ export const build: PortableBuildTable = {
 		importAlias: ['terminator'],
 		importStatement: ['terminator'],
 		lexicalDeclaration: ['terminator'],
-		numberBinary: ['prefix'],
+		numberBinary: ['radixPrefix'],
 		numberFloatLeadingPoint: ['marker'],
 		numberFloatPoint: ['marker'],
 		numberFloatScientific: ['marker'],
-		numberHex: ['prefix'],
-		numberOctal: ['prefix'],
+		numberHex: ['radixPrefix'],
+		numberOctal: ['radixPrefix'],
 		returnStatement: ['terminator'],
 		statementBlock: ['terminator'],
 		throwStatement: ['terminator'],
@@ -953,7 +953,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -1023,7 +1023,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'typeOnly',
+									key: 'typeKeyword',
 									optional: true
 								}
 							],
@@ -1036,7 +1036,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -1479,7 +1479,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -1551,7 +1551,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -1603,7 +1603,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'typeOnly',
+									key: 'typeKeyword',
 									optional: true
 								}
 							],
@@ -1616,7 +1616,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -1685,7 +1685,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'typeOnly',
+									key: 'typeKeyword',
 									optional: true
 								}
 							],
@@ -1698,7 +1698,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -23029,7 +23029,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionalChain'
+											key: 'operator'
 										}
 									],
 									kind: 254
@@ -23039,7 +23039,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionalChain'
+											key: 'operator'
 										}
 									],
 									kind: 63
@@ -24523,7 +24523,7 @@ export const build: PortableBuildTable = {
 							default: true
 						},
 						{
-							absent: ['content', 'exponent', 'fraction', 'integer', 'marker', 'prefix', 'sign'],
+							absent: ['content', 'exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
 							required: []
 						}
 					]
@@ -24533,16 +24533,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberBinary',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [160, 'prefix'],
+									at: [160, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0b|0B)$',
@@ -24579,7 +24579,7 @@ export const build: PortableBuildTable = {
 							value: 160
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
 							required: []
 						}
 					]
@@ -24589,16 +24589,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberHex',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [155, 'prefix'],
+									at: [155, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0x|0X)$',
@@ -24635,7 +24635,7 @@ export const build: PortableBuildTable = {
 							value: 155
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
 							required: []
 						}
 					]
@@ -24645,16 +24645,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberOctal',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [161, 'prefix'],
+									at: [161, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0o|0O)$',
@@ -24691,7 +24691,7 @@ export const build: PortableBuildTable = {
 							value: 161
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
 							required: []
 						}
 					]
@@ -24703,7 +24703,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -24746,17 +24746,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [157, 'sign'],
+									at: [157, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -24790,7 +24790,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['content', 'integer', 'prefix'],
+							absent: ['content', 'integer', 'radixPrefix'],
 							required: ['fraction']
 						}
 					]
@@ -24803,7 +24803,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -24866,17 +24866,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [156, 'sign'],
+									at: [156, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -24911,7 +24911,7 @@ export const build: PortableBuildTable = {
 					scalar: 'float',
 					when: [
 						{
-							absent: ['content', 'prefix'],
+							absent: ['content', 'radixPrefix'],
 							required: ['integer']
 						}
 					]
@@ -24923,7 +24923,7 @@ export const build: PortableBuildTable = {
 						integer: 'integer',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -24965,17 +24965,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [158, 'sign'],
+									at: [158, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -25008,7 +25008,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['content', 'fraction', 'prefix'],
+							absent: ['content', 'fraction', 'radixPrefix'],
 							required: ['integer']
 						}
 					]
@@ -25046,7 +25046,7 @@ export const build: PortableBuildTable = {
 							default: true
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'prefix', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
 							required: []
 						}
 					]
@@ -25083,7 +25083,7 @@ export const build: PortableBuildTable = {
 							value: 163
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'prefix', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
 							required: []
 						}
 					]
@@ -25120,7 +25120,7 @@ export const build: PortableBuildTable = {
 							value: 162
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'prefix', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
 							required: []
 						}
 					]
@@ -25157,7 +25157,7 @@ export const build: PortableBuildTable = {
 							value: 164
 						},
 						{
-							absent: ['exponent', 'fraction', 'integer', 'marker', 'prefix', 'sign'],
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
 							required: []
 						}
 					]
@@ -25175,7 +25175,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -25238,17 +25238,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [156, 'sign'],
+									at: [156, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -25295,7 +25295,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -25338,17 +25338,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [157, 'sign'],
+									at: [157, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -25395,7 +25395,7 @@ export const build: PortableBuildTable = {
 						integer: 'integer',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -25437,17 +25437,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [158, 'sign'],
+									at: [158, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -25637,16 +25637,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberBinary',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [160, 'prefix'],
+									at: [160, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0b|0B)$',
@@ -25690,16 +25690,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberHex',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [155, 'prefix'],
+									at: [155, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0x|0X)$',
@@ -25743,16 +25743,16 @@ export const build: PortableBuildTable = {
 					builder: 'numberOctal',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [161, 'prefix'],
+									at: [161, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0o|0O)$',
@@ -27601,7 +27601,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],
@@ -27764,7 +27764,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'typeOnly',
+									key: 'typeKeyword',
 									optional: true
 								}
 							],
@@ -27777,7 +27777,7 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly',
+											key: 'typeKeyword',
 											optional: true
 										}
 									],

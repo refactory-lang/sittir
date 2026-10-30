@@ -1,5 +1,6 @@
 import {
 	childFields,
+	fieldHoldsOnly,
 	fieldHosts,
 	fieldRenameIssue,
 	fieldWrapIssue,
@@ -545,7 +546,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				else for (const request of renames) candidates.push({ row, request, group: row });
 				continue;
 			}
-			if (to === m.field) {
+			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token }))) {
 				realizedMembers.push(row);
 				continue;
 			}
@@ -577,7 +578,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		if (where.fields.length === 1) {
 			const field = where.fields[0]!;
-			if (field === to) {
+			if (field === to || (m.flag === true && target !== null && !fieldHoldsOnly(checks, m.owner, field, target))) {
 				realizedMembers.push(row);
 				continue;
 			}

@@ -179,7 +179,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				argument: ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.memberExpression({
 						object: ts.build.identifier("a"),
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: ts.build.identifier("b"),
 					}),
 				}),
@@ -239,7 +239,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 							object: ts.build.identifier("a"),
 							index: ts.build.number.decimal("0"),
 						}),
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: ts.build.identifier("b"),
 					}),
 				})],
@@ -250,7 +250,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 							function: ts.build.identifier("foo"),
 							arguments: ts.build.arguments(ts.build.identifier("x")),
 						}),
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: ts.build.identifier("bar"),
 					}),
 					index: ts.build.number.decimal("1"),

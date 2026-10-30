@@ -1894,14 +1894,14 @@
 							"kind": "if",
 							"arms": [
 								{
-									"test": "sign",
+									"test": "exponent_sign",
 									"body": [
 										{
 											"kind": "adjacent"
 										},
 										{
 											"kind": "slot",
-											"name": "sign"
+											"name": "exponent_sign"
 										}
 									]
 								}
@@ -2002,14 +2002,14 @@
 							"kind": "if",
 							"arms": [
 								{
-									"test": "sign",
+									"test": "exponent_sign",
 									"body": [
 										{
 											"kind": "adjacent"
 										},
 										{
 											"kind": "slot",
-											"name": "sign"
+											"name": "exponent_sign"
 										}
 									]
 								}
@@ -2070,14 +2070,14 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "sign",
+					"test": "exponent_sign",
 					"body": [
 						{
 							"kind": "adjacent"
 						},
 						{
 							"kind": "slot",
-							"name": "sign"
+							"name": "exponent_sign"
 						}
 					]
 				}
@@ -2733,7 +2733,7 @@
 	"integer_binary": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -2746,7 +2746,7 @@
 	"integer_hex": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -2759,7 +2759,7 @@
 	"integer_octal": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -3233,8 +3233,8 @@
 	],
 	"match_block_empty": [
 		{
-			"kind": "tokenSeam",
-			"text": "\n"
+			"kind": "slot",
+			"name": "newline"
 		}
 	],
 	"match_statement": [
@@ -4261,8 +4261,8 @@
 	],
 	"suite_empty": [
 		{
-			"kind": "tokenSeam",
-			"text": "\n"
+			"kind": "slot",
+			"name": "newline"
 		}
 	],
 	"suite_inline": [

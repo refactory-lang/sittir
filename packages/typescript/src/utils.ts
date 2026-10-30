@@ -64,34 +64,34 @@ export const querySlots: QuerySlots = Object.freeze({
 	153: [['content', 0, undefined, '_content']],
 	154: [['content', 0, undefined, '_content']],
 	155: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	156: [
 		['integer', 0, undefined, '_integer'],
 		['fraction', 1, undefined, '_fraction'],
 		['marker', 2, undefined, '_marker'],
-		['sign', 3, undefined, '_sign'],
+		['exponentSign', 3, undefined, '_exponent_sign'],
 		['exponent', 4, undefined, '_exponent']
 	],
 	157: [
 		['fraction', 0, undefined, '_fraction'],
 		['marker', 1, undefined, '_marker'],
-		['sign', 2, undefined, '_sign'],
+		['exponentSign', 2, undefined, '_exponent_sign'],
 		['exponent', 3, undefined, '_exponent']
 	],
 	158: [
 		['integer', 0, undefined, '_integer'],
 		['marker', 1, undefined, '_marker'],
-		['sign', 2, undefined, '_sign'],
+		['exponentSign', 2, undefined, '_exponent_sign'],
 		['exponent', 3, undefined, '_exponent']
 	],
 	160: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	161: [
-		['prefix', 0, undefined, '_prefix'],
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	162: [['content', 0, undefined, '_content']],
@@ -105,12 +105,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	191: [['moduleExportName', 0, undefined, '_module_export_name']],
 	192: [['exportSpecifiers', 0, undefined, '_export_specifiers']],
 	193: [
-		['typeOnly', 0, undefined, '_type_only'],
+		['typeKeyword', 0, undefined, '_type_keyword'],
 		['name', 1, undefined, '_name'],
 		['alias', 2, undefined, '_alias']
 	],
 	197: [
-		['typeOnly', 0, undefined, '_type_only'],
+		['typeKeyword', 0, undefined, '_type_keyword'],
 		['fromClause', 1, undefined, '_from_clause'],
 		['importAttribute', 2, undefined, '_import_attribute'],
 		['terminator', 3, undefined, '_terminator']
@@ -295,7 +295,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	257: [['expression', 0, undefined, '_expression']],
 	258: [
 		['object', 0, undefined, '_object'],
-		['optionalChain', 1, undefined, '_optional_chain'],
+		['operator', 1, undefined, '_operator'],
 		['property', 2, undefined, '_property']
 	],
 	259: [
@@ -519,7 +519,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	352: [['typePredicate', 0, undefined, '_type_predicate']],
 	353: [
 		['object', 0, undefined, '_object'],
-		['content', 1, undefined, '_content'],
+		['operator', 1, undefined, '_operator'],
 		['property', 2, undefined, '_property']
 	],
 	354: [
@@ -578,7 +578,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	373: [['type', 0, undefined, '_type']],
 	374: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['bounds', 1, undefined, '_bounds']
 	],
 	375: [
@@ -669,11 +669,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	414: [['expression', 0, undefined, '_expression']],
 	416: [
-		['typeOnly', 0, undefined, '_type_only'],
+		['typeKeyword', 0, undefined, '_type_keyword'],
 		['name', 1, undefined, '_name']
 	],
 	417: [
-		['typeOnly', 0, undefined, '_type_only'],
+		['typeKeyword', 0, undefined, '_type_keyword'],
 		['name', 1, undefined, '_name'],
 		['alias', 2, undefined, '_alias']
 	],
@@ -768,7 +768,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	444: [
 		['kind', 0, undefined, '_kind'],
 		['left', 1, undefined, '_left'],
-		['terminator', 2, '\n', '_terminator', 174],
+		['terminator', 2, undefined, '_terminator'],
 		['operator', 3, undefined, '_operator'],
 		['right', 4, undefined, '_right']
 	],
@@ -941,12 +941,12 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		254, 278, 279, 280, 281, 282, 326, 363, 394, 407, 415, 439, 440, 446, 503
 	]),
 	options: Object.freeze<NodeJSONFacts['options']>({
-		155: ['prefix'],
+		155: ['radixPrefix'],
 		156: ['marker'],
 		157: ['marker'],
 		158: ['marker'],
-		160: ['prefix'],
-		161: ['prefix'],
+		160: ['radixPrefix'],
+		161: ['radixPrefix'],
 		197: ['terminator'],
 		205: ['terminator'],
 		206: ['terminator'],
@@ -966,7 +966,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		302: ['terminator'],
 		317: ['terminator'],
 		324: ['terminator'],
-		374: ['content'],
+		374: ['operator'],
 		399: ['terminator'],
 		402: ['terminator'],
 		403: ['terminator'],
@@ -975,7 +975,8 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		410: ['terminator'],
 		430: ['terminator'],
 		436: ['automaticSemicolon'],
-		443: ['terminator']
+		443: ['terminator'],
+		444: ['terminator']
 	})
 });
 
@@ -997,7 +998,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'number_hex',
 		required: [['_content', 'content']],
 		single: [['_content', 'NumberHex.content']],
-		texts: [['_prefix', 'NumberHex.prefix', ['0x', '0X']]]
+		texts: [['_radix_prefix', 'NumberHex.radixPrefix', ['0x', '0X']]]
 	},
 	156: {
 		kind: 'number_float_point',
@@ -1009,9 +1010,9 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'NumberFloatPoint.marker', ['e', 'E']],
-			['_sign', 'NumberFloatPoint.sign', ['-', '+']]
+			['_exponent_sign', 'NumberFloatPoint.exponentSign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent']
+		config: ['integer', 'fraction', 'marker', 'exponentSign', 'exponent']
 	},
 	157: {
 		kind: 'number_float_leading_point',
@@ -1022,9 +1023,9 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'NumberFloatLeadingPoint.marker', ['e', 'E']],
-			['_sign', 'NumberFloatLeadingPoint.sign', ['-', '+']]
+			['_exponent_sign', 'NumberFloatLeadingPoint.exponentSign', ['-', '+']]
 		],
-		config: ['fraction', 'marker', 'sign', 'exponent']
+		config: ['fraction', 'marker', 'exponentSign', 'exponent']
 	},
 	158: {
 		kind: 'number_float_scientific',
@@ -1038,21 +1039,21 @@ export const structure: StructureTable = Object.freeze({
 		],
 		texts: [
 			['_marker', 'NumberFloatScientific.marker', ['e', 'E']],
-			['_sign', 'NumberFloatScientific.sign', ['-', '+']]
+			['_exponent_sign', 'NumberFloatScientific.exponentSign', ['-', '+']]
 		],
-		config: ['integer', 'marker', 'sign', 'exponent']
+		config: ['integer', 'marker', 'exponentSign', 'exponent']
 	},
 	160: {
 		kind: 'number_binary',
 		required: [['_content', 'content']],
 		single: [['_content', 'NumberBinary.content']],
-		texts: [['_prefix', 'NumberBinary.prefix', ['0b', '0B']]]
+		texts: [['_radix_prefix', 'NumberBinary.radixPrefix', ['0b', '0B']]]
 	},
 	161: {
 		kind: 'number_octal',
 		required: [['_content', 'content']],
 		single: [['_content', 'NumberOctal.content']],
-		texts: [['_prefix', 'NumberOctal.prefix', ['0o', '0O']]]
+		texts: [['_radix_prefix', 'NumberOctal.radixPrefix', ['0o', '0O']]]
 	},
 	162: {
 		kind: 'number_bigint_hex',
@@ -1106,8 +1107,8 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ExportSpecifier.name', 'buildIdentifier(…)'],
 			['_alias', 'ExportSpecifier.alias', 'buildIdentifier(…)']
 		],
-		kindIds: [['_type_only', 'ExportSpecifier.typeOnly', [7, 8]]],
-		config: ['typeOnly', 'name', 'alias']
+		kindIds: [['_type_keyword', 'ExportSpecifier.typeKeyword', [7, 8]]],
+		config: ['typeKeyword', 'name', 'alias']
 	},
 	197: {
 		kind: 'import_statement',
@@ -1126,10 +1127,10 @@ export const structure: StructureTable = Object.freeze({
 			['_import_attribute', 'ImportStatement.importAttribute', 'a built ImportAttribute', [203]]
 		],
 		kindIds: [
-			['_type_only', 'ImportStatement.typeOnly', [7, 8]],
+			['_type_keyword', 'ImportStatement.typeKeyword', [7, 8]],
 			['_terminator', 'ImportStatement.terminator', [22, 174]]
 		],
-		config: ['typeOnly', 'fromClause', 'importAttribute', 'terminator']
+		config: ['typeKeyword', 'fromClause', 'importAttribute', 'terminator']
 	},
 	198: {
 		kind: 'import_clause',
@@ -1746,7 +1747,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'member_expression',
 		required: [
 			['_object', 'object'],
-			['_optional_chain', 'optionalChain'],
+			['_operator', 'operator'],
 			['_property', 'property']
 		],
 		single: [
@@ -1757,8 +1758,8 @@ export const structure: StructureTable = Object.freeze({
 			['_object', 'MemberExpression.object', 'a built Expression / PrimaryExpression'],
 			['_property', 'MemberExpression.property', 'a built PrivatePropertyIdentifier / PropertyIdentifier', [128, 499]]
 		],
-		kindIds: [['_optional_chain', 'MemberExpression.optionalChain', [63, 254]]],
-		config: ['object', 'optionalChain', 'property']
+		kindIds: [['_operator', 'MemberExpression.operator', [63, 254]]],
+		config: ['object', 'operator', 'property']
 	},
 	259: {
 		kind: 'subscript_expression',
@@ -2645,7 +2646,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'type_query_member_expression',
 		required: [
 			['_object', 'object'],
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_property', 'property']
 		],
 		single: [
@@ -2661,8 +2662,8 @@ export const structure: StructureTable = Object.freeze({
 				[128, 499]
 			]
 		],
-		kindIds: [['_content', 'TypeQueryMemberExpression.content', [63, 67]]],
-		config: ['object', 'content', 'property']
+		kindIds: [['_operator', 'TypeQueryMemberExpression.operator', [63, 67]]],
+		config: ['object', 'operator', 'property']
 	},
 	354: {
 		kind: 'type_query_subscript_expression',
@@ -2875,7 +2876,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_bounds', 'bounds']],
 		single: [['_bounds', 'Constraint.bounds']],
 		nodeOnly: [['_bounds', 'Constraint.bounds', 'a built Type', [338]]],
-		kindIds: [['_content', 'Constraint.content', [55, 70]]]
+		kindIds: [['_operator', 'Constraint.operator', [55, 70]]]
 	},
 	375: {
 		kind: 'construct_signature',
@@ -3236,8 +3237,8 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_name', 'name']],
 		single: [['_name', 'ImportSpecifierName.name']],
 		nodeOnly: [['_name', 'ImportSpecifierName.name', 'buildIdentifier(…)', [1]]],
-		kindIds: [['_type_only', 'ImportSpecifierName.typeOnly', [7, 8]]],
-		config: ['typeOnly', 'name']
+		kindIds: [['_type_keyword', 'ImportSpecifierName.typeKeyword', [7, 8]]],
+		config: ['typeKeyword', 'name']
 	},
 	417: {
 		kind: 'import_specifier_as',
@@ -3253,8 +3254,8 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ImportSpecifierAs.name', 'buildIdentifier(…)'],
 			['_alias', 'ImportSpecifierAs.alias', 'buildIdentifier(…)', [1]]
 		],
-		kindIds: [['_type_only', 'ImportSpecifierAs.typeOnly', [7, 8]]],
-		config: ['typeOnly', 'name', 'alias']
+		kindIds: [['_type_keyword', 'ImportSpecifierAs.typeKeyword', [7, 8]]],
+		config: ['typeKeyword', 'name', 'alias']
 	},
 	418: {
 		kind: 'parenthesized_expression_typed',
@@ -3593,9 +3594,9 @@ export const structure: StructureTable = Object.freeze({
 			['_left', 'ForHeaderUsingKind.left', 'buildIdentifier(…)', [1, 238, 242]],
 			['_right', 'ForHeaderUsingKind.right', 'a built Expression / SequenceExpression', [234, 271]]
 		],
-		booleans: [['_terminator', 'ForHeaderUsingKind.terminator']],
 		kindIds: [
 			['_kind', 'ForHeaderUsingKind.kind', [16, 394]],
+			['_terminator', 'ForHeaderUsingKind.terminator', [0, 174]],
 			['_operator', 'ForHeaderUsingKind.operator', [72, 151]]
 		],
 		config: ['kind', 'left', 'terminator', 'operator', 'right']

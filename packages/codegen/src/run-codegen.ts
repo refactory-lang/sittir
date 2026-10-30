@@ -249,9 +249,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
 	}
 
-	if (result.portableDiagnostics.length > 0) {
-		writeDiagnostics(result.portableDiagnostics, formatGrammarDiagnostics);
-		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...result.portableDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
+	if (result.emitDiagnostics.length > 0) {
+		writeDiagnostics(result.emitDiagnostics, formatGrammarDiagnostics);
+		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...result.emitDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
 	}
 
 	const outDir = outputDir;

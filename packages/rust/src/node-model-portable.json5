@@ -12143,7 +12143,7 @@
     },
     "ordered_field_declaration_list": {
       "container": {
-        "slot": "attributes",
+        "slot": "elements",
         "kinds": [
           "ordered_field_declaration_list_elements"
         ],
@@ -12506,15 +12506,7 @@
           "test": []
         }
       ],
-      "members": [],
-      "container": {
-        "slot": "range_expression_bare",
-        "kinds": [
-          "_range_expression_bare"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      "members": []
     },
     "range_expression_binary": {
       "vocab": "expression.range",
@@ -12729,8 +12721,8 @@
           "within": [],
           "pins": [
             {
-              "member": "content",
-              "slot": "content",
+              "member": "operator",
+              "slot": "operator",
               "text": "..="
             }
           ],
@@ -12754,8 +12746,8 @@
           "within": [],
           "pins": [
             {
-              "member": "content",
-              "slot": "content",
+              "member": "operator",
+              "slot": "operator",
               "text": ".."
             }
           ],
@@ -16421,13 +16413,13 @@
           ]
         },
         {
-          "name": "type",
+          "name": "fragment",
           "route": "slot",
-          "slot": "type",
+          "slot": "fragment",
           "path": [
             {
               "owner": "token_binding_pattern",
-              "slot": "type"
+              "slot": "fragment"
             }
           ]
         }

@@ -5179,11 +5179,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "attributes",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "attributes"
+							"name": "elements"
 						}
 					]
 				}
@@ -5608,7 +5608,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -5644,7 +5644,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -7005,11 +7005,11 @@
 		},
 		{
 			"kind": "seam",
-			"field": "type_before"
+			"field": "fragment_before"
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "fragment"
 		},
 		{
 			"kind": "seam",

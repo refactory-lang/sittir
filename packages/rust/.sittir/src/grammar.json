@@ -426,10 +426,13 @@
           },
           {
             "type": "FIELD",
-            "name": "type",
+            "name": "fragment",
             "content": {
               "type": "SYMBOL",
               "name": "fragment_specifier"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         ]
@@ -1414,26 +1417,26 @@
           "value": "("
         },
         {
-          "type": "FIELD",
-          "name": "attributes",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
                 "type": "SYMBOL",
                 "name": "ordered_field_declaration_list_elements",
                 "metadata": {
                   "symbolSource": "group-lift"
                 }
               },
-              {
-                "type": "BLANK"
+              "metadata": {
+                "fieldSource": "enriched"
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",

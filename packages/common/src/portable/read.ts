@@ -143,7 +143,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 	};
 	const decimalOf = (node: Node, arm: PortableBuildArm, parts: PortableDecimalParts): number | undefined => {
 		const part = (name: string | undefined): string | undefined => (name === undefined ? undefined : memberText(node, arm, name));
-		const [integer, fraction, exponent, sign] = [part(parts.integer), part(parts.fraction), part(parts.exponent), part(parts.sign)];
+		const [integer, fraction, exponent, sign] = [part(parts.integer), part(parts.fraction), part(parts.exponent), part(parts.exponentSign)];
 		return floatOf(`${integer ?? '0'}.${fraction ?? '0'}${exponent === undefined ? '' : `e${sign ?? ''}${exponent}`}`);
 	};
 	const spelledBy = (arm: PortableBuildArm): readonly string[] =>

@@ -635,6 +635,90 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('yield.comparison builds the parent', () => {
+		const node = ir.expressionStatement.yield.comparison({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			comparators: [
+				stampBuilt({
+					$type: TSKindId.ComparisonOperatorComparator,
+					$text: 'test',
+					$named: true,
+					_operators: TSKindId.Lt as never,
+					_primary_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.not builds the parent', () => {
+		const node = ir.expressionStatement.yield.not(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.boolean builds the parent', () => {
+		const node = ir.expressionStatement.yield.boolean({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			operator: 'and',
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.lambda builds the parent', () => {
+		const node = ir.expressionStatement.yield.lambda({
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.conditional builds the parent', () => {
+		const node = ir.expressionStatement.yield.conditional({
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.named builds the parent', () => {
+		const node = ir.expressionStatement.yield.named({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.as builds the parent', () => {
+		const node = ir.expressionStatement.yield.as({
+			expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alias: stampBuilt({
+				$type: TSKindId.AsPatternTarget,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.expressionList builds the parent', () => {
+		const node = ir.expressionStatement.yield.expressionList(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('yield.fromClause.comparison builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.comparison({
 			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
@@ -720,6 +804,15 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('yield.named.identifier builds the parent', () => {
+		const node = ir.expressionStatement.yield.named.identifier({
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('named_expression', () => {
@@ -765,6 +858,100 @@ describe('return_statement', () => {
 	});
 });
 
+describe('return_statement sub-factories', () => {
+	it('comparison builds the parent', () => {
+		const node = ir.returnStatement.comparison({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			comparators: [
+				stampBuilt({
+					$type: TSKindId.ComparisonOperatorComparator,
+					$text: 'test',
+					$named: true,
+					_operators: TSKindId.Lt as never,
+					_primary_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('not builds the parent', () => {
+		const node = ir.returnStatement.not(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('boolean builds the parent', () => {
+		const node = ir.returnStatement.boolean({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			operator: 'and',
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('lambda builds the parent', () => {
+		const node = ir.returnStatement.lambda({
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('conditional builds the parent', () => {
+		const node = ir.returnStatement.conditional({
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named builds the parent', () => {
+		const node = ir.returnStatement.named({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as builds the parent', () => {
+		const node = ir.returnStatement.as({
+			expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alias: stampBuilt({
+				$type: TSKindId.AsPatternTarget,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('expressionList builds the parent', () => {
+		const node = ir.returnStatement.expressionList(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.returnStatement.named.identifier({
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.ReturnStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('delete_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.deleteStatement(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
@@ -779,6 +966,100 @@ describe('delete_statement', () => {
 	});
 });
 
+describe('delete_statement sub-factories', () => {
+	it('comparison builds the parent', () => {
+		const node = ir.deleteStatement.comparison({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			comparators: [
+				stampBuilt({
+					$type: TSKindId.ComparisonOperatorComparator,
+					$text: 'test',
+					$named: true,
+					_operators: TSKindId.Lt as never,
+					_primary_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('not builds the parent', () => {
+		const node = ir.deleteStatement.not(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('boolean builds the parent', () => {
+		const node = ir.deleteStatement.boolean({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			operator: 'and',
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('lambda builds the parent', () => {
+		const node = ir.deleteStatement.lambda({
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('conditional builds the parent', () => {
+		const node = ir.deleteStatement.conditional({
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named builds the parent', () => {
+		const node = ir.deleteStatement.named({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as builds the parent', () => {
+		const node = ir.deleteStatement.as({
+			expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alias: stampBuilt({
+				$type: TSKindId.AsPatternTarget,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('expressionList builds the parent', () => {
+		const node = ir.deleteStatement.expressionList(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.deleteStatement.named.identifier({
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.DeleteStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('raise_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.raiseStatement({});
@@ -788,6 +1069,103 @@ describe('raise_statement', () => {
 	it('render does not throw on minimal config', () => {
 		const node = ir.raiseStatement({});
 		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('raise_statement sub-factories', () => {
+	it('comparison builds the parent', () => {
+		const node = ir.raiseStatement.comparison({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			comparators: [
+				stampBuilt({
+					$type: TSKindId.ComparisonOperatorComparator,
+					$text: 'test',
+					$named: true,
+					_operators: TSKindId.Lt as never,
+					_primary_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('not builds the parent', () => {
+		const node = ir.raiseStatement.not({
+			expressions: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('boolean builds the parent', () => {
+		const node = ir.raiseStatement.boolean({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			operator: 'and',
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('lambda builds the parent', () => {
+		const node = ir.raiseStatement.lambda({
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('conditional builds the parent', () => {
+		const node = ir.raiseStatement.conditional({
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named builds the parent', () => {
+		const node = ir.raiseStatement.named({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as builds the parent', () => {
+		const node = ir.raiseStatement.as({
+			expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alias: stampBuilt({
+				$type: TSKindId.AsPatternTarget,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('expressionList builds the parent', () => {
+		const node = ir.raiseStatement.expressionList({
+			expressions: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.raiseStatement.named.identifier({
+			expressions: [
+				{ right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any, left: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.RaiseStatement);
+		expect((node as any).expressions()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2288,19 +2666,19 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.hex builds the parent', () => {
-		const node = ir.casePattern.simplePattern.hex('a', { prefix: '0x' });
+		const node = ir.casePattern.simplePattern.hex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.octal builds the parent', () => {
-		const node = ir.casePattern.simplePattern.octal('1', { prefix: '0o' });
+		const node = ir.casePattern.simplePattern.octal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.binary builds the parent', () => {
-		const node = ir.casePattern.simplePattern.binary('1', { prefix: '0b' });
+		const node = ir.casePattern.simplePattern.binary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3694,6 +4072,88 @@ describe('yield sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('comparison builds the parent', () => {
+		const node = ir.yield.comparison({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			comparators: [
+				stampBuilt({
+					$type: TSKindId.ComparisonOperatorComparator,
+					$text: 'test',
+					$named: true,
+					_operators: TSKindId.Lt as never,
+					_primary_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('not builds the parent', () => {
+		const node = ir.yield.not(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('boolean builds the parent', () => {
+		const node = ir.yield.boolean({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			operator: 'and',
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('lambda builds the parent', () => {
+		const node = ir.yield.lambda({
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('conditional builds the parent', () => {
+		const node = ir.yield.conditional({
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named builds the parent', () => {
+		const node = ir.yield.named({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as builds the parent', () => {
+		const node = ir.yield.as({
+			expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			alias: stampBuilt({
+				$type: TSKindId.AsPatternTarget,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('expressionList builds the parent', () => {
+		const node = ir.yield.expressionList(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('fromClause.comparison builds the parent', () => {
 		const node = ir.yield.fromClause.comparison({
 			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
@@ -3772,6 +4232,15 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.named.identifier builds the parent', () => {
 		const node = ir.yield.fromClause.named.identifier({
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.yield.named.identifier({
 			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			left: ['test']
 		});
@@ -5380,12 +5849,12 @@ describe('comprehension_clauses', () => {
 
 describe('integer_hex', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerHex('a', { prefix: '0x' });
+		const node = ir.integerHex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.IntegerHex);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerHex('a', { prefix: '0x' });
+		const node = ir.integerHex('a', { radixPrefix: '0x' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -5393,12 +5862,12 @@ describe('integer_hex', () => {
 
 describe('integer_octal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerOctal('1', { prefix: '0o' });
+		const node = ir.integerOctal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.IntegerOctal);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerOctal('1', { prefix: '0o' });
+		const node = ir.integerOctal('1', { radixPrefix: '0o' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -5406,12 +5875,12 @@ describe('integer_octal', () => {
 
 describe('integer_binary', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerBinary('1', { prefix: '0b' });
+		const node = ir.integerBinary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.IntegerBinary);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerBinary('1', { prefix: '0b' });
+		const node = ir.integerBinary('1', { radixPrefix: '0b' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});

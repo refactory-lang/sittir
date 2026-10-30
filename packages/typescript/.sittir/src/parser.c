@@ -13,7 +13,7 @@
 #define ALIAS_COUNT 8
 #define TOKEN_COUNT 189
 #define EXTERNAL_TOKEN_COUNT 18
-#define FIELD_COUNT 83
+#define FIELD_COUNT 84
 #define MAX_ALIAS_SEQUENCE_LENGTH 10
 #define MAX_RESERVED_WORD_SET_SIZE 35
 #define PRODUCTION_ID_COUNT 1684
@@ -3671,11 +3671,12 @@ enum ts_field_identifiers {
   field_tuple_type_members = 76,
   field_type = 77,
   field_type_arguments = 78,
-  field_type_only = 79,
-  field_type_parameters = 80,
-  field_types = 81,
-  field_value = 82,
-  field_variable_declarator = 83,
+  field_type_keyword = 79,
+  field_type_only = 80,
+  field_type_parameters = 81,
+  field_types = 82,
+  field_value = 83,
+  field_variable_declarator = 84,
 };
 
 static const char * const ts_field_names[] = {
@@ -3758,6 +3759,7 @@ static const char * const ts_field_names[] = {
   [field_tuple_type_members] = "tuple_type_members",
   [field_type] = "type",
   [field_type_arguments] = "type_arguments",
+  [field_type_keyword] = "type_keyword",
   [field_type_only] = "type_only",
   [field_type_parameters] = "type_parameters",
   [field_types] = "types",
@@ -5714,7 +5716,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_right, 2},
   [181] =
     {field_object, 0},
-    {field_optional_chain, 1},
+    {field_operator, 1},
     {field_property, 2},
   [184] =
     {field_arguments, 2},
@@ -5769,11 +5771,11 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 2},
   [219] =
     {field_name, 1},
-    {field_type_only, 0},
+    {field_type_keyword, 0},
   [221] =
     {field_from_clause, 2},
     {field_terminator, 3},
-    {field_type_only, 1},
+    {field_type_keyword, 1},
   [224] =
     {field_source, 1},
   [225] =
@@ -6171,7 +6173,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_from_clause, 2},
     {field_import_attribute, 3},
     {field_terminator, 4},
-    {field_type_only, 1},
+    {field_type_keyword, 1},
   [523] =
     {field_cases, 1},
   [524] =
@@ -6860,7 +6862,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [1070] =
     {field_alias, 3},
     {field_name, 1},
-    {field_type_only, 0},
+    {field_type_keyword, 0},
   [1073] =
     {field_body, 5},
     {field_condition, 3},

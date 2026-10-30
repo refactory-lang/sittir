@@ -65,21 +65,21 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: interiorPattern(TOKEN_INTERIORS['integer_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex');
-			return F.buildIntegerHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildIntegerHex(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	integer_octal: {
 		pattern: interiorPattern(TOKEN_INTERIORS['integer_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal');
-			return F.buildIntegerOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildIntegerOctal(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	integer_binary: {
 		pattern: interiorPattern(TOKEN_INTERIORS['integer_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary');
-			return F.buildIntegerBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildIntegerBinary(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	integer_decimal_long: { pattern: F._leafRe_buildIntegerDecimalLong, factory: F.buildIntegerDecimalLong },
@@ -6263,32 +6263,32 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerHex>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 >;
 export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerHex>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerHex>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerHex(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerHex>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 	>;
 }
 
@@ -6305,32 +6305,32 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerOctal>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 >;
 export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerOctal>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerOctal>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerOctal(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerOctal>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 	>;
 }
 
@@ -6350,8 +6350,8 @@ export function coerceToIntegerBinary<
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerBinary>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 >;
 export function coerceToIntegerBinary<
 	const I extends T.IntegerBinary.Loose,
@@ -6361,24 +6361,24 @@ export function coerceToIntegerBinary<
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerBinary>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerBinary>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerBinary(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerBinary>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 	>;
 }
 
@@ -6421,7 +6421,9 @@ export function resolveFloatPoint_fraction(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_sign(value: T.FloatPoint.LooseConfig['sign']): Admit<T.FloatPoint['_sign']> {
+export function resolveFloatPoint_exponentSign(
+	value: T.FloatPoint.LooseConfig['exponentSign']
+): Admit<T.FloatPoint['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
@@ -6461,7 +6463,7 @@ export function coerceToFloatPoint(
 		{
 			integer: resolveFloatPoint_integer(_cfg.integer),
 			fraction: resolveFloatPoint_fraction(_cfg.fraction),
-			sign: resolveFloatPoint_sign(_cfg.sign),
+			exponentSign: resolveFloatPoint_exponentSign(_cfg.exponentSign),
 			exponent: resolveFloatPoint_exponent(_cfg.exponent),
 			imaginary: resolveFloatPoint_imaginary(_cfg.imaginary)
 		},
@@ -6485,9 +6487,9 @@ export function resolveFloatLeadingPoint_fraction(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatLeadingPoint_sign(
-	value: T.FloatLeadingPoint.LooseConfig['sign']
-): Admit<T.FloatLeadingPoint['_sign']> {
+export function resolveFloatLeadingPoint_exponentSign(
+	value: T.FloatLeadingPoint.LooseConfig['exponentSign']
+): Admit<T.FloatLeadingPoint['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
@@ -6527,7 +6529,7 @@ export function coerceToFloatLeadingPoint(
 		{
 			integer: resolveFloatLeadingPoint_integer(_cfg.integer),
 			fraction: resolveFloatLeadingPoint_fraction(_cfg.fraction),
-			sign: resolveFloatLeadingPoint_sign(_cfg.sign),
+			exponentSign: resolveFloatLeadingPoint_exponentSign(_cfg.exponentSign),
 			exponent: resolveFloatLeadingPoint_exponent(_cfg.exponent),
 			imaginary: resolveFloatLeadingPoint_imaginary(_cfg.imaginary)
 		},
@@ -6543,9 +6545,9 @@ export function resolveFloatScientific_integer(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatScientific_sign(
-	value: T.FloatScientific.LooseConfig['sign']
-): Admit<T.FloatScientific['_sign']> {
+export function resolveFloatScientific_exponentSign(
+	value: T.FloatScientific.LooseConfig['exponentSign']
+): Admit<T.FloatScientific['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
@@ -6582,7 +6584,7 @@ export function coerceToFloatScientific(
 	return F.buildFloatScientific(
 		{
 			integer: resolveFloatScientific_integer(_cfg.integer),
-			sign: resolveFloatScientific_sign(_cfg.sign),
+			exponentSign: resolveFloatScientific_exponentSign(_cfg.exponentSign),
 			exponent: resolveFloatScientific_exponent(_cfg.exponent),
 			imaginary: resolveFloatScientific_imaginary(_cfg.imaginary)
 		},

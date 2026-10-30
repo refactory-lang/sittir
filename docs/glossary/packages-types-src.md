@@ -996,7 +996,7 @@ The flag query for a portable row.
 
 ### `packages/types/src/portable.ts::PortableCallShape`
 
-The shape of a builder's call: config, spread, text, constant, direct, elements, forwarded or placed.
+The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
 
 ### `packages/types/src/portable.ts::PortableMountCall`
 
@@ -1208,7 +1208,7 @@ The arm is the default when no other test applies.
 
 ### `packages/types/src/portable.ts::PortableDecimalParts`
 
-The parts of a decimal number: integer, fraction, exponent, marker and sign.
+The parts of a decimal number: integer, fraction, exponent, marker and the exponent's sign.
 
 ### `packages/types/src/portable.ts::PortableDecimalParts::integer`
 
@@ -1226,9 +1226,9 @@ The exponent part.
 
 The marker part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::sign`
+### `packages/types/src/portable.ts::PortableDecimalParts::exponentSign`
 
-The sign part.
+The exponent's sign.
 
 ### `packages/types/src/portable.ts::PortableBuildArm`
 

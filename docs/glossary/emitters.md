@@ -4619,14 +4619,16 @@ The slots of a node that take their value from the options argument instead of t
 
 ```text
 /**
- * The factory surface, read from the model's class: a fixed-text leaf with a
- * builder is `constant` (its build entry is its kind id, not a call), other
- * leaves are `text`, a
+ * The factory surface, read from the model's class. A kind with no content
+ * to supply (`suppliesNoContent`) takes its shape from what it stores: a
+ * fixed-text leaf with a builder is `constant` (its build entry is its kind
+ * id, not a call), and a compound with no slots is `nullary` (a call that
+ * takes nothing and builds the node). Other leaves are `text`, a
  * list is `elements`, a compound with a sole repeated slot is `spread`,
  * with a sole singular slot `direct` (or `forwarded` when that slot names
- * one kind with its own factory), anything else — two-plus slots, zero
- * slots, a hidden non-user-facing kind — is `config`. A hoisted form is
- * `direct`/`forwarded`/`config` by the same sole-slot test.
+ * one kind with its own factory), anything else — two-plus slots, a hidden
+ * non-user-facing kind — is `config`. A hoisted form is
+ * `direct`/`forwarded`/`config`/`nullary` by the same test.
  */
 ```
 
@@ -10765,7 +10767,7 @@ Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf`
 
 ### `packages/codegen/src/emitters/test.ts::rendersText`
 
-True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
+True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A layout member (`layoutSymbolsOf`) writes none: its text is whitespace, and at a node's edge the engine writes it as a gap. Any other kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
 
 ### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 

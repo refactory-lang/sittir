@@ -12,12 +12,12 @@ describe('a registered spelling site leaves the config and takes an option', () 
 	});
 
 	it('the second parameter chooses the other spelling for each base', () => {
-		expect(ts.build.number.hex('FF', { prefix: '0X' }).$render()).toBe('0XFF');
-		expect(ts.build.number.octal('17', { prefix: '0O' }).$render()).toBe('0O17');
-		expect(ts.build.number.binary('101', { prefix: '0B' }).$render()).toBe('0B101');
+		expect(ts.build.number.hex('FF', { radixPrefix: '0X' }).$render()).toBe('0XFF');
+		expect(ts.build.number.octal('17', { radixPrefix: '0O' }).$render()).toBe('0O17');
+		expect(ts.build.number.binary('101', { radixPrefix: '0B' }).$render()).toBe('0B101');
 	});
 
 	it('a prefix of another base is not admitted', () => {
-		expect(() => ts.build.number.hex('ff', { prefix: '0o' as never })).toThrow(/does not match/);
+		expect(() => ts.build.number.hex('ff', { radixPrefix: '0o' as never })).toThrow(/does not match/);
 	});
 });

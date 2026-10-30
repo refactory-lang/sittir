@@ -28,11 +28,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	53: [['termGroups', 0, undefined, '_term_group']],
 	55: [['content', 0, undefined, '_content']],
 	56: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['pattern', 1, undefined, '_pattern']
 	],
 	57: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['pattern', 1, undefined, '_pattern']
 	],
 	58: [
@@ -48,7 +48,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	62: [['pattern', 0, undefined, '_pattern']],
 	63: [
-		['content', 0, undefined, '_content'],
+		['operator', 0, undefined, '_operator'],
 		['groupName', 1, undefined, '_group_name'],
 		['pattern', 2, undefined, '_pattern']
 	],
@@ -146,24 +146,24 @@ export const structure: StructureTable = Object.freeze({
 	56: {
 		kind: 'lookahead_assertion',
 		required: [
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_pattern', 'pattern']
 		],
 		single: [['_pattern', 'LookaheadAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51]]],
-		kindIds: [['_content', 'LookaheadAssertion.content', [8, 9]]],
-		config: ['content', 'pattern']
+		kindIds: [['_operator', 'LookaheadAssertion.operator', [8, 9]]],
+		config: ['operator', 'pattern']
 	},
 	57: {
 		kind: 'lookbehind_assertion',
 		required: [
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_pattern', 'pattern']
 		],
 		single: [['_pattern', 'LookbehindAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51]]],
-		kindIds: [['_content', 'LookbehindAssertion.content', [8, 9]]],
-		config: ['content', 'pattern']
+		kindIds: [['_operator', 'LookbehindAssertion.operator', [8, 9]]],
+		config: ['operator', 'pattern']
 	},
 	58: {
 		kind: 'character_class',
@@ -213,7 +213,7 @@ export const structure: StructureTable = Object.freeze({
 	63: {
 		kind: 'named_capturing_group',
 		required: [
-			['_content', 'content'],
+			['_operator', 'operator'],
 			['_group_name', 'groupName'],
 			['_pattern', 'pattern']
 		],
@@ -225,8 +225,8 @@ export const structure: StructureTable = Object.freeze({
 			['_group_name', 'NamedCapturingGroup.groupName', 'buildGroupName(…)', [38]],
 			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51]]
 		],
-		kindIds: [['_content', 'NamedCapturingGroup.content', [11, 22]]],
-		config: ['content', 'groupName', 'pattern']
+		kindIds: [['_operator', 'NamedCapturingGroup.operator', [11, 22]]],
+		config: ['operator', 'groupName', 'pattern']
 	},
 	64: {
 		kind: 'non_capturing_group',

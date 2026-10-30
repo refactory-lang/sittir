@@ -177,4 +177,32 @@ describe('flattenRules terminality stamps', () => {
 		const members = (out['owner'] as { members: Rule[] }).members;
 		expect(members[1]).toMatchObject({ fieldName: 'operator', nonterminal: false });
 	});
+
+	it('a body that is one layout token keeps it as a slot; beside other parts it is fixed text', () => {
+		const out = flattenRules({
+			_layout: { type: 'CHOICE', members: [sym('_space'), sym('_newline')] } as Rule,
+			_space: str(' '),
+			_newline: str('\n'),
+			empty: sym('_newline'),
+			terminated: { type: SEQ, members: [sym('statement'), sym('_newline')] }
+		});
+		expect(out['empty']).toMatchObject({ type: SYMBOL, name: '_newline', nonterminal: true });
+		expect((out['terminated'] as { members: Rule[] }).members.map((m) => m.nonterminal)).toEqual([true, false]);
+	});
+
+	it('re-flattening keeps a stamped reference to a literal rule terminal', () => {
+		const out = flattenRules({ dots: str('..'), bare: sym('dots') });
+		expect(out['bare']).toMatchObject({ type: SYMBOL, name: 'dots', nonterminal: false });
+		expect(flatten(out['bare'] as Rule)).toMatchObject({ nonterminal: false });
+	});
+
+	it('re-flattening keeps every leaf stamp it is given', () => {
+		const leaves: Rule[] = [
+			{ ...str('a'), nonterminal: true },
+			{ ...sym('x'), nonterminal: false },
+			{ type: 'PATTERN', value: 'a', nonterminal: false } as Rule,
+			{ type: NEWLINE, nonterminal: true } as Rule
+		];
+		expect(leaves.map((leaf) => flatten(leaf).nonterminal)).toEqual([true, false, false, true]);
+	});
 });

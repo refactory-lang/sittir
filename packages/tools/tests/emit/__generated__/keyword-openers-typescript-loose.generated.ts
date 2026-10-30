@@ -177,7 +177,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				argument: ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.memberExpression({
 						object: "a",
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: "b",
 					}),
 				}),
@@ -237,7 +237,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 							object: "a",
 							index: "0",
 						}),
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: "b",
 					}),
 				})],
@@ -248,7 +248,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 							function: "foo",
 							arguments: "x",
 						}),
-						optionalChain: ts.kinds.Dot,
+						operator: ts.kinds.Dot,
 						property: "bar",
 					}),
 					index: "1",
