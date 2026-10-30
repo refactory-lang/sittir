@@ -123,20 +123,22 @@ pub fn row_coordinate(tree: &tree_sitter::Tree, read: &crate::read::ReadCtx<'_>,
 }
 
 /// The index of the outermost `ERROR` that is or holds the node at `index`,
-/// or `None` when none does.
+/// or `None` when none does. A tree whose root holds no error answers at
+/// once; otherwise the cursor goes to the node and climbs its ancestors, so
+/// the cost follows the node's depth, not how many siblings precede it.
 fn error_holding(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<NodeIndex> {
+    if !tree.root_node().has_error() {
+        return None;
+    }
     let mut cursor = tree.walk();
+    crate::read::goto(&mut cursor, index);
+    let mut outermost = None;
     loop {
         if cursor.node().is_error() {
-            return Some(crate::read::index_of(&cursor));
+            outermost = Some(crate::read::index_of(&cursor));
         }
-        if crate::read::index_of(&cursor) == index || !cursor.goto_first_child() {
-            return None;
-        }
-        while crate::read::index_of(&cursor).0 + crate::read::descendant_count(&cursor.node()) <= index.0 {
-            if !cursor.goto_next_sibling() {
-                return None;
-            }
+        if !cursor.goto_parent() {
+            return outermost;
         }
     }
 }
@@ -2208,6 +2210,25 @@ mod tests {
         let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
+    }
+
+    #[test]
+    fn the_error_holding_a_node_is_the_outermost_error_among_its_ancestors() {
+        for source in ["fn f() {} @@ fn g() {}", "fn f() { if @@ { while @@ { ] } } }", "@@ ( @@ [ @@ { @@", "@@ @@", "fn f() {}\nfn g() {}\n", ""] {
+            let (tree, _) = parsed(source);
+            for index in (0..crate::read::descendant_count(&tree.tree().root_node())).map(NodeIndex) {
+                let mut outermost = None;
+                let mut at = node_at_index(tree.tree(), index);
+                while let Some(node) = at {
+                    if node.is_error() {
+                        outermost = Some(node.id());
+                    }
+                    at = node.parent();
+                }
+                let found = error_holding(tree.tree(), index).and_then(|error| node_at_index(tree.tree(), error)).map(|node| node.id());
+                assert_eq!(found, outermost, "{source:?} at {index:?}");
+            }
+        }
     }
 
     fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryItem]) -> Vec<String> {

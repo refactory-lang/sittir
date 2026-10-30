@@ -11,8 +11,8 @@ const LONG = { timeout: 30_000 };
 
 const textOf = (n: number): string => Array.from({ length: n }, (_, at) => `x${at};\n`).join('');
 
-describe('a list longer than an arena chunk, in arena storage', () => {
-	const engine = createEngine(rust, { nodeStorage: 'arena' });
+describe.each(['arena', 'object'] as const)('a list longer than an arena chunk, in %s storage', (storage) => {
+	const engine = createEngine(rust, { nodeStorage: storage });
 
 	it.each([
 		{ items: CHUNK_WORDS - 1, run: 'fills a chunk' },
