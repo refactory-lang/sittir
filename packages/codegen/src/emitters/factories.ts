@@ -1081,12 +1081,12 @@ function fieldCarryingBuiltTypeSurface(
 		surface.leadingOptions === undefined
 			? paramsToTuple(params)
 			: `${paramsToTuple(params)} | ${paramsToTuple(withLeadingOptions(surface.leadingOptions.type, params))}`;
-	const { param } = surface;
-	const arrayArgs = spreadFacts?.multiple && param !== undefined
-		? ` | ${rowsOf(paramText({ ...param, rest: false }, `Readonly<${param.looseType}>`))}`
-		: '';
+	const arrayArgs =
+		surface.spreadFacts !== null && surface.spreadFacts.multiple
+			? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
+			: '';
 	return {
-		...(spreadTarget === null && param !== undefined && !param.rest ? { row: rowParamOf(node, param, nodeMap, kindEntries) } : {}),
+		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
@@ -1234,10 +1234,9 @@ interface FactoryParam {
 }
 
 
-interface FactorySurface {
+interface FactorySurfaceFields {
 	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
-	readonly param?: FactoryParam;
 	readonly params: string;
 	readonly looseParams: string;
 	readonly rowParams: string;
@@ -1253,6 +1252,20 @@ interface FactorySurface {
 	readonly spellingType?: string;
 	readonly leadingOptions?: LeadingOptions;
 }
+
+interface ParamFactorySurface extends FactorySurfaceFields {
+	readonly nullary?: undefined;
+	readonly param: FactoryParam;
+}
+
+interface NullaryFactorySurface extends FactorySurfaceFields {
+	readonly nullary: true;
+	readonly param?: undefined;
+	readonly spreadFacts: null;
+	readonly leadingOptions?: undefined;
+}
+
+type FactorySurface = ParamFactorySurface | NullaryFactorySurface;
 
 export function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = [^,]+/, '$1?: $2');
@@ -1376,6 +1389,7 @@ function resolveFactorySurface(
 	kindEntries: readonly KindEnumEntry[]
 ): FactorySurface {
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
+	if (surface.nullary === true) return surface;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spellingType === undefined) return surface;
 	const leadingOptions = leadingOptionsOf(node, nodeMap);
@@ -1493,7 +1507,7 @@ function resolveConfigFactorySurface(
 	}
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	if (classifyFactoryShape(node, nodeMap) === 'nullary') {
-		return { spreadFacts, singleField, params: '', looseParams: '', rowParams: '', rowLooseParams: `input?: T.${node.typeName}.Loose`, arity: 0, args: '', configType, directParamOptional: false, opt: '' };
+		return { nullary: true, spreadFacts: null, singleField, params: '', looseParams: '', rowParams: '', rowLooseParams: `input?: T.${node.typeName}.Loose`, arity: 0, args: '', configType, directParamOptional: false, opt: '' };
 	}
 	const slots = node.slots;
 	const opt = node.argumentOptional(nodeMap) ? '?' : '';
@@ -1882,8 +1896,8 @@ function emitFieldCarryingFactory(
 					`    value = unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`,
 					'  }'
 				];
-	if (leadingOptions !== undefined && surface.param !== undefined) {
-		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));
+	if (surface.leadingOptions !== undefined) {
+		lines.push(...leadingOptionsSplit(surface.leadingOptions, 'children', strictParamType(surface.param)));
 	}
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	const owner = plan.viewPlan?.owner;
