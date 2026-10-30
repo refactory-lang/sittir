@@ -807,7 +807,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		117, 118, 121, 122, 124, 125, 126, 128, 129, 130, 131, 136, 137, 138, 139, 140, 156, 158, 163, 164, 168, 169, 170,
 		171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426, 474, 478
 	]),
-	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({ 295: ['trailingComma'] })
 });
 

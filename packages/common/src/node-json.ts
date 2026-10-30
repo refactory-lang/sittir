@@ -72,7 +72,7 @@ function unitJSON(kindId: number, sides: UnitSidesData | undefined, facts: NodeJ
 function valueJSON(value: unknown, facts: NodeJSONFacts, units?: UnitSides, item = 0): NodeJSONValue | undefined {
 	if (value === undefined || value === false) return undefined;
 	if (value === true || typeof value === 'string') return value;
-	if (value === facts.blank) return null;
+	if (value === null) return null;
 	if (typeof value === 'number') return unitJSON(value, units?.get(item), facts);
 	if (isNode(value)) return nodeJSON(value, facts);
 	if (typeof value === 'object' && value !== null && Symbol.iterator in value) {

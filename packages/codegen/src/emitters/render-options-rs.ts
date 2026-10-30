@@ -1,4 +1,5 @@
 import type { SeamOrigin } from '../types/rule.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { rustStringLiteral as q } from '../util/string-literal.ts';
@@ -8,7 +9,6 @@ import { AssembledLeaf } from '../compiler/model/node-map.ts';
 import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import {
 	BLANK_ARM,
-	BLANK_KIND_ID,
 	type PreferenceArm,
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';

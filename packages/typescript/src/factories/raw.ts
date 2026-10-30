@@ -44,6 +44,8 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	admitSplicedEnvelope,
@@ -811,7 +813,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 	currentHandle()?.admit(TSKindId.StatementBlock, args);
 	const _statements = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -827,7 +829,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 				rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children))
 		},
 		statements: () => hydrateStoredSlots(node, '_statements'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1097,7 +1099,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 	const _body = kindIdStorage<NonNullable<T.DoStatement['_body']>>(config.body);
 	const _condition = config.condition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -1117,7 +1119,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
 		condition: () => hydrateStoredSlot(node, '_condition'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2152,7 +2154,7 @@ export function buildClassDeclaration(
 	const _heritage = config.heritage;
 	const _body = orDefault(config.body, () => buildClassBody());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2192,7 +2194,7 @@ export function buildClassDeclaration(
 		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
 		heritage: () => hydrateStoredSlot(node, '_heritage'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2349,7 +2351,7 @@ export function buildFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2391,7 +2393,7 @@ export function buildFunctionDeclaration(
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2519,7 +2521,7 @@ export function buildGeneratorFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2562,7 +2564,7 @@ export function buildGeneratorFunctionDeclaration(
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3788,7 +3790,7 @@ function _buildClassStaticBlock(
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _body = value;
@@ -3803,7 +3805,7 @@ function _buildClassStaticBlock(
 			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
 				rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling }))
 		},
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8298,7 +8300,7 @@ export function buildAmbientDeclarationModule(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -8318,7 +8320,7 @@ export function buildAmbientDeclarationModule(
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9285,7 +9287,7 @@ export function buildClassBodyMemberMethod(
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -9307,7 +9309,7 @@ export function buildClassBodyMemberMethod(
 		},
 		decorators: () => hydrateStoredSlots(node, '_decorator'),
 		methodDefinition: () => hydrateStoredSlot(node, '_method_definition'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -10698,7 +10700,7 @@ export function buildForHeaderLetConstKind(
 		_reservedWords_buildIdentifier
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator);
@@ -10731,7 +10733,7 @@ export function buildForHeaderLetConstKind(
 		},
 		kind: () => _kind,
 		left: () => hydrateStoredSlot(node, '_left'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),

@@ -27,7 +27,6 @@ import { displayNameOf, displayNameOfEntry, displayOfParserName, displayedKinds 
 
 const UNDECLARED_ARM = '';
 export const BLANK_ARM = 'blank';
-export const BLANK_KIND_ID = 0;
 
 export function admitsArm(site: { readonly arms: readonly PreferenceArm[] }, arm: string): boolean {
 	return site.arms.some((candidate) => candidate.value === arm);

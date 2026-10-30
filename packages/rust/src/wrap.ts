@@ -31,7 +31,9 @@ import {
 	queryOf,
 	snapshotOf,
 	triviaSide,
-	triviaInner
+	triviaInner,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -3960,7 +3962,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma;
+			return blankArmRead(this._trailing_comma);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
@@ -3972,7 +3974,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			body: (v: NonNullable<T.LastMatchArm['_body']>) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _body: v }, tree)),
 			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree)),
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: blankArmStored(v) }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(

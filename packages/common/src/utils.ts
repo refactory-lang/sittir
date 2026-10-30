@@ -14,6 +14,7 @@ import { snapshotOf } from './snapshot.ts';
 import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-entries.ts';
 
 export { Delimiter } from './delimiter.ts';
+export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { nodeJSON } from './node-json.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';

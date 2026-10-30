@@ -1,4 +1,4 @@
-import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -1023,8 +1023,16 @@ export function registeredSlots(node: {
 	return node.slots.filter((slot) => !config.has(slot));
 }
 
+export function blankArmImports(nodeMap: NodeMap): readonly string[] {
+	return [...nodeMap.nodes.values()].some((node) => node.slots.some(hasBlankArm)) ? ['blankArmRead', 'blankArmStored'] : [];
+}
+
 export function blankFromInput(blank: boolean, expr: string): string {
-	return blank ? `(${expr} === null ? ${BLANK_KIND_ID} : ${expr})` : expr;
+	return blank ? `blankArmStored(${expr})` : expr;
+}
+
+export function blankForRead(blank: boolean, expr: string): string {
+	return blank ? `blankArmRead(${expr})` : expr;
 }
 
 export interface LeadingOptions {

@@ -13,7 +13,7 @@ import {
 	type TypedNode
 } from '../validate/common.ts';
 
-const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} } } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
+const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} }, slotBlankArms: {} } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(type: number, text: string): TypedNode {
 	return { $type: type, $named: true, $text: text };

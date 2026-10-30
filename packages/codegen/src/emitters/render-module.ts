@@ -1,4 +1,5 @@
 import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
@@ -122,7 +123,7 @@ import {
 	type DelimiterSite
 } from './render-options-rs.ts';
 import { displayedKinds } from '../compiler/model/display-name.ts';
-import { BLANK_KIND_ID, collectSitePreferences, hasBlankArm, type SitePreference } from '../compiler/model/site-preferences.ts';
+import { collectSitePreferences, hasBlankArm, type SitePreference } from '../compiler/model/site-preferences.ts';
 import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {

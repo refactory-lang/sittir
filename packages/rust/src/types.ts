@@ -7274,7 +7274,7 @@ export interface LastMatchArm {
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
 	readonly match: () => MatchPattern;
 	readonly body: () => Expression;
-	readonly trailingComma: () => number | undefined;
+	readonly trailingComma: () => NonNullable<T.LastMatchArm.Options>['trailingComma'] | undefined;
 }
 
 export interface MatchPattern {

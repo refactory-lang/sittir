@@ -159,8 +159,6 @@ export interface NodeJSONFacts {
 	readonly textEnvelopes: ReadonlyMap<number, number>;
 	/** The kinds a slot holds as a kind id. */
 	readonly units: ReadonlySet<number>;
-	/** The kind id an optional slot holds when it chose none. */
-	readonly blank: number;
 	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
 	readonly spread: ReadonlySet<number>;
 	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */

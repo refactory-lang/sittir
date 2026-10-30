@@ -5,7 +5,6 @@ import { classifyFactoryShape, compareOrdinal, keywordPresenceStorage, registere
 import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
-import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
 import { layoutTriviaKindIds, listKindIds, namedUnitKindIds, rebuildWrapperKindIds, unitKindIds } from './wrap.ts';
 import { builtFromText, storedTextKinds } from './built-from-text.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
@@ -172,7 +171,6 @@ function emitJsonFacts(
 		`\tleaves: new Set<number>(${JSON.stringify(leaves)}),`,
 		`\ttextEnvelopes: new Map<number, number>(${JSON.stringify([...textEnvelopes])}),`,
 		`\tunits: new Set<number>(${JSON.stringify(units)}),`,
-		`\tblank: ${BLANK_KIND_ID},`,
 		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, names]) => ` ${kindId}: ${JSON.stringify(names)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,
 		'});'
 	];

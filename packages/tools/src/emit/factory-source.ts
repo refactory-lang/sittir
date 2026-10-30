@@ -13,7 +13,7 @@ import {
 import type { FactoryShape } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
-import { isStorageKey, mapTriviaEntries, sidesOf } from '@sittir/common/utils';
+import { BLANK_KIND_ID, isStorageKey, mapTriviaEntries, sidesOf } from '@sittir/common/utils';
 
 export type Surface = 'strict' | 'loose';
 
@@ -1043,7 +1043,7 @@ export async function emitFactorySourceText(
 		nested,
 		kindNameFromId,
 		memberNameOfId: (id) => memberOf(types.TSKindId, id),
-		blankKindId: (await load('sitePreferences')).BLANK_KIND_ID,
+		blankKindId: BLANK_KIND_ID,
 		irPathOfKind: irPathResolver(model.builderPaths, binding.engine),
 		seats: model.seats,
 		slotNameOf: slotNameOf(model),

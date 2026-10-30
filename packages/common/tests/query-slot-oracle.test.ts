@@ -21,9 +21,6 @@ const GRAMMARS = [
 	['typescript', () => createEngine(typescript), typescriptHooks.querySlots, source('packages/common/src/query.ts')]
 ] as const;
 
-/** The kind id of the blank arm a parsed optional keeps when no child came: the slot holds nothing there. */
-const BLANK = 0;
-
 const at = (node: Node): string => `${node.$type}@${node.$_layout.at.$span.start}-${node.$_layout.at.$span.end}`;
 
 const textOf = (text: string, item: unknown): string | undefined => {
@@ -43,7 +40,7 @@ describe('a where over a slot selects the nodes its read gives the slot', () => 
 		let checked = 0;
 		for (const [kind, nodes] of byKind) {
 			for (const [accessor, , keyword] of querySlots[kind] ?? []) {
-				const held = (node: Node) => slotItems(node, accessor).filter((item) => (keyword === undefined ? item !== false && item !== BLANK : item === true));
+				const held = (node: Node) => slotItems(node, accessor).filter((item) => (keyword === undefined ? item !== false && item !== null : item === true));
 				const expected = nodes.filter((node) => held(node).length > 0).map(at);
 				const native = (condition: Parameters<View['where']>[0]) => [...all().ofType(kind).where(condition)].filter((node) => node.$type === kind).map(at);
 				const present = native((c) => (keyword === undefined ? c[accessor]!.match(/^/) : c[accessor]!.eq(true)));

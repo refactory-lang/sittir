@@ -7,7 +7,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { emitClientUtils } from '../client-utils.ts';
 import { compoundStructureRow, listStructureRow } from '../factories.ts';
 import { collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
-import { BLANK_KIND_ID } from '../../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 
 describe('the structure table: what a built node of each kind must hold', () => {
 	let nodeMap: NodeMap;
