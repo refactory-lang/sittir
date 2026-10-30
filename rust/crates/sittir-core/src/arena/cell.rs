@@ -293,7 +293,8 @@ impl Cell {
     /// Writes the cell into `out`, the words of a parsed record's slot of
     /// shape `shape` (its stamped width, or for a list item its run's),
     /// kinds packed in `bits` bits, zeroing the words its form leaves unused.
-    /// An embedded record is copied in by its writer (`inline_payload`).
+    /// An embedded record is written in place by its child's walk, and its
+    /// cell tagged (`inline_tag`).
     ///
     /// # Errors
     ///
@@ -329,15 +330,15 @@ impl Cell {
         Ok(())
     }
 
-    /// The words of `out`, a parsed record's slot of shape `shape`, a bounded
-    /// child's embedded record is written into, tagged as one when the slot
-    /// holds more than one form.
+    /// The payload of `out`, a parsed record's slot of shape `shape`, where a
+    /// bounded child's embedded record lies: its first word, and the words
+    /// it holds.
     ///
     /// # Errors
     ///
     /// `ArenaError::Unwritable` for a slot that holds no embedded record, and
     /// `ArenaError::Malformed` for one narrower than its stamped capacity.
-    pub fn inline_payload(out: &mut [u32], shape: CellShape) -> Result<&mut [u32], ArenaError> {
+    pub fn inline_payload(out: &[u32], shape: CellShape) -> Result<std::ops::Range<usize>, ArenaError> {
         if shape.forms & form::INLINE == 0 {
             return Err(ArenaError::Unwritable("an embedded record in a slot that holds none"));
         }
@@ -346,11 +347,22 @@ impl Cell {
         if out.len() < end || shape.inline < HEADER_WORDS {
             return Err(malformed("inline cell width", shape.inline));
         }
-        out.fill(0);
-        if start == 1 {
+        Ok(start..end)
+    }
+
+    /// Tags `out`, a parsed record's slot of shape `shape` whose payload holds
+    /// the embedded record its child's walk wrote there, as holding one, when
+    /// the slot holds more than one form.
+    ///
+    /// # Errors
+    ///
+    /// As `inline_payload`.
+    pub fn inline_tag(out: &mut [u32], shape: CellShape) -> Result<(), ArenaError> {
+        let payload = Cell::inline_payload(out, shape)?;
+        if payload.start == 1 {
             out[0] = parsed_tag::INLINE;
         }
-        Ok(&mut out[start..end])
+        Ok(())
     }
 
     /// The cell in `words`, the words of a parsed record's slot of shape
@@ -638,8 +650,10 @@ mod tests {
             if at == Address::NONE {
                 cell.encode_parsed(&mut written, shape, bits).expect("it fits");
             } else {
-                let start = shape.payload_start();
-                Cell::inline_payload(&mut written, shape).expect("its capacity").copy_from_slice(&words[start..start + shape.inline as usize]);
+                written.fill(0);
+                let payload = Cell::inline_payload(&written, shape).expect("its capacity");
+                written[payload.clone()].copy_from_slice(&words[payload]);
+                Cell::inline_tag(&mut written, shape).expect("its capacity");
             }
             assert_eq!(written, words, "{entry}");
         }
@@ -767,11 +781,12 @@ mod tests {
         assert!(Cell::decode_parsed(&[header, 0], Address::NONE, embedded, BITS).is_err(), "an embedded record has an address");
         assert!(Cell::decode_parsed(&[header, 0], at, CellShape { inline: 1, ..embedded }, BITS).is_err(), "narrower than a record header");
         assert!(Cell::decode_parsed(&[header | 1 << BITS, 0], at, embedded, BITS).is_err(), "a header with flags");
-        let mut words = [9; 3];
+        let mut words = [0, 9, 9];
         let tagged = CellShape { inline: 2, ..shape(form::NODE | form::INLINE, 3) };
-        assert_eq!(Cell::inline_payload(&mut words, tagged).map(|payload| payload.len()), Ok(2));
-        assert_eq!(words, [parsed_tag::INLINE, 0, 0]);
-        assert!(Cell::inline_payload(&mut [0; 3], shape(form::NODE, 3)).is_err(), "a slot that holds no embedded record");
+        assert_eq!(Cell::inline_payload(&words, tagged), Ok(1..3));
+        Cell::inline_tag(&mut words, tagged).expect("its capacity");
+        assert_eq!(words, [parsed_tag::INLINE, 9, 9], "the tag, and the words the child's walk wrote kept");
+        assert!(Cell::inline_tag(&mut [0; 3], shape(form::NODE, 3)).is_err(), "a slot that holds no embedded record");
     }
 
     #[test]

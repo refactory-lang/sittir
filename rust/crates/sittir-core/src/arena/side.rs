@@ -5,7 +5,7 @@
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
-use super::{Address, ArenaError, ArenaRead};
+use super::{Address, Arena, ArenaError, ArenaRead};
 use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
@@ -200,23 +200,66 @@ impl SideRecord {
         if self.is_empty() {
             return Ok(Address::NONE);
         }
-        let mut flags = 0;
+        let runs = self.token_runs(place)?;
         let mut words = vec![0];
+        let flags = self.fields(&runs, &mut |word| words.push(word))?;
+        words[0] = flags;
+        place(&words)
+    }
+
+    /// Writes the side record in place in `arena`, its slots' token runs
+    /// first, and answers its address: `Address::NONE` when it holds
+    /// nothing.
+    pub fn write_in(&self, arena: &mut Arena) -> Result<Address, ArenaError> {
+        if self.is_empty() {
+            return Ok(Address::NONE);
+        }
+        let runs = self.token_runs(&mut |words| arena.push(words))?;
+        let mut len = 1;
+        self.fields(&runs, &mut |_| len += 1)?;
+        let at = arena.alloc(len)?;
+        let out = arena.words_mut(at, len)?;
+        let mut n = 1;
+        let flags = self.fields(&runs, &mut |word| {
+            out[n] = word;
+            n += 1;
+        })?;
+        out[0] = flags;
+        Ok(at)
+    }
+
+    /// Each slot's token run, placed by `place`, and its length; none for a
+    /// slot with no tokens.
+    fn token_runs(&self, place: &mut dyn FnMut(&[u32]) -> Result<Address, ArenaError>) -> Result<Vec<(Address, u32)>, ArenaError> {
+        self.slots
+            .iter()
+            .map(|slot| {
+                let tokens: Vec<u32> = slot.tokens.iter().copied().map(optional_kind).collect();
+                Ok(if tokens.is_empty() { (Address::NONE, 0) } else { (place(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) })
+            })
+            .collect()
+    }
+
+    /// Hands `put` each word after the flags word, in field order, its slots'
+    /// token runs at `runs`, and answers the flags word.
+    fn fields(&self, runs: &[(Address, u32)], put: &mut dyn FnMut(u32)) -> Result<u32, ArenaError> {
+        let mut flags = 0;
+        let mut words = |words: &[u32]| words.iter().for_each(|&word| put(word));
         if let Some(Row { index, end, span }) = self.at {
             flags |= mask::AT;
-            words.extend([index.0, end.0, span.start, span.end]);
+            words(&[index.0, end.0, span.start, span.end]);
         }
         if let Some(edges) = self.edges {
             flags |= mask::EDGES;
-            words.extend([edge_word(edges.before), edge_word(edges.after)]);
+            words(&[edge_word(edges.before), edge_word(edges.after)]);
         }
         if let Some(PointSpan { start, end }) = self.span {
             flags |= mask::SPAN;
-            words.extend([start.row, start.column, end.row, end.column]);
+            words(&[start.row, start.column, end.row, end.column]);
         }
         if let Some(sides) = self.sides {
             flags |= mask::SIDES;
-            words.extend([sides.tree.0, sides.index.0, sides.end.0, sides.span.start, sides.span.end]);
+            words(&[sides.tree.0, sides.index.0, sides.end.0, sides.span.start, sides.span.end]);
         }
         if self.changed.leading {
             flags |= mask::CHANGED_LEADING;
@@ -226,27 +269,25 @@ impl SideRecord {
         }
         if let Some(separator) = self.separator {
             flags |= mask::SEPARATOR;
-            words.push(u32::from(separator.0));
+            words(&[u32::from(separator.0)]);
         }
         if let Some(delimiter) = self.delimiter {
             flags |= mask::DELIMITER;
-            words.push(u32::from(delimiter.0));
+            words(&[u32::from(delimiter.0)]);
         }
         if let Some(kind) = self.separator_kind {
             flags |= mask::SEPARATOR_KIND;
-            words.push(u32::from(kind.0));
+            words(&[u32::from(kind.0)]);
         }
         if !self.flanks.is_none() {
             flags |= mask::FLANKS;
-            words.push(self.flanks.word());
+            words(&[self.flanks.word()]);
         }
         if !self.slots.is_empty() {
             flags |= mask::SLOTS;
-            words.push(u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?);
-            for slot in &self.slots {
-                let tokens: Vec<u32> = slot.tokens.iter().copied().map(optional_kind).collect();
-                let (run, len) = if tokens.is_empty() { (Address::NONE, 0) } else { (place(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) };
-                words.extend([
+            words(&[u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?]);
+            for (slot, &(run, len)) in self.slots.iter().zip(runs) {
+                words(&[
                     slot.word,
                     optional_kind(slot.before),
                     optional_kind(slot.after),
@@ -258,8 +299,7 @@ impl SideRecord {
                 ]);
             }
         }
-        words[0] = flags;
-        place(&words)
+        Ok(flags)
     }
 
     /// The side record at `at`; an empty one at `Address::NONE`.
@@ -381,6 +421,16 @@ mod tests {
         let record = full();
         let at = record.write(&mut |words| arena.push(words)).expect("room");
         assert_eq!(SideRecord::read(&arena, at), Ok(record));
+    }
+
+    #[test]
+    fn a_side_record_written_in_place_holds_the_words_a_placed_one_does() {
+        let (mut placed, mut in_place) = (Arena::new(), Arena::new());
+        let record = full();
+        let at = record.write(&mut |words| placed.push(words)).expect("room");
+        assert_eq!(record.write_in(&mut in_place), Ok(at), "the token runs, then the record, at the same words");
+        assert_eq!(in_place.chunk(0), placed.chunk(0));
+        assert_eq!(SideRecord::default().write_in(&mut in_place), Ok(Address::NONE));
     }
 
     #[test]

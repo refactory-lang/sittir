@@ -37,7 +37,7 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
-                inline: bool,
+                inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 let __node = cursor.node();
                 if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
@@ -52,19 +52,19 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
 }
 
 /// The start of the walk of a struct with a record: none past the read's
-/// depth unless embedded, and its draft.
+/// depth unless embedded, and its record, reserved.
 fn record_start(words: u32) -> TokenStream {
     quote! {
         if records.walk(depth, inline) == ::sittir_core::arena::Walk::Skip {
             return ::core::result::Result::Ok(__held);
         }
         let __row = ::sittir_core::arena::hydrated_row(cursor, ctx);
-        let mut __draft = records.draft(__stored_kind(&__node), #words)?;
+        let __draft = records.draft(__stored_kind(&__node), #words, inline)?;
     }
 }
 
 fn record_end(delimiter: &TokenStream) -> TokenStream {
-    quote!(records.finish(__draft, ::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node), inline))
+    quote!(records.finish(__draft, &::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node), inline))
 }
 
 fn words_of(ident: &Ident, attrs: &KindAttrs) -> syn::Result<u32> {
@@ -118,14 +118,18 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         if let Some(bit) = slot.cell.bit {
             starts.push(quote!(let mut #acc = false;));
             takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <bool as __rt::ReadSlot>::take(&mut #acc, cursor, ctx, __rt::Depth::ONE, #site)?,));
-            finishes.push(quote!(__draft.flag(#word, #bit, #acc);));
+            finishes.push(quote!(records.flag(__draft, #word, #bit, #acc)?;));
             continue;
         }
         let shape = crate::views::cell_shape(field, &slot.cell)?;
+        if slot.cell.run.is_some() {
+            let message = format!("{ident}.{}: a list's items embed no record", field.ident);
+            starts.push(quote!(const _: () = assert!(#shape.forms & ::sittir_core::record::form::INLINE == 0, #message);));
+        }
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
-        takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape)?,));
+        takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft)?,));
         separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
-        finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, &mut __draft)?;));
+        finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, __draft, records)?;));
     }
     let flank = fields.iter().find_map(|field| match &field.role {
         Role::Flank(flank) => Some(flank),
@@ -178,17 +182,17 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
         let Role::Slot(slot) = &field.role else { continue };
         if let Some(bit) = slot.cell.bit {
             let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(field.ident, "a capture's bit states its `word`"))?;
-            cells.push(quote!(__draft.flag(#word, #bit, captures.name(#capture).is_some());));
+            cells.push(quote!(records.flag(__draft, #word, #bit, captures.name(#capture).is_some())?;));
             continue;
         }
         let shape = crate::views::cell_shape(field, &slot.cell)?;
         let span = quote!(__rt::capture_span(&captures, #capture, base).map(|span| ::sittir_core::arena::Hydrated::Text { span }));
         cells.push(if inner_of(field.ty, "Option").is_some() {
-            quote!(__draft.cell(#shape, #span)?;)
+            quote!(records.cell(__draft, #shape, #span)?;)
         } else {
             quote! {
                 let __text = #span.ok_or(__rt::ReadError::Missing { kind: __KIND, slot: #capture, index })?;
-                __draft.cell(#shape, ::core::option::Option::Some(__text))?;
+                records.cell(__draft, #shape, ::core::option::Option::Some(__text))?;
             }
         });
     }
@@ -233,10 +237,11 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     Ok(quote! {
         const _: () = assert!(#wraps_hidden || <#inner as ::sittir_core::record::Stored>::STORED & ::sittir_core::record::stored::RECORD == 0, #message);
         #start
+        let __inline = records.embed(__draft, #shape)?;
         #hidden
-        let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth, records, #shape.forms & ::sittir_core::record::form::INLINE != 0);
+        let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth, records, __inline);
         #restore
-        __draft.cell(#shape, ::core::option::Option::Some(__content?))?;
+        records.cell(__draft, #shape, ::core::option::Option::Some(__content?))?;
         #end
     })
 }
@@ -280,7 +285,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                 ctx: &mut __rt::ReadCtx<'_>,
                 depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
-                inline: bool,
+                inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 #value
             }
@@ -289,13 +294,13 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
     }
     let hydrate = gated(&quote! {
         const _: () = {
-            type __Hydrate = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, bool) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
+            type __Hydrate = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
             fn __unhydrated(
                 cursor: &mut ::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
                 _records: &mut ::sittir_core::arena::Hydration<'_>,
-                _inline: bool,
+                _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) }.into())
             }
@@ -307,7 +312,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
-                    inline: bool,
+                    inline: ::core::option::Option<::sittir_core::arena::Embed>,
                 ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                     let node = cursor.node();
                     let (grammar, display) = (::sittir_core::read::grammar_id(&node), __rt::display_id(&node));
@@ -333,7 +338,7 @@ pub fn members(ident: &Ident) -> TokenStream {
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: ::core::option::Option<__rt::Depth>,
                 _records: &mut ::sittir_core::arena::Hydration<'_>,
-                _inline: bool,
+                _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 let member = __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })?;
                 ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: __id(&member), row: ::core::option::Option::Some(__rt::index_of(cursor)) })
