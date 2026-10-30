@@ -1,6 +1,7 @@
 import type { SeamOrigin } from '../types/rule.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
+import { stringLiteral as q } from '../util/string-literal.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
@@ -306,7 +307,6 @@ export function planRenderOptions(
 	};
 }
 
-const q = (s: string): string => JSON.stringify(s);
 
 interface SiteLevel {
 	readonly storage: string;

@@ -11,21 +11,23 @@ beforeAll(async () => {
 }, 120_000);
 
 const factoryOf = (source: string, name: string): readonly string[] => {
-	const body = new RegExp(`function ${name}\\(n: T\\.FunctionItem\\.Parsed, set = 0\\): VocabViews\\['declaration\\.function'\\] \\{\\n\\treturn \\{ (.*) \\};\\n\\}`).exec(source);
+	const body = new RegExp(`function ${name}\\(n: T\\.FunctionItem\\.Parsed, set = 0\\): VocabViews\\["declaration\\.function"\\] \\{\\n\\treturn \\{ (.*) \\};\\n\\}`).exec(source);
 	if (body?.[1] === undefined) throw new Error(`no factory ${name}`);
 	return body[1].split(', ');
 };
 
 describe('emitPortableTyped', () => {
 	it("declares rust's declaration.function as the view form of its interface", () => {
-		expect(typed.source).toContain("\t'declaration.function': ViewForm<V.Declaration.Function<Ctx>>;");
+		expect(typed.source).toContain('\t"declaration.function": ViewForm<V.Declaration.Function<Ctx>>;');
 	});
 
-	it('prints each read entry as a literal whose only data member is $type, naming member functions written once', () => {
+	it('prints each read entry as a literal whose only data member is $type, naming member functions written once, its symbol keys last', () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(name).toBeDefined();
-		const [type, held, flags, ...members] = factoryOf(typed.source, name!);
-		expect([type, held, flags]).toEqual(['$type: kindOf(n)', '[low]: n', '[flags]: set']);
+		const fields = factoryOf(typed.source, name!);
+		const [type, ...members] = fields.slice(0, -2);
+		expect(type).toBe('$type: kindOf(n)');
+		expect(fields.slice(-2)).toEqual(['[low]: n', '[flags]: set']);
 		expect(members.length).toBeGreaterThan(0);
 		for (const member of members) {
 			const [key, value] = member.split(': ');

@@ -1,11 +1,12 @@
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
-import { camel } from '../../../bindings/names.ts';
+import { tsname } from '../../../bindings/names.ts';
+import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { concreteKinds, modelNode, type GrammarInput, type GrammarRoutes, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { Vocabulary } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { grammarDisplayName, type GrammarName } from '../../../grammars.ts';
-import { fixedTextKinds, hasCatalogEntry, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
+import { fixedTextKinds, hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -31,8 +32,6 @@ export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
 export const PORTABLE_TYPED_TSCONFIG = 'tsconfig.portable.json';
 
 export const PORTABLE_TYPED_TSCONFIG_TEXT = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [PORTABLE_TYPED_FILE] }, null, '\t')}\n`;
-
-const q = (text: string): string => `'${text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n')}'`;
 
 const PRELUDE = [
 	'declare const low: unique symbol;',
@@ -127,7 +126,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 	};
 	const token = (kind: string): boolean => isEnum(kind) || fixedText.has(kind);
 	const lowOf = (kind: string): string | undefined => (token(kind) ? 'TSKindId' : typeNameOf(kind) === undefined ? undefined : `T.${typeNameOf(kind)}.Parsed`);
-	const aliasOf = (kind: string): string => `VK_${typeNameOf(kind) ?? kind.replace(/^_+/, '').replace(/(^|_)([a-z0-9])/g, (_, __, c: string) => c.toUpperCase())}`;
+	const aliasOf = (kind: string): string => `VK_${kindIdMemberName(nodeMap, kind)}`;
 
 	const entries = [...routes.readEntries].filter(([, list]) => list.length > 0).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
 	const claimedPaths = [...new Set(entries.flatMap(([, list]) => list.map((e) => e.vocab)))].sort();
@@ -265,7 +264,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 		return { body: chain.optional && !chain.last.multiple && listsOnly(chain.last) ? `${read} ?? []` : read };
 	};
 
-	const factoryNameOf = (entry: ReadEntry): string => `${typeNameOf(entry.kind) ?? camel(entry.kind)}As${entry.vocab.split('.').map((s) => s.charAt(0).toUpperCase() + camel(s).slice(1)).join('')}${entry.index > 0 ? entry.index : ''}`;
+	const factoryNameOf = (entry: ReadEntry): string => `${kindIdMemberName(nodeMap, entry.kind)}As${entry.vocab.split('.').map(tsname).join('')}${entry.index > 0 ? entry.index : ''}`;
 	const names = new Set<string>();
 	for (const [kind, list] of entries) {
 		const low = lowOf(kind);
@@ -298,7 +297,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			if (varies(kind) && (claimersOf.get(entry.vocab) ?? []).every(varies)) fields.push('$value: value');
 			emit(
 				`function ${name}(n: ${low}, set = 0): VocabViews[${q(entry.vocab)}] {`,
-				`\treturn { $type: kindOf(n), [low]: n, [flags]: set${fields.map((f) => `, ${f}`).join('')} };`,
+				`\treturn { $type: kindOf(n)${fields.map((f) => `, ${f}`).join('')}, [low]: n, [flags]: set };`,
 				'}',
 				''
 			);

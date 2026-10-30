@@ -1,6 +1,7 @@
 import type { PortableCondition, QueryPlan } from '@sittir/types';
 import { portablePathHasFacts } from '@sittir/common/engine';
 import { WILDCARD } from '../../../bindings/facts.ts';
+import { stringLiteral as q } from '../../../util/string-literal.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
 import type { SlotFlag } from './flags.ts';
 import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
@@ -17,7 +18,6 @@ export interface PortableSurfaceConfig {
 	readonly slotFlagTypes: readonly (readonly [typeName: string, slots: readonly (readonly [accessor: string, flags: readonly string[]])[]])[];
 }
 
-const q = (text: string): string => JSON.stringify(text);
 
 export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixedText, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
