@@ -254,9 +254,85 @@ A bound grammar's two portable outputs from one route resolution: `node-model-po
 
 The portable overlay's two emitted files: the routes model (`node-model-portable.json5`) and the typed surface (`portable.ts`).
 
+### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::typed`
+
+The typed portable module, emitted from the same routes as the other portable outputs.
+
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::emitPortableSurface`
 
 `src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node (its `$path`) and guard (`PortableGuard` over the path's ids, the grammar's node union from `./types.js` and its `TSKindId`, so a node or kind id of another language, or a node widened to a bare `$type`, is refused at compile time, and a kind id narrows to the path's ids), both with their child segments, as views of the shared portable trees, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: each of its kinds has an unplaced, untested entry, and every entry up to and including the first such one carries all of its facts (`portablePathHasFacts`), so the first match always satisfies it; no entry after an unconditional one is ever tried), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by exporting `rows` (`PortableRows`: the table and the grammar's slot table), which the language hooks carry onto every engine's identity, so a node's engine (`engineOf`) reaches its language's rows, then exports `queryFlags`, each kind id's flag plans, which the language hooks carry to a `where` recorder's `is`, and `querySlotFlags`, each kind id's slot flags (`slotFlagsOf`), which they carry to a slot's `is`. Last, in `./types.js`, it fills the grammar's `PortableReads` with its `PortableIds` (`interface PortableReads extends PortableIds {}`), merged by declaration into the empty interface the types module declares, so a parsed node's query views narrow a portable kind by the paths this grammar reads, and a grammar without bindings, which has no portable module, keeps it empty. It also declares each flagged kind's flags on its node interface there (`readonly __flags__?: …`, `flagTypes`), merged by declaration, so a recorder's `is` takes only the flags the view's kind declares (`types/src/query.ts::FlagOf`), and declares each slot's readable flags beside them (`readonly __slotFlags__?: { readonly <accessor>: … }`, `slotFlagTypes`), so a slot's `is` takes only those (`types/src/query.ts::SlotRef`). The grammar's `api.ts` imports this module, and its index imports `api.ts`, so the declaration is in every program that imports the grammar package, portable surface used or not.
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's node union type name (`grammarNodeTypeName`), its routes, the compiled test of each read entry, the kind-id expression of a kind, the fixed text of each fixed-text kind, each kind's flag plans and the type names that declare them, and each kind's slot flags and the type names that declare the readable ones.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput`
+
+The inputs of the typed portable module: the read routes, the grammar input, the vocabulary, the node map and the kind entries that `emitPortableTyped` reads.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::routes`
+
+The grammar's read routes: for each kind, the vocabulary entries it claims and the member routes of each.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::input`
+
+The grammar input the bindings were derived from, which supplies the model the reads are typed against.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::vocabulary`
+
+The vocabulary that names the kinds and members the typed module refers to.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::nodeMap`
+
+The node map that gives each kind its type name and, through the kind entries, its kind id.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::kindEntries`
+
+The kind enumeration entries, which give each kind the id that the typed module's kind lookups use.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted`
+
+A read entry or member that the typed emitter skipped, with the reason. Its kind and vocabulary name the entry; its member names the member when the skip is per member.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::kind`
+
+The grammar kind of the skipped read entry.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::vocab`
+
+The vocabulary path the skipped entry reads into.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::member`
+
+The member the skip applies to, when the skip is per member. Absent when the whole entry was skipped.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::reason`
+
+Why the emitter skipped the entry or member.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedOutput`
+
+The generated typed module: its source text and the reads the emitter skipped. `emitPortableTyped` returns it.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedOutput::source`
+
+The module source, written to the portable typed file.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedOutput::unemitted`
+
+The reads the emitter skipped, each with its reason.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PORTABLE_TYPED_FILE`
+
+The file name the typed module is written under, in the `.sittir` directory.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PORTABLE_TYPED_TSCONFIG`
+
+The name of the tsconfig that type-checks the typed module on its own, beside it in the `.sittir` directory.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PORTABLE_TYPED_TSCONFIG_TEXT`
+
+The text of that tsconfig. It extends the repository config, sets `noEmit` and the node types, and includes only the typed module.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::emitPortableTyped`
+
+Emits one grammar's typed portable module as source text, with the reads the emitter could not type. Each read entry becomes a factory function bound to its kind. The module's views, its per-kind view map, its backward view and its enum view map are derived from the routes and the model. Reads that cannot be typed go to `unemitted` and are not emitted as code.
