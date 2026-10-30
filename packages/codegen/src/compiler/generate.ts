@@ -9,6 +9,7 @@ import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammar
 import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
 import { accessorClassDiagnostics } from './model/accessor-classes.ts';
+import { leadEffectsOf } from '../dsl/verbs/effects.ts';
 import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
@@ -207,7 +208,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portable: portable?.surface,
 			portableBuild: portable?.build,
 			portableTyped: portable?.typed,
-			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar), ...portableDiagnostics],
+			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics],
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

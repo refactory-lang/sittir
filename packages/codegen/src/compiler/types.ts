@@ -12,6 +12,7 @@ import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { BindingEffect } from '../dsl/verbs/effects.ts';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
@@ -133,6 +134,7 @@ export interface RawGrammar {
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly options?: OptionsConfig;
+	readonly bindingEffects?: readonly BindingEffect[];
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly reparseHosts?: ReparseHostsConfig;

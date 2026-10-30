@@ -1,7 +1,8 @@
 import { isTextEnum, resolveFieldStorageInfo } from '../../emitters/shared.ts';
+import type { LeadEffect } from '../../dsl/verbs/effects.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { NodeMap } from '../types.ts';
-import { AbstractAssembledCompound, isMultiple, type AssembledNonterminal } from './node-map.ts';
+import { AbstractAssembledCompound, AssembledList, isMultiple, valueParseKindsOf, type AssembledNonterminal } from './node-map.ts';
 
 export type AccessorValueClass = 'boolean' | 'flags' | 'choice' | 'single' | 'list';
 
@@ -19,24 +20,61 @@ export function accessorValueClassOf(slot: AssembledNonterminal, nodeMap: NodeMa
 	return 'single';
 }
 
-const isNodePair = (classes: ReadonlyMap<AccessorValueClass, unknown>): boolean =>
-	classes.size === 2 && classes.has('single') && classes.has('list');
+type LedLists = ReadonlyMap<string, string>;
 
-export function accessorClassClashes(nodeMap: NodeMap): AccessorClassClash[] {
+function listItemsOf(kind: string, nodeMap: NodeMap, led: LedLists, seen: ReadonlySet<string> = new Set()): readonly string[] | undefined {
+	const node = nodeMap.nodes.get(kind);
+	if (!(node instanceof AbstractAssembledCompound) || seen.has(kind)) return undefined;
+	const leadList = led.get(kind);
+	if (leadList !== undefined) return listItemsOf(leadList, nodeMap, led, new Set([...seen, kind]));
+	if (node instanceof AssembledList) return node.slots.filter(isMultiple).flatMap(valueParseKindsOf);
+	const [slot, ...rest] = node.slots;
+	if (slot === undefined || rest.length > 0) return undefined;
+	if (isMultiple(slot)) return valueParseKindsOf(slot);
+	const within = new Set([...seen, kind]);
+	const values = valueParseKindsOf(slot);
+	const items: string[] = [];
+	for (const value of values) {
+		const inner = listItemsOf(value, nodeMap, led, within);
+		if (inner === undefined) return undefined;
+		items.push(...inner);
+	}
+	return values.length > 0 ? items : undefined;
+}
+
+function holdsAContainer(slot: AssembledNonterminal, nodeMap: NodeMap, led: LedLists): boolean {
+	const values = valueParseKindsOf(slot);
+	const items = new Set(values.flatMap((value) => listItemsOf(value, nodeMap, led) ?? []));
+	return values.length > 0 && values.every((value) => listItemsOf(value, nodeMap, led) !== undefined || items.has(value));
+}
+
+const isNodePair = (
+	classes: ReadonlyMap<AccessorValueClass, unknown>,
+	singles: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	led: LedLists
+): boolean => classes.size === 2 && classes.has('single') && classes.has('list') && singles.every((slot) => holdsAContainer(slot, nodeMap, led));
+
+export function accessorClassClashes(nodeMap: NodeMap, leads: readonly LeadEffect[] = []): AccessorClassClash[] {
+	const led: LedLists = new Map(leads.map((lead) => [lead.receiver, lead.list]));
 	const byName = new Map<string, Map<AccessorValueClass, string[]>>();
+	const singlesByName = new Map<string, AssembledNonterminal[]>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AbstractAssembledCompound) || !node.userFacing) continue;
 		for (const slot of node.slots) {
 			const classes = byName.get(slot.propertyName) ?? byName.set(slot.propertyName, new Map()).get(slot.propertyName)!;
 			const valueClass = accessorValueClassOf(slot, nodeMap);
 			(classes.get(valueClass) ?? classes.set(valueClass, []).get(valueClass)!).push(node.kind);
+			if (valueClass === 'single') (singlesByName.get(slot.propertyName) ?? singlesByName.set(slot.propertyName, []).get(slot.propertyName)!).push(slot);
 		}
 	}
-	return [...byName].filter(([, classes]) => classes.size > 1 && !isNodePair(classes)).map(([name, classes]) => ({ name, classes }));
+	return [...byName]
+		.filter(([name, classes]) => classes.size > 1 && !isNodePair(classes, singlesByName.get(name) ?? [], nodeMap, led))
+		.map(([name, classes]) => ({ name, classes }));
 }
 
-export function accessorClassDiagnostics(nodeMap: NodeMap, grammar: string): GrammarDiagnostic[] {
-	return accessorClassClashes(nodeMap).map(({ name, classes }) => ({
+export function accessorClassDiagnostics(nodeMap: NodeMap, grammar: string, leads: readonly LeadEffect[]): GrammarDiagnostic[] {
+	return accessorClassClashes(nodeMap, leads).map(({ name, classes }) => ({
 		scope: 'grammar',
 		grammar,
 		code: 'accessor-class-clash',
