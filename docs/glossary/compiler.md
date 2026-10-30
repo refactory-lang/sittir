@@ -4262,15 +4262,9 @@ collector parameter.
  */
 ```
 
-### `packages/codegen/src/compiler/ctx.ts::BaseCtx::wordMatcher`
+### `packages/codegen/src/compiler/ctx.ts::BaseCtx::isWordShaped`
 
-```text
-/**
-	 * Grammar word-shape predicate — "does this string lex as a word under the
-	 * grammar's `word` rule?". Curried `matchesWordShape` bound to the grammar's
-	 * compiled matcher; `undefined` when the grammar declares no `word`.
-	 */
-```
+Whether a string lexes as a word under the grammar's `word` rule: `matchesWordShape` applied with the context's word matcher. The matcher is `undefined` when the grammar declares no `word`.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`
 
@@ -8145,6 +8139,26 @@ The base a copy of a rule is taken from.
 ### `packages/codegen/src/compiler/link.ts::ValidateGroupsArgs`
 
 The arguments that validate the groups of a grammar.
+
+### `packages/codegen/src/compiler/link.ts::LinkCtx::renderAsStamps`
+
+The render-as stamps the link pass reads: the literal and blank entries built by `renderAsStampsOf` from the grammar's render-as bodies.
+
+### `packages/codegen/src/compiler/link.ts::RenderAsStamps`
+
+The render-as stamps of a grammar: its literal entries, each with its text and immediacy, and the set of symbols whose render-as body is blank.
+
+### `packages/codegen/src/compiler/link.ts::RenderAsStamps::blanks`
+
+The symbols whose render-as body is blank.
+
+### `packages/codegen/src/compiler/link.ts::RenderAsStamps::literals`
+
+The symbols whose render-as body is a literal string, each with its literal text and whether it is an immediate token.
+
+### `packages/codegen/src/compiler/link.ts::renderAsStampsOf`
+
+Builds the render-as stamps from the grammar's render-as bodies. A string body, or a token wrapping one, becomes a literal entry, and a blank body is recorded as blank.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::reownedRuleId`
 
