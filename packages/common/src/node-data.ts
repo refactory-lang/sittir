@@ -4,7 +4,6 @@ import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfTo
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { builtRefOf, siteOf } from './built-ref.ts';
 import { HANDLE_FIELDS, isLeafHandle, isParsedPosition, type LeafHandle } from './handle.ts';
-import { Source } from './source.ts';
 import { hydrateOn } from './engine-scope.ts';
 import { storedSlotValues } from './record-view.ts';
 

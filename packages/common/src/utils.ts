@@ -493,6 +493,28 @@ export function holdListItems(node: object, items: ArrayLike<unknown>): void {
 	for (let index = 0; index < items.length; index++) held[index] = items[index];
 }
 
+type ListRead = (this: object) => ArrayLike<unknown>;
+
+const pendingReads: (object | ListRead)[] = [];
+let pendingFrom = -1;
+
+export function holdReadItems<N extends object>(node: N, read: (this: N) => ArrayLike<unknown>): void {
+	pendingReads.push(node, read as ListRead);
+	if (pendingFrom >= 0) return;
+	pendingFrom = 0;
+	try {
+		while (pendingFrom < pendingReads.length) {
+			const held = pendingReads[pendingFrom] as object;
+			const items = (pendingReads[pendingFrom + 1] as ListRead).call(held);
+			pendingFrom += 2;
+			holdListItems(held, items);
+		}
+	} finally {
+		pendingReads.length = 0;
+		pendingFrom = -1;
+	}
+}
+
 export function holdBuiltItems(node: object, items: readonly unknown[], wrapper?: ListViewWrapper): void {
 	const held = node as Record<number, unknown>;
 	for (let index = 0; index < items.length; index++) held[index] = collapseWrapper(hydrateStored(items[index]), wrapper);

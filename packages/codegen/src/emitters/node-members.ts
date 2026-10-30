@@ -98,7 +98,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		'    $engine: handle && (() => handle.current),',
 		...(spec.root === true ? [ROOT_ERRORS_LINE] : []),
 		...(spec.tail ?? []),
-		...(spec.parsed ? ['    [TREE]: treeTokenOf(data),'] : []),
+		...(spec.parsed ? ['    [TREE]: treeTokenOf(data) ?? null,'] : []),
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'}`
 	);
 	return lines;
@@ -168,6 +168,16 @@ function hoistedWrapper(plan: ListViewPlan, prefix: string, used: boolean): { re
 	return plan.wrapper === undefined || !used ? { ref: 'undefined', hoisted: [] } : { ref: `${prefix}$wrapper`, hoisted: [`const ${prefix}$wrapper = ${plan.wrapper};`] };
 }
 
+export function listReadLines(prefix: string, owner: string | undefined, elements: string, wrapper: string): readonly string[] {
+	const receiver = owner === undefined ? 'object' : `{ readonly ${owner}: () => unknown }`;
+	const list = owner === undefined ? 'this' : `this.${owner}()`;
+	return [`function ${prefix}$listRead(this: ${receiver}): readonly unknown[] {`, `  return listItems(ownerElements(${list}, ${JSON.stringify(elements)}), ${wrapper});`, '}'];
+}
+
+export function listReadPostlude(prefix: string): string {
+	return `  holdReadItems(node, ${prefix}$listRead);`;
+}
+
 function optionMember(key: string, value: string): string {
 	return key === 'separator' ? `    separator: () => ${value},` : `    ${key}: ${value},`;
 }
@@ -180,7 +190,7 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 			: optionMember(option.key, `listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default})`)
 	);
 	return {
-		hoisted: wrapper.hoisted,
+		hoisted: environment === 'factory' ? wrapper.hoisted : [...wrapper.hoisted, ...listReadLines(prefix, accessor, plan.elements, wrapper.ref)],
 		prelude:
 			environment === 'factory'
 				? [
@@ -190,11 +200,7 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [
-			environment === 'factory'
-				? '  holdListItems(node, heldItems(listView.list));'
-				: `  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper.ref}));`
-		]
+		postlude: [environment === 'factory' ? '  holdListItems(node, heldItems(listView.list));' : listReadPostlude(prefix)]
 	};
 }
 
@@ -219,17 +225,13 @@ export function listSelfViewParts(
 			: optionMember(option.key, `${selfListOption(option.key, environment)} ?? ${option.default}`)
 	);
 	return {
-		hoisted: wrapper.hoisted,
+		hoisted: built ? wrapper.hoisted : [...wrapper.hoisted, ...listReadLines(prefix, undefined, elementsReader, wrapper.ref)],
 		prelude:
 			'elements' in stored
 				? [`  const listedItems = storedElements(${stored.elements});`, '  const listedLength = listedItems.length;']
 				: [`  const listedLength = ${stored.length};`],
 		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [
-			built
-				? `  holdBuiltItems(node, ${stored.listed ?? 'listedItems'}${plan.wrapper === undefined ? '' : `, ${wrapper.ref}`});`
-				: `  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper.ref}));`
-		]
+		postlude: [built ? `  holdBuiltItems(node, ${stored.listed ?? 'listedItems'}${plan.wrapper === undefined ? '' : `, ${wrapper.ref}`});` : listReadPostlude(prefix)]
 	};
 }

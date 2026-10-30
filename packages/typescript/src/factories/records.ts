@@ -55,6 +55,7 @@ import {
 	leafText,
 	leafLeading,
 	leafTrailing,
+	LEAF_SITES,
 	handleRender,
 	handleToString,
 	handleEngine,
@@ -4942,12 +4943,14 @@ function leafUnescapedDoubleStringFragment(tree: TreeHandle, entry: BuiltText, s
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -4973,12 +4976,14 @@ function leafUnescapedSingleStringFragment(tree: TreeHandle, entry: BuiltText, s
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -5201,12 +5206,14 @@ function leafRegexPattern(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -5228,12 +5235,14 @@ function leafRegexFlags(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -5255,12 +5264,14 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -13667,12 +13678,14 @@ function leafNumberDecimal(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -18865,11 +18878,13 @@ function leafHtmlComment(tree: TreeHandle, entry: BuiltText, site: LeafSite | un
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	return node;
@@ -18890,12 +18905,14 @@ function leafJsxText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefi
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -18917,12 +18934,14 @@ function leafTemplateChars(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -19365,12 +19384,14 @@ function leafTernaryQmark(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
@@ -19390,12 +19411,14 @@ function leafErrorRecovery(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		$tree: tree,
 		$entry: entry,
 		$site: site,
+		$_layout: undefined,
 		$text: leafText,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handleEngine,
+		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };

@@ -6,7 +6,7 @@ import rust from '../src/index.ts';
 
 const backend = getActiveBackend();
 if (backend.name !== 'native') throw new Error(`native backend unavailable: ${backend.reason}`);
-const CHUNK_WORDS = 2 ** cellFormatOf(backend.native).chunkShift;
+const CHUNK_WORDS = 2 ** cellFormatOf(backend.native)!.chunkShift;
 const LONG = { timeout: 30_000 };
 
 const textOf = (n: number): string => Array.from({ length: n }, (_, at) => `x${at};\n`).join('');
@@ -38,7 +38,7 @@ describe('a list longer than an arena chunk, in arena storage', () => {
 		const read = root.statements();
 		expect(read.length).toBe(items);
 		expect([read[0], read[items - 1]].map((statement) => rs.render(statement!).toString())).toEqual(['x0;', `x${items - 1};`]);
-		expect(rs.render(rs.build.sourceFile({ statements: read })).toString()).toBe(text);
+		expect(rs.render(rs.build.sourceFile({ statements: [...read] })).toString()).toBe(text);
 		expect(rs.render(root.$with.statements(...read, rs.build.expressionStatement.withSemi(rs.build.identifier('tail')))).toString()).toBe(`${text}tail;\n`);
 	});
 });

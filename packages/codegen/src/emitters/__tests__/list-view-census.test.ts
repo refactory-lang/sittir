@@ -47,9 +47,9 @@ function functionsOf(source: string, head: RegExp): string[] {
 	return source.split(/\n(?=(?:export )?function )/).filter((block) => head.test(block));
 }
 
-/** How many list views the blocks install: a `withListView`, `holdListItems` or `holdBuiltItems` call each. */
+/** How many list views the blocks install: a `withListView`, `holdListItems`, `holdReadItems` or `holdBuiltItems` call each. */
 function installsIn(blocks: readonly string[]): number {
-	return blocks.reduce((sum, block) => sum + (block.match(/withListView\(|holdListItems\(|holdBuiltItems\(/g)?.length ?? 0), 0);
+	return blocks.reduce((sum, block) => sum + (block.match(/withListView\(|holdListItems\(|holdReadItems\(|holdBuiltItems\(/g)?.length ?? 0), 0);
 }
 
 describe('every kind that reads as a list is stamped, wired and typed from one fact', () => {

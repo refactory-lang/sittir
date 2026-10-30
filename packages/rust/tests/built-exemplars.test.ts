@@ -25,6 +25,23 @@ describe('the first node an arena engine builds of each kind', () => {
 		expect(() => rs.build.expressionStatement.withSemi(awaited)).toThrow(/was released/);
 		rs.dispose();
 	});
+
+	it.each([true, false])('is not kept, nor the parsed nodes it was built from, once its builder drops it (released: %s)', async (released) => {
+		const rs = await createEngine(rust, { nodeStorage: 'arena' });
+		const firsts = (() => {
+			const parsed = rs.parse('x;\n').statements();
+			const root = rs.build.sourceFile({ statements: [...parsed] });
+			const read = root.statements();
+			expect(rs.render(root).toString()).toBe('x;\n');
+			const refs = [new WeakRef(parsed[0] as object), new WeakRef(root), new WeakRef(read[0] as object)];
+			if (released) rs.release(root);
+			return refs;
+		})();
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		gc();
+		expect(firsts.map((first) => first.deref())).toEqual([undefined, undefined, undefined]);
+		rs.dispose();
+	});
 });
 
 describe('the first node an object engine builds of each kind', () => {

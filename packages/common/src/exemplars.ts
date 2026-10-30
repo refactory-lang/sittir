@@ -11,7 +11,7 @@ function unkeptKind(kept: readonly object[], node: object): number | undefined {
 
 export function keepExemplar<T extends object>(exemplars: object[], node: T): T {
 	const kind = unkeptKind(exemplars, node);
-	if (kind !== undefined) exemplars[kind] = node;
+	if (kind !== undefined) exemplars[kind] = layoutShell(node);
 	return node;
 }
 

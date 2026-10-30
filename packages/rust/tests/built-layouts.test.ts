@@ -26,3 +26,19 @@ describe('a built object node keeps the layout of its kind', () => {
 		expect(haveSameMap(rs.build.awaitExpression(rs.build.identifier('y')), sided)).toBe(true);
 	});
 });
+
+describe('a built arena leaf keeps the layout of its kind', async () => {
+	const ra = await createEngine(rust, { nodeStorage: 'arena' });
+
+	it('when it is placed', () => {
+		const placed = ra.build.identifier('x');
+		ra.build.expressionStatement.withSemi(placed);
+		expect(haveSameMap(ra.build.identifier('y'), placed)).toBe(true);
+	});
+
+	it('when trivia is written on it', () => {
+		const commented = ra.build.identifier('z');
+		commented.$trivia.leading(ra.build.lineComment(' c'));
+		expect(haveSameMap(ra.build.identifier('w'), commented)).toBe(true);
+	});
+});

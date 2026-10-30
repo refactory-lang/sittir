@@ -6,7 +6,7 @@ export type { TreeToken };
 
 export const TREE = Symbol('sittir.tree') as typeof TreeMember;
 
-type Holder = { [TREE]?: TreeToken };
+type Holder = { [TREE]?: TreeToken | null };
 
 /** Mint the token of a tree this thread parsed. */
 export function mintTreeToken(treeId: number): TreeToken {
@@ -21,7 +21,7 @@ export function holdTreeOn(node: object, token: TreeToken): void {
 /** The token `node` holds, or `undefined` when it holds no tree. */
 export function treeTokenOf(node: object): TreeToken | undefined {
 	const own = (node as Holder)[TREE];
-	if (own !== undefined) return own;
+	if (own != null) return own;
 	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
 	return tree !== undefined && tree.built === undefined && isHandle(node) ? tree.token : undefined;
 }

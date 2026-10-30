@@ -49,7 +49,7 @@ interface SiteList {
 }
 
 type PlacedSites = LeafSite | SiteList;
-type PlacedLeaf = { [LEAF_SITES]?: PlacedSites };
+type PlacedLeaf = { [LEAF_SITES]?: PlacedSites | null };
 type LiveSite = (holder: number) => boolean;
 
 function flatSites(sites: PlacedSites): readonly number[] {
@@ -66,7 +66,7 @@ function liveSites(sites: PlacedSites, live: LiveSite): number[] {
 }
 
 function keepSites(leaf: PlacedLeaf, data: number[], pruneAt = Math.max(6, data.length * 2)): void {
-	leaf[LEAF_SITES] = data.length === 0 ? undefined : data.length === 3 ? packSite(data[0]!, data[1]!, data[2]!) : { data, length: data.length, pruneAt };
+	leaf[LEAF_SITES] = data.length === 0 ? null : data.length === 3 ? packSite(data[0]!, data[1]!, data[2]!) : { data, length: data.length, pruneAt };
 }
 
 export function packSite(holder: number, word: number, item: number): LeafSite {
@@ -80,7 +80,7 @@ export function siteOf(site: LeafSite): readonly number[] {
 export function placeLeaf(leaf: object, holder: number, word: number, item: number, live?: LiveSite): void {
 	const held = leaf as PlacedLeaf;
 	const sites = held[LEAF_SITES];
-	if (sites === undefined) {
+	if (sites == null) {
 		held[LEAF_SITES] = packSite(holder, word, item);
 		return;
 	}
@@ -101,7 +101,7 @@ export function placeLeaf(leaf: object, holder: number, word: number, item: numb
 export function moveLeafSite(leaf: object, from: number, to: number, word: number, item: number): void {
 	const held = leaf as PlacedLeaf;
 	const sites = held[LEAF_SITES];
-	if (sites === undefined) return;
+	if (sites == null) return;
 	const flat = [...flatSites(sites)];
 	for (let n = 0; n < flat.length; n += 3) if (flat[n] === from && flat[n + 1] === word && flat[n + 2] === item) flat[n] = to;
 	keepSites(held, flat);
@@ -110,7 +110,7 @@ export function moveLeafSite(leaf: object, from: number, to: number, word: numbe
 export function leafSitesOf(leaf: object, live?: LiveSite): readonly number[] | undefined {
 	const held = leaf as PlacedLeaf;
 	const sites = held[LEAF_SITES];
-	if (sites === undefined) return undefined;
+	if (sites == null) return undefined;
 	if (live === undefined) return flatSites(sites);
 	const kept = liveSites(sites, live);
 	keepSites(held, kept);

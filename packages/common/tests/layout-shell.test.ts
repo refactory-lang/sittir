@@ -90,11 +90,15 @@ describe('keepLayout', () => {
 });
 
 describe('keepExemplar', () => {
-	it('keeps the first node of a kind itself, and returns each node unchanged', () => {
+	it('keeps a shell of the first node of a kind, and returns each node unchanged', () => {
 		const exemplars: object[] = [];
 		const first = listOf(itemsOf(2), 'a');
 		expect(keepExemplar(exemplars, first)).toBe(first);
+		const kept = exemplars[7];
 		expect(keepExemplar(exemplars, listOf(itemsOf(2), 'b'))).not.toBe(first);
-		expect(exemplars[7]).toBe(first);
+		expect(exemplars[7]).toBe(kept);
+		expect(kept).not.toBe(first);
+		expect(haveSameMap(kept!, first)).toBe(true);
+		expect(Object.keys(kept!).filter((key) => /^\d+$/.test(key))).toEqual([]);
 	});
 });
