@@ -260,7 +260,3 @@ The portable overlay's two emitted files: the routes model (`node-model-portable
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's node union type name (`grammarNodeTypeName`), its routes, the compiled test of each read entry, the kind-id expression of a kind, the fixed text of each fixed-text kind, each kind's flag plans and the type names that declare them, and each kind's slot flags and the type names that declare the readable ones.
-
-### `packages/codegen/src/emitters/overlays/portable/surface.ts::q`
-
-A string as a quoted TypeScript literal.
