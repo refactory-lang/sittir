@@ -215,7 +215,7 @@ export interface LinkedGrammar {
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
-	readonly splicedNames?: ReadonlySet<string>;
+	readonly splicedNames: ReadonlySet<string>;
 	readonly generatedIdTables: GeneratedIdTables;
 }
 
@@ -271,7 +271,7 @@ export interface SimplifiedGrammar {
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
-	readonly splicedNames?: ReadonlySet<string>;
+	readonly splicedNames: ReadonlySet<string>;
 	readonly generatedIdTables: GeneratedIdTables;
 }
 

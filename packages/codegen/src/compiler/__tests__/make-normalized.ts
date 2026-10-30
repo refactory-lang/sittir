@@ -45,6 +45,7 @@ export function makeNormalized(
 		normalizedRules,
 		rules: simplifiedRules,
 		factoryInline: new Set(),
+		splicedNames: new Set(),
 		word: null,
 		...overrides
 	};
