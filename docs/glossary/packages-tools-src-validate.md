@@ -1680,6 +1680,14 @@ The storage kinds a display covers, across the families.
 
 Creates the strict native engine for a grammar.
 
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::slotBlankArms`
+
+For each kind that has blank-arm slots, the set of those slots' storage keys. Kinds with none have no entry.
+
+### `packages/tools/src/validate/common.ts::KindSlots::blankArms`
+
+The storage keys of this kind's slots that have a blank arm. The set is empty when none do.
+
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 
 The stage a round-trip failure reached: read, build, render, reparse or ast.
