@@ -33,7 +33,9 @@ import {
 	queryOf,
 	snapshotOf,
 	triviaSide,
-	triviaInner
+	triviaInner,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -547,7 +549,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
@@ -555,7 +557,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 					wrapStatementBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree)
 				),
 			terminator: (v: NonNullable<T.StatementBlock['_terminator']> | null) =>
-				rebuilt(node, handle, () => wrapStatementBlock({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
+				rebuilt(node, handle, () => wrapStatementBlock({ ...$edited(data), _terminator: blankArmStored(v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -787,7 +789,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			return hydrateSlot<T.ParenthesizedExpression>(this, '_condition', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			body: (v: NonNullable<T.DoStatement['_body']>) =>
@@ -795,7 +797,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			condition: (v: NonNullable<T.DoStatement['_condition']>) =>
 				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _condition: v }, tree)),
 			terminator: (v: NonNullable<T.DoStatement['_terminator']> | null) =>
-				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
+				rebuilt(node, handle, () => wrapDoStatement({ ...$edited(data), _terminator: blankArmStored(v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1559,7 +1561,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			return hydrateSlot<T.ClassBody>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
@@ -1582,7 +1584,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			body: (v: NonNullable<T.ClassDeclaration['_body']>) =>
 				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _body: v }, tree)),
 			terminator: (v: NonNullable<T.ClassDeclaration['_terminator']> | null) =>
-				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree))
+				rebuilt(node, handle, () => wrapClassDeclaration({ ...$edited(data), _terminator: blankArmStored(v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1714,7 +1716,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			async: (v: NonNullable<T.FunctionDeclaration['_async']>) =>
@@ -1737,9 +1739,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			body: (v: NonNullable<T.FunctionDeclaration['_body']>) =>
 				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _body: v }, tree)),
 			terminator: (v: NonNullable<T.FunctionDeclaration['_terminator']> | null) =>
-				rebuilt(node, handle, () =>
-					wrapFunctionDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
-				)
+				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _terminator: blankArmStored(v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1848,7 +1848,7 @@ export function wrapGeneratorFunctionDeclaration(
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			async: (v: NonNullable<T.GeneratorFunctionDeclaration['_async']>) =>
@@ -1872,7 +1872,7 @@ export function wrapGeneratorFunctionDeclaration(
 				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _body: v }, tree)),
 			terminator: (v: NonNullable<T.GeneratorFunctionDeclaration['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapGeneratorFunctionDeclaration({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+					wrapGeneratorFunctionDeclaration({ ...$edited(data), _terminator: blankArmStored(v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -2682,14 +2682,14 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ClassStaticBlock as const,
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		$with: {
 			terminator: (v: NonNullable<T.ClassStaticBlock['_terminator']> | null) =>
-				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)),
+				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _terminator: blankArmStored(v) }, tree)),
 			body: (v: NonNullable<T.ClassStaticBlock['_body']>) =>
 				rebuilt(node, handle, () => wrapClassStaticBlock({ ...$edited(data), _body: v }, tree))
 		},
@@ -5853,7 +5853,7 @@ export function wrapAmbientDeclarationModule(
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			name: (v: NonNullable<T.AmbientDeclarationModule['_name']>) =>
@@ -5862,7 +5862,7 @@ export function wrapAmbientDeclarationModule(
 				rebuilt(node, handle, () => wrapAmbientDeclarationModule({ ...$edited(data), _type: v }, tree)),
 			terminator: (v: NonNullable<T.AmbientDeclarationModule['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapAmbientDeclarationModule({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+					wrapAmbientDeclarationModule({ ...$edited(data), _terminator: blankArmStored(v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -6438,7 +6438,7 @@ export function wrapClassBodyMemberMethod(
 			return hydrateSlot<T.MethodDefinitionClassBodyMemberMethod>(this, '_method_definition', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
@@ -6449,7 +6449,7 @@ export function wrapClassBodyMemberMethod(
 				rebuilt(node, handle, () => wrapClassBodyMemberMethod({ ...$edited(data), _method_definition: v }, tree)),
 			terminator: (v: NonNullable<T.ClassBodyMemberMethod['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapClassBodyMemberMethod({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+					wrapClassBodyMemberMethod({ ...$edited(data), _terminator: blankArmStored(v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7592,7 +7592,7 @@ export function wrapForHeaderLetConstKind(
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
-			return this._terminator === 0 ? null : this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		operator() {
 			return this._operator;
@@ -7607,7 +7607,7 @@ export function wrapForHeaderLetConstKind(
 				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _left: v }, tree)),
 			terminator: (v: NonNullable<T.ForHeaderLetConstKind['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapForHeaderLetConstKind({ ...$edited(data), _terminator: v === null ? 0 : v }, tree)
+					wrapForHeaderLetConstKind({ ...$edited(data), _terminator: blankArmStored(v) }, tree)
 				),
 			operator: (v: NonNullable<T.ForHeaderLetConstKind['_operator']>) =>
 				rebuilt(node, handle, () => wrapForHeaderLetConstKind({ ...$edited(data), _operator: v }, tree)),

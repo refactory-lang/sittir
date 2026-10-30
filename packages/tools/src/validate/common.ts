@@ -13,7 +13,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { hydrateTriviaEntry } from '@sittir/common/utils';
+import { blankArmStored, hydrateTriviaEntry } from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -489,6 +489,7 @@ export interface LoadedNodeModel {
 	readonly slotStorage: Record<string, Record<string, string>>;
 	/** Each kind's slots by storage key, to the accessor that reads it; a kind with no slots maps to `{}`. */
 	readonly slotAccessors: Record<string, Record<string, string>>;
+	readonly slotBlankArms: Record<string, ReadonlySet<string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -557,6 +558,7 @@ interface ParsedNodeModel {
 			nonEmpty?: boolean;
 			storage?: string;
 			registered?: boolean;
+			blank?: boolean;
 			optionDefault?: number | string;
 			separator?: { readonly default?: number };
 			values?: ReadonlyArray<ParsedSlotValue>;
@@ -604,6 +606,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotNames: {},
 	slotStorage: {},
 	slotAccessors: {},
+	slotBlankArms: {},
 	factoryShapes: {},
 	factoryFields: {},
 	factorySlots: {},
@@ -670,6 +673,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const slotNames: Record<string, readonly string[]> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const slotAccessors: Record<string, Record<string, string>> = {};
+	const slotBlankArms: Record<string, ReadonlySet<string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
 	const subtypes: Record<string, readonly string[]> = {};
@@ -698,6 +702,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slotPropertyName(slot)]));
+		const blankArms = (node.slots ?? []).filter((slot) => slot.blank === true).map((slot) => storageKeyOf(slot.name));
+		if (blankArms.length > 0) slotBlankArms[node.kind] = new Set(blankArms);
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
 				for (const value of slot.values ?? []) {
@@ -751,6 +757,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		slotNames,
 		slotStorage,
 		slotAccessors,
+		slotBlankArms,
 		factoryShapes,
 		factoryFields,
 		factorySlots,
@@ -912,7 +919,8 @@ function resolveWrappedStorageValue(
 		throw new Error(`resolveWrappedStorageValue: ${slots.kind} stores ${storageKey}, but has no reader ${accessorName}()`);
 	}
 	try {
-		return (accessor as () => unknown).call(node);
+		const read = (accessor as () => unknown).call(node);
+		return slots.blankArms.has(storageKey) ? blankArmStored(read) : read;
 	} catch (e) {
 		const message = (e as Error).message;
 		const type = node.$type;
@@ -926,17 +934,20 @@ function resolveWrappedStorageValue(
 export interface KindSlots {
 	readonly kind: string;
 	readonly accessors: Readonly<Record<string, string>>;
+	readonly blankArms: ReadonlySet<string>;
 }
 
 /** A kind's slots, by the node's stamped kind id. */
 export type SlotAccessorOf = (typeId: number) => KindSlots;
+
+const NO_BLANK_ARMS: ReadonlySet<string> = new Set();
 
 export function slotAccessorOf(model: LoadedNodeModel, kindNameFromId: (id: number) => string | undefined): SlotAccessorOf {
 	return (typeId) => {
 		const kind = kindNameFromId(typeId);
 		const accessors = kind === undefined ? undefined : model.slotAccessors[kind];
 		if (kind === undefined || accessors === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
-		return { kind, accessors };
+		return { kind, accessors, blankArms: model.slotBlankArms[kind] ?? NO_BLANK_ARMS };
 	};
 }
 

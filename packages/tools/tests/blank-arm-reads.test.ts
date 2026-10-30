@@ -8,9 +8,7 @@ import { languageByName } from '../src/languages.ts';
 
 interface ModelSlot {
 	readonly name: string;
-	readonly required: boolean;
-	readonly registered?: boolean;
-	readonly optionDefault?: unknown;
+	readonly blank?: boolean;
 }
 
 interface ModelNode {
@@ -18,14 +16,12 @@ interface ModelNode {
 	readonly slots?: readonly ModelSlot[];
 }
 
-// A registered choice slot that may be left out has a blank arm: its default
-// is an arm's kind id (a spelling slot's is text), and none is one of its arms.
 function blankArmSlots(grammar: string): string[] {
 	const model = JSON.parse(readFileSync(join(PACKAGES_DIR, grammar, 'src', 'node-model.json5'), 'utf-8')) as { readonly nodes: Record<string, ModelNode> };
 	return Object.values(model.nodes)
 		.flatMap((node) =>
 			(node.slots ?? [])
-				.filter((slot) => slot.registered === true && !slot.required && typeof slot.optionDefault === 'number')
+				.filter((slot) => slot.blank === true)
 				.map((slot) => `${node.typeName}.${slot.name}`)
 		)
 		.sort();

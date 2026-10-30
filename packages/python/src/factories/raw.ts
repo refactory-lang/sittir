@@ -44,6 +44,8 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	admitAliasContent,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
@@ -4323,7 +4325,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 	const _left = config.left;
 	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.rights, kindIdStorage);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.ForInClause['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const handle = currentHandle();
@@ -4347,7 +4349,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 		async: () => _async,
 		left: () => hydrateStoredSlot(node, '_left'),
 		rights: () => hydrateStoredSlots(node, '_right'),
-		trailingComma: () => (_trailing_comma === 0 ? null : _trailing_comma),
+		trailingComma: () => blankArmRead(_trailing_comma),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

@@ -54,6 +54,7 @@ interface SerializedSlot {
 	nonEmpty: boolean;
 	storage: string;
 	registered?: true;
+	blank?: true;
 	optionDefault?: number | string;
 	separator?: { default?: number };
 	values: SerializedValue[];
@@ -333,6 +334,7 @@ function serializeSlot(
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		...(meta?.registered === true ? { registered: true } : {}),
+		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
 		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
 		values: slot.values.map((v) =>

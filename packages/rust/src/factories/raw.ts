@@ -44,6 +44,8 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceKindEnumStorage,
@@ -5140,7 +5142,7 @@ export function buildLastMatchArm(
 	const _match = config.match;
 	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const readGroup_match = () => _match;
@@ -5203,7 +5205,7 @@ export function buildLastMatchArm(
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		trailingComma: () => (_trailing_comma === 0 ? null : _trailing_comma),
+		trailingComma: () => blankArmRead(_trailing_comma),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),

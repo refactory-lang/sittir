@@ -33,7 +33,9 @@ import {
 	queryOf,
 	snapshotOf,
 	triviaSide,
-	triviaInner
+	triviaInner,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -3527,7 +3529,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma === 0 ? null : this._trailing_comma;
+			return blankArmRead(this._trailing_comma);
 		},
 		$with: {
 			async: (v: NonNullable<T.ForInClause['_async']>) =>
@@ -3537,7 +3539,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
 				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _right: restItems('rights', v) }, tree)),
 			trailingComma: (v: NonNullable<T.ForInClause['_trailing_comma']> | null) =>
-				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree))
+				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _trailing_comma: blankArmStored(v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

@@ -2,6 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { armIdOf } from './render-options-rs.ts';
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { AssembledList, deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
@@ -25,6 +26,7 @@ export interface FactorySlotMeta {
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
 	readonly registered?: boolean;
+	readonly blank?: boolean;
 	readonly optionDefault?: number | string;
 	readonly separator?: { readonly default?: number };
 }
@@ -78,7 +80,7 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 			slots[field.name] = createFactorySlotMeta(
 				field.propertyName,
 				deriveSlotCardinality(field),
-				registered.has(field) ? { registered: true, ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
+				registered.has(field) ? { registered: true, ...(hasBlankArm(field) ? { blank: true } : {}), ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
 			);
 		}
 		const itemSlot = node instanceof AssembledList && node.separatorRule !== undefined ? node.slots.find((slot) => deriveSlotCardinality(slot).multiple) : undefined;
@@ -128,7 +130,7 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 function createFactorySlotMeta(
 	propertyName: string,
 	cardinality: ReturnType<typeof deriveSlotCardinality>,
-	registration: Pick<FactorySlotMeta, 'registered' | 'optionDefault'> = {}
+	registration: Pick<FactorySlotMeta, 'registered' | 'blank' | 'optionDefault'> = {}
 ): FactorySlotMeta {
 	return { propertyName, ...cardinality, ...registration };
 }

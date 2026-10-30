@@ -33,6 +33,11 @@
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
 		},
+		"./blank-arm": {
+			"types": "./src/blank-arm.ts",
+			"import": "./src/blank-arm.ts",
+			"default": "./src/blank-arm.ts"
+		},
 		"./error-kind": {
 			"types": "./src/error-kind.ts",
 			"import": "./src/error-kind.ts",
