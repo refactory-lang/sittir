@@ -262,3 +262,7 @@ The SHA-256 of each of `files` under `root` that exists (`sha256File`), by repo-
 ### `packages/codegen/src/util/write-file-atomic.ts::writeFileAtomic`
 
 Writes `text` to `path`, creating its directory. The text goes to a scratch file beside `path`, named for the process, and is renamed into place, so a reader never sees a half-written file and two processes writing at once leave one of their files whole.
+
+### `packages/codegen/src/util/string-literal.ts::rustStringLiteral`
+
+A string as a Rust string literal: quoted, with backslash, double quote and control characters escaped. A control character with no short escape becomes a `\u{...}` escape.
