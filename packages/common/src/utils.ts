@@ -7,6 +7,7 @@ import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, tr
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
+import { undoIfFillFails } from './list-fills.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
@@ -488,32 +489,7 @@ export const LIST_METHODS = Object.fromEntries(
 /** The iterator member of a list node. */
 export const listIterator: (this: ArrayLike<unknown>) => ArrayIterator<unknown> = Array.prototype.values;
 
-export function holdListItems(node: object, items: ArrayLike<unknown>): void {
-	const held = node as Record<number, unknown>;
-	for (let index = 0; index < items.length; index++) held[index] = items[index];
-}
-
-type ListRead = (this: object) => ArrayLike<unknown>;
-
-const pendingReads: (object | ListRead)[] = [];
-let pendingFrom = -1;
-
-export function holdReadItems<N extends object>(node: N, read: (this: N) => ArrayLike<unknown>): void {
-	pendingReads.push(node, read as ListRead);
-	if (pendingFrom >= 0) return;
-	pendingFrom = 0;
-	try {
-		while (pendingFrom < pendingReads.length) {
-			const held = pendingReads[pendingFrom] as object;
-			const items = (pendingReads[pendingFrom + 1] as ListRead).call(held);
-			pendingFrom += 2;
-			holdListItems(held, items);
-		}
-	} finally {
-		pendingReads.length = 0;
-		pendingFrom = -1;
-	}
-}
+export { holdListItems, holdReadItems } from './list-fills.ts';
 
 export function holdBuiltItems(node: object, items: readonly unknown[], wrapper?: ListViewWrapper): void {
 	const held = node as Record<number, unknown>;
@@ -792,7 +768,10 @@ const hydratedLists = new WeakSet<readonly unknown[]>();
 function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
 	const slots = node as Record<string, unknown>;
 	const child = hydrateOne(slots[key]);
-	if (child !== slots[key]) slots[key] = child;
+	if (child !== slots[key]) {
+		undoIfFillFails(slots, key, slots[key]);
+		slots[key] = child;
+	}
 	return child;
 }
 
@@ -804,6 +783,7 @@ function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): read
 	if (hydratedLists.has(stored)) return stored;
 	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
 	hydratedLists.add(children);
+	undoIfFillFails(slots, key, stored);
 	slots[key] = children;
 	return children;
 }
@@ -823,13 +803,16 @@ export function childSlot(node: RecordHandle, word: number, width: number, forms
 	if (word in cache) return cache[word];
 	const value = recordSlot(node, word, width, forms, inline, built);
 	const role = aliasContent ? contentRole(node, () => value) : 'node';
-	return (cache[word] = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role));
+	const child = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role);
+	undoIfFillFails(cache, word, undefined);
+	return (cache[word] = child);
 }
 
 export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
 	const items = recordSlots(node, word, width, run, forms, inline, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
+	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
 

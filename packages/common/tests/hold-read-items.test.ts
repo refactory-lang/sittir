@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { holdReadItems } from '../src/utils.ts';
+import { undoIfFillFails } from '../src/list-fills.ts';
 
 type Held = Record<number, unknown>;
 
@@ -39,5 +40,56 @@ describe('holdReadItems', () => {
 			})
 		).toThrow('refused');
 		expect(listOf(() => ['a'])[0]).toBe('a');
+	});
+});
+
+describe('undoIfFillFails', () => {
+	const write = <K, V>(cache: Map<K, V> | Record<string, unknown>, key: K & string, value: V): void => {
+		if (cache instanceof Map) {
+			undoIfFillFails(cache, key, cache.get(key));
+			cache.set(key, value);
+		} else {
+			undoIfFillFails(cache, key, cache[key]);
+			cache[key] = value;
+		}
+	};
+
+	it('takes back every cache write made while the fills ran when one of them throws', () => {
+		const map = new Map<string, string>([['kept', 'before']]);
+		const weak = new WeakMap<object, string>();
+		const weakKey = {};
+		const record: Record<string, unknown> = { kept: 'before' };
+		expect(() =>
+			listOf(() => {
+				write(map, 'kept', 'during');
+				write(map, 'added', 'during');
+				undoIfFillFails(weak, weakKey, undefined);
+				weak.set(weakKey, 'during');
+				listOf(() => {
+					write(record, 'kept', 'during');
+					write(record, 'added', 'during');
+					listOf(() => {
+						throw new Error('refused');
+					});
+					return [];
+				});
+				return [];
+			})
+		).toThrow('refused');
+		expect([...map]).toEqual([['kept', 'before']]);
+		expect(weak.has(weakKey)).toBe(false);
+		expect(record).toEqual({ kept: 'before' });
+	});
+
+	it('keeps the cache writes of fills that all return, and writes made while no fill runs', () => {
+		const record: Record<string, unknown> = {};
+		write(record, 'outside', 'kept');
+		listOf(() => (write(record, 'during', 'kept'), []));
+		expect(() =>
+			listOf(() => {
+				throw new Error('refused');
+			})
+		).toThrow('refused');
+		expect(record).toEqual({ outside: 'kept', during: 'kept' });
 	});
 });

@@ -1,5 +1,6 @@
 import { treeHandleOf } from './node-data.ts';
 import { decodeIndex, decodeTree, type TreeHandle } from './read.ts';
+import { undoIfFillFails } from './list-fills.ts';
 
 /** How a route reaches a node: as itself, or as the content of an alias envelope that shares its parser node. */
 export type Role = 'node' | 'aliasContent';
@@ -28,6 +29,7 @@ export function register(tree: TreeHandle, index: number, role: Role, wrapper: o
 	if (wrappers === undefined) registries.set(tree, (wrappers = new Map()));
 	const key = keyOf(index, role);
 	const ref = new WeakRef(wrapper);
+	undoIfFillFails(wrappers, key, wrappers.get(key));
 	wrappers.set(key, ref);
 	collected.register(wrapper, { wrappers, key, ref });
 }
