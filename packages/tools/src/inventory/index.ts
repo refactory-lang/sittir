@@ -97,7 +97,8 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		file: relative(REPO_ROOT, bindingsPath(grammar)),
 		facts: input.bindings,
 		base,
-		layerRules: layer.rules,
+		wordMatcher: unbound.nodeMap.wordMatcher,
+			layerRules: layer.rules,
 		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
 		routes: resolveRoutes(input),
 		model: input.model
