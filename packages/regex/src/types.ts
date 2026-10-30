@@ -518,27 +518,10 @@ export type WhitespaceKindId = TSKindId.Tight | TSKindId.Newline | TSKindId.Blan
 export type LayoutKindId = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
 
 // Scoped enums per supertype
-export enum ClassAtomKind {
-	ClassCharacter = 'class_character',
-	BslashDash = 'bslash_dash',
-	CharacterClassEscape = 'character_class_escape',
-	ControlEscape = 'control_escape',
-	ControlLetterEscape = 'control_letter_escape',
-	IdentityEscape = 'identity_escape',
-	PosixCharacterClass = 'posix_character_class',
-	ClassRange = 'class_range'
-}
-
 export enum InlineFlagsGroupKind {
 	InlineFlagsGroupEnable = 'inline_flags_group_enable',
 	InlineFlagsGroupToggle = 'inline_flags_group_toggle',
 	InlineFlagsGroupDisable = 'inline_flags_group_disable'
-}
-
-export enum CharacterEscapeKind {
-	ControlEscape = 'control_escape',
-	ControlLetterEscape = 'control_letter_escape',
-	IdentityEscape = 'identity_escape'
 }
 
 export enum LayoutKind {
@@ -1163,7 +1146,6 @@ export namespace Layout {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type BslashDash = TSKindId.BslashDash;
 
 export type RegexNode = NodeOfNamespaces<NamespaceMap>;
 

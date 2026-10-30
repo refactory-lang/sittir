@@ -359,6 +359,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
 		variantChildren: linked.variantChildren,
+		splicedNames: linked.splicedNames,
 		generatedIdTables: linked.generatedIdTables
 	};
 }

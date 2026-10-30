@@ -6,33 +6,20 @@ import type {
 	AugmentedAssignment,
 	PatternList,
 	Yield,
-	Pattern,
 	Expression,
 	Assignment,
 	TSKindId
 } from './types.js';
 export type * from './types.js';
 
-export type Expressions = Expression | ExpressionList;
-
 export type ExpressionWithinForInClause = Expression | LambdaWithinForInClause;
-
-export type LeftHandSide = Pattern | PatternList;
 
 export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 
 export type FExpression = Expression | ExpressionList | PatternList | Yield;
 
-export namespace Expressions {
-	export type Kind = '_expressions';
-}
-
 export namespace ExpressionWithinForInClause {
 	export type Kind = '_expression_within_for_in_clause';
-}
-
-export namespace LeftHandSide {
-	export type Kind = '_left_hand_side';
 }
 
 export namespace RightHandSide {

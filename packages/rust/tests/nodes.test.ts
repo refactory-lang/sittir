@@ -68,6 +68,97 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExpressionStatementWithSemi);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('unsafeBlock builds the parent', () => {
+		const node = ir.expressionStatement.unsafeBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.UnsafeBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('asyncBlock builds the parent', () => {
+		const node = ir.expressionStatement.asyncBlock({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.AsyncBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('genBlock builds the parent', () => {
+		const node = ir.expressionStatement.genBlock({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.GenBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('tryBlock builds the parent', () => {
+		const node = ir.expressionStatement.tryBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.TryBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('block builds the parent', () => {
+		const node = ir.expressionStatement.block({});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Block);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ifExpression builds the parent', () => {
+		const node = ir.expressionStatement.ifExpression({
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.IfExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('matchExpression builds the parent', () => {
+		const node = ir.expressionStatement.matchExpression({
+			subject: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.MatchBlock, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.MatchExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('whileExpression builds the parent', () => {
+		const node = ir.expressionStatement.whileExpression({
+			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.WhileExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('loopExpression builds the parent', () => {
+		const node = ir.expressionStatement.loopExpression({
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.LoopExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('forExpression builds the parent', () => {
+		const node = ir.expressionStatement.forExpression({
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('constBlock builds the parent', () => {
+		const node = ir.expressionStatement.constBlock(
+			stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		);
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ConstBlock);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('macro_rule', () => {
@@ -1143,6 +1234,44 @@ describe('visibility_modifier sub-factories', () => {
 		const node = ir.visibilityModifier.pub.scope.inPath(
 			stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		);
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.self builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.self();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.metavariable builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.metavariable('test');
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.super builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.super();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.crate builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.crate();
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.identifier builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.identifier('test');
+		expect(node.$type).toBe(TSKindId.VisibilityModifier);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('pub.scope.inPath.scopedIdentifier builds the parent', () => {
+		const node = ir.visibilityModifier.pub.scope.inPath.scopedIdentifier({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

@@ -5,7 +5,6 @@ import type {
 	ArrayPattern,
 	MemberExpression,
 	SubscriptExpression,
-	SequenceExpression,
 	PrivatePropertyIdentifier,
 	ComputedPropertyName,
 	NonNullExpression,
@@ -17,9 +16,7 @@ import type {
 	RestType,
 	PropertyIdentifier,
 	Identifier,
-	Undefined,
 	ParenthesizedExpression,
-	Expression,
 	String,
 	Number,
 	Type,
@@ -28,8 +25,6 @@ import type {
 export type * from './types.js';
 
 export type ModuleExportName = Identifier | String;
-
-export type Expressions = Expression | SequenceExpression;
 
 export type FormalParameter = RequiredParameter | OptionalParameter;
 
@@ -42,18 +37,12 @@ export type AugmentedAssignmentLhs =
 
 export type DestructuringPattern = ObjectPattern | ArrayPattern;
 
-export type _Identifier = Undefined | Identifier;
-
 export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 
 export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
 
 export namespace ModuleExportName {
 	export type Kind = '_module_export_name';
-}
-
-export namespace Expressions {
-	export type Kind = '_expressions';
 }
 
 export namespace FormalParameter {
@@ -66,10 +55,6 @@ export namespace AugmentedAssignmentLhs {
 
 export namespace DestructuringPattern {
 	export type Kind = '_destructuring_pattern';
-}
-
-export namespace _Identifier {
-	export type Kind = '_identifier';
 }
 
 export namespace PropertyName {

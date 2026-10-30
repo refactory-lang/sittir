@@ -2610,13 +2610,6 @@ export enum TokenTreePatternKind {
 	TokenTreePatternBrace = 'token_tree_pattern_brace'
 }
 
-export enum TokensKind {
-	TokenTree = 'token_tree',
-	TokenRepetition = 'token_repetition',
-	Metavariable = 'metavariable',
-	NonSpecialToken = 'non_special_token'
-}
-
 export enum TokenTreeKind {
 	TokenTreeParen = 'token_tree_paren',
 	TokenTreeBracket = 'token_tree_bracket',
@@ -2767,20 +2760,6 @@ export enum ExpressionKind {
 	RangeExpression = 'range_expression'
 }
 
-export enum ExpressionEndingWithBlockKind {
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block'
-}
-
 export enum DelimTokenTreeKind {
 	DelimTokenTreeParen = 'delim_token_tree_paren',
 	DelimTokenTreeBracket = 'delim_token_tree_bracket',
@@ -2911,15 +2890,6 @@ export enum EscapeSequenceKind {
 export enum CommentKind {
 	LineComment = 'line_comment',
 	BlockComment = 'block_comment'
-}
-
-export enum PathKind {
-	SelfModule = 'self_module',
-	Metavariable = 'metavariable',
-	Super = 'super',
-	Crate = 'crate',
-	Identifier = 'identifier',
-	ScopedIdentifier = 'scoped_identifier'
 }
 
 export enum CharLiteralEscapedKind {

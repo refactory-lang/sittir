@@ -194,6 +194,42 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildTermGroup']>
 	) => ReturnType<Table['buildTermGroup']>;
+	readonly termGroup$controlEscape: <
+		const V extends OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & {
+			content: ArgsOf<Table['buildControlEscape']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & { content: ArgsOf<Table['buildControlEscape']> }
+			>,
+		options?: OptionsArg<Table['buildTermGroup']>
+	) => ReturnType<Table['buildTermGroup']>;
+	readonly termGroup$controlLetterEscape: <
+		const V extends OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & {
+			content: ArgsOf<Table['buildControlLetterEscape']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & { content: ArgsOf<Table['buildControlLetterEscape']> }
+			>,
+		options?: OptionsArg<Table['buildTermGroup']>
+	) => ReturnType<Table['buildTermGroup']>;
+	readonly termGroup$identityEscape: <
+		const V extends OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & {
+			content: ArgsOf<typeof F.buildIdentityEscape>[0];
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & { content: ArgsOf<typeof F.buildIdentityEscape>[0] }
+			>,
+		options?: OptionsArg<Table['buildTermGroup']>
+	) => ReturnType<Table['buildTermGroup']>;
 	readonly termGroup$backreferenceEscape: <
 		const V extends OmitEach<ArgsOf<Table['buildTermGroup']>[0], 'content'> & {
 			content: ArgsOf<Table['buildBackreferenceEscape']>[0];
@@ -478,6 +514,9 @@ export interface Routes<Table extends AnyTable> {
 			readonly arm: Routes<Table>['termGroup$characterClassEscape$arm'];
 			readonly unicodeCharacterEscape: Routes<Table>['termGroup$characterClassEscape$unicodeCharacterEscape'];
 		};
+		readonly controlEscape: Routes<Table>['termGroup$controlEscape'];
+		readonly controlLetterEscape: Routes<Table>['termGroup$controlLetterEscape'];
+		readonly identityEscape: Routes<Table>['termGroup$identityEscape'];
 		readonly backreferenceEscape: Routes<Table>['termGroup$backreferenceEscape'];
 		readonly namedGroupBackreference: Routes<Table>['termGroup$namedGroupBackreference'];
 		readonly anonymousCapturingGroup: Routes<Table>['termGroup$anonymousCapturingGroup'];
@@ -744,6 +783,18 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const termGroup$characterClassEscape: Routes<Table>['termGroup$characterClassEscape'] =
 		K.termGroup$characterClassEscape($at('buildTermGroup'), $at('buildCharacterClassEscape'));
+	const termGroup$controlEscape: Routes<Table>['termGroup$controlEscape'] = K.termGroup$controlEscape(
+		$at('buildTermGroup'),
+		$at('buildControlEscape')
+	);
+	const termGroup$controlLetterEscape: Routes<Table>['termGroup$controlLetterEscape'] = K.termGroup$controlLetterEscape(
+		$at('buildTermGroup'),
+		$at('buildControlLetterEscape')
+	);
+	const termGroup$identityEscape: Routes<Table>['termGroup$identityEscape'] = K.termGroup$identityEscape(
+		$at('buildTermGroup'),
+		F.buildIdentityEscape
+	);
 	const termGroup$backreferenceEscape: Routes<Table>['termGroup$backreferenceEscape'] = K.termGroup$backreferenceEscape(
 		$at('buildTermGroup'),
 		$at('buildBackreferenceEscape')
@@ -839,6 +890,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 				unicodeCharacterEscape: termGroup$characterClassEscape$unicodeCharacterEscape
 			} as const)
 		),
+		controlEscape: termGroup$controlEscape,
+		controlLetterEscape: termGroup$controlLetterEscape,
+		identityEscape: termGroup$identityEscape,
 		backreferenceEscape: termGroup$backreferenceEscape,
 		namedGroupBackreference: termGroup$namedGroupBackreference,
 		anonymousCapturingGroup: termGroup$anonymousCapturingGroup,

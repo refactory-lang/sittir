@@ -271,6 +271,7 @@ export interface SimplifiedGrammar {
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly splicedNames?: ReadonlySet<string>;
 	readonly generatedIdTables: GeneratedIdTables;
 }
 

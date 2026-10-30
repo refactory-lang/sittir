@@ -2654,11 +2654,6 @@ export enum ParenthesizedExpressionKind {
 	ParenthesizedExpressionSequence = 'parenthesized_expression_sequence'
 }
 
-export enum ExpressionsKind {
-	Expression = 'expression',
-	SequenceExpression = 'sequence_expression'
-}
-
 export enum ExpressionKind {
 	AsExpression = 'as_expression',
 	SatisfiesExpression = 'satisfies_expression',
@@ -2751,11 +2746,6 @@ export enum NumberKind {
 	NumberBinary = 'number_binary',
 	NumberOctal = 'number_octal',
 	NumberBigint = 'number_bigint'
-}
-
-export enum _IdentifierKind {
-	Undefined = 'undefined',
-	Identifier = 'identifier'
 }
 
 export enum MetaPropertyKind {

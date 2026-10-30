@@ -2089,6 +2089,19 @@ describe('rest_pattern sub-factories', () => {
 		expect((node as any).lhsExpression()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('undefined builds the parent', () => {
+		const node = ir.restPattern.undefined();
+		expect(node.$type).toBe(TSKindId.RestPattern);
+		const seated = (node as any).lhsExpression();
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Undefined);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('identifier builds the parent', () => {
+		const node = ir.restPattern.identifier('test');
+		expect(node.$type).toBe(TSKindId.RestPattern);
+		expect((node as any).lhsExpression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('nonNullExpression builds the parent', () => {
 		const node = ir.restPattern.nonNullExpression(
 			stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any

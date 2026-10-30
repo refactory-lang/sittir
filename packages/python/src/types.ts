@@ -1819,11 +1819,6 @@ export enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
-export enum ExpressionsKind {
-	Expression = 'expression',
-	ExpressionList = 'expression_list'
-}
-
 export enum CompoundStatementKind {
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
@@ -1926,11 +1921,6 @@ export enum AssignmentKind {
 	AssignmentEq = 'assignment_eq',
 	AssignmentType = 'assignment_type',
 	AssignmentTyped = 'assignment_typed'
-}
-
-export enum LeftHandSideKind {
-	Pattern = 'pattern',
-	PatternList = 'pattern_list'
 }
 
 export enum RightHandSideKind {

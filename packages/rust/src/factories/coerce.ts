@@ -1560,19 +1560,6 @@ const _super_escape_sequence: readonly string[] = [
 	'escape_sequence_hex'
 ];
 const _super_field_pattern: readonly string[] = ['field_pattern_shorthand', 'field_pattern_named'];
-const _super_expression_ending_with_block: readonly string[] = [
-	'unsafe_block',
-	'async_block',
-	'gen_block',
-	'try_block',
-	'block',
-	'if_expression',
-	'match_expression',
-	'while_expression',
-	'loop_expression',
-	'for_expression',
-	'const_block'
-];
 const _super_match_arm: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending'];
 const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
@@ -2277,12 +2264,25 @@ const _K66: readonly string[] = ['impl_item_positive_clause', 'impl_item_negativ
 const _K67: readonly string[] = ['self_module', 'super', 'crate'];
 const _K68: readonly string[] = ['visibility_modifier_pub_scope_in_path'];
 const _K69: readonly string[] = [
+	'unsafe_block',
+	'async_block',
+	'gen_block',
+	'try_block',
+	'block',
+	'if_expression',
+	'match_expression',
+	'while_expression',
+	'loop_expression',
+	'for_expression',
+	'const_block'
+];
+const _K70: readonly string[] = [
 	'non_special_token',
 	'delim_token_tree_paren',
 	'delim_token_tree_bracket',
 	'delim_token_tree_brace'
 ];
-const _K70: readonly string[] = [
+const _K71: readonly string[] = [
 	'char_literal_empty',
 	'boolean_literal',
 	'float_literal',
@@ -2291,7 +2291,7 @@ const _K70: readonly string[] = [
 	'crate',
 	'identifier'
 ];
-const _K71: readonly string[] = [
+const _K72: readonly string[] = [
 	'string_literal',
 	'raw_string_literal',
 	'char_literal_escaped_simple',
@@ -2307,9 +2307,9 @@ const _K71: readonly string[] = [
 	'metavariable',
 	'scoped_identifier'
 ];
-const _K72: readonly string[] = ['range_pattern_with_left_bare'];
-const _K73: readonly string[] = ['range_pattern_with_left_with_right'];
-const _K74: readonly string[] = [
+const _K73: readonly string[] = ['range_pattern_with_left_bare'];
+const _K74: readonly string[] = ['range_pattern_with_left_with_right'];
+const _K75: readonly string[] = [
 	'parameter',
 	'variadic_parameter',
 	'abstract_type',
@@ -2328,7 +2328,7 @@ const _K74: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K75: readonly string[] = [
+const _K76: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2357,7 +2357,7 @@ const _K75: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K76: readonly string[] = [
+const _K77: readonly string[] = [
 	'const_item',
 	'macro_invocation',
 	'macro_definition_paren',
@@ -2386,7 +2386,7 @@ const _K76: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K77: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
+const _K78: readonly string[] = ['receiver_parameter_declaration', 'self_parameter'];
 
 export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['shebang']): Admit<T.SourceFile['_shebang']> {
 	return _resolveOneBranch<T.Shebang>(value, 'shebang', undefined, true);
@@ -9863,7 +9863,7 @@ export function resolveMatchArmBlockEnding_body(
 		| T.LoopExpression
 		| T.ForExpression
 		| T.ConstBlock
-	>(value, _K2, _super_expression_ending_with_block);
+	>(value, _K2, _K69);
 }
 
 export const coerceToMatchArmBlockEnding: ConfigSeat<
@@ -10128,7 +10128,7 @@ export const coerceToDelimTokenTreeParen: EmptyForm<
 	return F.buildDelimTokenTreeParen(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K69)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
@@ -10151,7 +10151,7 @@ export const coerceToDelimTokenTreeBracket: EmptyForm<
 	return F.buildDelimTokenTreeBracket(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K69)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
@@ -10174,7 +10174,7 @@ export const coerceToDelimTokenTreeBrace: EmptyForm<
 	return F.buildDelimTokenTreeBrace(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K69)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K70)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
@@ -10356,7 +10356,7 @@ export function resolveRangePatternPrefix_right(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K70, _K71)
+					>(value, _K71, _K72)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10402,7 +10402,7 @@ export function resolveRangePatternWithLeftWithRight_right(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K70, _K71)
+					>(value, _K71, _K72)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10445,7 +10445,7 @@ export function resolveRangePatternWithLeft_left(
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-					>(value, _K70, _K71)
+					>(value, _K71, _K72)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -10457,7 +10457,7 @@ export function resolveRangePatternWithLeft_content(
 ): Admit<T.RangePatternWithLeft['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.RangePatternWithLeftBare], () =>
-			_resolveOne<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(value, _K72, _K73)
+			_resolveOne<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(value, _K73, _K74)
 		),
 		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
@@ -10663,7 +10663,7 @@ export function resolveAttributedParameter_content(
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Underscore], () =>
-				_resolveOne<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(value, _K14, _K74)
+				_resolveOne<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(value, _K14, _K75)
 			),
 			[['_', TSKindId.Underscore] as const]
 		)
@@ -10934,7 +10934,7 @@ export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
 			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 			return F.buildTraitInterfaceDeclarationBody(
 				...(listStorage(
-					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
+					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K76)),
 					(item) => coerceMixedEnumStorage(item, [])
 				) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
 			);
@@ -10949,7 +10949,7 @@ export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
 		})();
 		return F.buildTraitInterfaceDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K76)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
 		);
@@ -10968,7 +10968,7 @@ export const coerceToExtensionDeclarationBody: EmptyForm<
 			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 			return F.buildExtensionDeclarationBody(
 				...(listStorage(
-					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
+					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K77)),
 					(item) => coerceMixedEnumStorage(item, [])
 				) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
 			);
@@ -10983,7 +10983,7 @@ export const coerceToExtensionDeclarationBody: EmptyForm<
 		})();
 		return F.buildExtensionDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K77)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
 		);
@@ -11027,7 +11027,7 @@ export function resolveAttributedParameterReceiver_attributeItem(
 export function resolveAttributedParameterReceiver_content(
 	value: T.AttributedParameterReceiver.LooseConfig['content']
 ): Admit<T.AttributedParameterReceiver['_content']> {
-	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K77);
+	return _resolveOne<T.ReceiverParameterDeclaration | T.SelfParameter>(value, _K2, _K78);
 }
 
 export const coerceToAttributedParameterReceiver: ConfigSeat<

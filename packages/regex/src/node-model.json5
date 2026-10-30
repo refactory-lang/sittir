@@ -44,8 +44,6 @@
 	},
 	"nodes": [
 		{"kind":"_blankline","modelType":"punctuation","typeName":"Blankline","builderPathAlternates":[["layout","blankline"]],"unit":true,"text":"\n\n","factoryShape":"constant"},
-		{"kind":"_character_escape","modelType":"supertype","typeName":"CharacterEscape","subtypes":["control_escape","control_letter_escape","identity_escape"]},
-		{"kind":"_class_atom","modelType":"supertype","typeName":"ClassAtom","subtypes":["bslash_dash","character_class_escape","class_character","class_range","control_escape","control_letter_escape","identity_escape","posix_character_class"]},
 		{"kind":"_double_blankline","modelType":"punctuation","typeName":"DoubleBlankline","builderPathAlternates":[["layout","doubleBlankline"]],"unit":true,"text":"\n\n\n","factoryShape":"constant"},
 		{"kind":"_layout","modelType":"supertype","typeName":"Layout","irKey":"layout","builderPath":["layout"],"subtypes":["_blankline","_double_blankline","_newline","_tight"]},
 		{"kind":"_newline","modelType":"punctuation","typeName":"Newline","builderPathAlternates":[["layout","newline"]],"unit":true,"text":"\n","factoryShape":"constant"},
