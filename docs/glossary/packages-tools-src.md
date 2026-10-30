@@ -406,6 +406,10 @@ and calls the same function.
 
 The round-trip result for the grammar, when it ran.
 
+### `packages/tools/src/commands.ts::GrammarCounts::portableConformance`
+
+The grammar's portable conformance report, or undefined when the grammar has no typed module.
+
 ### `packages/tools/src/history.ts::ValidationRun::portableRoundTripPass`
 
 The number of round-trip entries that passed.
@@ -421,3 +425,7 @@ The number of round-trip entries whose syntax tree matched.
 ### `packages/tools/src/history.ts::ValidationRun::portableRoundTripCarried`
 
 The number of round-trip entries that carried something past the structure.
+
+### `packages/tools/src/history.ts::ValidationRun::portableConformance`
+
+The total of the grammar's portable conformance errors, recorded for the validation run when the grammar has a typed module.
