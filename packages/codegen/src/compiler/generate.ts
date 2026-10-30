@@ -8,9 +8,11 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
-import { bindingsPathIn } from '../bindings/facts.ts';
+import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
+import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
+import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
 import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
@@ -32,6 +34,7 @@ export interface GeneratedFiles {
 	types: string;
 	typesInternal: string;
 	kinds: string | undefined;
+	portableTyped: PortableTypedOutput | undefined;
 	descriptor: string;
 	renderEngine: string;
 	api: string;
@@ -137,8 +140,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const nodeModelData = buildNodeModel(nodeMap, generatedIdTables);
 		const nodeModel = printNodeModel(nodeModelData);
-		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir));
-		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
+		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, vocabulary);
 		const portableDiagnostics = (portable?.pickDiagnostics ?? []).map(
 			({ code, path, kinds, holder, slot, arms }): GrammarDiagnostic => ({
 				scope: 'grammar',
@@ -201,6 +205,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portableNodeModel: portable?.nodeModel,
 			portable: portable?.surface,
 			portableBuild: portable?.build,
+			portableTyped: portable?.typed,
 			portableDiagnostics,
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),

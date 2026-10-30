@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Lead, LeadMatch } from '../dsl/verbs/effects.ts';
+import { stringLiteral as q } from '../util/string-literal.ts';
 import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName, type GrammarPackage } from '../grammars.ts';
 import { bindingsPathIn } from './facts.ts';
 import { assertBindingsFresh, REGENERATE_BINDINGS_COMMAND } from './hash.ts';
@@ -20,7 +21,6 @@ export async function assertPackageBindingsFresh(pkg: GrammarPackage): Promise<v
 	assertBindingsFresh(pkg.name, await loadBindingsHash(pkg.dir), bindingsPathIn(pkg.dir));
 }
 
-const q = (v: string): string => JSON.stringify(v);
 
 const editCall = (edit: GrammarBindingsEdit): string => ('field' in edit ? `field(${q(edit.field)})` : `alias(${q(edit.alias)})`);
 

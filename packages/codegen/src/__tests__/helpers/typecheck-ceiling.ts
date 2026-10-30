@@ -1,19 +1,11 @@
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { expect } from 'vitest';
+import { parseTypeCheckDiagnostics, typeCheckOutput } from '../../typecheck.ts';
 
 export type TypecheckCeiling = Readonly<Record<string, number | { readonly max: number; readonly issue: string }>>;
 
 export function typeCheckErrorLines(pnpmArgs: readonly string[], cwd: string): string[] {
-	let out = '';
-	try {
-		out = execFileSync('pnpm', [...pnpmArgs, '--pretty', 'false'], { cwd, encoding: 'utf8' });
-	} catch (e) {
-		const failure = e as { status?: number | null; stdout?: string };
-		out = String(failure.stdout ?? '');
-		if (!out.includes('error TS')) throw e;
-	}
-	return out.split('\n').filter((line) => line.includes('error TS'));
+	return parseTypeCheckDiagnostics(typeCheckOutput('pnpm', pnpmArgs, cwd)).map((d) => d.head);
 }
 
 export function expectWithinTypecheckCeiling(errorLines: readonly string[], ceilingPath: string): void {

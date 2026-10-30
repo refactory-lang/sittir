@@ -13,6 +13,7 @@ import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurf
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
 import { runLayoutRuns, type LayoutRunsResult } from './validate/layout-runs.ts';
 import { runPortableRoundTrip, type PortableRoundTripResult } from './validate/portable-round-trip.ts';
+import { portableConformance as computePortableConformance, type ConformanceReport } from './portable/conformance.ts';
 import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
@@ -80,6 +81,7 @@ export interface GrammarCounts {
 	readonly builtRenderParse: BuiltRenderResult;
 	readonly layoutRuns: LayoutRunsResult;
 	readonly portableRoundTrip: PortableRoundTripResult | undefined;
+	readonly portableConformance: ConformanceReport | undefined;
 }
 
 export async function collectGrammarCounts(grammar: GrammarName, backend: Backend): Promise<GrammarCounts> {
@@ -99,6 +101,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	const readRenderParseShallow = await runRt(grammar, backend, { recursive: false });
 	const layoutRuns = await runLayoutRuns(grammar);
 	const portableRoundTrip = await runPortableRoundTrip(grammar);
+	const portableConformance = await computePortableConformance(grammar);
 	return {
 		grammar,
 		backend,
@@ -110,12 +113,13 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 		irStorage,
 		builtRenderParse: combineBuiltRender({ factory: factoryStorage.render, ir: irStorage.render }),
 		layoutRuns,
-		portableRoundTrip
+		portableRoundTrip,
+		portableConformance
 	};
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip, portableConformance } =
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
@@ -132,7 +136,8 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 			? []
 			: [
 					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}    portable-round-tripCarried=${portableRoundTrip.carried.length}`
-				])
+				]),
+		...(portableConformance === undefined ? [] : [`  portable-conformance=${portableConformance.total}`])
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
@@ -210,7 +215,7 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip, portableConformance } =
 		counts;
 	return {
 		ts: new Date().toISOString(),
@@ -252,7 +257,8 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 					portableRoundTripTotal: portableRoundTrip.total,
 					portableRoundTripAstMatchPass: portableRoundTrip.astMatchPass,
 					portableRoundTripCarried: portableRoundTrip.carried.length
-				})
+				}),
+		...(portableConformance === undefined ? {} : { portableConformance: portableConformance.total })
 	};
 }
 

@@ -32,6 +32,7 @@ import { nodeJsonCensus } from './node-json-census.ts';
 import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
+import { portableConformance } from './portable-conformance.ts';
 import { probeKind } from './probe-kind.ts';
 import { probeParity } from './probe-parity.ts';
 import { probeStages } from './probe-stages.ts';
@@ -83,6 +84,7 @@ export const toolModules: readonly CommandModule[] = [
 	outputGate,
 	overrideCensus,
 	phantomKinds,
+	portableConformance,
 	probeKind,
 	probeParity,
 	probeStages,

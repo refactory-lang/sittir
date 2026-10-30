@@ -137,3 +137,4 @@ export { run as outputGate, type OutputGateOptions } from './output-gate/index.t
 export { run as vocabularyFeatures, type VocabularyFeaturesOptions } from './vocabulary/index.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';
 export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';
+export { run as portableConformance, portableConformance as computePortableConformance, formatConformance, type ConformanceReport, type PortableConformanceOptions } from './portable/conformance.ts';

@@ -63,6 +63,10 @@ vi.mock('../src/validate/portable-round-trip.ts', () => ({
 	runPortableRoundTrip: vi.fn().mockResolvedValue(undefined)
 }));
 
+vi.mock('../src/portable/conformance.ts', () => ({
+	portableConformance: vi.fn().mockResolvedValue(undefined)
+}));
+
 // Mock cachedNativeEngineProfile so debug-profile-skip tests can control it
 // independently of the (also mocked) run.ts collectors. Partial mock — other
 // common.ts exports (e.g. adaptNode) are used transitively by index.ts.

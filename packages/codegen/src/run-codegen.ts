@@ -32,6 +32,7 @@ import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPED_TSCONFIG_TEXT } from './emitters/overlays/portable/typed.ts';
 
 export interface CodegenOptions {
 	grammar: string;
@@ -66,6 +67,16 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	}
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, finalContent, 'utf8');
+}
+
+export async function writePortableTyped(sittirDir: string, source: string | undefined): Promise<void> {
+	const module = join(sittirDir, PORTABLE_TYPED_FILE);
+	const tsconfig = join(sittirDir, PORTABLE_TYPED_TSCONFIG);
+	if (source === undefined) for (const path of [module, tsconfig]) rmSync(path, { force: true });
+	else {
+		await writeFile(module, source);
+		await writeFile(tsconfig, PORTABLE_TYPED_TSCONFIG_TEXT);
+	}
 }
 
 export async function runTreeSitterGenerate(pkg: GrammarPackage): Promise<void> {
@@ -321,6 +332,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	else await writeFile(join(outDir, 'portable.ts'), result.portable);
 	if (result.portableBuild === undefined) rmSync(join(outDir, 'portable-build.ts'), { force: true });
 	else await writeFile(join(outDir, 'portable-build.ts'), result.portableBuild);
+	await writePortableTyped(join(dirname(outDir), '.sittir'), result.portableTyped?.source);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
