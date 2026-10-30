@@ -176,7 +176,11 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 		for (const k of kinds) for (const c of concreteKinds(model, [k])) if (typed.has(c)) parts.add(aliasOf(c));
 		return parts.size > 0 ? [...parts].join(' | ') : 'never';
 	};
-	const viewTypeOf = (node: ModelNode): string => {
+	const listsOnly = (slot: ModelSlot): boolean => {
+		const held = concreteKinds(model, slot.kinds);
+		return held.length > 0 && held.every((k) => entriesFor(k) === undefined && (nodeOf(k)?.modelType === 'list' || routes.containers.get(k)?.list === true));
+	};
+	const viewTypeOf =(node: ModelNode): string => {
 		const claimed = entriesFor(node.kind);
 		if (claimed !== undefined) return [...new Set(claimed.map((e) => `VocabViews[${q(e.vocab)}]`))].join(' | ');
 		if (unclaimed.has(node.kind)) return 'never';
@@ -189,7 +193,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			const slot = node.slots.find((s) => s.name === unwrap.slot);
 			const elements = refsOf(unwrap.kinds, unwrap.terminals);
 			if (unwrap.list || slot?.multiple === true) return `readonly (${elements})[]`;
-			return slot?.required === true ? elements : `${elements} | undefined`;
+			return slot !== undefined && (slot.required || listsOnly(slot)) ? elements : `${elements} | undefined`;
 		}
 		return `V.Unmapped<'${input.grammar}:${node.kind.replace(/^_+/, '')}'>`;
 	};
@@ -216,11 +220,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 
 	const enumKinds = new Set(claimedEnums.flatMap((kind) => concreteKinds(model, [kind])));
 	const admitsEnum = (slot: ModelSlot): boolean => slot.kinds.some((k) => concreteKinds(model, [k]).some((c) => enumKinds.has(c)));
-	const listsOnly = (slot: ModelSlot): boolean => {
-		const held = concreteKinds(model, slot.kinds);
-		return held.length > 0 && held.every((k) => entriesFor(k) === undefined && (nodeOf(k)?.modelType === 'list' || routes.containers.get(k)?.list === true));
-	};
-	const slotOf = (step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
+	const slotOf =(step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
 	const chainOf = (kind: string, path: readonly SlotStep[]): { expr: string; last: ModelSlot; optional: boolean } | string => {
 		let expr = 'this[low]';
 		let optional = false;

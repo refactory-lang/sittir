@@ -41,6 +41,12 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain(`function ${name}$name(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(this[low].name());\n}`);
 	});
 
+	it('types a container whose slot holds only a list as that list, since an empty one reads as []', () => {
+		expect(typed.source).toContain('type VK_EnumVariantList = VK_EnumVariantListElements;');
+		expect(typed.source).toContain('type VK_Arguments = VK_ArgumentsElements;');
+		expect(typed.source).toContain('type VK_BlockCommentDocInner = VK_BlockCommentContent | undefined;');
+	});
+
 	it('reports what it skipped with the reason', () => {
 		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
 	});
