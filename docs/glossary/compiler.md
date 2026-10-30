@@ -6045,8 +6045,8 @@ wire has no protected names and prunes nothing.
 #### body
 
 ```text
-// PIN POINT (2026-07-05 design): compiled exactly ONCE here, from
-// `raw.rules` — the evaluate-view rule tree, where the `word` rule's
+// PIN POINT (2026-07-05 design): compiled exactly ONCE here, from the spliced rules (before stamping),
+// the spliced rules — the evaluate-view rule tree, where the `word` rule's
 // authored wrappers (notably a trailing REPEAT) are still intact. This is
 // the grammar's single word-matcher compilation for the entire pipeline;
 // every later phase CARRIES `wordMatcherRegex` forward on its
@@ -8006,7 +8006,7 @@ A rule whose body becomes all text (`isAllTextShape`) once each spliceable refer
 
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 
-Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`dsl/rule-patterns.ts::inlinesAtReference`) from the parser catalog, asked through `catalogSymbolSource`. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
+Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`dsl/rule-patterns.ts::inlinesAtReference`) from the parser catalog, asked through `catalogSymbolSource`. The word matcher is an argument: `link` pins it once, compiled from the spliced rules, before this stamp runs. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
 
 A named alias whose display is the grammar's word rule and whose content is a literal the link-pinned `wordMatcher` accepts and the catalog has a keyword row for is a relaxation site (`alias('print', $.identifier)`). The displays that count as word displays come from `dsl/rule-transforms.ts::wordDisplaysOf`, the recognizer enrich also uses. Its reference becomes the word symbol itself (or, for a word display, the word under that display), and the literal joins the grammar's `relaxedLiterals`, which link, normalize and the node map carry through unchanged. A choice that held such sites keeps one arm per distinct display (the word symbol itself counts as its own display), the one carrying the word's own variant label when several repeat, and a rule left as nothing but the word (python's `keyword_identifier`) is dissolved into it, so no slot lists a keyword kind the grammar relaxes. The enriched grammar, `grammar.json` and the parser are untouched: the aliases stay in place upstream, and only link's model drops the keyword arms.
 
