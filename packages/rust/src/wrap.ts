@@ -843,6 +843,11 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 	return node as unknown as T.EnumItem.Parsed;
 }
 
+const wrapEnumVariantList$wrapper = {
+	kind: TSKindId.AttributedEnumVariant,
+	content: 'enumVariant',
+	decorations: ['attributeItems']
+};
 export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): T.EnumVariantList.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
@@ -917,14 +922,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedEnumVariant,
-			content: 'enumVariant',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapEnumVariantList$wrapper));
 	return node as unknown as T.EnumVariantList.Parsed;
 }
 
@@ -982,6 +980,11 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVa
 	return node as unknown as T.EnumVariant.Parsed;
 }
 
+const wrapFieldDeclarationList$wrapper = {
+	kind: TSKindId.AttributedFieldDeclaration,
+	content: 'fieldDeclaration',
+	decorations: ['attributeItems']
+};
 export function wrapFieldDeclarationList(
 	data: T.FieldDeclarationList,
 	tree: TreeHandle
@@ -1059,14 +1062,7 @@ export function wrapFieldDeclarationList(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedFieldDeclaration,
-			content: 'fieldDeclaration',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapFieldDeclarationList$wrapper));
 	return node as unknown as T.FieldDeclarationList.Parsed;
 }
 
@@ -1117,6 +1113,11 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 	return node as unknown as T.FieldDeclaration.Parsed;
 }
 
+const wrapOrderedFieldDeclarationList$wrapper = {
+	kind: TSKindId.AttributedOrderedField,
+	content: 'type',
+	decorations: ['attributeItems', 'visibilityModifier']
+};
 export function wrapOrderedFieldDeclarationList(
 	data: T.OrderedFieldDeclarationList,
 	tree: TreeHandle
@@ -1194,14 +1195,7 @@ export function wrapOrderedFieldDeclarationList(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.attributes(), 'items'), {
-			kind: TSKindId.AttributedOrderedField,
-			content: 'type',
-			decorations: ['attributeItems', 'visibilityModifier']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.attributes(), 'items'), wrapOrderedFieldDeclarationList$wrapper));
 	return node as unknown as T.OrderedFieldDeclarationList.Parsed;
 }
 
@@ -2177,6 +2171,11 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 	return node as unknown as T.RemovedTraitBound.Parsed;
 }
 
+const wrapTypeParameters$wrapper = {
+	kind: TSKindId.AttributedTypeParameter,
+	content: 'content',
+	decorations: ['attributeItems']
+};
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.TypeParameters.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
@@ -2250,14 +2249,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedTypeParameter,
-			content: 'content',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapTypeParameters$wrapper));
 	return node as unknown as T.TypeParameters.Parsed;
 }
 
@@ -3549,6 +3541,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 	return node as unknown as T.UseBounds.Parsed;
 }
 
+const wrapTypeArguments$wrapper = { kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] };
 export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.TypeArguments.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
@@ -3622,14 +3615,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.TypeArgument,
-			content: 'content',
-			decorations: ['traitBounds']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapTypeArguments$wrapper));
 	return node as unknown as T.TypeArguments.Parsed;
 }
 
@@ -4458,6 +4444,11 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 	return node as unknown as T.CallExpression.Parsed;
 }
 
+const wrapArguments$wrapper = {
+	kind: TSKindId.AttributedArgument,
+	content: 'expression',
+	decorations: ['attributeItems']
+};
 export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
@@ -4529,14 +4520,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedArgument,
-			content: 'expression',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapArguments$wrapper));
 	return node as unknown as T.Arguments.Parsed;
 }
 
@@ -6646,6 +6630,11 @@ export function wrapMacroRules(data: T.MacroRules, tree: TreeHandle): T.MacroRul
 	return node as unknown as T.MacroRules.Parsed;
 }
 
+const wrapEnumVariantListElements$wrapper = {
+	kind: TSKindId.AttributedEnumVariant,
+	content: 'enumVariant',
+	decorations: ['attributeItems']
+};
 export function wrapEnumVariantListElements(
 	data: T.EnumVariantListElements,
 	tree: TreeHandle
@@ -6723,17 +6712,15 @@ export function wrapEnumVariantListElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedEnumVariant,
-			content: 'enumVariant',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapEnumVariantListElements$wrapper));
 	return node as unknown as T.EnumVariantListElements.Parsed;
 }
 
+const wrapFieldDeclarationListElements$wrapper = {
+	kind: TSKindId.AttributedFieldDeclaration,
+	content: 'fieldDeclaration',
+	decorations: ['attributeItems']
+};
 export function wrapFieldDeclarationListElements(
 	data: T.FieldDeclarationListElements,
 	tree: TreeHandle
@@ -6811,17 +6798,15 @@ export function wrapFieldDeclarationListElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedFieldDeclaration,
-			content: 'fieldDeclaration',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapFieldDeclarationListElements$wrapper));
 	return node as unknown as T.FieldDeclarationListElements.Parsed;
 }
 
+const wrapOrderedFieldDeclarationListElements$wrapper = {
+	kind: TSKindId.AttributedOrderedField,
+	content: 'type',
+	decorations: ['attributeItems', 'visibilityModifier']
+};
 export function wrapOrderedFieldDeclarationListElements(
 	data: T.OrderedFieldDeclarationListElements,
 	tree: TreeHandle
@@ -6903,14 +6888,7 @@ export function wrapOrderedFieldDeclarationListElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedOrderedField,
-			content: 'type',
-			decorations: ['attributeItems', 'visibilityModifier']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapOrderedFieldDeclarationListElements$wrapper));
 	return node as unknown as T.OrderedFieldDeclarationListElements.Parsed;
 }
 
@@ -6984,6 +6962,11 @@ export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle): 
 	return node as unknown as T.WherePredicates.Parsed;
 }
 
+const wrapTypeParametersElements$wrapper = {
+	kind: TSKindId.AttributedTypeParameter,
+	content: 'content',
+	decorations: ['attributeItems']
+};
 export function wrapTypeParametersElements(
 	data: T.TypeParametersElements,
 	tree: TreeHandle
@@ -7061,14 +7044,7 @@ export function wrapTypeParametersElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedTypeParameter,
-			content: 'content',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapTypeParametersElements$wrapper));
 	return node as unknown as T.TypeParametersElements.Parsed;
 }
 
@@ -7153,6 +7129,11 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 	return node as unknown as T.UseClauses.Parsed;
 }
 
+const wrapParametersElements$wrapper = {
+	kind: TSKindId.AttributedParameter,
+	content: 'content',
+	decorations: ['attributeItem']
+};
 export function wrapParametersElements(data: T.ParametersElements, tree: TreeHandle): T.ParametersElements.Parsed {
 	const handle = currentHandle();
 	const listedItems = storedElements(data._item);
@@ -7224,14 +7205,7 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedParameter,
-			content: 'content',
-			decorations: ['attributeItem']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapParametersElements$wrapper));
 	return node as unknown as T.ParametersElements.Parsed;
 }
 
@@ -7442,6 +7416,11 @@ export function wrapUseBoundsElements(data: T.UseBoundsElements, tree: TreeHandl
 	return node as unknown as T.UseBoundsElements.Parsed;
 }
 
+const wrapTypeArgumentsElements$wrapper = {
+	kind: TSKindId.TypeArgument,
+	content: 'content',
+	decorations: ['traitBounds']
+};
 export function wrapTypeArgumentsElements(
 	data: T.TypeArgumentsElements,
 	tree: TreeHandle
@@ -7519,17 +7498,15 @@ export function wrapTypeArgumentsElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.TypeArgument,
-			content: 'content',
-			decorations: ['traitBounds']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapTypeArgumentsElements$wrapper));
 	return node as unknown as T.TypeArgumentsElements.Parsed;
 }
 
+const wrapArgumentsElements$wrapper = {
+	kind: TSKindId.AttributedArgument,
+	content: 'expression',
+	decorations: ['attributeItems']
+};
 export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandle): T.ArgumentsElements.Parsed {
 	const handle = currentHandle();
 	const listedItems = storedElements(data._item);
@@ -7601,14 +7578,7 @@ export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandl
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedArgument,
-			content: 'expression',
-			decorations: ['attributeItems']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapArgumentsElements$wrapper));
 	return node as unknown as T.ArgumentsElements.Parsed;
 }
 
@@ -12103,6 +12073,11 @@ export function wrapParametersElementsReceiver(
 	return node as unknown as T.ParametersElementsReceiver.Parsed;
 }
 
+const wrapParametersElementsReceiverGroup$wrapper = {
+	kind: TSKindId.AttributedParameter,
+	content: 'content',
+	decorations: ['attributeItem']
+};
 export function wrapParametersElementsReceiverGroup(
 	data: T.ParametersElementsReceiverGroup,
 	tree: TreeHandle
@@ -12179,14 +12154,7 @@ export function wrapParametersElementsReceiverGroup(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.AttributedParameter,
-			content: 'content',
-			decorations: ['attributeItem']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapParametersElementsReceiverGroup$wrapper));
 	return node as unknown as T.ParametersElementsReceiverGroup.Parsed;
 }
 

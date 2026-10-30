@@ -27,6 +27,7 @@ import {
 	listOption,
 	refuseReadStub,
 	hydrateStored,
+	holdBuiltItems,
 	storedElements,
 	elementsWith,
 	seatWith,
@@ -566,7 +567,7 @@ function _buildImportList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportList.Bound;
 }
 
@@ -2298,7 +2299,7 @@ function _buildExpressionList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ExpressionList.Bound;
 }
 
@@ -2898,7 +2899,7 @@ function _buildParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ParametersElements.Bound;
 }
 
@@ -2983,7 +2984,7 @@ function _buildPatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -3753,7 +3754,7 @@ function _buildPatternList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PatternList.Bound;
 }
 
@@ -4909,7 +4910,7 @@ function _buildCollectionElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.CollectionElements.Bound;
 }
 
@@ -5448,7 +5449,7 @@ function _buildSimpleStatementsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
@@ -5534,7 +5535,7 @@ function _buildSubjects(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Subjects.Bound;
 }
 
@@ -5622,7 +5623,7 @@ function _buildWithClauseWithItems(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
@@ -5707,7 +5708,7 @@ function _buildTypes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -5811,7 +5812,7 @@ function _buildArgumentListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
@@ -5899,7 +5900,7 @@ function _buildListPatternCasePatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
@@ -5989,7 +5990,7 @@ function _buildDictPatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.DictPatternElements.Bound;
 }
 
@@ -6077,7 +6078,7 @@ function _buildSubscripts(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Subscripts.Bound;
 }
 
@@ -6165,7 +6166,7 @@ function _buildDictionaryElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.DictionaryElements.Bound;
 }
 
@@ -6302,7 +6303,7 @@ function _buildTuplePatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -6390,7 +6391,7 @@ function _buildCasePatternList(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.CasePatternList.Bound;
 }
 
@@ -6485,7 +6486,7 @@ function _buildTupleElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleElements.Bound;
 }
 
@@ -6802,7 +6803,7 @@ function _buildPrintArguments(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PrintArguments.Bound;
 }
 
@@ -6890,7 +6891,7 @@ function _buildPrintChevronArguments(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
@@ -8335,7 +8336,7 @@ function _buildExpressionStatementTuple(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
@@ -8423,7 +8424,7 @@ function _buildWithClauseBare(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.WithClauseBare.Bound;
 }
 
@@ -9250,7 +9251,7 @@ function _buildNames(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Names.Bound;
 }
 

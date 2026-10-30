@@ -29,10 +29,9 @@ import {
 	hydrateStored,
 	seatWith,
 	groupField,
+	holdBuiltItems,
 	storedElements,
 	elementsWith,
-	listItems,
-	ownerElements,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -7170,10 +7169,15 @@ function _buildMacroRules(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.MacroRules.Bound;
 }
 
+const buildEnumVariantListElements$wrapper = {
+	kind: TSKindId.AttributedEnumVariant,
+	content: 'enumVariant',
+	decorations: ['attributeItems']
+};
 export function buildEnumVariantListElements<A extends NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildEnumVariantListElements>;
@@ -7275,17 +7279,15 @@ function _buildEnumVariantListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedEnumVariant,
-			content: 'enumVariant',
-			decorations: ['attributeItems']
-		})
-	);
+	holdBuiltItems(node, elements, buildEnumVariantListElements$wrapper);
 	return node as unknown as T.EnumVariantListElements.Bound;
 }
 
+const buildFieldDeclarationListElements$wrapper = {
+	kind: TSKindId.AttributedFieldDeclaration,
+	content: 'fieldDeclaration',
+	decorations: ['attributeItems']
+};
 export function buildFieldDeclarationListElements<
 	A extends NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildFieldDeclarationListElements>;
@@ -7392,17 +7394,15 @@ function _buildFieldDeclarationListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedFieldDeclaration,
-			content: 'fieldDeclaration',
-			decorations: ['attributeItems']
-		})
-	);
+	holdBuiltItems(node, elements, buildFieldDeclarationListElements$wrapper);
 	return node as unknown as T.FieldDeclarationListElements.Bound;
 }
 
+const buildOrderedFieldDeclarationListElements$wrapper = {
+	kind: TSKindId.AttributedOrderedField,
+	content: 'type',
+	decorations: ['attributeItems', 'visibilityModifier']
+};
 export function buildOrderedFieldDeclarationListElements<
 	A extends NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
@@ -7513,14 +7513,7 @@ function _buildOrderedFieldDeclarationListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedOrderedField,
-			content: 'type',
-			decorations: ['attributeItems', 'visibilityModifier']
-		})
-	);
+	holdBuiltItems(node, elements, buildOrderedFieldDeclarationListElements$wrapper);
 	return node as unknown as T.OrderedFieldDeclarationListElements.Bound;
 }
 
@@ -7608,10 +7601,15 @@ function _buildWherePredicates(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.WherePredicates.Bound;
 }
 
+const buildTypeParametersElements$wrapper = {
+	kind: TSKindId.AttributedTypeParameter,
+	content: 'content',
+	decorations: ['attributeItems']
+};
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<
 		Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
@@ -7729,14 +7727,7 @@ function _buildTypeParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedTypeParameter,
-			content: 'content',
-			decorations: ['attributeItems']
-		})
-	);
+	holdBuiltItems(node, elements, buildTypeParametersElements$wrapper);
 	return node as unknown as T.TypeParametersElements.Bound;
 }
 
@@ -7906,10 +7897,15 @@ function _buildUseClauses(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.UseClauses.Bound;
 }
 
+const buildParametersElements$wrapper = {
+	kind: TSKindId.AttributedParameter,
+	content: 'content',
+	decorations: ['attributeItem']
+};
 export function buildParametersElements<
 	A extends NonEmptyArray<
 		Admit<
@@ -8047,14 +8043,7 @@ function _buildParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedParameter,
-			content: 'content',
-			decorations: ['attributeItem']
-		})
-	);
+	holdBuiltItems(node, elements, buildParametersElements$wrapper);
 	return node as unknown as T.ParametersElements.Bound;
 }
 
@@ -8139,7 +8128,7 @@ function _buildLifetimes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Lifetimes.Bound;
 }
 
@@ -8231,7 +8220,7 @@ function _buildTypes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -8328,10 +8317,15 @@ function _buildUseBoundsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.UseBoundsElements.Bound;
 }
 
+const buildTypeArgumentsElements$wrapper = {
+	kind: TSKindId.TypeArgument,
+	content: 'content',
+	decorations: ['traitBounds']
+};
 export function buildTypeArgumentsElements<
 	A extends NonEmptyArray<
 		Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
@@ -8447,17 +8441,15 @@ function _buildTypeArgumentsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.TypeArgument,
-			content: 'content',
-			decorations: ['traitBounds']
-		})
-	);
+	holdBuiltItems(node, elements, buildTypeArgumentsElements$wrapper);
 	return node as unknown as T.TypeArgumentsElements.Bound;
 }
 
+const buildArgumentsElements$wrapper = {
+	kind: TSKindId.AttributedArgument,
+	content: 'expression',
+	decorations: ['attributeItems']
+};
 export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArgumentsElements>;
@@ -8558,14 +8550,7 @@ function _buildArgumentsElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.AttributedArgument,
-			content: 'expression',
-			decorations: ['attributeItems']
-		})
-	);
+	holdBuiltItems(node, elements, buildArgumentsElements$wrapper);
 	return node as unknown as T.ArgumentsElements.Bound;
 }
 
@@ -8653,7 +8638,7 @@ function _buildExpressions(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Expressions.Bound;
 }
 
@@ -8748,7 +8733,7 @@ function _buildFieldInitializerListElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.FieldInitializerListElements.Bound;
 }
 
@@ -8838,7 +8823,7 @@ function _buildTuplePatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -8923,7 +8908,7 @@ function _buildPatterns(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -9018,7 +9003,7 @@ function _buildStructPatternElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.StructPatternElements.Bound;
 }
 

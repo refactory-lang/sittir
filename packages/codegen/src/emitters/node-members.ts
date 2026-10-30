@@ -157,24 +157,30 @@ export const LIST_SURFACE_LINES: readonly string[] = LIST_VIEW_MEMBERS.filter((n
 export const LIST_SYMBOL_LINES: readonly string[] = ['    [Symbol.iterator]: listIterator,', '    [Symbol.isConcatSpreadable]: true,'];
 
 export interface ListViewParts {
+	readonly hoisted: readonly string[];
 	readonly prelude: string[];
 	readonly members: string[];
 	readonly tail: readonly string[];
 	readonly postlude: string[];
 }
 
+function hoistedWrapper(plan: ListViewPlan, prefix: string, used: boolean): { readonly ref: string; readonly hoisted: readonly string[] } {
+	return plan.wrapper === undefined || !used ? { ref: 'undefined', hoisted: [] } : { ref: `${prefix}$wrapper`, hoisted: [`const ${prefix}$wrapper = ${plan.wrapper};`] };
+}
+
 function optionMember(key: string, value: string): string {
 	return key === 'separator' ? `    separator: () => ${value},` : `    ${key}: ${value},`;
 }
 
-export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
-	const wrapper = plan.wrapper ?? 'undefined';
+export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap', prefix: string): ListViewParts {
+	const wrapper = hoistedWrapper(plan, prefix, environment === 'wrap');
 	const options = plan.options.map((option) =>
 		environment !== 'factory' && option.key === 'separator'
 			? optionMember(option.key, `(node.${accessor}() as { readonly separator?: () => unknown } | null | undefined)?.separator?.()`)
 			: optionMember(option.key, `listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default})`)
 	);
 	return {
+		hoisted: wrapper.hoisted,
 		prelude:
 			environment === 'factory'
 				? [
@@ -187,12 +193,12 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		postlude: [
 			environment === 'factory'
 				? '  holdListItems(node, heldItems(listView.list));'
-				: `  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}));`
+				: `  holdListItems(node, listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper.ref}));`
 		]
 	};
 }
 
-export type ListStored = { readonly elements: string } | { readonly length: string };
+export type ListStored = { readonly elements: string; readonly listed?: string } | { readonly length: string };
 
 function selfListOption(key: string, environment: 'factory' | 'wrap'): string {
 	return environment === 'factory' ? `_${key}` : `(data as { readonly _${key}?: unknown })._${key}`;
@@ -202,16 +208,18 @@ export function listSelfViewParts(
 	plan: ListViewPlan,
 	stored: ListStored,
 	elementsReader: string,
-	environment: 'factory' | 'wrap'
+	environment: 'factory' | 'wrap',
+	prefix: string
 ): ListViewParts {
-	const wrapper = plan.wrapper ?? 'undefined';
+	const built = environment === 'factory' && 'elements' in stored;
+	const wrapper = hoistedWrapper(plan, prefix, true);
 	const options = plan.options.map((option) =>
 		environment !== 'factory' && option.key === 'separator'
 			? optionMember(option.key, 'listSeparatorOf(node)')
 			: optionMember(option.key, `${selfListOption(option.key, environment)} ?? ${option.default}`)
 	);
-	const holdsStored = environment === 'factory' && plan.wrapper === undefined && 'elements' in stored;
 	return {
+		hoisted: wrapper.hoisted,
 		prelude:
 			'elements' in stored
 				? [`  const listedItems = storedElements(${stored.elements});`, '  const listedLength = listedItems.length;']
@@ -219,7 +227,9 @@ export function listSelfViewParts(
 		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
 		postlude: [
-			holdsStored ? '  holdListItems(node, listedItems);' : `  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`
+			built
+				? `  holdBuiltItems(node, ${stored.listed ?? 'listedItems'}${plan.wrapper === undefined ? '' : `, ${wrapper.ref}`});`
+				: `  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper.ref}));`
 		]
 	};
 }

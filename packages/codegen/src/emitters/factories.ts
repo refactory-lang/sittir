@@ -1956,7 +1956,7 @@ function fieldCarryingFactoryText(
 			);
 		}
 	}
-	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
+	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	lines.push(...(view?.prelude ?? []), ...(backend === 'records' ? [] : groups.prelude));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
@@ -2631,7 +2631,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.viewPlan !== undefined) {
 			const names_ =
 				plan.viewPlan.owner === undefined
-					? ['LIST_METHODS', 'listIterator', 'holdListItems', 'storedElements', ...(plan.viewPlan.wrapper === undefined ? [] : ['listItems', 'ownerElements'])]
+					? ['LIST_METHODS', 'listIterator', 'holdBuiltItems', 'storedElements']
 					: ['LIST_METHODS', 'listIterator', 'holdListItems', 'heldItems', 'ownerView', 'listOption', 'refuseReadStub', 'hydrateStored'];
 			for (const name of names_) names.add(name);
 		}
@@ -2823,7 +2823,7 @@ function emitSeparatedListFactory(
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	{
-		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey }, contentAccessorName, 'factory');
+		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey, ...(w === undefined ? {} : { listed: 'elements' }) }, contentAccessorName, 'factory', fn);
 		const optionsArg = hasOptions ? 'options, ' : '';
 		const impl = hasOptions ? `_${fn}` : fn;
 		const optionsSet = (option: string): string =>
@@ -2836,7 +2836,10 @@ function emitSeparatedListFactory(
 		if (hasDelimiterOption) {
 			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: optionsSet('delimiter') });
 		}
-		if (backend === 'objects') lines.push(...view.prelude);
+		if (backend === 'objects') {
+			lines.unshift(...view.hoisted);
+			lines.push(...view.prelude);
+		}
 		lines.push(...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]));
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 		const seated = seatedSetters(setters, plan);

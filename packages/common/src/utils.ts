@@ -463,7 +463,7 @@ void readonlyArrayCovered;
 
 export const LIST_VIEW_MEMBERS: readonly string[] = [...READONLY_ARRAY_METHODS, 'length'];
 
-const holdsDecoration = (value: unknown): boolean => value !== undefined && !(Array.isArray(value) && value.length === 0);
+const holdsDecoration = (value: unknown): boolean => value !== undefined && value !== false && !(Array.isArray(value) && value.length === 0);
 
 const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): unknown => {
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
@@ -491,6 +491,11 @@ export const listIterator: (this: ArrayLike<unknown>) => ArrayIterator<unknown> 
 export function holdListItems(node: object, items: ArrayLike<unknown>): void {
 	const held = node as Record<number, unknown>;
 	for (let index = 0; index < items.length; index++) held[index] = items[index];
+}
+
+export function holdBuiltItems(node: object, items: readonly unknown[], wrapper?: ListViewWrapper): void {
+	const held = node as Record<number, unknown>;
+	for (let index = 0; index < items.length; index++) held[index] = collapseWrapper(hydrateStored(items[index]), wrapper);
 }
 
 const NO_ITEMS: readonly unknown[] = Object.freeze([]);

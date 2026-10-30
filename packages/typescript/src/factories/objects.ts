@@ -30,9 +30,8 @@ import {
 	hydrateStored,
 	seatWith,
 	groupField,
+	holdBuiltItems,
 	storedElements,
-	listItems,
-	ownerElements,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -8069,6 +8068,11 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	return node as unknown as T.FunctionType.Bound;
 }
 
+const buildExportSpecifiers$wrapper = {
+	kind: TSKindId.ExportSpecifier,
+	content: 'name',
+	decorations: ['typeOnly', 'alias']
+};
 export function buildExportSpecifiers<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildExportSpecifiers>;
@@ -8166,14 +8170,7 @@ function _buildExportSpecifiers(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.ExportSpecifier,
-			content: 'name',
-			decorations: ['typeOnly', 'alias']
-		})
-	);
+	holdBuiltItems(node, elements, buildExportSpecifiers$wrapper);
 	return node as unknown as T.ExportSpecifiers.Bound;
 }
 
@@ -8261,7 +8258,7 @@ function _buildImportSpecifiers(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportSpecifiers.Bound;
 }
 
@@ -8353,7 +8350,7 @@ function _buildFormalParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.FormalParametersElements.Bound;
 }
 
@@ -8484,7 +8481,7 @@ function _buildEnumBodyElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.EnumBodyElements.Bound;
 }
 
@@ -8576,10 +8573,15 @@ function _buildTypes(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
 }
 
+const buildTypeParametersElements$wrapper = {
+	kind: TSKindId.TypeParameter,
+	content: 'name',
+	decorations: ['const', 'constraint', 'default']
+};
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildTypeParametersElements>;
@@ -8677,14 +8679,7 @@ function _buildTypeParametersElements(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.TypeParameter,
-			content: 'name',
-			decorations: ['const', 'constraint', 'default']
-		})
-	);
+	holdBuiltItems(node, elements, buildTypeParametersElements$wrapper);
 	return node as unknown as T.TypeParametersElements.Bound;
 }
 
@@ -8792,7 +8787,7 @@ function _buildTupleTypeMembers(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleTypeMembers.Bound;
 }
 
@@ -9180,7 +9175,7 @@ function _buildObjectTypeContent(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory
 	};
-	holdListItems(node, listedItems);
+	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ObjectTypeContent.Bound;
 }
 

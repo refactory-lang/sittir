@@ -249,8 +249,9 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 	const canonical = canonicalSeparatedListField(node);
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
-	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), { elements: dataAccessExpr('data', canonical.storageKey) }, canonical.propertyName, 'wrap');
+	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), { elements: dataAccessExpr('data', canonical.storageKey) }, canonical.propertyName, 'wrap', `wrap${node.typeName}`);
 	return [
+		...view.hoisted,
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...view.prelude,
@@ -270,13 +271,14 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
-	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, dataAccessExpr('data', owner.storage), owner.accessor, 'wrap') : undefined;
+	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, dataAccessExpr('data', owner.storage), owner.accessor, 'wrap', `wrap${node.typeName}`) : undefined;
 	const groups = groupSeatParts(
 		plan,
 		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
 		(stored) => `${dataAccessExpr('data', stored)} === undefined`
 	);
 	return [
+		...(view?.hoisted ?? []),
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...(view?.prelude ?? []),

@@ -210,6 +210,11 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle): 
 	return node as unknown as T.NamespaceExport.Parsed;
 }
 
+const wrapExportClause$wrapper = {
+	kind: TSKindId.ExportSpecifier,
+	content: 'name',
+	decorations: ['typeOnly', 'alias']
+};
 export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.ExportClause.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._export_specifiers, '_item', (list) => hydrate(list, tree));
@@ -279,14 +284,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.exportSpecifiers(), 'items'), {
-			kind: TSKindId.ExportSpecifier,
-			content: 'name',
-			decorations: ['typeOnly', 'alias']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.exportSpecifiers(), 'items'), wrapExportClause$wrapper));
 	return node as unknown as T.ExportClause.Parsed;
 }
 
@@ -6643,6 +6641,11 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 	return node as unknown as T.PropertySignature.Parsed;
 }
 
+const wrapTypeParameters$wrapper = {
+	kind: TSKindId.TypeParameter,
+	content: 'name',
+	decorations: ['const', 'constraint', 'default']
+};
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.TypeParameters.Parsed {
 	const handle = currentHandle();
 	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
@@ -6711,14 +6714,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node.elements(), 'items'), {
-			kind: TSKindId.TypeParameter,
-			content: 'name',
-			decorations: ['const', 'constraint', 'default']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node.elements(), 'items'), wrapTypeParameters$wrapper));
 	return node as unknown as T.TypeParameters.Parsed;
 }
 
@@ -7170,6 +7166,11 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 	return node as unknown as T.FunctionType.Parsed;
 }
 
+const wrapExportSpecifiers$wrapper = {
+	kind: TSKindId.ExportSpecifier,
+	content: 'name',
+	decorations: ['typeOnly', 'alias']
+};
 export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle): T.ExportSpecifiers.Parsed {
 	const handle = currentHandle();
 	const listedItems = storedElements(data._item);
@@ -7236,14 +7237,7 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.ExportSpecifier,
-			content: 'name',
-			decorations: ['typeOnly', 'alias']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapExportSpecifiers$wrapper));
 	return node as unknown as T.ExportSpecifiers.Parsed;
 }
 
@@ -7565,6 +7559,11 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 	return node as unknown as T.Types.Parsed;
 }
 
+const wrapTypeParametersElements$wrapper = {
+	kind: TSKindId.TypeParameter,
+	content: 'name',
+	decorations: ['const', 'constraint', 'default']
+};
 export function wrapTypeParametersElements(
 	data: T.TypeParametersElements,
 	tree: TreeHandle
@@ -7634,14 +7633,7 @@ export function wrapTypeParametersElements(
 		[TREE]: treeTokenOf(data),
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
 	};
-	holdListItems(
-		node,
-		listItems(ownerElements(node, 'items'), {
-			kind: TSKindId.TypeParameter,
-			content: 'name',
-			decorations: ['const', 'constraint', 'default']
-		})
-	);
+	holdListItems(node, listItems(ownerElements(node, 'items'), wrapTypeParametersElements$wrapper));
 	return node as unknown as T.TypeParametersElements.Parsed;
 }
 
