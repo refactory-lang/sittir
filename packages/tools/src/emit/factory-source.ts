@@ -613,6 +613,8 @@ export function printingFactoryMap(
 			switch (shape) {
 				case 'constant':
 					return new Printed(id, spelled(), kind);
+				case 'nullary':
+					return new Printed(id, `${spelled()}()`, kind, '');
 				case 'text': {
 					const text = String(args[0] ?? '');
 					if (ctx.enumKinds?.has(kind)) {

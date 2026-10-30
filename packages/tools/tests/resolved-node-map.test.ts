@@ -25,14 +25,33 @@ describe.each([
 	);
 
 	it(
-		'recognizes a referenced fixed-text slot as filled when omitted',
+		'classifies a kind with no content by what it stores: a leaf is constant, a compound is nullary',
 		async () => {
 			const nodeMap = await loader('rust');
+			const { suppliesNoContent } = await load('modelNodeMap');
+			const { classifyFactoryShape } = await load('emittersShared');
+			const shapeOf = (kind: string) => {
+				const node = nodeMap.nodes.get(kind);
+				if (node === undefined) throw new Error(`Expected ${kind}`);
+				return [suppliesNoContent(node), classifyFactoryShape(node, nodeMap)];
+			};
+
+			expect(shapeOf('self')).toEqual([true, 'constant']);
+			expect(shapeOf('range_expression_bare')).toEqual([true, 'nullary']);
+			expect(shapeOf('range_expression_prefix')).toEqual([false, 'direct']);
+		},
+		grammarCompilationTimeout
+	);
+
+	it(
+		'recognizes a referenced fixed-text slot as filled when omitted',
+		async () => {
+			const nodeMap = await loader('python');
 			const { AbstractAssembledCompound, holdsFixedText } = await load('modelNodeMap');
-			const node = nodeMap.nodes.get('range_expression_bare');
-			if (!(node instanceof AbstractAssembledCompound)) throw new Error('Expected range_expression_bare compound');
+			const node = nodeMap.nodes.get('suite_empty');
+			if (!(node instanceof AbstractAssembledCompound)) throw new Error('Expected suite_empty compound');
 			const slot = node.slots[0];
-			if (slot === undefined) throw new Error('Expected bare range slot');
+			if (slot === undefined) throw new Error('Expected empty suite newline slot');
 
 			expect(holdsFixedText(slot)).toBe(true);
 			expect(node.argumentOptional(nodeMap)).toBe(true);

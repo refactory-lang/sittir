@@ -7183,18 +7183,12 @@ export function wrapRangeExpressionPrefix(
 	return node as unknown as T.RangeExpressionPrefix.Parsed;
 }
 
-export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeHandle): T.RangeExpressionBare.Parsed {
+export function wrapRangeExpressionBare(data: T.RangeExpressionBare, _tree: TreeHandle): T.RangeExpressionBare.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionBare as const,
-		rangeExpressionBare() {
-			return this._range_expression_bare;
-		},
-		$with: {
-			rangeExpressionBare: (v: NonNullable<T.RangeExpressionBare['_range_expression_bare']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree))
-		},
+		$with: {},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

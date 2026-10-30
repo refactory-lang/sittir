@@ -1621,6 +1621,10 @@ export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword
 	return isFixedTextLeaf(node) && node.factoryName !== undefined;
 }
 
+export function suppliesNoContent(node: AssembledNode): boolean {
+	return node instanceof AbstractAssembledCompound ? node.slots.length === 0 : isBuilderTextLeaf(node);
+}
+
 export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
 	return node instanceof AssembledPunctuation && node.factoryName === undefined;
 }

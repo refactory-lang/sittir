@@ -12506,15 +12506,7 @@
           "test": []
         }
       ],
-      "members": [],
-      "container": {
-        "slot": "range_expression_bare",
-        "kinds": [
-          "_range_expression_bare"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      "members": []
     },
     "range_expression_binary": {
       "vocab": "expression.range",

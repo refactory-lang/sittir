@@ -103625,8 +103625,7 @@
           "_content": {
             "$type": 394,
             "_expression": {
-              "$type": 393,
-              "_range_expression_bare": 100
+              "$type": 393
             }
           }
         },
@@ -103932,8 +103931,7 @@
       "_content": {
         "$type": 394,
         "_expression": {
-          "$type": 393,
-          "_range_expression_bare": 100
+          "$type": 393
         }
       }
     },
@@ -104379,8 +104377,7 @@
     "input": {
       "$type": 394,
       "_expression": {
-        "$type": 393,
-        "_range_expression_bare": 100
+        "$type": 393
       }
     },
     "expectedOutput": "..;",
@@ -105369,8 +105366,7 @@
     "grammar": "rust",
     "pattern": "range_expression_bare",
     "input": {
-      "$type": 393,
-      "_range_expression_bare": 100
+      "$type": 393
     },
     "expectedOutput": "..",
     "options": {

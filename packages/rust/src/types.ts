@@ -9483,17 +9483,6 @@ export interface RangeExpressionPrefix {
 
 export interface RangeExpressionBare {
 	readonly $type: TSKindId.RangeExpressionBare;
-	readonly _range_expression_bare: number;
-	readonly __slotNames__?: {
-		readonly _range_expression_bare: 'rangeExpressionBare';
-	};
-	readonly __inputHints__?: {
-		readonly range_expression_bare: KindEnum<'..', TSKindId.DotDot>;
-	};
-	readonly __slotHints__?: {
-		readonly rangeExpressionBare: SlotHint<NonNullable<TSKindId.DotDot>>;
-	};
-	readonly rangeExpressionBare: () => number;
 }
 
 export interface ExpressionStatementWithSemi {
@@ -11580,7 +11569,6 @@ export namespace DeclarationStatementImplItemBody {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type _RangeExpressionBare = TSKindId._RangeExpressionBare;
 export type Dollar = TSKindId.Dollar;
 
 export type RustNode = NodeOfNamespaces<NamespaceMap>;
@@ -17413,7 +17401,7 @@ export interface RangeExpressionBareNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	RangeExpressionBare.Bound,
-	'range_expression_bare',
+	never,
 	TSKindId.RangeExpressionBare,
 	RangeExpressionBare.Parsed,
 	never
@@ -25142,8 +25130,8 @@ export namespace RangeExpressionBare {
 	}
 	export type Loose = LooseFor<TSKindId.RangeExpressionBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBare>;
-	export type BuildArgs = [value?: Admit<TSKindId.DotDot>];
-	export type LooseArgs = [value?: T.RangeExpressionBare.Loose];
+	export type BuildArgs = [];
+	export type LooseArgs = [input?: T.RangeExpressionBare.Loose];
 	export type Kind = TSKindId.RangeExpressionBare;
 }
 export namespace ExpressionStatementWithSemi {

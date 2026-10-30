@@ -25856,7 +25856,7 @@ impl ::sittir_core::render::Render for TokenKeywordsEnum {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
 pub enum _RangeExpressionBareNode {
-    #[kind(kind::DOT_DOT, kind::_RANGE_EXPRESSION_BARE)]
+    #[kind(kind::_RANGE_EXPRESSION_BARE)]
     _RangeExpressionBare,
 }
 
@@ -28182,13 +28182,10 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_BARE, words = 7)]
+#[node(kind = kind::RANGE_EXPRESSION_BARE, layout = [kind::_RANGE_EXPRESSION_BARE], words = 2)]
 pub struct RangeExpressionBareNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_range_expression_bare")]
-    #[slot(word = 2, width = 5)]
-    pub range_expression_bare: ::sittir_core::SlotValue<_RangeExpressionBareNode>,
 }
 
 impl ::sittir_core::view::KindOf for RangeExpressionBareNode {
@@ -28212,7 +28209,6 @@ impl ::sittir_core::render::Render for RangeExpressionBareNode {
 impl ::sittir_core::prepare::Prepare for RangeExpressionBareNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.range_expression_bare.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {

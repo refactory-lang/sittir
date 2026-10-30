@@ -425,7 +425,7 @@ export const records = {
 	},
 	RangeExpressionPostfixNode: { words: 7, start: { word: 2, width: 5 } },
 	RangeExpressionPrefixNode: { words: 7, end: { word: 2, width: 5 } },
-	RangeExpressionBareNode: { words: 7, range_expression_bare: { word: 2, width: 5 } },
+	RangeExpressionBareNode: { words: 2 },
 	ExpressionStatementWithSemiNode: { words: 7, expression: { word: 2, width: 5 } },
 	ForeignModItemSemiNode: { words: 8, unsafe_: { word: 2, bit: 0 }, extern_modifier: { word: 3, width: 5 } },
 	ForeignModItemBodyNode: {

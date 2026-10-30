@@ -9795,23 +9795,12 @@ export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeE
 	return stampBuilt(node) as unknown as T.RangeExpressionPrefix.Bound;
 }
 
-export function buildRangeExpressionBare<V extends Admit<TSKindId.DotDot>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): T.RangeExpressionBare.Bound;
-export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.RangeExpressionBare.Bound {
-	const _range_expression_bare = kindIdStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		orDefault(value, () => TSKindId.DotDot as const)
-	);
+export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RangeExpressionBare as const,
 		$named: true as const,
-		_range_expression_bare,
-		$with: {
-			rangeExpressionBare: (value: Admit<NonNullable<TSKindId.DotDot>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBare(value))
-		},
-		rangeExpressionBare: () => _range_expression_bare,
+		$with: {},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

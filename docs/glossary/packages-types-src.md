@@ -996,7 +996,7 @@ The flag query for a portable row.
 
 ### `packages/types/src/portable.ts::PortableCallShape`
 
-The shape of a builder's call: config, spread, text, constant, direct, elements, forwarded or placed.
+The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
 
 ### `packages/types/src/portable.ts::PortableMountCall`
 

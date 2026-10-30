@@ -16,6 +16,11 @@ describe('the portable round trip', () => {
 		expect(result).toMatchObject({ total: 2, pass: 2, astMatchPass: 2, carried: [], errors: [], astMismatches: [] });
 	});
 
+	it('builds a form with no content back through its nullary builder', async () => {
+		const result = await runPortableRoundTrip('rust', [{ name: 'bare range', source: 'fn f() { ..; }' }]);
+		expect(result).toMatchObject({ total: 1, pass: 1, astMatchPass: 1, carried: [], errors: [], astMismatches: [] });
+	});
+
 	it('counts an entry the read carries a node of whole, with the flags no arm at its path builds', async () => {
 		const result = await runPortableRoundTrip('rust', [{ name: 'byte', source: "let c = b'a';" }]);
 		expect(result).toMatchObject({ total: 1, pass: 1, carried: [{ entry: 'byte', carries: [{ reason: 'flags', flags: ['byte'] }] }] });

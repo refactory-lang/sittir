@@ -189,4 +189,20 @@ describe('flattenRules terminality stamps', () => {
 		expect(out['empty']).toMatchObject({ type: SYMBOL, name: '_newline', nonterminal: true });
 		expect((out['terminated'] as { members: Rule[] }).members.map((m) => m.nonterminal)).toEqual([true, false]);
 	});
+
+	it('re-flattening keeps a stamped reference to a literal rule terminal', () => {
+		const out = flattenRules({ dots: str('..'), bare: sym('dots') });
+		expect(out['bare']).toMatchObject({ type: SYMBOL, name: 'dots', nonterminal: false });
+		expect(flatten(out['bare'] as Rule)).toMatchObject({ nonterminal: false });
+	});
+
+	it('re-flattening keeps every leaf stamp it is given', () => {
+		const leaves: Rule[] = [
+			{ ...str('a'), nonterminal: true },
+			{ ...sym('x'), nonterminal: false },
+			{ type: 'PATTERN', value: 'a', nonterminal: false } as Rule,
+			{ type: NEWLINE, nonterminal: true } as Rule
+		];
+		expect(leaves.map((leaf) => flatten(leaf).nonterminal)).toEqual([true, false, false, true]);
+	});
 });

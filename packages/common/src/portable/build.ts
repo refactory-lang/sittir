@@ -83,6 +83,7 @@ const argsOf = (shape: PortableCallShape | undefined, input: unknown): readonly 
 		case 'config':
 			return [input ?? {}];
 		case 'constant':
+		case 'nullary':
 			return [];
 		case 'spread':
 		case 'elements':

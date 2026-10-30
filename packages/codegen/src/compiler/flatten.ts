@@ -82,22 +82,26 @@ function construct(node: Input): Output {
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case STRING:
-			return { ...node, ...b.string(node.value), ...(node.nonterminal === true ? { nonterminal: true } : {}) };
+			return rebuiltLeaf(node, b.string(node.value));
 		case INDENT:
-			return { ...node, ...b.indent() };
+			return rebuiltLeaf(node, b.indent());
 		case DEDENT:
-			return { ...node, ...b.dedent() };
+			return rebuiltLeaf(node, b.dedent());
 		case NEWLINE:
-			return { ...node, ...b.newline() };
+			return rebuiltLeaf(node, b.newline());
 		case SYMBOL:
-			return { ...node, ...b.symbol(node.name) };
+			return rebuiltLeaf(node, b.symbol(node.name));
 		case PATTERN:
-			return { ...node, ...b.pattern(node.value) };
+			return rebuiltLeaf(node, b.pattern(node.value));
 		case SUPERTYPE:
-			return { ...node, ...b.supertype(node.name, node.subtypes) };
+			return rebuiltLeaf(node, b.supertype(node.name, node.subtypes));
 		default:
 			return node;
 	}
+}
+
+function rebuiltLeaf<N extends Input, B extends Output>(node: N, built: B): N & B {
+	return { ...node, ...built, ...(node.nonterminal === undefined ? {} : { nonterminal: node.nonterminal }) };
 }
 
 function rebuild(node: Input): Output {

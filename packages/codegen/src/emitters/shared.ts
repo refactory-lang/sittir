@@ -9,6 +9,7 @@ import {
 	type FullFormAffix,
 	isWordOrBuilderTextLeaf,
 	isBuilderTextLeaf,
+	suppliesNoContent,
 	isBuilderlessPunctuationLeaf,
 	isHiddenPresenceMarker,
 	storageKindIdByNameOf
@@ -670,7 +671,7 @@ export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: No
 	return field.storageInfo;
 }
 
-export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'nullary' | 'direct' | 'elements' | 'forwarded';
 export type FactoryShape = ClassifiedFactoryShape | 'placed';
 export type ChildFactorySurface = 'direct' | 'spread';
 
@@ -1061,7 +1062,7 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): ClassifiedFactoryShape | null {
-	if (isBuilderTextLeaf(node)) return 'constant';
+	if (suppliesNoContent(node)) return node instanceof AbstractAssembledCompound ? 'nullary' : 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';

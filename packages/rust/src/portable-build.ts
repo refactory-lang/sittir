@@ -146,7 +146,7 @@ export const build: PortableBuildTable = {
 		pointerTypeConst: 'direct',
 		pointerTypeMut: 'direct',
 		qualifiedType: 'config',
-		rangeExpressionBare: 'direct',
+		rangeExpressionBare: 'nullary',
 		rangeExpressionBinary: 'config',
 		rangeExpressionPostfix: 'direct',
 		rangeExpressionPrefix: 'direct',

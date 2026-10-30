@@ -623,7 +623,6 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	391: [['start', 0, undefined, '_start']],
 	392: [['end', 0, undefined, '_end']],
-	393: [['rangeExpressionBare', 0, undefined, '_range_expression_bare']],
 	394: [['expression', 0, undefined, '_expression']],
 	395: [
 		['unsafe', 0, 'unsafe', '_unsafe', 111],
@@ -2876,11 +2875,6 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_end', 'end']],
 		single: [['_end', 'RangeExpressionPrefix.end']],
 		nodeOnly: [['_end', 'RangeExpressionPrefix.end', 'a built Expression', [258]]]
-	},
-	393: {
-		kind: 'range_expression_bare',
-		required: [['_range_expression_bare', 'rangeExpressionBare']],
-		kindIds: [['_range_expression_bare', 'RangeExpressionBare.rangeExpressionBare', [100]]]
 	},
 	394: {
 		kind: 'expression_statement_with_semi',
