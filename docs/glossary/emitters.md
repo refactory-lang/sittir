@@ -15402,3 +15402,43 @@ The pick diagnostics the build raised.
 ### `packages/codegen/src/emitters/shared.ts::keywordPresenceStorage`
 
 The storage of a keyword-presence field, when it has one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
+
+One error from type-checker output: the file, position, code and message from its first line, and the indented lines that follow it.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::head`
+
+The error's first output line, verbatim.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::file`
+
+The file the error is reported in, when the line names one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::line`
+
+The 1-based line of the error, when the line reports one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::column`
+
+The 1-based column of the error, when the line reports one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::code`
+
+The compiler's diagnostic code, such as `TS2339`.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::message`
+
+The error message after the code.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::detail`
+
+The trimmed, indented lines that follow the error, in order.
+
+### `packages/codegen/src/typecheck.ts::parseTypeCheckDiagnostics`
+
+Parses type-checker output into one diagnostic per `error TS` line. Each indented line that follows is attached to the diagnostic before it. Other non-indented lines are dropped.
+
+### `packages/codegen/src/typecheck.ts::typeCheckOutput`
+
+Runs a type-checker command in a directory and returns its output. A non-zero exit that still prints `error TS` lines counts as a result; any other failure is rethrown. The output is requested without colour.
