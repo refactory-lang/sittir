@@ -26,8 +26,11 @@ export interface NodeMemberSpec {
 	readonly extra?: readonly string[];
 	readonly tail?: readonly string[];
 	readonly parsed?: true;
+	readonly root?: boolean;
 	readonly text?: string;
 }
+
+export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
 
 export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
 	return nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(nodeMap).has(kind) };
@@ -93,7 +96,9 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 				]
 			: []),
 		'    $engine: handle && (() => handle.current),',
+		...(spec.root === true ? [ROOT_ERRORS_LINE] : []),
 		...(spec.tail ?? []),
+		...(spec.parsed ? ['    [TREE]: treeTokenOf(data),'] : []),
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'}`
 	);
 	return lines;
