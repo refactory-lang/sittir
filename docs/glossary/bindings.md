@@ -650,7 +650,7 @@ The generated layer's `edits` object: each kind's patch sets (`patchSet`) and th
 
 The kind renames as an object literal, each kind to its vocabulary name; `{}` when there are none.
 
-### `packages/codegen/src/bindings/module.ts::q`
+### `packages/codegen/src/util/string-literal.ts::stringLiteral`
 
 A string as a quoted TypeScript literal, for the generated layer.
 
