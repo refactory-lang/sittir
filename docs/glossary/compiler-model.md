@@ -4443,7 +4443,7 @@ An optional slot whose arms are all tokens (each names a kind) also offers a `bl
 
 The name of the arm a registered optional choice slot takes when it holds no token, as a declaration spells it (`preference('blank')`). It is `blank`, not `none`, because a grammar may have a kind named `none` (python's `None`).
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::BLANK_KIND_ID`
+### `packages/common/src/blank-arm.ts::BLANK_KIND_ID`
 
 The id the blank arm stores and crosses as: 0, which no parser kind holds. The builder, the wrap, the options table and the native slot enum all use it, and the render core's `KindId::BLANK` is the same number.
 
