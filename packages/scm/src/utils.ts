@@ -117,7 +117,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	units: new Set<number>([
 		2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 60
 	]),
-	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({})
 });
 

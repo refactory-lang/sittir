@@ -1027,6 +1027,10 @@ export function blankFromInput(blank: boolean, expr: string): string {
 	return blank ? `(${expr} === null ? ${BLANK_KIND_ID} : ${expr})` : expr;
 }
 
+export function blankForRead(blank: boolean, expr: string): string {
+	return blank ? `(${expr} === ${BLANK_KIND_ID} ? null : ${expr})` : expr;
+}
+
 export interface LeadingOptions {
 	readonly type: string;
 	readonly keys: readonly string[];

@@ -21,7 +21,8 @@ import {
 	aliasEnvelopesOf,
 	aliasEnvelopeIds,
 	pruneUnusedImports,
-	blankFromInput
+	blankFromInput,
+	blankForRead
 } from './shared.ts';
 import { builtTypeSurfaceOf, fieldElementType, listSelfViewPlan, seatPlanOf, splicedEnvelopeAdmission, splicedEnvelopeType } from './factories.ts';
 import { collectKindEntries, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
@@ -144,11 +145,12 @@ interface SlotAccessorConfig {
 	readonly elemType: string;
 	readonly required: boolean;
 	readonly storageInfo: ReturnType<typeof resolveFieldStorageInfo>;
+	readonly blank: boolean;
 	readonly aliasContent?: boolean;
 }
 
 function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig): string {
-	if (!storesNodes(config.storageInfo)) return `return this.${slot.storageKey}`;
+	if (!storesNodes(config.storageInfo)) return `return ${blankForRead(config.blank, `this.${slot.storageKey}`)}`;
 	const key = JSON.stringify(slot.storageKey);
 	if (slot.arity === 'many') return `return hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
 	const role = config.aliasContent === true ? `, contentRole(this, ${dataAccessExpr('this', slot.storageKey)})` : '';
@@ -198,7 +200,8 @@ function emitSeparatedListWrap(
 			{
 				elemType: fieldElementType(contentSlot, nodeMap, kindEntries),
 				required: node.nonEmpty,
-				storageInfo: resolveFieldStorageInfo(contentSlot, nodeMap)
+				storageInfo: resolveFieldStorageInfo(contentSlot, nodeMap),
+				blank: hasBlankArm(contentSlot)
 			}
 		);
 		lines.push(`    ${canonical.propertyName}() { ${body}; },`);
@@ -230,6 +233,7 @@ function fieldAccessorLines(
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			storageInfo: resolveFieldStorageInfo(f, nodeMap),
+			blank: hasBlankArm(f),
 			aliasContent
 		});
 		return `    ${f.propertyName}() { ${body}; },`;

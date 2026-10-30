@@ -4392,7 +4392,7 @@ export interface ForInClause {
 	readonly async: () => boolean;
 	readonly left: () => Pattern | PatternList;
 	readonly rights: () => NonEmptyArray<Expression | LambdaWithinForInClause>;
-	readonly trailingComma: () => number | undefined;
+	readonly trailingComma: () => NonNullable<T.ForInClause.Options>['trailingComma'] | undefined;
 }
 
 export interface IfClause {

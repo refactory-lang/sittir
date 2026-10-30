@@ -108,7 +108,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
 		48, 49, 50, 54, 82, 89
 	]),
-	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({})
 });
 

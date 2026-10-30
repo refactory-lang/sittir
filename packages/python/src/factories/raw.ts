@@ -4347,7 +4347,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 		async: () => _async,
 		left: () => hydrateStoredSlot(node, '_left'),
 		rights: () => hydrateStoredSlots(node, '_right'),
-		trailingComma: () => _trailing_comma,
+		trailingComma: () => (_trailing_comma === 0 ? null : _trailing_comma),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

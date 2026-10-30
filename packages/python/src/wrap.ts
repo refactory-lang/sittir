@@ -3527,7 +3527,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma;
+			return this._trailing_comma === 0 ? null : this._trailing_comma;
 		},
 		$with: {
 			async: (v: NonNullable<T.ForInClause['_async']>) =>

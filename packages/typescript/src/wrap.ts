@@ -547,7 +547,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
@@ -787,7 +787,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			return hydrateSlot<T.ParenthesizedExpression>(this, '_condition', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			body: (v: NonNullable<T.DoStatement['_body']>) =>
@@ -1559,7 +1559,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			return hydrateSlot<T.ClassBody>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
@@ -1714,7 +1714,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			async: (v: NonNullable<T.FunctionDeclaration['_async']>) =>
@@ -1848,7 +1848,7 @@ export function wrapGeneratorFunctionDeclaration(
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			async: (v: NonNullable<T.GeneratorFunctionDeclaration['_async']>) =>
@@ -2682,7 +2682,7 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ClassStaticBlock as const,
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
@@ -5853,7 +5853,7 @@ export function wrapAmbientDeclarationModule(
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			name: (v: NonNullable<T.AmbientDeclarationModule['_name']>) =>
@@ -6438,7 +6438,7 @@ export function wrapClassBodyMemberMethod(
 			return hydrateSlot<T.MethodDefinitionClassBodyMemberMethod>(this, '_method_definition', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
@@ -7592,7 +7592,7 @@ export function wrapForHeaderLetConstKind(
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return this._terminator === 0 ? null : this._terminator;
 		},
 		operator() {
 			return this._operator;

@@ -940,7 +940,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		148, 149, 150, 151, 152, 166, 168, 170, 171, 172, 173, 174, 179, 181, 182, 183, 184, 185, 186, 187, 188, 196, 226,
 		254, 278, 279, 280, 281, 282, 326, 363, 394, 407, 415, 439, 440, 446, 503
 	]),
-	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({
 		155: ['prefix'],
 		156: ['marker'],

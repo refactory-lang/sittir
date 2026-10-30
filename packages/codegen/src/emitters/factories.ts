@@ -98,6 +98,7 @@ import {
 	looseElementType,
 	pruneUnusedImports,
 	blankFromInput,
+	blankForRead,
 	leadingOptionsOf,
 	unreservedWordFactory,
 	slotAliases,
@@ -2531,7 +2532,7 @@ function storedAccessor(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap
 ): StoredAccessor {
-	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read };
+	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
 	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
 }
 

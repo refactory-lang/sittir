@@ -3960,7 +3960,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma;
+			return this._trailing_comma === 0 ? null : this._trailing_comma;
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>

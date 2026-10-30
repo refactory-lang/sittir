@@ -5203,7 +5203,7 @@ export function buildLastMatchArm(
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		trailingComma: () => _trailing_comma,
+		trailingComma: () => (_trailing_comma === 0 ? null : _trailing_comma),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),

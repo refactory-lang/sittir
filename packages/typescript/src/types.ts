@@ -3192,7 +3192,7 @@ export interface StatementBlock {
 		readonly terminator: SlotHint<NonNullable<T.StatementBlock.Options>['terminator'], true>;
 	};
 	readonly statements: () => readonly Statement[];
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.StatementBlock.Options>['terminator'] | undefined;
 }
 
 export interface ElseClause {
@@ -3398,7 +3398,7 @@ export interface DoStatement {
 	};
 	readonly body: () => Statement;
 	readonly condition: () => ParenthesizedExpression;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.DoStatement.Options>['terminator'] | undefined;
 }
 
 export interface TryStatement {
@@ -3979,7 +3979,7 @@ export interface ClassDeclaration {
 	readonly typeParameters: () => TypeParameters | undefined;
 	readonly heritage: () => ClassHeritage | undefined;
 	readonly body: () => ClassBody;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.ClassDeclaration.Options>['terminator'] | undefined;
 }
 
 export interface ClassHeritage {
@@ -4088,7 +4088,7 @@ export interface FunctionDeclaration {
 	readonly parameters: () => FormalParameters;
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.FunctionDeclaration.Options>['terminator'] | undefined;
 }
 
 export interface GeneratorFunction {
@@ -4185,7 +4185,7 @@ export interface GeneratorFunctionDeclaration {
 	readonly parameters: () => FormalParameters;
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.GeneratorFunctionDeclaration.Options>['terminator'] | undefined;
 }
 
 export interface ArrowFunction {
@@ -4980,7 +4980,7 @@ export interface ClassStaticBlock {
 		readonly body: SlotHint<T.StatementBlock>;
 		readonly terminator: SlotHint<NonNullable<T.ClassStaticBlock.Options>['terminator'], true>;
 	};
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.ClassStaticBlock.Options>['terminator'] | undefined;
 	readonly body: () => StatementBlock;
 }
 
@@ -8244,7 +8244,7 @@ export interface AmbientDeclarationModule {
 	};
 	readonly name: () => PropertyIdentifier;
 	readonly type: () => Type;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.AmbientDeclarationModule.Options>['terminator'] | undefined;
 }
 
 export interface ObjectTypeContent {
@@ -8606,7 +8606,7 @@ export interface ClassBodyMemberMethod {
 	};
 	readonly decorators: () => readonly Decorator[];
 	readonly methodDefinition: () => MethodDefinitionClassBodyMemberMethod;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.ClassBodyMemberMethod.Options>['terminator'] | undefined;
 }
 
 export interface ClassBodyMemberMethodSig {
@@ -9459,7 +9459,7 @@ export interface ForHeaderLetConstKind {
 	};
 	readonly kind: () => number;
 	readonly left: () => Identifier | ObjectPattern | ArrayPattern;
-	readonly terminator: () => number | undefined;
+	readonly terminator: () => NonNullable<T.ForHeaderLetConstKind.Options>['terminator'] | undefined;
 	readonly operator: () => number;
 	readonly right: () => Expression | SequenceExpression;
 }
