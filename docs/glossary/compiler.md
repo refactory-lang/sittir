@@ -7965,3 +7965,7 @@ The generated portable build module source, when the grammar emits one.
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableDiagnostics`
 
 The diagnostics the portable build raised for the grammar.
+
+### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableTyped`
+
+The typed portable module for the grammar, or undefined when the grammar has no routes input.
