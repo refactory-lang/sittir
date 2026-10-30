@@ -2,6 +2,7 @@ import {
 	fieldNames,
 	isParserHiddenName,
 	isRecord,
+	listedNames,
 	OPAQUE_RULES,
 	supertypesOf,
 	transparentReach,
@@ -103,6 +104,8 @@ export function wrapHosts(rules: GrammarRecord, wrap: FieldWrap, stop: ReadonlyS
 export function fieldWrapIssue(grammar: GrammarRecord, wrap: FieldWrap, batch: readonly FieldWrap[] = [wrap]): string | undefined {
 	const rules = isRecord(grammar.rules) ? grammar.rules : {};
 	if (!(wrap.owner in rules)) return 'owner is not a rule';
+	if ('symbol' in wrap.target && listedNames(grammar.inline).has(wrap.target.symbol) && fieldNames(rules[wrap.target.symbol]).size > 0)
+		return 'the child is inlined and its body already fields its parts, so a wrap would give them a second field';
 	const stop = supertypesOf(grammar);
 	const hosts = wrapHosts(rules, wrap, stop);
 	if (hosts.length === 0) return 'token' in wrap.target ? 'token is not on the owner outside a field or token' : 'child is not an unfielded reference of the owner';

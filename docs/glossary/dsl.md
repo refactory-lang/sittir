@@ -7677,7 +7677,7 @@ The rules in the owner's transparent reach that hold the wrap's target.
 
 ### `packages/codegen/src/dsl/bind.ts::fieldWrapIssue`
 
-Why a field wrap cannot apply, or nothing: the owner must be a rule that reaches an unfielded target. Shared hidden hosts must agree across the batch, as for a rename. The field name must not already be the owner's.
+Why a field wrap cannot apply, or nothing: the owner must be a rule that reaches an unfielded target. A child the grammar inlines whose body already fields its parts is refused, since the parser would tag those parts with both fields. Shared hidden hosts must agree across the batch, as for a rename. The field name must not already be the owner's.
 
 ### `packages/codegen/src/dsl/bind.ts::ChildFields`
 
