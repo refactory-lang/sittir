@@ -51,7 +51,7 @@ describe('the portable read', () => {
 		for (const source of ['function f<T extends U>() {}', 'type A<T extends string> = T;']) expect(roundTrip(source)).toBe(`${source}\n`);
 		const bound = typescript.kinds.StringKeyword;
 		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound)))).toBe('extends string');
-		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound, { content: typescript.kinds.Colon })))).toBe(': string');
+		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound, { operator: typescript.kinds.Colon })))).toBe(': string');
 	});
 
 	it('leaves out a member whose route needs a member the node does not have', () => {

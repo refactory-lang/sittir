@@ -171,14 +171,14 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 		name() {
 			return hydrateSlot<T.Metavariable>(this, '_name', tree);
 		},
-		type() {
-			return this._type;
+		fragment() {
+			return this._fragment;
 		},
 		$with: {
 			name: (v: NonNullable<T.TokenBindingPattern['_name']>) =>
 				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _name: v }, tree)),
-			type: (v: NonNullable<T.TokenBindingPattern['_type']>) =>
-				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _type: v }, tree))
+			fragment: (v: NonNullable<T.TokenBindingPattern['_fragment']>) =>
+				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _fragment: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -854,15 +854,15 @@ export function wrapOrderedFieldDeclarationList(
 	tree: TreeHandle
 ): T.OrderedFieldDeclarationList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._attributes, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.OrderedFieldDeclarationList as const,
-		attributes() {
-			return hydrateSlot<T.OrderedFieldDeclarationListElements | undefined>(this, '_attributes', tree);
+		elements() {
+			return hydrateSlot<T.OrderedFieldDeclarationListElements | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			attributes: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -872,15 +872,15 @@ export function wrapOrderedFieldDeclarationList(
 							make: RAW.buildOrderedFieldDeclarationListElements,
 							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
-						(v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
-							wrapOrderedFieldDeclarationList({ ...$edited(data), _attributes: v }, tree)
+						(v: NonNullable<T.OrderedFieldDeclarationList['_elements']>) =>
+							wrapOrderedFieldDeclarationList({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node.attributes(), 'items'), {
+			listItems(ownerElements(node.elements(), 'items'), {
 				kind: TSKindId.AttributedOrderedField,
 				content: 'type',
 				decorations: ['_attribute_item', '_visibility_modifier']
@@ -8050,8 +8050,8 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.RangePatternPrefix as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		right() {
 			return hydrateSlot<
@@ -8065,8 +8065,8 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 			>(this, '_right', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.RangePatternPrefix['_content']>) =>
-				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.RangePatternPrefix['_operator']>) =>
+				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.RangePatternPrefix['_right']>) =>
 				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _right: v }, tree))
 		},
@@ -8092,8 +8092,8 @@ export function wrapRangePatternWithLeftWithRight(
 	const node = {
 		...data,
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		right() {
 			return hydrateSlot<
@@ -8107,8 +8107,8 @@ export function wrapRangePatternWithLeftWithRight(
 			>(this, '_right', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.RangePatternWithLeftWithRight['_content']>) =>
-				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.RangePatternWithLeftWithRight['_operator']>) =>
+				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.RangePatternWithLeftWithRight['_right']>) =>
 				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _right: v }, tree))
 		},

@@ -272,15 +272,15 @@ export interface Routes<Table extends AnyTable> {
 	readonly macroDefinitionBracket: Table['macroDefinitionBracket$seated'];
 	readonly macroDefinitionBrace: Table['macroDefinitionBrace$seated'];
 	readonly rangePatternPrefix$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternPrefix']>
 	) => ReturnType<Table['buildRangePatternPrefix']>;
 	readonly rangePatternPrefix$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternPrefix']>
 	) => ReturnType<Table['buildRangePatternPrefix']>;
 	readonly rangePatternPrefix: Table['buildRangePatternPrefix'] & {
@@ -288,21 +288,21 @@ export interface Routes<Table extends AnyTable> {
 		readonly dotDot: Routes<Table>['rangePatternPrefix$dotDot'];
 	};
 	readonly rangePatternWithLeftWithRight$dotDotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
 	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
 	readonly rangePatternWithLeftWithRight: {

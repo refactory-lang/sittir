@@ -3883,7 +3883,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4030,7 +4030,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4208,7 +4208,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4373,7 +4373,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4551,7 +4551,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4780,7 +4780,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -4937,7 +4937,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -5124,7 +5124,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -5298,7 +5298,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -5485,7 +5485,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -5723,7 +5723,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -5880,7 +5880,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -6067,7 +6067,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -6241,7 +6241,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -6428,7 +6428,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -19512,7 +19512,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -20576,7 +20576,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -20725,7 +20725,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -20905,7 +20905,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -21072,7 +21072,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -21252,7 +21252,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'orderedFieldDeclarationList',
-											key: 'attributes',
+											key: 'elements',
 											optional: true
 										},
 										{
@@ -25437,16 +25437,16 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'type',
+							name: 'fragment',
 							steps: [
 								{
-									key: 'type'
+									key: 'fragment'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [184, 'type'],
+									at: [184, 'fragment'],
 									kinds: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 186]
 								}
 							]
@@ -33571,7 +33571,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'content'
+									key: 'operator'
 								}
 							],
 							kind: 100
@@ -33658,7 +33658,7 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'content'
+									key: 'operator'
 								}
 							],
 							kind: 100
@@ -33710,7 +33710,7 @@ export const build: PortableBuildTable = {
 						{
 							steps: [
 								{
-									key: 'content'
+									key: 'operator'
 								}
 							],
 							kind: 137
@@ -33797,7 +33797,7 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'content'
+									key: 'operator'
 								}
 							],
 							kind: 137
@@ -33889,7 +33889,7 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'content'
+									key: 'operator'
 								}
 							],
 							kind: 48

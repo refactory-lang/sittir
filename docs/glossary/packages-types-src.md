@@ -1208,7 +1208,7 @@ The arm is the default when no other test applies.
 
 ### `packages/types/src/portable.ts::PortableDecimalParts`
 
-The parts of a decimal number: integer, fraction, exponent, marker and sign.
+The parts of a decimal number: integer, fraction, exponent, marker and the exponent's sign.
 
 ### `packages/types/src/portable.ts::PortableDecimalParts::integer`
 
@@ -1226,9 +1226,9 @@ The exponent part.
 
 The marker part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::sign`
+### `packages/types/src/portable.ts::PortableDecimalParts::exponentSign`
 
-The sign part.
+The exponent's sign.
 
 ### `packages/types/src/portable.ts::PortableBuildArm`
 

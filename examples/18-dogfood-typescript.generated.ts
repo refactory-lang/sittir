@@ -6,7 +6,7 @@ const ts = await typescript.createEngine({ api: 'strict' });
 export function rebuildFormatGenerated() {
 	return ts.build.program({
 		statements: [ts.build.importStatement.clauseFrom({
-			typeOnly: ts.kinds.TypeKeyword,
+			typeKeyword: ts.kinds.TypeKeyword,
 			importClause: ts.build.importClause(ts.build.namedImports(ts.build.importSpecifierName({
 				name: ts.build.identifier("FormatRecord"),
 			}), ts.build.importSpecifierName({
@@ -81,7 +81,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: ts.build.identifier("boundary"),
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: ts.build.identifier("leading"),
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -95,7 +95,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: ts.build.identifier("boundary"),
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: ts.build.identifier("trailing"),
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -134,7 +134,7 @@ export function rebuildFormatGenerated() {
 						right: ts.build.binaryExpression({
 							left: ts.build.memberExpression({
 								object: ts.build.identifier("trivia"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("length"),
 							}),
 							operator: ts.kinds.EqEqEq,
@@ -150,7 +150,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: ts.build.array(ts.build.spreadElement(ts.build.identifier("trivia"))),
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: ts.build.identifier("sort"),
 						}),
 						arguments: ts.build.arguments(ts.build.arrowFunction({
@@ -164,13 +164,13 @@ export function rebuildFormatGenerated() {
 							body: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: ts.build.identifier("b"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Dash,
 								right: ts.build.memberExpression({
 									object: ts.build.identifier("a"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 							}),
@@ -199,22 +199,22 @@ export function rebuildFormatGenerated() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: ts.build.identifier("Math"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("max"),
 							}),
 							arguments: ts.build.arguments(ts.build.number.decimal("0"), ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: ts.build.identifier("Math"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("min"),
 								}),
 								arguments: ts.build.arguments(ts.build.memberExpression({
 									object: ts.build.identifier("item"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}), ts.build.memberExpression({
 									object: ts.build.identifier("result"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("length"),
 								})),
 							})),
@@ -227,7 +227,7 @@ export function rebuildFormatGenerated() {
 							left: ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: ts.build.identifier("result"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("slice"),
 								}),
 								arguments: ts.build.arguments(ts.build.number.decimal("0"), ts.build.identifier("offset")),
@@ -235,7 +235,7 @@ export function rebuildFormatGenerated() {
 							operator: ts.kinds.Plus,
 							right: ts.build.memberExpression({
 								object: ts.build.identifier("item"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("text"),
 							}),
 						}),
@@ -243,7 +243,7 @@ export function rebuildFormatGenerated() {
 						right: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: ts.build.identifier("result"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("slice"),
 							}),
 							arguments: ts.build.arguments(ts.build.identifier("offset")),
@@ -277,7 +277,7 @@ export function rebuildFormatGenerated() {
 							function: ts.build.identifier("rebaseTriviaItems"),
 							arguments: ts.build.arguments(ts.build.memberExpression({
 								object: ts.build.identifier("format"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("trivia"),
 							}), ts.build.identifier("editStart"), ts.build.identifier("delta")),
 						}),
@@ -290,7 +290,7 @@ export function rebuildFormatGenerated() {
 							function: ts.build.identifier("rebaseKinds"),
 							arguments: ts.build.arguments(ts.build.memberExpression({
 								object: ts.build.identifier("format"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("kinds"),
 							}), ts.build.identifier("editStart"), ts.build.identifier("delta")),
 						}),
@@ -351,7 +351,7 @@ export function rebuildFormatGenerated() {
 			}), ts.build.returnStatement(ts.build.callExpressionCall({
 				function: ts.build.memberExpression({
 					object: ts.build.identifier("trivia"),
-					optionalChain: ts.kinds.Dot,
+					operator: ts.kinds.Dot,
 					property: ts.build.identifier("map"),
 				}),
 				arguments: ts.build.arguments(ts.build.arrowFunction({
@@ -365,7 +365,7 @@ export function rebuildFormatGenerated() {
 							expression: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: ts.build.identifier("item"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Lt,
@@ -380,7 +380,7 @@ export function rebuildFormatGenerated() {
 							value: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: ts.build.identifier("item"),
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Plus,
@@ -392,7 +392,7 @@ export function rebuildFormatGenerated() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: ts.build.identifier("Math"),
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: ts.build.identifier("max"),
 							}),
 							arguments: ts.build.arguments(ts.build.number.decimal("0"), ts.build.identifier("newOffset")),
@@ -455,7 +455,7 @@ export function rebuildFormatGenerated() {
 					right: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: ts.build.identifier("Object"),
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: ts.build.identifier("entries"),
 						}),
 						arguments: ts.build.arguments(ts.build.identifier("kinds")),

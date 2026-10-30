@@ -8,6 +8,7 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
+import { accessorClassDiagnostics } from './model/accessor-classes.ts';
 import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
@@ -55,7 +56,7 @@ export interface GeneratedFiles {
 	portableNodeModel: string | undefined;
 	portable: string | undefined;
 	portableBuild: string | undefined;
-	portableDiagnostics: readonly GrammarDiagnostic[];
+	emitDiagnostics: readonly GrammarDiagnostic[];
 	is: string;
 	kindIds: string;
 	fieldIds: string;
@@ -206,7 +207,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portable: portable?.surface,
 			portableBuild: portable?.build,
 			portableTyped: portable?.typed,
-			portableDiagnostics,
+			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar), ...portableDiagnostics],
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

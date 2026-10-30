@@ -183,9 +183,9 @@ export const build: PortableBuildTable = {
 		floatPoint: ['marker'],
 		floatScientific: ['marker'],
 		forInClause: ['trailingComma'],
-		integerBinary: ['prefix'],
-		integerHex: ['prefix'],
-		integerOctal: ['prefix']
+		integerBinary: ['radixPrefix'],
+		integerHex: ['radixPrefix'],
+		integerOctal: ['radixPrefix']
 	},
 	paths: {
 		'argument.named': {
@@ -8773,7 +8773,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -8836,17 +8836,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [96, 'sign'],
+									at: [96, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -8914,7 +8914,7 @@ export const build: PortableBuildTable = {
 						fraction: 'fraction',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -8977,17 +8977,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [97, 'sign'],
+									at: [97, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -9054,7 +9054,7 @@ export const build: PortableBuildTable = {
 						integer: 'integer',
 						exponent: 'exponent',
 						marker: 'marker',
-						sign: 'sign'
+						exponentSign: 'exponentSign'
 					},
 					members: [
 						{
@@ -9096,17 +9096,17 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'sign',
+							name: 'exponentSign',
 							steps: [
 								{
-									key: 'sign',
+									key: 'exponentSign',
 									optional: true
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [98, 'sign'],
+									at: [98, 'exponentSign'],
 									kinds: [],
 									pattern: {
 										source: '^(?:-|\\+)$',
@@ -9197,16 +9197,16 @@ export const build: PortableBuildTable = {
 					builder: 'integerBinary',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [92, 'prefix'],
+									at: [92, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0b|0B)$',
@@ -9250,16 +9250,16 @@ export const build: PortableBuildTable = {
 					builder: 'integerHex',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [90, 'prefix'],
+									at: [90, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0x|0X)$',
@@ -9316,16 +9316,16 @@ export const build: PortableBuildTable = {
 					builder: 'integerOctal',
 					members: [
 						{
-							name: 'prefix',
+							name: 'radixPrefix',
 							steps: [
 								{
-									key: 'prefix'
+									key: 'radixPrefix'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [91, 'prefix'],
+									at: [91, 'radixPrefix'],
 									kinds: [],
 									pattern: {
 										source: '^(?:0o|0O)$',

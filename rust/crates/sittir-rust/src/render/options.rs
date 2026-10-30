@@ -1073,7 +1073,7 @@ pub const SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = Sit
 pub const SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(1064);
 pub const SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_BEFORE: SiteId = SiteId(1065);
 pub const SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_AFTER: SiteId = SiteId(1066);
-pub const SITE_TOKEN_BINDING_PATTERN_TYPE_BEFORE: SiteId = SiteId(1067);
+pub const SITE_TOKEN_BINDING_PATTERN_FRAGMENT_BEFORE: SiteId = SiteId(1067);
 pub const SITE_TOKEN_BINDING_PATTERN_COLON_BEFORE: SiteId = SiteId(1068);
 pub const SITE_TOKEN_BINDING_PATTERN_COLON_AFTER: SiteId = SiteId(1069);
 pub const SITE_TOKEN_BINDING_PATTERN_TOKEN_BINDING_PATTERN_BEFORE: SiteId = SiteId(1070);
@@ -2740,7 +2740,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("struct_pattern_elements", "item_separator_space_after", "comma_separator_space_after", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173)]),
     ("struct_pattern_elements", "struct_pattern_elements_before", "struct_pattern_elements_before", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
     ("struct_pattern_elements", "struct_pattern_elements_after", "struct_pattern_elements_after", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
-    ("token_binding_pattern", "type_before", "type_before", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
+    ("token_binding_pattern", "fragment_before", "fragment_before", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
     ("token_binding_pattern", "colon_before", "colon_before", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
     ("token_binding_pattern", "colon_after", "colon_after", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
     ("token_binding_pattern", "token_binding_pattern_before", "token_binding_pattern_before", &[KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175)]),
@@ -6853,7 +6853,7 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, Some(SeatPath::Content), None, None, Some(SeatPath::Content), None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    Some(SeatPath::Field(FieldId(88))), None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content), Some(SeatPath::Content),
+    Some(SeatPath::Field(FieldId(89))), None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content), Some(SeatPath::Content),
 ];
 
 /// Per kind id of a list, the site its items' separator reads.
@@ -9464,8 +9464,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_COLON_AFTER, path: "(token_binding_pattern)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_COLON_BEFORE, path: "(token_binding_pattern)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "type", path: "(token_binding_pattern)/type:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_TYPE_BEFORE, path: "(token_binding_pattern)/type:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "fragment", path: "(token_binding_pattern)/fragment:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_FRAGMENT_BEFORE, path: "(token_binding_pattern)/fragment:/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "tokenKeywords", path: "(token_keywords)", children: &[

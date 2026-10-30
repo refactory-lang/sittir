@@ -599,45 +599,45 @@ export interface LookaroundAssertion {
 
 export interface LookaheadAssertion {
 	readonly $type: TSKindId.LookaheadAssertion;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.LookaheadAssertion.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.LookaheadAssertion.Config>['operator']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly pattern: () => Pattern;
 }
 
 export interface LookbehindAssertion {
 	readonly $type: TSKindId.LookbehindAssertion;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.LookbehindAssertion.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.LookbehindAssertion.Config>['operator']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly pattern: () => Pattern;
 }
 
@@ -751,26 +751,26 @@ export interface AnonymousCapturingGroup {
 
 export interface NamedCapturingGroup {
 	readonly $type: TSKindId.NamedCapturingGroup;
-	readonly _content: number;
+	readonly _operator: number;
 	readonly _group_name: GroupName;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _operator: 'operator';
 		readonly _group_name: 'groupName';
 		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt>;
+		readonly operator: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt>;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['content']>;
+		readonly operator: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['operator']>;
 		readonly groupName: SlotHint<T.GroupName>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly content: () => number;
+	readonly operator: () => number;
 	readonly groupName: () => GroupName;
 	readonly pattern: () => Pattern;
 }

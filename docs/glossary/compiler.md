@@ -7962,9 +7962,9 @@ The generated builder table files, by path, for the grammar.
 
 The generated portable build module source, when the grammar emits one.
 
-### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableDiagnostics`
+### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::emitDiagnostics`
 
-The diagnostics the portable build raised for the grammar.
+The warnings emit raised for the grammar: an accessor name that holds more than one value class, and the portable build's picks.
 
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableTyped`
 

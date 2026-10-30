@@ -10,8 +10,8 @@ export const records = {
 	AlternationNode: { words: 4, terms: { word: 2, width: 2, run: 5 } },
 	TermNode: { words: 4, term_group: { word: 2, width: 2, run: 5 } },
 	LookaroundAssertionNode: { words: 7, content: { word: 2, width: 5 } },
-	LookaheadAssertionNode: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	LookbehindAssertionNode: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	LookaheadAssertionNode: { words: 12, operator: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	LookbehindAssertionNode: { words: 12, operator: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
 	PatternCharacterNode: { words: 2 },
 	CharacterClassNode: {
 		words: 5,
@@ -27,7 +27,7 @@ export const records = {
 	AnonymousCapturingGroupNode: { words: 7, pattern: { word: 2, width: 5 } },
 	NamedCapturingGroupNode: {
 		words: 17,
-		content: { word: 2, width: 5 },
+		operator: { word: 2, width: 5 },
 		group_name: { word: 7, width: 5 },
 		pattern: { word: 12, width: 5 }
 	},

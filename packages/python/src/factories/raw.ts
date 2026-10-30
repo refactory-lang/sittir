@@ -108,27 +108,27 @@ export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 export const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
-export const _slotRe_buildIntegerHex_prefix = /^(?:0x|0X)$/u;
+export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
-export const _slotRe_buildIntegerOctal_prefix = /^(?:0o|0O)$/u;
+export const _slotRe_buildIntegerOctal_radix_prefix = /^(?:0o|0O)$/u;
 export const _slotRe_buildIntegerOctal_content = /^(?:(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$/u;
-export const _slotRe_buildIntegerBinary_prefix = /^(?:0b|0B)$/u;
+export const _slotRe_buildIntegerBinary_radix_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildIntegerBinary_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
 export const _slotRe_buildFloatPoint_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_fraction = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_marker = /^(?:e|E)$/u;
-export const _slotRe_buildFloatPoint_sign = /^(?:-|\+)$/u;
+export const _slotRe_buildFloatPoint_exponent_sign = /^(?:-|\+)$/u;
 export const _slotRe_buildFloatPoint_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_imaginary = /^(?:(?:[jJ]))$/u;
 export const _slotRe_buildFloatLeadingPoint_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_fraction = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_marker = _slotRe_buildFloatPoint_marker;
-export const _slotRe_buildFloatLeadingPoint_sign = _slotRe_buildFloatPoint_sign;
+export const _slotRe_buildFloatLeadingPoint_exponent_sign = _slotRe_buildFloatPoint_exponent_sign;
 export const _slotRe_buildFloatLeadingPoint_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_imaginary = _slotRe_buildFloatPoint_imaginary;
 export const _slotRe_buildFloatScientific_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_marker = _slotRe_buildFloatPoint_marker;
-export const _slotRe_buildFloatScientific_sign = _slotRe_buildFloatPoint_sign;
+export const _slotRe_buildFloatScientific_exponent_sign = _slotRe_buildFloatPoint_exponent_sign;
 export const _slotRe_buildFloatScientific_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_imaginary = _slotRe_buildFloatPoint_imaginary;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
@@ -6073,11 +6073,11 @@ export function buildIntegerHex(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerHex.Options
 ): T.IntegerHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
-		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
@@ -6087,14 +6087,14 @@ export function buildIntegerHex(
 	const node = {
 		$type: TSKindId.IntegerHex as const,
 		$named: true as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$with: {
 			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildIntegerHex(value, options)),
-			prefix: (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildIntegerHex(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0x' | '0X') =>
+				rebuilt(node, handle, () => buildIntegerHex(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6116,11 +6116,11 @@ export function buildIntegerOctal(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerOctal.Options
 ): T.IntegerOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
-		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
@@ -6130,15 +6130,15 @@ export function buildIntegerOctal(
 	const node = {
 		$type: TSKindId.IntegerOctal as const,
 		$named: true as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerOctal(value, options)),
-			prefix: (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0o' | '0O') =>
+				rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6160,11 +6160,11 @@ export function buildIntegerBinary(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerBinary.Options
 ): T.IntegerBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
-		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
@@ -6174,15 +6174,15 @@ export function buildIntegerBinary(
 	const node = {
 		$type: TSKindId.IntegerBinary as const,
 		$named: true as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerBinary(value, options)),
-			prefix: (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6274,7 +6274,7 @@ export function buildFloatPoint<
 	>,
 	IntegerSlot extends T.FloatPoint.Config['integer'],
 	FractionSlot extends T.FloatPoint.Config['fraction'],
-	SignSlot extends T.FloatPoint.Config['sign'],
+	ExponentSignSlot extends T.FloatPoint.Config['exponentSign'],
 	ExponentSlot extends T.FloatPoint.Config['exponent'],
 	ImaginarySlot extends T.FloatPoint.Config['imaginary']
 >(
@@ -6292,7 +6292,13 @@ export function buildFloatPoint<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{
+				integer: IntegerSlot;
+				fraction: FractionSlot;
+				exponentSign: ExponentSignSlot;
+				exponent: ExponentSlot;
+				imaginary: ImaginarySlot;
+			}
 		>,
 	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound;
@@ -6314,16 +6320,17 @@ export function buildFloatPoint(
 		throw new Error(`float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatPoint_sign.test(_sign))
-		throw new Error(`float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -6341,7 +6348,7 @@ export function buildFloatPoint(
 		_integer,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		_imaginary,
 		$with: {
@@ -6349,8 +6356,8 @@ export function buildFloatPoint(
 				rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value }, options)),
 			fraction: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatPoint({ ...config, fraction: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponentSign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
@@ -6361,7 +6368,7 @@ export function buildFloatPoint(
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
@@ -6383,7 +6390,7 @@ export function buildFloatLeadingPoint<
 	>,
 	IntegerSlot extends T.FloatLeadingPoint.Config['integer'],
 	FractionSlot extends T.FloatLeadingPoint.Config['fraction'],
-	SignSlot extends T.FloatLeadingPoint.Config['sign'],
+	ExponentSignSlot extends T.FloatLeadingPoint.Config['exponentSign'],
 	ExponentSlot extends T.FloatLeadingPoint.Config['exponent'],
 	ImaginarySlot extends T.FloatLeadingPoint.Config['imaginary']
 >(
@@ -6401,7 +6408,13 @@ export function buildFloatLeadingPoint<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{
+				integer: IntegerSlot;
+				fraction: FractionSlot;
+				exponentSign: ExponentSignSlot;
+				exponent: ExponentSlot;
+				imaginary: ImaginarySlot;
+			}
 		>,
 	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound;
@@ -6423,16 +6436,17 @@ export function buildFloatLeadingPoint(
 		throw new Error(`float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -6450,7 +6464,7 @@ export function buildFloatLeadingPoint(
 		_integer,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		_imaginary,
 		$with: {
@@ -6458,8 +6472,8 @@ export function buildFloatLeadingPoint(
 				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value }, options)),
 			fraction: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, fraction: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponentSign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
@@ -6470,7 +6484,7 @@ export function buildFloatLeadingPoint(
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
@@ -6488,7 +6502,7 @@ export function buildFloatLeadingPoint(
 export function buildFloatScientific<
 	const C extends WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.FloatScientific.Config['integer'],
-	SignSlot extends T.FloatScientific.Config['sign'],
+	ExponentSignSlot extends T.FloatScientific.Config['exponentSign'],
 	ExponentSlot extends T.FloatScientific.Config['exponent'],
 	ImaginarySlot extends T.FloatScientific.Config['imaginary']
 >(
@@ -6497,7 +6511,7 @@ export function buildFloatScientific<
 		RefuseUndeclared<C, WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>> &
 		RefusingConfig<
 			WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
-			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{ integer: IntegerSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound;
@@ -6516,11 +6530,11 @@ export function buildFloatScientific(
 		throw new Error(`float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatScientific_sign.test(_sign))
-		throw new Error(`float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -6537,14 +6551,14 @@ export function buildFloatScientific(
 		$named: true as const,
 		_integer,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		_imaginary,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatScientific({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatScientific({ ...config, exponentSign: value }, options)),
 			exponent: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatScientific({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
@@ -6554,7 +6568,7 @@ export function buildFloatScientific(
 		},
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),

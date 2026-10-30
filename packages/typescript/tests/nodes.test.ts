@@ -1578,7 +1578,7 @@ describe('member_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.memberExpression({
 			object: stampBuilt({ $type: TSKindId.Import, $text: 'import', $named: true }) as any,
-			optionalChain: '.',
+			operator: '.',
 			property: stampBuilt({
 				$type: TSKindId.PrivatePropertyIdentifier,
 				$text: 'test',
@@ -1592,7 +1592,7 @@ describe('member_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.memberExpression({
 			object: stampBuilt({ $type: TSKindId.Import, $text: 'import', $named: true }) as any,
-			optionalChain: '.',
+			operator: '.',
 			property: stampBuilt({
 				$type: TSKindId.PrivatePropertyIdentifier,
 				$text: 'test',
@@ -2068,7 +2068,7 @@ describe('rest_pattern sub-factories', () => {
 	it('memberExpression builds the parent', () => {
 		const node = ir.restPattern.memberExpression({
 			object: stampBuilt({ $type: TSKindId.Import, $text: 'import', $named: true }) as any,
-			optionalChain: '.',
+			operator: '.',
 			property: stampBuilt({
 				$type: TSKindId.PrivatePropertyIdentifier,
 				$text: 'test',
@@ -3478,7 +3478,7 @@ describe('type_query_member_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeQueryMemberExpression({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			content: '.',
+			operator: '.',
 			property: stampBuilt({
 				$type: TSKindId.PrivatePropertyIdentifier,
 				$text: 'test',
@@ -3492,7 +3492,7 @@ describe('type_query_member_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.typeQueryMemberExpression({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			content: '.',
+			operator: '.',
 			property: stampBuilt({
 				$type: TSKindId.PrivatePropertyIdentifier,
 				$text: 'test',
@@ -3517,7 +3517,7 @@ describe('type_query_member_expression sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Dot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3532,7 +3532,7 @@ describe('type_query_member_expression sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.QmarkDot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3715,7 +3715,7 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('hex builds the parent', () => {
-		const node = ir.literalType.hex('a', { prefix: '0x' });
+		const node = ir.literalType.hex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3745,13 +3745,13 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binary builds the parent', () => {
-		const node = ir.literalType.binary('1', { prefix: '0b' });
+		const node = ir.literalType.binary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('octal builds the parent', () => {
-		const node = ir.literalType.octal('1', { prefix: '0o' });
+		const node = ir.literalType.octal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4007,14 +4007,14 @@ describe('default_type', () => {
 describe('constraint', () => {
 	it('factory produces correct type', () => {
 		const node = ir.constraint(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any, {
-			content: TSKindId.ExtendsKeyword
+			operator: TSKindId.ExtendsKeyword
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.constraint(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any, {
-			content: TSKindId.ExtendsKeyword
+			operator: TSKindId.ExtendsKeyword
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4026,14 +4026,14 @@ describe('constraint sub-factories', () => {
 	it('extends builds the parent', () => {
 		const node = ir.constraint.extends(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Constraint);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.ExtendsKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('colon builds the parent', () => {
 		const node = ir.constraint.colon(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Constraint);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Colon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -4521,12 +4521,12 @@ describe('comment_block', () => {
 
 describe('number_hex', () => {
 	it('factory produces correct type', () => {
-		const node = ir.numberHex('a', { prefix: '0x' });
+		const node = ir.numberHex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.NumberHex);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.numberHex('a', { prefix: '0x' });
+		const node = ir.numberHex('a', { radixPrefix: '0x' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -4573,12 +4573,12 @@ describe('number_float_scientific', () => {
 
 describe('number_binary', () => {
 	it('factory produces correct type', () => {
-		const node = ir.numberBinary('1', { prefix: '0b' });
+		const node = ir.numberBinary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.NumberBinary);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.numberBinary('1', { prefix: '0b' });
+		const node = ir.numberBinary('1', { radixPrefix: '0b' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -4586,12 +4586,12 @@ describe('number_binary', () => {
 
 describe('number_octal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.numberOctal('1', { prefix: '0o' });
+		const node = ir.numberOctal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.NumberOctal);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.numberOctal('1', { prefix: '0o' });
+		const node = ir.numberOctal('1', { radixPrefix: '0o' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});

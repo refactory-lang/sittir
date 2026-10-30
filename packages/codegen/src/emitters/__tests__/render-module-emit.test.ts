@@ -746,7 +746,7 @@ describe('node attributes', () => {
 			.filter(hasBlankArm);
 		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[node\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
-		expect(blankOptions).toHaveLength(9);
+		expect(blankOptions).toHaveLength(10);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
 		expect(blankChoices).toHaveLength(4);
 	});

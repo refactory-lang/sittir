@@ -99,9 +99,9 @@ export default grammar(enrich(base), wire({
 		body: { before: preference('indent'), after: preference('dedent') },
 		case_body: { start: preference('indent'), end: preference('dedent') },
 		gap: { separator: preference('newline') },
-		number_hex: { 'prefix:': preference('0x') },
-		number_octal: { 'prefix:': preference('0o') },
-		number_binary: { 'prefix:': preference('0b') },
+		number_hex: { 'radix_prefix:': preference('0x') },
+		number_octal: { 'radix_prefix:': preference('0o') },
+		number_binary: { 'radix_prefix:': preference('0b') },
 		number_float_point: { 'marker:': preference('e') },
 		number_float_leading_point: { 'marker:': preference('e') },
 		number_float_scientific: { 'marker:': preference('e') },
@@ -195,9 +195,10 @@ export default grammar(enrich(base), wire({
 		function_declaration: { 'terminator:': preference('blank') },
 		generator_function_declaration: { 'terminator:': preference('blank'), '"*"/before': preference('tight') },
 		for_header_let_const_kind: { 'terminator:': preference('blank') },
+		for_header_using_kind: { 'terminator:': preference('blank') },
 		class_body_member_method: { 'terminator:': preference('blank') },
 		class_body_member_method_sig: { 'terminator:': preference('function_signature_automatic_semicolon') },
-		constraint: { 'content:': preference('extends') },
+		constraint: { 'operator:': preference('extends') },
 		class_body:{ before: preference('space') },
 		switch_body: { before: preference('space') },
 		named_imports: { before: preference('space'), after: preference('space') },
@@ -269,18 +270,21 @@ export default grammar(enrich(base), wire({
 		literal_type: { 0: variant('negative_number') },
 		_number: { '0/0': { type: 'STRING', value: '-' } },
 		number: {
+			'0/0/0': field('radix_prefix'),
+			'5/0/0': field('radix_prefix'),
+			'6/0/0': field('radix_prefix'),
 			'1/0/0': field('integer'),
 			'1/0/2': field('fraction'),
 			'1/0/3/0/0': field('marker'),
-			'1/0/3/0/1/0': field('sign'),
+			'1/0/3/0/1/0': field('exponent_sign'),
 			'1/0/3/0/1/1': field('exponent'),
 			'2/0/1': field('fraction'),
 			'2/0/2/0/0': field('marker'),
-			'2/0/2/0/1/0': field('sign'),
+			'2/0/2/0/1/0': field('exponent_sign'),
 			'2/0/2/0/1/1': field('exponent'),
 			'3/0/0': field('integer'),
 			'3/0/1/0': field('marker'),
-			'3/0/1/1/0': field('sign'),
+			'3/0/1/1/0': field('exponent_sign'),
 			'3/0/1/1/1': field('exponent'),
 			0: variant('hex'),
 			1: variant('float_point'),
@@ -387,7 +391,7 @@ export default grammar(enrich(base), wire({
 		import_statement: [
 			{ '2/0': variant('clause_from') },
 			{
-				1: field('import_clause'),
+				1: field('type_keyword'),
 				2: field('from_clause'),
 				4: field('terminator')
 			}
@@ -419,7 +423,7 @@ export default grammar(enrich(base), wire({
 		},
 
 		member_expression: {
-			1: field('separator')
+			1: field('operator')
 		},
 
 		property_signature: {
@@ -495,10 +499,10 @@ export default grammar(enrich(base), wire({
 		},
 
 		export_specifier: {
-			'0/0': field('export_kind')
+			'0/0': field('type_keyword')
 		},
 
-		import_specifier: [{ '0/0': field('import_kind') }, { '1/0': variant('name'), '1/1': variant('as') }],
+		import_specifier: [{ '0/0': field('type_keyword') }, { '1/0': variant('name'), '1/1': variant('as') }],
 
 		_parameter_name: { '2/0': field('override') },
 

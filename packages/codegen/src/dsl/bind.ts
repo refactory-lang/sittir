@@ -150,6 +150,38 @@ export function childFields(grammar: GrammarRecord, owner: string, target: Field
 	return { fields: [...fields], unfielded, mixed: [...fields].some((field) => others.has(field)), arm };
 }
 
+export function fieldHoldsOnly(grammar: GrammarRecord, owner: string, field: string, target: FieldWrapTarget): boolean {
+	const rules = isRecord(grammar.rules) ? grammar.rules : {};
+	const supertypes = supertypesOf(grammar);
+	const entered = new Set<string>();
+	const only = (rule: unknown): boolean => {
+		if (Array.isArray(rule)) return rule.every(only);
+		if (!isRecord(rule)) return true;
+		if (rule.type === 'BLANK' || isWrapTarget(rule, target)) return true;
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string' && isParserHiddenName(rule.name) && rule.name in rules && !supertypes.has(rule.name)) {
+			if (entered.has(rule.name)) return true;
+			entered.add(rule.name);
+			return only(rules[rule.name]);
+		}
+		if (rule.type === 'CHOICE' || rule.type === 'SEQ') return Array.isArray(rule.members) && rule.members.every(only);
+		if (rule.type === 'FIELD' || rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') return only(rule.content);
+		return false;
+	};
+	const sites: unknown[] = [];
+	const collect = (rule: unknown): void => {
+		if (Array.isArray(rule)) return rule.forEach(collect);
+		if (!isRecord(rule)) return;
+		if (rule.type === 'FIELD' && rule.name === field) {
+			sites.push(rule.content);
+			return;
+		}
+		if (rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN' || rule.type === 'ALIAS') return;
+		for (const value of Object.values(rule)) collect(value);
+	};
+	for (const host of transparentReach(rules, owner, supertypes)) collect(rules[host]);
+	return sites.every(only);
+}
+
 export function sharedHosts(grammar: GrammarRecord, request: FieldRename | FieldWrap, batch: readonly (FieldRename | FieldWrap)[] = [request]): string[] {
 	const rules = isRecord(grammar.rules) ? grammar.rules : {};
 	const stop = supertypesOf(grammar);

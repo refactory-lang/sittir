@@ -342,7 +342,7 @@ export const keywordPattern$point =
 				key === 'integer' ||
 				key === 'fraction' ||
 				key === 'marker' ||
-				key === 'sign' ||
+				key === 'exponentSign' ||
 				key === 'exponent' ||
 				key === 'imaginary'
 			)
@@ -361,7 +361,7 @@ export const keywordPattern$leadingPoint =
 				key === 'integer' ||
 				key === 'fraction' ||
 				key === 'marker' ||
-				key === 'sign' ||
+				key === 'exponentSign' ||
 				key === 'exponent' ||
 				key === 'imaginary'
 			)
@@ -376,7 +376,7 @@ export const keywordPattern$scientific =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent' || key === 'imaginary')
+			if (key === 'integer' || key === 'marker' || key === 'exponentSign' || key === 'exponent' || key === 'imaginary')
 				inner[key] = value;
 			else rest[key] = value;
 		}
@@ -875,7 +875,7 @@ export const keyValuePattern$point =
 				key === 'integer' ||
 				key === 'fraction' ||
 				key === 'marker' ||
-				key === 'sign' ||
+				key === 'exponentSign' ||
 				key === 'exponent' ||
 				key === 'imaginary'
 			)
@@ -894,7 +894,7 @@ export const keyValuePattern$leadingPoint =
 				key === 'integer' ||
 				key === 'fraction' ||
 				key === 'marker' ||
-				key === 'sign' ||
+				key === 'exponentSign' ||
 				key === 'exponent' ||
 				key === 'imaginary'
 			)
@@ -909,7 +909,7 @@ export const keyValuePattern$scientific =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent' || key === 'imaginary')
+			if (key === 'integer' || key === 'marker' || key === 'exponentSign' || key === 'exponent' || key === 'imaginary')
 				inner[key] = value;
 			else rest[key] = value;
 		}

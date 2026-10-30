@@ -338,15 +338,21 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 	return storage !== undefined && isTextStorage(storage) ? storage.text : undefined;
 }
 
+function optionalChoiceTexts(field: AssembledNonterminal, nodeMap: NodeMap): ReadonlySet<string> | undefined {
+	const texts = new Set<string>();
+	for (const v of field.values) {
+		const storage = valueStorageOf(v, nodeMap);
+		const leaves = storage === undefined ? [] : textStoragesOf(storage);
+		if (leaves.length === 0) return undefined;
+		for (const leaf of leaves) texts.add(leaf.text);
+	}
+	return texts;
+}
+
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
 	if (field.values.length === 0 || field.registeredOption === 'choice') return null;
 
-	if (field.values.length === 1) {
-		const v = field.values[0]!;
-		if (v.multiplicity === 'optional' && resolveEntryLiteral(v, nodeMap) !== undefined) {
-			return 'boolean';
-		}
-	}
+	if (field.values.every((v) => v.multiplicity === 'optional') && optionalChoiceTexts(field, nodeMap)?.size === 1) return 'boolean';
 
 	const literals: string[] = [];
 	for (const v of field.values) {
@@ -365,7 +371,8 @@ export function keywordPresenceStorage(field: AssembledNonterminal, nodeMap: Nod
 	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
 	for (const v of field.values) {
 		const storage = valueStorageOf(v, nodeMap);
-		if (storage !== undefined && isTextStorage(storage)) return storage;
+		const leaf = storage === undefined ? undefined : textStoragesOf(storage)[0];
+		if (leaf !== undefined) return leaf;
 	}
 	return undefined;
 }

@@ -103,7 +103,7 @@ describe('token_binding_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tokenBindingPattern({
 			name: stampBuilt({ $type: TSKindId.Metavariable, $text: 'test', $named: true, _name: 'test' }) as any,
-			type: 'block'
+			fragment: 'block'
 		});
 		expect(node.$type).toBe(TSKindId.TokenBindingPattern);
 		expectBuiltNode(node);
@@ -111,7 +111,7 @@ describe('token_binding_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.tokenBindingPattern({
 			name: stampBuilt({ $type: TSKindId.Metavariable, $text: 'test', $named: true, _name: 'test' }) as any,
-			type: 'block'
+			fragment: 'block'
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4575,7 +4575,7 @@ describe('macro_definition_brace', () => {
 describe('range_pattern_prefix', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangePatternPrefix({
-			content: '..=',
+			operator: '..=',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
@@ -4583,7 +4583,7 @@ describe('range_pattern_prefix', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.rangePatternPrefix({
-			content: '..=',
+			operator: '..=',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		const rendered = node.$render!();
@@ -4597,7 +4597,7 @@ describe('range_pattern_prefix sub-factories', () => {
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -4606,7 +4606,7 @@ describe('range_pattern_prefix sub-factories', () => {
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-		const seated = (node as any).content();
+		const seated = (node as any).operator();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -4641,7 +4641,7 @@ describe('range_pattern_with_left sub-factories', () => {
 	it('withRight builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight({
 			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
-			content: '...',
+			operator: '...',
 			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);

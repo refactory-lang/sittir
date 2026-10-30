@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "ca3c2fab274d0781f96f85bd0c4fcfffe36de468ee67ff5d661cfb75d0017991";
+export const hash = "2ab30fc69f6649a0af4b2d61af1a42327889b78e20473246b82ca0784f478ce1";
 
 export const renames = {
 	program: "file",
@@ -135,7 +135,6 @@ export default grammar(
 			constraint: { "1": field("bounds") },
 			decorator: { "1": field("content") },
 			export_clause: { "1/0": field("export_specifiers") },
-			export_specifier: { "0/0": field("type_only") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },
 			extends_type_clause: { "1/0/0/1": alias("qualified_identifier"), "1/1/0/1/0/1": alias("qualified_identifier") },
@@ -144,11 +143,7 @@ export default grammar(
 			generator_function_declaration: { "2": field("generator") },
 			generic_type: { "0/0/1": alias("qualified_identifier") },
 			import_alias: { "3/0/1": alias("qualified_identifier") },
-			import_specifier_as: { "0/0": field("type_only") },
-			import_specifier_name: { "0/0": field("type_only") },
-			import_statement: { "1": field("type_only") },
 			index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
-			member_expression: { "1": field("optional_chain"), "1/0/1": field("optional_chain") },
 			method_definition_plain: { "5/0": field("generator") },
 			method_signature_plain: { "5/0": field("generator") },
 			nested_identifier: [{ "0": field("qualifier"), "2": field("name") }, { "0/0/1": alias("qualified_identifier") }],

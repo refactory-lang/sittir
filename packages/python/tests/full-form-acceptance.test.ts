@@ -14,16 +14,16 @@ describe('builders and their kind spelled in full', () => {
 		expect(py.build.integer.hex('0XFF').$render()).toBe('0XFF');
 		expect(py.build.integer.hex('0xFF').$render()).toBe('0xFF');
 		expect(py.build.integer.hex('FF').$render()).toBe('0xFF');
-		expect(py.build.integer.hex('0XFF', { prefix: '0x' }).$render()).toBe('0xFF');
+		expect(py.build.integer.hex('0XFF', { radixPrefix: '0x' }).$render()).toBe('0xFF');
 	});
 
 	it('types the spelling it takes from the text', () => {
-		const typed: '0X' = py.build.integer.hex('0XFF').prefix();
-		const defaulted: '0x' = py.build.integer.hex('FF').prefix();
-		const chosen: '0x' = py.build.integer.hex('0XFF', { prefix: '0x' }).prefix();
+		const typed: '0X' = py.build.integer.hex('0XFF').radixPrefix();
+		const defaulted: '0x' = py.build.integer.hex('FF').radixPrefix();
+		const chosen: '0x' = py.build.integer.hex('0XFF', { radixPrefix: '0x' }).radixPrefix();
 		const text: string = '0XFF';
 		// @ts-expect-error a plain string keeps both spellings
-		const unknown: '0x' = py.build.integer.hex(text).prefix();
+		const unknown: '0x' = py.build.integer.hex(text).radixPrefix();
 		expect([typed, defaulted, chosen, unknown]).toEqual(['0X', '0x', '0x', '0X']);
 	});
 

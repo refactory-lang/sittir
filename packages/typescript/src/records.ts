@@ -12,13 +12,13 @@ export const records = {
 	ExportClauseNode: { words: 7, export_specifiers: { word: 2, width: 5 } },
 	ExportSpecifierNode: {
 		words: 17,
-		type_only: { word: 2, width: 5 },
+		type_keyword: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
 	ImportStatementNode: {
 		words: 22,
-		type_only: { word: 2, width: 5 },
+		type_keyword: { word: 2, width: 5 },
 		from_clause: { word: 7, width: 5 },
 		import_attribute: { word: 12, width: 5 },
 		terminator: { word: 17, width: 5 }
@@ -168,7 +168,7 @@ export const records = {
 	MemberExpressionNode: {
 		words: 17,
 		object: { word: 2, width: 5 },
-		optional_chain: { word: 7, width: 5 },
+		operator: { word: 7, width: 5 },
 		property: { word: 12, width: 5 }
 	},
 	SubscriptExpressionNode: {
@@ -355,7 +355,7 @@ export const records = {
 	TypeQueryMemberExpressionNode: {
 		words: 17,
 		object: { word: 2, width: 5 },
-		content: { word: 7, width: 5 },
+		operator: { word: 7, width: 5 },
 		property: { word: 12, width: 5 }
 	},
 	TypeQuerySubscriptExpressionNode: {
@@ -414,7 +414,7 @@ export const records = {
 		default: { word: 13, width: 5 }
 	},
 	DefaultTypeNode: { words: 7, type_: { word: 2, width: 5 } },
-	ConstraintNode: { words: 12, content: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
+	ConstraintNode: { words: 12, operator: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	ConstructSignatureNode: {
 		words: 18,
 		abstract_: { word: 2, bit: 0 },
@@ -457,32 +457,32 @@ export const records = {
 	CommentLineNode: { words: 6, content: { word: 2, width: 4 } },
 	CommentBlockNode: { words: 6, content: { word: 2, width: 4 } },
 	LiteralTypeNegativeNumberNode: { words: 7, value: { word: 2, width: 5 } },
-	NumberHexNode: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
+	NumberHexNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
 	NumberFloatPointNode: {
 		words: 22,
 		integer: { word: 2, width: 4 },
 		fraction: { word: 6, width: 4 },
 		marker: { word: 10, width: 4 },
-		sign: { word: 14, width: 4 },
+		exponent_sign: { word: 14, width: 4 },
 		exponent: { word: 18, width: 4 }
 	},
 	NumberFloatLeadingPointNode: {
 		words: 18,
 		fraction: { word: 2, width: 4 },
 		marker: { word: 6, width: 4 },
-		sign: { word: 10, width: 4 },
+		exponent_sign: { word: 10, width: 4 },
 		exponent: { word: 14, width: 4 }
 	},
 	NumberFloatScientificNode: {
 		words: 18,
 		integer: { word: 2, width: 4 },
 		marker: { word: 6, width: 4 },
-		sign: { word: 10, width: 4 },
+		exponent_sign: { word: 10, width: 4 },
 		exponent: { word: 14, width: 4 }
 	},
 	NumberDecimalNode: { words: 2 },
-	NumberBinaryNode: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
-	NumberOctalNode: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
+	NumberBinaryNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
+	NumberOctalNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
 	NumberBigintHexNode: { words: 6, content: { word: 2, width: 4 } },
 	NumberBigintBinaryNode: { words: 6, content: { word: 2, width: 4 } },
 	NumberBigintOctalNode: { words: 6, content: { word: 2, width: 4 } },
@@ -517,10 +517,10 @@ export const records = {
 	},
 	ImportStatementClauseFromNode: { words: 12, import_clause: { word: 2, width: 5 }, source: { word: 7, width: 5 } },
 	YieldExpressionDelegateNode: { words: 7, expression: { word: 2, width: 5 } },
-	ImportSpecifierNameNode: { words: 12, type_only: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	ImportSpecifierNameNode: { words: 12, type_keyword: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ImportSpecifierAsNode: {
 		words: 17,
-		type_only: { word: 2, width: 5 },
+		type_keyword: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
@@ -611,12 +611,12 @@ export const records = {
 		right: { word: 22, width: 5 }
 	},
 	ForHeaderUsingKindNode: {
-		words: 23,
-		kind: { word: 3, width: 5 },
-		left: { word: 8, width: 5 },
-		terminator: { word: 2, bit: 0 },
-		operator: { word: 13, width: 5 },
-		right: { word: 18, width: 5 }
+		words: 27,
+		kind: { word: 2, width: 5 },
+		left: { word: 7, width: 5 },
+		terminator: { word: 12, width: 5 },
+		operator: { word: 17, width: 5 },
+		right: { word: 22, width: 5 }
 	},
 	FormalParametersSetAccessorSignatureNode: { words: 7, elements: { word: 2, width: 5 } },
 	FormalParametersElementsSetAccessorSignatureNode: { words: 7, item: { word: 2, width: 5 } },

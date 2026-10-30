@@ -331,15 +331,15 @@ export interface Routes<Table extends AnyTable> {
 		readonly module: Table['buildAmbientDeclarationModule'];
 	};
 	readonly typeQueryMemberExpression$dot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression$qmarkDot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression: Table['buildTypeQueryMemberExpression'] & {

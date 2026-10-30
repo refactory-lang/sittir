@@ -2288,19 +2288,19 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.hex builds the parent', () => {
-		const node = ir.casePattern.simplePattern.hex('a', { prefix: '0x' });
+		const node = ir.casePattern.simplePattern.hex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.octal builds the parent', () => {
-		const node = ir.casePattern.simplePattern.octal('1', { prefix: '0o' });
+		const node = ir.casePattern.simplePattern.octal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.binary builds the parent', () => {
-		const node = ir.casePattern.simplePattern.binary('1', { prefix: '0b' });
+		const node = ir.casePattern.simplePattern.binary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5380,12 +5380,12 @@ describe('comprehension_clauses', () => {
 
 describe('integer_hex', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerHex('a', { prefix: '0x' });
+		const node = ir.integerHex('a', { radixPrefix: '0x' });
 		expect(node.$type).toBe(TSKindId.IntegerHex);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerHex('a', { prefix: '0x' });
+		const node = ir.integerHex('a', { radixPrefix: '0x' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -5393,12 +5393,12 @@ describe('integer_hex', () => {
 
 describe('integer_octal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerOctal('1', { prefix: '0o' });
+		const node = ir.integerOctal('1', { radixPrefix: '0o' });
 		expect(node.$type).toBe(TSKindId.IntegerOctal);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerOctal('1', { prefix: '0o' });
+		const node = ir.integerOctal('1', { radixPrefix: '0o' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -5406,12 +5406,12 @@ describe('integer_octal', () => {
 
 describe('integer_binary', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerBinary('1', { prefix: '0b' });
+		const node = ir.integerBinary('1', { radixPrefix: '0b' });
 		expect(node.$type).toBe(TSKindId.IntegerBinary);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.integerBinary('1', { prefix: '0b' });
+		const node = ir.integerBinary('1', { radixPrefix: '0b' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});

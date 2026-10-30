@@ -76,7 +76,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: interiorPattern(TOKEN_INTERIORS['number_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_hex'], 'number_hex');
-			return F.buildNumberHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildNumberHex(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	number_float_point: {
@@ -105,14 +105,14 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: interiorPattern(TOKEN_INTERIORS['number_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_binary'], 'number_binary');
-			return F.buildNumberBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildNumberBinary(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	number_octal: {
 		pattern: interiorPattern(TOKEN_INTERIORS['number_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_octal'], 'number_octal');
-			return F.buildNumberOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+			return F.buildNumberOctal(cfg['content'] as never, { radixPrefix: cfg['radixPrefix'] } as never);
 		}
 	},
 	number_bigint_hex: { factory: (content: string) => _resolveByKind('number_bigint_hex', content) },
@@ -2375,9 +2375,9 @@ export const coerceToExportClause: EmptyForm<
 	);
 });
 
-export function resolveExportSpecifier_typeOnly(
-	value: T.ExportSpecifier.LooseConfig['typeOnly']
-): Admit<T.ExportSpecifier['_type_only']> {
+export function resolveExportSpecifier_typeKeyword(
+	value: T.ExportSpecifier.LooseConfig['typeKeyword']
+): Admit<T.ExportSpecifier['_type_keyword']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.TypeKeyword] as const, ['typeof', TSKindId.TypeofKeyword] as const]
@@ -2417,7 +2417,7 @@ export const coerceToExportSpecifier: ConfigSeat<T.ExportSpecifier.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildExportSpecifier>;
 	currentHandle()?.admit(TSKindId.ExportSpecifier, [input]);
 	return F.buildExportSpecifier({
-		typeOnly: resolveExportSpecifier_typeOnly(input.typeOnly),
+		typeKeyword: resolveExportSpecifier_typeKeyword(input.typeKeyword),
 		name: resolveExportSpecifier_name(input.name),
 		alias: resolveExportSpecifier_alias(input.alias)
 	});
@@ -2427,9 +2427,9 @@ export function coerceToImport(_input?: T.Import.Loose): typeof F.buildImport {
 	return F.buildImport;
 }
 
-export function resolveImportStatement_typeOnly(
-	value: T.ImportStatement.LooseConfig['typeOnly']
-): Admit<T.ImportStatement['_type_only']> {
+export function resolveImportStatement_typeKeyword(
+	value: T.ImportStatement.LooseConfig['typeKeyword']
+): Admit<T.ImportStatement['_type_keyword']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.TypeKeyword] as const, ['typeof', TSKindId.TypeofKeyword] as const]
@@ -2461,7 +2461,7 @@ export function coerceToImportStatement(
 	currentHandle()?.admit(TSKindId.ImportStatement, [input]);
 	return F.buildImportStatement(
 		{
-			typeOnly: resolveImportStatement_typeOnly(input.typeOnly),
+			typeKeyword: resolveImportStatement_typeKeyword(input.typeKeyword),
 			fromClause: resolveImportStatement_fromClause(input.fromClause),
 			importAttribute: resolveImportStatement_importAttribute(input.importAttribute)
 		},
@@ -4016,9 +4016,9 @@ export function resolveMemberExpression_object(
 	);
 }
 
-export function resolveMemberExpression_optionalChain(
-	value: T.MemberExpression.LooseConfig['optionalChain']
-): Admit<T.MemberExpression['_optional_chain']> {
+export function resolveMemberExpression_operator(
+	value: T.MemberExpression.LooseConfig['operator']
+): Admit<T.MemberExpression['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<TSKindId.Dot | TSKindId.OptionalChain>(value, 'optional_chain')
@@ -4042,7 +4042,7 @@ export const coerceToMemberExpression: ConfigSeat<
 	currentHandle()?.admit(TSKindId.MemberExpression, [input]);
 	return F.buildMemberExpression({
 		object: resolveMemberExpression_object(input.object),
-		optionalChain: resolveMemberExpression_optionalChain(input.optionalChain),
+		operator: resolveMemberExpression_operator(input.operator),
 		property: resolveMemberExpression_property(input.property)
 	});
 };
@@ -6537,9 +6537,9 @@ export function resolveTypeQueryMemberExpression_object(
 	);
 }
 
-export function resolveTypeQueryMemberExpression_content(
-	value: T.TypeQueryMemberExpression.LooseConfig['content']
-): Admit<T.TypeQueryMemberExpression['_content']> {
+export function resolveTypeQueryMemberExpression_operator(
+	value: T.TypeQueryMemberExpression.LooseConfig['operator']
+): Admit<T.TypeQueryMemberExpression['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'.' | '?.'>(value, _K2, _K2)),
 		[['.', TSKindId.Dot] as const, ['?.', TSKindId.QmarkDot] as const]
@@ -6561,7 +6561,7 @@ export const coerceToTypeQueryMemberExpression: ConfigSeat<
 	currentHandle()?.admit(TSKindId.TypeQueryMemberExpression, [input]);
 	return F.buildTypeQueryMemberExpression({
 		object: resolveTypeQueryMemberExpression_object(input.object),
-		content: resolveTypeQueryMemberExpression_content(input.content),
+		operator: resolveTypeQueryMemberExpression_operator(input.operator),
 		property: resolveTypeQueryMemberExpression_property(input.property)
 	});
 };
@@ -8160,32 +8160,32 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 >;
 export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberHex>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildNumberHex(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberHex>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 	>;
 }
 
@@ -8205,9 +8205,9 @@ export function resolveNumberFloatPoint_fraction(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function resolveNumberFloatPoint_sign(
-	value: T.NumberFloatPoint.LooseConfig['sign']
-): Admit<T.NumberFloatPoint['_sign']> {
+export function resolveNumberFloatPoint_exponentSign(
+	value: T.NumberFloatPoint.LooseConfig['exponentSign']
+): Admit<T.NumberFloatPoint['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K2, _K2);
 }
 
@@ -8241,7 +8241,7 @@ export function coerceToNumberFloatPoint(
 		{
 			integer: resolveNumberFloatPoint_integer(_cfg.integer),
 			fraction: resolveNumberFloatPoint_fraction(_cfg.fraction),
-			sign: resolveNumberFloatPoint_sign(_cfg.sign),
+			exponentSign: resolveNumberFloatPoint_exponentSign(_cfg.exponentSign),
 			exponent: resolveNumberFloatPoint_exponent(_cfg.exponent)
 		},
 		options
@@ -8256,9 +8256,9 @@ export function resolveNumberFloatLeadingPoint_fraction(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function resolveNumberFloatLeadingPoint_sign(
-	value: T.NumberFloatLeadingPoint.LooseConfig['sign']
-): Admit<T.NumberFloatLeadingPoint['_sign']> {
+export function resolveNumberFloatLeadingPoint_exponentSign(
+	value: T.NumberFloatLeadingPoint.LooseConfig['exponentSign']
+): Admit<T.NumberFloatLeadingPoint['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K2, _K2);
 }
 
@@ -8295,7 +8295,7 @@ export function coerceToNumberFloatLeadingPoint(
 	return F.buildNumberFloatLeadingPoint(
 		{
 			fraction: resolveNumberFloatLeadingPoint_fraction(_cfg.fraction),
-			sign: resolveNumberFloatLeadingPoint_sign(_cfg.sign),
+			exponentSign: resolveNumberFloatLeadingPoint_exponentSign(_cfg.exponentSign),
 			exponent: resolveNumberFloatLeadingPoint_exponent(_cfg.exponent)
 		},
 		options
@@ -8310,9 +8310,9 @@ export function resolveNumberFloatScientific_integer(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function resolveNumberFloatScientific_sign(
-	value: T.NumberFloatScientific.LooseConfig['sign']
-): Admit<T.NumberFloatScientific['_sign']> {
+export function resolveNumberFloatScientific_exponentSign(
+	value: T.NumberFloatScientific.LooseConfig['exponentSign']
+): Admit<T.NumberFloatScientific['_exponent_sign']> {
 	return _resolveOne<'-' | '+'>(value, _K2, _K2);
 }
 
@@ -8349,7 +8349,7 @@ export function coerceToNumberFloatScientific(
 	return F.buildNumberFloatScientific(
 		{
 			integer: resolveNumberFloatScientific_integer(_cfg.integer),
-			sign: resolveNumberFloatScientific_sign(_cfg.sign),
+			exponentSign: resolveNumberFloatScientific_exponentSign(_cfg.exponentSign),
 			exponent: resolveNumberFloatScientific_exponent(_cfg.exponent)
 		},
 		options
@@ -8377,32 +8377,32 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 >;
 export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberBinary>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildNumberBinary(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberBinary>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 	>;
 }
 
@@ -8419,32 +8419,32 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 >;
 export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
-	'prefix',
-	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	'radixPrefix',
+	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberOctal>,
-			'prefix',
-			O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+			'radixPrefix',
+			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildNumberOctal(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberOctal>,
-		'prefix',
-		O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		'radixPrefix',
+		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 	>;
 }
 
@@ -8828,9 +8828,9 @@ export function coerceToOptionalChainMarker(_input?: T.OptionalChainMarker.Loose
 	return F.buildOptionalChainMarker;
 }
 
-export function resolveImportSpecifierName_typeOnly(
-	value: T.ImportSpecifierName.LooseConfig['typeOnly']
-): Admit<T.ImportSpecifierName['_type_only']> {
+export function resolveImportSpecifierName_typeKeyword(
+	value: T.ImportSpecifierName.LooseConfig['typeKeyword']
+): Admit<T.ImportSpecifierName['_type_keyword']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.TypeKeyword] as const, ['typeof', TSKindId.TypeofKeyword] as const]
@@ -8851,14 +8851,14 @@ export const coerceToImportSpecifierName: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImportSpecifierName>;
 	currentHandle()?.admit(TSKindId.ImportSpecifierName, [input]);
 	return F.buildImportSpecifierName({
-		typeOnly: resolveImportSpecifierName_typeOnly(input.typeOnly),
+		typeKeyword: resolveImportSpecifierName_typeKeyword(input.typeKeyword),
 		name: resolveImportSpecifierName_name(input.name)
 	});
 };
 
-export function resolveImportSpecifierAs_typeOnly(
-	value: T.ImportSpecifierAs.LooseConfig['typeOnly']
-): Admit<T.ImportSpecifierAs['_type_only']> {
+export function resolveImportSpecifierAs_typeKeyword(
+	value: T.ImportSpecifierAs.LooseConfig['typeKeyword']
+): Admit<T.ImportSpecifierAs['_type_keyword']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'type' | 'typeof'>(value, _K2, _K2)),
 		[['type', TSKindId.TypeKeyword] as const, ['typeof', TSKindId.TypeofKeyword] as const]
@@ -8892,7 +8892,7 @@ export const coerceToImportSpecifierAs: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImportSpecifierAs>;
 	currentHandle()?.admit(TSKindId.ImportSpecifierAs, [input]);
 	return F.buildImportSpecifierAs({
-		typeOnly: resolveImportSpecifierAs_typeOnly(input.typeOnly),
+		typeKeyword: resolveImportSpecifierAs_typeKeyword(input.typeKeyword),
 		name: resolveImportSpecifierAs_name(input.name),
 		alias: resolveImportSpecifierAs_alias(input.alias)
 	});
@@ -9669,12 +9669,6 @@ export function resolveForHeaderUsingKind_left(
 	return _resolveOne<T.Identifier | T.ObjectPattern | T.ArrayPattern>(value, _K3, _super_destructuring_pattern);
 }
 
-export function resolveForHeaderUsingKind_terminator(
-	value: T.ForHeaderUsingKind.LooseConfig['terminator']
-): Admit<T.ForHeaderUsingKind['_terminator']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function resolveForHeaderUsingKind_operator(
 	value: T.ForHeaderUsingKind.LooseConfig['operator']
 ): Admit<T.ForHeaderUsingKind['_operator']> {
@@ -9693,21 +9687,27 @@ export function resolveForHeaderUsingKind_right(
 	);
 }
 
-export const coerceToForHeaderUsingKind: ConfigSeat<
-	T.ForHeaderUsingKind.Loose,
-	ReturnType<typeof F.buildForHeaderUsingKind>
-> = (input: T.ForHeaderUsingKind.Loose): ReturnType<typeof F.buildForHeaderUsingKind> => {
+export function coerceToForHeaderUsingKind<const I extends T.ForHeaderUsingKind.Loose>(
+	input: I & RefuseUndeclared<I, T.ForHeaderUsingKind.Loose>,
+	options?: T.ForHeaderUsingKind.Options
+): ReturnType<typeof F.buildForHeaderUsingKind>;
+export function coerceToForHeaderUsingKind(
+	input: T.ForHeaderUsingKind.Loose,
+	options?: T.ForHeaderUsingKind.Options
+): ReturnType<typeof F.buildForHeaderUsingKind> {
 	if (!_isLooseConfig<T.ForHeaderUsingKind.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForHeaderUsingKind>;
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [input]);
-	return F.buildForHeaderUsingKind({
-		kind: resolveForHeaderUsingKind_kind(input.kind),
-		left: resolveForHeaderUsingKind_left(input.left),
-		terminator: resolveForHeaderUsingKind_terminator(input.terminator),
-		operator: resolveForHeaderUsingKind_operator(input.operator),
-		right: resolveForHeaderUsingKind_right(input.right)
-	});
-};
+	return F.buildForHeaderUsingKind(
+		{
+			kind: resolveForHeaderUsingKind_kind(input.kind),
+			left: resolveForHeaderUsingKind_left(input.left),
+			operator: resolveForHeaderUsingKind_operator(input.operator),
+			right: resolveForHeaderUsingKind_right(input.right)
+		},
+		options
+	);
+}
 
 export function coerceToFormalParametersGetAccessorSignature(
 	_input?: T.FormalParametersGetAccessorSignature.Loose

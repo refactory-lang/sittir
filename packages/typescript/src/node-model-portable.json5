@@ -4839,8 +4839,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -4897,7 +4897,7 @@
           "path": [
             {
               "owner": "export_specifier",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -7141,8 +7141,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -7199,7 +7199,7 @@
           "path": [
             {
               "owner": "import_specifier_as",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -7215,8 +7215,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -7262,7 +7262,7 @@
           "path": [
             {
               "owner": "import_specifier_name",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -7288,8 +7288,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -7349,7 +7349,7 @@
           "path": [
             {
               "owner": "import_statement",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -8111,7 +8111,7 @@
           "path": [
             {
               "owner": "member_expression",
-              "slot": "optional_chain"
+              "slot": "operator"
             }
           ],
           "flag": true
@@ -10387,13 +10387,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_binary",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -10472,13 +10472,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_leading_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10548,13 +10548,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10613,13 +10613,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_scientific",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10656,13 +10656,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_hex",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -10719,13 +10719,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_octal",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },

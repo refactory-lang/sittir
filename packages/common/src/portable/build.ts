@@ -466,8 +466,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			out.set(parts.exponent, written);
 			if (parts.marker !== undefined) out.set(parts.marker, 'e');
 			if (sign !== '-') return out;
-			if (parts.sign === undefined) return undefined;
-			out.set(parts.sign, '-');
+			if (parts.exponentSign === undefined) return undefined;
+			out.set(parts.exponentSign, '-');
 			return out;
 		};
 		const decimalParts = (value: number | bigint, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {

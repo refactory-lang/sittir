@@ -173,7 +173,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 			listItems(ownerElements(node.exportSpecifiers(), 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
-				decorations: ['_type_only', '_alias']
+				decorations: ['_type_keyword', '_alias']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -201,8 +201,8 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.ExportSpecifier as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
@@ -211,8 +211,8 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | undefined>(this, '_alias', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ExportSpecifier['_type_only']>) =>
-				rebuilt(node, handle, () => wrapExportSpecifier({ ...$edited(data), _type_only: v }, tree)),
+			typeKeyword: (v: NonNullable<T.ExportSpecifier['_type_keyword']>) =>
+				rebuilt(node, handle, () => wrapExportSpecifier({ ...$edited(data), _type_keyword: v }, tree)),
 			name: (v: NonNullable<T.ExportSpecifier['_name']>) =>
 				rebuilt(node, handle, () => wrapExportSpecifier({ ...$edited(data), _name: v }, tree)),
 			alias: (v: NonNullable<T.ExportSpecifier['_alias']>) =>
@@ -237,8 +237,8 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.ImportStatement as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		fromClause() {
 			return hydrateSlot<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>(this, '_from_clause', tree);
@@ -250,8 +250,8 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 			return this._terminator;
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportStatement['_type_only']>) =>
-				rebuilt(node, handle, () => wrapImportStatement({ ...$edited(data), _type_only: v }, tree)),
+			typeKeyword: (v: NonNullable<T.ImportStatement['_type_keyword']>) =>
+				rebuilt(node, handle, () => wrapImportStatement({ ...$edited(data), _type_keyword: v }, tree)),
 			fromClause: (v: NonNullable<T.ImportStatement['_from_clause']>) =>
 				rebuilt(node, handle, () => wrapImportStatement({ ...$edited(data), _from_clause: v }, tree)),
 			importAttribute: (v: NonNullable<T.ImportStatement['_import_attribute']>) =>
@@ -2002,8 +2002,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		object() {
 			return hydrateSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, '_object', tree);
 		},
-		optionalChain() {
-			return this._optional_chain;
+		operator() {
+			return this._operator;
 		},
 		property() {
 			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
@@ -2011,8 +2011,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		$with: {
 			object: (v: NonNullable<T.MemberExpression['_object']>) =>
 				rebuilt(node, handle, () => wrapMemberExpression({ ...$edited(data), _object: v }, tree)),
-			optionalChain: (v: NonNullable<T.MemberExpression['_optional_chain']>) =>
-				rebuilt(node, handle, () => wrapMemberExpression({ ...$edited(data), _optional_chain: v }, tree)),
+			operator: (v: NonNullable<T.MemberExpression['_operator']>) =>
+				rebuilt(node, handle, () => wrapMemberExpression({ ...$edited(data), _operator: v }, tree)),
 			property: (v: NonNullable<T.MemberExpression['_property']>) =>
 				rebuilt(node, handle, () => wrapMemberExpression({ ...$edited(data), _property: v }, tree))
 		},
@@ -4475,8 +4475,8 @@ export function wrapTypeQueryMemberExpression(
 				| T.TypeQueryCallExpression
 			>(this, '_object', tree);
 		},
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		property() {
 			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
@@ -4484,8 +4484,8 @@ export function wrapTypeQueryMemberExpression(
 		$with: {
 			object: (v: NonNullable<T.TypeQueryMemberExpression['_object']>) =>
 				rebuilt(node, handle, () => wrapTypeQueryMemberExpression({ ...$edited(data), _object: v }, tree)),
-			content: (v: NonNullable<T.TypeQueryMemberExpression['_content']>) =>
-				rebuilt(node, handle, () => wrapTypeQueryMemberExpression({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.TypeQueryMemberExpression['_operator']>) =>
+				rebuilt(node, handle, () => wrapTypeQueryMemberExpression({ ...$edited(data), _operator: v }, tree)),
 			property: (v: NonNullable<T.TypeQueryMemberExpression['_property']>) =>
 				rebuilt(node, handle, () => wrapTypeQueryMemberExpression({ ...$edited(data), _property: v }, tree))
 		},
@@ -5165,15 +5165,15 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 	const node = {
 		...data,
 		$type: TSKindId.Constraint as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		bounds() {
 			return hydrateSlot<T.Type>(this, '_bounds', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.Constraint['_content']>) =>
-				rebuilt(node, handle, () => wrapConstraint({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.Constraint['_operator']>) =>
+				rebuilt(node, handle, () => wrapConstraint({ ...$edited(data), _operator: v }, tree)),
 			bounds: (v: NonNullable<T.Constraint['_bounds']>) =>
 				rebuilt(node, handle, () => wrapConstraint({ ...$edited(data), _bounds: v }, tree))
 		},
@@ -5456,7 +5456,7 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
-				decorations: ['_type_only', '_alias']
+				decorations: ['_type_keyword', '_alias']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -6066,15 +6066,15 @@ export function wrapNumberHex(data: T.NumberHex, tree: TreeHandle): T.NumberHex.
 	const node = {
 		...data,
 		$type: TSKindId.NumberHex as const,
-		prefix() {
-			return hydrateSlot<'0x' | '0X'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberHex['_prefix']>) =>
-				rebuilt(node, handle, () => wrapNumberHex({ ...$edited(data), _prefix: v }, tree)),
+			radixPrefix: (v: NonNullable<T.NumberHex['_radix_prefix']>) =>
+				rebuilt(node, handle, () => wrapNumberHex({ ...$edited(data), _radix_prefix: v }, tree)),
 			content: (v: NonNullable<T.NumberHex['_content']>) =>
 				rebuilt(node, handle, () => wrapNumberHex({ ...$edited(data), _content: v }, tree))
 		},
@@ -6106,8 +6106,8 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -6119,8 +6119,8 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapNumberFloatPoint({ ...$edited(data), _fraction: v }, tree)),
 			marker: (v: NonNullable<T.NumberFloatPoint['_marker']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatPoint({ ...$edited(data), _marker: v }, tree)),
-			sign: (v: NonNullable<T.NumberFloatPoint['_sign']>) =>
-				rebuilt(node, handle, () => wrapNumberFloatPoint({ ...$edited(data), _sign: v }, tree)),
+			exponentSign: (v: NonNullable<T.NumberFloatPoint['_exponent_sign']>) =>
+				rebuilt(node, handle, () => wrapNumberFloatPoint({ ...$edited(data), _exponent_sign: v }, tree)),
 			exponent: (v: NonNullable<T.NumberFloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatPoint({ ...$edited(data), _exponent: v }, tree))
 		},
@@ -6152,8 +6152,8 @@ export function wrapNumberFloatLeadingPoint(
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -6163,8 +6163,8 @@ export function wrapNumberFloatLeadingPoint(
 				rebuilt(node, handle, () => wrapNumberFloatLeadingPoint({ ...$edited(data), _fraction: v }, tree)),
 			marker: (v: NonNullable<T.NumberFloatLeadingPoint['_marker']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatLeadingPoint({ ...$edited(data), _marker: v }, tree)),
-			sign: (v: NonNullable<T.NumberFloatLeadingPoint['_sign']>) =>
-				rebuilt(node, handle, () => wrapNumberFloatLeadingPoint({ ...$edited(data), _sign: v }, tree)),
+			exponentSign: (v: NonNullable<T.NumberFloatLeadingPoint['_exponent_sign']>) =>
+				rebuilt(node, handle, () => wrapNumberFloatLeadingPoint({ ...$edited(data), _exponent_sign: v }, tree)),
 			exponent: (v: NonNullable<T.NumberFloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatLeadingPoint({ ...$edited(data), _exponent: v }, tree))
 		},
@@ -6196,8 +6196,8 @@ export function wrapNumberFloatScientific(
 		marker() {
 			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string>(this, '_exponent', tree);
@@ -6207,8 +6207,8 @@ export function wrapNumberFloatScientific(
 				rebuilt(node, handle, () => wrapNumberFloatScientific({ ...$edited(data), _integer: v }, tree)),
 			marker: (v: NonNullable<T.NumberFloatScientific['_marker']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatScientific({ ...$edited(data), _marker: v }, tree)),
-			sign: (v: NonNullable<T.NumberFloatScientific['_sign']>) =>
-				rebuilt(node, handle, () => wrapNumberFloatScientific({ ...$edited(data), _sign: v }, tree)),
+			exponentSign: (v: NonNullable<T.NumberFloatScientific['_exponent_sign']>) =>
+				rebuilt(node, handle, () => wrapNumberFloatScientific({ ...$edited(data), _exponent_sign: v }, tree)),
 			exponent: (v: NonNullable<T.NumberFloatScientific['_exponent']>) =>
 				rebuilt(node, handle, () => wrapNumberFloatScientific({ ...$edited(data), _exponent: v }, tree))
 		},
@@ -6231,15 +6231,15 @@ export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle): T.Numb
 	const node = {
 		...data,
 		$type: TSKindId.NumberBinary as const,
-		prefix() {
-			return hydrateSlot<'0b' | '0B'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberBinary['_prefix']>) =>
-				rebuilt(node, handle, () => wrapNumberBinary({ ...$edited(data), _prefix: v }, tree)),
+			radixPrefix: (v: NonNullable<T.NumberBinary['_radix_prefix']>) =>
+				rebuilt(node, handle, () => wrapNumberBinary({ ...$edited(data), _radix_prefix: v }, tree)),
 			content: (v: NonNullable<T.NumberBinary['_content']>) =>
 				rebuilt(node, handle, () => wrapNumberBinary({ ...$edited(data), _content: v }, tree))
 		},
@@ -6262,15 +6262,15 @@ export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle): T.Number
 	const node = {
 		...data,
 		$type: TSKindId.NumberOctal as const,
-		prefix() {
-			return hydrateSlot<'0o' | '0O'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberOctal['_prefix']>) =>
-				rebuilt(node, handle, () => wrapNumberOctal({ ...$edited(data), _prefix: v }, tree)),
+			radixPrefix: (v: NonNullable<T.NumberOctal['_radix_prefix']>) =>
+				rebuilt(node, handle, () => wrapNumberOctal({ ...$edited(data), _radix_prefix: v }, tree)),
 			content: (v: NonNullable<T.NumberOctal['_content']>) =>
 				rebuilt(node, handle, () => wrapNumberOctal({ ...$edited(data), _content: v }, tree))
 		},
@@ -6706,15 +6706,15 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifierName as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportSpecifierName['_type_only']>) =>
-				rebuilt(node, handle, () => wrapImportSpecifierName({ ...$edited(data), _type_only: v }, tree)),
+			typeKeyword: (v: NonNullable<T.ImportSpecifierName['_type_keyword']>) =>
+				rebuilt(node, handle, () => wrapImportSpecifierName({ ...$edited(data), _type_keyword: v }, tree)),
 			name: (v: NonNullable<T.ImportSpecifierName['_name']>) =>
 				rebuilt(node, handle, () => wrapImportSpecifierName({ ...$edited(data), _name: v }, tree))
 		},
@@ -6737,8 +6737,8 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifierAs as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
@@ -6747,8 +6747,8 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			return hydrateSlot<T.Identifier>(this, '_alias', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportSpecifierAs['_type_only']>) =>
-				rebuilt(node, handle, () => wrapImportSpecifierAs({ ...$edited(data), _type_only: v }, tree)),
+			typeKeyword: (v: NonNullable<T.ImportSpecifierAs['_type_keyword']>) =>
+				rebuilt(node, handle, () => wrapImportSpecifierAs({ ...$edited(data), _type_keyword: v }, tree)),
 			name: (v: NonNullable<T.ImportSpecifierAs['_name']>) =>
 				rebuilt(node, handle, () => wrapImportSpecifierAs({ ...$edited(data), _name: v }, tree)),
 			alias: (v: NonNullable<T.ImportSpecifierAs['_alias']>) =>
@@ -7640,7 +7640,7 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		operator() {
 			return this._operator;
@@ -7653,8 +7653,8 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _kind: v }, tree)),
 			left: (v: NonNullable<T.ForHeaderUsingKind['_left']>) =>
 				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _left: v }, tree)),
-			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']>) =>
-				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _terminator: v }, tree)),
+			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']> | null) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _terminator: blankArmStored(v) }, tree)),
 			operator: (v: NonNullable<T.ForHeaderUsingKind['_operator']>) =>
 				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.ForHeaderUsingKind['_right']>) =>

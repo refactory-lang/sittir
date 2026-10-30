@@ -234,8 +234,8 @@ describe('the portable build table', () => {
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
 		expect(armOf('typescript', 'expression.member', typescript.kinds.MemberExpression).flags.optionalChain).toEqual({
-			presets: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.OptionalChain }],
-			unset: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.Dot }]
+			presets: [{ steps: [{ key: 'operator' }], kind: typescript.kinds.OptionalChain }],
+			unset: [{ steps: [{ key: 'operator' }], kind: typescript.kinds.Dot }]
 		});
 	});
 
@@ -248,7 +248,7 @@ describe('the portable build table', () => {
 	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric members", () => {
 		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
 		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toBe('content');
-		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', sign: 'sign' });
+		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' });
 		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
 	});
 
@@ -256,12 +256,12 @@ describe('the portable build table', () => {
 		const engine = await createEngine(python, { api: 'strict' });
 		const withSign = (sign: string | undefined) => (arm: PortableBuildArm): PortableBuildArm => {
 			const parts = typeof arm.numeric === 'object' ? arm.numeric : undefined;
-			if (parts?.sign === undefined) return arm;
-			const { sign: old, ...rest } = parts;
+			if (parts?.exponentSign === undefined) return arm;
+			const { exponentSign: old, ...rest } = parts;
 			return {
 				...arm,
 				members: arm.members.flatMap((member) => (member.name !== old ? [member] : sign === undefined ? [] : [{ ...member, name: sign }])),
-				numeric: sign === undefined ? rest : { ...rest, sign }
+				numeric: sign === undefined ? rest : { ...rest, exponentSign: sign }
 			};
 		};
 		const builderWith = (sign: string | undefined) =>
@@ -272,7 +272,7 @@ describe('the portable build table', () => {
 				kindName: () => undefined,
 				readsAs: () => true
 			});
-		expect(String(engine.render(builderWith('exponentSign')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
+		expect(String(engine.render(builderWith('signOfExponent')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
 		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
 	});
 

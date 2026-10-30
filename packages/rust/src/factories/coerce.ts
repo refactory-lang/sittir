@@ -2490,9 +2490,9 @@ export function resolveTokenBindingPattern_name(
 	return _resolveOneBranch<T.Metavariable>(value, 'metavariable');
 }
 
-export function resolveTokenBindingPattern_type(
-	value: T.TokenBindingPattern.LooseConfig['type']
-): Admit<T.TokenBindingPattern['_type']> {
+export function resolveTokenBindingPattern_fragment(
+	value: T.TokenBindingPattern.LooseConfig['fragment']
+): Admit<T.TokenBindingPattern['_fragment']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<
@@ -2542,7 +2542,7 @@ export const coerceToTokenBindingPattern: ConfigSeat<
 	currentHandle()?.admit(TSKindId.TokenBindingPattern, [input]);
 	return F.buildTokenBindingPattern({
 		name: resolveTokenBindingPattern_name(input.name),
-		type: resolveTokenBindingPattern_type(input.type)
+		fragment: resolveTokenBindingPattern_fragment(input.fragment)
 	});
 };
 
@@ -3651,9 +3651,9 @@ export const coerceToFieldDeclaration: ConfigSeat<
 	});
 };
 
-export function resolveOrderedFieldDeclarationList_attributes(
-	value: T.OrderedFieldDeclarationList.LooseConfig['attributes']
-): Admit<T.OrderedFieldDeclarationList['_attributes']> {
+export function resolveOrderedFieldDeclarationList_elements(
+	value: T.OrderedFieldDeclarationList.LooseConfig['elements']
+): Admit<T.OrderedFieldDeclarationList['_elements']> {
 	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(
 		value,
 		'ordered_field_declaration_list_elements',
@@ -3678,7 +3678,7 @@ export const coerceToOrderedFieldDeclarationList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 	return F.buildOrderedFieldDeclarationList(
 		_resolveOneBranch<T.OrderedFieldDeclarationListElements>(
-			configFieldOr(input, 'attributes', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'ordered_field_declaration_list_elements',
 			undefined,
 			true
@@ -10330,9 +10330,9 @@ export const coerceToMacroDefinitionBrace: ConfigSeat<
 	});
 };
 
-export function resolveRangePatternPrefix_content(
-	value: T.RangePatternPrefix.LooseConfig['content']
-): Admit<T.RangePatternPrefix['_content']> {
+export function resolveRangePatternPrefix_operator(
+	value: T.RangePatternPrefix.LooseConfig['operator']
+): Admit<T.RangePatternPrefix['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'..=' | '..'>(value, _K2, _K2)),
 		[['..=', TSKindId.DotDotEq] as const, ['..', TSKindId.DotDot] as const]
@@ -10371,14 +10371,14 @@ export const coerceToRangePatternPrefix: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildRangePatternPrefix>;
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [input]);
 	return F.buildRangePatternPrefix({
-		content: resolveRangePatternPrefix_content(input.content),
+		operator: resolveRangePatternPrefix_operator(input.operator),
 		right: resolveRangePatternPrefix_right(input.right)
 	});
 };
 
-export function resolveRangePatternWithLeftWithRight_content(
-	value: T.RangePatternWithLeftWithRight.LooseConfig['content']
-): Admit<T.RangePatternWithLeftWithRight['_content']> {
+export function resolveRangePatternWithLeftWithRight_operator(
+	value: T.RangePatternWithLeftWithRight.LooseConfig['operator']
+): Admit<T.RangePatternWithLeftWithRight['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'...' | '..=' | '..'>(value, _K2, _K2)),
 		[['...', TSKindId.DotDotDot] as const, ['..=', TSKindId.DotDotEq] as const, ['..', TSKindId.DotDot] as const]
@@ -10417,7 +10417,7 @@ export const coerceToRangePatternWithLeftWithRight: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [input]);
 	return F.buildRangePatternWithLeftWithRight({
-		content: resolveRangePatternWithLeftWithRight_content(input.content),
+		operator: resolveRangePatternWithLeftWithRight_operator(input.operator),
 		right: resolveRangePatternWithLeftWithRight_right(input.right)
 	});
 };

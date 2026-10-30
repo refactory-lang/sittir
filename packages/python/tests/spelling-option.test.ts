@@ -13,16 +13,16 @@ describe('a registered spelling site leaves the config and takes an option', () 
 	});
 
 	it('the second parameter chooses the other spelling', () => {
-		expect(py.build.integer.hex('FF', { prefix: '0X' }).$render()).toBe('0XFF');
-		expect(pyStrict.build.integer.hex('ff', { prefix: '0X' }).$render()).toBe('0Xff');
+		expect(py.build.integer.hex('FF', { radixPrefix: '0X' }).$render()).toBe('0XFF');
+		expect(pyStrict.build.integer.hex('ff', { radixPrefix: '0X' }).$render()).toBe('0Xff');
 	});
 
 	it('the setter for the option keeps the value', () => {
-		expect(py.build.integer.hex('ff').$with.prefix('0X').$render()).toBe('0Xff');
-		expect(py.build.integer.hex('ff', { prefix: '0X' }).$with.content('aa').$render()).toBe('0Xaa');
+		expect(py.build.integer.hex('ff').$with.radixPrefix('0X').$render()).toBe('0Xff');
+		expect(py.build.integer.hex('ff', { radixPrefix: '0X' }).$with.content('aa').$render()).toBe('0Xaa');
 	});
 
 	it('a spelling the site does not admit is rejected by the slot guard', () => {
-		expect(() => py.build.integer.hex('ff', { prefix: '0q' as never })).toThrow(/does not match/);
+		expect(() => py.build.integer.hex('ff', { radixPrefix: '0q' as never })).toThrow(/does not match/);
 	});
 });

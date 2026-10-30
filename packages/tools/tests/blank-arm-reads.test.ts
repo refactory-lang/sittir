@@ -38,6 +38,7 @@ const CHOSE_NONE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 		'ClassStaticBlock.terminator': 'class C { static {} }',
 		'DoStatement.terminator': 'do {} while (a) x',
 		'ForHeaderLetConstKind.terminator': 'for (let x of y) {}',
+		'ForHeaderUsingKind.terminator': 'for (using x of y) {}',
 		'FunctionDeclaration.terminator': 'function f() {} x',
 		'GeneratorFunctionDeclaration.terminator': 'function* g() {} x',
 		'StatementBlock.terminator': '{} x'

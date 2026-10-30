@@ -164,7 +164,7 @@ export interface PortableDecimalParts {
 	readonly fraction?: string;
 	readonly exponent?: string;
 	readonly marker?: string;
-	readonly sign?: string;
+	readonly exponentSign?: string;
 }
 
 /**

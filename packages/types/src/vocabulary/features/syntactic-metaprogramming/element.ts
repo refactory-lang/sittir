@@ -14,7 +14,7 @@ export namespace Element {
 			// claimed by r
 			readonly $kind: 'element.macro.token_binding';
 			readonly name: V.Identifier.Metavariable<G>;
-			readonly type: V.Element.Macro.Fragment<G>;
+			readonly fragment: V.Element.Macro.Fragment<G>;
 		}
 		export interface TokenRepetition<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r

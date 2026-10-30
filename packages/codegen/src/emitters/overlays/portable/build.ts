@@ -49,7 +49,7 @@ export type PickDiagnosticCode =
 
 const FORM_PRODUCT_LIMIT = 8;
 
-const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'sign'] as const satisfies readonly (keyof PortableDecimalParts)[];
+const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
 export interface PickDiagnostic {
 	readonly code: PickDiagnosticCode;

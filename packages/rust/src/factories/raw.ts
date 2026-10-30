@@ -258,21 +258,21 @@ export function buildTokenBindingPattern<NameSlot extends T.TokenBindingPattern.
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Bound {
 	currentHandle()?.admit(TSKindId.TokenBindingPattern, [config]);
 	const _name = config.name;
-	const _type = kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type);
+	const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TokenBindingPattern as const,
 		$named: true as const,
 		_name,
-		_type,
+		_fragment,
 		$with: {
 			name: (value: Admit<T.Metavariable>) =>
 				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, name: value })),
-			type: (value: Admit<NonNullable<T.TokenBindingPattern.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, type: value }))
+			fragment: (value: Admit<NonNullable<T.TokenBindingPattern.Config>['fragment']>) =>
+				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, fragment: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => _type,
+		fragment: () => _fragment,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1401,16 +1401,16 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 function _buildOrderedFieldDeclarationList(
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): T.OrderedFieldDeclarationList.Bound {
-	const _attributes = hydrateStored(value);
-	const listView = ownerView(_attributes, '_item');
-	if (listView.stored === undefined) refuseReadStub('_attributes');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationList as const,
 		$named: true as const,
-		_attributes,
+		_elements,
 		$with: {
-			attributes: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1424,11 +1424,11 @@ function _buildOrderedFieldDeclarationList(
 					)
 				)
 		},
-		attributes: () => hydrateStoredSlot(node, '_attributes'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node.attributes(), 'items'), {
+			listItems(ownerElements(node.elements(), 'items'), {
 				kind: TSKindId.AttributedOrderedField,
 				content: 'type',
 				decorations: ['_attribute_item', '_visibility_modifier']
@@ -10771,7 +10771,7 @@ export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.C
 ): T.RangePatternPrefix.Bound;
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 		'RangePatternPrefix.right',
@@ -10782,15 +10782,15 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 	const node = {
 		$type: TSKindId.RangePatternPrefix as const,
 		$named: true as const,
-		_content,
+		_operator,
 		_right,
 		$with: {
-			content: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, operator: value })),
 			right: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
 				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, right: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10811,7 +10811,7 @@ export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 		'RangePatternWithLeftWithRight.right',
@@ -10822,15 +10822,15 @@ export function buildRangePatternWithLeftWithRight(
 	const node = {
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		$named: true as const,
-		_content,
+		_operator,
 		_right,
 		$with: {
-			content: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, operator: value })),
 			right: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, right: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

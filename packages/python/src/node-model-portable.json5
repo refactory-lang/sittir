@@ -3856,13 +3856,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_leading_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -3936,13 +3936,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -4005,13 +4005,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_scientific",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -4688,13 +4688,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_binary",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -4763,13 +4763,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_hex",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -4799,13 +4799,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_octal",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },

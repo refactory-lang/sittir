@@ -64,7 +64,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			kind: 'integer_hex',
 			required: [['_content', 'content']],
 			single: [['_content', 'IntegerHex.content']],
-			texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]]
+			texts: [['_radix_prefix', 'IntegerHex.radixPrefix', ['0x', '0X']]]
 		});
 	});
 

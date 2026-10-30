@@ -10,26 +10,26 @@ import type * as StrictTable from './strict.js';
 export type AnyTable = typeof LooseTable | typeof StrictTable;
 
 export interface Routes<Table extends AnyTable> {
-	readonly lookaheadAssertion$eq: <const V extends OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'content'>>,
+	readonly lookaheadAssertion$eq: <const V extends OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'operator'>>(
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildLookaheadAssertion']>
 	) => ReturnType<Table['buildLookaheadAssertion']>;
-	readonly lookaheadAssertion$bang: <const V extends OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'content'>>,
+	readonly lookaheadAssertion$bang: <const V extends OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'operator'>>(
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookaheadAssertion']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildLookaheadAssertion']>
 	) => ReturnType<Table['buildLookaheadAssertion']>;
 	readonly lookaheadAssertion: Table['buildLookaheadAssertion'] & {
 		readonly eq: Routes<Table>['lookaheadAssertion$eq'];
 		readonly bang: Routes<Table>['lookaheadAssertion$bang'];
 	};
-	readonly lookbehindAssertion$eq: <const V extends OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'content'>>,
+	readonly lookbehindAssertion$eq: <const V extends OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'operator'>>(
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildLookbehindAssertion']>
 	) => ReturnType<Table['buildLookbehindAssertion']>;
 	readonly lookbehindAssertion$bang: <
-		const V extends OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildLookbehindAssertion']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildLookbehindAssertion']>
 	) => ReturnType<Table['buildLookbehindAssertion']>;
 	readonly lookbehindAssertion: Table['buildLookbehindAssertion'] & {
@@ -83,15 +83,15 @@ export interface Routes<Table extends AnyTable> {
 		readonly unicodeCharacterEscape: Routes<Table>['characterClassEscape$unicodeCharacterEscape'];
 	};
 	readonly namedCapturingGroup$lparenQmarkLt: <
-		const V extends OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildNamedCapturingGroup']>
 	) => ReturnType<Table['buildNamedCapturingGroup']>;
 	readonly namedCapturingGroup$lparenQmarkPLt: <
-		const V extends OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildNamedCapturingGroup']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildNamedCapturingGroup']>
 	) => ReturnType<Table['buildNamedCapturingGroup']>;
 	readonly namedCapturingGroup: Table['buildNamedCapturingGroup'] & {

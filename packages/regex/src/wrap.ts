@@ -161,15 +161,15 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.LookaheadAssertion as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		pattern() {
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.LookaheadAssertion['_content']>) =>
-				rebuilt(node, handle, () => wrapLookaheadAssertion({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.LookaheadAssertion['_operator']>) =>
+				rebuilt(node, handle, () => wrapLookaheadAssertion({ ...$edited(data), _operator: v }, tree)),
 			pattern: (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
 				rebuilt(node, handle, () => wrapLookaheadAssertion({ ...$edited(data), _pattern: v }, tree))
 		},
@@ -192,15 +192,15 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.LookbehindAssertion as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		pattern() {
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.LookbehindAssertion['_content']>) =>
-				rebuilt(node, handle, () => wrapLookbehindAssertion({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.LookbehindAssertion['_operator']>) =>
+				rebuilt(node, handle, () => wrapLookbehindAssertion({ ...$edited(data), _operator: v }, tree)),
 			pattern: (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
 				rebuilt(node, handle, () => wrapLookbehindAssertion({ ...$edited(data), _pattern: v }, tree))
 		},
@@ -370,8 +370,8 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.NamedCapturingGroup as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		groupName() {
 			return hydrateSlot<T.GroupName>(this, '_group_name', tree);
@@ -380,8 +380,8 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.NamedCapturingGroup['_content']>) =>
-				rebuilt(node, handle, () => wrapNamedCapturingGroup({ ...$edited(data), _content: v }, tree)),
+			operator: (v: NonNullable<T.NamedCapturingGroup['_operator']>) =>
+				rebuilt(node, handle, () => wrapNamedCapturingGroup({ ...$edited(data), _operator: v }, tree)),
 			groupName: (v: NonNullable<T.NamedCapturingGroup['_group_name']>) =>
 				rebuilt(node, handle, () => wrapNamedCapturingGroup({ ...$edited(data), _group_name: v }, tree)),
 			pattern: (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
