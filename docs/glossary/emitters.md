@@ -14707,6 +14707,10 @@ The factory for a word that is not reserved.
 
 The separator a factory slot takes.
 
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::blank`
+
+True when the slot has a blank arm, so the factory's writes store the blank marker for `null`.
+
 ### `packages/codegen/src/emitters/is.ts::EmitIsConfig`
 
 The options the is-guard emitter takes.
@@ -14726,6 +14730,10 @@ The table of relaxations the Rust kind ids apply.
 ### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::separator`
 
 The separator a written slot takes.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::blank`
+
+True when the slot has a blank arm. Writers store `null` as the blank marker and readers map the marker back to `null`.
 
 ### `packages/codegen/src/emitters/node-projection.ts::displayClaimedIds`
 
@@ -15402,6 +15410,14 @@ The pick diagnostics the build raised.
 ### `packages/codegen/src/emitters/shared.ts::keywordPresenceStorage`
 
 The storage of a keyword-presence field, when it has one.
+
+### `packages/codegen/src/emitters/shared.ts::blankArmImports`
+
+The runtime helpers a generated module imports for blank arms: `blankArmRead` and `blankArmStored` when any node in the map has a slot with a blank arm, and none otherwise.
+
+### `packages/codegen/src/emitters/shared.ts::blankForRead`
+
+The read expression for a slot value: `blankArmRead(expr)` when the slot has a blank arm, and the expression unchanged otherwise.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 
