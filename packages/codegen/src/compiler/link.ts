@@ -155,14 +155,15 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	const generatedIdTables = stampVisibleExternals(ctx.generatedIdTables, evaluated);
 	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
-	const raw = stampParserVisibility(spliceTextLeaves(collapseRenamedRules(evaluated, catalogCtx), catalogCtx), catalogCtx);
+	const spliced = spliceTextLeaves(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
+	const wordMatcherRegex = compileWordMatcher(spliced.word, spliced.rules);
+	const raw = stampParserVisibility(spliced, catalogCtx, wordMatcherRegex);
 	const supertypes = new Set(raw.supertypes);
 	const factoryInline = new Set(raw.factoryInline);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
 
 	const hiddenNamedArmChoices = collectHiddenNamedArmChoices(raw.rules);
-	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
 
 	const linkCtx = new LinkCtx({
 		grammar: raw,
@@ -897,13 +898,12 @@ function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	return { ...raw, rules };
 }
 
-function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx, wordMatcher: RegExp | undefined): RawGrammar {
 	const inlineCtx: InlineAtReferenceCtx = {
 		symbols: catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries }),
 		inlineNames: new Set(raw.inline),
 		selfReferencing: new Map()
 	};
-	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
 	const relaxedLiterals = new Set<string>();
 	const relaxedDisplayLiterals = new Map<string, Set<string>>();
 	const fixedNameLiterals = new Map<string, Set<string>>();

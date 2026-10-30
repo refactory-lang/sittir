@@ -308,6 +308,12 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		writable: false,
 		configurable: true
 	});
+	Object.defineProperty(result, ENRICH_WORD_MATCHER_KEY, {
+		value: ctx.wordMatcher,
+		enumerable: false,
+		writable: false,
+		configurable: true
+	});
 	return result as unknown as EnrichedGrammar<B>;
 }
 
@@ -332,6 +338,13 @@ export function stampWiredVariants(wired: unknown, base: unknown, automatic: Aut
 }
 
 export const ENRICH_RULE_ORIGINS_KEY = '__enrichedRuleOrigins__' as const;
+
+export const ENRICH_WORD_MATCHER_KEY = '__enrichedWordMatcher__' as const;
+
+export function getEnrichWordMatcher(grammar: unknown): RegExp | undefined {
+	if (!grammar || typeof grammar !== 'object') return undefined;
+	return (grammar as Record<string, unknown>)[ENRICH_WORD_MATCHER_KEY] as RegExp | undefined;
+}
 
 export function getEnrichRuleOrigins(grammar: unknown): ReadonlyMap<string, EnrichRuleOrigin> {
 	if (!grammar || typeof grammar !== 'object') return new Map();
