@@ -27,23 +27,31 @@ impl BuiltImage {
         with_kind(kind, self.kind_bits).expect("a kind the width holds") | high << self.kind_bits
     }
 
-    fn address(chunk: usize, offset: usize) -> Address {
+    pub(crate) fn address(chunk: usize, offset: usize) -> Address {
         Address::new(u32::try_from(chunk).expect("a chunk number"), u32::try_from(offset).expect("an offset")).expect("an address")
+    }
+
+    /// A new word chunk holding no words yet, which `record_in` writes to by
+    /// its number whatever chunks are opened after it.
+    pub(crate) fn open_chunk(&mut self) -> usize {
+        self.chunks.push(Some(ImageChunk::Words(Vec::new())));
+        self.chunks.len() - 1
     }
 
     /// `words` at the end of the last word chunk, or in a chunk of their own
     /// when the last chunk is a string chunk or has no room.
     pub(crate) fn words(&mut self, words: &[u32]) -> Address {
-        let n = self.chunks.len() - 1;
-        if let Some(Some(ImageChunk::Words(last))) = self.chunks.last_mut() {
-            if last.len() + words.len() <= CHUNK_WORDS as usize {
-                let at = Self::address(n, last.len());
-                last.extend_from_slice(words);
-                return at;
-            }
-        }
-        self.chunks.push(Some(ImageChunk::Words(words.to_vec())));
-        Self::address(self.chunks.len() - 1, 0)
+        let fits = matches!(self.chunks.last(), Some(Some(ImageChunk::Words(last))) if last.len() + words.len() <= CHUNK_WORDS as usize);
+        let chunk = if fits { self.chunks.len() - 1 } else { self.open_chunk() };
+        self.words_in(chunk, words)
+    }
+
+    /// `words` at the end of word chunk `chunk`.
+    fn words_in(&mut self, chunk: usize, words: &[u32]) -> Address {
+        let Some(Some(ImageChunk::Words(held))) = self.chunks.get_mut(chunk) else { panic!("chunk {chunk} is no word chunk") };
+        let at = Self::address(chunk, held.len());
+        held.extend_from_slice(words);
+        at
     }
 
     /// A leaf entry of `kind` holding `text`, `KindId::BLANK` for a text
@@ -70,12 +78,23 @@ impl BuiltImage {
 
     /// A record of `kind` `words` long, its cells at their built words.
     pub(crate) fn record(&mut self, kind: KindId, words: u32, cells: &[(u32, u32)]) -> Address {
+        let image = self.record_words(kind, words, cells);
+        self.words(&image)
+    }
+
+    /// A record as `record` writes it, at the end of word chunk `chunk`.
+    pub(crate) fn record_in(&mut self, chunk: usize, kind: KindId, words: u32, cells: &[(u32, u32)]) -> Address {
+        let image = self.record_words(kind, words, cells);
+        self.words_in(chunk, &image)
+    }
+
+    fn record_words(&self, kind: KindId, words: u32, cells: &[(u32, u32)]) -> Vec<u32> {
         let mut image = vec![0; words as usize];
         image[0] = self.header(kind, 0);
         for &(word, cell) in cells {
             image[word as usize] = cell;
         }
-        self.words(&image)
+        image
     }
 
     /// The link record of the parsed node at `row` of `tree`, whose record

@@ -541,7 +541,7 @@ impl<T, N> SlotAt<'_, T, N> {
         let words = view.words(record, reach)?;
         let place = self.key.place;
         let parsed = view.tree().is_some();
-        let item = |cell: Cell, item: u32, at: Option<Address>| -> Result<Option<Item>, ArenaError> {
+        let item = |cell: Cell, item: u32, cell_place: Option<super::reach::CellPlace>| -> Result<Option<Item>, ArenaError> {
             let site = Site { holder: place, word, item: ItemIndex(item) };
             let cell = match cell {
                 Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(word)).and_then(|slot| slot.unit) {
@@ -550,15 +550,18 @@ impl<T, N> SlotAt<'_, T, N> {
                 },
                 cell => cell,
             };
-            let cell_place = at.filter(|_| parsed).map(|at| super::reach::CellPlace::new(at, self.shape));
             let at = CellAt { cell, tree: self.key.tree, site: Some(site) };
             Ok(Some(Item { at, site, row: view.parsed_row(cell)?, cell: cell_place }))
         };
         if self.shape.run.is_none() {
-            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0, record.offset(word))?]));
+            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0, parsed.then(|| super::reach::CellPlace::slot(record, self.shape)))?]));
         }
         let (list, run) = view.slot_list(words, self.shape)?;
-        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words, self.shape)?, at, list.run.offset(at * run))).collect::<Result<_, _>>().map(Items::Many)
+        list.items(view.arena(), run)?
+            .zip(0..)
+            .map(|(words, at)| item(view.item_cell(words, self.shape)?, at, if parsed { Some(super::reach::CellPlace::item(list.run, at, self.shape)?) } else { None }))
+            .collect::<Result<_, _>>()
+            .map(Items::Many)
     }
 
     fn present(&self, prep: &RecordPrep<'_, T>) -> Items<Item> {

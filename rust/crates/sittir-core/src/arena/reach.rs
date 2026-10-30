@@ -16,19 +16,48 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-/// Where one parsed cell lies: its words, and its slot's shape.
+/// Where one parsed cell lies: the record or run it is in, its first word's
+/// offset there, and its slot's shape. An item of a run longer than a chunk
+/// can lie past every word an address names, so a cell is placed by its
+/// offset, not by an address of its own.
 #[derive(Debug, Clone, Copy)]
 pub(super) struct CellPlace {
-    at: Address,
-    len: u32,
+    base: Address,
+    offset: u32,
     shape: CellShape,
 }
 
 impl CellPlace {
-    /// The cell at `at` of a slot of shape `shape`: its one cell, or an item
-    /// of its list, whose run's width it takes.
-    pub(super) fn new(at: Address, shape: CellShape) -> Self {
-        Self { at, len: shape.run.unwrap_or(shape.width), shape }
+    /// The one cell of the slot of shape `shape` in the parsed record at
+    /// `record`.
+    pub(super) fn slot(record: Address, shape: CellShape) -> Self {
+        Self { base: record, offset: shape.word, shape }
+    }
+
+    /// Item `n` of the run at `run`, a list slot's of shape `shape`.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a slot that holds no list, or an item
+    /// past what a run's offset holds.
+    pub(super) fn item(run: Address, n: u32, shape: CellShape) -> Result<Self, ArenaError> {
+        let width = shape.run.ok_or(malformed("list run width", shape.word))?;
+        Ok(Self { base: run, offset: n.checked_mul(width).ok_or(malformed("list item", n))?, shape })
+    }
+
+    /// The words `base` holds up to the cell's end, and the cell's among them.
+    fn span(self) -> Result<(u32, std::ops::Range<usize>), ArenaError> {
+        let end = self.offset.checked_add(self.shape.run.unwrap_or(self.shape.width)).ok_or(malformed("cell word", self.offset))?;
+        Ok((end, self.offset as usize..end as usize))
+    }
+
+    /// The cell's own address, which an embedded record follows; none for a
+    /// list's item, which embeds no record.
+    fn at(self) -> Address {
+        if self.shape.run.is_some() {
+            return Address::NONE;
+        }
+        self.base.offset(self.offset).unwrap_or(Address::NONE)
     }
 }
 
@@ -36,14 +65,14 @@ impl CellPlace {
 /// in the order of their rows.
 enum SlotPlaces {
     One(CellPlace),
-    Run { run: Address, len: u32, width: u32, shape: CellShape },
+    Run { run: Address, len: u32, shape: CellShape },
 }
 
 impl SlotPlaces {
     fn item(&self, n: u32) -> Result<CellPlace, ArenaError> {
         match *self {
             SlotPlaces::One(place) => Ok(place),
-            SlotPlaces::Run { run, width, shape, .. } => Ok(CellPlace { at: run.offset(n * width).ok_or(malformed("list item address", run.0))?, len: width, shape }),
+            SlotPlaces::Run { run, shape, .. } => CellPlace::item(run, n, shape),
         }
     }
 
@@ -64,19 +93,20 @@ fn slots<N: RecordCells>(tree: &TreeArena, at: Address) -> Result<Vec<SlotPlaces
     record
         .cells
         .iter()
-        .map(|&shape| match shape.run {
-            None => Ok(SlotPlaces::One(CellPlace { at: at.offset(shape.word).ok_or(malformed("cell word", shape.word))?, len: shape.width, shape })),
-            Some(width) => {
-                let list = ListCell::of_word(CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
-                Ok(SlotPlaces::Run { run: list.run, len: list.len, width, shape })
+        .map(|&shape| {
+            if shape.run.is_none() {
+                return Ok(SlotPlaces::One(CellPlace::slot(at, shape)));
             }
+            let list = ListCell::of_word(CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
+            Ok(SlotPlaces::Run { run: list.run, len: list.len, shape })
         })
         .collect()
 }
 
 fn cell_at(tree: &TreeArena, place: CellPlace) -> Result<Cell, ArenaError> {
     let arena = tree.arena();
-    Cell::decode_parsed(arena.words(place.at, place.len)?, place.at, place.shape, arena.kind_bits())
+    let (end, cell) = place.span()?;
+    Cell::decode_parsed(&arena.words(place.base, end)?[cell], place.at(), place.shape, arena.kind_bits())
 }
 
 /// The row the node `cell` names: a record's from its side record.
@@ -95,7 +125,8 @@ fn row_of(tree: &TreeArena, cell: Cell) -> Result<Option<NodeIndex>, ArenaError>
 /// Rewrites the cell at `place` from its coordinate to `at`.
 pub(super) fn patch(tree: &mut TreeArena, place: CellPlace, at: Address) -> Result<(), ArenaError> {
     let bits = tree.arena().kind_bits();
-    Cell::patch_parsed(tree.arena_mut().words_mut(place.at, place.len)?, place.shape, bits, at)?;
+    let (end, cell) = place.span()?;
+    Cell::patch_parsed(&mut tree.arena_mut().words_mut(place.base, end)?[cell], place.shape, bits, at)?;
     Ok(())
 }
 
