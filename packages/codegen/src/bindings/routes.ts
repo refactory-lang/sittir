@@ -496,15 +496,16 @@ function deepRouteOf(model: SlotModel, kind: string, member: DeepMember): Member
 	};
 }
 
-interface Guaranteed {
+export interface Guaranteed {
 	readonly holds: (path: readonly SlotStep[] | undefined) => boolean;
 	readonly many: (step: SlotStep) => boolean;
+	readonly present: (step: SlotStep) => readonly string[] | undefined;
 }
 
 const stepKey = (step: SlotStep): string => `${step.owner} ${step.slot} ${step.anchor ?? ''}`;
 
-function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[] }): Guaranteed {
-	const one = new Set<string>();
+export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[] }): Guaranteed {
+	const one = new Map<string, Set<string>>();
 	const many = new Set<string>();
 	for (const child of entry.children) {
 		if (child.subject.up !== 0) continue;
@@ -513,14 +514,21 @@ function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly
 			const last = holder === null ? undefined : heldSteps(model, holder, selector)?.at(-1);
 			if (last === undefined) break;
 			const key = stepKey(stepOf(last.holder, last.slot.name, slotAnchor(model, last.holder, selector)));
-			if (!('excludes' in child)) one.add(key);
-			else if (i === child.subject.down.length - 1) many.add(key);
+			const final = i === child.subject.down.length - 1;
+			if (!('excludes' in child)) {
+				const kinds = one.get(key) ?? one.set(key, new Set<string>()).get(key)!;
+				for (const kind of final && 'kinds' in child ? child.kinds : selector.kind === null ? [] : [selector.kind]) kinds.add(kind);
+			} else if (final) many.add(key);
 			holder = selector.kind;
 		}
 	}
 	return {
 		holds: (path) => (path ?? []).every((step) => step.anchor !== 'only' || one.has(stepKey(step))),
-		many: (step) => many.has(stepKey(step))
+		many: (step) => many.has(stepKey(step)),
+		present: (step) => {
+			const kinds = one.get(stepKey(step));
+			return kinds === undefined ? undefined : concreteKinds(model, [...kinds]);
+		}
 	};
 }
 

@@ -2,7 +2,7 @@ import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { concreteKinds, modelNode, type GrammarInput, type GrammarRoutes, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { Vocabulary } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { grammarDisplayName, type GrammarName } from '../../../grammars.ts';
@@ -67,7 +67,13 @@ const PRELUDE = [
 	'',
 	'export type ViewForm<I> = PortableHandle & { readonly $kind?: KindOf<I> } & { readonly [P in keyof I as Kept<I, P>]-?: () => Resolved<Member<I, P>> };',
 	'',
-	'type Of<N, K> = N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? readonly Of<E, K>[] : undefined;',
+	'type Ret<F> = F extends (...args: never[]) => infer R ? R : never;',
+	'',
+	'type Narrow<R, Id> = [Id] extends [never] ? NonNullable<R> : Extract<NonNullable<R>, { readonly $type: Id } | Id>;',
+	'',
+	'type Present<N, G> = [keyof G] extends [never] ? N : Omit<N, keyof G> & { readonly [P in keyof G & keyof N]: () => G[P] extends readonly [infer Id, infer Sub] ? Present<Narrow<Ret<N[P]>, Id>, Sub> : never };',
+	'',
+	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? readonly Of<E, K>[] : undefined;',
 	'',
 	'type Without<N, K> = N extends { readonly $type: K } ? never : N extends readonly (infer E)[] ? readonly Without<E, K>[] : N;',
 	'',
@@ -221,11 +227,25 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 	const enumKinds = new Set(claimedEnums.flatMap((kind) => concreteKinds(model, [kind])));
 	const admitsEnum = (slot: ModelSlot): boolean => slot.kinds.some((k) => concreteKinds(model, [k]).some((c) => enumKinds.has(c)));
 	const slotOf = (step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
-	const chainOf = (kind: string, path: readonly SlotStep[]): { expr: string; last: ModelSlot; optional: boolean } | string => {
+	interface PresentStep {
+		readonly accessor: string;
+		readonly ids: string;
+		readonly tested: boolean;
+	}
+	interface Chain {
+		readonly expr: string;
+		readonly last: ModelSlot;
+		readonly optional: boolean;
+		readonly present: readonly PresentStep[];
+		readonly pinned: readonly string[] | undefined;
+	}
+	const chainOf = (kind: string, path: readonly SlotStep[], sure: Guaranteed): Chain | string | null => {
 		let expr = 'this[low]';
 		let optional = false;
 		let last: ModelSlot | undefined;
 		let held: readonly string[] = [kind];
+		let pinned: readonly string[] | undefined = [kind];
+		const present: PresentStep[] = [];
 		for (const [i, step] of path.entries()) {
 			const slot = slotOf(step);
 			if (slot === undefined) return `${step.owner} has no slot ${step.slot}`;
@@ -233,41 +253,71 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			if (held.length !== 1 || held[0] !== step.owner) {
 				const owner = idOf(step.owner);
 				if (owner === undefined) return `${step.owner} has no kind id`;
+				if (!optional && pinned !== undefined && !pinned.includes(step.owner)) return null;
 				expr = `of(${expr}, ${owner})`;
-				optional = true;
+				optional ||= pinned === undefined || pinned.some((k) => k !== step.owner);
 			}
 			held = concreteKinds(model, slot.kinds);
-			if (nodeOf(step.owner)?.modelType !== 'list' || !slot.multiple) expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
-			optional ||= !slot.required && !slot.multiple;
+			const listed = nodeOf(step.owner)?.modelType === 'list' && slot.multiple;
+			if (!listed) expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
+			const tested: readonly string[] | undefined = optional || listed ? undefined : sure.present(step);
+			if (!optional && !listed) {
+				const narrowed = tested !== undefined && tested.length > 0 && held.some((k) => !tested.includes(k)) ? tested.flatMap((k) => idOf(k) ?? []) : [];
+				present.push({ accessor: slot.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined });
+			}
+			optional ||= !slot.required && !slot.multiple && tested === undefined;
+			pinned = tested !== undefined && tested.length > 0 ? tested : slot.required || tested !== undefined ? held : undefined;
 			if (slot.multiple && i < path.length - 1) {
 				if (step.anchor === undefined) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
 				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
 				optional = true;
+				pinned = undefined;
 			}
 			last = slot;
 		}
-		return last === undefined ? 'an empty path' : { expr, last, optional };
+		const through = present.findLastIndex((s) => s.tested) + 1;
+		return last === undefined ? 'an empty path' : { expr, last, optional, present: present.slice(0, through), pinned };
 	};
 	interface RouteRead {
 		readonly body: string;
 		readonly list: boolean;
 		readonly optional: boolean;
+		readonly present: readonly PresentStep[];
 	}
-	const readOf = (kind: string, route: MemberRoute): RouteRead | { readonly reason: string } => {
+	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed): RouteRead | { readonly reason: string } | null => {
 		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
-		const chain = chainOf(kind, route.path);
+		const chain = chainOf(kind, route.path, sure);
+		if (chain === null) return null;
 		if (typeof chain === 'string') return { reason: chain };
+		const { present } = chain;
 		const reader = admitsEnum(chain.last) ? 'readEnum' : 'read';
 		if (route.route === 'kind') {
 			const id = idOf(route.kind);
-			return id === undefined ? { reason: `${route.kind} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [route.kind] }), optional: true };
+			const optional = chain.optional || chain.pinned === undefined || chain.pinned.some((k) => k !== route.kind);
+			return id === undefined ? { reason: `${route.kind} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [route.kind] }), optional, present };
 		}
-		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false };
+		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false, present };
 		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];
 		const body = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
-		return { body, list: chain.last.multiple || listsOnly(chain.last), optional: chain.optional };
+		return { body, list: chain.last.multiple || listsOnly(chain.last), optional: chain.optional, present };
 	};
+	interface PresentTree {
+		readonly ids: string;
+		readonly sub: Map<string, PresentTree>;
+	}
+	const presentTreeOf = (paths: readonly (readonly PresentStep[])[]): Map<string, PresentTree> => {
+		const root = new Map<string, PresentTree>();
+		for (const path of paths) {
+			let at = root;
+			for (const step of path) {
+				const node = at.get(step.accessor) ?? at.set(step.accessor, { ids: step.ids, sub: new Map() }).get(step.accessor)!;
+				at = node.sub;
+			}
+		}
+		return root;
+	};
+	const presentTypeOf = (tree: ReadonlyMap<string, PresentTree>): string => tree.size === 0 ? '{}' : `{ ${[...tree].map(([accessor, node]) => `readonly ${accessor}: [${node.ids}, ${presentTypeOf(node.sub)}];`).join(' ')} }`;
 	const memberBody = (reads: readonly RouteRead[]): string => {
 		const bodies = [...new Set(reads.map((r) => r.body))];
 		const last = reads.at(-1)!;
@@ -291,26 +341,31 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			const written = new Set<string>();
 			const pins = new Map(entry.pins.map((pin) => [pin.member, pin.text]));
 			const readsByName = new Map<string, RouteRead[]>();
+			const sure = guaranteedBy(model, entry);
 			for (const route of token(kind) ? [] : entry.members) {
 				if (route.flag === true) continue;
 				const pin = pins.get(route.name);
-				const read = pin !== undefined ? { body: q(pin), list: false, optional: false } : readOf(kind, route);
+				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure);
+				if (read === null) continue;
 				if ('reason' in read) {
 					unemitted.push({ kind, vocab: entry.vocab, member: route.name, reason: read.reason });
 					continue;
 				}
 				(readsByName.get(route.name) ?? readsByName.set(route.name, []).get(route.name)!).push(read);
 			}
+			const tree = presentTreeOf([...readsByName.values()].flat().map((read) => read.present));
+			const held = tree.size === 0 ? low : `${name}$Held`;
+			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
 			for (const [member, reads] of readsByName) {
 				const fn = `${name}$${member}`;
-				emit(`function ${fn}(this: Held<${low}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
+				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
 				fields.push(`${member}: ${fn}`);
 				written.add(member);
 			}
 			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
 			if (varies(kind) && (claimersOf.get(entry.vocab) ?? []).every(varies)) fields.push('$value: value');
 			emit(
-				`function ${name}(n: ${low}, set = 0): VocabViews[${q(entry.vocab)}] {`,
+				`function ${name}(n: ${held}, set = 0): VocabViews[${q(entry.vocab)}] {`,
 				`\treturn { $type: kindOf(n)${fields.map((f) => `, ${f}`).join('')}, [low]: n, [flags]: set };`,
 				'}',
 				''

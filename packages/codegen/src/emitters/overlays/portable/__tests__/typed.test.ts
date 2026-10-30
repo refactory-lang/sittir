@@ -59,6 +59,19 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
 	});
 
+	it("types an entry's node by what its claim tests present, and reads through that guarantee", () => {
+		const held = 'ConstItemAsDeclarationConstantPublicRestricted115$Held';
+		expect(typed.source).toContain(
+			`type ${held} = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, {}]; }]; }]; }>;`
+		);
+		expect(typed.source).toContain(`function ConstItemAsDeclarationConstantPublicRestricted115(n: ${held}, set = 0)`);
+		expect(typed.source).toMatch(/function ConstItemAsDeclarationConstantPublicRestricted115\$scope\(this: Held<ConstItemAsDeclarationConstantPublicRestricted115\$Held>\) \{\n\treturn read\(of\(this\[low\]\.visibilityModifier\(\)\.content\(\), TSKindId\.VisibilityModifierPub\)\.visibilityModifierPubScope\(\)\);/);
+	});
+
+	it('writes no route through a kind the claim rules out', () => {
+		expect(typed.source).toContain('function VisibilityModifierPubAsModifierVisibilityPublicRestricted357$scope(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted357$Held>) {\n\treturn read(this[low].visibilityModifierPubScope().content());\n}');
+	});
+
 	it('reports what it skipped with the reason', () => {
 		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
 	});
