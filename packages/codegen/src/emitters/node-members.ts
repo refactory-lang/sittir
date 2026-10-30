@@ -79,7 +79,7 @@ function triviaMember(side: 'leading' | 'trailing' | 'inner'): string {
 }
 
 export function nodeMemberLines(spec: NodeMemberSpec): string[] {
-	const lines: string[] = [];
+	const lines: string[] = spec.parsed ? [] : ['    $_layout: undefined,'];
 	lines.push(...withBlockLines(spec.setters, withEntry));
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);

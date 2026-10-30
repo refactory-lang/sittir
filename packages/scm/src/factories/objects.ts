@@ -40,6 +40,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	const node = {
 		$type: TSKindId.Program as const,
 		_definitions,
+		$_layout: undefined,
 		$with: {
 			definitions: (...vs: Admit<T.Definition>[]) =>
 				rebuilt(node, handle, () => buildProgram(...restItems('definitions', vs)))
@@ -78,6 +79,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	const node = {
 		$type: TSKindId.EscapeSequence as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value))
 		},
@@ -103,6 +105,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Identifier as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -125,6 +128,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImmediateIdentifier as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -147,6 +151,7 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	const node = {
 		$type: TSKindId.Capture as const,
 		_name,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.ImmediateIdentifier>) => rebuilt(node, handle, () => buildCapture(value))
 		},
@@ -190,6 +195,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	const node = {
 		$type: TSKindId.String as const,
 		_string_content,
+		$_layout: undefined,
 		$with: {
 			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value))
 		},
@@ -235,6 +241,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	const node = {
 		$type: TSKindId.ImmediateString as const,
 		_string_content,
+		$_layout: undefined,
 		$with: {
 			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildImmediateString(value))
 		},
@@ -265,6 +272,7 @@ export function buildStringContent(
 	const node = {
 		$type: TSKindId.StringContent as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			contents: (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
 				rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
@@ -296,6 +304,7 @@ export function buildParameters(
 	const node = {
 		$type: TSKindId.Parameters as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
 				rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
@@ -332,6 +341,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	const node = {
 		$type: TSKindId.Comment as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
 		},
@@ -359,6 +369,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 		$type: TSKindId.List as const,
 		_definitions,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			definitions: (...values: Admit<NonEmptyArray<T.Definition>>) =>
 				rebuilt(node, handle, () => buildList({ ...config, definitions: restItems('definitions', values) })),
@@ -396,6 +407,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 		$type: TSKindId.Grouping as const,
 		_grouping_group,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			groupingGroups: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -441,6 +453,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 		$type: TSKindId.MissingNode as const,
 		_name,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			name: (value?: Admit<T.Identifier | T.String>) =>
 				rebuilt(node, handle, () => buildMissingNode({ ...config, name: value })),
@@ -477,6 +490,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 		$type: TSKindId.AnonymousNode as const,
 		_name,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
 				rebuilt(node, handle, () => buildAnonymousNode({ ...config, name: value })),
@@ -514,6 +528,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 		$type: TSKindId.FieldDefinition as const,
 		_name,
 		_definition,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildFieldDefinition({ ...config, name: value })),
@@ -543,6 +558,7 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	const node = {
 		$type: TSKindId.NegatedField as const,
 		_identifier,
+		$_layout: undefined,
 		$with: {
 			identifier: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNegatedField(value))
 		},
@@ -579,6 +595,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 		_name,
 		_type,
 		_parameters,
+		$_layout: undefined,
 		$with: {
 			prefix: (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
 				rebuilt(node, handle, () => buildPredicate({ ...config, prefix: value })),
@@ -618,6 +635,7 @@ export function buildListElementQuantifier(
 	const node = {
 		$type: TSKindId.ListElementQuantifier as const,
 		_quantifier,
+		$_layout: undefined,
 		$with: {
 			quantifier: (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
 				rebuilt(node, handle, () => buildListElementQuantifier(value))
@@ -652,6 +670,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 		$type: TSKindId.GroupExpressionArm as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
 				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, left: value })),
@@ -689,6 +708,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 		$type: TSKindId.NamedNodeExpressionArm as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
 				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, left: value })),
@@ -724,6 +744,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 		$type: TSKindId.GroupingGroup as const,
 		_group_expression,
 		_anchor,
+		$_layout: undefined,
 		$with: {
 			groupExpression: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
 				rebuilt(node, handle, () => buildGroupingGroup({ ...config, groupExpression: value })),
@@ -753,6 +774,7 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringContentText as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -792,6 +814,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 		_name,
 		_named_node_group,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
 				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, name: value })),
@@ -847,6 +870,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		_name,
 		_named_node_group,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			supertype: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, supertype: value })),
@@ -895,6 +919,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		$type: TSKindId.NamedNodeGroupChildren as const,
 		_anchor,
 		_named_node_expressions,
+		$_layout: undefined,
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value })),
@@ -956,6 +981,7 @@ export function buildNamedNodeGroupAnchoredLast(
 		_anchor,
 		_named_node_expressions,
 		_last,
+		$_layout: undefined,
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value })),

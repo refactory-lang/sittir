@@ -19,6 +19,7 @@ describe('a node writes its members in its literal', () => {
 		expect(body).toContain('$render: () => renderText(handle, node),');
 		expect(body).toContain("leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),");
 		expect(body).toContain('$engine: handle && (() => handle.current)');
+		expect(body).toContain('$_layout: undefined,');
 		expect(body).not.toMatch(/withMethods|withAccessors|defineProperty/);
 	});
 
@@ -27,6 +28,7 @@ describe('a node writes its members in its literal', () => {
 		expect(body).toContain('$with: {');
 		expect(body).toMatch(/callee: \(value[^)]*\) =>\s+rebuilt\(node, handle, \(\) => buildCallExpression\(\{ \.\.\.config, callee: value \}/);
 		expect(body).toContain('callee: () => hydrateStoredSlot(node, "_callee"),');
+		expect(body).toContain('$_layout: undefined,');
 		expect(body).not.toMatch(/withMethods|withAccessors|defineProperty/);
 	});
 });
@@ -55,6 +57,7 @@ describe('a wrapped node writes its members in its literal', () => {
 		expect(body).toContain('const handle = currentHandle();');
 		expect(body).toContain('$render: () => renderText(handle, node),');
 		expect(body).toMatch(/rebuilt\(node, handle, \(\) =>\s+wrapCallExpression\(\{ \.\.\.\$edited\(data\)/);
+		expect(body).not.toContain('$_layout: undefined');
 		expect(body).not.toMatch(/withMethods|defineProperty/);
 	});
 });

@@ -10,6 +10,7 @@ import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellF
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
 import type { LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
+import { keepExemplar } from './exemplars.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { Source } from './source.ts';
 import { sourceOf } from './source-stamp.ts';
@@ -242,6 +243,7 @@ export class BuiltArena {
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
+	readonly #exemplars: object[] = [];
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 
@@ -649,7 +651,7 @@ export class BuiltArena {
 
 	#view(at: number): object {
 		const position: RecordPosition = { $type: this.kindAt(at), $tree: this.tree, $at: at, $_layout: undefined };
-		return this.#wrap(position, this.tree) as object;
+		return keepExemplar(this.#exemplars, this.#wrap(position, this.tree) as object);
 	}
 
 	/** The handle of the drafted `record`, placed past every record its cells name. Each built leaf it holds is placed at its site there. */
@@ -666,7 +668,7 @@ export class BuiltArena {
 
 	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
 	leaf(maker: LeafMaker, text: string): object {
-		return maker(this.tree, { at: 0, text }, undefined);
+		return keepExemplar(this.#exemplars, maker(this.tree, { at: 0, text }, undefined));
 	}
 
 	/**
@@ -677,7 +679,7 @@ export class BuiltArena {
 	leafAt(kind: number, at: number, holder: number, word: number, item: number): object {
 		const maker = this.#views.leaves[kind];
 		if (maker === undefined) throw new Error(`no builder writes leaves of kind ${kind}, so the arena has no leaf handle for one`);
-		return maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item));
+		return keepExemplar(this.#exemplars, maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item)));
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {

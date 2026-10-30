@@ -124,6 +124,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 		$type: TSKindId.SourceFile as const,
 		_shebang,
 		_statements,
+		$_layout: undefined,
 		$with: {
 			shebang: (value?: Admit<T.Shebang>) =>
 				rebuilt(node, handle, () => buildSourceFile({ ...config, shebang: value })),
@@ -186,6 +187,7 @@ export function buildExpressionStatement(
 	const node = {
 		$type: TSKindId.ExpressionStatement as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -232,6 +234,7 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 		$type: TSKindId.MacroRule as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<T.TokenTreePattern>) =>
 				rebuilt(node, handle, () => buildMacroRule({ ...config, left: value })),
@@ -265,6 +268,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 		$type: TSKindId.TokenBindingPattern as const,
 		_name,
 		_type,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Metavariable>) =>
 				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, name: value })),
@@ -314,6 +318,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 		_token_patterns,
 		_separator,
 		_operator,
+		$_layout: undefined,
 		$with: {
 			tokenPatterns: (
 				...values: Admit<
@@ -363,6 +368,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 		_tokens,
 		_separator,
 		_operator,
+		$_layout: undefined,
 		$with: {
 			tokens: (...values: Admit<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]>) =>
 				rebuilt(node, handle, () => buildTokenRepetition({ ...config, tokens: restItems('tokens', values) })),
@@ -649,6 +655,7 @@ export function buildNonSpecialToken(
 	const node = {
 		$type: TSKindId.NonSpecialToken as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -798,6 +805,7 @@ function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
 	const node = {
 		$type: TSKindId.AttributeItem as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value))
 		},
@@ -846,6 +854,7 @@ function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeIt
 	const node = {
 		$type: TSKindId.InnerAttributeItem as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
 		},
@@ -882,6 +891,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		$type: TSKindId.Attribute as const,
 		_path,
 		_input,
+		$_layout: undefined,
 		$with: {
 			path: (value: Admit<NonNullable<T.Attribute.Config>['path']>) =>
 				rebuilt(node, handle, () => buildAttribute({ ...config, path: value })),
@@ -915,6 +925,7 @@ export function buildDeclarationList(...children: Admit<T.DeclarationStatement[]
 	const node = {
 		$type: TSKindId.DeclarationList as const,
 		_declarations,
+		$_layout: undefined,
 		$with: {
 			declarations: (...vs: Admit<T.DeclarationStatement>[]) =>
 				rebuilt(node, handle, () => buildDeclarationList(...restItems('declarations', vs)))
@@ -977,6 +988,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 		_type_parameters,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildUnionItem({ ...config, visibilityModifier: value })),
@@ -1078,6 +1090,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 		_type_parameters,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildEnumItem({ ...config, visibilityModifier: value })),
@@ -1173,6 +1186,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 	const node = {
 		$type: TSKindId.EnumVariantList as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1267,6 +1281,7 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bo
 		_name,
 		_body,
 		_value,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildEnumVariant({ ...config, visibilityModifier: value })),
@@ -1332,6 +1347,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 	const node = {
 		$type: TSKindId.FieldDeclarationList as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1423,6 +1439,7 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 		_visibility_modifier,
 		_name,
 		_type,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, visibilityModifier: value })),
@@ -1488,6 +1505,7 @@ function _buildOrderedFieldDeclarationList(
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationList as const,
 		_attributes,
+		$_layout: undefined,
 		$with: {
 			attributes: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1578,6 +1596,7 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 		_visibility_modifier,
 		_name,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, visibilityModifier: value })),
@@ -1636,6 +1655,7 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 		_name,
 		_type,
 		_value,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildConstItem({ ...config, visibilityModifier: value })),
@@ -1702,6 +1722,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		_name,
 		_type,
 		_value,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value })),
@@ -1785,6 +1806,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		_where_clause,
 		_value,
 		_trailing_where_clause,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildTypeItem({ ...config, visibilityModifier: value })),
@@ -1900,6 +1922,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		_return_type,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildFunctionItem({ ...config, visibilityModifier: value })),
@@ -2009,6 +2032,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 		_parameters,
 		_return_type,
 		_where_clause,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, visibilityModifier: value })),
@@ -2091,6 +2115,7 @@ export function buildFunctionModifiers(
 	const node = {
 		$type: TSKindId.FunctionModifiers as const,
 		_modifier,
+		$_layout: undefined,
 		$with: {
 			modifiers: (
 				...vs: NonEmptyArray<
@@ -2152,6 +2177,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 	const node = {
 		$type: TSKindId.WhereClause as const,
 		_where_predicates,
+		$_layout: undefined,
 		$with: {
 			wherePredicates: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2226,6 +2252,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		$type: TSKindId.WherePredicate as const,
 		_left,
 		_bounds,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.WherePredicate.Config>['left']>) =>
 				rebuilt(node, handle, () => buildWherePredicate({ ...config, left: value })),
@@ -2298,6 +2325,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		_bounds,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildTraitItem({ ...config, visibilityModifier: value })),
@@ -2384,6 +2412,7 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 		_type_parameters,
 		_bounds,
 		_where_clause,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildAssociatedType({ ...config, name: value })),
@@ -2443,6 +2472,7 @@ export function buildTraitBounds(
 	const node = {
 		$type: TSKindId.TraitBounds as const,
 		_bounds,
+		$_layout: undefined,
 		$with: {
 			bounds: (
 				...vs: NonEmptyArray<Admit<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types>>
@@ -2482,6 +2512,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 		$type: TSKindId.HigherRankedTraitBound as const,
 		_type_parameters,
 		_type,
+		$_layout: undefined,
 		$with: {
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2527,6 +2558,7 @@ export function buildRemovedTraitBound(value: Admit<T.Type | T.TypeIdentifier.Ty
 	const node = {
 		$type: TSKindId.RemovedTraitBound as const,
 		_type,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildRemovedTraitBound(value))
@@ -2587,6 +2619,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 	const node = {
 		$type: TSKindId.TypeParameters as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2671,6 +2704,7 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 		_name,
 		_type,
 		_default,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildConstParameter({ ...config, name: value })),
@@ -2720,6 +2754,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		_name,
 		_bounds,
 		_default,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
@@ -2760,6 +2795,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 		$type: TSKindId.LifetimeParameter as const,
 		_name,
 		_bounds,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Lifetime>) =>
 				rebuilt(node, handle, () => buildLifetimeParameter({ ...config, name: value })),
@@ -2818,6 +2854,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 		_type,
 		_value,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.LetDeclaration.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutable: value })),
@@ -2873,6 +2910,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 		$type: TSKindId.UseDeclaration as const,
 		_visibility_modifier,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildUseDeclaration({ ...config, visibilityModifier: value })),
@@ -2913,6 +2951,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 		$type: TSKindId.ScopedUseList as const,
 		_path,
 		_list,
+		$_layout: undefined,
 		$with: {
 			path: (value?: Admit<NonNullable<T.ScopedUseList.Config>['path']>) =>
 				rebuilt(node, handle, () => buildScopedUseList({ ...config, path: value })),
@@ -3001,6 +3040,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 	const node = {
 		$type: TSKindId.UseList as const,
 		_use_clauses,
+		$_layout: undefined,
 		$with: {
 			useClauses: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3078,6 +3118,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		$type: TSKindId.UseAsClause as const,
 		_name,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
 				rebuilt(node, handle, () => buildUseAsClause({ ...config, name: value })),
@@ -3129,6 +3170,7 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 	const node = {
 		$type: TSKindId.UseWildcard as const,
 		_use_wildcard_group,
+		$_layout: undefined,
 		$with: {
 			useWildcardGroup: (value?: Admit<T.UseWildcardGroup>) => rebuilt(node, handle, () => _buildUseWildcard(value)),
 			path: (...args: unknown[]) =>
@@ -3176,6 +3218,7 @@ export function buildParameters(
 	const node = {
 		$type: TSKindId.Parameters as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>) =>
 				rebuilt(node, handle, () => buildParameters(value))
@@ -3211,6 +3254,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 		_reference,
 		_lifetime,
 		_mutable,
+		$_layout: undefined,
 		$with: {
 			reference: (value?: Admit<NonNullable<T.SelfParameter.Config>['reference']>) =>
 				rebuilt(node, handle, () => buildSelfParameter({ ...config, reference: value })),
@@ -3248,6 +3292,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 		$type: TSKindId.VariadicParameter as const,
 		_mutable,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.VariadicParameter.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildVariadicParameter({ ...config, mutable: value })),
@@ -3288,6 +3333,7 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 		_mutable,
 		_name,
 		_type,
+		$_layout: undefined,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.Parameter.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildParameter({ ...config, mutable: value })),
@@ -3343,6 +3389,7 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 	const node = {
 		$type: TSKindId.ExternModifier as const,
 		_abi,
+		$_layout: undefined,
 		$with: {
 			abi: (value?: Admit<T.StringLiteral>) => rebuilt(node, handle, () => _buildExternModifier(value))
 		},
@@ -3372,6 +3419,7 @@ export function buildVisibilityModifier(
 	const node = {
 		$type: TSKindId.VisibilityModifier as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>>) =>
 				rebuilt(node, handle, () => buildVisibilityModifier(value))
@@ -3405,6 +3453,7 @@ export function buildBracketedType(
 	const node = {
 		$type: TSKindId.BracketedType as const,
 		_type,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildBracketedType(value))
@@ -3443,6 +3492,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 		$type: TSKindId.QualifiedType as const,
 		_type,
 		_alias,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<NonNullable<T.QualifiedType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildQualifiedType({ ...config, type: value })),
@@ -3472,6 +3522,7 @@ export function buildLifetime(value: Admit<T.Identifier>): T.Lifetime.Bound {
 	const node = {
 		$type: TSKindId.Lifetime as const,
 		_name,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildLifetime(value))
 		},
@@ -3506,6 +3557,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 		$type: TSKindId.ArrayType as const,
 		_element,
 		_length,
+		$_layout: undefined,
 		$with: {
 			element: (value: Admit<NonNullable<T.ArrayType.Config>['element']>) =>
 				rebuilt(node, handle, () => buildArrayType({ ...config, element: value })),
@@ -3561,6 +3613,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 	const node = {
 		$type: TSKindId.ForLifetimes as const,
 		_lifetimes,
+		$_layout: undefined,
 		$with: {
 			lifetimes: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3652,6 +3705,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		_content,
 		_parameters,
 		_return_type,
+		$_layout: undefined,
 		$with: {
 			forLifetimes: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3717,6 +3771,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 	const node = {
 		$type: TSKindId.TupleType as const,
 		_types,
+		$_layout: undefined,
 		$with: {
 			types: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3793,6 +3848,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 		$type: TSKindId.GenericFunction as const,
 		_function,
 		_type_arguments,
+		$_layout: undefined,
 		$with: {
 			function: (value: Admit<T.Identifier | T.ScopedIdentifier | T.FieldExpression>) =>
 				rebuilt(node, handle, () => buildGenericFunction({ ...config, function: value })),
@@ -3841,6 +3897,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$type: TSKindId.GenericType as const,
 		_type,
 		_type_arguments,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildGenericType({ ...config, type: value })),
@@ -3894,6 +3951,7 @@ export function buildGenericTypeWithTurbofish(
 		$type: TSKindId.GenericTypeWithTurbofish as const,
 		_type,
 		_type_arguments,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildGenericTypeWithTurbofish({ ...config, type: value })),
@@ -3946,6 +4004,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bo
 		$type: TSKindId.BoundedType as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.BoundedType.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBoundedType({ ...config, left: value })),
@@ -4002,6 +4061,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 	const node = {
 		$type: TSKindId.UseBounds as const,
 		_bounds,
+		$_layout: undefined,
 		$with: {
 			bounds: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -4102,6 +4162,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 	const node = {
 		$type: TSKindId.TypeArguments as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -4189,6 +4250,7 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 		_name,
 		_type_arguments,
 		_type,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeBinding({ ...config, name: value })),
@@ -4244,6 +4306,7 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 		_lifetime,
 		_exclusive,
 		_type,
+		$_layout: undefined,
 		$with: {
 			lifetime: (value?: Admit<T.Lifetime>) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, lifetime: value })),
@@ -4288,6 +4351,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 		$type: TSKindId.AbstractType as const,
 		_type_parameters,
 		_trait,
+		$_layout: undefined,
 		$with: {
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -4364,6 +4428,7 @@ export function buildDynamicType(
 	const node = {
 		$type: TSKindId.DynamicType as const,
 		_trait,
+		$_layout: undefined,
 		$with: {
 			trait: (
 				value: Admit<
@@ -4411,6 +4476,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 		$type: TSKindId.MacroInvocation as const,
 		_function,
 		_arguments,
+		$_layout: undefined,
 		$with: {
 			function: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroInvocation({ ...config, function: value })),
@@ -4458,6 +4524,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 		$type: TSKindId.ScopedIdentifier as const,
 		_qualifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			qualifier: (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['qualifier']>) =>
 				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, qualifier: value })),
@@ -4508,6 +4575,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		_qualifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier']>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, qualifier: value })),
@@ -4552,6 +4620,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		_qualifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier']>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, qualifier: value })),
@@ -4586,6 +4655,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		$type: TSKindId.UnaryExpression as const,
 		_operator,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
@@ -4617,6 +4687,7 @@ export function buildTryExpression(value: Admit<T.Expression>): T.TryExpression.
 	const node = {
 		$type: TSKindId.TryExpression as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildTryExpression(value))
 		},
@@ -4651,6 +4722,7 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config): T.Bina
 		_left,
 		_operator,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value })),
@@ -4691,6 +4763,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		$type: TSKindId.AssignmentExpression as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.AssignmentExpression.Config>['left']>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
@@ -4731,6 +4804,7 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 		_left,
 		_operator,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.CompoundAssignmentExpr.Config>['left']>) =>
 				rebuilt(node, handle, () => buildCompoundAssignmentExpr({ ...config, left: value })),
@@ -4774,6 +4848,7 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 		$type: TSKindId.TypeCastExpression as const,
 		_expression,
 		_type,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.TypeCastExpression.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, expression: value })),
@@ -4805,6 +4880,7 @@ export function buildReturnExpression(value?: Admit<T.Expression>): T.ReturnExpr
 	const node = {
 		$type: TSKindId.ReturnExpression as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value?: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReturnExpression(value))
@@ -4833,6 +4909,7 @@ export function buildYieldExpression(value?: Admit<T.Expression>): T.YieldExpres
 	const node = {
 		$type: TSKindId.YieldExpression as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value?: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildYieldExpression(value))
 		},
@@ -4871,6 +4948,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		$type: TSKindId.CallExpression as const,
 		_function,
 		_arguments,
+		$_layout: undefined,
 		$with: {
 			function: (value: Admit<NonNullable<T.CallExpression.Config>['function']>) =>
 				rebuilt(node, handle, () => buildCallExpression({ ...config, function: value })),
@@ -4938,6 +5016,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 	const node = {
 		$type: TSKindId.Arguments as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -5011,6 +5090,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression>): T.Pare
 	const node = {
 		$type: TSKindId.ParenthesizedExpression as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildParenthesizedExpression(value))
@@ -5045,6 +5125,7 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 		$type: TSKindId.TupleExpression as const,
 		_attributes,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () => buildTupleExpression({ ...config, attributes: restItems('attributes', values) })),
@@ -5090,6 +5171,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 		$type: TSKindId.StructExpression as const,
 		_name,
 		_body,
+		$_layout: undefined,
 		$with: {
 			name: (
 				value: Admit<
@@ -5162,6 +5244,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 	const node = {
 		$type: TSKindId.FieldInitializerList as const,
 		_initializers,
+		$_layout: undefined,
 		$with: {
 			initializers: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -5243,6 +5326,7 @@ export function buildShorthandFieldInitializer(
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		_attributes,
 		_field,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -5288,6 +5372,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 		_attributes,
 		_field,
 		_value,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, attributes: restItems('attributes', values) })),
@@ -5322,6 +5407,7 @@ export function buildBaseFieldInitializer(value: Admit<T.Expression>): T.BaseFie
 	const node = {
 		$type: TSKindId.BaseFieldInitializer as const,
 		_value,
+		$_layout: undefined,
 		$with: {
 			value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildBaseFieldInitializer(value))
 		},
@@ -5366,6 +5452,7 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 		_condition,
 		_consequence,
 		_alternative,
+		$_layout: undefined,
 		$with: {
 			condition: (value: Admit<NonNullable<T.IfExpression.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildIfExpression({ ...config, condition: value })),
@@ -5404,6 +5491,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 		$type: TSKindId.LetCondition as const,
 		_pattern,
 		_value,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.LetCondition.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildLetCondition({ ...config, pattern: value })),
@@ -5439,6 +5527,7 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 		$type: TSKindId.LetChain as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.LetChain.Config>['left']>) =>
 				rebuilt(node, handle, () => buildLetChain({ ...config, left: value })),
@@ -5470,6 +5559,7 @@ export function buildElseClause(value: Admit<T.Block | T.IfExpression>): T.ElseC
 	const node = {
 		$type: TSKindId.ElseClause as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Block | T.IfExpression>) => rebuilt(node, handle, () => buildElseClause(value))
 		},
@@ -5501,6 +5591,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 		$type: TSKindId.MatchExpression as const,
 		_subject,
 		_body,
+		$_layout: undefined,
 		$with: {
 			subject: (value: Admit<NonNullable<T.MatchExpression.Config>['subject']>) =>
 				rebuilt(node, handle, () => buildMatchExpression({ ...config, subject: value })),
@@ -5534,6 +5625,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 	const node = {
 		$type: TSKindId.MatchBlock as const,
 		_match_block_arms,
+		$_layout: undefined,
 		$with: {
 			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => buildMatchBlock(value)),
 			arms: (...args: unknown[]) =>
@@ -5626,6 +5718,7 @@ export function buildLastMatchArm(
 		_match,
 		_body,
 		_trailing_comma,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
@@ -5709,6 +5802,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 		$type: TSKindId.MatchPattern as const,
 		_pattern,
 		_condition,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.MatchPattern.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildMatchPattern({ ...config, pattern: value })),
@@ -5750,6 +5844,7 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 		_label,
 		_condition,
 		_body,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildWhileExpression({ ...config, label: value })),
 			condition: (value: Admit<NonNullable<T.WhileExpression.Config>['condition']>) =>
@@ -5788,6 +5883,7 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 		$type: TSKindId.LoopExpression as const,
 		_label,
 		_body,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildLoopExpression({ ...config, label: value })),
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => buildLoopExpression({ ...config, body: value }))
@@ -5830,6 +5926,7 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 		_left,
 		_right,
 		_body,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildForExpression({ ...config, label: value })),
 			left: (value: Admit<NonNullable<T.ForExpression.Config>['left']>) =>
@@ -5891,6 +5988,7 @@ function _buildConstBlock(value: Admit<T.Block>): T.ConstBlock.Bound {
 	const node = {
 		$type: TSKindId.ConstBlock as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildConstBlock(value))
 		},
@@ -5930,6 +6028,7 @@ export function buildClosureParameters(
 	const node = {
 		$type: TSKindId.ClosureParameters as const,
 		_parameters,
+		$_layout: undefined,
 		$with: {
 			parameters: (...vs: Admit<(T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types>[]) =>
 				rebuilt(node, handle, () => buildClosureParameters(...restItems('parameters', vs)))
@@ -5957,6 +6056,7 @@ export function buildLabel(value: Admit<T.Identifier>): T.Label.Bound {
 	const node = {
 		$type: TSKindId.Label as const,
 		_name,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildLabel(value))
 		},
@@ -5990,6 +6090,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 		$type: TSKindId.BreakExpression as const,
 		_label,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildBreakExpression({ ...config, label: value })),
 			expression: (value?: Admit<NonNullable<T.BreakExpression.Config>['expression']>) =>
@@ -6020,6 +6121,7 @@ export function buildContinueExpression(value?: Admit<T.Label>): T.ContinueExpre
 	const node = {
 		$type: TSKindId.ContinueExpression as const,
 		_label,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildContinueExpression(value))
 		},
@@ -6051,6 +6153,7 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 		$type: TSKindId.IndexExpression as const,
 		_object,
 		_index,
+		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.IndexExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildIndexExpression({ ...config, object: value })),
@@ -6082,6 +6185,7 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 	const node = {
 		$type: TSKindId.AwaitExpression as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAwaitExpression(value))
 		},
@@ -6117,6 +6221,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 		$type: TSKindId.FieldExpression as const,
 		_object,
 		_property,
+		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.FieldExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildFieldExpression({ ...config, object: value })),
@@ -6176,6 +6281,7 @@ function _buildUnsafeBlock(value: Admit<T.Block>): T.UnsafeBlock.Bound {
 	const node = {
 		$type: TSKindId.UnsafeBlock as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildUnsafeBlock(value))
 		},
@@ -6206,6 +6312,7 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 		$type: TSKindId.AsyncBlock as const,
 		_move,
 		_body,
+		$_layout: undefined,
 		$with: {
 			move: (value?: Admit<NonNullable<T.AsyncBlock.Config>['move']>) =>
 				rebuilt(node, handle, () => buildAsyncBlock({ ...config, move: value })),
@@ -6239,6 +6346,7 @@ export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlo
 		$type: TSKindId.GenBlock as const,
 		_move,
 		_body,
+		$_layout: undefined,
 		$with: {
 			move: (value?: Admit<NonNullable<T.GenBlock.Config>['move']>) =>
 				rebuilt(node, handle, () => buildGenBlock({ ...config, move: value })),
@@ -6295,6 +6403,7 @@ function _buildTryBlock(value: Admit<T.Block>): T.TryBlock.Bound {
 	const node = {
 		$type: TSKindId.TryBlock as const,
 		_body,
+		$_layout: undefined,
 		$with: {
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildTryBlock(value))
 		},
@@ -6340,6 +6449,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound 
 		_label,
 		_statements,
 		_trailing_expression,
+		$_layout: undefined,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildBlock({ ...config, label: value })),
 			statements: (...values: Admit<NonNullable<NonNullable<T.Block.Config>['statements']>[number][]>) =>
@@ -6380,6 +6490,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 		$type: TSKindId.GenericPattern as const,
 		_name,
 		_type_arguments,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier | T.ScopedIdentifier>) =>
 				rebuilt(node, handle, () => buildGenericPattern({ ...config, name: value })),
@@ -6447,6 +6558,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const node = {
 		$type: TSKindId.TuplePattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -6540,6 +6652,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 	const node = {
 		$type: TSKindId.SlicePattern as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -6614,6 +6727,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 		$type: TSKindId.TupleStructPattern as const,
 		_type,
 		_fields,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>) =>
 				rebuilt(node, handle, () => buildTupleStructPattern({ ...config, type: value })),
@@ -6657,6 +6771,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 		$type: TSKindId.StructPattern as const,
 		_type,
 		_fields,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildStructPattern({ ...config, type: value })),
@@ -6694,6 +6809,7 @@ export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
 	const node = {
 		$type: TSKindId.MutPattern as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildMutPattern(value))
 		},
@@ -6719,6 +6835,7 @@ export function buildRefPattern(value: Admit<T.Pattern>): T.RefPattern.Bound {
 	const node = {
 		$type: TSKindId.RefPattern as const,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			pattern: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildRefPattern(value))
 		},
@@ -6750,6 +6867,7 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 		$type: TSKindId.CapturedPattern as const,
 		_name,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildCapturedPattern({ ...config, name: value })),
@@ -6784,6 +6902,7 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 		$type: TSKindId.ReferencePattern as const,
 		_exclusive,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			exclusive: (value?: Admit<NonNullable<T.ReferencePattern.Config>['exclusive']>) =>
 				rebuilt(node, handle, () => buildReferencePattern({ ...config, exclusive: value })),
@@ -6815,6 +6934,7 @@ export function buildNegativeLiteral(value: Admit<T.IntegerLiteral | T.FloatLite
 	const node = {
 		$type: TSKindId.NegativeLiteral as const,
 		_value,
+		$_layout: undefined,
 		$with: {
 			value: (value: Admit<T.IntegerLiteral | T.FloatLiteral>) =>
 				rebuilt(node, handle, () => buildNegativeLiteral(value))
@@ -6849,6 +6969,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 		$type: TSKindId.StringLiteral as const,
 		_string_open,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			stringOpen: (value: Admit<T.StringOpen>) =>
 				rebuilt(node, handle, () => buildStringLiteral({ ...config, stringOpen: value })),
@@ -6901,6 +7022,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		_raw_string_literal_start,
 		_string_content,
 		_raw_string_literal_end,
+		$_layout: undefined,
 		$with: {
 			rawStringLiteralStart: (value: Admit<T.RawStringLiteralStart>) =>
 				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralStart: value })),
@@ -6945,6 +7067,7 @@ export function buildLineComment(
 	const node = {
 		$type: TSKindId.LineComment as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>
@@ -6976,6 +7099,7 @@ export function buildBlockComment(
 	const node = {
 		$type: TSKindId.BlockComment as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value?: Admit<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular>) =>
 				rebuilt(node, handle, () => buildBlockComment(value))
@@ -6999,6 +7123,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Identifier as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7031,6 +7156,7 @@ export function buildShebang(input: string, affix: boolean = true): T.Shebang.Bo
 	const node = {
 		$type: TSKindId.Shebang as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildShebang(value))
 		},
@@ -7071,6 +7197,7 @@ export function buildMetavariable(input: string, affix: boolean = true): T.Metav
 	const node = {
 		$type: TSKindId.Metavariable as const,
 		_name,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<string>) => rebuilt(node, handle, () => buildMetavariable(value))
 		},
@@ -7121,6 +7248,7 @@ function _buildMacroRules(
 		$type: TSKindId.MacroRules as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.MacroRule>>) => rebuilt(node, handle, () => buildMacroRules(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -7223,6 +7351,7 @@ function _buildEnumVariantListElements(
 		$type: TSKindId.EnumVariantListElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7338,6 +7467,7 @@ function _buildFieldDeclarationListElements(
 		$type: TSKindId.FieldDeclarationListElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7453,6 +7583,7 @@ function _buildOrderedFieldDeclarationListElements(
 		$type: TSKindId.OrderedFieldDeclarationListElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7552,6 +7683,7 @@ function _buildWherePredicates(
 		$type: TSKindId.WherePredicates as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.WherePredicate>>) =>
 				rebuilt(node, handle, () => buildWherePredicates(options, ...vs)),
@@ -7666,6 +7798,7 @@ function _buildTypeParametersElements(
 		$type: TSKindId.TypeParametersElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -7834,6 +7967,7 @@ function _buildUseClauses(
 		$type: TSKindId.UseClauses as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (
 				...vs: NonEmptyArray<
@@ -7977,6 +8111,7 @@ function _buildParametersElements(
 		$type: TSKindId.ParametersElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -8080,6 +8215,7 @@ function _buildLifetimes(
 		$type: TSKindId.Lifetimes as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Lifetime>>) => rebuilt(node, handle, () => buildLifetimes(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -8171,6 +8307,7 @@ function _buildTypes(
 		$type: TSKindId.Types as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildTypes(options, ...vs)),
@@ -8268,6 +8405,7 @@ function _buildUseBoundsElements(
 		$type: TSKindId.UseBoundsElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildUseBoundsElements(options, ...vs)),
@@ -8380,6 +8518,7 @@ function _buildTypeArgumentsElements(
 		$type: TSKindId.TypeArgumentsElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -8495,6 +8634,7 @@ function _buildArgumentsElements(
 		$type: TSKindId.ArgumentsElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -8589,6 +8729,7 @@ function _buildExpressions(
 		$type: TSKindId.Expressions as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressions(options, ...vs)),
@@ -8684,6 +8825,7 @@ function _buildFieldInitializerListElements(
 		$type: TSKindId.FieldInitializerListElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>) =>
 				rebuilt(node, handle, () => buildFieldInitializerListElements(options, ...vs)),
@@ -8774,6 +8916,7 @@ function _buildTuplePatternElements(
 		$type: TSKindId.TuplePatternElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>) =>
 				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
@@ -8860,6 +9003,7 @@ function _buildPatterns(
 		$type: TSKindId.Patterns as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatterns(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -8954,6 +9098,7 @@ function _buildStructPatternElements(
 		$type: TSKindId.StructPatternElements as const,
 		_item,
 		_delimiter,
+		$_layout: undefined,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>) =>
 				rebuilt(node, handle, () => buildStructPatternElements(options, ...vs)),
@@ -9028,6 +9173,7 @@ export function buildUseWildcardGroup(
 	const node = {
 		$type: TSKindId.UseWildcardGroup as const,
 		_path,
+		$_layout: undefined,
 		$with: {
 			path: (
 				value?: Admit<
@@ -9060,6 +9206,7 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TokenRepetitionPatternText as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9082,6 +9229,7 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringOpen as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9129,6 +9277,7 @@ export function buildIntegerLiteralDecimal(
 		$type: TSKindId.IntegerLiteralDecimal as const,
 		_content,
 		_suffix,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerLiteralDecimal({ ...config, content: value })),
@@ -9199,6 +9348,7 @@ export function buildIntegerLiteralHex(
 		$type: TSKindId.IntegerLiteralHex as const,
 		_content,
 		_suffix,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerLiteralHex({ ...config, content: value })),
@@ -9269,6 +9419,7 @@ export function buildIntegerLiteralBinary(
 		$type: TSKindId.IntegerLiteralBinary as const,
 		_content,
 		_suffix,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerLiteralBinary({ ...config, content: value })),
@@ -9339,6 +9490,7 @@ export function buildIntegerLiteralOctal(
 		$type: TSKindId.IntegerLiteralOctal as const,
 		_content,
 		_suffix,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerLiteralOctal({ ...config, content: value })),
@@ -9393,6 +9545,7 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 		$type: TSKindId.CharLiteralPlain as const,
 		_byte,
 		_content,
+		$_layout: undefined,
 		$with: {
 			byte: (value?: Admit<NonNullable<T.CharLiteralPlain.Config>['byte']>) =>
 				rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, byte: value })),
@@ -9422,6 +9575,7 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CharLiteralEmpty as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9455,6 +9609,7 @@ export function buildCharLiteralEscapedSimple(
 		$type: TSKindId.CharLiteralEscapedSimple as const,
 		_byte,
 		_content,
+		$_layout: undefined,
 		$with: {
 			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedSimple.Config>['byte']>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, byte: value })),
@@ -9500,6 +9655,7 @@ export function buildCharLiteralEscapedUnicodeFixed(
 		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
 		_byte,
 		_content,
+		$_layout: undefined,
 		$with: {
 			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['byte']>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, byte: value })),
@@ -9545,6 +9701,7 @@ export function buildCharLiteralEscapedUnicodeBraced(
 		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
 		_byte,
 		_content,
+		$_layout: undefined,
 		$with: {
 			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['byte']>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, byte: value })),
@@ -9583,6 +9740,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 		$type: TSKindId.CharLiteralEscapedHex as const,
 		_byte,
 		_content,
+		$_layout: undefined,
 		$with: {
 			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedHex.Config>['byte']>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, byte: value })),
@@ -9623,6 +9781,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 	const node = {
 		$type: TSKindId.EscapeSequenceSimple as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value))
 		},
@@ -9662,6 +9821,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value))
 		},
@@ -9704,6 +9864,7 @@ export function buildEscapeSequenceUnicodeBraced(
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeBraced as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeBraced(value))
 		},
@@ -9740,6 +9901,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	const node = {
 		$type: TSKindId.EscapeSequenceHex as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceHex(value))
 		},
@@ -9780,6 +9942,7 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 		_attributes,
 		_element,
 		_length,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -9826,6 +9989,7 @@ export function buildArrayExpressionList(
 		$type: TSKindId.ArrayExpressionList as const,
 		_attributes,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -9877,6 +10041,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 		$type: TSKindId.AttributeInput as const,
 		_value,
 		_arguments,
+		$_layout: undefined,
 		$with: {
 			value: (value?: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
 				rebuilt(node, handle, () => buildAttributeInput({ ...config, value: value })),
@@ -9939,6 +10104,7 @@ export function buildClosureExpressionBlock(
 		_parameters,
 		_return_type,
 		_body,
+		$_layout: undefined,
 		$with: {
 			static: (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['static']>) =>
 				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, static: value })),
@@ -10001,6 +10167,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 		_move,
 		_parameters,
 		_body,
+		$_layout: undefined,
 		$with: {
 			static: (value?: Admit<NonNullable<T.ClosureExpressionExpr.Config>['static']>) =>
 				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, static: value })),
@@ -10041,6 +10208,7 @@ export function buildReferenceExpressionRawConst(value: Admit<T.Expression>): T.
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawConst as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawConst(value))
@@ -10069,6 +10237,7 @@ export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.Re
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawMut as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawMut(value))
@@ -10097,6 +10266,7 @@ export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.Refer
 	const node = {
 		$type: TSKindId.ReferenceExpressionMut as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionMut(value))
@@ -10125,6 +10295,7 @@ export function buildReferenceExpressionBare(value: Admit<T.Expression>): T.Refe
 	const node = {
 		$type: TSKindId.ReferenceExpressionBare as const,
 		_argument,
+		$_layout: undefined,
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionBare(value))
@@ -10157,6 +10328,7 @@ export function buildImplItemPositiveClause(
 	const node = {
 		$type: TSKindId.ImplItemPositiveClause as const,
 		_trait,
+		$_layout: undefined,
 		$with: {
 			trait: (value: Admit<(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildImplItemPositiveClause(value))
@@ -10189,6 +10361,7 @@ export function buildImplItemNegativeClause(
 	const node = {
 		$type: TSKindId.ImplItemNegativeClause as const,
 		_trait,
+		$_layout: undefined,
 		$with: {
 			trait: (value: Admit<(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildImplItemNegativeClause(value))
@@ -10254,6 +10427,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		_type,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			unsafe: (value?: Admit<NonNullable<T.ImplItemBody.Config>['unsafe']>) =>
 				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafe: value })),
@@ -10341,6 +10515,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 		_trait_clause,
 		_type,
 		_where_clause,
+		$_layout: undefined,
 		$with: {
 			unsafe: (value?: Admit<NonNullable<T.ImplItemSemi.Config>['unsafe']>) =>
 				rebuilt(node, handle, () => buildImplItemSemi({ ...config, unsafe: value })),
@@ -10409,6 +10584,7 @@ export function buildVisibilityModifierPubScopeInPath(
 	const node = {
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		_path,
+		$_layout: undefined,
 		$with: {
 			path: (
 				value: Admit<
@@ -10444,6 +10620,7 @@ export function buildVisibilityModifierPubScope(
 	const node = {
 		$type: TSKindId.VisibilityModifierPubScope as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (
 				value: Admit<
@@ -10496,6 +10673,7 @@ function _buildVisibilityModifierPub(value?: Admit<T.VisibilityModifierPubScope>
 	const node = {
 		$type: TSKindId.VisibilityModifierPub as const,
 		_visibility_modifier_pub_scope,
+		$_layout: undefined,
 		$with: {
 			visibilityModifierPubScope: (value?: Admit<T.VisibilityModifierPubScope>) =>
 				rebuilt(node, handle, () => _buildVisibilityModifierPub(value))
@@ -10528,6 +10706,7 @@ export function buildFunctionTypeTraitForm(
 	const node = {
 		$type: TSKindId.FunctionTypeTraitForm as const,
 		_trait,
+		$_layout: undefined,
 		$with: {
 			trait: (value: Admit<(T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildFunctionTypeTraitForm(value))
@@ -10584,6 +10763,7 @@ function _buildFunctionTypeFnForm(value?: Admit<T.FunctionModifiers>): T.Functio
 	const node = {
 		$type: TSKindId.FunctionTypeFnForm as const,
 		_function_modifiers,
+		$_layout: undefined,
 		$with: {
 			functionModifiers: (value?: Admit<T.FunctionModifiers>) =>
 				rebuilt(node, handle, () => _buildFunctionTypeFnForm(value))
@@ -10619,6 +10799,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 		$type: TSKindId.ModItemExternal as const,
 		_visibility_modifier,
 		_name,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildModItemExternal({ ...config, visibilityModifier: value })),
@@ -10663,6 +10844,7 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 		_visibility_modifier,
 		_name,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildModItemInline({ ...config, visibilityModifier: value })),
@@ -10700,6 +10882,7 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 		$type: TSKindId.OrPatternBinary as const,
 		_left,
 		_right,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.OrPatternBinary.Config>['left']>) =>
 				rebuilt(node, handle, () => buildOrPatternBinary({ ...config, left: value })),
@@ -10731,6 +10914,7 @@ export function buildOrPatternPrefix(value: Admit<T.Pattern>): T.OrPatternPrefix
 	const node = {
 		$type: TSKindId.OrPatternPrefix as const,
 		_right,
+		$_layout: undefined,
 		$with: {
 			right: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildOrPatternPrefix(value))
 		},
@@ -10761,6 +10945,7 @@ export function buildPointerTypeConst(value: Admit<T.Type | T.TypeIdentifier.Typ
 	const node = {
 		$type: TSKindId.PointerTypeConst as const,
 		_type,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildPointerTypeConst(value))
@@ -10792,6 +10977,7 @@ export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types
 	const node = {
 		$type: TSKindId.PointerTypeMut as const,
 		_type,
+		$_layout: undefined,
 		$with: {
 			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildPointerTypeMut(value))
@@ -10829,6 +11015,7 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 		_start,
 		_operator,
 		_end,
+		$_layout: undefined,
 		$with: {
 			start: (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['start']>) =>
 				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, start: value })),
@@ -10863,6 +11050,7 @@ export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.Range
 	const node = {
 		$type: TSKindId.RangeExpressionPostfix as const,
 		_start,
+		$_layout: undefined,
 		$with: {
 			start: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildRangeExpressionPostfix(value))
@@ -10891,6 +11079,7 @@ export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeE
 	const node = {
 		$type: TSKindId.RangeExpressionPrefix as const,
 		_end,
+		$_layout: undefined,
 		$with: {
 			end: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildRangeExpressionPrefix(value))
 		},
@@ -10921,6 +11110,7 @@ export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.Rang
 	const node = {
 		$type: TSKindId.RangeExpressionBare as const,
 		_range_expression_bare,
+		$_layout: undefined,
 		$with: {
 			rangeExpressionBare: (value: Admit<NonNullable<TSKindId.DotDot>>) =>
 				rebuilt(node, handle, () => buildRangeExpressionBare(value))
@@ -10949,6 +11139,7 @@ export function buildExpressionStatementWithSemi(value: Admit<T.Expression>): T.
 	const node = {
 		$type: TSKindId.ExpressionStatementWithSemi as const,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionStatementWithSemi(value))
@@ -10981,6 +11172,7 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 		$type: TSKindId.ForeignModItemSemi as const,
 		_unsafe,
 		_extern_modifier,
+		$_layout: undefined,
 		$with: {
 			unsafe: (value?: Admit<NonNullable<T.ForeignModItemSemi.Config>['unsafe']>) =>
 				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, unsafe: value })),
@@ -11021,6 +11213,7 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 		_unsafe,
 		_extern_modifier,
 		_body,
+		$_layout: undefined,
 		$with: {
 			unsafe: (value?: Admit<NonNullable<T.ForeignModItemBody.Config>['unsafe']>) =>
 				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, unsafe: value })),
@@ -11066,6 +11259,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		_attributes,
 		_match,
 		_body,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
@@ -11149,6 +11343,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		_attributes,
 		_match,
 		_body,
+		$_layout: undefined,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
@@ -11235,6 +11430,7 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LineCommentExtraSlashes as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11255,6 +11451,7 @@ export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineComm
 	const node = {
 		$type: TSKindId.LineCommentDocOuter as const,
 		_doc,
+		$_layout: undefined,
 		$with: {
 			doc: (value: Admit<T.DocComment>) => rebuilt(node, handle, () => buildLineCommentDocOuter(value))
 		},
@@ -11278,6 +11475,7 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 	const node = {
 		$type: TSKindId.LineCommentDocInner as const,
 		_doc,
+		$_layout: undefined,
 		$with: {
 			doc: (value: Admit<T.DocComment>) => rebuilt(node, handle, () => buildLineCommentDocInner(value))
 		},
@@ -11298,6 +11496,7 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LineCommentRegular as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11318,6 +11517,7 @@ export function buildBlockCommentDocOuter(value?: Admit<T.BlockCommentContent>):
 	const node = {
 		$type: TSKindId.BlockCommentDocOuter as const,
 		_doc,
+		$_layout: undefined,
 		$with: {
 			doc: (value?: Admit<T.BlockCommentContent>) => rebuilt(node, handle, () => buildBlockCommentDocOuter(value))
 		},
@@ -11341,6 +11541,7 @@ export function buildBlockCommentDocInner(value?: Admit<T.BlockCommentContent>):
 	const node = {
 		$type: TSKindId.BlockCommentDocInner as const,
 		_doc,
+		$_layout: undefined,
 		$with: {
 			doc: (value?: Admit<T.BlockCommentContent>) => rebuilt(node, handle, () => buildBlockCommentDocInner(value))
 		},
@@ -11361,6 +11562,7 @@ export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BlockCommentRegular as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11389,6 +11591,7 @@ export function buildTokenTreePatternParen(
 	const node = {
 		$type: TSKindId.TokenTreePatternParen as const,
 		_token_patterns,
+		$_layout: undefined,
 		$with: {
 			tokenPatterns: (
 				...vs: Admit<
@@ -11429,6 +11632,7 @@ export function buildTokenTreePatternBracket(
 	const node = {
 		$type: TSKindId.TokenTreePatternBracket as const,
 		_token_patterns,
+		$_layout: undefined,
 		$with: {
 			tokenPatterns: (
 				...vs: Admit<
@@ -11469,6 +11673,7 @@ export function buildTokenTreePatternBrace(
 	const node = {
 		$type: TSKindId.TokenTreePatternBrace as const,
 		_token_patterns,
+		$_layout: undefined,
 		$with: {
 			tokenPatterns: (
 				...vs: Admit<
@@ -11505,6 +11710,7 @@ export function buildTokenTreeParen(
 	const node = {
 		$type: TSKindId.TokenTreeParen as const,
 		_tokens,
+		$_layout: undefined,
 		$with: {
 			tokens: (...vs: Admit<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>[]) =>
 				rebuilt(node, handle, () => buildTokenTreeParen(...restItems('tokens', vs)))
@@ -11538,6 +11744,7 @@ export function buildTokenTreeBracket(
 	const node = {
 		$type: TSKindId.TokenTreeBracket as const,
 		_tokens,
+		$_layout: undefined,
 		$with: {
 			tokens: (...vs: Admit<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>[]) =>
 				rebuilt(node, handle, () => buildTokenTreeBracket(...restItems('tokens', vs)))
@@ -11571,6 +11778,7 @@ export function buildTokenTreeBrace(
 	const node = {
 		$type: TSKindId.TokenTreeBrace as const,
 		_tokens,
+		$_layout: undefined,
 		$with: {
 			tokens: (...vs: Admit<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>[]) =>
 				rebuilt(node, handle, () => buildTokenTreeBrace(...restItems('tokens', vs)))
@@ -11604,6 +11812,7 @@ export function buildDelimTokenTreeParen(
 	const node = {
 		$type: TSKindId.DelimTokenTreeParen as const,
 		_delim_tokens,
+		$_layout: undefined,
 		$with: {
 			delimTokens: (...vs: Admit<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>[]) =>
 				rebuilt(node, handle, () => buildDelimTokenTreeParen(...restItems('delimTokens', vs)))
@@ -11637,6 +11846,7 @@ export function buildDelimTokenTreeBracket(
 	const node = {
 		$type: TSKindId.DelimTokenTreeBracket as const,
 		_delim_tokens,
+		$_layout: undefined,
 		$with: {
 			delimTokens: (...vs: Admit<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>[]) =>
 				rebuilt(node, handle, () => buildDelimTokenTreeBracket(...restItems('delimTokens', vs)))
@@ -11670,6 +11880,7 @@ export function buildDelimTokenTreeBrace(
 	const node = {
 		$type: TSKindId.DelimTokenTreeBrace as const,
 		_delim_tokens,
+		$_layout: undefined,
 		$with: {
 			delimTokens: (...vs: Admit<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>[]) =>
 				rebuilt(node, handle, () => buildDelimTokenTreeBrace(...restItems('delimTokens', vs)))
@@ -11707,6 +11918,7 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 		_by_reference,
 		_mutable,
 		_name,
+		$_layout: undefined,
 		$with: {
 			byReference: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['byReference']>) =>
 				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, byReference: value })),
@@ -11759,6 +11971,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 		_mutable,
 		_name,
 		_pattern,
+		$_layout: undefined,
 		$with: {
 			byReference: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['byReference']>) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, byReference: value })),
@@ -11802,6 +12015,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 		$type: TSKindId.MacroDefinitionParen as const,
 		_name,
 		_macro_rules,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionParen({ ...config, name: value })),
@@ -11846,6 +12060,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 		$type: TSKindId.MacroDefinitionBracket as const,
 		_name,
 		_macro_rules,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionBracket({ ...config, name: value })),
@@ -11889,6 +12104,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 		$type: TSKindId.MacroDefinitionBrace as const,
 		_name,
 		_macro_rules,
+		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionBrace({ ...config, name: value })),
@@ -11934,6 +12150,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		$type: TSKindId.RangePatternPrefix as const,
 		_content,
 		_right,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['content']>) =>
 				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, content: value })),
@@ -11976,6 +12193,7 @@ export function buildRangePatternWithLeftWithRight(
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		_content,
 		_right,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['content']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, content: value })),
@@ -12020,6 +12238,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		$type: TSKindId.RangePatternWithLeft as const,
 		_left,
 		_content,
+		$_layout: undefined,
 		$with: {
 			left: (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, left: value })),
@@ -12084,6 +12303,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 		_type_parameters,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStructItemBrace({ ...config, visibilityModifier: value })),
@@ -12185,6 +12405,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 		_type_parameters,
 		_body,
 		_where_clause,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStructItemTuple({ ...config, visibilityModifier: value })),
@@ -12272,6 +12493,7 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 		_visibility_modifier,
 		_name,
 		_type_parameters,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStructItemUnit({ ...config, visibilityModifier: value })),
@@ -12336,6 +12558,7 @@ export function buildAttributedFieldDeclaration(
 		$type: TSKindId.AttributedFieldDeclaration as const,
 		_attribute_item,
 		_field_declaration,
+		$_layout: undefined,
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -12381,6 +12604,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 		$type: TSKindId.AttributedEnumVariant as const,
 		_attribute_item,
 		_enum_variant,
+		$_layout: undefined,
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -12424,6 +12648,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 		$type: TSKindId.AttributedParameter as const,
 		_attribute_item,
 		_content,
+		$_layout: undefined,
 		$with: {
 			attributeItem: (value?: Admit<T.AttributeItem>) =>
 				rebuilt(node, handle, () => buildAttributedParameter({ ...config, attributeItem: value })),
@@ -12466,6 +12691,7 @@ export function buildAttributedTypeParameter(
 		$type: TSKindId.AttributedTypeParameter as const,
 		_attribute_item,
 		_content,
+		$_layout: undefined,
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -12511,6 +12737,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 		$type: TSKindId.AttributedArgument as const,
 		_attribute_item,
 		_expression,
+		$_layout: undefined,
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -12566,6 +12793,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 		_attribute_item,
 		_visibility_modifier,
 		_type,
+		$_layout: undefined,
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
@@ -12611,6 +12839,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 		$type: TSKindId.TypeArgument as const,
 		_content,
 		_trait_bounds,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<T.TypeArgument.Config>['content']>) =>
 				rebuilt(node, handle, () => buildTypeArgument({ ...config, content: value })),
@@ -12646,6 +12875,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 		$type: TSKindId.MatchBlockArms as const,
 		_arms,
 		_last_arm,
+		$_layout: undefined,
 		$with: {
 			arms: (...values: Admit<T.MatchArm[]>) =>
 				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, arms: restItems('arms', values) })),
@@ -12679,6 +12909,7 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FloatLiteral as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12701,6 +12932,7 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringContent as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12723,6 +12955,7 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteralContent as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12750,6 +12983,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteralStart as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12773,6 +13007,7 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteralEnd as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12794,6 +13029,7 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DocComment as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12812,6 +13048,7 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BlockCommentContent as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12852,6 +13089,7 @@ export function buildTraitInterfaceDeclarationBody(
 	const node = {
 		$type: TSKindId.TraitInterfaceDeclarationBody as const,
 		_declarations,
+		$_layout: undefined,
 		$with: {
 			declarations: (...vs: Admit<T.DeclarationStatementTraitItem>[]) =>
 				rebuilt(node, handle, () => buildTraitInterfaceDeclarationBody(...restItems('declarations', vs)))
@@ -12885,6 +13123,7 @@ export function buildExtensionDeclarationBody(
 	const node = {
 		$type: TSKindId.ExtensionDeclarationBody as const,
 		_declarations,
+		$_layout: undefined,
 		$with: {
 			declarations: (...vs: Admit<T.DeclarationStatementImplItemBody>[]) =>
 				rebuilt(node, handle, () => buildExtensionDeclarationBody(...restItems('declarations', vs)))
@@ -12922,6 +13161,7 @@ export function buildReceiverParameterDeclaration(
 		$type: TSKindId.ReceiverParameterDeclaration as const,
 		_mutable,
 		_type,
+		$_layout: undefined,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, mutable: value })),
@@ -12965,6 +13205,7 @@ export function buildAttributedParameterReceiver(
 		$type: TSKindId.AttributedParameterReceiver as const,
 		_attribute_item,
 		_content,
+		$_layout: undefined,
 		$with: {
 			attributeItem: (value?: Admit<T.AttributeItem>) =>
 				rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, attributeItem: value })),
@@ -13012,6 +13253,7 @@ export function buildParametersElementsReceiver(
 		$type: TSKindId.ParametersElementsReceiver as const,
 		_receiver,
 		_parameters_elements_receiver_group,
+		$_layout: undefined,
 		$with: {
 			receiver: (value: Admit<T.AttributedParameterReceiver>) =>
 				rebuilt(node, handle, () => buildParametersElementsReceiver({ ...config, receiver: value })),
@@ -13136,6 +13378,7 @@ function _buildParametersElementsReceiverGroup(
 	const node = {
 		$type: TSKindId.ParametersElementsReceiverGroup as const,
 		_elements,
+		$_layout: undefined,
 		$with: {
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -13204,6 +13447,7 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringClose as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13224,6 +13468,7 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ErrorSentinel as const,
+		$_layout: undefined,
 		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13250,6 +13495,7 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 	const node = {
 		$type: TSKindId.TypeIdentifier as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value))
 		},
@@ -13277,6 +13523,7 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 	const node = {
 		$type: TSKindId.FieldIdentifier as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildFieldIdentifier(value))
 		},
@@ -13306,6 +13553,7 @@ export function buildClosureParameter(value: Admit<T.Pattern>): T.ClosureParamet
 	const node = {
 		$type: TSKindId.ClosureParameter as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildClosureParameter(value))
 		},
@@ -13333,6 +13581,7 @@ export function buildShorthandFieldIdentifier(value: Admit<T.Identifier>): T.Sho
 	const node = {
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		_content,
+		$_layout: undefined,
 		$with: {
 			content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildShorthandFieldIdentifier(value))
 		},
@@ -13409,6 +13658,7 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 		_return_type,
 		_where_clause,
 		_body,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, visibilityModifier: value })),
@@ -13520,6 +13770,7 @@ export function buildSignatureMethodDeclaration(
 		_parameters,
 		_return_type,
 		_where_clause,
+		$_layout: undefined,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, visibilityModifier: value })),
