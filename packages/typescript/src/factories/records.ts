@@ -13076,8 +13076,9 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 	handle?.verifyStored?.(TSKindId.CommentBlock as const, { _content });
 	const record = arena.record(TSKindId.CommentBlock as const);
 	storeCell(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildCommentBlock, [_content])
+	);
 	return node as unknown as T.CommentBlock.Bound;
 }
 
@@ -13099,8 +13100,9 @@ function buildCommentBlock$patch(source: object, input: string, affix: boolean =
 	handle?.verifyStored?.(TSKindId.CommentBlock as const, { _content });
 	const record = arena.copy(source, TSKindId.CommentBlock as const);
 	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildCommentBlock, [_content])
+	);
 	return node as unknown as T.CommentBlock.Bound;
 }
 function withCommentBlock(node: object, setter: string, args: readonly unknown[]): unknown {

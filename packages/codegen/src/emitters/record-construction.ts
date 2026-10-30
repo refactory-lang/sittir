@@ -55,7 +55,7 @@ export interface RecordConstruction {
 	readonly listOptions?: { readonly delimiter: boolean; readonly separator: boolean };
 	readonly setters: readonly SetterEntry[] | undefined;
 	readonly inputs: readonly string[] | 'kind';
-	readonly checks: readonly string[];
+	readonly check?: string;
 	readonly result: string;
 }
 
@@ -101,8 +101,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		`  const record = ${record};`,
 		...placed.map(store),
 		...(listOptions === undefined ? [] : [`  ${storeOptions}(${listOptions});`]),
-		'  const node = arena.view(record);',
-		...spec.checks,
+		`  const node = ${spec.check === undefined ? 'arena.view(record)' : `arena.checkedView(record, (node) => ${spec.check})`};`,
 		`  return node as unknown as ${spec.result};`
 	];
 	const tail = tailOf(`arena.record(${spec.kind})`, slotStore, 'storeListOptions');

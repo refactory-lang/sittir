@@ -661,9 +661,29 @@ export class BuiltArena {
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
 		if (record.copyOf !== undefined) this.#copySites(record.copyOf, place.at, record.patched ?? []);
-		const node = this.#view(place.at);
+		const node = this.#owned(place.at);
 		this.#placedLast = placed === undefined ? undefined : { node, placed };
 		return node;
+	}
+
+	checkedView(record: BuiltDraft, check: (node: object) => void): object {
+		const node = this.view(record);
+		try {
+			check(node);
+			return node;
+		} catch (error) {
+			this.releaseHandle(node);
+			throw error;
+		}
+	}
+
+	#owned(at: number): object {
+		try {
+			return this.#view(at);
+		} catch (error) {
+			this.release(at);
+			throw error;
+		}
 	}
 
 	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
@@ -762,7 +782,7 @@ export class BuiltArena {
 		this.#copySites(at, place.at, []);
 		const last = this.#placedLast;
 		if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, place.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
-		return this.#view(place.at);
+		return this.#owned(place.at);
 	}
 
 	#sidesNaming(side: number, sides: readonly number[]): number {

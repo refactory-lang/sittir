@@ -8948,14 +8948,15 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	storeCell(arena, record, 2, 2, _raw_string_literal_start);
 	storeCell(arena, record, 3, 5, _string_content);
 	storeCell(arena, record, 4, 8, _raw_string_literal_end);
-	const node = arena.view(record);
-	checkDelimited(
-		handle,
-		node,
-		_delimited_buildRawStringLiteral,
-		[_string_content],
-		_raw_string_literal_start,
-		_raw_string_literal_end
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(
+			handle,
+			node,
+			_delimited_buildRawStringLiteral,
+			[_string_content],
+			_raw_string_literal_start,
+			_raw_string_literal_end
+		)
 	);
 	return node as unknown as T.RawStringLiteral.Bound;
 }
@@ -8982,14 +8983,15 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 	patchCell(arena, record, 2, 2, carriedSlot(source, 'rawStringLiteralStart', _raw_string_literal_start));
 	patchCell(arena, record, 3, 5, carriedSlot(source, 'stringContent', _string_content));
 	patchCell(arena, record, 4, 8, carriedSlot(source, 'rawStringLiteralEnd', _raw_string_literal_end));
-	const node = arena.view(record);
-	checkDelimited(
-		handle,
-		node,
-		_delimited_buildRawStringLiteral,
-		[_string_content],
-		_raw_string_literal_start,
-		_raw_string_literal_end
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(
+			handle,
+			node,
+			_delimited_buildRawStringLiteral,
+			[_string_content],
+			_raw_string_literal_start,
+			_raw_string_literal_end
+		)
 	);
 	return node as unknown as T.RawStringLiteral.Bound;
 }
@@ -9076,8 +9078,9 @@ export function buildBlockComment(
 	handle?.verifyStored?.(TSKindId.BlockComment as const, { _content });
 	const record = arena.record(TSKindId.BlockComment as const);
 	storeCell(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildBlockComment, [_content]);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildBlockComment, [_content])
+	);
 	return node as unknown as T.BlockComment.Bound;
 }
 
@@ -9092,8 +9095,9 @@ function buildBlockComment$patch(
 	handle?.verifyStored?.(TSKindId.BlockComment as const, { _content });
 	const record = arena.copy(source, TSKindId.BlockComment as const);
 	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildBlockComment, [_content]);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildBlockComment, [_content])
+	);
 	return node as unknown as T.BlockComment.Bound;
 }
 function withBlockComment(node: object, setter: string, args: readonly unknown[]): unknown {

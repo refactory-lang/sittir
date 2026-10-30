@@ -6133,8 +6133,9 @@ export function buildString(config: T.String.Config): T.String.Bound {
 	storeCell(arena, record, 2, 2, _string_start);
 	storeList(arena, record, 3, 5, _content);
 	storeCell(arena, record, 4, 6, _string_end);
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end)
+	);
 	return node as unknown as T.String.Bound;
 }
 
@@ -6152,8 +6153,9 @@ function buildString$patch(source: object, config: T.String.Config): T.String.Bo
 	patchCell(arena, record, 2, 2, carriedSlot(source, 'stringStart', _string_start));
 	patchList(arena, record, 3, 5, _content);
 	patchCell(arena, record, 4, 6, carriedSlot(source, 'stringEnd', _string_end));
-	const node = arena.view(record);
-	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
+	const node = arena.checkedView(record, (node) =>
+		checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end)
+	);
 	return node as unknown as T.String.Bound;
 }
 function withString(node: object, setter: string, args: readonly unknown[]): unknown {

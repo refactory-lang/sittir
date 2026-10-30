@@ -261,7 +261,7 @@ function buildDelimitedConsts(
 	}
 }
 
-function delimitedCheckLine(
+function delimitedCheckCall(
 	node: AssembledNode,
 	slots: readonly AssembledNonterminal[],
 	leafReConsts: ReadonlyMap<string, string>
@@ -278,7 +278,7 @@ function delimitedCheckLine(
 	const [openKey, closeKey] = [storageOf(open), storageOf(close)];
 	const content = slots.map((f) => f.storageKey).filter((key) => key !== openKey && key !== closeKey);
 	const ends = closeKey === undefined ? (openKey === undefined ? '' : `, ${openKey}`) : `, ${openKey ?? 'undefined'}, ${closeKey}`;
-	return `  checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends});`;
+	return `checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends})`;
 }
 
 function buildLeafReConsts(
@@ -1962,8 +1962,7 @@ function fieldCarryingFactoryText(
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(setters, plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
-	const delimitedCheck = delimitedCheckLine(node, slotsToEmit, leafReConsts);
-	const checks = delimitedCheck === undefined ? [] : [delimitedCheck];
+	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	if (backend === 'records') {
 		const optionsType = leadingOptions?.type ?? `T.${node.typeName}.Options`;
@@ -1975,7 +1974,7 @@ function fieldCarryingFactoryText(
 			...(takesOptions ? [`  const options = inputs.options as ${optionsType};`] : []),
 			...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude
 		];
-		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, checks, result: builtName }, nodeMap, viewTable(views));
+		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
 		after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
 		after.push(...parts.after);
@@ -1996,7 +1995,7 @@ function fieldCarryingFactoryText(
 		);
 		lines.push('  };');
 		lines.push(...(view?.postlude ?? []));
-		lines.push(...checks);
+		if (check !== undefined) lines.push(`  ${check};`);
 		lines.push(`  return node as unknown as ${builtName};`);
 	}
 	lines.push('}');
@@ -2199,7 +2198,7 @@ function emitRefineFormFactory(
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
 	if (backend === 'records') {
-		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', checks: [], result: formBuiltName }, nodeMap, viewTable(views)).tail);
+		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', result: formBuiltName }, nodeMap, viewTable(views)).tail);
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2859,7 +2858,6 @@ function emitSeparatedListFactory(
 						...(hasSeparatorKindOption || hasDelimiterOption ? [`  const elements = inputs.elements as ${elementsType};`] : []),
 						...(hasOptions ? [`  const options = inputs.options as ${optionsType};`] : [])
 					],
-					checks: [],
 					result: listBuiltName
 				},
 				nodeMap,
