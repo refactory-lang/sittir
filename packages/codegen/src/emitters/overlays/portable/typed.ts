@@ -220,7 +220,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 
 	const enumKinds = new Set(claimedEnums.flatMap((kind) => concreteKinds(model, [kind])));
 	const admitsEnum = (slot: ModelSlot): boolean => slot.kinds.some((k) => concreteKinds(model, [k]).some((c) => enumKinds.has(c)));
-	const slotOf =(step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
+	const slotOf = (step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
 	const chainOf = (kind: string, path: readonly SlotStep[]): { expr: string; last: ModelSlot; optional: boolean } | string => {
 		let expr = 'this[low]';
 		let optional = false;
@@ -238,7 +238,7 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			}
 			held = concreteKinds(model, slot.kinds);
 			if (nodeOf(step.owner)?.modelType !== 'list' || !slot.multiple) expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
-			optional ||= !slot.required;
+			optional ||= !slot.required && !slot.multiple;
 			if (slot.multiple && i < path.length - 1) {
 				if (step.anchor === undefined) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
 				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
@@ -248,7 +248,12 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 		}
 		return last === undefined ? 'an empty path' : { expr, last, optional };
 	};
-	const readOf = (kind: string, route: MemberRoute): { readonly body: string } | { readonly reason: string } => {
+	interface RouteRead {
+		readonly body: string;
+		readonly list: boolean;
+		readonly optional: boolean;
+	}
+	const readOf = (kind: string, route: MemberRoute): RouteRead | { readonly reason: string } => {
 		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
 		const chain = chainOf(kind, route.path);
@@ -256,12 +261,17 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 		const reader = admitsEnum(chain.last) ? 'readEnum' : 'read';
 		if (route.route === 'kind') {
 			const id = idOf(route.kind);
-			return id === undefined ? { reason: `${route.kind} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))` };
+			return id === undefined ? { reason: `${route.kind} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [route.kind] }), optional: true };
 		}
-		if (chain.last.storage === 'boolean') return { body: chain.expr };
+		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false };
 		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];
-		const read = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
-		return { body: chain.optional && !chain.last.multiple && listsOnly(chain.last) ? `${read} ?? []` : read };
+		const body = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
+		return { body, list: chain.last.multiple || listsOnly(chain.last), optional: chain.optional };
+	};
+	const memberBody = (reads: readonly RouteRead[]): string => {
+		const bodies = [...new Set(reads.map((r) => r.body))];
+		const last = reads.at(-1)!;
+		return [...bodies, ...(reads.some((r) => r.list) && last.optional ? ['[]'] : [])].join(' ?? ');
 	};
 
 	const factoryNameOf = (entry: ReadEntry): string => `${kindIdMemberName(nodeMap, entry.kind)}As${entry.vocab.split('.').map(tsname).join('')}${entry.index > 0 ? entry.index : ''}`;
@@ -280,18 +290,22 @@ export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntr
 			const fields: string[] = [];
 			const written = new Set<string>();
 			const pins = new Map(entry.pins.map((pin) => [pin.member, pin.text]));
+			const readsByName = new Map<string, RouteRead[]>();
 			for (const route of token(kind) ? [] : entry.members) {
-				if (route.flag === true || written.has(route.name)) continue;
+				if (route.flag === true) continue;
 				const pin = pins.get(route.name);
-				const read = pin !== undefined ? { body: q(pin) } : readOf(kind, route);
+				const read = pin !== undefined ? { body: q(pin), list: false, optional: false } : readOf(kind, route);
 				if ('reason' in read) {
 					unemitted.push({ kind, vocab: entry.vocab, member: route.name, reason: read.reason });
 					continue;
 				}
-				const fn = `${name}$${route.name}`;
-				emit(`function ${fn}(this: Held<${low}>) {`, `\treturn ${read.body};`, '}', '');
-				fields.push(`${route.name}: ${fn}`);
-				written.add(route.name);
+				(readsByName.get(route.name) ?? readsByName.set(route.name, []).get(route.name)!).push(read);
+			}
+			for (const [member, reads] of readsByName) {
+				const fn = `${name}$${member}`;
+				emit(`function ${fn}(this: Held<${low}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
+				fields.push(`${member}: ${fn}`);
+				written.add(member);
 			}
 			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
 			if (varies(kind) && (claimersOf.get(entry.vocab) ?? []).every(varies)) fields.push('$value: value');

@@ -47,6 +47,18 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('type VK_BlockCommentDocInner = VK_BlockCommentContent | undefined;');
 	});
 
+	it("reads a member through each of its routes in the route table's order, and an absent list as []", () => {
+		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
+		expect(typed.source).toContain(
+			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].parameters().elements(), TSKindId.ParametersElements)) ?? read(of(this[low].parameters().elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup()?.elements()) ?? [];\n}`
+		);
+	});
+
+	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
+		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
+		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
+	});
+
 	it('reports what it skipped with the reason', () => {
 		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
 	});
