@@ -1717,16 +1717,16 @@ pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>)
     Ok(())
 }
 
-/// Drops `tree`, then settles its store (`settle`) when the tree made its
-/// arena: a side names a built record only on a node read as a record, and
-/// that read made the arena.
+/// Drops `tree`, then settles its store (`settle`) when that freed what a
+/// view into the store's buffers may read: a built record a side of the
+/// tree held (`ParsedTree::release_sides`), or the tree's arena.
 ///
 /// # Errors
 ///
 /// What `settle` refuses.
 #[cfg(feature = "arena")]
 pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
-    if !tree.made_arena() {
+    if !(tree.release_sides() || tree.made_arena()) {
         return Ok(());
     }
     let store = tree.written().clone();

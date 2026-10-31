@@ -479,16 +479,9 @@ pub struct ParsedTree<G: EngineGrammar> {
 }
 
 impl<G: EngineGrammar> Drop for ParsedTree<G> {
-    /// Drops the tree's sides. A side holds a built record only on a node
-    /// read as a record, and that read made the tree's arena, so a tree that
-    /// never made one releases no record (what `napi_engine::dispose` skips
-    /// settling on).
+    /// Drops the tree's sides (`release_sides`).
     fn drop(&mut self) {
-        let released = self.written.drop_tree(self.tree_id);
-        #[cfg(feature = "arena")]
-        debug_assert!(!released || self.made_arena(), "tree {} released a built record but never made its arena", self.tree_id);
-        #[cfg(not(feature = "arena"))]
-        debug_assert!(!released, "tree {} released a built record without the arena", self.tree_id);
+        let _ = self.release_sides();
     }
 }
 
@@ -640,6 +633,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[must_use]
     pub fn made_arena(&self) -> bool {
         self.arena.get().is_some()
+    }
+
+    /// Drops the tree's sides from its engine's store, answering whether one
+    /// held a built record (`TriviaStore::drop_tree`). Dropping the tree
+    /// drops them too; once dropped, a release finds none.
+    #[must_use]
+    pub fn release_sides(&self) -> bool {
+        self.written.drop_tree(self.tree_id)
     }
 
     /// The parsed tree-sitter tree.
@@ -2626,16 +2627,17 @@ mod tests {
         assert!(second.edited_within(NodeIndex::ROOT, false));
     }
 
-    #[cfg(all(feature = "arena", debug_assertions))]
+    #[cfg(feature = "arena")]
     #[test]
-    #[should_panic(expected = "never made its arena")]
-    fn a_tree_that_never_made_its_arena_holds_no_built_record() {
+    fn a_tree_that_never_made_its_arena_answers_that_its_sides_held_a_built_record() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        assert!(!tree.release_sides(), "a tree with no sides");
         let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
         tree.written().write_side(Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT }, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
-        assert!(!tree.made_arena());
-        drop(tree);
+        assert!(tree.release_sides(), "its side held a built record");
+        assert!(!tree.made_arena(), "holding a record made no arena");
+        assert!(!tree.release_sides(), "once released, none is left");
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
