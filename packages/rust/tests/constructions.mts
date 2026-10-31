@@ -1,8 +1,9 @@
 // The engines the side tests render through, one per construction.
 import { expect } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { recordOf } from '@sittir/common/utils';
+import { coordinateOf, recordOf } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
+import { carryTree } from '../../common/src/tree-token.ts';
 import rust from '../src/index.ts';
 
 export const objects = await createEngine(rust, { nodeStorage: 'object' });
@@ -28,3 +29,6 @@ export function expectGiven(read: unknown, given: object): void {
 	expect((read as Read).$type).toBe((given as Read).$type);
 	expect((read as Read).$text?.()).toBe((given as Read).$text?.());
 }
+
+// A parsed node's coordinate as a lazy caller holds it: a copy that still holds its tree.
+export const heldCoordinate = (node: object): object => carryTree(node, { ...coordinateOf(node)! });

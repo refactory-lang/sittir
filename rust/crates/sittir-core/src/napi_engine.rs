@@ -100,9 +100,7 @@ macro_rules! napi_engine {
                 let _ = buffers.detach(&env);
             }
             if let Some(tree) = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id)) {
-                let store = tree.written().clone();
-                drop(tree);
-                let _ = $crate::napi_engine::settle(&env, &store);
+                let _ = $crate::napi_engine::dispose(&env, tree);
             }
         }
 
@@ -131,15 +129,7 @@ macro_rules! napi_engine {
             index: $crate::types::NodeIndex,
             depth: $crate::read::Depth,
         ) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
-            $crate::napi_engine::check_node(parsed, index)?;
-            if let Some(error) = parsed.read_error(index) {
-                return Ok(::napi::Either::B(error));
-            }
-            let grammar = parsed.grammar();
-            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
-                .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
-                .map(::napi::Either::A)
-                .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+            $crate::napi_engine::node_or_error(parsed, index, "read panicked", || parsed.read_node::<$any>(index, depth))
         }
 
         /// A tree id as JavaScript holds it: a whole number.
@@ -340,15 +330,7 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| {
                 let trees = trees.borrow();
                 let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                $crate::napi_engine::check_node(parsed, index)?;
-                if let Some(error) = parsed.snapshot_error(index, holder_byte) {
-                    return Ok(::napi::Either::B(error));
-                }
-                let grammar = <$grammar as ::std::default::Default>::default();
-                ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.snapshot::<$any>(index, holder_byte)))
-                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "snapshot panicked")))?
-                    .map(::napi::Either::A)
-                    .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                $crate::napi_engine::node_or_error(parsed, index, "snapshot panicked", || parsed.snapshot_node::<$any>(index, holder_byte))
             })
         }
 
@@ -1325,11 +1307,41 @@ pub fn trivia_side_from_wire(side: &str) -> napi::Result<crate::trivia_table::Tr
     }
 }
 
-/// Refuses an index that names no node of `parsed`.
+/// Refuses an index that names no node of `parsed`, without moving to it.
 pub fn check_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>, index: crate::types::NodeIndex) -> napi::Result<()> {
-    match crate::engine::node_at_index(parsed.tree(), index) {
-        Some(_) => Ok(()),
-        None => Err(napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id()))),
+    if crate::engine::names_node(parsed.tree(), index) {
+        Ok(())
+    } else {
+        Err(no_node(parsed, index))
+    }
+}
+
+/// The refusal for an index that names no node of `parsed`.
+#[must_use]
+pub fn no_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>, index: crate::types::NodeIndex) -> napi::Error {
+    napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id()))
+}
+
+/// What `read` and `snapshot` answer for the node at `index` of `parsed`,
+/// from `read` (`ParsedTree::read_node`, `ParsedTree::snapshot_node`): the
+/// node, or the `ERROR` holding it. Refuses an index naming no node of the
+/// tree, a read that panicked (`what`), and a node the model has no route
+/// for, naming the kind, the child and the index.
+///
+/// # Errors
+///
+/// Those refusals.
+pub fn node_or_error<G: crate::engine::EngineGrammar, T>(
+    parsed: &crate::ParsedTree<G>,
+    index: crate::types::NodeIndex,
+    what: &str,
+    read: impl FnOnce() -> Option<Result<crate::engine::NodeRead<T>, crate::read::ReadError>>,
+) -> napi::Result<napi::Either<T, crate::ErrorRead>> {
+    let read = std::panic::catch_unwind(std::panic::AssertUnwindSafe(read)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
+    match read.ok_or_else(|| no_node(parsed, index))? {
+        Ok(crate::engine::NodeRead::Node(node)) => Ok(napi::Either::A(node)),
+        Ok(crate::engine::NodeRead::Error(error)) => Ok(napi::Either::B(error)),
+        Err(refusal) => Err(napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind)))),
     }
 }
 
@@ -1702,6 +1714,34 @@ fn settle_buffers<T>(env: napi::Env, buffers: &mut Buffers, store: &crate::trivi
 /// None.
 #[cfg(not(feature = "arena"))]
 pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    Ok(())
+}
+
+/// Drops `tree`, then settles its store (`settle`) when that freed what a
+/// view into the store's buffers may read: a built record a side of the
+/// tree held (`ParsedTree::release_sides`), or the tree's arena.
+///
+/// # Errors
+///
+/// What `settle` refuses.
+#[cfg(feature = "arena")]
+pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
+    if !(tree.release_sides() || tree.made_arena()) {
+        return Ok(());
+    }
+    let store = tree.written().clone();
+    drop(tree);
+    settle(env, &store)
+}
+
+/// Drops `tree`: without the arena no chunk is freed.
+///
+/// # Errors
+///
+/// None.
+#[cfg(not(feature = "arena"))]
+pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
+    drop(tree);
     Ok(())
 }
 

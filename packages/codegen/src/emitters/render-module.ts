@@ -61,7 +61,7 @@ import {
 	type NodeLiteral,
 	type NodeProjection
 } from './node-projection.ts';
-import { listViewOwners } from './factories.ts';
+import { listViewOwners, wrappedItemLists } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
@@ -1385,6 +1385,7 @@ function readPrintOf(
 			kindEntries,
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
 			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
+			wrappedLists: new Map(wrappedItemLists(nodeMap, kindEntries).map(({ list, wrapper }) => [list.kind, wrapper])),
 			displayIds: displayClaimedIds(nodeMap),
 			folds: foldsWithRelaxed(generatedIdTables.folds, nodeMap, kindEntries),
 			grammar

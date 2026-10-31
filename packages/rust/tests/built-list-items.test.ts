@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
 import rust from '../src/index.ts';
+import { heldCoordinate } from './constructions.mts';
 
 type Node = Record<string, unknown> & { readonly $type: number; $render(): string };
 
@@ -36,33 +37,17 @@ function find(node: unknown, kind: number, seen = new Set<object>()): Node | und
 
 const fingerprint = (item: unknown): unknown => (typeof item === 'object' && item !== null ? [(item as Node).$type, (item as Node).$render()] : item);
 
-function storedCoordinates(node: unknown, kind: number, seen = new Set<object>()): readonly unknown[] | undefined {
-	if (node === null || typeof node !== 'object' || seen.has(node)) return undefined;
-	seen.add(node);
-	const record = node as Node;
-	if (record.$type === kind && Array.isArray(record._item) && record._item.every(isCoordinate)) return record._item;
-	for (const key of Object.keys(record)) {
-		if (!key.startsWith('_')) continue;
-		for (const child of Array.isArray(record[key]) ? (record[key] as unknown[]) : [record[key]]) {
-			const found = storedCoordinates(child, kind, seen);
-			if (found !== undefined) return found;
-		}
-	}
-	return undefined;
-}
-
-describe('a built list over the coordinates a shallow read stores', () => {
+describe('a built list over the coordinates a lazy caller holds', () => {
 	it.each([
 		{ list: 'ParametersElements', build: 'parametersElements', source: 'fn f(#[a] x: u8, y: u16) {}\n' },
 		{ list: 'FieldInitializerListElements', build: 'fieldInitializerListElements', source: 'fn f() { S { a: 1, b }; }\n' }
 	])('$list holds the nodes its items() hydrates', async ({ list, build, source }) => {
 		const rs = await createEngine(rust, { nodeStorage: 'object' });
 		const kinds = rs.kinds as unknown as Record<string, number>;
-		const depths = Array.from({ length: 10 }, (_, at) => at + 1);
-		const coordinates = depths.map((depth) => storedCoordinates(rs.parse(source, { depth }), kinds[list]!)).find((found) => found !== undefined);
-		expect(coordinates).toBeDefined();
 		const parsed = find(rs.parse(source, { depth: Infinity }), kinds[list]!);
-		const built = (rs.build as unknown as Record<string, (...items: unknown[]) => Node>)[build]!(...coordinates!);
+		const coordinates = (parsed as unknown as { readonly _item: readonly object[] })._item.map(heldCoordinate);
+		expect(coordinates.every(isCoordinate)).toBe(true);
+		const built = (rs.build as unknown as Record<string, (...items: unknown[]) => Node>)[build]!(...coordinates);
 		const indexed = Array.from({ length: built.length as number }, (_, at) => built[at]);
 		expect(indexed.some(isCoordinate)).toBe(false);
 		expect(indexed.map(fingerprint)).toEqual([...(parsed as unknown as Iterable<unknown>)].map(fingerprint));

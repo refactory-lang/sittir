@@ -438,7 +438,9 @@ impl<T: Clone> TriviaStore<T> {
 
     /// Drop every side written on a node of `tree`, and release the built
     /// records they held. A record the release refuses is left counted.
-    pub fn drop_tree(&self, tree: TreeId) {
+    /// Answers whether a side it dropped held a built record.
+    #[must_use]
+    pub fn drop_tree(&self, tree: TreeId) -> bool {
         let dropped: Vec<Vec<TriviaEntry<T>>> = {
             let mut sides = self.write();
             let first = (Place::Row { tree, row: NodeIndex::ROOT }, TriviaSide::Leading);
@@ -447,10 +449,16 @@ impl<T: Clone> TriviaStore<T> {
         };
         #[cfg(feature = "arena")]
         {
-            let _ = self.release_records(dropped.iter().flat_map(|entries| held_records(entries)).collect());
+            let records: Vec<_> = dropped.iter().flat_map(|entries| held_records(entries)).collect();
+            let held = !records.is_empty();
+            let _ = self.release_records(records);
+            held
         }
         #[cfg(not(feature = "arena"))]
-        drop(dropped);
+        {
+            drop(dropped);
+            false
+        }
     }
 
     /// The sides the store holds, every place's.
@@ -517,11 +525,22 @@ mod tests {
             store.write_side(row(tree, 0), TriviaSide::Leading, vec![entry("// x")]);
             store.write_side(row(tree, 7), TriviaSide::Inner, Vec::new());
         }
-        store.drop_tree(TreeId(2));
+        assert!(!store.drop_tree(TreeId(2)), "text alone holds no record");
         assert_eq!(store.len(), 4);
         assert_eq!(store.side(row(2, 0), TriviaSide::Leading), None);
         assert_eq!(store.side(row(1, 0), TriviaSide::Leading), Some(vec![entry("// x")]));
         assert_eq!(store.side(row(3, 7), TriviaSide::Inner), Some(Vec::new()));
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn dropping_a_tree_answers_whether_a_side_it_dropped_held_a_built_record() {
+        let store = TriviaStore::<TriviaText>::new();
+        store.write_side(row(1, 0), TriviaSide::Leading, vec![entry("// x"), record(5, None)]);
+        store.write_side(row(2, 0), TriviaSide::Leading, vec![entry("// y")]);
+        assert!(store.drop_tree(TreeId(1)));
+        assert!(!store.drop_tree(TreeId(2)), "text alone holds no record");
+        assert!(!store.drop_tree(TreeId(3)), "a tree with no sides");
     }
 
     #[cfg(feature = "arena")]
@@ -534,7 +553,7 @@ mod tests {
         store.write_side(record, TriviaSide::Leading, vec![entry("// r")]);
         store.write_side(unit, TriviaSide::Trailing, vec![entry("// u")]);
         store.write_side(row(1, 0), TriviaSide::Leading, Vec::new());
-        store.drop_tree(TreeId(1));
+        assert!(!store.drop_tree(TreeId(1)));
         assert_eq!(store.side(record, TriviaSide::Leading), Some(vec![entry("// r")]));
         assert_eq!(store.side(unit, TriviaSide::Trailing), Some(vec![entry("// u")]));
         assert_eq!(store.len(), 2);

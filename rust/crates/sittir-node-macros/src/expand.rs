@@ -699,7 +699,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
 /// The survey and routes every node's own pass starts with.
 fn pass(min_depth: u32) -> TokenStream {
     quote! {
-        let depth = depth.at_least(#min_depth);
+        let depth = if ctx.starts() { depth.at_least(#min_depth) } else { depth };
         let index = __rt::index_of(cursor);
         let __at = ctx.at_of(cursor);
         ctx.hold(cursor);
@@ -923,6 +923,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     if u16::try_from(slot_fields.len()).is_err() {
         return Err(syn::Error::new_spanned(attrs.kind.as_ref(), "a kind indexes its slots by u16: at most 65535"));
     }
+    if attrs.wrapped_items && attrs.item.is_none() {
+        return Err(syn::Error::new_spanned(attrs.kind.as_ref(), "`wrapped_items` describes a list's items: the kind names its item slot with `item = …`"));
+    }
     let slots: Vec<(u16, &Field<'_>, &SlotAttrs)> = (0..=u16::MAX).zip(slot_fields).map(|(i, (field, slot))| (i, field, slot)).collect();
     let mut tagged_separators = Vec::new();
     let mut tagged = Vec::new();
@@ -992,6 +995,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
     let positions: Vec<usize> = slots.iter().map(|&(i, ..)| usize::from(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
+    let wrapped = attrs.wrapped_items;
+    let depths: Vec<TokenStream> = names.iter().map(|name| if attrs.item.as_ref() == Some(*name) { quote!(ctx.item_depth(depth, #wrapped)) } else { quote!(depth) }).collect();
     let labels: Vec<LitStr> = names.iter().map(|name| LitStr::new(&name.to_string(), name.span())).collect();
     let keys: Vec<&LitStr> = slots
         .iter()
@@ -1082,11 +1087,11 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                 &mut #accs,
                                 cursor,
                                 ctx,
-                                depth,
+                                #depths,
                                 __rt::SlotSite { kind: __KIND, slot: #labels, index },
                             )?;
                             if scalar {
-                                __units.push(__rt::UnitRead { slot: #keys, item: __arrival, row: __child, trivia: ctx.unit_sides(__child, depth) });
+                                __units.push(__rt::UnitRead { slot: #keys, item: __arrival, row: __child, trivia: ctx.unit_sides(__child, #depths) });
                                 __unit_slots.push(#idxs);
                             }
                             __items[#positions] += 1;

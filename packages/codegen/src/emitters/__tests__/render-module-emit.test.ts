@@ -29,9 +29,15 @@ import type { NodeMap } from '../../compiler/types.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
-import { listViewOwners } from '../factories.ts';
+import { listViewOwners, wrappedItemLists } from '../factories.ts';
 import { isTextLeaf, slotKindNames } from '../shared.ts';
-import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledList,
+	AssembledSupertype,
+	type AssembledNode,
+	type AssembledNonterminal
+} from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
 	assertOneUntaggedSlot,
@@ -39,6 +45,7 @@ import {
 	enumKindArgs,
 	flankArgs,
 	layoutTokenIds,
+	listItemSlot,
 	readNames,
 	slotArgs,
 	nodeArgs,
@@ -619,6 +626,9 @@ describe('node read facts', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
+			wrappedLists: new Map(
+				wrappedItemLists(model.nodeMap, model.kindEntries).map(({ list, wrapper }) => [list.kind, wrapper])
+			),
 			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'rust'
@@ -657,9 +667,38 @@ describe('node read facts', () => {
 
 	it('selects list reading from its item slot and preserves its separator and optional flank', () => {
 		const list = node('ParametersElementsNode') as AssembledList;
-		expect(args('ParametersElementsNode')).toBe('kind = kind::PARAMETERS_ELEMENTS, item = item');
+		expect(args('ParametersElementsNode')).toBe('kind = kind::PARAMETERS_ELEMENTS, item = item, wrapped_items');
 		expect(slotArgs(slot('ParametersElementsNode', 'item'), list, shape(slot('ParametersElementsNode', 'item')), ctx)).toBe('field = field::ITEM, separator = kind::COMMA');
 		expect(flankArgs(list)).toBe('trailing = 0');
+	});
+
+	it('marks a list whose items are wrappers its view reads through, and only such a list', () => {
+		expect(args('ArgumentsElementsNode')).toBe('kind = kind::ARGUMENTS_ELEMENTS, item = item, wrapped_items');
+		expect(args('FieldInitializerListElementsNode')).toBe('kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item');
+	});
+
+	it('refuses a list whose items or wrapper slots can be a list kind, which would read itself at one depth without end', () => {
+		const list = node('ArgumentsElementsNode');
+		const cyclic = { ...ctx, wrappedLists: new Map([[list.kind, node('ArgumentsNode')]]) };
+		expect(() => nodeArgs(list, ownId(list), cyclic, list.slots)).toThrow(
+			/the list arguments_elements reads its items at its own depth, and arguments\.elements can be the list arguments_elements,/
+		);
+	});
+
+	it('refuses a list whose items reach a list kind through an envelope and a supertype', () => {
+		const list = node('FieldInitializerListElementsNode');
+		const [item] = slotKindNames(listItemSlot(list)!);
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const supertype = [...model.nodeMap.nodes.values()].find(
+			(n): n is AssembledSupertype => n instanceof AssembledSupertype
+		)!;
+		const [member] = supertype.subtypeNames;
+		const nodes = new Map([...model.nodeMap.nodes, [item!, envelope], [content!, supertype], [member!, list]]);
+		const through = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes } };
+		expect(() => nodeArgs(list, ownId(list), through, list.slots)).toThrow(
+			`the list ${list.kind} reads its items at its own depth, and ${list.kind}.${listItemSlot(list)!.propertyName} can be the list ${member} through the envelope ${item}, which would read its own items there too, without end`
+		);
 	});
 
 	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
@@ -736,6 +775,9 @@ describe('node read facts for an aliased presence keyword', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
+			wrappedLists: new Map(
+				wrappedItemLists(model.nodeMap, model.kindEntries).map(({ list, wrapper }) => [list.kind, wrapper])
+			),
 			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'typescript'

@@ -514,7 +514,7 @@ export interface OwnerView {
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [], length: 0 };
-	const source = count in list || isBuiltNode(list) || isParsedNode(list) || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	const source = !isCoordinate(list) && (count in list || isBuiltNode(list) || isParsedNode(list) || recordOf(list) === undefined) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
 	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];

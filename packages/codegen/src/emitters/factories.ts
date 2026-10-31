@@ -2509,6 +2509,17 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
 }
 
+export function wrappedItemLists(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): readonly { readonly list: AssembledList; readonly wrapper: AssembledNode }[] {
+	return [...nodeMap.nodes.values()].flatMap((node) => {
+		if (!(node instanceof AssembledList)) return [];
+		const wrapper = separatedListSurface(node, nodeMap, kindEntries).wrapper;
+		return wrapper === undefined ? [] : [{ list: node, wrapper: wrapper.node }];
+	});
+}
+
 export interface ListViewPlan {
 	readonly owner?: { readonly accessor: string; readonly storage: string };
 	readonly elements: string;
@@ -2661,6 +2672,7 @@ export function separatedListSurface(
 		readonly factory: string;
 		readonly contentKey: string;
 		readonly contentProperty: string;
+		readonly node: AssembledNode;
 		readonly decorationAccessors: readonly string[];
 		readonly typeName: string;
 	};
@@ -2676,17 +2688,18 @@ export function separatedListSurface(
 		const wKind = contentKinds[0]!;
 		const entry = findKindEntry(kindEntries, wKind);
 		const content = transparentWrapperContentSlot(wKind, nodeMap);
-		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
 		const wrapperNode = nodeMap.nodes.get(wKind);
+		const factoryName = wrapperNode?.rawFactoryName;
 		const wrapperSlots = wrapperNode !== undefined && isSlotBearingCompound(wrapperNode) ? wrapperNode.slots : [];
-		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
+		if (wrapperNode !== undefined && entry !== undefined && content !== undefined && factoryName !== undefined) {
 			wrapper = {
 				member: entry.member,
 				factory: factoryName,
 				contentKey: content.propertyName,
 				contentProperty: content.propertyName,
+				node: wrapperNode,
 				decorationAccessors: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.propertyName),
-				typeName: nodeMap.nodes.get(wKind)!.typeName
+				typeName: wrapperNode.typeName
 			};
 			const contentType = fieldElementType(content, nodeMap, kindEntries);
 			elemType = `${elemType} | ${withAdmittedTypes(contentType, content, nodeMap)}`;
@@ -2984,9 +2997,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(DELIMITER_IMPORT);
 		lines.push(`import { TSKindId } from '../kinds.js';`);
 		if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
-		const usesElementWrap = [...nodeMap.nodes.values()].some(
-			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
-		);
+		const usesElementWrap = wrappedItemLists(nodeMap, kindEntries).length > 0;
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
