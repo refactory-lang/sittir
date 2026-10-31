@@ -533,35 +533,35 @@ function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefi
 
 export interface Guaranteed {
 	readonly holds: (path: readonly SlotStep[] | undefined) => boolean;
-	readonly many: (step: SlotStep) => boolean;
-	readonly present: (step: SlotStep) => readonly string[] | undefined;
+	readonly many: (path: readonly SlotStep[]) => boolean;
+	readonly present: (path: readonly SlotStep[]) => readonly string[] | undefined;
 }
 
-const stepKey = (step: SlotStep): string => `${step.owner} ${step.slot} ${step.anchor ?? ''}`;
+const pathKey = (path: readonly SlotStep[]): string => path.map((step) => `${step.owner} ${step.slot} ${step.anchor ?? ''}`).join(' > ');
 
 export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[] }): Guaranteed {
 	const one = new Map<string, Set<string>>();
 	const many = new Set<string>();
-	for (const child of entry.children) {
-		if (child.subject.up !== 0) continue;
-		let holder: string | null = entry.kind;
-		for (const [i, selector] of child.subject.down.entries()) {
-			const last = holder === null ? undefined : heldSteps(model, holder, selector)?.at(-1);
-			if (last === undefined) break;
-			const key = stepKey(stepOf(last.holder, last.slot.name, slotAnchor(model, last.holder, selector)));
-			const final = i === child.subject.down.length - 1;
-			if (!('excludes' in child)) {
-				const kinds = one.get(key) ?? one.set(key, new Set<string>()).get(key)!;
-				for (const kind of final && 'kinds' in child ? child.kinds : selector.kind === null ? [] : [selector.kind]) kinds.add(kind);
-			} else if (final) many.add(key);
-			holder = selector.kind;
-		}
-	}
+	const walk = (child: ChildTest, holder: string, path: readonly SlotStep[], i: number): void => {
+		const selector = child.subject.down[i];
+		const held = selector === undefined ? undefined : heldSteps(model, holder, selector);
+		const last = held?.at(-1);
+		if (selector === undefined || held === undefined || last === undefined) return;
+		const at = [...path, ...heldPath(held, slotAnchor(model, last.holder, selector))];
+		const key = pathKey(at);
+		const final = i === child.subject.down.length - 1;
+		if (!('excludes' in child)) {
+			const kinds = one.get(key) ?? one.set(key, new Set<string>()).get(key)!;
+			for (const kind of final && 'kinds' in child ? child.kinds : selector.kind === null ? [] : [selector.kind]) kinds.add(kind);
+		} else if (final) many.add(key);
+		for (const next of heldInto(model, holder, selector)?.next ?? []) walk(child, next.kind, at, i + 1);
+	};
+	for (const child of entry.children) if (child.subject.up === 0) walk(child, entry.kind, [], 0);
 	return {
-		holds: (path) => (path ?? []).every((step) => step.anchor !== 'only' || one.has(stepKey(step))),
-		many: (step) => many.has(stepKey(step)),
-		present: (step) => {
-			const kinds = one.get(stepKey(step));
+		holds: (path = []) => path.every((step, i) => step.anchor !== 'only' || one.has(pathKey(path.slice(0, i + 1)))),
+		many: (path) => many.has(pathKey(path)),
+		present: (path) => {
+			const kinds = one.get(pathKey(path));
 			return kinds === undefined ? undefined : concreteKinds(model, [...kinds]);
 		}
 	};
@@ -698,7 +698,7 @@ function membersOf(
 			unrouted(slot, 'holds only text on a kind read as an identifier');
 			continue;
 		}
-		if (counted.has(slot.name) && !guaranteed.many({ owner: holder, slot: slot.name, anchor: 'only' })) {
+		if (counted.has(slot.name) && !guaranteed.many([...through, { owner: holder, slot: slot.name, anchor: 'only' }])) {
 			unrouted(slot, 'is counted by a member anchored as its only node');
 			continue;
 		}

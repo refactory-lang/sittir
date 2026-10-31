@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { guaranteedBy } from '../routes.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -101,6 +102,8 @@ const MODEL = [
 	node('pair_outer', [slot('mid', ['_pair_copy', 'pair_shown'])]),
 	node('_pair_copy', [slot('inner', ['binary'])], { shownAs: ['pair_shown'] }),
 	node('pair_shown', [slot('inner', ['binary'])]),
+	node('twin', [slot('a', ['twin_mid']), slot('b', ['twin_mid'])]),
+	node('twin_mid', [slot('detail', ['identifier'], { required: false })]),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
@@ -466,6 +469,16 @@ describe('resolveRoutes', () => {
 			path: [{ owner: "function_definition", slot: "name" }]
 		});
 	});
+
+describe('guaranteedBy', () => {
+	it('guarantees a tested node only where it was tested, not at another occurrence of the same kind', async () => {
+		const input = await grammar('(twin a: (twin_mid detail: (identifier))) @expression.twin');
+		const [entry] = resolveRoutes(input).readEntries.get('twin') ?? [];
+		const sure = guaranteedBy(input.model, entry!);
+		expect(sure.present([{ owner: 'twin', slot: 'a' }, { owner: 'twin_mid', slot: 'detail' }])).toEqual(['identifier']);
+		expect(sure.present([{ owner: 'twin', slot: 'b' }, { owner: 'twin_mid', slot: 'detail' }])).toBeUndefined();
+	});
+});
 
 describe("keptKinds over a flag capture", () => {
 	const KEPT_MODEL = new Map(
