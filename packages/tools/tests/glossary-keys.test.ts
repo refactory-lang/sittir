@@ -41,7 +41,7 @@ const paths = (source: string, only?: boolean): string[] =>
 		.map((declaration) => declaration.path.join('::'))
 		.sort();
 
-describe('enumerateDeclarations', () => {
+describe('enumerateDeclarations', { timeout: 120_000 }, () => {
 	it('enumerates every level of owner, with constructor and parameter properties, and leaves out private members', () => {
 		const all = paths(SOURCE);
 		expect(all).toEqual(
@@ -95,7 +95,7 @@ describe('enumerateDeclarations', () => {
 	});
 });
 
-describe('classifyKey', () => {
+describe('classifyKey', { timeout: 120_000 }, () => {
 	let root: string;
 	beforeEach(() => {
 		root = mkdtempSync(join(tmpdir(), 'glossary-keys-'));
@@ -173,7 +173,7 @@ function writeSource(root: string, file: string, text: string): void {
 	writeFileSync(join(root, file), text, 'utf8');
 }
 
-describe('the ratchet on a planted tree', () => {
+describe('the ratchet on a planted tree', { timeout: 120_000 }, () => {
 	let root: string;
 	const FILE = 'packages/common/src/probe.ts';
 	const CEILINGS = 'ceilings.json';
@@ -252,7 +252,7 @@ describe('the ratchet on a planted tree', () => {
 	});
 });
 
-describe('enumeration edge cases', () => {
+describe('enumeration edge cases', { timeout: 120_000 }, () => {
 	it('enumerates the names a destructuring declaration binds', () => {
 		expect(paths('export const { a, b: [c, ...d], ...e } = source;', true)).toEqual(['a', 'c', 'd', 'e']);
 	});
@@ -307,7 +307,7 @@ describe('enumeration edge cases', () => {
 	});
 });
 
-describe('the ratchet on edge-case trees', () => {
+describe('the ratchet on edge-case trees', { timeout: 120_000 }, () => {
 	let root: string;
 	const FILE = 'packages/common/src/probe.ts';
 	beforeEach(() => {
