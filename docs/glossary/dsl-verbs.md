@@ -810,21 +810,13 @@ The node reference the narrowing site holds.
 
 The number of sites the narrowing reaches in each rule.
 
-### `packages/codegen/src/dsl/verbs/narrow.ts::NO_POSITIONS::counts`
-
-The position counts of a site with no positions: empty.
-
-### `packages/codegen/src/dsl/verbs/narrow.ts::NO_POSITIONS::holders`
-
-The position holders of a site with no positions: empty.
-
 ### `packages/codegen/src/dsl/verbs/narrow.ts::SitePositions::counts`
 
-The number of positions per site.
+The number of positions per site. The empty `NO_POSITIONS` value has no sites, so it is empty.
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::SitePositions::holders`
 
-The rules holding each site's positions.
+The rules holding each site's positions. The empty `NO_POSITIONS` value has no sites, so it is empty.
 
 ### `packages/codegen/src/dsl/verbs/rename.ts::RenameEntry::from`
 
