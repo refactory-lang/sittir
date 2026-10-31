@@ -10097,11 +10097,11 @@ A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it ta
 /** The type a coercing caller may pass for the same position. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.rowLooseOptional`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::rowLooseOptional`
 
 Whether the loose row's parameter may be left out, where that differs from the strict one. A wrapper around a kind that can be built from nothing takes no argument on the coercing side (`argumentOptional`), while its strict row names the built child.
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.defaultValue`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::defaultValue`
 
 ```text
 /** Set where the emitted signature defaults the parameter; an
@@ -11102,7 +11102,7 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::ChildrenFromNode.childSlotFacts`
+### `packages/codegen/src/emitters/from.ts::ChildrenFromNode::childSlotFacts`
 
 ```text
 // The container's classified sole user slot (soleSlotFacts) —
@@ -11532,7 +11532,7 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, each
 // not a class instance (see resolveUnnamedSlotConfig; reworked in task B).
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::SlotModel.propertyName`
+### `packages/codegen/src/emitters/wrap.ts::SlotModel::propertyName`
 
 ```text
 /** The accessor/setter name. One contributing slot lends its own; several
@@ -11540,7 +11540,7 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, each
 	 *  the generic the model uses for a slot the grammar left unnamed. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig.rootKind`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::rootKind`
 
 ```text
 /** The grammar's `root` role kind. Names that kind's wrapped surface as an
@@ -11773,13 +11773,13 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // ----------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::EmittedField.name`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::name`
 
 ```text
 // raw grammar field name
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::EmittedField.multiple`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::multiple`
 
 ```text
 // true when the node-side field is Vec<Box<AnyNode>>
@@ -11881,7 +11881,7 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // ----------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::MetaData.separators`
+### `packages/codegen/src/emitters/render-module.ts::MetaData::separators`
 
 ```text
 // kind → separator (fallback for inferred slots)
@@ -12057,20 +12057,20 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.stampedIds`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::stampedIds`
 
 ```text
 /** Per-reference-site mint stamp (slot values only) — authoritative when present. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.parseAliases`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::parseAliases`
 
 ```text
 /** Name-derived alias map for this slot/field (`aliasTargetToSourceMapOf`), used to
 	 *  expand `kind`'s alias-site names when no mint stamp is available. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.parseName`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::parseName`
 
 ```text
 /** This kind's own alias-occurrence parse name (e.g. supertype `subtypeParseNames`),
@@ -13596,7 +13596,7 @@ token it holds (`ArmOf::arm_among`, over the row's arm sites), so
 The separator site of a separated-list kind whose separator is a choice of
 literal tokens: the spacing-table row with `role: 'separator'`, if any.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite::address`
 
 ```text
 // The key the site answers to under its kind, and the tail of the node
@@ -13704,19 +13704,19 @@ all is a codegen-time error, never a guessed name. The canonical address path (`
 — it keeps the literal's quoted text, since that is what makes two different
 segments that would spell the same nested key distinguishable.
 
-### `packages/codegen/src/emitters/options.ts::AddressBranchEntry.segments`
+### `packages/codegen/src/emitters/options.ts::AddressBranchEntry::segments`
 
 ```text
 /** This branch's own address as typed segments — the prefix `path` was joined from. */
 ```
 
-### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.segments`
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry::segments`
 
 ```text
 /** This leaf's own address as typed segments — the full list `path` was joined from. */
 ```
 
-### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.canonical`
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry::canonical`
 
 ```text
 /** The typed segment list(s) of every site this leaf sets: one for an
@@ -13899,7 +13899,7 @@ Puts a tight join (`adjacent`, printed as `seam(TIGHT)`) before every slot and l
 
 The one-seam-per-flank check: every internal gap and each edge of a template carries at most one seam, decided in codegen, and coalescing (strength, then rank) happens only where flanks of different templates meet. It lists each run of seam-class nodes in a body (descending into gates) that holds a join (`adjacent`) or a static word seam (`wordSeam`) beside another, and generation fails naming the kind and the run. Two declared sites at one gap, or a site beside a whitespace token, are legal and permanent: each is an option address of its own, and the writer's coalescing resolves them. With `SEAM_FLANK_CENSUS` set the run is logged instead of failing, for counting.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.optional`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::optional`
 
 Whether a slot may be absent at render time (its node field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
@@ -13923,14 +13923,14 @@ A sample that satisfies the slot pattern, so the generated construction tests pa
 
 The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
 
-### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.registered`
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::registered`
 
 ```text
 /** A registered (spelling/choice) slot has no home in the factory's
 	 * config object — it moves to the trailing options argument. */
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.optionDefault`
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::optionDefault`
 
 The grammar default of a registered slot, in the value domain the builder takes:
 the spelling text for a spelling slot, the arm's kind id for a choice slot
