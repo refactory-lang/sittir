@@ -115,6 +115,15 @@ impl Depth {
         }
     }
 
+    /// The depth one level past `self`: the depth whose `below` is `self`.
+    #[must_use]
+    pub fn above(self) -> Depth {
+        match self {
+            Depth::All => Depth::All,
+            Depth::Levels(levels) => Depth::Levels(levels.saturating_add(1)),
+        }
+    }
+
     /// `self`, deepened to at least `levels`: a kind whose items arrive with it.
     #[must_use]
     pub fn at_least(self, levels: u32) -> Depth {
@@ -150,6 +159,10 @@ pub struct ReadCtx<'s> {
     /// (`ReadCtx::inline_units`): past the depth, a child with no named
     /// child is read inline although the read seats sides.
     pub inline_units: bool,
+    /// Set on a read whose client fills a list's items as soon as it holds
+    /// the list (`ReadCtx::inline_items`): a list kind reads its items at its
+    /// own depth, so they arrive with it as read nodes.
+    pub inline_items: bool,
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -160,6 +173,7 @@ impl std::fmt::Debug for ReadCtx<'_> {
             .field("sides", &self.sides.is_some())
             .field("changed", &self.changed)
             .field("inline_units", &self.inline_units)
+            .field("inline_items", &self.inline_items)
             .finish_non_exhaustive()
     }
 }
@@ -268,7 +282,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -294,6 +308,27 @@ impl<'s> ReadCtx<'s> {
     #[must_use]
     pub fn inline_units(self) -> Self {
         Self { inline_units: true, ..self }
+    }
+
+    /// This context, reading a list kind's items at the list's own depth, as
+    /// a client that fills a list's items as soon as it holds the list.
+    #[must_use]
+    pub fn inline_items(self) -> Self {
+        Self { inline_items: true, ..self }
+    }
+
+    /// The depth a list kind read at `depth` hands its item slot. On a read
+    /// that reads items inline (`inline_items`): one level past its own, so
+    /// its items are read at the list's own depth, and one more when its
+    /// items are wrappers (`wrapped`), so each wrapper's own slots are too.
+    /// Else `depth`, so they are read a level down like any child.
+    #[must_use]
+    pub fn item_depth(&self, depth: Depth, wrapped: bool) -> Depth {
+        match (self.inline_items, wrapped) {
+            (false, _) => depth,
+            (true, false) => depth.above(),
+            (true, true) => depth.above().above(),
+        }
     }
 
     /// Whether a child with no named child, read at `depth` under a node,
@@ -1510,6 +1545,26 @@ mod tests {
         assert_eq!(Depth::Levels(NonZeroU32::new(5).unwrap()).at_least(2), Depth::Levels(NonZeroU32::new(5).unwrap()));
         assert_eq!(Depth::All.at_least(2), Depth::All);
         assert_eq!(Depth::ONE.at_least(0), Depth::ONE);
+    }
+
+    #[test]
+    fn one_level_past_a_depth_is_the_depth_its_children_are_read_below() {
+        for depth in [Depth::ONE, Depth::Levels(NonZeroU32::new(4).unwrap()), Depth::All] {
+            assert_eq!(depth.above().below(), Some(depth));
+        }
+        assert_eq!(Depth::Levels(NonZeroU32::MAX).above(), Depth::Levels(NonZeroU32::MAX), "the deepest count stays");
+    }
+
+    #[test]
+    fn a_read_that_reads_items_inline_hands_a_list_s_item_slot_one_level_more_and_a_wrapper_list_s_two() {
+        let levels = |n| Depth::Levels(NonZeroU32::new(n).unwrap());
+        let plain = ReadCtx::new("", crate::types::TreeId(1), |_| false);
+        assert_eq!(plain.item_depth(Depth::ONE, false), Depth::ONE);
+        assert_eq!(plain.item_depth(Depth::ONE, true), Depth::ONE);
+        let inline = ReadCtx::new("", crate::types::TreeId(1), |_| false).inline_items();
+        assert_eq!(inline.item_depth(Depth::ONE, false), levels(2));
+        assert_eq!(inline.item_depth(Depth::ONE, true), levels(3));
+        assert_eq!(inline.item_depth(Depth::All, true), Depth::All);
     }
 
     #[test]

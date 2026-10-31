@@ -64,6 +64,9 @@ export interface ParseOptions {
 	/**
 	 * How many levels the parse reads: one by default, `Infinity` for the whole
 	 * tree. A node past the depth is read when an accessor first reaches it.
+	 * A list's items count as children of the node that holds the list: they
+	 * are read with that node, to the same depth as its other children, so
+	 * filling a list never reads its items one by one.
 	 *
 	 * The choice changes when the work is done, never the result: an untouched
 	 * node renders its source bytes whatever depth it was read at.

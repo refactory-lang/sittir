@@ -30048,7 +30048,7 @@ fn prepare_macro_rules<N: MacroRulesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 3, built_words = 3, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare, view = EnumVariantListElementsNodeRecord, prepare_fn = prepare_enum_variant_list_elements)]
+#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare, view = EnumVariantListElementsNodeRecord, prepare_fn = prepare_enum_variant_list_elements)]
 pub struct EnumVariantListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30136,7 +30136,7 @@ fn prepare_enum_variant_list_elements<N: EnumVariantListElementsPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 3, built_words = 3, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare, view = FieldDeclarationListElementsNodeRecord, prepare_fn = prepare_field_declaration_list_elements)]
+#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare, view = FieldDeclarationListElementsNodeRecord, prepare_fn = prepare_field_declaration_list_elements)]
 pub struct FieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30224,7 +30224,7 @@ fn prepare_field_declaration_list_elements<N: FieldDeclarationListElementsPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 3, built_words = 3, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare, view = OrderedFieldDeclarationListElementsNodeRecord, prepare_fn = prepare_ordered_field_declaration_list_elements)]
+#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare, view = OrderedFieldDeclarationListElementsNodeRecord, prepare_fn = prepare_ordered_field_declaration_list_elements)]
 pub struct OrderedFieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30400,7 +30400,7 @@ fn prepare_where_predicates<N: WherePredicatesPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 3, built_words = 3, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
+#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
 pub struct TypeParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30576,7 +30576,7 @@ fn prepare_use_clauses<N: UseClausesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 3, built_words = 3, fields = ParametersElementsFields, prepare = ParametersElementsPrepare, view = ParametersElementsNodeRecord, prepare_fn = prepare_parameters_elements)]
+#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = ParametersElementsFields, prepare = ParametersElementsPrepare, view = ParametersElementsNodeRecord, prepare_fn = prepare_parameters_elements)]
 pub struct ParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30928,7 +30928,7 @@ fn prepare_use_bounds_elements<N: UseBoundsElementsPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 3, built_words = 3, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare, view = TypeArgumentsElementsNodeRecord, prepare_fn = prepare_type_arguments_elements)]
+#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare, view = TypeArgumentsElementsNodeRecord, prepare_fn = prepare_type_arguments_elements)]
 pub struct TypeArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31016,7 +31016,7 @@ fn prepare_type_arguments_elements<N: TypeArgumentsElementsPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 3, built_words = 3, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare, view = ArgumentsElementsNodeRecord, prepare_fn = prepare_arguments_elements)]
+#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare, view = ArgumentsElementsNodeRecord, prepare_fn = prepare_arguments_elements)]
 pub struct ArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]

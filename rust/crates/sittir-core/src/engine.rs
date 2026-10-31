@@ -684,12 +684,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// The node at `index` read into `T`, `depth` levels down, seating no
-    /// sides, or, when an `ERROR` holds it, that `ERROR` as `read_error`
-    /// reads it: one cursor, moved to the node once, answers both. `None`
-    /// past the tree's last node.
+    /// sides and reading a list's items with it (`ReadCtx::inline_items`),
+    /// or, when an `ERROR` holds it, that `ERROR` as `read_error` reads it:
+    /// one cursor, moved to the node once, answers both. `None` past the
+    /// tree's last node.
     pub fn read_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
         let mut cursor = cursor_at(&self.tree, index)?;
-        let mut ctx = self.read_ctx();
+        let mut ctx = self.read_ctx().inline_items();
         if let Some((error, node)) = error_holding(&self.tree, &cursor) {
             return Some(Ok(NodeRead::Error(self.error_at(error, node, &ctx))));
         }

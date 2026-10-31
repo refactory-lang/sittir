@@ -35792,7 +35792,7 @@ fn prepare_function_type<N: FunctionTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_SPECIFIERS, item = item, words = 3, built_words = 3, fields = ExportSpecifiersFields, prepare = ExportSpecifiersPrepare, view = ExportSpecifiersNodeRecord, prepare_fn = prepare_export_specifiers)]
+#[node(kind = kind::EXPORT_SPECIFIERS, item = item, wrapped_items, words = 3, built_words = 3, fields = ExportSpecifiersFields, prepare = ExportSpecifiersPrepare, view = ExportSpecifiersNodeRecord, prepare_fn = prepare_export_specifiers)]
 pub struct ExportSpecifiersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36304,7 +36304,7 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 3, built_words = 3, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
+#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
 pub struct TypeParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]

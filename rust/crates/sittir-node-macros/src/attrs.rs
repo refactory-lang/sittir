@@ -27,6 +27,9 @@ pub struct KindAttrs {
     pub interior: Option<LitStr>,
     pub content: Option<Ident>,
     pub item: Option<Ident>,
+    /// On a list kind: its items are wrappers a client reads through, to
+    /// their decorations and content, as soon as it holds the list.
+    pub wrapped_items: bool,
     /// On a variant: the arm bare text and an `ERROR` object decode as.
     pub verbatim: bool,
     /// On a variant: the arm an `ERROR` object decodes as, in a choice that
@@ -207,6 +210,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "interior" => out.interior = Some(meta.value()?.parse()?),
                 "content" => out.content = Some(meta.value()?.parse()?),
                 "item" => out.item = Some(meta.value()?.parse()?),
+                "wrapped_items" => out.wrapped_items = true,
                 "verbatim" => out.verbatim = true,
                 "error" => out.error = true,
                 "codec_only" => out.codec_only = true,

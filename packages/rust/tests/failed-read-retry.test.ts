@@ -8,9 +8,9 @@ type Members = Record<string, (...args: unknown[]) => unknown>;
 const SOURCE = 'type T = ((Foo, (Baz,)), (Bar,), ());\n';
 
 describe.each([
-	{ storage: 'arena', member: 'cell' },
-	{ storage: 'object', member: 'read' }
-] as const)('a read that fails partway, in $storage storage', ({ storage, member }) => {
+	{ storage: 'arena', member: 'cell', reads: [4, Infinity] },
+	{ storage: 'object', member: 'read', reads: [1, 1] }
+] as const)('a read that fails partway, in $storage storage', ({ storage, member, reads: [fewest, most] }) => {
 	it('leaves no list it made unfilled for the read that follows, wherever it fails', async () => {
 		const rs = await createEngine(rust, { nodeStorage: storage });
 		const statementOf = () => {
@@ -42,6 +42,7 @@ describe.each([
 			failures++;
 			expect(items(statement.value())).toEqual(expected);
 		}
-		expect(failures).toBeGreaterThan(3);
+		expect(failures).toBeGreaterThanOrEqual(fewest);
+		expect(failures).toBeLessThanOrEqual(most);
 	});
 });

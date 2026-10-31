@@ -2509,6 +2509,13 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
 }
 
+export function wrappedItemLists(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly AssembledList[] {
+	return [...nodeMap.nodes.values()].filter(
+		(node): node is AssembledList =>
+			node instanceof AssembledList && separatedListSurface(node, nodeMap, kindEntries).wrapper !== undefined
+	);
+}
+
 export interface ListViewPlan {
 	readonly owner?: { readonly accessor: string; readonly storage: string };
 	readonly elements: string;
@@ -2984,9 +2991,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(DELIMITER_IMPORT);
 		lines.push(`import { TSKindId } from '../kinds.js';`);
 		if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
-		const usesElementWrap = [...nodeMap.nodes.values()].some(
-			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
-		);
+		const usesElementWrap = wrappedItemLists(nodeMap, kindEntries).length > 0;
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);

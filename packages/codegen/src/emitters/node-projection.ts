@@ -191,6 +191,7 @@ export interface ReadFactsCtx {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly names: ReadNames;
 	readonly listOwners: ReadonlySet<string>;
+	readonly wrappedLists: ReadonlySet<string>;
 	readonly displayIds: ReadonlySet<number>;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly grammar: string;
@@ -295,6 +296,7 @@ export function nodeArgs(
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
 	const item = listItemSlot(node);
 	if (item !== undefined) args.push(`item = ${rustFieldIdent(item.storageName)}`);
+	if (ctx.wrappedLists.has(node.kind)) args.push('wrapped_items');
 	return args.join(', ');
 }
 
