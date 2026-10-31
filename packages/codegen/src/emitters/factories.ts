@@ -2512,11 +2512,11 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 export function wrappedItemLists(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
-): readonly { readonly list: AssembledList; readonly content: AssembledNonterminal }[] {
+): readonly { readonly list: AssembledList; readonly wrapper: AssembledNode }[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => {
 		if (!(node instanceof AssembledList)) return [];
 		const wrapper = separatedListSurface(node, nodeMap, kindEntries).wrapper;
-		return wrapper === undefined ? [] : [{ list: node, content: wrapper.contentSlot }];
+		return wrapper === undefined ? [] : [{ list: node, wrapper: wrapper.node }];
 	});
 }
 
@@ -2672,7 +2672,7 @@ export function separatedListSurface(
 		readonly factory: string;
 		readonly contentKey: string;
 		readonly contentProperty: string;
-		readonly contentSlot: AssembledNonterminal;
+		readonly node: AssembledNode;
 		readonly decorationAccessors: readonly string[];
 		readonly typeName: string;
 	};
@@ -2688,18 +2688,18 @@ export function separatedListSurface(
 		const wKind = contentKinds[0]!;
 		const entry = findKindEntry(kindEntries, wKind);
 		const content = transparentWrapperContentSlot(wKind, nodeMap);
-		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
 		const wrapperNode = nodeMap.nodes.get(wKind);
+		const factoryName = wrapperNode?.rawFactoryName;
 		const wrapperSlots = wrapperNode !== undefined && isSlotBearingCompound(wrapperNode) ? wrapperNode.slots : [];
-		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
+		if (wrapperNode !== undefined && entry !== undefined && content !== undefined && factoryName !== undefined) {
 			wrapper = {
 				member: entry.member,
 				factory: factoryName,
 				contentKey: content.propertyName,
 				contentProperty: content.propertyName,
-				contentSlot: content,
+				node: wrapperNode,
 				decorationAccessors: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.propertyName),
-				typeName: nodeMap.nodes.get(wKind)!.typeName
+				typeName: wrapperNode.typeName
 			};
 			const contentType = fieldElementType(content, nodeMap, kindEntries);
 			elemType = `${elemType} | ${withAdmittedTypes(contentType, content, nodeMap)}`;
