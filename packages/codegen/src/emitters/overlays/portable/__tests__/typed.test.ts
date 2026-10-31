@@ -77,6 +77,10 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('return read(this[low].suffix());');
 	});
 
+	it('reads an absent value and a hole as themselves', () => {
+		expect(typed.source).toContain('export type ViewOf<N> = N extends undefined | null\n\t? N\n');
+	});
+
 	it('reports what it skipped with the reason', () => {
 		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
 	});
