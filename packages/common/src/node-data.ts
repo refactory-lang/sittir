@@ -86,7 +86,7 @@ export function triviaOf(node: object): NodeLayout['trivia'] {
 	return (node as { readonly $_layout?: NodeLayout }).$_layout?.trivia;
 }
 
-export function setTriviaOf(node: object, trivia: NodeTrivia): void {
+export function setTriviaOf(node: object, trivia: NodeTrivia | undefined): void {
 	const record = node as { $_layout?: NodeLayout };
 	record.$_layout = { ...record.$_layout, trivia };
 }

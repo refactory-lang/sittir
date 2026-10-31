@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, setTriviaOf, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -245,6 +245,7 @@ export class BuiltArena {
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 	readonly #minted: number[] = [];
 	readonly #moved: number[] = [];
+	readonly #undos: (() => void)[] = [];
 	#scopes = 0;
 
 	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
@@ -355,24 +356,28 @@ export class BuiltArena {
 	scope<T>(build: () => T): T {
 		const minted = this.#minted.length;
 		const moved = this.#moved.length;
+		const undos = this.#undos.length;
 		this.#scopes++;
 		try {
 			return build();
 		} catch (error) {
-			this.#abandon(minted, moved);
+			this.#abandon(minted, moved, undos);
 			throw error;
 		} finally {
 			if (--this.#scopes === 0) {
 				this.#minted.length = 0;
 				this.#moved.length = 0;
+				this.#undos.length = 0;
 			}
 		}
 	}
 
-	#abandon(minted: number, moved: number): void {
+	#abandon(minted: number, moved: number, undos: number): void {
+		for (let n = this.#undos.length - 1; n >= undos; n--) this.#undos[n]!();
 		for (let n = this.#moved.length - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
 		for (let n = this.#minted.length - 1; n >= minted; n--) this.release(this.#minted[n]!);
 		this.#moved.length = moved;
+		this.#undos.length = undos;
 		this.#minted.length = minted;
 	}
 
@@ -489,10 +494,22 @@ export class BuiltArena {
 		const next = { ...own, ...written };
 		if (placed) return next;
 		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
-		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
-		this.#unpark(this.#parkedOf(leaf));
-		this.#parkedBy.set(next, leaf);
+		const parked = this.#parkedOf(leaf);
+		this.#park(leaf, next);
+		this.#unpark(parked);
+		if (this.#scopes > 0) {
+			this.#undos.push(() => {
+				this.#unpark(next);
+				if (parked !== undefined) this.#park(leaf, parked);
+				setTriviaOf(leaf, own);
+			});
+		}
 		return next;
+	}
+
+	#park(leaf: object, trivia: NodeTrivia): void {
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
+		this.#parkedBy.set(trivia, leaf);
 	}
 
 	#parkedOf(leaf: object): NodeTrivia | undefined {
@@ -732,6 +749,7 @@ export class BuiltArena {
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		this.#unpark(parked);
+		if (parked !== undefined && this.#scopes > 0) this.#undos.push(() => this.#park(leaf, parked));
 	}
 
 	leafSites(leaf: object): readonly number[] | undefined {
