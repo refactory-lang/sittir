@@ -107,41 +107,39 @@ function unwrapExpression(expression: ts.Expression | undefined): ts.Expression 
 	return current;
 }
 
-function isCountedMember(declaration: ts.Declaration): boolean {
-	const source = declaration.getSourceFile();
-	if (source.isDeclarationFile || !GLOSSARY_TREES.some((tree) => source.fileName.includes(`/${tree}`))) return false;
-	if (
-		!ts.isPropertySignature(declaration) &&
-		!ts.isMethodSignature(declaration) &&
-		!ts.isGetAccessorDeclaration(declaration) &&
-		!ts.isSetAccessorDeclaration(declaration) &&
-		!ts.isPropertyDeclaration(declaration)
-	)
-		return false;
-	if (nameOf(declaration.name) === undefined || hasModifier(declaration, ts.SyntaxKind.PrivateKeyword)) return false;
-	const member = declaration.parent;
-	const owner = ts.isTypeLiteralNode(member) && ts.isTypeAliasDeclaration(member.parent) ? member.parent : member;
-	const namedOwner = ts.isInterfaceDeclaration(owner) || ts.isTypeAliasDeclaration(owner) || ts.isClassLike(owner);
-	return namedOwner && ts.isSourceFile(owner.parent) && hasModifier(owner, ts.SyntaxKind.ExportKeyword);
-}
-
-function isContextuallyDeclared(literal: ts.ObjectLiteralExpression, name: string, checker: ts.TypeChecker): boolean {
+function isContextuallyDeclared(
+	literal: ts.ObjectLiteralExpression,
+	name: string,
+	checker: ts.TypeChecker,
+	counted: ReadonlySet<ts.Node>
+): boolean {
 	const contextual = checker.getContextualType(literal);
 	const property = contextual === undefined ? undefined : checker.getPropertyOfType(contextual, name);
 	return (property?.declarations ?? []).some(
 		(declaration) =>
-			isCountedMember(declaration) &&
+			counted.has(declaration) &&
 			(declaration.getSourceFile() !== literal.getSourceFile() || declaration.end <= literal.pos || declaration.pos >= literal.end)
 	);
 }
 
-export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.TypeChecker): readonly Declaration[] {
+interface FileDeclarations {
+	readonly declarations: readonly Declaration[];
+	readonly declaringNodes: ReadonlySet<ts.Node>;
+}
+
+export function enumerateDeclarations(
+	sourceFile: ts.SourceFile,
+	checker: ts.TypeChecker | undefined,
+	counted: ReadonlySet<ts.Node>
+): FileDeclarations {
 	const listed = namesExportedByList(sourceFile);
 	const found = new Map<string, Declaration>();
-	const add = (path: readonly string[], exported: boolean, isStatic = false): void => {
+	const declaringNodes = new Set<ts.Node>();
+	const add = (path: readonly string[], exported: boolean, isStatic = false, node?: ts.Node): void => {
 		const id = `${path.join('::')}${isStatic ? '\u0000static' : ''}`;
 		const prior = found.get(id);
 		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported, isStatic });
+		if (node !== undefined && exported && path.length <= UNDOCUMENTED_DEPTH) declaringNodes.add(node);
 	};
 
 	const typeMembers = (type: ts.TypeNode | undefined, path: readonly string[], exported: boolean): void => {
@@ -164,7 +162,7 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 			const name = nameOf(member.name);
 			if (name === undefined) continue;
 			const own = [...path, name];
-			add(own, exported);
+			add(own, exported, false, member);
 			if (ts.isPropertySignature(member)) typeMembers(member.type, own, exported);
 		}
 	};
@@ -177,7 +175,7 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 					const name = nameOf(parameter.name);
 					const modifiers = ts.getModifiers(parameter) ?? [];
 					if (name !== undefined && modifiers.length > 0 && !hasModifier(parameter, ts.SyntaxKind.PrivateKeyword)) {
-						add([...path, name], exported);
+						add([...path, name], exported, false, parameter);
 						typeMembers(parameter.type, [...path, name], exported);
 					}
 				}
@@ -193,12 +191,17 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 			const name = nameOf(member.name);
 			if (name === undefined || hasModifier(member, ts.SyntaxKind.PrivateKeyword)) continue;
 			const own = [...path, name];
-			add(own, exported, hasModifier(member, ts.SyntaxKind.StaticKeyword));
+			add(own, exported, hasModifier(member, ts.SyntaxKind.StaticKeyword), member);
 			if (ts.isPropertyDeclaration(member)) typeMembers(member.type, own, exported);
 		}
 	};
 
-	const objectMembers = (expression: ts.Expression | undefined, path: readonly string[], exported: boolean): void => {
+	const objectMembers = (
+		expression: ts.Expression | undefined,
+		path: readonly string[],
+		exported: boolean,
+		checker: ts.TypeChecker
+	): void => {
 		const literal = unwrapExpression(expression);
 		if (literal === undefined || !ts.isObjectLiteralExpression(literal)) return;
 		for (const property of literal.properties) {
@@ -206,8 +209,8 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 			const name = ts.isShorthandPropertyAssignment(property) ? property.name.text : nameOf(property.name);
 			if (name === undefined) continue;
 			const own = [...path, name];
-			if (!isContextuallyDeclared(literal, name, checker)) add(own, exported);
-			if (ts.isPropertyAssignment(property)) objectMembers(property.initializer, own, exported);
+			if (!isContextuallyDeclared(literal, name, checker, counted)) add(own, exported);
+			if (ts.isPropertyAssignment(property)) objectMembers(property.initializer, own, exported, checker);
 		}
 	};
 
@@ -255,7 +258,8 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 						const path = [...prefix, bound];
 						const exported = isExported(statement, bound);
 						add(path, exported);
-						if (constant && ts.isIdentifier(declaration.name)) objectMembers(declaration.initializer, path, exported);
+						if (checker !== undefined && constant && ts.isIdentifier(declaration.name))
+						objectMembers(declaration.initializer, path, exported, checker);
 					}
 				}
 			} else if (ts.isModuleDeclaration(statement) && ts.isIdentifier(statement.name)) {
@@ -265,7 +269,7 @@ export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.Typ
 	};
 
 	visit(sourceFile.statements, [], (node, name) => hasModifier(node, ts.SyntaxKind.ExportKeyword) || listed.has(name));
-	return [...found.values()];
+	return { declarations: [...found.values()], declaringNodes };
 }
 
 export function enumerateSource(file: string, source: string): readonly Declaration[] {
@@ -279,7 +283,22 @@ export function enumerateSource(file: string, source: string): readonly Declarat
 	const program = ts.createProgram({ rootNames: [name], options: CHECKER_OPTIONS, host });
 	const sourceFile = program.getSourceFile(name);
 	if (sourceFile === undefined) throw new Error(`glossary-keys: no source for ${file}`);
-	return enumerateDeclarations(sourceFile, program.getTypeChecker());
+	return enumerateProgram([{ file: name, sourceFile }], program.getTypeChecker()).get(name) ?? [];
+}
+
+interface SourceEntry {
+	readonly file: string;
+	readonly sourceFile: ts.SourceFile;
+}
+
+function enumerateProgram(entries: readonly SourceEntry[], checker: ts.TypeChecker): Map<string, readonly Declaration[]> {
+	const counted = new Set<ts.Node>();
+	for (const { sourceFile } of entries)
+		for (const node of enumerateDeclarations(sourceFile, undefined, counted).declaringNodes) counted.add(node);
+	const byFile = new Map<string, readonly Declaration[]>();
+	for (const { file, sourceFile } of entries)
+		byFile.set(file, enumerateDeclarations(sourceFile, checker, counted).declarations);
+	return byFile;
 }
 
 function isTestFile(path: string): boolean {
@@ -321,13 +340,11 @@ export function enumerateTrees(root: string): ReadonlyMap<string, readonly Decla
 	for (const tree of GLOSSARY_TREES) if (existsSync(join(root, tree))) walkTs(root, tree, files);
 	const sources = files.sort().filter((file) => !isGeneratedSource(readFileSync(join(root, file), 'utf8')));
 	const program = ts.createProgram({ rootNames: sources.map((file) => join(root, file)), options: CHECKER_OPTIONS });
-	const checker = program.getTypeChecker();
-	const byFile = new Map<string, readonly Declaration[]>();
-	for (const file of sources) {
+	const entries = sources.flatMap((file) => {
 		const sourceFile = program.getSourceFile(join(root, file));
-		if (sourceFile !== undefined) byFile.set(file, enumerateDeclarations(sourceFile, checker));
-	}
-	return byFile;
+		return sourceFile === undefined ? [] : [{ file, sourceFile }];
+	});
+	return enumerateProgram(entries, program.getTypeChecker());
 }
 
 export function readKeys(root: string): readonly GlossaryKey[] {

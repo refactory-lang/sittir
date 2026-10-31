@@ -137,10 +137,11 @@ These settle the cases the rule above leaves open. Implement builds to them.
 - A property of a named const object literal is not a declaration when its contextual type
   declares that name: an interface or type-literal member, or a key of a mapped type over
   `keyof` a declared type. The compiler resolves such a property to a declaration outside
-  the literal, and that declaration must itself be counted: a member of an exported interface,
-  type alias or class at the top of a source file in the glossary trees. Otherwise (an inline
-  variable annotation, a `node_modules` type) the literal property stays counted. Each nested
-  property is decided on its own, against its own contextual type. An index signature (`Record<string, …>`) declares no name, so its properties still
+  the literal, and that declaration is itself counted as undocumented-eligible (exported, depth ≤ 2).
+  Otherwise the literal property stays counted. A union contextual type declares a name only
+  when every constituent declares it, so a discriminated arm's own member (`RuleJson`'s
+  `members`) is not declared by the union and stays counted. Each nested property is decided
+  on its own, against its own contextual type. An index signature (`Record<string, …>`) declares no name, so its properties still
   count, and so do properties whose contextual type has no declaration (for example
   `Record<K, …>` over a union of literal keys).
 - A key names exactly one declaration in its file, as the rule above states: the bare name when
