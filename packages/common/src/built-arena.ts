@@ -722,6 +722,11 @@ export class BuiltArena {
 		return keepExemplar(this.#exemplars, maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item)));
 	}
 
+	textNode(entry: { readonly $type: number; readonly $text: string }): object {
+		const maker = this.#views.leaves[entry.$type];
+		return maker === undefined ? (this.#wrap(entry, this.tree) as object) : this.leaf(maker, entry.$text);
+	}
+
 	#site(leaf: object, holder: number, word: number, item: number): void {
 		const parked = this.#parkedOf(leaf);
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
@@ -848,8 +853,17 @@ export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
 }
 
 export function builtEntries(entries: readonly unknown[], table: object): unknown[] {
-	if (!entries.some(isBuiltEntry)) return entries as unknown[];
-	return entries.map((entry) => (isBuiltEntry(entry) ? builtEntryNode(entry, table) : entry));
+	const built = (table as Partial<TreeHandle>).built;
+	const node = (entry: unknown): object | undefined =>
+		isBuiltEntry(entry) ? builtEntryNode(entry, table) : built !== undefined && isTextData(entry) ? built.textNode(entry) : undefined;
+	if (!entries.some((entry) => isBuiltEntry(entry) || (built !== undefined && isTextData(entry)))) return entries as unknown[];
+	return entries.map((entry) => node(entry) ?? entry);
+}
+
+type TextData = { readonly $type: number; readonly $text: string };
+
+function isTextData(entry: unknown): entry is TextData {
+	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<TextData>).$type === 'number' && typeof (entry as Partial<TextData>).$text === 'string';
 }
 
 export function readEntries(table: object, entries: readonly unknown[], own?: TreeToken): unknown[] {

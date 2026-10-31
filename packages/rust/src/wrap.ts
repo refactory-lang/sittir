@@ -4,7 +4,6 @@ import {
 	restItems,
 	admitSlot,
 	markEdited as $edited,
-	asTextNode,
 	carryReadTree,
 	treeHandleOf,
 	hydrateWith,
@@ -22780,7 +22779,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.RawStringLiteralStart]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralEnd]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DocComment]: (d, t) => wrapInteriorLeaf(d, t),
-	[TSKindId.BlockCommentContent]: (d, t) => wrapInteriorLeaf(d, t)
+	[TSKindId.BlockCommentContent]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };
 
 const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => object> = {
@@ -23041,10 +23041,9 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 		return inTreeEngine(tree, () => view(data, tree));
 	}
 	const fn = _wrapTable[data.$type as unknown as number];
-	return fn === undefined
-		? asTextNode(data)
-		: carryReadTree(
-				data,
-				inTreeEngine(tree, () => fn(data, tree))
-			);
+	if (fn === undefined) throw new Error(`no wrap reads a node of kind ${data.$type}`);
+	return carryReadTree(
+		data,
+		inTreeEngine(tree, () => fn(data, tree))
+	);
 }

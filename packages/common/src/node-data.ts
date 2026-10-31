@@ -36,15 +36,6 @@ export function sourceTextOf(node: object, tree: TreeHandle | undefined = treeOf
 	return span === undefined ? undefined : tree?.text?.(span);
 }
 
-/**
- * A read value given a node's text member: native data whose `$text` is a string, with that text as the method `$text()`. Any other value is returned as it is.
- */
-export function asTextNode<T>(value: T): T {
-	if (value === null || typeof value !== 'object') return value;
-	const text: unknown = (value as { readonly $text?: unknown }).$text;
-	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
-}
-
 export function mapSideEntries<S extends TriviaSides<unknown>>(sides: S, each: (entry: unknown) => unknown): S {
 	return mapTriviaEntries(sides, (entries) => entries.map(each)) as S;
 }
