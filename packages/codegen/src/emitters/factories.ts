@@ -1010,8 +1010,8 @@ export interface BuiltTypeSurface {
 	readonly maxArgs: number | undefined;
 }
 
-function withHoles(f: { values: readonly NodeOrTerminal[] }, elemType: string): string {
-	return hasOptionalElements(f) ? `${elemType} | undefined` : elemType;
+export function withHoles(f: { values: readonly NodeOrTerminal[] }, elemType: string): string {
+	return hasOptionalElements(f) ? `${elemType} | null` : elemType;
 }
 
 export function restSetterType(

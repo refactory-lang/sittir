@@ -546,14 +546,14 @@ export interface Pattern {
 
 export interface Alternation {
 	readonly $type: TSKindId.Alternation;
-	readonly _terms: NonEmptyArray<Term | undefined>;
+	readonly _terms: NonEmptyArray<Term | null>;
 	readonly __slotNames__?: {
 		readonly _terms: 'terms';
 	};
 	readonly __slotHints__?: {
-		readonly terms: SlotHint<NonEmptyArray<T.Term | undefined>, false, true>;
+		readonly terms: SlotHint<NonEmptyArray<T.Term | null>, false, true>;
 	};
-	readonly terms: () => NonEmptyArray<Term | undefined>;
+	readonly terms: () => NonEmptyArray<Term | null>;
 }
 
 export interface Term {

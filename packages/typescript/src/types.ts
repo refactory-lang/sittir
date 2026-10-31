@@ -3704,7 +3704,7 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
+	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | null)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
 	};
@@ -3715,19 +3715,13 @@ export interface Object {
 						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
 						| T.ShorthandPropertyIdentifier.Types
 				  )
-				| undefined
+				| null
 			)[],
 			false,
 			true
 		>;
 	};
-	readonly properties: () => readonly (
-		| Pair
-		| SpreadElement
-		| MethodDefinition
-		| ShorthandPropertyIdentifier
-		| undefined
-	)[];
+	readonly properties: () => readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | null)[];
 }
 
 export interface ObjectPattern {
@@ -3737,7 +3731,7 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
+		| null
 	)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
@@ -3749,7 +3743,7 @@ export interface ObjectPattern {
 						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
 						| T.ShorthandPropertyIdentifierPattern.Types
 				  )
-				| undefined
+				| null
 			)[],
 			false,
 			true
@@ -3760,7 +3754,7 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
+		| null
 	)[];
 }
 
@@ -3829,7 +3823,7 @@ export interface ObjectAssignmentPattern {
 
 export interface Array {
 	readonly $type: TSKindId.Array;
-	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
@@ -3849,21 +3843,21 @@ export interface Array {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
+	readonly elements: () => readonly (Expression | SpreadElement | null)[];
 }
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
-	readonly _elements: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly _elements: readonly (Pattern | AssignmentPattern | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly elements: () => readonly (Pattern | AssignmentPattern | null)[];
 }
 
 export interface NestedIdentifier {
@@ -4919,7 +4913,7 @@ export interface PrivatePropertyIdentifier {
 
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
-	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements: readonly (Expression | SpreadElement | null)[];
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
@@ -4939,9 +4933,9 @@ export interface Arguments {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | null)[], false, true>;
 	};
-	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
+	readonly elements: () => readonly (Expression | SpreadElement | null)[];
 }
 
 export interface Decorator {
