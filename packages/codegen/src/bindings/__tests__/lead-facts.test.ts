@@ -40,6 +40,10 @@ const MODEL: SlotModel = new Map(
 		node('positive', [slot('trait', ['identifier'])]),
 		node('negative', [slot('trait', ['identifier'])]),
 		node('bare'),
+		node('copy_first', [slot('mid', ['_copy', 'named'])]),
+		node('named_first', [slot('mid', ['named', '_copy'])]),
+		node('_copy', [slot('other', ['identifier'])], { shownAs: ['named'] }),
+		node('named', [slot('value', ['identifier'])]),
 		node('entries', [slot('parameter', ['parameter'], { multiple: true })], { modelType: 'list' }),
 		node('entries_receiver', [slot('receiver', ['receiver_parameter']), slot('entries_receiver_group', ['entries_receiver_group'])]),
 		node('entries_receiver_group', [slot('elements', ['entries'])]),
@@ -72,6 +76,14 @@ describe('held member expansion', () => {
 		expect(expandHeldMembers(facts, MODEL).members).toEqual(
 			['negative', 'positive'].map((kind) => ({ ...member, parent: kind, via: [{ ...(member as { via: readonly object[] }).via[0], kind }] }))
 		);
+	});
+
+	it.each(['copy_first', 'named_first'])("expands a wildcard step into the original %s holds beside a copy shown as it, when only the original takes the rest of the path", async (holder) => {
+		const facts = await readBindings(`(${holder} mid: (_ value: (_) @value))`);
+		const [member] = facts.members;
+		expect(expandHeldMembers(facts, MODEL).members).toEqual([
+			{ ...member, parent: 'named', via: [{ ...(member as { via: readonly object[] }).via[0], kind: 'named' }] }
+		]);
 	});
 
 	it('leaves a member with no wildcard step as it is', async () => {

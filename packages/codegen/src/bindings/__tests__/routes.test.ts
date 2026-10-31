@@ -94,6 +94,13 @@ const MODEL = [
 	node('mid_shown', [slot('inner', ['binary'])]),
 	node('split_outer', [slot('mid', ['mid_split'])]),
 	node('mid_split', [slot('inner', ['binary'])], { splitFrom: 'mid_shown' }),
+	node('copy_first', [slot('mid', ['_dual_copy', 'dual_shown'])]),
+	node('named_first', [slot('mid', ['dual_shown', '_dual_copy'])]),
+	node('_dual_copy', [slot('other', ['identifier'])], { shownAs: ['dual_shown'] }),
+	node('dual_shown', [slot('inner', ['binary'])]),
+	node('pair_outer', [slot('mid', ['_pair_copy', 'pair_shown'])]),
+	node('_pair_copy', [slot('inner', ['binary'])], { shownAs: ['pair_shown'] }),
+	node('pair_shown', [slot('inner', ['binary'])]),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
@@ -628,6 +635,28 @@ describe("keptKinds over a supertype the slot holds", () => {
 			{ owner: 'mid_split', slot: 'inner' },
 			{ owner: 'binary', slot: 'left' }
 		]);
+	});
+
+	it.each(['copy_first', 'named_first'])('steps through whichever kind %s holds that takes the rest of the path, whatever order the slot lists them in', async (outer) => {
+		const routes = resolveRoutes(await grammar(`(${outer} (dual_shown (binary left: (_) @lhs))) @expression.outer`));
+		expect(routes.members.get(outer)?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual([
+			[
+				{ owner: outer, slot: 'mid' },
+				{ owner: 'dual_shown', slot: 'inner' },
+				{ owner: 'binary', slot: 'left' }
+			]
+		]);
+	});
+
+	it('routes a member through each kind a slot holds that shows the named kind and takes the rest of the path, in slot order', async () => {
+		const routes = resolveRoutes(await grammar('(pair_outer (pair_shown (binary left: (_) @lhs))) @expression.outer'));
+		expect(routes.members.get('pair_outer')?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual(
+			['_pair_copy', 'pair_shown'].map((held) => [
+				{ owner: 'pair_outer', slot: 'mid' },
+				{ owner: held, slot: 'inner' },
+				{ owner: 'binary', slot: 'left' }
+			])
+		);
 	});
 
 	it('steps through a slot that admits the next kind by a supertype', async () => {

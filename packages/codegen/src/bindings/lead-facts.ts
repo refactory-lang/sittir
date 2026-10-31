@@ -134,82 +134,85 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 
 const passesList = (member: MemberFact, effect: LeadEffect): boolean => member.route === 'nested' && member.via.some((step) => step.kind === effect.list);
 
-function intoList(model: SlotModel, at: string, effect: LeadEffect, seen: ReadonlySet<string> = new Set([at])): readonly SlotSelector[] | undefined {
+type SelectorPath = readonly SlotSelector[];
+
+const distinctPaths = (paths: readonly SelectorPath[]): readonly SelectorPath[] => [...new Map(paths.map((path) => [JSON.stringify(path), path])).values()];
+
+const nextKinds = (model: SlotModel, at: string, step: SlotSelector): readonly string[] => heldInto(model, at, step)?.next.map((next) => next.kind) ?? [];
+
+const heldAlong = (model: SlotModel, at: string, steps: SelectorPath): readonly string[] =>
+	steps.reduce<readonly string[]>((ats, step) => ats.flatMap((from) => nextKinds(model, from, step)), [at]);
+
+function intoList(model: SlotModel, at: string, effect: LeadEffect, seen: ReadonlySet<string> = new Set([at])): readonly SelectorPath[] {
 	const minted = [effect.receiver, effect.group];
-	for (const slot of shownSlots(model, at)) {
-		if (slot.kinds.some((kind) => reachedBy(model, kind, effect.list) !== undefined)) return [selector(effect.list, slot.name)];
-		for (const kind of slot.kinds.filter((k) => minted.includes(k) && !seen.has(k))) {
-			const rest = intoList(model, kind, effect, new Set([...seen, kind]));
-			if (rest !== undefined) return [selector(kind), ...rest];
-		}
-	}
-	return undefined;
+	return shownSlots(model, at).flatMap((slot): SelectorPath[] =>
+		slot.kinds.some((kind) => reachedBy(model, kind, effect.list).length > 0)
+			? [[selector(effect.list, slot.name)]]
+			: slot.kinds
+					.filter((k) => minted.includes(k) && !seen.has(k))
+					.flatMap((kind) => intoList(model, kind, effect, new Set([...seen, kind])).map((rest) => [selector(kind), ...rest]))
+	);
 }
 
-function headWalk(model: SlotModel, form: string, path: readonly SlotSelector[], effect: LeadEffect): readonly SlotSelector[] | undefined {
-	const out: SlotSelector[] = [];
-	let at: string = form;
-	let parent: string | null = form;
-	let inside = form in effect.variants;
-	for (const [index, step] of path.entries()) {
+function headWalk(model: SlotModel, form: string, path: SelectorPath, effect: LeadEffect): readonly SelectorPath[] {
+	const walk = (at: string, parent: string | null, inside: boolean, index: number): readonly SelectorPath[] => {
+		const step = path[index];
+		if (step === undefined) return [[]];
 		const below = parent === effect.list;
-		parent = step.kind;
-		if (below) inside = isLead(step);
-		const prefix = below && !inside ? intoList(model, at, effect) : [];
-		if (prefix === undefined) return undefined;
+		const within = below ? isLead(step) : inside;
+		const prefixes = below && !within ? intoList(model, at, effect) : [[]];
 		const taken = below
-			? inside ? receiverSelector(step, effect) : restSelector(step)
+			? within ? receiverSelector(step, effect) : restSelector(step)
 			: step.kind === effect.list ? { ...step, kind: effect.receiver }
-				: inside && step.kind !== null ? { ...step, kind: effect.variants[step.kind] ?? step.kind } : step;
-		for (const via of prefix) {
-			const into = heldInto(model, at, via);
-			if (into === undefined) return undefined;
-			at = into.next.kind;
-		}
-		if (index === path.length - 1) {
-			if (heldSteps(model, at, taken) === undefined) return undefined;
-		} else {
-			const into = heldInto(model, at, taken);
-			if (into === undefined) return undefined;
-			at = into.next.kind;
-		}
-		out.push(...prefix, taken);
-	}
-	return out;
+				: within && step.kind !== null ? { ...step, kind: effect.variants[step.kind] ?? step.kind } : step;
+		return prefixes.flatMap((prefix) =>
+			heldAlong(model, at, prefix).flatMap((held): SelectorPath[] =>
+				index === path.length - 1
+					? heldSteps(model, held, taken) === undefined ? [] : [[...prefix, taken]]
+					: nextKinds(model, held, taken).flatMap((next) => walk(next, step.kind, within, index + 1).map((rest) => [...prefix, taken, ...rest]))
+			)
+		);
+	};
+	return distinctPaths(walk(form, form, form in effect.variants, 0));
 }
 
-function heldPaths(model: SlotModel, at: string, steps: readonly SlotSelector[]): readonly (readonly SlotSelector[])[] {
+function heldPaths(model: SlotModel, at: string, steps: SelectorPath): readonly SelectorPath[] {
 	const [step, ...rest] = steps;
 	if (step === undefined) return [[]];
 	if (rest.length === 0) return heldSteps(model, at, step) === undefined ? [] : [[step]];
 	const kinds = step.kind !== null ? [step.kind] : concreteKinds(model, heldSteps(model, at, step)?.at(-1)?.slot.kinds ?? []);
 	return kinds.flatMap((kind) => {
 		const taken = { ...step, kind };
-		const into = heldInto(model, at, taken);
-		return into === undefined ? [] : heldPaths(model, into.next.kind, rest).map((path) => [taken, ...path]);
+		return nextKinds(model, at, taken).flatMap((next) => heldPaths(model, next, rest).map((path) => [taken, ...path]));
 	});
 }
+
+const memberAlong = (member: Extract<MemberFact, { readonly route: 'nested' }>, path: SelectorPath): MemberFact => ({
+	...member,
+	parent: path.at(-2)?.kind ?? member.parent,
+	via: path.slice(0, -1).toReversed()
+});
 
 function heldMembers(member: MemberFact, model: SlotModel): readonly MemberFact[] {
 	if (member.route !== 'nested' || member.via.every((step) => step.kind !== null)) return [member];
 	const steps = [...member.via.toReversed(), member];
-	const paths = [...new Map(formsOf(model, member.owner).flatMap((form) => heldPaths(model, form, steps)).map((path) => [JSON.stringify(path), path])).values()];
-	return paths.length === 0 ? [member] : paths.map((path) => ({ ...member, parent: path.at(-2)?.kind ?? member.parent, via: path.slice(0, -1).toReversed() }));
+	const paths = distinctPaths(formsOf(model, member.owner).flatMap((form) => heldPaths(model, form, steps)));
+	return paths.length === 0 ? [member] : paths.map((path) => memberAlong(member, path));
 }
 
 export function expandHeldMembers(facts: BindingFacts, model: SlotModel): BindingFacts {
 	return { ...facts, members: facts.members.flatMap((member) => heldMembers(member, model)) };
 }
 
-function headMember(member: MemberFact, effect: LeadEffect, model: SlotModel): MemberFact | undefined {
-	if (member.route !== 'nested') return undefined;
+function headMembers(member: MemberFact, effect: LeadEffect, model: SlotModel): readonly MemberFact[] {
+	if (member.route !== 'nested') return [];
 	const steps = [...member.via.toReversed(), member];
-	const path = formsOf(model, member.owner)
-		.map((form) => headWalk(model, form, steps, effect))
-		.find((walked) => walked !== undefined);
-	if (path === undefined) return undefined;
-	const { field, kind, after, anchor, adjacent } = path.at(-1)!;
-	return { ...member, field, kind, after, anchor, adjacent, parent: path.at(-2)?.kind ?? member.parent, via: path.slice(0, -1).toReversed() };
+	return distinctPaths(formsOf(model, member.owner).flatMap((form) => headWalk(model, form, steps, effect))).flatMap((path) => {
+		const last = path.at(-1);
+		if (last === undefined) return [];
+		const { field, kind, after, anchor, adjacent } = last;
+		return [memberAlong({ ...member, field, kind, after, anchor, adjacent }, path)];
+	});
 }
 
 interface ClaimIndices {
@@ -229,10 +232,9 @@ function memberWithClaims(member: MemberFact, indices: ReadonlyMap<number, Claim
 function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly MemberFact[] {
 	return facts.members.flatMap((member, index): MemberFact[] => {
 		if (passesList(member, effect)) {
-			const head = headMember(member, effect, model);
 			return [
 				...(isHeadMember(member, effect) ? [] : [memberWithClaims(member, indices, 'plain')]),
-				...(head === undefined ? [] : [memberWithClaims(head, indices, 'head')])
+				...headMembers(member, effect, model).map((head) => memberWithClaims(head, indices, 'head'))
 			].filter((member) => member !== undefined);
 		}
 		if (member.owner in effect.variants) return [
