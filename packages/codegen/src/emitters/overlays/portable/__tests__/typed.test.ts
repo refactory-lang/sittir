@@ -81,8 +81,14 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('export type ViewOf<N> = N extends undefined | null\n\t? N\n');
 	});
 
-	it('reports what it skipped with the reason', () => {
-		expect(typed.unemitted).toContainEqual({ kind: 'impl_item_body', vocab: 'declaration.extension.conformance', member: 'implements', reason: 'no path for its nested route' });
+	it('skips no read: every read entry has a typed surface and every member a path', () => {
+		expect(typed.unemitted).toEqual([]);
+	});
+
+	it("reads rust's implements through the positive clause only: a negative clause says the type does not implement the trait", () => {
+		const body = /function ImplItemBodyAsDeclarationExtensionConformance\d*\$implements\([^)]*\) \{([\s\S]*?)\n\}/.exec(typed.source)?.[1];
+		expect(body).toContain('TSKindId.ImplItemPositiveClause');
+		expect(body).not.toContain('TSKindId.ImplItemNegativeClause');
 	});
 
 	it('reads a claim on a name the parser shows once, as the kind it shows', () => {

@@ -4826,7 +4826,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.extension.conformance',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [376, 375], slots: { '377': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [375], slots: { '377': 2 } } }]
 			},
 			{ path: 'declaration.extension', within: [], test: [] }
 		],

@@ -8871,7 +8871,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  376,
                   375
                 ],
                 "slots": {
@@ -8917,6 +8916,9 @@
           "name": "traitClause",
           "route": "slot",
           "slot": "trait_clause",
+          "except": [
+            "impl_item_positive_clause"
+          ],
           "path": [
             {
               "owner": "impl_item_body",
@@ -8963,15 +8965,24 @@
           "via": [
             {
               "field": "trait_clause",
-              "kind": null,
+              "kind": "impl_item_positive_clause",
               "after": null,
               "anchor": null
             }
           ],
-          "parent": "_",
-          "slot": null,
+          "parent": "impl_item_positive_clause",
+          "slot": "trait",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "impl_item_body",
+              "slot": "trait_clause"
+            },
+            {
+              "owner": "impl_item_positive_clause",
+              "slot": "trait"
+            }
+          ]
         }
       ]
     },

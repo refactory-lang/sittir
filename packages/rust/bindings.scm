@@ -39,7 +39,7 @@
 ((signature_method_declaration (parameters (_)? @_list)) @declaration.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
 (impl_item_body) @declaration.impl
 (impl_item_semi) @declaration.impl
-(impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.impl.conformance
+(impl_item_body trait_clause: (impl_item_positive_clause trait: (_) @implements)) @declaration.impl.conformance
 (trait_item) @declaration.interface.trait
 (trait_item bounds: (trait_bounds bounds: (_) @extends))
 (trait_item (declaration_list (function_item) @declaration.method))

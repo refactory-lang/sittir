@@ -94,6 +94,7 @@ export const build: PortableBuildTable = {
 		identifier: 'text',
 		ifExpression: 'config',
 		implItemBody: 'config',
+		'implItemBody.positiveClause': 'config',
 		implItemSemi: 'config',
 		indexExpression: 'config',
 		innerAttributeItem: 'forwarded',
@@ -6802,7 +6803,8 @@ export const build: PortableBuildTable = {
 									at: [377, 'traitClause'],
 									kinds: [375, 376]
 								}
-							]
+							],
+							reads: [376]
 						},
 						{
 							name: 'type',
@@ -6974,7 +6976,8 @@ export const build: PortableBuildTable = {
 									at: [377, 'traitClause'],
 									kinds: [375, 376]
 								}
-							]
+							],
+							reads: [376]
 						},
 						{
 							name: 'type',
@@ -7045,9 +7048,55 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'traitClause',
+									builder: 'implItemBody.positiveClause',
+									optional: true,
+									mounted: {
+										call: 'keyed',
+										key: 'traitClause',
+										seats: 'direct'
+									}
+								},
+								{
+									key: 'trait'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [375, 'trait'],
+									kinds: [246, 265, 481],
+									leaf: 'identifier',
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'traitClause',
+									optional: true,
+									builder: 'implItemBody.positiveClause',
+									mounted: {
+										call: 'keyed',
+										key: 'traitClause',
+										seats: 'direct'
+									}
+								}
+							]
+						}
+					],
 					flags: {},
 					when: []
 				}
