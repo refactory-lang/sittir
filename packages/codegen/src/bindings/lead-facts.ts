@@ -1,6 +1,6 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
 import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
-import { formsOf, heldInto, heldSteps, reachedBy, shownSlots } from './routes.ts';
+import { concreteKinds, formsOf, heldInto, heldSteps, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
 	field,
@@ -176,6 +176,29 @@ function headWalk(model: SlotModel, form: string, path: readonly SlotSelector[],
 		out.push(...prefix, taken);
 	}
 	return out;
+}
+
+function heldPaths(model: SlotModel, at: string, steps: readonly SlotSelector[]): readonly (readonly SlotSelector[])[] {
+	const [step, ...rest] = steps;
+	if (step === undefined) return [[]];
+	if (rest.length === 0) return heldSteps(model, at, step) === undefined ? [] : [[step]];
+	const kinds = step.kind !== null ? [step.kind] : concreteKinds(model, heldSteps(model, at, step)?.at(-1)?.slot.kinds ?? []);
+	return kinds.flatMap((kind) => {
+		const taken = { ...step, kind };
+		const into = heldInto(model, at, taken);
+		return into === undefined ? [] : heldPaths(model, into.next.kind, rest).map((path) => [taken, ...path]);
+	});
+}
+
+function heldMembers(member: MemberFact, model: SlotModel): readonly MemberFact[] {
+	if (member.route !== 'nested' || member.via.every((step) => step.kind !== null)) return [member];
+	const steps = [...member.via.toReversed(), member];
+	const paths = [...new Map(formsOf(model, member.owner).flatMap((form) => heldPaths(model, form, steps)).map((path) => [JSON.stringify(path), path])).values()];
+	return paths.length === 0 ? [member] : paths.map((path) => ({ ...member, parent: path.at(-2)?.kind ?? member.parent, via: path.slice(0, -1).toReversed() }));
+}
+
+export function expandHeldMembers(facts: BindingFacts, model: SlotModel): BindingFacts {
+	return { ...facts, members: facts.members.flatMap((member) => heldMembers(member, model)) };
 }
 
 function headMember(member: MemberFact, effect: LeadEffect, model: SlotModel): MemberFact | undefined {

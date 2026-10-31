@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { projectLeadFacts as projectWith } from '../lead-facts.ts';
+import { expandHeldMembers, projectLeadFacts as projectWith } from '../lead-facts.ts';
 import { readBindings } from '../read.ts';
 import type { BindingFacts, ModelNode, ModelSlot, SlotModel } from '../facts.ts';
 import type { LeadEffect } from '../../dsl/verbs/effects.ts';
@@ -36,6 +36,10 @@ const MODEL: SlotModel = new Map(
 	[
 		node('function', [slot('name', ['identifier']), slot('entries', ['entries', 'entries_receiver'])]),
 		node('setter', [slot('entries', ['entries'])]),
+		node('impl', [slot('clause', ['positive', 'negative', 'bare'])]),
+		node('positive', [slot('trait', ['identifier'])]),
+		node('negative', [slot('trait', ['identifier'])]),
+		node('bare'),
 		node('entries', [slot('parameter', ['parameter'], { multiple: true })], { modelType: 'list' }),
 		node('entries_receiver', [slot('receiver', ['receiver_parameter']), slot('entries_receiver_group', ['entries_receiver_group'])]),
 		node('entries_receiver_group', [slot('elements', ['entries'])]),
@@ -60,6 +64,21 @@ const effect: LeadEffect = {
 	variants: { parameter: 'receiver_parameter' },
 	admits: [{ kind: 'parameter', within: { field: 'name', admits: [{ kind: 'self' }] }, as: 'receiver_parameter' }]
 };
+
+describe('held member expansion', () => {
+	it('expands a wildcard step into each kind its slot holds that has the next slot, naming that kind', async () => {
+		const facts = await readBindings('(impl clause: (_ trait: (_) @implements))');
+		const [member] = facts.members;
+		expect(expandHeldMembers(facts, MODEL).members).toEqual(
+			['negative', 'positive'].map((kind) => ({ ...member, parent: kind, via: [{ ...(member as { via: readonly object[] }).via[0], kind }] }))
+		);
+	});
+
+	it('leaves a member with no wildcard step as it is', async () => {
+		const facts = await readBindings('(impl clause: (positive trait: (_) @implements))');
+		expect(expandHeldMembers(facts, MODEL)).toEqual(facts);
+	});
+});
 
 describe('lead fact projection', () => {
 	it('carries a cloned receiver wrapper\'s declared container and dropped layout', async () => {

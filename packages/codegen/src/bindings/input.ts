@@ -8,7 +8,7 @@ import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
-import { projectLeadFacts } from './lead-facts.ts';
+import { expandHeldMembers, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
 import { canonicalFacts, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
@@ -155,7 +155,7 @@ export async function grammarInput(
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(facts, leadEffectsOf(effects), model),
+				projectLeadFacts(expandHeldMembers(facts, model), leadEffectsOf(effects), model),
 				known,
 				model
 			),
