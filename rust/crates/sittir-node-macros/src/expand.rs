@@ -1024,7 +1024,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                     .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
                 let (leading, trailing) = (option(flank.leading), option(flank.trailing));
                 inits.push(quote! {
-                    #name: ::core::option::Option::Some(__rt::delimiter(&cursor.node(), &children, &routes, #slot, #leading, #trailing)),
+                    #name: ::core::option::Option::Some(__rt::delimiter(&children, &routes, #slot, #leading, #trailing)),
                 });
             }
             Role::SeparatorKind(_) => inits.push(quote!(#name: ::core::option::Option::None,)),

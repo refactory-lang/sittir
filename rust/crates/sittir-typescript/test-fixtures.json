@@ -9762,7 +9762,8 @@
                             "$text": "y"
                           }
                         }
-                      ]
+                      ],
+                      "_delimiter": 0
                     },
                     "_terminator": 22
                   }
@@ -9980,7 +9981,8 @@
                         "$text": "y"
                       }
                     }
-                  ]
+                  ],
+                  "_delimiter": 0
                 },
                 "_terminator": 22
               }
@@ -10231,7 +10233,8 @@
                       "$text": "y"
                     }
                   }
-                ]
+                ],
+                "_delimiter": 0
               },
               "_terminator": 22
             }
@@ -10382,7 +10385,8 @@
                     "$text": "y"
                   }
                 }
-              ]
+              ],
+              "_delimiter": 0
             },
             "_terminator": 22
           }
@@ -11033,7 +11037,8 @@
                   "$text": "y"
                 }
               }
-            ]
+            ],
+            "_delimiter": 0
           },
           "_terminator": 22
         }
@@ -11084,7 +11089,8 @@
               "$text": "y"
             }
           }
-        ]
+        ],
+        "_delimiter": 0
       },
       "_terminator": 22
     },
@@ -11130,7 +11136,8 @@
             "$text": "y"
           }
         }
-      ]
+      ],
+      "_delimiter": 0
     },
     "expectedOutput": "{ x, y }",
     "options": {
@@ -12188,7 +12195,8 @@
           "$type": 403,
           "_value": {
             "$type": 237,
-            "_properties": []
+            "_properties": [],
+            "_delimiter": 0
           },
           "_terminator": 22
         }
@@ -12251,7 +12259,8 @@
       "$type": 403,
       "_value": {
         "$type": 237,
-        "_properties": []
+        "_properties": [],
+        "_delimiter": 0
       },
       "_terminator": 22
     },
@@ -12279,7 +12288,8 @@
     "pattern": "object",
     "input": {
       "$type": 237,
-      "_properties": []
+      "_properties": [],
+      "_delimiter": 0
     },
     "expectedOutput": "{}",
     "options": {
@@ -17410,7 +17420,8 @@
                     "$text": "private_"
                   }
                 }
-              ]
+              ],
+              "_delimiter": 0
             }
           },
           "_terminator": 174
@@ -17483,7 +17494,8 @@
                 "$text": "private_"
               }
             }
-          ]
+          ],
+          "_delimiter": 0
         }
       },
       "_terminator": 174
@@ -17551,7 +17563,8 @@
               "$text": "private_"
             }
           }
-        ]
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "x = { name, description, private: private_ }",
@@ -17636,7 +17649,8 @@
             "$text": "private_"
           }
         }
-      ]
+      ],
+      "_delimiter": 0
     },
     "expectedOutput": "{ name, description, private: private_ }",
     "options": {
@@ -57405,6 +57419,7 @@
                 }
               }
             ],
+            "_delimiter": 0,
             "$_layout": {
               "slots": [
                 {
@@ -57480,6 +57495,7 @@
                 }
               }
             ],
+            "_delimiter": 0,
             "$_layout": {
               "slots": [
                 {
@@ -57578,6 +57594,7 @@
             }
           }
         ],
+        "_delimiter": 0,
         "$_layout": {
           "slots": [
             {
@@ -57675,6 +57692,7 @@
             }
           }
         ],
+        "_delimiter": 0,
         "$_layout": {
           "slots": [
             {
@@ -57761,6 +57779,7 @@
           }
         }
       ],
+      "_delimiter": 0,
       "$_layout": {
         "slots": [
           {
@@ -57854,6 +57873,7 @@
           }
         }
       ],
+      "_delimiter": 0,
       "$_layout": {
         "slots": [
           {
@@ -84261,7 +84281,8 @@
                                     }
                                   }
                                 }
-                              ]
+                              ],
+                              "_delimiter": 0
                             }
                           },
                           "_type": {
@@ -84357,7 +84378,8 @@
                                 }
                               }
                             }
-                          ]
+                          ],
+                          "_delimiter": 0
                         }
                       },
                       "_type": {
@@ -84446,7 +84468,8 @@
                             }
                           }
                         }
-                      ]
+                      ],
+                      "_delimiter": 0
                     }
                   },
                   "_type": {
@@ -84526,7 +84549,8 @@
                           }
                         }
                       }
-                    ]
+                    ],
+                    "_delimiter": 0
                   }
                 },
                 "_type": {
@@ -84635,7 +84659,8 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "_delimiter": 0
                 }
               },
               "_type": {
@@ -84709,7 +84734,8 @@
                       }
                     }
                   }
-                ]
+                ],
+                "_delimiter": 0
               }
             },
             "_type": {
@@ -84779,7 +84805,8 @@
                     }
                   }
                 }
-              ]
+              ],
+              "_delimiter": 0
             }
           },
           "_type": {
@@ -84845,7 +84872,8 @@
                 }
               }
             }
-          ]
+          ],
+          "_delimiter": 0
         }
       },
       "_type": {
@@ -84903,7 +84931,8 @@
               }
             }
           }
-        ]
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "{a}",
@@ -84948,7 +84977,8 @@
             }
           }
         }
-      ]
+      ],
+      "_delimiter": 0
     },
     "expectedOutput": "{a}",
     "options": {
@@ -149423,7 +149453,8 @@
                     ]
                   }
                 }
-              ]
+              ],
+              "_delimiter": 0
             }
           },
           "_terminator": 174
@@ -149502,7 +149533,8 @@
                 ]
               }
             }
-          ]
+          ],
+          "_delimiter": 0
         }
       },
       "_terminator": 174
@@ -149721,7 +149753,8 @@
               ]
             }
           }
-        ]
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "assert { type: 'css' }",
@@ -149768,7 +149801,8 @@
             ]
           }
         }
-      ]
+      ],
+      "_delimiter": 0
     },
     "expectedOutput": "{ type: 'css' }",
     "options": {

@@ -3062,6 +3062,16 @@ export interface ImportAttribute {
 	readonly __slotHints__?: {
 		readonly attributeKind: SlotHint<NonNullable<T.ImportAttribute.Config>['attributeKind']>;
 		readonly object: SlotHint<T.Object>;
+		readonly $listSlots: {
+			readonly object: ListSlotHint<
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| T.ShorthandPropertyIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	readonly attributeKind: () => number;
 	readonly object: () => Object;
@@ -3704,30 +3714,33 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
+	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
 	};
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
-				| (
-						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-						| T.ShorthandPropertyIdentifier.Types
-				  )
-				| undefined
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| T.ShorthandPropertyIdentifier.Types
 			)[],
 			false,
 			true
 		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			| T.Pair
+			| T.SpreadElement
+			| T.MethodDefinition
+			| T.ShorthandPropertyIdentifier
+			| T.ShorthandPropertyIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
-	readonly properties: () => readonly (
-		| Pair
-		| SpreadElement
-		| MethodDefinition
-		| ShorthandPropertyIdentifier
-		| undefined
-	)[];
+	readonly properties: () => readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectPattern {
@@ -3737,7 +3750,6 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
 	)[];
 	readonly __slotNames__?: {
 		readonly _properties: 'properties';
@@ -3745,14 +3757,23 @@ export interface ObjectPattern {
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
-				| (
-						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-						| T.ShorthandPropertyIdentifierPattern.Types
-				  )
-				| undefined
+				| T.PairPattern
+				| T.RestPattern
+				| T.ObjectAssignmentPattern
+				| T.ShorthandPropertyIdentifierPattern
+				| T.ShorthandPropertyIdentifierPattern.Types
 			)[],
 			false,
 			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			| T.PairPattern
+			| T.RestPattern
+			| T.ObjectAssignmentPattern
+			| T.ShorthandPropertyIdentifierPattern
+			| T.ShorthandPropertyIdentifierPattern.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
 	readonly properties: () => readonly (
@@ -3760,7 +3781,6 @@ export interface ObjectPattern {
 		| RestPattern
 		| ObjectAssignmentPattern
 		| ShorthandPropertyIdentifierPattern
-		| undefined
 	)[];
 }
 
@@ -11746,6 +11766,7 @@ export namespace Object {
 			readonly before?: LayoutKindId;
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly properties?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
 				readonly methodDefinitionGetter?: { readonly after?: LayoutKindId };
 				readonly methodDefinitionPlain?: { readonly after?: LayoutKindId };
@@ -11769,6 +11790,7 @@ export namespace ObjectPattern {
 			readonly before?: LayoutKindId;
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly properties?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
 				readonly objectAssignmentPattern?: { readonly after?: LayoutKindId };
 				readonly pairPattern?: { readonly after?: LayoutKindId };
@@ -14591,7 +14613,7 @@ export interface ObjectNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Object.Bound,
-	never,
+	'properties',
 	TSKindId.Object,
 	Object.Parsed,
 	EmptyObject
@@ -14605,7 +14627,7 @@ export interface ObjectPatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ObjectPattern.Bound,
-	never,
+	'properties',
 	TSKindId.ObjectPattern,
 	ObjectPattern.Parsed,
 	EmptyObjectPattern
@@ -19749,6 +19771,7 @@ export namespace Object {
 	export interface Bound extends BoundOf<T.Object, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Object['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Object, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.Object['$type'];
@@ -19761,20 +19784,33 @@ export namespace Object {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.Object['$type']>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Object>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Object>;
-	export type BuildArgs = [
-		...children: Admit<
-			(
-				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-				| T.ShorthandPropertyIdentifier.Types
-			)[]
-		>
-	];
+	export type BuildArgs =
+		| [
+				...elements: Admit<
+					| T.Pair
+					| T.SpreadElement
+					| T.MethodDefinition
+					| T.ShorthandPropertyIdentifier
+					| T.ShorthandPropertyIdentifier.Types
+				>[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				...elements: Admit<
+					| T.Pair
+					| T.SpreadElement
+					| T.MethodDefinition
+					| T.ShorthandPropertyIdentifier
+					| T.ShorthandPropertyIdentifier.Types
+				>[]
+		  ];
 	export type LooseArgs =
 		| [
-				...children: (
+				...elements: (
 					| T.Object.Loose
 					| LooseValue<
 							T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
@@ -19785,14 +19821,16 @@ export namespace Object {
 				)[]
 		  ]
 		| [
-				children: Readonly<
-					LooseValue<
-						T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
-						T.LeafScalarMap,
-						T.LeafStringMap,
-						T.NamespaceMap
-					>[]
-				>
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				...elements: (
+					| T.Object.Loose
+					| LooseValue<
+							T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ];
 	export type Kind = TSKindId.Object;
 }
@@ -19801,6 +19839,7 @@ export namespace ObjectPattern {
 	export interface Bound extends BoundOf<T.ObjectPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ObjectPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ObjectPattern, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.ObjectPattern['$type'];
@@ -19813,20 +19852,33 @@ export namespace ObjectPattern {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.ObjectPattern['$type']>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectPattern>;
-	export type BuildArgs = [
-		...children: Admit<
-			(
-				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-				| T.ShorthandPropertyIdentifierPattern.Types
-			)[]
-		>
-	];
+	export type BuildArgs =
+		| [
+				...elements: Admit<
+					| T.PairPattern
+					| T.RestPattern
+					| T.ObjectAssignmentPattern
+					| T.ShorthandPropertyIdentifierPattern
+					| T.ShorthandPropertyIdentifierPattern.Types
+				>[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				...elements: Admit<
+					| T.PairPattern
+					| T.RestPattern
+					| T.ObjectAssignmentPattern
+					| T.ShorthandPropertyIdentifierPattern
+					| T.ShorthandPropertyIdentifierPattern.Types
+				>[]
+		  ];
 	export type LooseArgs =
 		| [
-				...children: (
+				...elements: (
 					| T.ObjectPattern.Loose
 					| LooseValue<
 							T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
@@ -19837,14 +19889,16 @@ export namespace ObjectPattern {
 				)[]
 		  ]
 		| [
-				children: Readonly<
-					LooseValue<
-						T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
-						T.LeafScalarMap,
-						T.LeafStringMap,
-						T.NamespaceMap
-					>[]
-				>
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				...elements: (
+					| T.ObjectPattern.Loose
+					| LooseValue<
+							T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ];
 	export type Kind = TSKindId.ObjectPattern;
 }

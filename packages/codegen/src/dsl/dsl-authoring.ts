@@ -11,6 +11,7 @@ import type {
 	FieldRule,
 	AliasRule,
 	GrammarRule,
+	EvaluatedRule,
 	AuthoringRule,
 	SymbolRule,
 	ToGrammarRule,
@@ -28,6 +29,7 @@ export { group } from './primitives/group.ts';
 export { flatten } from './primitives/flatten.ts';
 export { regex } from './primitives/regex.ts';
 export { arm } from './primitives/arm.ts';
+export { required } from './primitives/required.ts';
 export { preference } from './primitives/preference.ts';
 export { pendingBase as enrich, layerOptions as wire } from './layer.ts';
 export type { LayerConfig, LayerOptions, PendingBase } from './layer.ts';
@@ -77,7 +79,7 @@ interface AuthoringCopy {
 }
 export const copy = copyImpl as unknown as AuthoringCopy;
 
-type AuthoringReplacement = AuthoringRule | (($: Readonly<Record<string, SymbolRule<string>>>, member: GrammarRule) => AuthoringRule);
+type AuthoringReplacement = AuthoringRule | (($: Readonly<Record<string, SymbolRule<string>>>, member: EvaluatedRule) => AuthoringRule);
 interface AuthoringReplace {
 	<R extends AuthoringRule>(previous: R, path: string, rule: AuthoringReplacement): R;
 }

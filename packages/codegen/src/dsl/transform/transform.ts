@@ -29,6 +29,7 @@ import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.t
 import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
 import { isNarrowPlaceholder, type NarrowPlaceholder } from '../primitives/narrow.ts';
 import { isRenamePlaceholder, type RenamePlaceholder } from '../primitives/rename.ts';
+import { isRequiredPlaceholder, type RequiredPlaceholder } from '../primitives/required.ts';
 import { VerbRefusal } from '../verbs/copy.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
@@ -119,6 +120,7 @@ export type PatchValue =
 	| RulePlaceholder
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
+	| RequiredPlaceholder
 	| PreferencePlaceholder
 	| GroupPlaceholder
 	| FlattenPlaceholder
@@ -174,7 +176,7 @@ function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => typeof v === 'function' || isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
+		(v) => typeof v === 'function' || isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isRequiredPlaceholder(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
 	);
 	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches);
 	return appliedAtSite(Object.keys(patches).join(', '), () => applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)) ?? rule;
@@ -217,6 +219,7 @@ function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
 	if (isAliasPlaceholder(value)) return { form: 'alias', name: value.name };
 	if (isVariantPlaceholder(value)) return { form: 'variant', name: value.name };
 	if (isArmDefault(value)) return { form: 'default' };
+	if (isRequiredPlaceholder(value)) return { form: 'required' };
 	if (isGroupPlaceholder(value)) return { form: 'group' };
 	if (isFlattenPlaceholder(value)) return { form: 'flatten' };
 	if (isRegexPlaceholder(value)) return { form: 'regex' };
@@ -774,6 +777,7 @@ function rewritesText(patch: PatchValue): boolean {
 		isFieldPlaceholder(patch) ||
 		isFieldLike(patch) ||
 		isArmDefault(patch) ||
+		isRequiredPlaceholder(patch) ||
 		isGroupPlaceholder(patch) ||
 		isFlattenPlaceholder(patch) ||
 		isVariantPlaceholder(patch) ||
@@ -841,6 +845,11 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 	}
 	if (isArmDefault(patch)) {
 		return withAnnotations(originalMember, { default: true });
+	}
+	if (isRequiredPlaceholder(patch)) {
+		const content = optionalContentOf(originalMember);
+		if (content === undefined) throw new VerbRefusal('edit-site-missing', `required(): the member at '${key}' is a '${(originalMember as { type?: string }).type}', not an optional one`, { path: key });
+		return content;
 	}
 	if (isGroupPlaceholder(patch)) {
 		return withAnnotations(originalMember, { hoisted: true });

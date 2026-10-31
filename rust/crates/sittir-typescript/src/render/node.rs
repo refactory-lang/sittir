@@ -21658,13 +21658,16 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT, layout = [kind::LBRACE, kind::RBRACE], words = 4)]
+#[node(kind = kind::OBJECT, layout = [kind::LBRACE, kind::RBRACE], item = properties, words = 4)]
 pub struct ObjectNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_properties")]
     #[slot(field = field::PROPERTIES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub properties: Vec<Option<::sittir_core::SlotValue<ObjectPropertiesNodeSlot>>>,
+    pub properties: Vec<::sittir_core::SlotValue<ObjectPropertiesNodeSlot>>,
+    #[wire(key = "_delimiter")]
+    #[flank(trailing = 0)]
+    pub delimiter: Option<::sittir_core::types::Delimiter>,
     #[wire(key = "_properties_separator_space_before")]
     pub properties_separator_space_before: Option<KindId>,
     #[wire(key = "_properties_separator_space_after")]
@@ -21693,10 +21696,11 @@ impl ::sittir_core::prepare::Prepare for ObjectNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.properties.iter_mut().map(Option::as_mut), ::sittir_core::layout::Layout::slot(&self.layout, "_properties"));
+        ::sittir_core::prepare::fill_slot_gaps(self.properties.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_properties"));
         self.properties_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE).arm);
         self.properties_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.properties.iter_mut().map(Option::as_mut), options::SEATS_OBJECT_PROPERTIES, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.properties.iter_mut().map(Some), options::SEATS_OBJECT_PROPERTIES, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(237), &[::sittir_core::types::KindId(15)], ctx.options.delimiter_at(options::DELIM_OBJECT_PROPERTIES), ctx));
         self.properties.prepare(ctx)?;
         Ok(())
     }
@@ -21718,13 +21722,16 @@ impl ::sittir_core::prepare::Prepare for ObjectNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 4)]
+#[node(kind = kind::OBJECT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], item = properties, words = 4)]
 pub struct ObjectPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_properties")]
     #[slot(field = field::PROPERTIES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub properties: Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesNodeSlot>>>,
+    pub properties: Vec<::sittir_core::SlotValue<ObjectPatternPropertiesNodeSlot>>,
+    #[wire(key = "_delimiter")]
+    #[flank(trailing = 0)]
+    pub delimiter: Option<::sittir_core::types::Delimiter>,
     #[wire(key = "_properties_separator_space_before")]
     pub properties_separator_space_before: Option<KindId>,
     #[wire(key = "_properties_separator_space_after")]
@@ -21753,10 +21760,11 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.properties.iter_mut().map(Option::as_mut), ::sittir_core::layout::Layout::slot(&self.layout, "_properties"));
+        ::sittir_core::prepare::fill_slot_gaps(self.properties.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_properties"));
         self.properties_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_BEFORE).arm);
         self.properties_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.properties.iter_mut().map(Option::as_mut), options::SEATS_OBJECT_PATTERN_PROPERTIES, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.properties.iter_mut().map(Some), options::SEATS_OBJECT_PATTERN_PROPERTIES, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(238), &[::sittir_core::types::KindId(15)], ctx.options.delimiter_at(options::DELIM_OBJECT_PATTERN_PROPERTIES), ctx));
         self.properties.prepare(ctx)?;
         Ok(())
     }
@@ -42552,7 +42560,7 @@ fn render_object(node: &ObjectNode, w: &mut dyn ::sittir_core::render::RenderSin
         before: node.properties_separator_space_before.unwrap_or(KindId::BLANK),
         after: node.properties_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: false,
+        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: Some(options::SITE_OBJECT_PROPERTIES_START),
         tail: Some(options::SITE_OBJECT_PROPERTIES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_properties"),
@@ -42577,7 +42585,7 @@ fn render_object_pattern(node: &ObjectPatternNode, w: &mut dyn ::sittir_core::re
         before: node.properties_separator_space_before.unwrap_or(KindId::BLANK),
         after: node.properties_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: false,
+        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: Some(options::SITE_OBJECT_PATTERN_PROPERTIES_START),
         tail: Some(options::SITE_OBJECT_PATTERN_PROPERTIES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_properties"),

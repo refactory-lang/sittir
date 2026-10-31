@@ -1372,7 +1372,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between object, object_pattern on '}' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between object, object_pattern on ',' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -1393,13 +1393,14 @@
       ],
       "conflict": {
         "symbolSequence": [
+          "'('",
           "'{'",
-          "','"
+          "'}'"
         ],
-        "lookahead": "'}'",
+        "lookahead": "','",
         "interpretations": [
-          "object_repeat1",
-          "object_pattern_repeat1"
+          "object",
+          "object_pattern"
         ]
       }
     }

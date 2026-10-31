@@ -1132,25 +1132,87 @@ describe('yield_expression sub-factories', () => {
 
 describe('object', () => {
 	it('factory produces correct type', () => {
-		const node = ir.object();
+		const node = ir.object(
+			...[
+				stampBuilt({
+					$type: TSKindId.Pair,
+					$text: 'test',
+					$named: true,
+					_key: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+					_value: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+				}) as any
+			]
+		);
 		expect(node.$type).toBe(TSKindId.Object);
 		expectBuiltNode(node);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.object();
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.object(
+			...[
+				stampBuilt({
+					$type: TSKindId.Pair,
+					$text: 'test',
+					$named: true,
+					_key: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+					_value: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
 describe('object_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.objectPattern();
+		const node = ir.objectPattern(
+			...[
+				stampBuilt({
+					$type: TSKindId.PairPattern,
+					$text: 'test',
+					$named: true,
+					_key: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+					_value: stampBuilt({
+						$type: TSKindId.AssignmentPattern,
+						$text: 'test',
+						$named: true,
+						_left: stampBuilt({
+							$type: TSKindId.LhsExpression,
+							$text: 'test',
+							$named: true,
+							_content: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+						}) as any,
+						_right: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+					}) as any
+				}) as any
+			]
+		);
 		expect(node.$type).toBe(TSKindId.ObjectPattern);
 		expectBuiltNode(node);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.objectPattern();
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.objectPattern(
+			...[
+				stampBuilt({
+					$type: TSKindId.PairPattern,
+					$text: 'test',
+					$named: true,
+					_key: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+					_value: stampBuilt({
+						$type: TSKindId.AssignmentPattern,
+						$text: 'test',
+						$named: true,
+						_left: stampBuilt({
+							$type: TSKindId.LhsExpression,
+							$text: 'test',
+							$named: true,
+							_content: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+						}) as any,
+						_right: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any
+					}) as any
+				}) as any
+			]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

@@ -22,6 +22,7 @@ import {
 	reserved,
 	token,
 	reauthored,
+	required,
 	vocabulary,
 	copy,
 	edit,
@@ -66,6 +67,20 @@ const METHOD_SIGNATURE_WITNESSES = [
 const ABSTRACT_METHOD_SIGNATURE_WITNESSES = [
 	{ text: 'export abstract class A { abstract set x(a, b); }\n', form: ['abstract', 'set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'abstract_method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, in an abstract signature' }
 ] as const;
+
+const OBJECT_WITNESSES = [
+	{ text: 'export const o = { a: 1,, b: 2 };\n', form: ['{', { symbol: 'pair' }, ',', ',', { symbol: 'pair' }, '}'], kind: 'object', production: 'ECMAScript 13.2.5 ObjectLiteral: { PropertyDefinitionList ,opt }, which has no elision' },
+	{ text: 'export const o = { , };\n', form: ['{', ',', '}'], kind: 'object', production: 'ECMAScript 13.2.5 ObjectLiteral: { } or { PropertyDefinitionList ,opt }, never a lone comma' }
+] as const;
+const OBJECT_PATTERN_WITNESSES = [
+	{ text: 'export const { a: x,, b: y } = o;\n', form: ['{', { symbol: 'pair_pattern' }, ',', ',', { symbol: 'pair_pattern' }, '}'], kind: 'object_pattern', production: 'ECMAScript 14.3.3 ObjectBindingPattern: { BindingPropertyList ,opt }, which has no elision' }
+] as const;
+
+// ECMAScript's object literal and object binding pattern list their
+// members with one optional trailing comma and no elision; upstream's
+// commaSep(optional(member)) also admits holes. Each member stops being
+// optional, and the list may end with one comma.
+const HOLELESS_MEMBERS = { '1/0/0/0': required(), '1/0/0/1/0/1': required(), '1/0/0/1': (_$: unknown, repeated: GrammarRule) => seq(repeated, optional(',')) };
 
 interface AccessorPositions {
 	readonly override: number;
@@ -205,8 +220,8 @@ export default grammar(enrich(base), wire({
 		import_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		export_clause: { before: preference('space'), after: preference('space') },
 		export_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
-		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
-		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
+		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space'), 'properties:/delimiter': preference('Delimiter.None') },
+		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space'), 'properties:/delimiter': preference('Delimiter.None') },
 		ternary_expression: { '"?"/after': preference('space'), '":"/before': preference('space') },
 		conditional_type: { '"?"/after': preference('space'), '":"/before': preference('space') },
 		index_signature_colon: { '"["/before': preference('space'), 'sign:/after': preference('tight') },
@@ -304,10 +319,12 @@ export default grammar(enrich(base), wire({
 			24: variant('in')
 		},
 		object: {
-			1: field('properties')
+			1: field('properties'),
+			...HOLELESS_MEMBERS
 		},
 		object_pattern: {
-			1: field('properties')
+			1: field('properties'),
+			...HOLELESS_MEMBERS
 		},
 		switch_body: {
 			1: field('cases')

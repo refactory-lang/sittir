@@ -588,8 +588,14 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		$with: {
 			attributeKind: (value: Admit<NonNullable<T.ImportAttribute.Config>['attributeKind']>) =>
 				rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value })),
-			object: (value: Admit<T.Object>) =>
-				rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+			object: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Object as const, optional: false, make: buildObject },
+						(value: Admit<T.Object>) => buildImportAttribute({ ...config, object: value })
+					)
+				)
 		},
 		attributeKind: () => _attribute_kind,
 		object: () => hydrateStoredSlot(node, '_object'),
@@ -1752,42 +1758,83 @@ export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T
 	return stampBuilt(node) as unknown as T.YieldExpression.Bound;
 }
 
-export function buildObject(): T.EmptyObject;
 export function buildObject<
 	A extends Admit<
-		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
-		)[]
-	>
->(...children: A & RefuseUndeclared<A>): T.Object.Bound;
+		T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | T.ShorthandPropertyIdentifier.Types
+	>[]
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildObject>;
+export function buildObject<
+	A extends Admit<
+		T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | T.ShorthandPropertyIdentifier.Types
+	>[]
+>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildObject>;
 export function buildObject(
-	...children: Admit<
-		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
-		)[]
-	>
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| Admit<
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| T.ShorthandPropertyIdentifier.Types
+		  >
+	)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as Admit<
+		T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | T.ShorthandPropertyIdentifier.Types
+	>[];
+	return _buildObject(elements, options);
+}
+function _buildObject(
+	elements: Admit<
+		T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | T.ShorthandPropertyIdentifier.Types
+	>[],
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Object.Bound {
-	currentHandle()?.admit(TSKindId.Object, children);
-	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
-		rejectReservedText(children, 'Object.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
-		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
-	);
+	currentHandle()?.admit(TSKindId.Object, elements);
+	const _properties = admitAliasContent<
+		(T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]
+	>(elements, [[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]);
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_properties);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Object as const,
 		$named: true as const,
 		_properties,
+		_delimiter,
 		$with: {
 			properties: (
 				...vs: Admit<
-					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.Pair
+					| T.SpreadElement
+					| T.MethodDefinition
+					| T.ShorthandPropertyIdentifier
 					| T.ShorthandPropertyIdentifier.Types
 				>[]
-			) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs)))
+			) => rebuilt(node, handle, () => buildObject(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildObject({ ...options, delimiter: v }, ...elements))
 		},
 		properties: () => hydrateStoredSlots(node, '_properties'),
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'properties'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1798,45 +1845,103 @@ export function buildObject(
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return stampBuilt(node) as unknown as T.Object.Bound;
 }
 
-export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern<
 	A extends Admit<
-		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
-		)[]
-	>
->(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
+		| T.PairPattern
+		| T.RestPattern
+		| T.ObjectAssignmentPattern
+		| T.ShorthandPropertyIdentifierPattern
+		| T.ShorthandPropertyIdentifierPattern.Types
+	>[]
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildObjectPattern>;
+export function buildObjectPattern<
+	A extends Admit<
+		| T.PairPattern
+		| T.RestPattern
+		| T.ObjectAssignmentPattern
+		| T.ShorthandPropertyIdentifierPattern
+		| T.ShorthandPropertyIdentifierPattern.Types
+	>[]
+>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildObjectPattern>;
 export function buildObjectPattern(
-	...children: Admit<
-		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
-		)[]
-	>
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| Admit<
+				| T.PairPattern
+				| T.RestPattern
+				| T.ObjectAssignmentPattern
+				| T.ShorthandPropertyIdentifierPattern
+				| T.ShorthandPropertyIdentifierPattern.Types
+		  >
+	)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as Admit<
+		| T.PairPattern
+		| T.RestPattern
+		| T.ObjectAssignmentPattern
+		| T.ShorthandPropertyIdentifierPattern
+		| T.ShorthandPropertyIdentifierPattern.Types
+	>[];
+	return _buildObjectPattern(elements, options);
+}
+function _buildObjectPattern(
+	elements: Admit<
+		| T.PairPattern
+		| T.RestPattern
+		| T.ObjectAssignmentPattern
+		| T.ShorthandPropertyIdentifierPattern
+		| T.ShorthandPropertyIdentifierPattern.Types
+	>[],
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ObjectPattern.Bound {
-	currentHandle()?.admit(TSKindId.ObjectPattern, children);
-	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
-		rejectReservedText(children, 'ObjectPattern.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
-		[[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]
-	);
+	currentHandle()?.admit(TSKindId.ObjectPattern, elements);
+	const _properties = admitAliasContent<
+		(T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]
+	>(elements, [[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]);
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_properties);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ObjectPattern as const,
 		$named: true as const,
 		_properties,
+		_delimiter,
 		$with: {
 			properties: (
 				...vs: Admit<
-					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.PairPattern
+					| T.RestPattern
+					| T.ObjectAssignmentPattern
+					| T.ShorthandPropertyIdentifierPattern
 					| T.ShorthandPropertyIdentifierPattern.Types
 				>[]
-			) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs)))
+			) => rebuilt(node, handle, () => buildObjectPattern(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildObjectPattern({ ...options, delimiter: v }, ...elements))
 		},
 		properties: () => hydrateStoredSlots(node, '_properties'),
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'properties'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1847,6 +1952,7 @@ export function buildObjectPattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return stampBuilt(node) as unknown as T.ObjectPattern.Bound;
 }
 

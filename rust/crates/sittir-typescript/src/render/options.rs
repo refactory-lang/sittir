@@ -4,7 +4,7 @@ use ::sittir_core::options::{KindFlags, ResolvedOptions, SeatPath};
 use ::sittir_core::types::{Delimiter, EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 1568;
-pub const DELIMITER_SITE_COUNT: usize = 8;
+pub const DELIMITER_SITE_COUNT: usize = 10;
 
 pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_DECORATOR_AFTER: SiteId = SiteId(0);
 pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_END: SiteId = SiteId(1);
@@ -1578,10 +1578,12 @@ pub const DELIM_ENUM_BODY_ELEMENTS_ITEM: FlankId = FlankId(0);
 pub const DELIM_EXPORT_SPECIFIERS_ITEM: FlankId = FlankId(1);
 pub const DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM: FlankId = FlankId(2);
 pub const DELIM_IMPORT_SPECIFIERS_ITEM: FlankId = FlankId(3);
-pub const DELIM_OBJECT_TYPE_CONTENT_ITEM: FlankId = FlankId(4);
-pub const DELIM_TUPLE_TYPE_MEMBERS_ITEM: FlankId = FlankId(5);
-pub const DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM: FlankId = FlankId(6);
-pub const DELIM_TYPES_ITEM: FlankId = FlankId(7);
+pub const DELIM_OBJECT_PROPERTIES: FlankId = FlankId(4);
+pub const DELIM_OBJECT_PATTERN_PROPERTIES: FlankId = FlankId(5);
+pub const DELIM_OBJECT_TYPE_CONTENT_ITEM: FlankId = FlankId(6);
+pub const DELIM_TUPLE_TYPE_MEMBERS_ITEM: FlankId = FlankId(7);
+pub const DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM: FlankId = FlankId(8);
+pub const DELIM_TYPES_ITEM: FlankId = FlankId(9);
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
@@ -3439,6 +3441,8 @@ pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[
     ("export_specifiers", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("formal_parameters_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("import_specifiers", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("object", "properties_delimiter", Delimiter(2), Delimiter(0)),
+    ("object_pattern", "properties_delimiter", Delimiter(2), Delimiter(0)),
     ("object_type_content", "item_delimiter", Delimiter(3), Delimiter(2)),
     ("tuple_type_members", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("type_parameters_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
@@ -8333,6 +8337,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_LBRACE_AFTER, path: "(object)/\"{\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "properties", path: "(object)/properties:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_PROPERTIES, path: "(object)/properties:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_END, path: "(object)/properties:/end" }] },
             ::sittir_core::options::AddressNode::Branch { key: "methodDefinitionGetter", path: "(object)/properties:/(method_definition_getter)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_METHOD_DEFINITION_GETTER_AFTER, path: "(object)/properties:/(method_definition_getter)/after" }] },
@@ -8376,6 +8381,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PATTERN_LBRACE_AFTER, path: "(object_pattern)/\"{\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "properties", path: "(object_pattern)/properties:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_PATTERN_PROPERTIES, path: "(object_pattern)/properties:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PATTERN_PROPERTIES_END, path: "(object_pattern)/properties:/end" }] },
             ::sittir_core::options::AddressNode::Branch { key: "objectAssignmentPattern", path: "(object_pattern)/properties:/(object_assignment_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PATTERN_PROPERTIES_OBJECT_ASSIGNMENT_PATTERN_AFTER, path: "(object_pattern)/properties:/(object_assignment_pattern)/after" }] },

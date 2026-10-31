@@ -427,72 +427,82 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	named_imports: new Set([384, 416, 417]),
 	expression_statement: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	else_clause: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 197, 205, 206, 207, 208, 210, 212, 213, 214, 215,
 		217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 236, 237, 241, 244, 245, 247, 248, 249, 250, 251, 256, 257,
-		258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 302, 304, 305, 306, 307, 312, 313,
-		314, 315, 317, 319, 321, 324, 398, 399, 402, 403, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430, 431, 439,
-		440, 502
+		258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 302, 304, 305, 306, 307,
+		312, 313, 314, 315, 317, 319, 321, 324, 398, 399, 402, 403, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430,
+		431, 439, 440, 452, 453, 454, 500, 502
 	]),
 	break_statement: new Set([1, 502]),
 	continue_statement: new Set([1, 502]),
 	return_statement: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	throw_statement: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	finally_clause: new Set([210]),
 	yield_expression: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
+	]),
+	object: new Set([
+		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
+	]),
+	object_pattern: new Set([
+		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 238, 240, 241, 242, 244, 247, 249, 251,
+		256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 291, 293, 294, 299, 304,
+		305, 306, 307, 315, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500, 501
 	]),
 	class_heritage: new Set([311, 428]),
 	await_expression: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	_lhs_expression: new Set([
-		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 238, 241, 242, 244, 247, 249, 251, 256,
-		257, 258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414,
-		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440
+		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 238, 240, 241, 242, 244, 247, 249, 251,
+		256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 291, 293, 294, 299, 304,
+		305, 306, 307, 315, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500, 501
 	]),
 	spread_element: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	template_substitution: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	decorator: new Set([1, 285, 286, 303]),
 	formal_parameters: new Set([327, 328, 386, 469]),
 	class_static_block: new Set([210]),
 	rest_pattern: new Set([
-		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 238, 241, 242, 244, 247, 249, 251, 256,
-		257, 258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414,
-		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440
+		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 238, 240, 241, 242, 244, 247, 249, 251,
+		256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 291, 293, 294, 299, 304,
+		305, 306, 307, 315, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500, 501
 	]),
 	computed_property_name: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	non_null_expression: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	decorator_parenthesized_expression: new Set([1, 285, 286]),
 	ambient_declaration: new Set([
@@ -500,8 +510,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	enum_body: new Set([
 		1, 128, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257,
-		258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 296, 299, 304, 305, 306, 307, 315, 323,
-		387, 389, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 499
+		258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 296, 299, 304, 305, 306, 307,
+		315, 323, 387, 389, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 499, 500
 	]),
 	omitting_type_annotation: new Set([
 		1, 40, 41, 42, 43, 44, 46, 78, 129, 144, 145, 146, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 278, 280,
@@ -594,13 +604,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	formal_parameters_elements: new Set([327, 328]),
 	enum_body_element_name: new Set([
 		1, 128, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257,
-		258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 296, 299, 304, 305, 306, 307, 315, 414,
-		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 499
+		258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 296, 299, 304, 305, 306, 307,
+		315, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 499, 500
 	]),
 	enum_body_elements: new Set([
 		1, 128, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257,
-		258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 296, 299, 304, 305, 306, 307, 315, 323,
-		387, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 499
+		258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 296, 299, 304, 305, 306, 307,
+		315, 323, 387, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 499, 500
 	]),
 	types: new Set([
 		1, 40, 41, 42, 43, 44, 46, 78, 129, 144, 145, 146, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 278, 280,
@@ -617,36 +627,37 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	ambient_declaration_global: new Set([210]),
 	object_type_content: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 369, 370, 375,
-		402, 403, 411, 412, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430, 431, 439, 440, 455, 456, 457
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 369,
+		370, 375, 402, 403, 411, 412, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430, 431, 439, 440, 452, 453, 454,
+		455, 456, 457, 500
 	]),
 	export_statement_namespace_export: new Set([1]),
 	export_statement_equals_export: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	literal_type_negative_number: new Set([155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165]),
 	class_body_member_method_sig: new Set([455, 456, 457]),
 	class_body_member_declaration: new Set([411, 412, 455, 456, 457, 458, 459, 460, 461, 462]),
 	yield_expression_delegate: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	parenthesized_expression_sequence: new Set([271]),
 	arrow_function_parameter: new Set([1]),
 	export_statement_default_from_star_from: new Set([423, 424]),
 	export_statement_default_declaration_default_kw: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 206, 207, 208, 210, 236, 237, 241, 244, 245, 247,
-		248, 249, 250, 251, 256, 257, 258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 302,
-		304, 305, 306, 307, 312, 313, 314, 315, 317, 319, 321, 324, 398, 399, 414, 418, 419, 420, 421, 422, 423, 424, 425,
-		426, 436, 439, 440
+		248, 249, 250, 251, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293,
+		299, 302, 304, 305, 306, 307, 312, 313, 314, 315, 317, 319, 321, 324, 398, 399, 414, 418, 419, 420, 421, 422, 423,
+		424, 425, 426, 436, 439, 440, 452, 453, 454, 500
 	]),
 	export_statement_default_declaration_default_kw_value: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
-		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
-		420, 421, 422, 423, 424, 425, 426, 439, 440
+		259, 261, 263, 266, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 293, 299, 304, 305, 306, 307, 315, 414,
+		418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440, 452, 453, 454, 500
 	]),
 	_formal_parameters_set_accessor_signature: new Set([448, 449]),
 	_formal_parameters_elements_set_accessor_signature: new Set([449]),
@@ -3378,29 +3389,51 @@ export const coerceToObject: EmptyForm<
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object)) {
 		const data = input[0];
 		const stored = (data as unknown as { _properties?: unknown })._properties;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObject(
-			...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
-				children,
-				_K2,
-				_K12
-			) as unknown as Parameters<typeof F.buildObject>)
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as Admit<
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| T.ShorthandPropertyIdentifier.Types
+			>[])
 		);
 	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('properties' in head)) return input;
-		const v = (head as Record<string, unknown>)['properties'];
-		return Array.isArray(v) ? v : [v];
-	})();
 	return F.buildObject(
-		...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
-			_elems,
-			_K2,
-			_K12
-		) as unknown as Parameters<typeof F.buildObject>)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				_resolveMany<
+					| T.Pair
+					| T.SpreadElement
+					| T.MethodDefinition
+					| T.ShorthandPropertyIdentifier
+					| T.ShorthandPropertyIdentifier.Types
+				>(els, _K2, _K12),
+			[
+				'pair',
+				'spread_element',
+				'method_definition_plain',
+				'method_definition_getter',
+				'method_definition_setter',
+				'shorthand_property_identifier'
+			]
+		) as unknown as Admit<
+			| T.Pair
+			| T.SpreadElement
+			| T.MethodDefinition
+			| T.ShorthandPropertyIdentifier
+			| T.ShorthandPropertyIdentifier.Types
+		>[])
 	);
 });
 
@@ -3412,27 +3445,44 @@ export const coerceToObjectPattern: EmptyForm<
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectPattern)) {
 		const data = input[0];
 		const stored = (data as unknown as { _properties?: unknown })._properties;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectPattern(
-			...(_resolveMany<
-				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-			>(children, _K2, _K13) as unknown as Parameters<typeof F.buildObjectPattern>)
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as Admit<
+				| T.PairPattern
+				| T.RestPattern
+				| T.ObjectAssignmentPattern
+				| T.ShorthandPropertyIdentifierPattern
+				| T.ShorthandPropertyIdentifierPattern.Types
+			>[])
 		);
 	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('properties' in head)) return input;
-		const v = (head as Record<string, unknown>)['properties'];
-		return Array.isArray(v) ? v : [v];
-	})();
 	return F.buildObjectPattern(
-		...(_resolveMany<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(
-			_elems,
-			_K2,
-			_K13
-		) as unknown as Parameters<typeof F.buildObjectPattern>)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				_resolveMany<
+					| T.PairPattern
+					| T.RestPattern
+					| T.ObjectAssignmentPattern
+					| T.ShorthandPropertyIdentifierPattern
+					| T.ShorthandPropertyIdentifierPattern.Types
+				>(els, _K2, _K13),
+			['pair_pattern', 'rest_pattern', 'object_assignment_pattern', 'shorthand_property_identifier_pattern']
+		) as unknown as Admit<
+			| T.PairPattern
+			| T.RestPattern
+			| T.ObjectAssignmentPattern
+			| T.ShorthandPropertyIdentifierPattern
+			| T.ShorthandPropertyIdentifierPattern.Types
+		>[])
 	);
 });
 
@@ -4247,7 +4297,6 @@ export function resolveSpreadElement_expression(
 export const coerceToSpreadElement: ConfigSeat<T.SpreadElement.Loose, ReturnType<typeof F.buildSpreadElement>> = (
 	input: T.SpreadElement.Loose
 ): ReturnType<typeof F.buildSpreadElement> => {
-	if (isNodeOfKind(input, TSKindId.SpreadElement)) return input as unknown as ReturnType<typeof F.buildSpreadElement>;
 	return F.buildSpreadElement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
@@ -4888,7 +4937,6 @@ export function resolveRestPattern_lhsExpression(
 export const coerceToRestPattern: ConfigSeat<T.RestPattern.Loose, ReturnType<typeof F.buildRestPattern>> = (
 	input: T.RestPattern.Loose
 ): ReturnType<typeof F.buildRestPattern> => {
-	if (isNodeOfKind(input, TSKindId.RestPattern)) return input as unknown as ReturnType<typeof F.buildRestPattern>;
 	return F.buildRestPattern(
 		_keywordOr(
 			configFieldOr(input, 'lhsExpression', () => input),

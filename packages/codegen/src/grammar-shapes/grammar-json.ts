@@ -22,6 +22,10 @@ export interface PatternRule<V extends string | RegExp | RustRegex = string> {
 export interface BlankRule {
 	readonly type: 'BLANK';
 }
+export interface OptionalRule<C extends GrammarRule = GrammarRule> {
+	readonly type: 'OPTIONAL';
+	readonly content: C;
+}
 export interface EofRule {
 	readonly type: 'EOF';
 }
@@ -100,6 +104,8 @@ export type GrammarRule =
 	| ReservedRule<GrammarRule>;
 
 export type AuthoringRule = GrammarRule | string | RegExp;
+
+export type EvaluatedRule = GrammarRule | OptionalRule;
 
 export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string
 	? StringRule<S>

@@ -383,8 +383,15 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle): 
 		$with: {
 			attributeKind: (v: NonNullable<T.ImportAttribute['_attribute_kind']>) =>
 				rebuilt(node, handle, () => wrapImportAttribute({ ...$edited(data), _attribute_kind: v }, tree)),
-			object: (v: NonNullable<T.ImportAttribute['_object']>) =>
-				rebuilt(node, handle, () => wrapImportAttribute({ ...$edited(data), _object: v }, tree))
+			object: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Object as const, optional: false, make: RAW.buildObject },
+						(v: NonNullable<T.ImportAttribute['_object']>) =>
+							wrapImportAttribute({ ...$edited(data), _object: v }, tree)
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1278,6 +1285,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 
 export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 	const handle = currentHandle();
+	const listedStored = storedElements(data._properties);
 	const node = {
 		...data,
 		$type: TSKindId.Object as const,
@@ -1288,10 +1296,15 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 				tree
 			);
 		},
-		$with: {
-			properties: (...v: NonNullable<T.Object['_properties']>[number][]) =>
-				rebuilt(node, handle, () => wrapObject({ ...$edited(data), _properties: restItems('properties', v) }, tree))
-		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'properties'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1304,11 +1317,13 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.Object.Parsed;
 }
 
 export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.ObjectPattern.Parsed {
 	const handle = currentHandle();
+	const listedStored = storedElements(data._properties);
 	const node = {
 		...data,
 		$type: TSKindId.ObjectPattern as const,
@@ -1317,12 +1332,15 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
 			>(this, '_properties', tree);
 		},
-		$with: {
-			properties: (...v: NonNullable<T.ObjectPattern['_properties']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapObjectPattern({ ...$edited(data), _properties: restItems('properties', v) }, tree)
-				)
-		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'properties'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1335,6 +1353,7 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.ObjectPattern.Parsed;
 }
 

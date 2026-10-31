@@ -53,6 +53,7 @@ export type PatchForm =
 	| 'alias'
 	| 'rule'
 	| 'default'
+	| 'required'
 	| 'group'
 	| 'flatten'
 	| 'regex'

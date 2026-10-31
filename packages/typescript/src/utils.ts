@@ -30,7 +30,7 @@ export const triviaFacts = Object.freeze({
 		429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 448, 452, 453, 454, 455, 456, 457, 458, 459,
 		460, 461, 462, 463, 470, 499, 500, 501, 502, 504
 	]),
-	listKinds: new Set<number>([383, 384, 386, 389, 390, 391, 392, 400]),
+	listKinds: new Set<number>([237, 238, 383, 384, 386, 389, 390, 391, 392, 400]),
 	layout: new Set<number>([181, 182, 183, 184, 185, 186, 187, 188]),
 	innerRegions: new Map<number, readonly string[]>([
 		[189, ['_hash_bang_line', '_statements']],
@@ -1462,7 +1462,7 @@ export const structure: StructureTable = Object.freeze({
 				[266, 292, 293, 500]
 			]
 		],
-		lists: [['properties', true, 0]]
+		lists: [['properties', false, 0]]
 	},
 	238: {
 		kind: 'object_pattern',
@@ -1474,7 +1474,7 @@ export const structure: StructureTable = Object.freeze({
 				[240, 291, 294, 501]
 			]
 		],
-		lists: [['properties', true, 0]]
+		lists: [['properties', false, 0]]
 	},
 	239: {
 		kind: 'assignment_pattern',

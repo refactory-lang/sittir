@@ -10753,19 +10753,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "properties",
-          "route": "slot",
-          "slot": "properties",
-          "path": [
-            {
-              "owner": "object",
-              "slot": "properties"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "properties",
         "kinds": [
@@ -10845,19 +10833,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "properties",
-          "route": "slot",
-          "slot": "properties",
-          "path": [
-            {
-              "owner": "object_pattern",
-              "slot": "properties"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "properties",
         "kinds": [

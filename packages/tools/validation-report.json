@@ -4,7 +4,7 @@
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
 		"rust": {"digest":"a372b16c795a24537bbf5fbdb5686be8c4781d20ea52e37ce6a30bcf47594fd3","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
-		"typescript": {"digest":"65876e31c1eae409ebea253b2fb446a7ba0bef78574e88ce7958b691b4679886","counts":{"conflict-resolution":{"info":75},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
+		"typescript": {"digest":"b4ae1cd2ada7ec8e3d9376e3e5f6395eb656802f4818a9393607f82f26c050c3","counts":{"conflict-resolution":{"info":75},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},
 	"rows": [
 		{"source":"validator","grammar":"python","backend":"native","kind":"factory: escape_sequence_hex","count":3,"entries":["Raw strings","Strings","Unicode escape sequences"],"stage":"built-render-parse-excluded","code":"built-render-parse-excluded","severity":"info","message":"no-reparse-wrapper","label":"factory: escape_sequence_hex"},

@@ -152,9 +152,9 @@ export const build: PortableBuildTable = {
 		numberFloatScientific: 'config',
 		numberHex: 'direct',
 		numberOctal: 'direct',
-		object: 'spread',
+		object: 'elements',
 		objectAssignmentPattern: 'config',
-		objectPattern: 'spread',
+		objectPattern: 'elements',
 		objectType: 'config',
 		objectTypeContent: 'elements',
 		omittingTypeAnnotation: 'direct',
@@ -22090,32 +22090,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 237,
 					builder: 'object',
-					members: [
-						{
-							name: 'properties',
-							steps: [
-								{
-									key: 'properties',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [237, 'properties'],
-									kinds: [266, 292, 293, 452, 453, 454, 500],
-									leaf: 'identifier',
-									texts: [1, 500],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -26279,32 +26254,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 238,
 					builder: 'objectPattern',
-					members: [
-						{
-							name: 'properties',
-							steps: [
-								{
-									key: 'properties',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [238, 'properties'],
-									kinds: [240, 291, 294, 501],
-									leaf: 'identifier',
-									texts: [1, 501],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					when: []

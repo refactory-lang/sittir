@@ -1256,39 +1256,31 @@ pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite
     F::from_capture(captures.name(name).map(|m| m.as_str()), at)
 }
 
-/// A list's delimiter flags, as today's `_hasSeparatorFlank` computes them.
-/// `leading` and `trailing` are `Some(mandatory)` for each flank the kind
-/// leaves optional, with the mandatory flank tokens on the other side. A
-/// flank is present when the list spans past its first (last) item. Where
-/// that item is a unit variant, the flank is present when the list holds
-/// more anonymous unfielded tokens than the separators between its items and
-/// the mandatory flank tokens account for.
+/// A list's delimiter flags. `leading` and `trailing` are `Some(mandatory)`
+/// for each flank the kind leaves optional, with the mandatory flank tokens
+/// on the other side. A flank is present when the source writes a separator
+/// of the item slot before the first item (after the last); a zero-width
+/// separator writes nothing. A list with no items has a flank when it writes
+/// more separators than the mandatory flank tokens.
 #[must_use]
-pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
+pub fn delimiter(children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
     use crate::types::Delimiter;
-    let item_children: Vec<(&Child, bool)> = children
+    let written: Vec<bool> = children
         .iter()
         .zip(routes)
-        .filter_map(|(child, route)| match *route {
-            Route::Slot { slot, scalar } if slot == items => Some((child, scalar)),
-            _ => None,
-        })
+        .map(|(child, route)| matches!(*route, Route::Separator { slot, .. } if slot == items) && child.start < child.end)
         .collect();
-    let others = children
-        .iter()
-        .zip(routes)
-        .filter(|(child, route)| !child.named && child.field.is_none() && !matches!(route, Route::Trivia | Route::Slot { .. }))
-        .count();
-    let flank = |anchor: Option<&(&Child, bool)>, mandatory: u16, past: &dyn Fn(&Child) -> bool| match anchor {
-        Some((child, false)) => past(child),
-        _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
+    let holds = |route: &Route| matches!(*route, Route::Slot { slot, .. } if slot == items);
+    let separators = written.iter().filter(|&&written| written).count();
+    let flank = |outside: Option<&[bool]>, mandatory: u16| match outside {
+        Some(outside) => outside.contains(&true),
+        None => separators > usize::from(mandatory),
     };
-    let Span { start, end } = Span::of(list);
     let mut flags = Delimiter::NONE;
-    if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
+    if leading.is_some_and(|mandatory| flank(routes.iter().position(holds).map(|first| &written[..first]), mandatory)) {
         flags = flags.with(Delimiter::LEADING);
     }
-    if trailing.is_some_and(|mandatory| flank(item_children.last(), mandatory, &|child| end > child.end)) {
+    if trailing.is_some_and(|mandatory| flank(routes.iter().rposition(holds).map(|last| &written[last + 1..]), mandatory)) {
         flags = flags.with(Delimiter::TRAILING);
     }
     flags
