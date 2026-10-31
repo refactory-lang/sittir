@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import rust from '../src/index.ts';
 
@@ -14,7 +15,7 @@ const comment = (text: string) => rs.build.blockComment(rs.build.blockCommentReg
 
 describe('disposing a tree no read made records of', () => {
 	it('frees the sealed chunk whose last count a side of it held', () => {
-		const tree = rs.diagnostics.parseTree('fn f() {}\n');
+		const tree = rs.diagnostics.parseTree('fn f() {}\n') as TreeHandle;
 		const held = comment('held');
 		const words = wordsOf(held);
 		tree.writeTriviaSide!(0, 'leading', [{ $type: held.$type, $record: builtRefOf(held)!.at }]);
@@ -23,7 +24,7 @@ describe('disposing a tree no read made records of', () => {
 		for (const filler of fillers) rs.release(filler);
 		rs.release(held);
 		expect(words.length).not.toBe(0);
-		native.disposeTree(tree.id);
+		native.disposeTree(tree.id!);
 		expect(words.length).toBe(0);
 	});
 });
