@@ -626,7 +626,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const byPath = new Map<string, Arm[]>();
 	for (const [kind, entries] of routes.readEntries) {
 		const node = modelNode(model, kind);
-		if (kind.startsWith('_') || node === undefined || node.modelType === 'supertype' || typeOf(kind) === undefined) continue;
+		if (node === undefined || node.modelType === 'supertype' || typeOf(kind) === undefined) continue;
 		for (const entry of entries) {
 			const arms = byPath.get(entry.vocab) ?? byPath.set(entry.vocab, []).get(entry.vocab)!;
 			if (arms.some((arm) => arm.kind === kind)) continue;

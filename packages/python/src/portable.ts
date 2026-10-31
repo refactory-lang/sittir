@@ -318,7 +318,6 @@ export interface PortableIds {
 	'literal.string.raw.multiline': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
 	pattern:
-		| TSKindId.PatternList
 		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
 		| TSKindId.CasePatternList
@@ -330,6 +329,7 @@ export interface PortableIds {
 		| TSKindId.KeywordPattern
 		| TSKindId.ListPattern
 		| TSKindId.ListSplatPattern
+		| TSKindId.PatternList
 		| TSKindId.SplatPatternDictionary
 		| TSKindId.SplatPatternList
 		| TSKindId.TuplePattern
@@ -349,8 +349,8 @@ export interface PortableIds {
 	'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
 	'pattern.struct': TSKindId.ClassPattern | TSKindId.KeywordPattern;
 	'pattern.struct.field': TSKindId.KeywordPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
-	'pattern.tuple.bare': TSKindId.PatternList | TSKindId.CasePatternList;
+	'pattern.tuple': TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
+	'pattern.tuple.bare': TSKindId.CasePatternList | TSKindId.PatternList;
 	statement:
 		| TSKindId.AssertStatement
 		| TSKindId.Block
@@ -2096,7 +2096,6 @@ const table: PortableTable = {
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		pattern: {
 			ids: [
-				TSKindId.PatternList,
 				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
 				TSKindId.CasePatternList,
@@ -2108,6 +2107,7 @@ const table: PortableTable = {
 				TSKindId.KeywordPattern,
 				TSKindId.ListPattern,
 				TSKindId.ListSplatPattern,
+				TSKindId.PatternList,
 				TSKindId.SplatPatternDictionary,
 				TSKindId.SplatPatternList,
 				TSKindId.TuplePattern,
@@ -2135,10 +2135,10 @@ const table: PortableTable = {
 		'pattern.struct': { ids: [TSKindId.ClassPattern, TSKindId.KeywordPattern], exact: true },
 		'pattern.struct.field': { ids: [TSKindId.KeywordPattern], exact: true },
 		'pattern.tuple': {
-			ids: [TSKindId.PatternList, TSKindId.CasePatternList, TSKindId.CaseTuplePattern, TSKindId.TuplePattern],
+			ids: [TSKindId.CasePatternList, TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern],
 			exact: true
 		},
-		'pattern.tuple.bare': { ids: [TSKindId.PatternList, TSKindId.CasePatternList], exact: true },
+		'pattern.tuple.bare': { ids: [TSKindId.CasePatternList, TSKindId.PatternList], exact: true },
 		statement: {
 			ids: [
 				TSKindId.AssertStatement,
@@ -2315,7 +2315,6 @@ const table: PortableTable = {
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
 		[TSKindId.Await]: [{ path: 'expression.await', within: [], test: [] }],
-		[TSKindId.PatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.BinaryOperator]: [
 			{
 				path: 'expression.binary.arithmetic.add',
@@ -2677,6 +2676,7 @@ const table: PortableTable = {
 		[TSKindId.ParenthesizedExpression]: [{ path: 'expression.parenthesized', within: [], test: [] }],
 		[TSKindId.ParenthesizedListSplat]: [{ path: 'element.spread.parenthesized', within: [], test: [] }],
 		[TSKindId.PassStatement]: [{ path: 'statement.empty', within: [], test: [] }],
+		[TSKindId.PatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.PrintStatement]: [{ path: 'statement.print', within: [], test: [] }],
 		[TSKindId.PrintStatementChevron]: [{ path: 'statement.print.chevron', within: [], test: [] }],
 		[TSKindId.PrintStatementPlain]: [{ path: 'statement.print', within: [], test: [] }],

@@ -12279,26 +12279,6 @@
       ],
       "members": []
     },
-    "qualified_identifier": {
-      "vocab": "identifier.qualified",
-      "read": [
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "readonly_type": {
       "vocab": "type.readonly",
       "read": [
@@ -13294,19 +13274,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "string_fragment": {
-      "vocab": "literal.string.text",
-      "read": [
-        {
-          "vocab": "literal.string.text",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "string_keyword": {
       "vocab": "type.primitive",
@@ -14993,13 +14960,13 @@
       {
         "depth": 2,
         "paths": 109,
-        "kinds": 146,
+        "kinds": 145,
         "refinements": 4
       },
       {
         "depth": 3,
         "paths": 108,
-        "kinds": 93,
+        "kinds": 92,
         "refinements": 82
       },
       {

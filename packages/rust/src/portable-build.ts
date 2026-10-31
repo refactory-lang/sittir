@@ -2067,6 +2067,18 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
+					kind: 165,
+					builder: 'blockCommentContent',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [],
+					holders: [
+						[402, 'doc'],
+						[403, 'doc']
+					]
+				},
+				{
 					kind: 155,
 					builder: 'lineCommentRegular',
 					members: [],

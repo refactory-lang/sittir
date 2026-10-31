@@ -86,6 +86,9 @@ const MODEL = [
 	node('_template_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
 	node('_quoted_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
 	node('text_fragment', [], { modelType: 'pattern' }),
+	node('_chained', [slot('left', ['identifier'])], { shownAs: ['chained'] }),
+	node('dotted', [], { modelType: 'pattern', shownAs: ['qualified'] }),
+	node('member_ty', [], { modelType: 'pattern', shownAs: ['qualified'] }),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
@@ -752,6 +755,16 @@ describe("keptKinds over a supertype the slot holds", () => {
 			'text_fragment'
 		]);
 		expect(routes.readEntries.get('_template_text')?.map((e) => e.claimed)).toEqual(['text_fragment']);
+	});
+
+	it.each([
+		['chained', ['_chained']],
+		['qualified', ['dotted', 'member_ty']]
+	])('enters a claim on a name only the parser shows (%s) on the kinds it shows, and reads the name as its path', async (name, shown) => {
+		const routes = resolveRoutes(await grammar(`(${name}) @identifier.qualified`));
+		expect([...routes.readEntries.keys()].filter((k) => routes.readEntries.get(k)?.some((e) => e.vocab === 'identifier.qualified')).sort()).toEqual(shown);
+		expect(routes.vocabOf.get(name)).toBe('identifier.qualified');
+		expect(unenteredForms(await grammar(`(${name}) @identifier.qualified`), routes)).toEqual([]);
 	});
 
 	it("enters a claim pinning an enum kind's token only on the member that is that token", async () => {

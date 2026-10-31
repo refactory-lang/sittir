@@ -795,19 +795,6 @@
         "list": false
       }
     },
-    "bare_tuple_pattern": {
-      "vocab": "pattern.tuple.bare",
-      "read": [
-        {
-          "vocab": "pattern.tuple.bare",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "binary_operator": {
       "vocab": "expression.binary",
       "read": [
@@ -4997,26 +4984,6 @@
         }
       ]
     },
-    "lambda_expression": {
-      "vocab": "expression.lambda",
-      "read": [
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "lambda_parameters": {
       "container": {
         "slot": "parameters_elements",
@@ -5246,26 +5213,6 @@
           ]
         }
       ]
-    },
-    "map_rest_pattern": {
-      "vocab": "pattern.rest.map",
-      "read": [
-        {
-          "vocab": "pattern.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "pattern.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "match_block_block": {
       "container": {
@@ -6022,19 +5969,6 @@
         "list": false
       }
     },
-    "qualified_identifier": {
-      "vocab": "identifier.qualified",
-      "read": [
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "raise_statement": {
       "vocab": "statement.throw",
       "read": [
@@ -6106,26 +6040,6 @@
           ]
         }
       ]
-    },
-    "rest_pattern": {
-      "vocab": "pattern.rest",
-      "read": [
-        {
-          "vocab": "pattern.rest",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "pattern.rest",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "return_statement": {
       "vocab": "statement.return",
@@ -7811,13 +7725,13 @@
       {
         "depth": 2,
         "paths": 76,
-        "kinds": 81,
+        "kinds": 78,
         "refinements": 5
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 62,
+        "kinds": 60,
         "refinements": 42
       },
       {

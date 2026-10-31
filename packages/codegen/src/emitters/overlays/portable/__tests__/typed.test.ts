@@ -82,6 +82,11 @@ describe('emitPortableTyped', () => {
 	});
 
 	it('reports what it skipped with the reason', () => {
-		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
+		expect(typed.unemitted).toContainEqual({ kind: 'impl_item_body', vocab: 'declaration.extension.conformance', member: 'implements', reason: 'no path for its nested route' });
+	});
+
+	it('reads a claim on a name the parser shows once, as the kind it shows', () => {
+		expect(typed.unemitted.filter((u) => u.kind === 'let_chain')).toEqual([]);
+		expect(typed.source.match(/function LetChainAsClauseLetChain\d*\(/g)).toHaveLength(1);
 	});
 });

@@ -26059,6 +26059,18 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
+					kind: 175,
+					builder: 'templateChars',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [],
+					holders: [
+						[273, 'elements'],
+						[347, 'elements']
+					]
+				},
+				{
 					kind: 119,
 					builder: 'unescapedDoubleStringFragment',
 					members: [],

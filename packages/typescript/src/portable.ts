@@ -504,11 +504,11 @@ export interface PortableIds {
 		| TSKindId.RegexPattern
 		| TSKindId.String
 		| TSKindId.StringDouble
-		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.StringSingle
 		| TSKindId.TemplateString
 		| TSKindId.True
 		| TSKindId.Undefined
+		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.UnescapedSingleStringFragment;
 	'literal.boolean': TSKindId.False | TSKindId.True;
 	'literal.boolean.false': TSKindId.False;
@@ -562,9 +562,9 @@ export interface PortableIds {
 		| TSKindId.EscapeSequence
 		| TSKindId.String
 		| TSKindId.StringDouble
-		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.StringSingle
 		| TSKindId.TemplateString
+		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.UnescapedSingleStringFragment;
 	'literal.string.escape': TSKindId.EscapeSequence;
 	'literal.string.interpolated': TSKindId.TemplateString;
@@ -3391,11 +3391,11 @@ const table: PortableTable = {
 				TSKindId.RegexPattern,
 				TSKindId.String,
 				TSKindId.StringDouble,
-				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.StringSingle,
 				TSKindId.TemplateString,
 				TSKindId.True,
 				TSKindId.Undefined,
+				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.UnescapedSingleStringFragment
 			],
 			exact: true
@@ -3468,9 +3468,9 @@ const table: PortableTable = {
 				TSKindId.EscapeSequence,
 				TSKindId.String,
 				TSKindId.StringDouble,
-				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.StringSingle,
 				TSKindId.TemplateString,
+				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.UnescapedSingleStringFragment
 			],
 			exact: true
@@ -4628,7 +4628,6 @@ const table: PortableTable = {
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.StringDouble]: [{ path: 'literal.string', within: [], test: [] }],
-		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringKeyword]: [
 			{ path: 'type.primitive.string', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
@@ -4699,6 +4698,7 @@ const table: PortableTable = {
 			{ path: 'expression.unary', within: [], test: [] }
 		],
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
+		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.UnescapedSingleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
 		[TSKindId.Unique]: [

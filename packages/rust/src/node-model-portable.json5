@@ -9410,42 +9410,6 @@
         }
       ]
     },
-    "let_chain": {
-      "vocab": "clause.let.chain",
-      "read": [
-        {
-          "vocab": "clause.let.chain",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "left",
-          "route": "slot",
-          "slot": "left",
-          "path": [
-            {
-              "owner": "let_chain",
-              "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "rights",
-          "route": "slot",
-          "slot": "right",
-          "path": [
-            {
-              "owner": "let_chain",
-              "slot": "right"
-            }
-          ]
-        }
-      ]
-    },
     "let_condition": {
       "vocab": "clause.let",
       "read": [
@@ -12418,26 +12382,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "qualified_identifier": {
-      "vocab": "identifier.qualified",
-      "read": [
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "qualified_type": {
       "vocab": "type.qualified",
@@ -20081,13 +20025,13 @@
       {
         "depth": 2,
         "paths": 95,
-        "kinds": 145,
+        "kinds": 144,
         "refinements": 7
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 122,
+        "kinds": 121,
         "refinements": 83
       },
       {

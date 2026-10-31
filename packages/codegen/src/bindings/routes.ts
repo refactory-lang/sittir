@@ -139,6 +139,10 @@ export function modelNode(model: SlotModel, kind: string): ModelNode | undefined
 	return model.get(kind) ?? model.get(`_${kind}`);
 }
 
+function shownNameOnly(model: SlotModel, kind: string): boolean {
+	return !model.has(kind) && [...model.values()].some((node) => node.shownAs.includes(kind));
+}
+
 export function aliasContentSlot(node: ModelNode | undefined): ModelSlot | undefined {
 	const [content, ...rest] = node?.modelType === 'alias' ? node.slots : [];
 	return rest.length === 0 ? content : undefined;
@@ -943,27 +947,28 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const inherited = new Set<ReadEntry>();
 	const cloned = new Set<ReadEntry>();
 	for (const [kind, at] of reads)
-		readEntries.set(
-			kind,
-			at.map(({ form, claimed, vocab, claim, index, spelled, decided }) => {
-				const entry: ReadEntry = {
-					kind,
-					claimed,
-					vocab,
-					claim,
-					index,
-					pins: pinsOf(input.model, kind, claim, slotNamesOf(kind)),
-					children: claimChildTests(input.model, kind, claim),
-					template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
-					members: [],
-					...(spelled ? { spelled: true as const } : {}),
-					...(decided ? { decided: true as const } : {})
-				};
-				if (form !== claimed) inherited.add(entry);
-				if (form !== claimed && modelNode(input.model, form)?.splitFrom != null) cloned.add(entry);
-				return entry;
-			})
-		);
+		if (!shownNameOnly(input.model, kind))
+			readEntries.set(
+				kind,
+				at.map(({ form, claimed, vocab, claim, index, spelled, decided }) => {
+					const entry: ReadEntry = {
+						kind,
+						claimed,
+						vocab,
+						claim,
+						index,
+						pins: pinsOf(input.model, kind, claim, slotNamesOf(kind)),
+						children: claimChildTests(input.model, kind, claim),
+						template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
+						members: [],
+						...(spelled ? { spelled: true as const } : {}),
+						...(decided ? { decided: true as const } : {})
+					};
+					if (form !== claimed) inherited.add(entry);
+					if (form !== claimed && modelNode(input.model, form)?.splitFrom != null) cloned.add(entry);
+					return entry;
+				})
+			);
 
 	const vocabOf = kindVocabs(input.model, reads);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
@@ -1012,7 +1017,7 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 			.filter((form) => form !== owner)
 			.flatMap((form) =>
 				readKinds(input.model, form, claim).flatMap(({ kind }) =>
-					(routes.readEntries.get(kind) ?? []).some((e) => e.index === index) || routes.stopped.some((s) => s.kind === kind && s.index === index) ? [] : [kind]
+					shownNameOnly(input.model, kind) || (routes.readEntries.get(kind) ?? []).some((e) => e.index === index) || routes.stopped.some((s) => s.kind === kind && s.index === index) ? [] : [kind]
 				)
 			)
 			.map((kind) => `${input.grammar}: ${kind} has no entry for its supertype ${owner}'s claim @${claim.vocab}, so it reads by no path there when no claim of its own holds`);

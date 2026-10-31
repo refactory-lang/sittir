@@ -5136,7 +5136,6 @@ const table: PortableTable = {
 		[TSKindId.PointerType]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeConst]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeMut]: [{ path: 'type.pointer', within: [], test: [] }],
-		[TSKindId.ScopedIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.QualifiedType]: [{ path: 'type.qualified', within: [], test: [] }],
 		[TSKindId.RangeExpression]: [{ path: 'expression.range', within: [], test: [] }],
 		[TSKindId.RangeExpressionBare]: [
@@ -5232,6 +5231,7 @@ const table: PortableTable = {
 		[TSKindId.RemainingFieldPattern]: [{ path: 'pattern.struct.rest', within: [], test: [] }],
 		[TSKindId.RemovedTraitBound]: [{ path: 'clause.bounds.removed', within: [], test: [] }],
 		[TSKindId.ReturnExpression]: [{ path: 'statement.return', within: [], test: [] }],
+		[TSKindId.ScopedIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
