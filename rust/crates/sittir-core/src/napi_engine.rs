@@ -100,9 +100,7 @@ macro_rules! napi_engine {
                 let _ = buffers.detach(&env);
             }
             if let Some(tree) = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id)) {
-                let store = tree.written().clone();
-                drop(tree);
-                let _ = $crate::napi_engine::settle(&env, &store);
+                let _ = $crate::napi_engine::dispose(&env, tree);
             }
         }
 
@@ -1702,6 +1700,34 @@ fn settle_buffers<T>(env: napi::Env, buffers: &mut Buffers, store: &crate::trivi
 /// None.
 #[cfg(not(feature = "arena"))]
 pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    Ok(())
+}
+
+/// Drops `tree`, then settles its store (`settle`) when the tree made its
+/// arena: a side names a built record only on a node read as a record, and
+/// that read made the arena.
+///
+/// # Errors
+///
+/// What `settle` refuses.
+#[cfg(feature = "arena")]
+pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
+    if !tree.made_arena() {
+        return Ok(());
+    }
+    let store = tree.written().clone();
+    drop(tree);
+    settle(env, &store)
+}
+
+/// Drops `tree`: without the arena no chunk is freed.
+///
+/// # Errors
+///
+/// None.
+#[cfg(not(feature = "arena"))]
+pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
+    drop(tree);
     Ok(())
 }
 

@@ -461,14 +461,23 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The sides a write set, in the store of the engine that parsed the tree.
     written: TriviaStore<G::Trivia>,
     /// The tree's records, each written on its node's first read, and those
-    /// no cell names, which it holds by row (`tree_arena`).
+    /// no cell names, which it holds by row (`tree_arena`): made on the
+    /// first call that reaches them.
     #[cfg(feature = "arena")]
-    arena: std::sync::Mutex<crate::arena::TreeArena>,
+    arena: std::sync::OnceLock<std::sync::Mutex<crate::arena::TreeArena>>,
 }
 
 impl<G: EngineGrammar> Drop for ParsedTree<G> {
+    /// Drops the tree's sides. A side holds a built record only on a node
+    /// read as a record, and that read made the tree's arena, so a tree that
+    /// never made one releases no record (what `napi_engine::dispose` skips
+    /// settling on).
     fn drop(&mut self) {
-        self.written.drop_tree(self.tree_id);
+        let released = self.written.drop_tree(self.tree_id);
+        #[cfg(feature = "arena")]
+        debug_assert!(!released || self.made_arena(), "tree {} released a built record but never made its arena", self.tree_id);
+        #[cfg(not(feature = "arena"))]
+        debug_assert!(!released, "tree {} released a built record without the arena", self.tree_id);
     }
 }
 
@@ -596,11 +605,22 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.grammar
     }
 
-    /// The tree's records, held while the guard lives:
-    /// every route that reads a node reaches or writes its record here.
+    /// The tree's records, held while the guard lives, the arena made on the
+    /// first call: every route that reads a node reaches or writes its
+    /// record here.
     #[cfg(feature = "arena")]
     pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {
-        self.arena.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+        self.arena
+            .get_or_init(|| std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree.root_node()))))
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+    }
+
+    /// Whether a call made the tree's arena (`tree_arena`).
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn made_arena(&self) -> bool {
+        self.arena.get().is_some()
     }
 
     /// The parsed tree-sitter tree.
@@ -1601,8 +1621,6 @@ impl<G: EngineGrammar> Engine<G> {
         let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
-        #[cfg(feature = "arena")]
-        let nodes = crate::read::descendant_count(&tree.root_node());
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
@@ -1619,7 +1637,7 @@ impl<G: EngineGrammar> Engine<G> {
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
             #[cfg(feature = "arena")]
-            arena: std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, nodes)),
+            arena: std::sync::OnceLock::new(),
         })
     }
 
@@ -2543,6 +2561,18 @@ mod tests {
         drop(first);
         assert_eq!(engine.written.len(), 1, "a dropped tree's sides leave the store");
         assert!(second.edited_within(NodeIndex::ROOT, false));
+    }
+
+    #[cfg(all(feature = "arena", debug_assertions))]
+    #[test]
+    #[should_panic(expected = "never made its arena")]
+    fn a_tree_that_never_made_its_arena_holds_no_built_record() {
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
+        let tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
+        tree.written().write_side(Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT }, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        assert!(!tree.made_arena());
+        drop(tree);
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
