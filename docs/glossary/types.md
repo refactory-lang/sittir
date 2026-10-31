@@ -1704,3 +1704,31 @@ The rule the token wraps. Its matched text is one lexical token.
 ### `packages/codegen/src/types/rule.ts::TokenRule::type`
 
 The `TOKEN` tag that identifies a token rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::content`
+
+The element repeated one or more times.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::separator`
+
+The separator between elements. A `RuleSeparator` in the link phase and a plain string in the evaluate phase.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::type`
+
+The `REPEAT1` tag that identifies a one-or-more repeat in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::content`
+
+The element repeated zero or more times.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::separator`
+
+The separator between elements. A `RuleSeparator` in the link phase and a plain string in the evaluate phase.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::type`
+
+The `REPEAT` tag that identifies a zero-or-more repeat in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::TokenRule::immediate`
+
+Whether the token must match with no extras before it. Required in the link phase and optional in the evaluate phase.

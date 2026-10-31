@@ -429,6 +429,14 @@ grammar hands `wire()`.
 
 The enriched members of a `SEQ` arm. Each member is enriched against its own sequence.
 
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRule::type`
+
+The discriminant of the enriched rule: `SEQ`, `REPEAT` or `REPEAT1` for the three rule arms. Any other rule keeps its own type.
+
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRule::content`
+
+The enriched content of a `REPEAT` or `REPEAT1` arm. A repeat of a sequence has its members enriched in turn.
+
 ### `packages/codegen/src/grammar-shapes/grammar-json.ts::SeqRule`
 
 ```text

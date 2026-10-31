@@ -994,6 +994,14 @@ A builder's empty form: a zero-argument call returning the empty type, intersect
 
 Type-level only. The refusal list `{ readonly refused: … }` that `RefuseUndeclared` yields when an argument holds an untyped node or an undeclared key. No argument carries it at run time; the type names each refusal message.
 
+### `packages/types/src/node-surface.ts::NarrowTo::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `NarrowTo` narrows a wide node type to one kind by intersecting it with `$type: D`; the alias emits no code.
+
+### `packages/types/src/node-surface.ts::Admit::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `Admit` requires that existing numeric tag on a value and attaches the node marker; the alias emits no code.
+
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 
 The single-slot entries of a structure row, as storage key and label pairs.
