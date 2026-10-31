@@ -107,6 +107,10 @@ function unwrapExpression(expression: ts.Expression | undefined): ts.Expression 
 	return current;
 }
 
+function isUndocumentedEligible(path: readonly string[], exported: boolean): boolean {
+	return exported && path.length <= UNDOCUMENTED_DEPTH;
+}
+
 function isContextuallyDeclared(
 	literal: ts.ObjectLiteralExpression,
 	name: string,
@@ -139,7 +143,7 @@ export function enumerateDeclarations(
 		const id = `${path.join('::')}${isStatic ? '\u0000static' : ''}`;
 		const prior = found.get(id);
 		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported, isStatic });
-		if (node !== undefined && exported && path.length <= UNDOCUMENTED_DEPTH) declaringNodes.add(node);
+		if (node !== undefined && isUndocumentedEligible(path, exported)) declaringNodes.add(node);
 	};
 
 	const typeMembers = (type: ts.TypeNode | undefined, path: readonly string[], exported: boolean): void => {
@@ -258,8 +262,9 @@ export function enumerateDeclarations(
 						const path = [...prefix, bound];
 						const exported = isExported(statement, bound);
 						add(path, exported);
-						if (checker !== undefined && constant && ts.isIdentifier(declaration.name))
-						objectMembers(declaration.initializer, path, exported, checker);
+						if (checker !== undefined && constant && ts.isIdentifier(declaration.name)) {
+							objectMembers(declaration.initializer, path, exported, checker);
+						}
 					}
 				}
 			} else if (ts.isModuleDeclaration(statement) && ts.isIdentifier(statement.name)) {
@@ -436,7 +441,7 @@ export function measure(root: string): Measurement {
 	let exported = 0;
 	for (const [file, own] of declarations) {
 		for (const declaration of own) {
-			if (!declaration.exported || declaration.path.length > UNDOCUMENTED_DEPTH) continue;
+			if (!isUndocumentedEligible(declaration.path, declaration.exported)) continue;
 			exported += 1;
 			if (!resolved.has(declarationId(file, declaration)))
 				undocumented.push(`${file}::${declaration.path.join('::')}${declaration.isStatic ? ' (static)' : ''}`);
