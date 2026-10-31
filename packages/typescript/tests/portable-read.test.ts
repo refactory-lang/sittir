@@ -27,9 +27,9 @@ describe('the portable read', () => {
 		expect(roundTrip('try {} catch (e: unknown) {}')).toBe('try {} catch (e: unknown) {}\n');
 	});
 
-	it('carries a node whose flags its path cannot build, so a static readonly field keeps both', () => {
+	it('reads a static readonly field as a value with both flags, each set through the slot that holds its token, and builds it back', () => {
 		const field = (firstOf('class C { static readonly x = 1; }') as { readonly body: readonly unknown[] }).body[0];
-		expect(field).toMatchObject({ $type: typescript.kinds.PublicFieldDefinitionPlain });
+		expect(field).toEqual({ $path: 'declaration.field', $flags: ['static', 'readonly'], decorators: [], name: 'x', value: { $path: 'literal.number.integer', $value: 1 } });
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
 	});
 

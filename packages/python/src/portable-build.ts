@@ -618,7 +618,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						group: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'group',
+											optional: true
+										}
+									],
+									kind: 8
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -709,7 +723,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						},
+						trailingComma: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'trailingComma',
+											optional: true
+										}
+									],
+									kind: 6
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -1914,7 +1955,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: ['doc', 'name'],
@@ -2152,7 +2207,21 @@ export const build: PortableBuildTable = {
 							builder: 'identifier'
 						}
 					],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -2385,7 +2454,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -2613,7 +2696,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -2841,7 +2938,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					template: {
 						member: 'name',
 						pattern: '__${string}__',
@@ -7732,7 +7843,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						debug: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'debug',
+											optional: true
+										}
+									],
+									kind: 40
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -11561,7 +11686,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -12014,7 +12153,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]

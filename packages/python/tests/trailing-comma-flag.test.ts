@@ -29,6 +29,22 @@ describe.each([
 		expect(trailingComma(runtime.is)(clause())).toBe(false);
 	});
 
+	it('builds a clause from a portable value, the comma written by its flag and left to the blank default without it', async () => {
+		const runtime = await runtimeOf();
+		const list = (clause: object): string =>
+			String(runtime.engine.render(runtime.build({ $path: 'expression.comprehension.list', body: 'x', clauses: { $path: 'clause.comprehension', contents: [clause] } } as never) as never));
+		const clause = { $path: 'clause.comprehension.for', left: 'x', rights: ['a', 'b'] };
+		expect(list({ ...clause, $flags: ['trailingComma'] })).toBe('[x for x in a, b,]');
+		expect(list({ ...clause, $flags: [] })).toBe('[x for x in a, b]');
+		expect(list(clause)).toBe('[x for x in a, b]');
+	});
+
+	it('reads the comma as a flag of a plain portable value, not a node carried whole', async () => {
+		const runtime = await runtimeOf();
+		const read = runtime.read(runtime.engine.parse('[x for x in a, b,]\n')) as { statements: [{ content: { clauses: { contents: unknown[] } } }] };
+		expect(read.statements[0].content.clauses.contents).toEqual([{ $path: 'clause.comprehension.for', $flags: ['trailingComma'], left: 'x', rights: ['a', 'b'] }]);
+	});
+
 	it('reads and builds a clause back with its comma, and one without it without', async () => {
 		const runtime = await runtimeOf();
 		const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never));

@@ -2973,7 +2973,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'const',
+											optional: true
+										}
+									],
+									kind: 68
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -3277,6 +3291,71 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						},
 						optional: {
 							presets: [
 								{
@@ -3493,6 +3572,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						},
 						optional: {
 							presets: [
 								{
@@ -3709,6 +3853,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						},
 						optional: {
 							presets: [
 								{
@@ -3925,6 +4134,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						},
 						optional: {
 							presets: [
 								{
@@ -4070,6 +4344,58 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -4199,6 +4525,58 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -4328,6 +4706,58 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -4457,6 +4887,58 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -4703,7 +5185,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'generator',
@@ -4925,7 +5421,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'generator',
@@ -5137,7 +5647,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -5492,16 +6016,55 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
-						generator: {
+						static: {
 							presets: [
 								{
 									steps: [
 										{
-											key: 'generator',
+											key: 'static',
 											optional: true
 										}
 									],
-									kind: 3
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
 								}
 							]
 						},
@@ -5515,6 +6078,28 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 140
+								},
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						generator: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'generator',
+											optional: true
+										}
+									],
+									kind: 3
 								}
 							]
 						},
@@ -5797,16 +6382,55 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
-						generator: {
+						static: {
 							presets: [
 								{
 									steps: [
 										{
-											key: 'generator',
+											key: 'static',
 											optional: true
 										}
 									],
-									kind: 3
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
 								}
 							]
 						},
@@ -5820,6 +6444,28 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 140
+								},
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						generator: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'generator',
+											optional: true
+										}
+									],
+									kind: 3
 								}
 							]
 						},
@@ -6102,16 +6748,55 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
-						generator: {
+						static: {
 							presets: [
 								{
 									steps: [
 										{
-											key: 'generator',
+											key: 'static',
 											optional: true
 										}
 									],
-									kind: 3
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
 								}
 							]
 						},
@@ -6125,6 +6810,28 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 140
+								},
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						generator: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'generator',
+											optional: true
+										}
+									],
+									kind: 3
 								}
 							]
 						},
@@ -6407,16 +7114,55 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
-						generator: {
+						static: {
 							presets: [
 								{
 									steps: [
 										{
-											key: 'generator',
+											key: 'static',
 											optional: true
 										}
 									],
-									kind: 3
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
 								}
 							]
 						},
@@ -6430,6 +7176,28 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 140
+								},
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						generator: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'generator',
+											optional: true
+										}
+									],
+									kind: 3
 								}
 							]
 						},
@@ -6687,6 +7455,71 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -6954,6 +7787,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -7231,6 +8090,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -7508,6 +8393,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -7785,6 +8696,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -8062,6 +8999,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -8339,6 +9341,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -8616,6 +9683,71 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
 						generator: {
 							presets: [
 								{
@@ -8945,7 +10077,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9041,7 +10200,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9173,7 +10359,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9277,7 +10490,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9424,7 +10664,34 @@ export const build: PortableBuildTable = {
 							kind: 35
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9530,7 +10797,34 @@ export const build: PortableBuildTable = {
 							kind: 35
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9672,7 +10966,34 @@ export const build: PortableBuildTable = {
 							kind: 35
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9786,7 +11107,34 @@ export const build: PortableBuildTable = {
 							kind: 35
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -9933,7 +11281,34 @@ export const build: PortableBuildTable = {
 							kind: 36
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10039,7 +11414,34 @@ export const build: PortableBuildTable = {
 							kind: 36
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10181,7 +11583,34 @@ export const build: PortableBuildTable = {
 							kind: 36
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10295,7 +11724,34 @@ export const build: PortableBuildTable = {
 							kind: 36
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10442,7 +11898,34 @@ export const build: PortableBuildTable = {
 							kind: 34
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10548,7 +12031,34 @@ export const build: PortableBuildTable = {
 							kind: 34
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10690,7 +12200,34 @@ export const build: PortableBuildTable = {
 							kind: 34
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10804,7 +12341,34 @@ export const build: PortableBuildTable = {
 							kind: 34
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'optional',
@@ -10909,7 +12473,34 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: ['name'],
@@ -11046,7 +12637,34 @@ export const build: PortableBuildTable = {
 							kind: 278
 						}
 					],
-					flags: {},
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -11192,6 +12810,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -11346,6 +12990,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -11510,6 +13180,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -11674,6 +13370,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -11838,6 +13560,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12012,6 +13760,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12186,6 +13960,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12360,6 +14160,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12511,6 +14337,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12672,6 +14524,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12833,6 +14711,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -12994,6 +14898,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13168,6 +15098,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13307,6 +15263,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13456,6 +15425,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13605,6 +15587,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13754,6 +15749,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -13890,6 +15898,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14036,6 +16057,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14182,6 +16216,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14328,6 +16375,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14467,6 +16527,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14616,6 +16702,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14765,6 +16877,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -14914,6 +17052,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -15050,6 +17214,32 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -15196,6 +17386,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -15342,6 +17558,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -15488,6 +17730,32 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
 						privateName: {
 							presets: [
 								{
@@ -15838,7 +18106,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -15978,7 +18260,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: ['indexType', 'name'],
@@ -16150,7 +18446,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: ['mappedTypeClause'],
@@ -16295,7 +18605,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -16469,7 +18793,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'const',
+											optional: true
+										}
+									],
+									kind: 68
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -22039,7 +24377,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'generator',
@@ -22262,7 +24614,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'generator',
@@ -22564,7 +24930,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -28453,6 +30833,15 @@ export const build: PortableBuildTable = {
 					flags: {
 						abstract: {
 							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								},
 								{
 									steps: [
 										{

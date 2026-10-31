@@ -406,7 +406,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				return placedText(route.path, route.token);
 			case 'kind':
 				return placedValue(route.path, route.kind);
-			case 'slot':
+			case 'slot': {
+				const slot = lastSlot(route.path);
+				const [only, ...more] = slot === undefined ? [] : admitted(slot);
+				return only === undefined || more.length > 0 ? undefined : placedValue(route.path, only);
+			}
 			case 'nested':
 				return undefined;
 		}

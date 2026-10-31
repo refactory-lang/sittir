@@ -6710,7 +6710,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 364
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: ['body'],
@@ -6878,7 +6892,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 364
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -7097,7 +7125,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 364
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -12273,7 +12315,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -12482,7 +12538,21 @@ export const build: PortableBuildTable = {
 							kind: 478
 						}
 					],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -12678,7 +12748,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -12887,7 +12971,21 @@ export const build: PortableBuildTable = {
 							kind: 126
 						}
 					],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -13147,7 +13245,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					flags: {},
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -17909,6 +18021,15 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 111
+								},
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
 								}
 							]
 						}
@@ -17974,6 +18095,15 @@ export const build: PortableBuildTable = {
 					flags: {
 						unsafe: {
 							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								},
 								{
 									steps: [
 										{
@@ -19162,7 +19292,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -24609,6 +24753,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -24733,7 +24890,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						}
+					},
 					when: [
 						{
 							flag: 'static',
@@ -24856,6 +25027,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -24974,6 +25158,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -25105,6 +25302,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -25287,6 +25497,19 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -29263,7 +29486,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						move: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'move',
+											optional: true
+										}
+									],
+									kind: 129
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -29321,7 +29558,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						move: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'move',
+											optional: true
+										}
+									],
+									kind: 129
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]
@@ -30350,7 +30601,47 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 128
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						move: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'move',
+											optional: true
+										}
+									],
+									kind: 129
+								}
+							]
+						}
+					},
 					when: [
 						{
 							member: 'body',
@@ -30423,7 +30714,47 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 128
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						move: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'move',
+											optional: true
+										}
+									],
+									kind: 129
+								}
+							]
+						}
+					},
 					when: [
 						{
 							member: 'body',
@@ -34223,6 +34554,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
@@ -34297,6 +34641,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
 						byReference: {
 							presets: [
 								{
