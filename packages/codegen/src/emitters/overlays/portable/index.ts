@@ -1,6 +1,5 @@
 import { resolveRoutes, type GrammarInput, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
-import type { Vocabulary } from '../../../bindings/vocabulary.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
 import { grammarNodeTypeName } from '../../../grammars.ts';
@@ -22,7 +21,7 @@ export interface PortableOutputs {
 	readonly pickDiagnostics: readonly PickDiagnostic[];
 }
 
-export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], vocabulary: Vocabulary): PortableOutputs {
+export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): PortableOutputs {
 	const routes = resolveRoutes(input);
 	const typeOf = (kind: string) => findKindEntry(kindEntries, kind)?.id;
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
@@ -70,7 +69,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind });
 	return {
 		build: build.source,
-		typed: emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntries }),
+		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries }),
 		pickDiagnostics: build.diagnostics,
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({

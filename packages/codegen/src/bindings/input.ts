@@ -10,7 +10,7 @@ import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNo
 import { readBindings } from './read.ts';
 import { expandHeldMembers, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
-import { canonicalFacts, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
+import { canonicalFacts, compositionOf, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
 export interface NodeModelValue {
 	readonly kind?: string;
@@ -150,7 +150,7 @@ export async function grammarInput(
 		),
 		boundNameAt(nameOf, aliases)
 	);
-	const known = vocabulary ?? (await readVocabulary(VOCABULARY_DIR));
+	const known = (vocabulary ?? (await readVocabulary(VOCABULARY_DIR))).composedAs(compositionOf(grammar));
 	return {
 		grammar,
 		bindings: resolveFlags(
@@ -164,6 +164,7 @@ export async function grammarInput(
 		),
 		model,
 		textTokens: new Set(raw.textTokens ?? []),
-		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys()))
+		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys())),
+		vocabulary: known
 	};
 }

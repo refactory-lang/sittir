@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, readBindings, resolveRoutes, slotModelOf } from '../../../../bindings/index.ts';
 import { emitPortableSurface } from '../surface.ts';
+import { EMPTY_VOCABULARY } from '../../../../__tests__/helpers/vocabulary.ts';
 
 const input = async (scm: string): Promise<GrammarInput> => ({
 	grammar: 'g',
@@ -19,7 +20,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 		]
 	}),
 	textTokens: new Set(),
-	layoutSlots: []
+	layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 });
 
 const emit = async (scm: string) =>
@@ -89,7 +90,7 @@ describe('emitPortableSurface', () => {
 				]
 			}),
 			textTokens: new Set(),
-			layoutSlots: []
+			layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 		});
 		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');

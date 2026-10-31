@@ -287,6 +287,7 @@ describe('readVocabulary', () => {
 			''
 		].join('\n')
 	);
+	writeFileSync(join(dir, 'compositions.ts'), 'export interface FixtureFeatures {}\n');
 	vocabulary = await readVocabulary(dir);
 	rmSync(dir, { recursive: true, force: true });
 	});
@@ -303,7 +304,7 @@ describe('readVocabulary', () => {
 	});
 
 	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
-		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
+		expect(vocabularyMembers(vocabulary.composedAs('FixtureFeatures')).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });
 
@@ -339,6 +340,7 @@ describe('readVocabulary over feature folders', () => {
 		'\t}',
 		'}'
 	]);
+	write('compositions.ts', ['export interface WithLambdas extends Lambdas {}', 'export interface WithoutLambdas {}', 'export interface Composed extends WithLambdas {}']);
 	let vocabulary: Vocabulary;
 	beforeAll(async () => {
 		vocabulary = await readVocabulary(dir);
@@ -351,10 +353,17 @@ describe('readVocabulary over feature folders', () => {
 
 	it('gives a kind the members a feature adds to it, optional when any declaration of one is', () => {
 		expect(Object.fromEntries(vocabulary.members('declaration.function.lambda'))).toEqual({
-			arrow: { optional: true, flag: true },
+			arrow: { optional: true, flag: true, features: ['Lambdas'] },
 			body: { optional: true, flag: false },
 			name: { optional: false, flag: false }
 		});
+	});
+
+	it("lists a feature's members only for a composition that has the feature, directly or through another composition", () => {
+		expect(vocabularyMembers(vocabulary.composedAs('WithLambdas')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
+		expect(vocabularyMembers(vocabulary.composedAs('Composed')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
+		expect(vocabularyMembers(vocabulary.composedAs('WithoutLambdas')).get('declaration.function')).toEqual(new Set(['body', 'name']));
+		expect(() => vocabulary.featuresOf('Missing')).toThrow('compositions.ts declares no composition Missing');
 	});
 });
 
@@ -408,6 +417,7 @@ describe('readVocabulary over an owner refined by a value', () => {
 		'\t}',
 		'}'
 	]);
+	write('compositions.ts', ['export interface ScopedFeatures extends Scoped {}']);
 	let vocabulary: Vocabulary;
 	beforeAll(async () => {
 		vocabulary = await readVocabulary(dir);
@@ -421,8 +431,8 @@ describe('readVocabulary over an owner refined by a value', () => {
 	it("gives an owner's refinement the members its value adds, beside the owner's", () => {
 		expect(Object.fromEntries(vocabulary.members('declaration.public.restricted'))).toEqual({
 			name: { optional: false, flag: false },
-			scope: { optional: false, flag: false }
+			scope: { optional: false, flag: false, features: ['Scoped'] }
 		});
-		expect(vocabularyMembers(vocabulary).get('declaration.public')).toEqual(new Set(['name']));
+		expect(vocabularyMembers(vocabulary.composedAs('ScopedFeatures')).get('declaration.public')).toEqual(new Set(['name']));
 	});
 });

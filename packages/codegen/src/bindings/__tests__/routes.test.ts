@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 import { guaranteedBy } from '../routes.ts';
+import { EMPTY_VOCABULARY } from '../../__tests__/helpers/vocabulary.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -178,7 +179,8 @@ const grammar = async (bindings: string): Promise<GrammarInput> => ({
 	bindings: await readBindings(bindings),
 	model: new Map(MODEL.map((n) => [n.kind, n])),
 	textTokens: new Set(),
-	layoutSlots: [{ kind: null, slot: 'comment' }]
+	layoutSlots: [{ kind: null, slot: 'comment' }],
+	vocabulary: EMPTY_VOCABULARY
 });
 
 describe('unenteredForms', () => {
@@ -497,14 +499,16 @@ describe("keptKinds over a flag capture", () => {
 		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
 		flags: new Set(["marked"]),
 		synonyms: { levels: new Map(), flags: new Map() },
-		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map())
+		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map()),
+		featuresOf: () => new Set(),
+		composedAs: () => KEPT_VOCABULARY
 	};
 	const kept = async (bindings: string): Promise<GrammarInput> => ({
 		grammar: "g",
 		bindings: resolveFlags(await readBindings(bindings), KEPT_VOCABULARY, KEPT_MODEL),
 		model: KEPT_MODEL,
 		textTokens: new Set(),
-		layoutSlots: []
+		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 	it("ignores a flag capture, so the kind capture alone decides what the slot keeps", async () => {
 		const members = resolveRoutes(await kept("(holder (a_kind) @x @marked) @declaration.function")).members.get("holder") ?? [];
@@ -528,7 +532,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		bindings: await readBindings(bindings),
 		model: SUPER_MODEL,
 		textTokens: new Set(),
-		layoutSlots: []
+		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 
 	it("keeps the supertype the slot holds when the capture names one of its subtypes, and lists the other kind in except", async () => {
@@ -1205,7 +1209,8 @@ describe('flag captures', () => {
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
 		const kinds = new Map(Object.entries(own).map(([path, members]) => [path, { name: path, own: new Map(Object.entries(members).map(([n, flag]) => [n, member(flag)])), parent: undefined, refines: undefined }]));
-		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, members: (path) => kinds.get(path)?.own ?? new Map() };
+		const built: Vocabulary = { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, members: (path) => kinds.get(path)?.own ?? new Map(), featuresOf: () => new Set(), composedAs: () => built };
+		return built;
 	};
 	const VOCABULARY = vocabulary({
 		'declaration.method': { generator: true },
@@ -1222,7 +1227,7 @@ describe('flag captures', () => {
 		bindings: resolveFlags(await readBindings(bindings), VOCABULARY, FLAGGED_MODEL),
 		model: FLAGGED_MODEL,
 		textTokens: new Set(),
-		layoutSlots: []
+		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).members.get(kind);
 
@@ -1279,7 +1284,7 @@ describe('flag captures', () => {
 				bindings: resolveFlags(canonicalFacts(await readBindings(bindings), synonymous, model), synonymous, model),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).members.get('binding_plain');
 		for (const [claim, capture] of [
 			['(binding)', '(binding_plain (mutable_specifier) @NAME)'],
@@ -1303,7 +1308,7 @@ describe('flag captures', () => {
 		);
 		const both = vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mutable: false } });
 		const bindings = await readBindings(['(binding_flag) @declaration.parameter', '(binding_data) @declaration.variable', '(binding value: (_) @mutable)'].join('\n'));
-		const routes = resolveRoutes({ grammar: 'g', bindings: resolveFlags(canonicalFacts(bindings, both, model), both, model), model, textTokens: new Set(), layoutSlots: [] });
+		const routes = resolveRoutes({ grammar: 'g', bindings: resolveFlags(canonicalFacts(bindings, both, model), both, model), model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY });
 		const data = routes.members.get('binding_data')?.find((r) => r.name === 'mutable');
 		expect(data).toMatchObject({ route: 'slot', name: 'mutable' });
 		expect(data).not.toHaveProperty('flag');
@@ -1318,7 +1323,7 @@ describe('flag captures', () => {
 				bindings: resolveFlags(canonicalFacts(await readBindings(['(holder item: (_) @declaration.parameter)', `(param (mutable_specifier) @${name})`].join('\n')), synonymous, model), synonymous, model),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).members.get('param');
 		const canonical = await of('mutable');
 		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
@@ -1347,7 +1352,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).members.get('binding_plain');
 		const canonical = await of('mutable');
 		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
@@ -1380,7 +1385,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('outer');
 		const canonical = await of('shared');
 		const routesAt = (path: string) => canonical?.find((entry) => entry.vocab === path)?.members.filter((r) => r.name === 'shared');
@@ -1412,7 +1417,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).members;
 		const canonical = await of('mutable');
 		expect(canonical.get('binding_flag')?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
@@ -1442,7 +1447,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('outer');
 		const canonical = await of('shared');
 		expect(canonical?.find((entry) => entry.vocab === 'declaration.function')?.members.filter((r) => r.name === 'shared')).toMatchObject([{ route: 'presence', flag: true }]);
@@ -1472,7 +1477,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('entry');
 		const canonical = await of('static');
 		expect(canonical?.find((entry) => entry.vocab === 'declaration.method')?.members.filter((r) => r.name === 'static')).toMatchObject([{ flag: true }]);
@@ -1497,7 +1502,7 @@ describe('flag captures', () => {
 				),
 				model,
 				textTokens: new Set(),
-				layoutSlots: []
+				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('entry');
 		const canonical = await of('default');
 		const optional = canonical?.find((entry) => entry.vocab === 'declaration.parameter')?.members.find((r) => r.name === 'optional');

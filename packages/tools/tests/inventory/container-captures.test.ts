@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, canonicalFacts, derive, readBindings, resolveFlags } from '@sittir/codegen/bindings';
+import { EMPTY_VOCABULARY } from '../../../codegen/src/__tests__/helpers/vocabulary.ts';
 
 const slot = (name: string, kinds: readonly string[], multiple = false): ModelSlot => ({
 	name,
@@ -53,7 +54,7 @@ const grammar = async (bindings: string): Promise<GrammarInput> => ({
 		].map((n) => [n.kind, n])
 	),
 	textTokens: new Set(),
-	layoutSlots: []
+	layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 });
 
 const CLAIMS = ['(leaf_a) @declaration.a', '(leaf_b) @declaration.b', '(decorator) @attribute.decorator'];
@@ -72,12 +73,15 @@ describe('container captures', () => {
 		const kinds = new Map(
 			[['declaration.b', flagged] as const, ...extra].map(([name, own]) => [name, { name, own, parent: undefined, refines: undefined }])
 		);
-		return {
+		const built: Vocabulary = {
 			kinds,
 			flags: new Set(['async']),
 			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },
-			members: (path) => kinds.get(path)?.own ?? new Map()
+			members: (path) => kinds.get(path)?.own ?? new Map(),
+			featuresOf: () => new Set(),
+			composedAs: () => built
 		};
+		return built;
 	};
 	const envelopeMembers = async (vocabulary: Vocabulary, claims: readonly string[], name: string) => {
 		const input = await grammar([...CLAIMS, ...claims, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));

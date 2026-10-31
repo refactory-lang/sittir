@@ -1,6 +1,7 @@
 import { WILDCARD, isFixedText, literalClaimOf, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
+import type { Vocabulary } from './vocabulary.ts';
 
 export interface LayoutSlot {
 	readonly kind: string | null;
@@ -13,6 +14,7 @@ export interface GrammarInput {
 	readonly model: SlotModel;
 	readonly textTokens: ReadonlySet<string>;
 	readonly layoutSlots: readonly LayoutSlot[];
+	readonly vocabulary: Vocabulary;
 }
 
 export interface SlotStep {

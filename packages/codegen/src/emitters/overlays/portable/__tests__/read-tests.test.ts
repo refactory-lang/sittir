@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { SlotSubject } from '@sittir/types';
 import { type GrammarInput, type ModelNode, type ModelSlot, readBindings, resolveRoutes } from '../../../../bindings/index.ts';
 import { readTestOf } from '../read-tests.ts';
+import { EMPTY_VOCABULARY } from '../../../../__tests__/helpers/vocabulary.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -79,7 +80,7 @@ const presenceKeywordOf = (owner: string, name: string): string | undefined => P
 const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34, modifier: 35, private_keyword: 36, public_keyword: 37 };
 
 const testsOf = async (bindings: string, kind: string) => {
-	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
+	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY };
 	const entries = resolveRoutes(input).readEntries.get(kind) ?? [];
 	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => BY_KEY[`${owner}.${name}`], presenceKeywordOf, (kind) => TYPES[kind])]);
 };
@@ -93,7 +94,7 @@ describe('readTestOf', () => {
 		const clone = { ...node('constructor_declaration', [slot('body', ['block'])]), splitFrom: 'function_definition' };
 		const model = new Map([...MODEL, [clone.kind, clone]]);
 		const bindings = await readBindings('((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))');
-		const entries = resolveRoutes({ grammar: 'g', bindings, model, textTokens: new Set(), layoutSlots: [] }).readEntries;
+		const entries = resolveRoutes({ grammar: 'g', bindings, model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY }).readEntries;
 		const testOf = (kind: string) =>
 			entries.get(kind)!.map((entry) => readTestOf(entry, model, (owner, name) => BY_KEY[`${owner}.${name}`], presenceKeywordOf, (k) => TYPES[k]));
 		expect(testOf('constructor_declaration')).toEqual([[]]);
@@ -208,7 +209,7 @@ describe('readTestOf', () => {
 
 	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
-		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [] };
+		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
 		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? SLOTS['param.element'] : BY_KEY[`${owner}.${name}`]), presenceKeywordOf, (kind) => TYPES[kind])).toEqual([
 			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...SLOTS['param.element'] } } }

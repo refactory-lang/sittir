@@ -3,15 +3,13 @@ import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, sole
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { concreteKinds, guaranteedBy, modelNode, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
-import type { Vocabulary } from '../../../bindings/vocabulary.ts';
+import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
-import { grammarDisplayName, type GrammarName } from '../../../grammars.ts';
 import { fixedTextKinds, hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
 	readonly input: GrammarInput;
-	readonly vocabulary: Vocabulary;
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 }
@@ -117,8 +115,8 @@ const PRELUDE = [
 	'}'
 ];
 
-export function emitPortableTyped({ routes, input, vocabulary, nodeMap, kindEntries }: PortableTypedInput): PortableTypedOutput {
-	const { model } = input;
+export function emitPortableTyped({ routes, input, nodeMap, kindEntries }: PortableTypedInput): PortableTypedOutput {
+	const { model, vocabulary } = input;
 	const unemitted: PortableTypedUnemitted[] = [];
 	const idOf = (kind: string): string | undefined => (hasCatalogEntry(kindEntries, kind) ? kindDiscriminantExpr(kind, nodeMap, kindEntries) : undefined);
 	const typeNameOf = (kind: string): string | undefined => nodeMap.nodes.get(kind)?.typeName;
@@ -424,7 +422,7 @@ function contextOf({ grammar, own, vocabulary, claimedPaths, interfaceOf, slotAr
 		if (filled.length > 0) out.push(`\treadonly ${q(path)}: {`, ...filled, '\t};');
 	}
 	const roles: string[] = [];
-	const ctx = [`export interface Ctx extends V.GrammarContext<Ctx>, V.${grammarDisplayName(grammar as GrammarName)}Features {`];
+	const ctx = [`export interface Ctx extends V.GrammarContext<Ctx>, V.${compositionOf(grammar)} {`];
 	for (const ns of namespaces) {
 		const paths = claimedPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
 		const text = [...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort();

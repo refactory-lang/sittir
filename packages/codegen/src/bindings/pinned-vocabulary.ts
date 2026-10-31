@@ -130,6 +130,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		path,
 		parent,
 		refines,
+		heritage: heritageNames(heritage, source),
 		members
 	});
 }
