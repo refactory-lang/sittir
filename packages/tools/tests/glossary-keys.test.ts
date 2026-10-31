@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	classifyKey,
 	compareWithCeilings,
-	enumerateDeclarations,
+	enumerateSource,
 	loweredCeilings,
 	measure,
 	run
@@ -36,12 +36,12 @@ export class Other { open(): void {} }
 `;
 
 const paths = (source: string, only?: boolean): string[] =>
-	enumerateDeclarations('probe.ts', source)
+	enumerateSource('packages/common/src/probe.ts',source)
 		.filter((declaration) => only === undefined || declaration.exported === only)
 		.map((declaration) => declaration.path.join('::'))
 		.sort();
 
-describe('enumerateDeclarations', () => {
+describe('enumerateDeclarations', { timeout: 120_000 }, () => {
 	it('enumerates every level of owner, with constructor and parameter properties, and leaves out private members', () => {
 		const all = paths(SOURCE);
 		expect(all).toEqual(
@@ -95,7 +95,7 @@ describe('enumerateDeclarations', () => {
 	});
 });
 
-describe('classifyKey', () => {
+describe('classifyKey', { timeout: 120_000 }, () => {
 	let root: string;
 	beforeEach(() => {
 		root = mkdtempSync(join(tmpdir(), 'glossary-keys-'));
@@ -104,7 +104,7 @@ describe('classifyKey', () => {
 	afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 	const classOf = (key: string): string => {
-		const declarations = new Map([['packages/common/src/probe.ts', enumerateDeclarations('probe.ts', SOURCE)]]);
+		const declarations = new Map([['packages/common/src/probe.ts', enumerateSource('packages/common/src/probe.ts',SOURCE)]]);
 		return classifyKey(key, root, declarations).class;
 	};
 	const FILE = 'packages/common/src/probe.ts';
@@ -173,7 +173,7 @@ function writeSource(root: string, file: string, text: string): void {
 	writeFileSync(join(root, file), text, 'utf8');
 }
 
-describe('the ratchet on a planted tree', () => {
+describe('the ratchet on a planted tree', { timeout: 120_000 }, () => {
 	let root: string;
 	const FILE = 'packages/common/src/probe.ts';
 	const CEILINGS = 'ceilings.json';
@@ -252,7 +252,7 @@ describe('the ratchet on a planted tree', () => {
 	});
 });
 
-describe('enumeration edge cases', () => {
+describe('enumeration edge cases', { timeout: 120_000 }, () => {
 	it('enumerates the names a destructuring declaration binds', () => {
 		expect(paths('export const { a, b: [c, ...d], ...e } = source;', true)).toEqual(['a', 'c', 'd', 'e']);
 	});
@@ -271,10 +271,33 @@ describe('enumeration edge cases', () => {
 	});
 
 	it('keeps a static member and an instance member of one name apart', () => {
-		const found = enumerateDeclarations('probe.ts', 'export class C { static f(): void {} f(): void {} }').filter(
+		const found = enumerateSource('packages/common/src/probe.ts','export class C { static f(): void {} f(): void {} }').filter(
 			(declaration) => declaration.path.join('::') === 'C::f'
 		);
 		expect(found.map((declaration) => declaration.isStatic).sort()).toEqual([false, true]);
+	});
+
+	it('drops a const property its contextual type declares by name, and keeps index-signature properties', () => {
+		const names = paths(
+			'export interface S { readonly a: number } export const X: S = { a: 1 }; export const Y: Record<string, number> = { b: 1 };'
+		);
+		expect(names).toContain('S::a');
+		expect(names).toContain('Y::b');
+		expect(names).not.toContain('X::a');
+	});
+
+	it('keeps a property under a string-keyed record, and drops the named members beneath it', () => {
+		const names = paths(
+			'export interface K { readonly type: string } export interface J { readonly rules: Record<string, K> } export const G: J = { rules: { pattern: { type: "x" } } };'
+		);
+		expect(names).toContain('G::rules::pattern');
+		expect(names).not.toContain('G::rules');
+		expect(names).not.toContain('G::rules::pattern::type');
+	});
+
+	it('keeps a const property whose declaring member is not counted, such as an inline variable annotation', () => {
+		const names = paths('export const A: { readonly d: number } = { d: 1 };');
+		expect(names).toContain('A::d');
 	});
 
 	it('follows only as const, satisfies and parentheses into a const object', () => {
@@ -284,7 +307,7 @@ describe('enumeration edge cases', () => {
 	});
 });
 
-describe('the ratchet on edge-case trees', () => {
+describe('the ratchet on edge-case trees', { timeout: 120_000 }, () => {
 	let root: string;
 	const FILE = 'packages/common/src/probe.ts';
 	beforeEach(() => {

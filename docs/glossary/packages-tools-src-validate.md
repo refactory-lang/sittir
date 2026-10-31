@@ -1562,7 +1562,7 @@ The options a run takes: `update` lowers the ceilings file, `table` and `json` c
 
 ### `packages/tools/src/validate/glossary-keys.ts::enumerateDeclarations`
 
-Lists the declarations one source file contains, parsed through the TypeScript compiler API. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses.
+Lists the declarations one source file contains, walked over the syntax tree of a program the checker belongs to. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses. A property of a named const object, at any depth, is left out when its contextual type declares that name: an interface or type-literal member, or a key of a mapped type over `keyof` a declared type. The checker resolves such a property to that declaration, which is dropped only when the enumeration counts that declaring node as undocumented-eligible (exported, depth ≤ 2); otherwise the literal's property stays counted. The walk runs twice per tree: first the declaring nodes, then the literals against them, so a literal never decides from its own copy. Each nested property is decided on its own, against its own contextual type. An index signature declares no name, so its properties still count, and so do properties whose contextual type has no declaration.
 
 ### `packages/tools/src/validate/glossary-keys.ts::inGlossaryTrees`
 
@@ -1570,7 +1570,7 @@ True when a file is a TypeScript source under one of the glossary trees. A key n
 
 ### `packages/tools/src/validate/glossary-keys.ts::enumerateTrees`
 
-Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
+Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. The files are read through one type-checker program over all of them, so a contextual type declared in another file is seen. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
 
 ### `packages/tools/src/validate/glossary-keys.ts::readKeys`
 
@@ -1595,6 +1595,10 @@ The ceilings an `--update` run writes: each count's ceiling lowered to the curre
 ### `packages/tools/src/validate/glossary-keys.ts::run`
 
 The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateSource`
+
+Lists the declarations of one in-memory TypeScript source, through a one-file program and its type checker, for tests that enumerate a snippet rather than a tree. Contextual types declared in other files are not seen; a snippet's own interfaces are.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::forwardsArguments`
 
