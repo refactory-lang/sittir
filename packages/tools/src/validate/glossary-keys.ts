@@ -151,7 +151,10 @@ export function enumerateDeclarations(
 		if (ts.isParenthesizedTypeNode(type)) typeMembers(type.type, path, exported);
 		else if (ts.isUnionTypeNode(type) || ts.isIntersectionTypeNode(type))
 			for (const member of type.types) typeMembers(member, path, exported);
-		else if (ts.isTypeLiteralNode(type)) signatures(type.members, path, exported);
+		else if (ts.isConditionalTypeNode(type)) {
+			typeMembers(type.trueType, path, exported);
+			typeMembers(type.falseType, path, exported);
+		} else if (ts.isTypeLiteralNode(type)) signatures(type.members, path, exported);
 	};
 
 	const signatures = (members: ts.NodeArray<ts.TypeElement>, path: readonly string[], exported: boolean): void => {

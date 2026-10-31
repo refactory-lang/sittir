@@ -425,6 +425,10 @@ grammar hands `wire()`.
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/grammar-shapes/enrich-type.ts::EnrichRule::members`
+
+The enriched members of a `SEQ` arm. Each member is enriched against its own sequence.
+
 ### `packages/codegen/src/grammar-shapes/grammar-json.ts::SeqRule`
 
 ```text
