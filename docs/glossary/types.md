@@ -492,7 +492,7 @@ Where a variant label came from: `'enrich'` (automatic) or `'override'` (authore
 every phase from link on; both are set by the token-interior pass, not by the DSL.
 ```
 
-### `packages/codegen/src/types/rule.ts::inline`
+### `packages/codegen/src/types/rule.ts::RuleBase::inline`
 
 ```text
 /**
@@ -511,7 +511,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 	 */
 ```
 
-### `packages/codegen/src/types/rule.ts::hidden`
+### `packages/codegen/src/types/rule.ts::RuleBase::hidden`
 
 ```text
 /** Grammar-hidden fact: the parser's surface-hidden flag for every top-level
@@ -531,7 +531,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  *  rule link minted that has no raw-grammar counterpart. */
 ```
 
-### `packages/codegen/src/types/rule.ts::inlinedFrom`
+### `packages/codegen/src/types/rule.ts::RuleBase::inlinedFrom`
 
 ```text
 /** The occurrence-site name of a reference whose target rule's body was
@@ -552,7 +552,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::absorbedIds`
+### `packages/codegen/src/types/rule.ts::RuleBase::absorbedIds`
 
 ```text
 /** Ids of nodes this rule absorbed when simplify reduced them into it:
@@ -568,7 +568,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::metadata`
+### `packages/codegen/src/types/rule.ts::RuleBase::metadata`
 
 ```text
 /**
@@ -586,7 +586,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 	 */
 ```
 
-### `packages/codegen/src/types/rule.ts::splicedBody`
+### `packages/codegen/src/types/rule.ts::RuleBase::splicedBody`
 
 ```text
 /**
@@ -607,7 +607,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 	 */
 ```
 
-### `packages/codegen/src/types/rule.ts::variantArms`
+### `packages/codegen/src/types/rule.ts::RuleBase::variantArms`
 
 ```text
 /**
