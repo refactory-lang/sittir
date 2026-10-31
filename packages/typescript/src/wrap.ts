@@ -5,7 +5,6 @@ import {
 	admitSplicedEnvelope,
 	admitSlot,
 	markEdited as $edited,
-	asTextNode,
 	carryReadTree,
 	treeHandleOf,
 	hydrateWith,
@@ -30,6 +29,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
+	releaseNothing,
 	SOURCE,
 	Source,
 	TREE,
@@ -142,7 +142,8 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		$engine: handle && (() => handle.current),
 		$errors: (data as { readonly $errors?: unknown }).$errors,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Program.Parsed;
 }
@@ -172,7 +173,8 @@ export function wrapHashBangLine(data: T.HashBangLine, tree: TreeHandle): T.Hash
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.HashBangLine.Parsed;
 }
@@ -205,7 +207,8 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NamespaceExport.Parsed;
 }
@@ -285,7 +288,8 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapExportClause$listRead);
 	return node as unknown as T.ExportClause.Parsed;
@@ -333,7 +337,8 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportSpecifier.Parsed;
 }
@@ -396,7 +401,8 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportStatement.Parsed;
 }
@@ -426,7 +432,8 @@ export function wrapImportClause(data: T.ImportClause, tree: TreeHandle): T.Impo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClause.Parsed;
 }
@@ -456,7 +463,8 @@ export function wrapNamespaceImport(data: T.NamespaceImport, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NamespaceImport.Parsed;
 }
@@ -531,7 +539,8 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapNamedImports$listRead);
 	return node as unknown as T.NamedImports.Parsed;
@@ -572,7 +581,8 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportAttribute.Parsed;
 }
@@ -615,7 +625,8 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExpressionStatement.Parsed;
 }
@@ -661,7 +672,8 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaration.Parsed;
 }
@@ -714,7 +726,8 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LexicalDeclaration.Parsed;
 }
@@ -772,7 +785,8 @@ export function wrapUsingDeclaration(data: T.UsingDeclaration, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UsingDeclaration.Parsed;
 }
@@ -819,7 +833,8 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StatementBlock.Parsed;
 }
@@ -849,7 +864,8 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ElseClause.Parsed;
 }
@@ -893,7 +909,8 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IfStatement.Parsed;
 }
@@ -930,7 +947,8 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchStatement.Parsed;
 }
@@ -986,7 +1004,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForStatement.Parsed;
 }
@@ -1030,7 +1049,8 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForInStatement.Parsed;
 }
@@ -1070,7 +1090,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.WhileStatement.Parsed;
 }
@@ -1117,7 +1138,8 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DoStatement.Parsed;
 }
@@ -1161,7 +1183,8 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TryStatement.Parsed;
 }
@@ -1198,7 +1221,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.WithStatement.Parsed;
 }
@@ -1238,7 +1262,8 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BreakStatement.Parsed;
 }
@@ -1278,7 +1303,8 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ContinueStatement.Parsed;
 }
@@ -1311,7 +1337,8 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DebuggerStatement.Parsed;
 }
@@ -1354,7 +1381,8 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReturnStatement.Parsed;
 }
@@ -1397,7 +1425,8 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ThrowStatement.Parsed;
 }
@@ -1434,7 +1463,8 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LabeledStatement.Parsed;
 }
@@ -1468,7 +1498,8 @@ export function wrapSwitchBody(data: T.SwitchBody, tree: TreeHandle): T.SwitchBo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchBody.Parsed;
 }
@@ -1508,7 +1539,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchCase.Parsed;
 }
@@ -1541,7 +1573,8 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchDefault.Parsed;
 }
@@ -1635,7 +1668,8 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CatchClause.Parsed;
 }
@@ -1665,7 +1699,8 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FinallyClause.Parsed;
 }
@@ -1698,7 +1733,8 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.YieldExpression.Parsed;
 }
@@ -1736,7 +1772,8 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Object.Parsed;
 }
@@ -1775,7 +1812,8 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectPattern.Parsed;
 }
@@ -1812,7 +1850,8 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssignmentPattern.Parsed;
 }
@@ -1858,7 +1897,8 @@ export function wrapObjectAssignmentPattern(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectAssignmentPattern.Parsed;
 }
@@ -1892,7 +1932,8 @@ export function wrapArray(data: T.Array, tree: TreeHandle): T.Array.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Array.Parsed;
 }
@@ -1926,7 +1967,8 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle): T.Arra
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrayPattern.Parsed;
 }
@@ -1966,7 +2008,8 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NestedIdentifier.Parsed;
 }
@@ -2030,7 +2073,8 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Class.Parsed;
 }
@@ -2115,7 +2159,8 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassDeclaration.Parsed;
 }
@@ -2145,7 +2190,8 @@ export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle): T.Cl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassHeritage.Parsed;
 }
@@ -2231,7 +2277,8 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionExpression.Parsed;
 }
@@ -2336,7 +2383,8 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionDeclaration.Parsed;
 }
@@ -2419,7 +2467,8 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GeneratorFunction.Parsed;
 }
@@ -2530,7 +2579,8 @@ export function wrapGeneratorFunctionDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GeneratorFunctionDeclaration.Parsed;
 }
@@ -2574,7 +2624,8 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.Ar
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrowFunction.Parsed;
 }
@@ -2626,7 +2677,8 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle): T.Ne
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NewExpression.Parsed;
 }
@@ -2659,7 +2711,8 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AwaitExpression.Parsed;
 }
@@ -2709,7 +2762,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MemberExpression.Parsed;
 }
@@ -2762,7 +2816,8 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SubscriptExpression.Parsed;
 }
@@ -2800,7 +2855,8 @@ export function wrapLhsExpression(data: T.LhsExpression, tree: TreeHandle): T.Lh
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LhsExpression.Parsed;
 }
@@ -2856,7 +2912,8 @@ export function wrapAssignmentExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssignmentExpression.Parsed;
 }
@@ -2914,7 +2971,8 @@ export function wrapAugmentedAssignmentExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AugmentedAssignmentExpression.Parsed;
 }
@@ -2947,7 +3005,8 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle): T.Sp
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SpreadElement.Parsed;
 }
@@ -3000,7 +3059,8 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TernaryExpression.Parsed;
 }
@@ -3060,7 +3120,8 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BinaryExpression.Parsed;
 }
@@ -3103,7 +3164,8 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnaryExpression.Parsed;
 }
@@ -3139,7 +3201,8 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SequenceExpression.Parsed;
 }
@@ -3169,7 +3232,8 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EscapeSequence.Parsed;
 }
@@ -3202,7 +3266,8 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateString.Parsed;
 }
@@ -3238,7 +3303,8 @@ export function wrapTemplateSubstitution(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateSubstitution.Parsed;
 }
@@ -3275,7 +3341,8 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle): T.Regex.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Regex.Parsed;
 }
@@ -3311,7 +3378,8 @@ export function wrapPrivatePropertyIdentifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PrivatePropertyIdentifier.Parsed;
 }
@@ -3345,7 +3413,8 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Arguments.Parsed;
 }
@@ -3377,7 +3446,8 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Decorator.Parsed;
 }
@@ -3423,7 +3493,8 @@ export function wrapDecoratorMemberExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorMemberExpression.Parsed;
 }
@@ -3487,7 +3558,8 @@ export function wrapDecoratorCallExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorCallExpression.Parsed;
 }
@@ -3521,7 +3593,8 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBody.Parsed;
 }
@@ -3559,7 +3632,8 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParameters.Parsed;
 }
@@ -3602,7 +3676,8 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassStaticBlock.Parsed;
 }
@@ -3655,7 +3730,8 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RestPattern.Parsed;
 }
@@ -3690,7 +3766,8 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Pair.Parsed;
 }
@@ -3729,7 +3806,8 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle): T.PairPa
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PairPattern.Parsed;
 }
@@ -3765,7 +3843,8 @@ export function wrapComputedPropertyName(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ComputedPropertyName.Parsed;
 }
@@ -3798,7 +3877,8 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NonNullExpression.Parsed;
 }
@@ -3884,7 +3964,8 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionSignature.Parsed;
 }
@@ -3924,7 +4005,8 @@ export function wrapDecoratorParenthesizedExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorParenthesizedExpression.Parsed;
 }
@@ -3972,7 +4054,8 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle): T.Ty
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAssertion.Parsed;
 }
@@ -4009,7 +4092,8 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle): T.AsEx
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AsExpression.Parsed;
 }
@@ -4052,7 +4136,8 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SatisfiesExpression.Parsed;
 }
@@ -4106,7 +4191,8 @@ export function wrapInstantiationExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InstantiationExpression.Parsed;
 }
@@ -4149,7 +4235,8 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportRequireClause.Parsed;
 }
@@ -4182,7 +4269,8 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle): T.Ex
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsClause.Parsed;
 }
@@ -4230,7 +4318,8 @@ export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsClauseSingle.Parsed;
 }
@@ -4263,7 +4352,8 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImplementsClause.Parsed;
 }
@@ -4300,7 +4390,8 @@ export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclaration.Parsed;
 }
@@ -4387,7 +4478,8 @@ export function wrapAbstractClassDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractClassDeclaration.Parsed;
 }
@@ -4424,7 +4516,8 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Module.Parsed;
 }
@@ -4461,7 +4554,8 @@ export function wrapInternalModule(data: T.InternalModule, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InternalModule.Parsed;
 }
@@ -4505,7 +4599,8 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle): T.Import
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportAlias.Parsed;
 }
@@ -4551,7 +4646,8 @@ export function wrapNestedTypeIdentifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NestedTypeIdentifier.Parsed;
 }
@@ -4625,7 +4721,8 @@ export function wrapInterfaceDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceDeclaration.Parsed;
 }
@@ -4658,7 +4755,8 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsTypeClause.Parsed;
 }
@@ -4707,7 +4805,8 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumDeclaration.Parsed;
 }
@@ -4779,7 +4878,8 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapEnumBody$listRead);
 	return node as unknown as T.EnumBody.Parsed;
@@ -4819,7 +4919,8 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumAssignment.Parsed;
 }
@@ -4893,7 +4994,8 @@ export function wrapTypeAliasDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAliasDeclaration.Parsed;
 }
@@ -4983,7 +5085,8 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RequiredParameter.Parsed;
 }
@@ -5073,7 +5176,8 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalParameter.Parsed;
 }
@@ -5109,7 +5213,8 @@ export function wrapOmittingTypeAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OmittingTypeAnnotation.Parsed;
 }
@@ -5145,7 +5250,8 @@ export function wrapAddingTypeAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AddingTypeAnnotation.Parsed;
 }
@@ -5181,7 +5287,8 @@ export function wrapOptingTypeAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptingTypeAnnotation.Parsed;
 }
@@ -5211,7 +5318,8 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAnnotation.Parsed;
 }
@@ -5265,7 +5373,8 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 }
@@ -5317,7 +5426,8 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Parsed;
 }
@@ -5347,7 +5457,8 @@ export function wrapAsserts(data: T.Asserts, tree: TreeHandle): T.Asserts.Parsed
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Asserts.Parsed;
 }
@@ -5380,7 +5491,8 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssertsAnnotation.Parsed;
 }
@@ -5417,7 +5529,8 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TupleParameter.Parsed;
 }
@@ -5463,7 +5576,8 @@ export function wrapOptionalTupleParameter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalTupleParameter.Parsed;
 }
@@ -5493,7 +5607,8 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle): T.Opti
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalType.Parsed;
 }
@@ -5523,7 +5638,8 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle): T.RestType.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RestType.Parsed;
 }
@@ -5588,7 +5704,8 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructorType.Parsed;
 }
@@ -5618,7 +5735,8 @@ export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle): T.Temp
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateType.Parsed;
 }
@@ -5654,7 +5772,8 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateLiteralType.Parsed;
 }
@@ -5691,7 +5810,8 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle): T.InferType.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InferType.Parsed;
 }
@@ -5748,7 +5868,8 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConditionalType.Parsed;
 }
@@ -5793,7 +5914,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GenericType.Parsed;
 }
@@ -5843,7 +5965,8 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle): T.Ty
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypePredicate.Parsed;
 }
@@ -5879,7 +6002,8 @@ export function wrapTypePredicateAnnotation(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypePredicateAnnotation.Parsed;
 }
@@ -5941,7 +6065,8 @@ export function wrapTypeQueryMemberExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryMemberExpression.Parsed;
 }
@@ -6019,7 +6144,8 @@ export function wrapTypeQuerySubscriptExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQuerySubscriptExpression.Parsed;
 }
@@ -6069,7 +6195,8 @@ export function wrapTypeQueryCallExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryCallExpression.Parsed;
 }
@@ -6127,7 +6254,8 @@ export function wrapTypeQueryInstantiationExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryInstantiationExpression.Parsed;
 }
@@ -6164,7 +6292,8 @@ export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle): T.TypeQuery.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQuery.Parsed;
 }
@@ -6194,7 +6323,8 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexTypeQuery.Parsed;
 }
@@ -6231,7 +6361,8 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle): T.LookupTy
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LookupType.Parsed;
 }
@@ -6275,7 +6406,8 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MappedTypeClause.Parsed;
 }
@@ -6313,7 +6445,8 @@ export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle): T.Litera
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LiteralType.Parsed;
 }
@@ -6343,7 +6476,8 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle): T.Fl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FlowMaybeType.Parsed;
 }
@@ -6373,7 +6507,8 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedType.Parsed;
 }
@@ -6444,7 +6579,8 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTypeArguments$listRead);
 	return node as unknown as T.TypeArguments.Parsed;
@@ -6494,7 +6630,8 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle): T.ObjectTy
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectType.Parsed;
 }
@@ -6556,7 +6693,8 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallSignature.Parsed;
 }
@@ -6648,7 +6786,8 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PropertySignature.Parsed;
 }
@@ -6727,7 +6866,8 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTypeParameters$listRead);
 	return node as unknown as T.TypeParameters.Parsed;
@@ -6782,7 +6922,8 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeParameter.Parsed;
 }
@@ -6812,7 +6953,8 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle): T.Defaul
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DefaultType.Parsed;
 }
@@ -6849,7 +6991,8 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Constraint.Parsed;
 }
@@ -6914,7 +7057,8 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructSignature.Parsed;
 }
@@ -6944,7 +7088,8 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrayType.Parsed;
 }
@@ -7019,7 +7164,8 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTupleType$listRead);
 	return node as unknown as T.TupleType.Parsed;
@@ -7050,7 +7196,8 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle): T.Read
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReadonlyType.Parsed;
 }
@@ -7087,7 +7234,8 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnionType.Parsed;
 }
@@ -7124,7 +7272,8 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IntersectionType.Parsed;
 }
@@ -7179,7 +7328,8 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionType.Parsed;
 }
@@ -7256,7 +7406,8 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapExportSpecifiers$listRead);
 	return node as unknown as T.ExportSpecifiers.Parsed;
@@ -7329,7 +7480,8 @@ export function wrapImportSpecifiers(data: T.ImportSpecifiers, tree: TreeHandle)
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapImportSpecifiers$listRead);
 	return node as unknown as T.ImportSpecifiers.Parsed;
@@ -7408,7 +7560,8 @@ export function wrapFormalParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapFormalParametersElements$listRead);
 	return node as unknown as T.FormalParametersElements.Parsed;
@@ -7444,7 +7597,8 @@ export function wrapEnumBodyElementName(data: T.EnumBodyElementName, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumBodyElementName.Parsed;
 }
@@ -7516,7 +7670,8 @@ export function wrapEnumBodyElements(data: T.EnumBodyElements, tree: TreeHandle)
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapEnumBodyElements$listRead);
 	return node as unknown as T.EnumBodyElements.Parsed;
@@ -7586,7 +7741,8 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTypes$listRead);
 	return node as unknown as T.Types.Parsed;
@@ -7667,7 +7823,8 @@ export function wrapTypeParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTypeParametersElements$listRead);
 	return node as unknown as T.TypeParametersElements.Parsed;
@@ -7744,7 +7901,8 @@ export function wrapTupleTypeMembers(data: T.TupleTypeMembers, tree: TreeHandle)
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapTupleTypeMembers$listRead);
 	return node as unknown as T.TupleTypeMembers.Parsed;
@@ -7778,7 +7936,8 @@ export function wrapImportClauseGroup(data: T.ImportClauseGroup, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClauseGroup.Parsed;
 }
@@ -7818,7 +7977,8 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CatchClauseGroup.Parsed;
 }
@@ -7858,7 +8018,8 @@ export function wrapGetAccessorSignature(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GetAccessorSignature.Parsed;
 }
@@ -7894,7 +8055,8 @@ export function wrapAmbientDeclarationGlobal(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclarationGlobal.Parsed;
 }
@@ -7953,7 +8115,8 @@ export function wrapAmbientDeclarationModule(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclarationModule.Parsed;
 }
@@ -8047,7 +8210,8 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapObjectTypeContent$listRead);
 	return node as unknown as T.ObjectTypeContent.Parsed;
@@ -8094,7 +8258,8 @@ export function wrapExportStatementNamespaceExport(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
 }
@@ -8140,7 +8305,8 @@ export function wrapExportStatementEqualsExport(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementEqualsExport.Parsed;
 }
@@ -8166,7 +8332,8 @@ export function wrapCommentLine(data: T.CommentLine, tree: TreeHandle): T.Commen
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CommentLine.Parsed;
 }
@@ -8192,7 +8359,8 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle): T.Comm
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CommentBlock.Parsed;
 }
@@ -8228,7 +8396,8 @@ export function wrapLiteralTypeNegativeNumber(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LiteralTypeNegativeNumber.Parsed;
 }
@@ -8265,7 +8434,8 @@ export function wrapNumberHex(data: T.NumberHex, tree: TreeHandle): T.NumberHex.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberHex.Parsed;
 }
@@ -8335,7 +8505,8 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatPoint.Parsed;
 }
@@ -8401,7 +8572,8 @@ export function wrapNumberFloatLeadingPoint(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatLeadingPoint.Parsed;
 }
@@ -8467,7 +8639,8 @@ export function wrapNumberFloatScientific(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatScientific.Parsed;
 }
@@ -8504,7 +8677,8 @@ export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle): T.Numb
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBinary.Parsed;
 }
@@ -8541,7 +8715,8 @@ export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle): T.Number
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberOctal.Parsed;
 }
@@ -8574,7 +8749,8 @@ export function wrapNumberBigintHex(data: T.NumberBigintHex, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintHex.Parsed;
 }
@@ -8607,7 +8783,8 @@ export function wrapNumberBigintBinary(data: T.NumberBigintBinary, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintBinary.Parsed;
 }
@@ -8640,7 +8817,8 @@ export function wrapNumberBigintOctal(data: T.NumberBigintOctal, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintOctal.Parsed;
 }
@@ -8673,7 +8851,8 @@ export function wrapNumberBigintDecimal(data: T.NumberBigintDecimal, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintDecimal.Parsed;
 }
@@ -8716,7 +8895,8 @@ export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BinaryExpressionIn.Parsed;
 }
@@ -8781,7 +8961,8 @@ export function wrapClassBodyMemberMethod(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberMethod.Parsed;
 }
@@ -8830,7 +9011,8 @@ export function wrapClassBodyMemberMethodSig(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberMethodSig.Parsed;
 }
@@ -8880,7 +9062,8 @@ export function wrapClassBodyMemberDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberDeclaration.Parsed;
 }
@@ -8957,7 +9140,8 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexSignatureColon.Parsed;
 }
@@ -9030,7 +9214,8 @@ export function wrapIndexSignatureMappedTypeClause(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexSignatureMappedTypeClause.Parsed;
 }
@@ -9076,7 +9261,8 @@ export function wrapImportStatementClauseFrom(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportStatementClauseFrom.Parsed;
 }
@@ -9112,7 +9298,8 @@ export function wrapYieldExpressionDelegate(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.YieldExpressionDelegate.Parsed;
 }
@@ -9155,7 +9342,8 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportSpecifierName.Parsed;
 }
@@ -9205,7 +9393,8 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportSpecifierAs.Parsed;
 }
@@ -9251,7 +9440,8 @@ export function wrapParenthesizedExpressionTyped(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedExpressionTyped.Parsed;
 }
@@ -9290,7 +9480,8 @@ export function wrapParenthesizedExpressionSequence(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedExpressionSequence.Parsed;
 }
@@ -9348,7 +9539,8 @@ export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionCall.Parsed;
 }
@@ -9394,7 +9586,8 @@ export function wrapCallExpressionTemplateCall(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionTemplateCall.Parsed;
 }
@@ -9455,7 +9648,8 @@ export function wrapCallExpressionMember(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionMember.Parsed;
 }
@@ -9488,7 +9682,8 @@ export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle): T.Stri
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StringDouble.Parsed;
 }
@@ -9521,7 +9716,8 @@ export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle): T.Stri
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StringSingle.Parsed;
 }
@@ -9567,7 +9763,8 @@ export function wrapUpdateExpressionPostfix(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UpdateExpressionPostfix.Parsed;
 }
@@ -9613,7 +9810,8 @@ export function wrapUpdateExpressionPrefix(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UpdateExpressionPrefix.Parsed;
 }
@@ -9649,7 +9847,8 @@ export function wrapArrowFunctionParameter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrowFunctionParameter.Parsed;
 }
@@ -9701,7 +9900,8 @@ export function wrapClassHeritageExtendsClause(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassHeritageExtendsClause.Parsed;
 }
@@ -9750,7 +9950,8 @@ export function wrapImportClauseDefaultImport(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClauseDefaultImport.Parsed;
 }
@@ -9810,7 +10011,8 @@ export function wrapExportStatementDefaultFrom(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFrom.Parsed;
 }
@@ -9864,7 +10066,8 @@ export function wrapExportStatementDefaultDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclaration.Parsed;
 }
@@ -9900,7 +10103,8 @@ export function wrapExportStatementDefaultFromStarFrom(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromStarFrom.Parsed;
 }
@@ -9949,7 +10153,8 @@ export function wrapExportStatementDefaultFromNsFrom(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromNsFrom.Parsed;
 }
@@ -10003,7 +10208,8 @@ export function wrapExportStatementDefaultFromClauseFrom(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromClauseFrom.Parsed;
 }
@@ -10042,7 +10248,8 @@ export function wrapExportStatementDefaultDeclarationDefaultKw(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKw.Parsed;
 }
@@ -10099,7 +10306,8 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKwValue.Parsed;
 }
@@ -10155,7 +10363,8 @@ export function wrapVariableDeclaratorPlain(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaratorPlain.Parsed;
 }
@@ -10201,7 +10410,8 @@ export function wrapVariableDeclaratorDefinite(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaratorDefinite.Parsed;
 }
@@ -10245,7 +10455,8 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle): T.ForH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderLhs.Parsed;
 }
@@ -10299,7 +10510,8 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderVarKind.Parsed;
 }
@@ -10378,7 +10590,8 @@ export function wrapForHeaderLetConstKind(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderLetConstKind.Parsed;
 }
@@ -10451,7 +10664,8 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderUsingKind.Parsed;
 }
@@ -10490,7 +10704,8 @@ export function wrapFormalParametersSetAccessorSignature(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersSetAccessorSignature.Parsed;
 }
@@ -10529,7 +10744,8 @@ export function wrapFormalParametersElementsSetAccessorSignature(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Parsed;
 }
@@ -10612,7 +10828,8 @@ export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SetterParameter.Parsed;
 }
@@ -10775,7 +10992,8 @@ export function wrapMethodDefinitionPlain(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionPlain.Parsed;
 }
@@ -10870,7 +11088,8 @@ export function wrapMethodDefinitionGetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionGetter.Parsed;
 }
@@ -10961,7 +11180,8 @@ export function wrapMethodDefinitionSetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionSetter.Parsed;
 }
@@ -11114,7 +11334,8 @@ export function wrapMethodSignaturePlain(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignaturePlain.Parsed;
 }
@@ -11199,7 +11420,8 @@ export function wrapMethodSignatureGetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignatureGetter.Parsed;
 }
@@ -11280,7 +11502,8 @@ export function wrapMethodSignatureSetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignatureSetter.Parsed;
 }
@@ -11403,7 +11626,8 @@ export function wrapAbstractMethodSignaturePlain(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignaturePlain.Parsed;
 }
@@ -11478,7 +11702,8 @@ export function wrapAbstractMethodSignatureGetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignatureGetter.Parsed;
 }
@@ -11549,7 +11774,8 @@ export function wrapAbstractMethodSignatureSetter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignatureSetter.Parsed;
 }
@@ -11693,7 +11919,8 @@ export function wrapPublicFieldDefinitionPlain(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PublicFieldDefinitionPlain.Parsed;
 }
@@ -11812,7 +12039,8 @@ export function wrapPublicFieldDefinitionAccessor(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PublicFieldDefinitionAccessor.Parsed;
 }
@@ -11871,7 +12099,8 @@ export function wrapConstructorDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructorDeclaration.Parsed;
 }
@@ -11963,7 +12192,8 @@ export function wrapReceiverParameterDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReceiverParameterDeclaration.Parsed;
 }
@@ -12030,7 +12260,8 @@ export function wrapFormalParametersElementsReceiver(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersElementsReceiver.Parsed;
 }
@@ -12116,7 +12347,8 @@ export function wrapFormalParametersElementsReceiverGroup(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdReadItems(node, wrapFormalParametersElementsReceiverGroup$listRead);
 	return node as unknown as T.FormalParametersElementsReceiverGroup.Parsed;
@@ -12155,7 +12387,8 @@ export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StatementIdentifier.Parsed;
 }
@@ -12196,7 +12429,8 @@ export function wrapShorthandPropertyIdentifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ShorthandPropertyIdentifier.Parsed;
 }
@@ -12237,7 +12471,8 @@ export function wrapShorthandPropertyIdentifierPattern(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ShorthandPropertyIdentifierPattern.Parsed;
 }
@@ -12275,7 +12510,8 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PropertyIdentifier.Parsed;
 }
@@ -12310,7 +12546,8 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeIdentifier.Parsed;
 }
@@ -12359,7 +12596,8 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle): T.In
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceBody.Parsed;
 }
@@ -21732,7 +21970,8 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node;
 }
@@ -21749,7 +21988,8 @@ function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node;
 }
@@ -22059,7 +22299,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.NumberDecimal]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.HtmlComment]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.JsxText]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.TemplateChars]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.TemplateChars]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };
 
 const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => object> = {
@@ -22323,10 +22564,9 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 		return inTreeEngine(tree, () => view(data, tree));
 	}
 	const fn = _wrapTable[data.$type as unknown as number];
-	return fn === undefined
-		? asTextNode(data)
-		: carryReadTree(
-				data,
-				inTreeEngine(tree, () => fn(data, tree))
-			);
+	if (fn === undefined) throw new Error(`no wrap reads a node of kind ${data.$type}`);
+	return carryReadTree(
+		data,
+		inTreeEngine(tree, () => fn(data, tree))
+	);
 }

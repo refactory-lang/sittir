@@ -8,9 +8,19 @@
 //! leaf's captured text) is held by its tree, by its row, here: the one place
 //! a row names a record. The map never leaves native code.
 
-use super::{Address, Arena, ArenaError};
+use super::{Address, Arena, ArenaError, ArenaMark};
 use crate::types::NodeIndex;
 use std::collections::{HashMap, HashSet};
+
+/// What a tree's arena holds: its chunks' written words, its record starts
+/// and its held rows, each in order.
+#[cfg(test)]
+#[derive(Debug, PartialEq, Eq)]
+pub(super) struct Snapshot {
+    pub chunks: Vec<Vec<u32>>,
+    pub records: Vec<Address>,
+    pub held: Vec<(NodeIndex, Address)>,
+}
 
 /// One parsed tree's records, and those no cell names, by their rows.
 #[derive(Debug)]
@@ -47,22 +57,42 @@ impl TreeArena {
         &mut self.arena
     }
 
-    /// Appends a native node record; side records and list runs use the
-    /// arena directly and never enter the set of record starts.
-    pub(super) fn push_record(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
-        let at = self.arena.push(words)?;
+    /// Records a native node record written at `at`, an embedded one
+    /// included; side records and list runs never enter the set of record
+    /// starts.
+    pub(super) fn keep_record(&mut self, at: Address) {
         self.records.insert(at);
-        Ok(at)
     }
 
     #[must_use]
-    /// Whether the native writer allocated a record at `at`.
+    /// Whether the native writer wrote a record at `at`.
     pub(super) fn contains_record(&self, at: Address) -> bool {
         self.records.contains(&at)
     }
 
-    pub(super) fn keep_inline(&mut self, at: Address) {
-        self.records.insert(at);
+    /// Where the tree's writes stand now.
+    pub(super) fn mark(&self) -> ArenaMark {
+        self.arena.mark()
+    }
+
+    /// Drops what was written after `mark`: its words and chunks, and the
+    /// record starts and held rows that name them.
+    pub(super) fn rewind(&mut self, mark: ArenaMark) {
+        self.arena.rewind(mark);
+        self.records.retain(|&at| !mark.precedes(at));
+        self.held.retain(|_, at| !mark.precedes(*at));
+    }
+
+    /// Every chunk's written words, the record starts in order, and the held
+    /// rows in order.
+    #[cfg(test)]
+    pub(super) fn snapshot(&self) -> Snapshot {
+        let chunks = (0..).map_while(|n| self.arena.chunk(n).map(<[u32]>::to_vec)).collect();
+        let mut records: Vec<_> = self.records.iter().copied().collect();
+        records.sort_unstable();
+        let mut held: Vec<_> = self.held.iter().map(|(&row, &at)| (row, at)).collect();
+        held.sort_unstable();
+        Snapshot { chunks, records, held }
     }
 
     /// Holds `at` as the record of `row`, a node no cell names, for every
@@ -89,16 +119,44 @@ impl TreeArena {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::arena::CHUNK_WORDS;
+
+    fn record(tree: &mut TreeArena, words: &[u32]) -> Address {
+        let at = tree.arena_mut().push(words).expect("room");
+        tree.keep_record(at);
+        at
+    }
+
+    #[test]
+    fn a_rewind_drops_what_was_written_after_its_mark() {
+        let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 16);
+        let kept = record(&mut tree, &[7, 8]);
+        tree.hold(NodeIndex(1), kept).expect("the row had none");
+        let before = tree.snapshot();
+        let mark = tree.mark();
+        let first = record(&mut tree, &[9, 0, 3]);
+        let own = tree.arena_mut().alloc(CHUNK_WORDS + 1).expect("a run with a chunk of its own");
+        let next = record(&mut tree, &vec![5; CHUNK_WORDS as usize]);
+        assert_ne!(own.chunk(), kept.chunk());
+        assert_ne!(next.chunk(), kept.chunk(), "a record past the open chunk's room opens another");
+        tree.hold(NodeIndex(2), first).expect("the row had none");
+        tree.rewind(mark);
+        assert_eq!(tree.snapshot(), before, "the words, chunks, record starts and held rows past the mark are gone");
+        assert!(!tree.contains_record(first) && tree.held(NodeIndex(2)).is_none());
+        let again = tree.arena_mut().alloc(3).expect("room");
+        assert_eq!(again, first, "the next write takes the dropped words");
+        assert_eq!(tree.arena().words(again, 3), Ok(&[0, 0, 0][..]), "zeroed");
+    }
 
     #[test]
     fn a_held_row_holds_one_record() {
         let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 16);
         let row = NodeIndex(3);
         assert_eq!(tree.held(row), None);
-        let first = tree.push_record(&[7, 8]).expect("room");
+        let first = record(&mut tree, &[7, 8]);
         tree.hold(row, first).expect("the row had none");
         assert_eq!(tree.held(row), Some(first));
-        let second = tree.push_record(&[9, 0]).expect("room");
+        let second = record(&mut tree, &[9, 0]);
         assert_eq!(tree.hold(row, second), Err(ArenaError::Unwritable("a second record for a row")));
         assert_eq!(tree.held(row), Some(first), "the first record stays the row's");
     }
@@ -113,14 +171,14 @@ mod tests {
     #[test]
     fn address_0_is_never_a_record() {
         let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 4);
-        let first = tree.push_record(&[7, 0]).expect("room");
+        let first = record(&mut tree, &[7, 0]);
         assert_ne!(first, Address::NONE, "the arena's first word is reserved");
     }
 
     #[test]
     fn a_row_past_the_tree_s_nodes_is_refused() {
         let mut tree = TreeArena::new(crate::record::PARSED_KIND_BITS, 4);
-        let at = tree.push_record(&[7, 0]).expect("room");
+        let at = record(&mut tree, &[7, 0]);
         assert_eq!(tree.hold(NodeIndex(4), at), Err(ArenaError::Malformed { what: "record row", word: 4 }));
         assert_eq!(tree.held(NodeIndex(4)), None);
     }

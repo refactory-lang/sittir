@@ -54,10 +54,12 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	if (handle !== undefined) admitChildren(handle, 'program', { definitions: _definitions });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Program as const, { _definitions });
-	const record = arena.record(TSKindId.Program as const);
-	storeList(arena, record, 2, 2, _definitions);
-	const node = arena.view(record);
-	return node as unknown as T.Program.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Program as const);
+		storeList(arena, record, 2, 2, _definitions);
+		const node = arena.view(record);
+		return node as unknown as T.Program.Bound;
+	});
 }
 
 function buildProgram$patch(source: object, ...children: Admit<T.Definition[]>): T.Program.Bound {
@@ -67,10 +69,12 @@ function buildProgram$patch(source: object, ...children: Admit<T.Definition[]>):
 	if (handle !== undefined) admitChildren(handle, 'program', { definitions: _definitions });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Program as const, { _definitions });
-	const record = arena.copy(source, TSKindId.Program as const);
-	patchList(arena, record, 2, 2, _definitions);
-	const node = arena.view(record);
-	return node as unknown as T.Program.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Program as const);
+		patchList(arena, record, 2, 2, _definitions);
+		const node = arena.view(record);
+		return node as unknown as T.Program.Bound;
+	});
 }
 function withProgram(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -101,10 +105,12 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	if (handle !== undefined) admitChildren(handle, 'escape_sequence', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.EscapeSequence as const, { _content });
-	const record = arena.record(TSKindId.EscapeSequence as const);
-	storeCell(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.EscapeSequence.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.EscapeSequence as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.EscapeSequence.Bound;
+	});
 }
 
 function buildEscapeSequence$patch(source: object, input: string, affix: boolean = true): T.EscapeSequence.Bound {
@@ -123,10 +129,12 @@ function buildEscapeSequence$patch(source: object, input: string, affix: boolean
 	if (handle !== undefined) admitChildren(handle, 'escape_sequence', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.EscapeSequence as const, { _content });
-	const record = arena.copy(source, TSKindId.EscapeSequence as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-	const node = arena.view(record);
-	return node as unknown as T.EscapeSequence.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.EscapeSequence as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.EscapeSequence.Bound;
+	});
 }
 function withEscapeSequence(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -204,10 +212,12 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	if (handle !== undefined) admitChildren(handle, 'capture', { name: _name });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Capture as const, { _name });
-	const record = arena.record(TSKindId.Capture as const);
-	storeCell(arena, record, 2, 2, _name);
-	const node = arena.view(record);
-	return node as unknown as T.Capture.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Capture as const);
+		storeCell(arena, record, 2, 2, _name);
+		const node = arena.view(record);
+		return node as unknown as T.Capture.Bound;
+	});
 }
 
 function buildCapture$patch(source: object, value: Admit<T.ImmediateIdentifier>): T.Capture.Bound {
@@ -216,10 +226,12 @@ function buildCapture$patch(source: object, value: Admit<T.ImmediateIdentifier>)
 	if (handle !== undefined) admitChildren(handle, 'capture', { name: _name });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Capture as const, { _name });
-	const record = arena.copy(source, TSKindId.Capture as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-	const node = arena.view(record);
-	return node as unknown as T.Capture.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Capture as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		const node = arena.view(record);
+		return node as unknown as T.Capture.Bound;
+	});
 }
 function withCapture(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -257,10 +269,12 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	if (handle !== undefined) admitChildren(handle, 'string', { stringContent: _string_content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.String as const, { _string_content });
-	const record = arena.record(TSKindId.String as const);
-	storeCell(arena, record, 2, 2, _string_content);
-	const node = arena.view(record);
-	return node as unknown as T.String.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.String as const);
+		storeCell(arena, record, 2, 2, _string_content);
+		const node = arena.view(record);
+		return node as unknown as T.String.Bound;
+	});
 }
 
 function _buildString$patch(source: object, value?: Admit<T.StringContent>): T.String.Bound {
@@ -269,10 +283,12 @@ function _buildString$patch(source: object, value?: Admit<T.StringContent>): T.S
 	if (handle !== undefined) admitChildren(handle, 'string', { stringContent: _string_content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.String as const, { _string_content });
-	const record = arena.copy(source, TSKindId.String as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'stringContent', _string_content));
-	const node = arena.view(record);
-	return node as unknown as T.String.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.String as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'stringContent', _string_content));
+		const node = arena.view(record);
+		return node as unknown as T.String.Bound;
+	});
 }
 function withString(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -312,10 +328,12 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	if (handle !== undefined) admitChildren(handle, 'immediate_string', { stringContent: _string_content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImmediateString as const, { _string_content });
-	const record = arena.record(TSKindId.ImmediateString as const);
-	storeCell(arena, record, 2, 2, _string_content);
-	const node = arena.view(record);
-	return node as unknown as T.ImmediateString.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ImmediateString as const);
+		storeCell(arena, record, 2, 2, _string_content);
+		const node = arena.view(record);
+		return node as unknown as T.ImmediateString.Bound;
+	});
 }
 
 function _buildImmediateString$patch(source: object, value?: Admit<T.StringContent>): T.ImmediateString.Bound {
@@ -324,10 +342,12 @@ function _buildImmediateString$patch(source: object, value?: Admit<T.StringConte
 	if (handle !== undefined) admitChildren(handle, 'immediate_string', { stringContent: _string_content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImmediateString as const, { _string_content });
-	const record = arena.copy(source, TSKindId.ImmediateString as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'stringContent', _string_content));
-	const node = arena.view(record);
-	return node as unknown as T.ImmediateString.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ImmediateString as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'stringContent', _string_content));
+		const node = arena.view(record);
+		return node as unknown as T.ImmediateString.Bound;
+	});
 }
 function withImmediateString(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -352,10 +372,12 @@ export function buildStringContent(
 	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.StringContent as const, { _content });
-	const record = arena.record(TSKindId.StringContent as const);
-	storeList(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.StringContent.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.StringContent as const);
+		storeList(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.StringContent.Bound;
+	});
 }
 
 function buildStringContent$patch(
@@ -368,10 +390,12 @@ function buildStringContent$patch(
 	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.StringContent as const, { _content });
-	const record = arena.copy(source, TSKindId.StringContent as const);
-	patchList(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.StringContent.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.StringContent as const);
+		patchList(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.StringContent.Bound;
+	});
 }
 function withStringContent(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -396,10 +420,12 @@ export function buildParameters(
 	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
-	const record = arena.record(TSKindId.Parameters as const);
-	storeList(arena, record, 2, 2, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.Parameters.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Parameters as const);
+		storeList(arena, record, 2, 2, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.Parameters.Bound;
+	});
 }
 
 function buildParameters$patch(
@@ -412,10 +438,12 @@ function buildParameters$patch(
 	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
-	const record = arena.copy(source, TSKindId.Parameters as const);
-	patchList(arena, record, 2, 2, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.Parameters.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Parameters as const);
+		patchList(arena, record, 2, 2, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.Parameters.Bound;
+	});
 }
 function withParameters(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -445,10 +473,12 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	if (handle !== undefined) admitChildren(handle, 'comment', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Comment as const, { _content });
-	const record = arena.record(TSKindId.Comment as const);
-	storeCell(arena, record, 2, 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.Comment.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Comment as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.Comment.Bound;
+	});
 }
 
 function buildComment$patch(source: object, input: string, affix: boolean = true): T.Comment.Bound {
@@ -466,10 +496,12 @@ function buildComment$patch(source: object, input: string, affix: boolean = true
 	if (handle !== undefined) admitChildren(handle, 'comment', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Comment as const, { _content });
-	const record = arena.copy(source, TSKindId.Comment as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-	const node = arena.view(record);
-	return node as unknown as T.Comment.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Comment as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.Comment.Bound;
+	});
 }
 function withComment(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -492,11 +524,13 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.List as const, { _definitions, _elements });
-	const record = arena.record(TSKindId.List as const);
-	storeList(arena, record, 2, 2, _definitions);
-	storeList(arena, record, 3, 3, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.List.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.List as const);
+		storeList(arena, record, 2, 2, _definitions);
+		storeList(arena, record, 3, 3, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.List.Bound;
+	});
 }
 
 function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
@@ -507,11 +541,13 @@ function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
 	if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.List as const, { _definitions, _elements });
-	const record = arena.copy(source, TSKindId.List as const);
-	patchList(arena, record, 2, 2, _definitions);
-	patchList(arena, record, 3, 3, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.List.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.List as const);
+		patchList(arena, record, 2, 2, _definitions);
+		patchList(arena, record, 3, 3, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.List.Bound;
+	});
 }
 function withList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -544,11 +580,13 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Grouping as const, { _grouping_group, _elements });
-	const record = arena.record(TSKindId.Grouping as const);
-	storeList(arena, record, 2, 2, _grouping_group);
-	storeList(arena, record, 3, 3, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.Grouping.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Grouping as const);
+		storeList(arena, record, 2, 2, _grouping_group);
+		storeList(arena, record, 3, 3, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.Grouping.Bound;
+	});
 }
 
 function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Grouping.Bound {
@@ -559,11 +597,13 @@ function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Group
 	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Grouping as const, { _grouping_group, _elements });
-	const record = arena.copy(source, TSKindId.Grouping as const);
-	patchList(arena, record, 2, 2, _grouping_group);
-	patchList(arena, record, 3, 3, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.Grouping.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Grouping as const);
+		patchList(arena, record, 2, 2, _grouping_group);
+		patchList(arena, record, 3, 3, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.Grouping.Bound;
+	});
 }
 function withGrouping(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -604,11 +644,13 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MissingNode as const, { _name, _elements });
-	const record = arena.record(TSKindId.MissingNode as const);
-	storeCell(arena, record, 2, 2, _name);
-	storeList(arena, record, 3, 8, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.MissingNode.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.MissingNode as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeList(arena, record, 3, 8, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.MissingNode.Bound;
+	});
 }
 
 function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
@@ -619,11 +661,13 @@ function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Co
 	if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MissingNode as const, { _name, _elements });
-	const record = arena.copy(source, TSKindId.MissingNode as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-	patchList(arena, record, 3, 8, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.MissingNode.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.MissingNode as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchList(arena, record, 3, 8, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.MissingNode.Bound;
+	});
 }
 function withMissingNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -656,11 +700,13 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AnonymousNode as const, { _name, _elements });
-	const record = arena.record(TSKindId.AnonymousNode as const);
-	storeCell(arena, record, 2, 2, _name);
-	storeList(arena, record, 3, 8, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.AnonymousNode.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.AnonymousNode as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeList(arena, record, 3, 8, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.AnonymousNode.Bound;
+	});
 }
 
 function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
@@ -671,11 +717,13 @@ function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config
 	if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AnonymousNode as const, { _name, _elements });
-	const record = arena.copy(source, TSKindId.AnonymousNode as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-	patchList(arena, record, 3, 8, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.AnonymousNode.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.AnonymousNode as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchList(arena, record, 3, 8, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.AnonymousNode.Bound;
+	});
 }
 function withAnonymousNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -710,11 +758,13 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name, definition: _definition });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FieldDefinition as const, { _name, _definition });
-	const record = arena.record(TSKindId.FieldDefinition as const);
-	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 5, _definition);
-	const node = arena.view(record);
-	return node as unknown as T.FieldDefinition.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.FieldDefinition as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeCell(arena, record, 3, 5, _definition);
+		const node = arena.view(record);
+		return node as unknown as T.FieldDefinition.Bound;
+	});
 }
 
 function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Config): T.FieldDefinition.Bound {
@@ -725,11 +775,13 @@ function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Co
 	if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name, definition: _definition });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FieldDefinition as const, { _name, _definition });
-	const record = arena.copy(source, TSKindId.FieldDefinition as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-	patchCell(arena, record, 3, 5, carriedSlot(source, 'definition', _definition));
-	const node = arena.view(record);
-	return node as unknown as T.FieldDefinition.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.FieldDefinition as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'definition', _definition));
+		const node = arena.view(record);
+		return node as unknown as T.FieldDefinition.Bound;
+	});
 }
 function withFieldDefinition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -755,10 +807,12 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	if (handle !== undefined) admitChildren(handle, 'negated_field', { identifier: _identifier });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NegatedField as const, { _identifier });
-	const record = arena.record(TSKindId.NegatedField as const);
-	storeCell(arena, record, 2, 2, _identifier);
-	const node = arena.view(record);
-	return node as unknown as T.NegatedField.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NegatedField as const);
+		storeCell(arena, record, 2, 2, _identifier);
+		const node = arena.view(record);
+		return node as unknown as T.NegatedField.Bound;
+	});
 }
 
 function buildNegatedField$patch(source: object, value: Admit<T.Identifier>): T.NegatedField.Bound {
@@ -767,10 +821,12 @@ function buildNegatedField$patch(source: object, value: Admit<T.Identifier>): T.
 	if (handle !== undefined) admitChildren(handle, 'negated_field', { identifier: _identifier });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NegatedField as const, { _identifier });
-	const record = arena.copy(source, TSKindId.NegatedField as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-	const node = arena.view(record);
-	return node as unknown as T.NegatedField.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NegatedField as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
+		const node = arena.view(record);
+		return node as unknown as T.NegatedField.Bound;
+	});
 }
 function withNegatedField(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -798,13 +854,15 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 		admitChildren(handle, 'predicate', { prefix: _prefix, name: _name, type: _type, parameters: _parameters });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Predicate as const, { _prefix, _name, _type, _parameters });
-	const record = arena.record(TSKindId.Predicate as const);
-	storeCell(arena, record, 2, 2, _prefix);
-	storeCell(arena, record, 3, 3, _name);
-	storeCell(arena, record, 4, 6, _type);
-	storeCell(arena, record, 5, 7, _parameters);
-	const node = arena.view(record);
-	return node as unknown as T.Predicate.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Predicate as const);
+		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 3, 3, _name);
+		storeCell(arena, record, 4, 6, _type);
+		storeCell(arena, record, 5, 7, _parameters);
+		const node = arena.view(record);
+		return node as unknown as T.Predicate.Bound;
+	});
 }
 
 function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Predicate.Bound {
@@ -818,13 +876,15 @@ function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Pre
 		admitChildren(handle, 'predicate', { prefix: _prefix, name: _name, type: _type, parameters: _parameters });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Predicate as const, { _prefix, _name, _type, _parameters });
-	const record = arena.copy(source, TSKindId.Predicate as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
-	patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
-	patchCell(arena, record, 4, 6, carriedSlot(source, 'type', _type));
-	patchCell(arena, record, 5, 7, carriedSlot(source, 'parameters', _parameters));
-	const node = arena.view(record);
-	return node as unknown as T.Predicate.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Predicate as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'parameters', _parameters));
+		const node = arena.view(record);
+		return node as unknown as T.Predicate.Bound;
+	});
 }
 function withPredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -862,10 +922,12 @@ export function buildListElementQuantifier(
 	if (handle !== undefined) admitChildren(handle, 'list_element_quantifier', { quantifier: _quantifier });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ListElementQuantifier as const, { _quantifier });
-	const record = arena.record(TSKindId.ListElementQuantifier as const);
-	storeCell(arena, record, 2, 2, _quantifier);
-	const node = arena.view(record);
-	return node as unknown as T.ListElementQuantifier.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ListElementQuantifier as const);
+		storeCell(arena, record, 2, 2, _quantifier);
+		const node = arena.view(record);
+		return node as unknown as T.ListElementQuantifier.Bound;
+	});
 }
 
 function buildListElementQuantifier$patch(
@@ -877,10 +939,12 @@ function buildListElementQuantifier$patch(
 	if (handle !== undefined) admitChildren(handle, 'list_element_quantifier', { quantifier: _quantifier });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ListElementQuantifier as const, { _quantifier });
-	const record = arena.copy(source, TSKindId.ListElementQuantifier as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'quantifier', _quantifier));
-	const node = arena.view(record);
-	return node as unknown as T.ListElementQuantifier.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ListElementQuantifier as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'quantifier', _quantifier));
+		const node = arena.view(record);
+		return node as unknown as T.ListElementQuantifier.Bound;
+	});
 }
 function withListElementQuantifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -907,11 +971,13 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.GroupExpressionArm as const, { _left, _right });
-	const record = arena.record(TSKindId.GroupExpressionArm as const);
-	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 5, _right);
-	const node = arena.view(record);
-	return node as unknown as T.GroupExpressionArm.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.GroupExpressionArm as const);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 5, _right);
+		const node = arena.view(record);
+		return node as unknown as T.GroupExpressionArm.Bound;
+	});
 }
 
 function buildGroupExpressionArm$patch(
@@ -925,11 +991,13 @@ function buildGroupExpressionArm$patch(
 	if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.GroupExpressionArm as const, { _left, _right });
-	const record = arena.copy(source, TSKindId.GroupExpressionArm as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
-	patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
-	const node = arena.view(record);
-	return node as unknown as T.GroupExpressionArm.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.GroupExpressionArm as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
+		const node = arena.view(record);
+		return node as unknown as T.GroupExpressionArm.Bound;
+	});
 }
 function withGroupExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -962,11 +1030,13 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeExpressionArm as const, { _left, _right });
-	const record = arena.record(TSKindId.NamedNodeExpressionArm as const);
-	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 5, _right);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeExpressionArm.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NamedNodeExpressionArm as const);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 5, _right);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeExpressionArm.Bound;
+	});
 }
 
 function buildNamedNodeExpressionArm$patch(
@@ -980,11 +1050,13 @@ function buildNamedNodeExpressionArm$patch(
 	if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeExpressionArm as const, { _left, _right });
-	const record = arena.copy(source, TSKindId.NamedNodeExpressionArm as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
-	patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeExpressionArm.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NamedNodeExpressionArm as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeExpressionArm.Bound;
+	});
 }
 function withNamedNodeExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1015,11 +1087,13 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 		admitChildren(handle, 'grouping_group', { groupExpression: _group_expression, anchor: _anchor });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.GroupingGroup as const, { _group_expression, _anchor });
-	const record = arena.record(TSKindId.GroupingGroup as const);
-	storeCell(arena, record, 3, 3, _group_expression);
-	if (_anchor) storeFlag(record.data, record.base + 2, 1);
-	const node = arena.view(record);
-	return node as unknown as T.GroupingGroup.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.GroupingGroup as const);
+		storeCell(arena, record, 3, 3, _group_expression);
+		if (_anchor) storeFlag(record.data, record.base + 2, 1);
+		const node = arena.view(record);
+		return node as unknown as T.GroupingGroup.Bound;
+	});
 }
 
 function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config): T.GroupingGroup.Bound {
@@ -1031,11 +1105,13 @@ function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config
 		admitChildren(handle, 'grouping_group', { groupExpression: _group_expression, anchor: _anchor });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.GroupingGroup as const, { _group_expression, _anchor });
-	const record = arena.copy(source, TSKindId.GroupingGroup as const);
-	patchCell(arena, record, 3, 3, carriedSlot(source, 'groupExpression', _group_expression));
-	patchFlag(record, 2, 1, _anchor);
-	const node = arena.view(record);
-	return node as unknown as T.GroupingGroup.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.GroupingGroup as const);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'groupExpression', _group_expression));
+		patchFlag(record, 2, 1, _anchor);
+		const node = arena.view(record);
+		return node as unknown as T.GroupingGroup.Bound;
+	});
 }
 function withGroupingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1105,12 +1181,14 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 		admitChildren(handle, 'named_node_plain', { name: _name, namedNodeGroup: _named_node_group, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodePlain as const, { _name, _named_node_group, _elements });
-	const record = arena.record(TSKindId.NamedNodePlain as const);
-	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 6, _named_node_group);
-	storeList(arena, record, 4, 9, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodePlain.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NamedNodePlain as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeCell(arena, record, 3, 6, _named_node_group);
+		storeList(arena, record, 4, 9, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodePlain.Bound;
+	});
 }
 
 function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
@@ -1123,12 +1201,14 @@ function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Conf
 		admitChildren(handle, 'named_node_plain', { name: _name, namedNodeGroup: _named_node_group, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodePlain as const, { _name, _named_node_group, _elements });
-	const record = arena.copy(source, TSKindId.NamedNodePlain as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-	patchCell(arena, record, 3, 6, carriedSlot(source, 'namedNodeGroup', _named_node_group));
-	patchList(arena, record, 4, 9, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodePlain.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NamedNodePlain as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'namedNodeGroup', _named_node_group));
+		patchList(arena, record, 4, 9, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodePlain.Bound;
+	});
 }
 function withNamedNodePlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1180,13 +1260,15 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeSupertyped as const, { _supertype, _name, _named_node_group, _elements });
-	const record = arena.record(TSKindId.NamedNodeSupertyped as const);
-	storeCell(arena, record, 2, 2, _supertype);
-	storeCell(arena, record, 3, 5, _name);
-	storeCell(arena, record, 4, 11, _named_node_group);
-	storeList(arena, record, 5, 14, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeSupertyped.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NamedNodeSupertyped as const);
+		storeCell(arena, record, 2, 2, _supertype);
+		storeCell(arena, record, 3, 5, _name);
+		storeCell(arena, record, 4, 11, _named_node_group);
+		storeList(arena, record, 5, 14, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeSupertyped.Bound;
+	});
 }
 
 function buildNamedNodeSupertyped$patch(
@@ -1208,13 +1290,15 @@ function buildNamedNodeSupertyped$patch(
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeSupertyped as const, { _supertype, _name, _named_node_group, _elements });
-	const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
-	patchCell(arena, record, 2, 2, carriedSlot(source, 'supertype', _supertype));
-	patchCell(arena, record, 3, 5, carriedSlot(source, 'name', _name));
-	patchCell(arena, record, 4, 11, carriedSlot(source, 'namedNodeGroup', _named_node_group));
-	patchList(arena, record, 5, 14, _elements);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeSupertyped.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'supertype', _supertype));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 4, 11, carriedSlot(source, 'namedNodeGroup', _named_node_group));
+		patchList(arena, record, 5, 14, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeSupertyped.Bound;
+	});
 }
 function withNamedNodeSupertyped(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1262,11 +1346,13 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeGroupChildren as const, { _anchor, _named_node_expressions });
-	const record = arena.record(TSKindId.NamedNodeGroupChildren as const);
-	if (_anchor) storeFlag(record.data, record.base + 2, 1);
-	storeList(arena, record, 3, 3, _named_node_expressions);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeGroupChildren.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NamedNodeGroupChildren as const);
+		if (_anchor) storeFlag(record.data, record.base + 2, 1);
+		storeList(arena, record, 3, 3, _named_node_expressions);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeGroupChildren.Bound;
+	});
 }
 
 function buildNamedNodeGroupChildren$patch(
@@ -1286,11 +1372,13 @@ function buildNamedNodeGroupChildren$patch(
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeGroupChildren as const, { _anchor, _named_node_expressions });
-	const record = arena.copy(source, TSKindId.NamedNodeGroupChildren as const);
-	patchFlag(record, 2, 1, _anchor);
-	patchList(arena, record, 3, 3, _named_node_expressions);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeGroupChildren.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NamedNodeGroupChildren as const);
+		patchFlag(record, 2, 1, _anchor);
+		patchList(arena, record, 3, 3, _named_node_expressions);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeGroupChildren.Bound;
+	});
 }
 function withNamedNodeGroupChildren(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1346,12 +1434,14 @@ export function buildNamedNodeGroupAnchoredLast(
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeGroupAnchoredLast as const, { _anchor, _named_node_expressions, _last });
-	const record = arena.record(TSKindId.NamedNodeGroupAnchoredLast as const);
-	if (_anchor) storeFlag(record.data, record.base + 2, 1);
-	storeList(arena, record, 3, 3, _named_node_expressions);
-	storeCell(arena, record, 4, 4, _last);
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.NamedNodeGroupAnchoredLast as const);
+		if (_anchor) storeFlag(record.data, record.base + 2, 1);
+		storeList(arena, record, 3, 3, _named_node_expressions);
+		storeCell(arena, record, 4, 4, _last);
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+	});
 }
 
 function buildNamedNodeGroupAnchoredLast$patch(
@@ -1373,12 +1463,14 @@ function buildNamedNodeGroupAnchoredLast$patch(
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedNodeGroupAnchoredLast as const, { _anchor, _named_node_expressions, _last });
-	const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
-	patchFlag(record, 2, 1, _anchor);
-	patchList(arena, record, 3, 3, _named_node_expressions);
-	patchCell(arena, record, 4, 4, carriedSlot(source, 'last', _last));
-	const node = arena.view(record);
-	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
+		patchFlag(record, 2, 1, _anchor);
+		patchList(arena, record, 3, 3, _named_node_expressions);
+		patchCell(arena, record, 4, 4, carriedSlot(source, 'last', _last));
+		const node = arena.view(record);
+		return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+	});
 }
 function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);

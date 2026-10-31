@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -158,6 +158,9 @@ export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
 
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
+	if ((node as { readonly $type?: unknown }).$type === ERROR_KIND_ID && placeOf(node) === undefined) {
+		throw new Error('an ERROR read as a side entry holds no sides: a side entry never holds sides of its own');
+	}
 	const leaf = builtLeafOf(node);
 	if (leaf !== undefined) {
 		const wired = wireSides(node, trivia);
@@ -267,13 +270,12 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 
 function hydratedEntries(entries: readonly TriviaEntry[], tree: TreeHandle | undefined): readonly TriviaEntry[] {
 	if (tree !== undefined || entries.some(isCoordinate)) return entries.map((entry) => hydrateTriviaEntry(entry, tree));
-	entries.forEach(asTextNode);
 	return entries;
 }
 
 export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEntry {
 	if (isCoordinate(entry)) return hydrateStored(entry) as TriviaEntry;
-	return asTextNode(tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
+	return (tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
 }
 
 function sourcedRecord<R extends object>(source: object, built: R, own: boolean): R {
@@ -846,7 +848,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { TREE, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
@@ -884,7 +886,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { handleDispose, isLeafHandle, isRecordPosition, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
+export { handleDispose, isLeafHandle, isRecordPosition, releaseNothing, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

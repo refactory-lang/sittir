@@ -66,28 +66,29 @@ describe('a built arena', () => {
 		expect(Array.from(second.data.subarray(second.base, second.base + 4))).toEqual([8, 0, 0, 0]);
 	});
 
-	it('places a record when it is viewed, past every record its cells name', () => {
+	it('writes a draft in place, so its handle names the address it was drafted at', () => {
 		const arena = arenaOf();
 		const record = arena.draft(9, 7);
 		const child = arena.view(arena.draft(4, 2));
 		storeCell(arena, record, 2, 2, child);
 		const at = builtRecordOf(arena.view(record), arena)!;
+		expect(at).toBe(record.at);
 		const cell = decodeBuiltCell(arena, arena.words(at, 7)[wordOf(at, format!) + 2]!);
 		expect(cell.form === 'child' && cell.at).toBe(builtRecordOf(child, arena));
-		expect(at).toBeGreaterThan(builtRecordOf(child, arena)!);
 	});
 
 	it('gives each draft words of its own, which no later draft shares', () => {
 		const arena = arenaOf();
 		const outer = arena.draft(9, 7);
 		const inner = arena.draft(4, 2);
-		const innerNode = arena.view(inner);
 		const next = arena.draft(8, 3);
 		inner.data[inner.base + 1] = 7;
 		outer.data[outer.base + 3] = 5;
+		next.data[next.base + 2] = 6;
+		const innerNode = arena.view(inner);
 		expect(placed(arena, arena.view(outer), 7)).toEqual([9, 0, 0, 5, 0, 0, 0]);
-		expect(placed(arena, arena.view(next), 3)).toEqual([8, 0, 0]);
-		expect(placed(arena, innerNode, 2)).toEqual([4, 0]);
+		expect(placed(arena, arena.view(next), 3)).toEqual([8, 0, 6]);
+		expect(placed(arena, innerNode, 2)).toEqual([4, 7]);
 		const first = arena.draft(7, 4);
 		for (let n = 0; n < 3000; n++) arena.view(arena.draft(1, 3));
 		const wide = arena.draft(6, 5000);
@@ -172,8 +173,8 @@ describe('a built arena', () => {
 
 	it('writes no run for an empty list, whose cell stays 0', () => {
 		const arena = arenaOf();
-		const before = arena.chunks().words.map((chunk) => chunk.length);
 		const record = arena.draft(9, 4);
+		const before = arena.chunks().words.map((chunk) => chunk.length);
 		storeList(arena, record, 2, 2, []);
 		expect(record.data[record.base + 2]).toBe(0);
 		expect(arena.chunks().words.map((chunk) => chunk.length)).toEqual(before);

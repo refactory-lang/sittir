@@ -1,8 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { collectKindEntries, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, errorKindEntry, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
-import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { findEntryForKindName, treeNameOf } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import { layoutMemberKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
@@ -111,8 +111,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	for (const { name, id } of constants) lines.push(`pub const ${name}: KindId = KindId(${id});`);
 	lines.push('', `/// The bits a packed kind field takes: the least that holds every kind id below all-ones, which is \`ERROR\`.`);
 	lines.push(`pub const KIND_BITS: u32 = ${kindBitsOf(constants)};`);
-	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
-	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
+	const errorEntry = errorKindEntry(entries, `kind_ids.rs for ${grammar}`);
 	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.get() == KindId::ERROR.get());`);
 	lines.push('');
 	lines.push(`/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.`);

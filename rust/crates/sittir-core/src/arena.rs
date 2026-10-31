@@ -13,7 +13,8 @@
 //! are in its `BuiltChunks`, which JavaScript's builders write.
 //!
 //! An arena only appends records: no record is freed or moved, so an address
-//! names one record for as long as the arena lives. A parsed record's cell
+//! names one record for as long as the arena lives. A refused hydration's
+//! words were never named, and the arena takes them back (`rewind`). A parsed record's cell
 //! that holds a coordinate is rewritten once, to name the record the first
 //! read through it writes; nothing else in a written record changes.
 
@@ -48,7 +49,7 @@ pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
 pub use built_write::BuiltWriter;
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
+pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
 pub use reach::{deepen, reach, read_cell};
@@ -292,6 +293,24 @@ fn next_limit(last: Option<u32>, first: u32, cap: u32, least: u32) -> u32 {
     last.map_or(first, |last| last.saturating_mul(2)).clamp(first, cap).max(least)
 }
 
+/// Where an arena's word chunks stood: how many it held, the shared chunk
+/// records were appended to, and the words written of it. A later write
+/// lands past it, in that chunk or in a chunk made after it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ArenaMark {
+    chunks: u32,
+    open: u32,
+    written: u32,
+}
+
+impl ArenaMark {
+    /// Whether `at` was written after the mark.
+    #[must_use]
+    pub fn precedes(self, at: Address) -> bool {
+        at.chunk() >= self.chunks || (at.chunk() == self.open && at.word() >= self.written)
+    }
+}
+
 /// One arena native code writes: word chunks for records and runs, and the
 /// string table.
 #[derive(Debug)]
@@ -355,6 +374,20 @@ impl Arena {
         }
         let word = self.chunks[self.open as usize].extend(words);
         Ok(Address(self.open << CHUNK_SHIFT | word))
+    }
+
+    /// Where the word chunks stand now.
+    #[must_use]
+    pub fn mark(&self) -> ArenaMark {
+        ArenaMark { chunks: u32::try_from(self.chunks.len()).unwrap_or(MAX_CHUNKS), open: self.open, written: self.chunks[self.open as usize].written }
+    }
+
+    /// Drops every word written after `mark` and every chunk made after it;
+    /// the next write takes the words again, zeroed.
+    pub fn rewind(&mut self, mark: ArenaMark) {
+        self.chunks.truncate(mark.chunks as usize);
+        self.open = mark.open;
+        self.chunks[mark.open as usize].written = mark.written;
     }
 
     /// `words` written at a fresh address.

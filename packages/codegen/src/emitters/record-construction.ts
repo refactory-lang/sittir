@@ -98,11 +98,14 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const tailOf = (record: string, store: (slot: PlacedSlot) => string, storeOptions: string): string[] => [
 		'  const arena = builtArenaOf(handle);',
 		`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`,
-		`  const record = ${record};`,
-		...placed.map(store),
-		...(listOptions === undefined ? [] : [`  ${storeOptions}(${listOptions});`]),
-		`  const node = ${spec.check === undefined ? 'arena.view(record)' : `arena.checkedView(record, (node) => ${spec.check})`};`,
-		`  return node as unknown as ${spec.result};`
+		'  return arena.scope(() => {',
+		`    const record = ${record};`,
+		...placed.map((slot) => `  ${store(slot)}`),
+		...(listOptions === undefined ? [] : [`    ${storeOptions}(${listOptions});`]),
+		'    const node = arena.view(record);',
+		...(spec.check === undefined ? [] : [`    ${spec.check};`]),
+		`    return node as unknown as ${spec.result};`,
+		'  });'
 	];
 	const tail = tailOf(`arena.record(${spec.kind})`, slotStore, 'storeListOptions');
 	const patchTail = tailOf(`arena.copy(source, ${spec.kind})`, slotPatch, 'patchListOptions');

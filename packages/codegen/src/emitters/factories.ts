@@ -2990,7 +2990,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

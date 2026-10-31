@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, setTriviaOf, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -35,7 +35,7 @@ export interface BuiltPlace extends BuiltWords {
 	readonly at: number;
 }
 
-export interface BuiltDraft extends BuiltWords {
+export interface BuiltDraft extends BuiltPlace {
 	placed: unknown[] | undefined;
 	readonly copyOf: number | undefined;
 	readonly kept: Readonly<Record<number, unknown>> | undefined;
@@ -80,7 +80,6 @@ export type WriteLeafSites = (leaf: object, sites: readonly number[]) => void;
 
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 10;
-const DRAFT_WORDS = 1 << 12;
 const ENTRY_HEAD_BYTES = 4;
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
@@ -224,8 +223,6 @@ export class BuiltArena {
 	readonly #handle: TreeEngineHandle;
 	readonly #views: BuiltViews;
 	readonly #words: Chunks<WritableWords>;
-	#drafts = new Uint32Array(DRAFT_WORDS);
-	#drafted = 0;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #heads: (Uint32Array | undefined)[] = [];
 	readonly #tables: (CountTable | undefined)[] = [];
@@ -246,6 +243,10 @@ export class BuiltArena {
 	readonly #exemplars: object[] = [];
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
+	readonly #minted: number[] = [];
+	readonly #moved: number[] = [];
+	readonly #undos: (() => void)[] = [];
+	#scopes = 0;
 
 	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
@@ -346,6 +347,54 @@ export class BuiltArena {
 		return { data, base: word, at: addressOf(chunk, word, this.format), words: size };
 	}
 
+	#mint(size: number): BuiltPlace {
+		const place = this.#place(size, this.format.countOwned | 1);
+		if (this.#scopes > 0) this.#minted.push(place.at);
+		return place;
+	}
+
+	scope<T>(build: () => T): T {
+		const minted = this.#minted.length;
+		const moved = this.#moved.length;
+		const undos = this.#undos.length;
+		this.#scopes++;
+		try {
+			return build();
+		} catch (error) {
+			this.#abandon(minted, moved, undos);
+			throw error;
+		} finally {
+			if (--this.#scopes === 0) {
+				this.#minted.length = 0;
+				this.#moved.length = 0;
+				this.#undos.length = 0;
+			}
+		}
+	}
+
+	#abandon(minted: number, moved: number, undos: number): void {
+		for (let n = this.#undos.length - 1; n >= undos; n--) this.#undos[n]!();
+		for (let n = this.#moved.length - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
+		for (let n = this.#minted.length - 1; n >= minted; n--) this.release(this.#minted[n]!);
+		this.#moved.length = moved;
+		this.#undos.length = undos;
+		this.#minted.length = minted;
+	}
+
+	#giveBack(at: number): void {
+		const { counts, index } = this.#countAt(at);
+		this.#countOneMore(at, counts, index);
+		counts[index] = counts[index]! | this.format.countOwned;
+	}
+
+	#countOneMore(at: number, counts: Uint8Array, index: number): void {
+		const byte = counts[index]!;
+		const count = byte & this.format.countSaturated;
+		if (count === 0) throw new Error(releasedRecord(at));
+		if (count === this.format.countSaturated) this.#bump(at);
+		else counts[index] = byte + 1;
+	}
+
 	#countAt(at: number): { readonly counts: Uint8Array; readonly index: number } {
 		const chunk = chunkOf(at, this.format);
 		const word = wordOf(at, this.format);
@@ -366,15 +415,13 @@ export class BuiltArena {
 	hold(at: number): void {
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
-		const { countOwned, countSaturated } = this.format;
+		const { countOwned } = this.format;
 		if ((byte & countOwned) !== 0) {
 			counts[index] = byte & ~countOwned;
+			if (this.#scopes > 0) this.#moved.push(at);
 			return;
 		}
-		const count = byte & countSaturated;
-		if (count === 0) throw new Error(releasedRecord(at));
-		if (count === countSaturated) this.#bump(at);
-		else counts[index] = byte + 1;
+		this.#countOneMore(at, counts, index);
 	}
 
 	/** Holds once more what the cell `cell` names: a record or run, or a leaf entry's string chunk. */
@@ -447,10 +494,22 @@ export class BuiltArena {
 		const next = { ...own, ...written };
 		if (placed) return next;
 		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
-		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
-		this.#unpark(this.#parkedOf(leaf));
-		this.#parkedBy.set(next, leaf);
+		const parked = this.#parkedOf(leaf);
+		this.#park(leaf, next);
+		this.#unpark(parked);
+		if (this.#scopes > 0) {
+			this.#undos.push(() => {
+				this.#unpark(next);
+				if (parked !== undefined) this.#park(leaf, parked);
+				setTriviaOf(leaf, own);
+			});
+		}
 		return next;
+	}
+
+	#park(leaf: object, trivia: NodeTrivia): void {
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
+		this.#parkedBy.set(trivia, leaf);
 	}
 
 	#parkedOf(leaf: object): NodeTrivia | undefined {
@@ -483,12 +542,20 @@ export class BuiltArena {
 		}
 	}
 
-	#holdCells(at: number, kind: number, side: boolean): void {
-		const head = wordOf(at, this.format);
+	#copyCells(from: number, kind: number, to: BuiltWords, side: boolean): void {
+		const head = wordOf(from, this.format);
 		const words = this.#widthOf(kind);
-		const data = this.#chunk(at, words);
-		if (side) this.holdCell(data[head + 1]! * 4);
-		for (let word = this.#views.cells[kind] ?? words; word < words; word++) this.holdCell(data[head + word]!);
+		const data = this.#chunk(from, words);
+		if (side) {
+			this.holdCell(data[head + 1]! * 4);
+			to.data[to.base + 1] = data[head + 1]!;
+		}
+		const cells = this.#views.cells[kind] ?? words;
+		to.data.set(data.subarray(head + 2, head + cells), to.base + 2);
+		for (let word = cells; word < words; word++) {
+			this.holdCell(data[head + word]!);
+			to.data[to.base + word] = data[head + word]!;
+		}
 	}
 
 	/** The header word of a record of `kind`, its flags `flags`. */
@@ -506,26 +573,18 @@ export class BuiltArena {
 	}
 
 	draft(kind: number, words: number, copyOf?: number, kept?: Readonly<Record<number, unknown>>): BuiltDraft {
-		if (this.#drafted + words > this.#drafts.length) {
-			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
-			this.#drafted = 0;
-		}
-		const draft: BuiltDraft = { data: this.#drafts, base: this.#drafted, words, placed: undefined, copyOf, kept, patched: undefined };
-		this.#drafts[draft.base] = this.header(kind);
-		this.#drafted += words;
-		return draft;
+		const { data, base, at } = this.#mint(words);
+		data[base] = this.header(kind);
+		return { data, base, at, words, placed: undefined, copyOf, kept, patched: undefined };
 	}
 
 	copy(source: object, kind: number): BuiltDraft {
 		const at = builtRecordOf(source, this);
 		if (at === undefined) return this.record(kind);
-		const head = wordOf(at, this.format);
-		const words = this.#widthOf(kind);
 		const found = this.kindAt(at);
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
-		const draft = this.draft(kind, words, at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
-		draft.data.set(this.#chunk(at, words).subarray(head, head + words), draft.base);
-		this.#holdCells(at, kind, true);
+		const draft = this.draft(kind, this.#widthOf(kind), at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
+		this.#copyCells(at, kind, draft, true);
 		return draft;
 	}
 
@@ -654,36 +713,14 @@ export class BuiltArena {
 		return keepExemplar(this.#exemplars, this.#wrap(position, this.tree) as object);
 	}
 
-	/** The handle of the drafted `record`, placed past every record its cells name. Each built leaf it holds is placed at its site there. */
+	/** The handle of the drafted `record`. Each built leaf it holds is placed at its site there. */
 	view(record: BuiltDraft): object {
-		const place = this.#place(record.words, this.format.countOwned | 1);
-		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
 		const placed = record.placed;
-		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
-		if (record.copyOf !== undefined) this.#copySites(record.copyOf, place.at, record.patched ?? []);
-		const node = this.#owned(place.at);
+		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, record.at, placed[n + 1] as number, placed[n + 2] as number);
+		if (record.copyOf !== undefined) this.#copySites(record.copyOf, record.at, record.patched ?? []);
+		const node = this.#view(record.at);
 		this.#placedLast = placed === undefined ? undefined : { node, placed };
 		return node;
-	}
-
-	checkedView(record: BuiltDraft, check: (node: object) => void): object {
-		const node = this.view(record);
-		try {
-			check(node);
-			return node;
-		} catch (error) {
-			this.releaseHandle(node);
-			throw error;
-		}
-	}
-
-	#owned(at: number): object {
-		try {
-			return this.#view(at);
-		} catch (error) {
-			this.release(at);
-			throw error;
-		}
 	}
 
 	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
@@ -702,11 +739,17 @@ export class BuiltArena {
 		return keepExemplar(this.#exemplars, maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item)));
 	}
 
+	textNode(entry: { readonly $type: number; readonly $text: string }): object {
+		const maker = this.#views.leaves[entry.$type];
+		return maker === undefined ? (this.#wrap(entry, this.tree) as object) : this.leaf(maker, entry.$text);
+	}
+
 	#site(leaf: object, holder: number, word: number, item: number): void {
 		const parked = this.#parkedOf(leaf);
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		this.#unpark(parked);
+		if (parked !== undefined && this.#scopes > 0) this.#undos.push(() => this.#park(leaf, parked));
 	}
 
 	leafSites(leaf: object): readonly number[] | undefined {
@@ -769,20 +812,17 @@ export class BuiltArena {
 	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
 		const at = builtRecordOf(node, this);
 		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
-		const head = wordOf(at, this.format);
-		const header = this.words(at, 2);
-		const kind = this.kindAt(at);
-		const words = this.#widthOf(kind);
-		const side = this.#sidesNaming(header[head + 1]!, [tree.id, index, end, span.start, span.end]);
-		this.holdTree(tree, token);
-		this.#holdCells(at, kind, false);
-		const place = this.#place(words, this.format.countOwned | 1);
-		place.data.set(this.#chunk(at, words).subarray(head, head + words), place.base);
-		place.data[place.base + 1] = side;
-		this.#copySites(at, place.at, []);
-		const last = this.#placedLast;
-		if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, place.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
-		return this.#owned(place.at);
+		return this.scope(() => {
+			const kind = this.kindAt(at);
+			const record = this.record(kind);
+			record.data[record.base + 1] = this.#sidesNaming(this.words(at, 2)[wordOf(at, this.format) + 1]!, [tree.id, index, end, span.start, span.end]);
+			this.holdTree(tree, token);
+			this.#copyCells(at, kind, record, false);
+			this.#copySites(at, record.at, []);
+			const last = this.#placedLast;
+			if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, record.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
+			return this.#view(record.at);
+		});
 	}
 
 	#sidesNaming(side: number, sides: readonly number[]): number {
@@ -831,8 +871,17 @@ export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
 }
 
 export function builtEntries(entries: readonly unknown[], table: object): unknown[] {
-	if (!entries.some(isBuiltEntry)) return entries as unknown[];
-	return entries.map((entry) => (isBuiltEntry(entry) ? builtEntryNode(entry, table) : entry));
+	const built = (table as Partial<TreeHandle>).built;
+	const node = (entry: unknown): object | undefined =>
+		isBuiltEntry(entry) ? builtEntryNode(entry, table) : built !== undefined && isTextData(entry) ? built.textNode(entry) : undefined;
+	if (!entries.some((entry) => isBuiltEntry(entry) || (built !== undefined && isTextData(entry)))) return entries as unknown[];
+	return entries.map((entry) => node(entry) ?? entry);
+}
+
+type TextData = { readonly $type: number; readonly $text: string };
+
+function isTextData(entry: unknown): entry is TextData {
+	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<TextData>).$type === 'number' && typeof (entry as Partial<TextData>).$text === 'string';
 }
 
 export function readEntries(table: object, entries: readonly unknown[], own?: TreeToken): unknown[] {
@@ -1050,8 +1099,8 @@ function foreignValue(value: unknown, ref: BuiltRef | undefined): string {
 export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	if (items.length === 0) return;
 	const run = arena.run(items.length);
-	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, changedEdges(items, n, arena.kinds));
 	record.data[record.base + cell] = builtCell(run.at);
+	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, changedEdges(items, n, arena.kinds));
 }
 
 export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {

@@ -35,6 +35,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
+	releaseNothing,
 	SOURCE,
 	Source,
 	hydrateStoredSlot,
@@ -178,7 +179,8 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Program.Bound;
 }
@@ -215,7 +217,8 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.HashBangLine.Bound;
 }
@@ -256,7 +259,8 @@ export function buildNamespaceExport(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NamespaceExport.Bound;
 }
@@ -351,7 +355,8 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ExportClause.Bound;
@@ -414,7 +419,8 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportSpecifier.Bound;
 }
@@ -480,7 +486,8 @@ export function buildImportStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportStatement.Bound;
 }
@@ -511,7 +518,8 @@ export function buildImportClause(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClause.Bound;
 }
@@ -539,7 +547,8 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NamespaceImport.Bound;
 }
@@ -632,7 +641,8 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.NamedImports.Bound;
@@ -669,7 +679,8 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportAttribute.Bound;
 }
@@ -716,7 +727,8 @@ export function buildExpressionStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExpressionStatement.Bound;
 }
@@ -767,7 +779,8 @@ export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclarat
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaration.Bound;
 }
@@ -817,7 +830,8 @@ export function buildLexicalDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LexicalDeclaration.Bound;
 }
@@ -873,7 +887,8 @@ export function buildUsingDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UsingDeclaration.Bound;
 }
@@ -926,7 +941,8 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StatementBlock.Bound;
 }
@@ -952,7 +968,8 @@ export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ElseClause.Bound;
 }
@@ -1004,7 +1021,8 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IfStatement.Bound;
 }
@@ -1040,7 +1058,8 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchStatement.Bound;
 }
@@ -1114,7 +1133,8 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForStatement.Bound;
 }
@@ -1155,7 +1175,8 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForInStatement.Bound;
 }
@@ -1193,7 +1214,8 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.WhileStatement.Bound;
 }
@@ -1241,7 +1263,8 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DoStatement.Bound;
 }
@@ -1289,7 +1312,8 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TryStatement.Bound;
 }
@@ -1325,7 +1349,8 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.WithStatement.Bound;
 }
@@ -1388,7 +1413,8 @@ function _buildBreakStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BreakStatement.Bound;
 }
@@ -1454,7 +1480,8 @@ function _buildContinueStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ContinueStatement.Bound;
 }
@@ -1485,7 +1512,8 @@ export function buildDebuggerStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DebuggerStatement.Bound;
 }
@@ -1531,7 +1559,8 @@ export function buildReturnStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReturnStatement.Bound;
 }
@@ -1578,7 +1607,8 @@ export function buildThrowStatement(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ThrowStatement.Bound;
 }
@@ -1619,7 +1649,8 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LabeledStatement.Bound;
 }
@@ -1651,7 +1682,8 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchBody.Bound;
 }
@@ -1692,7 +1724,8 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchCase.Bound;
 }
@@ -1722,7 +1755,8 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SwitchDefault.Bound;
 }
@@ -1804,7 +1838,8 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CatchClause.Bound;
 }
@@ -1857,7 +1892,8 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FinallyClause.Bound;
 }
@@ -1891,7 +1927,8 @@ export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.YieldExpression.Bound;
 }
@@ -1942,7 +1979,8 @@ export function buildObject(
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Object.Bound;
 }
@@ -1993,7 +2031,8 @@ export function buildObjectPattern(
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectPattern.Bound;
 }
@@ -2034,7 +2073,8 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssignmentPattern.Bound;
 }
@@ -2093,7 +2133,8 @@ export function buildObjectAssignmentPattern(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectAssignmentPattern.Bound;
 }
@@ -2125,7 +2166,8 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Array.Bound;
 }
@@ -2157,7 +2199,8 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrayPattern.Bound;
 }
@@ -2203,7 +2246,8 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NestedIdentifier.Bound;
 }
@@ -2283,7 +2327,8 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Class.Bound;
 }
@@ -2379,7 +2424,8 @@ export function buildClassDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassDeclaration.Bound;
 }
@@ -2410,7 +2456,8 @@ export function buildClassHeritage(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassHeritage.Bound;
 }
@@ -2499,7 +2546,8 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionExpression.Bound;
 }
@@ -2601,7 +2649,8 @@ export function buildFunctionDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionDeclaration.Bound;
 }
@@ -2690,7 +2739,8 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GeneratorFunction.Bound;
 }
@@ -2793,7 +2843,8 @@ export function buildGeneratorFunctionDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GeneratorFunctionDeclaration.Bound;
 }
@@ -2839,7 +2890,8 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrowFunction.Bound;
 }
@@ -2904,7 +2956,8 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NewExpression.Bound;
 }
@@ -2937,7 +2990,8 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AwaitExpression.Bound;
 }
@@ -2993,7 +3047,8 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MemberExpression.Bound;
 }
@@ -3047,7 +3102,8 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SubscriptExpression.Bound;
 }
@@ -3115,7 +3171,8 @@ export function buildLhsExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LhsExpression.Bound;
 }
@@ -3164,7 +3221,8 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssignmentExpression.Bound;
 }
@@ -3223,7 +3281,8 @@ export function buildAugmentedAssignmentExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AugmentedAssignmentExpression.Bound;
 }
@@ -3256,7 +3315,8 @@ export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SpreadElement.Bound;
 }
@@ -3323,7 +3383,8 @@ export function buildTernaryExpression(config: T.TernaryExpression.Config): T.Te
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TernaryExpression.Bound;
 }
@@ -3391,7 +3452,8 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BinaryExpression.Bound;
 }
@@ -3431,7 +3493,8 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnaryExpression.Bound;
 }
@@ -3466,7 +3529,8 @@ export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expre
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SequenceExpression.Bound;
 }
@@ -3490,7 +3554,8 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnescapedDoubleStringFragment.Bound;
 }
@@ -3514,7 +3579,8 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnescapedSingleStringFragment.Bound;
 }
@@ -3551,7 +3617,8 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EscapeSequence.Bound;
 }
@@ -3583,7 +3650,8 @@ export function buildTemplateString(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateString.Bound;
 }
@@ -3619,7 +3687,8 @@ export function buildTemplateSubstitution(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateSubstitution.Bound;
 }
@@ -3652,7 +3721,8 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Regex.Bound;
 }
@@ -3675,7 +3745,8 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RegexPattern.Bound;
 }
@@ -3698,7 +3769,8 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RegexFlags.Bound;
 }
@@ -3721,7 +3793,8 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Identifier.Bound;
 }
@@ -3744,7 +3817,8 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Identifier.Bound;
 }
@@ -3784,7 +3858,8 @@ export function buildPrivatePropertyIdentifier(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PrivatePropertyIdentifier.Bound;
 }
@@ -3833,7 +3908,8 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Arguments.Bound;
 }
@@ -3871,7 +3947,8 @@ export function buildDecorator(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Decorator.Bound;
 }
@@ -3930,7 +4007,8 @@ export function buildDecoratorMemberExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorMemberExpression.Bound;
 }
@@ -3995,7 +4073,8 @@ export function buildDecoratorCallExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorCallExpression.Bound;
 }
@@ -4027,7 +4106,8 @@ export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.Class
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBody.Bound;
 }
@@ -4060,7 +4140,8 @@ export function buildFormalParameters(
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParameters.Bound;
 }
@@ -4121,7 +4202,8 @@ function _buildClassStaticBlock(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassStaticBlock.Bound;
 }
@@ -4202,7 +4284,8 @@ export function buildRestPattern(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RestPattern.Bound;
 }
@@ -4253,7 +4336,8 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Pair.Bound;
 }
@@ -4300,7 +4384,8 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PairPattern.Bound;
 }
@@ -4334,7 +4419,8 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ComputedPropertyName.Bound;
 }
@@ -4368,7 +4454,8 @@ export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExp
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NonNullExpression.Bound;
 }
@@ -4459,7 +4546,8 @@ export function buildFunctionSignature(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionSignature.Bound;
 }
@@ -4495,7 +4583,8 @@ export function buildDecoratorParenthesizedExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DecoratorParenthesizedExpression.Bound;
 }
@@ -4545,7 +4634,8 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAssertion.Bound;
 }
@@ -4594,7 +4684,8 @@ export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AsExpression.Bound;
 }
@@ -4645,7 +4736,8 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SatisfiesExpression.Bound;
 }
@@ -4700,7 +4792,8 @@ export function buildInstantiationExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InstantiationExpression.Bound;
 }
@@ -4743,7 +4836,8 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportRequireClause.Bound;
 }
@@ -4773,7 +4867,8 @@ export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsCla
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsClause.Bound;
 }
@@ -4823,7 +4918,8 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsClauseSingle.Bound;
 }
@@ -4858,7 +4954,8 @@ export function buildImplementsClause(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImplementsClause.Bound;
 }
@@ -4889,7 +4986,8 @@ export function buildAmbientDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclaration.Bound;
 }
@@ -4979,7 +5077,8 @@ export function buildAbstractClassDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractClassDeclaration.Bound;
 }
@@ -5013,7 +5112,8 @@ export function buildModule(config: T.Module.Config): T.Module.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Module.Bound;
 }
@@ -5054,7 +5154,8 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InternalModule.Bound;
 }
@@ -5112,7 +5213,8 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportAlias.Bound;
 }
@@ -5158,7 +5260,8 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NestedTypeIdentifier.Bound;
 }
@@ -5226,7 +5329,8 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceDeclaration.Bound;
 }
@@ -5266,7 +5370,8 @@ export function buildExtendsTypeClause(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExtendsTypeClause.Bound;
 }
@@ -5318,7 +5423,8 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumDeclaration.Bound;
 }
@@ -5411,7 +5517,8 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.EnumBody.Bound;
@@ -5464,7 +5571,8 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumAssignment.Bound;
 }
@@ -5547,7 +5655,8 @@ export function buildTypeAliasDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAliasDeclaration.Bound;
 }
@@ -5633,7 +5742,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RequiredParameter.Bound;
 }
@@ -5717,7 +5827,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalParameter.Bound;
 }
@@ -5756,7 +5867,8 @@ export function buildOmittingTypeAnnotation(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OmittingTypeAnnotation.Bound;
 }
@@ -5793,7 +5905,8 @@ export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AddingTypeAnnotation.Bound;
 }
@@ -5830,7 +5943,8 @@ export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptingTypeAnnotation.Bound;
 }
@@ -5867,7 +5981,8 @@ export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeAnnotation.Bound;
 }
@@ -5919,7 +6034,8 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryMemberExpressionInTypeAnnotation.Bound;
 }
@@ -5966,7 +6082,8 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Bound;
 }
@@ -6002,7 +6119,8 @@ export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKin
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Asserts.Bound;
 }
@@ -6048,7 +6166,8 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AssertsAnnotation.Bound;
 }
@@ -6089,7 +6208,8 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TupleParameter.Bound;
 }
@@ -6132,7 +6252,8 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalTupleParameter.Bound;
 }
@@ -6169,7 +6290,8 @@ export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.OptionalType.Bound;
 }
@@ -6206,7 +6328,8 @@ export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.RestType.Bound;
 }
@@ -6278,7 +6401,8 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructorType.Bound;
 }
@@ -6317,7 +6441,8 @@ export function buildTemplateType(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateType.Bound;
 }
@@ -6349,7 +6474,8 @@ export function buildTemplateLiteralType(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateLiteralType.Bound;
 }
@@ -6396,7 +6522,8 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InferType.Bound;
 }
@@ -6487,7 +6614,8 @@ export function buildConditionalType(config: T.ConditionalType.Config): T.Condit
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConditionalType.Bound;
 }
@@ -6534,7 +6662,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GenericType.Bound;
 }
@@ -6588,7 +6717,8 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypePredicate.Bound;
 }
@@ -6640,7 +6770,8 @@ function _buildTypePredicateAnnotation(value: Admit<T.TypePredicate>): T.TypePre
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypePredicateAnnotation.Bound;
 }
@@ -6704,7 +6835,8 @@ export function buildTypeQueryMemberExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryMemberExpression.Bound;
 }
@@ -6764,7 +6896,8 @@ export function buildTypeQuerySubscriptExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQuerySubscriptExpression.Bound;
 }
@@ -6815,7 +6948,8 @@ export function buildTypeQueryCallExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryCallExpression.Bound;
 }
@@ -6879,7 +7013,8 @@ export function buildTypeQueryInstantiationExpression(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQueryInstantiationExpression.Bound;
 }
@@ -6944,7 +7079,8 @@ export function buildTypeQuery(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeQuery.Bound;
 }
@@ -6981,7 +7117,8 @@ export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifie
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexTypeQuery.Bound;
 }
@@ -7033,7 +7170,8 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LookupType.Bound;
 }
@@ -7096,7 +7234,8 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MappedTypeClause.Bound;
 }
@@ -7154,7 +7293,8 @@ export function buildLiteralType(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LiteralType.Bound;
 }
@@ -7193,7 +7333,8 @@ export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FlowMaybeType.Bound;
 }
@@ -7230,7 +7371,8 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedType.Bound;
 }
@@ -7321,7 +7463,8 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeArguments.Bound;
@@ -7369,7 +7512,8 @@ export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectType.Bound;
 }
@@ -7406,7 +7550,8 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectType.Curly.Bound;
 }
@@ -7443,7 +7588,8 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ObjectType.Flow.Bound;
 }
@@ -7501,7 +7647,8 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallSignature.Bound;
 }
@@ -7584,7 +7731,8 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PropertySignature.Bound;
 }
@@ -7679,7 +7827,8 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameters.Bound;
@@ -7733,7 +7882,8 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeParameter.Bound;
 }
@@ -7770,7 +7920,8 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.DefaultType.Bound;
 }
@@ -7813,7 +7964,8 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.Constraint.Bound;
 }
@@ -7877,7 +8029,8 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructSignature.Bound;
 }
@@ -7914,7 +8067,8 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrayType.Bound;
 }
@@ -8013,7 +8167,8 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TupleType.Bound;
@@ -8051,7 +8206,8 @@ export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReadonlyType.Bound;
 }
@@ -8103,7 +8259,8 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UnionType.Bound;
 }
@@ -8155,7 +8312,8 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IntersectionType.Bound;
 }
@@ -8221,7 +8379,8 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FunctionType.Bound;
 }
@@ -8327,7 +8486,8 @@ function _buildExportSpecifiers(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, elements, buildExportSpecifiers$wrapper);
 	return node as unknown as T.ExportSpecifiers.Bound;
@@ -8416,7 +8576,8 @@ function _buildImportSpecifiers(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportSpecifiers.Bound;
@@ -8509,7 +8670,8 @@ function _buildFormalParametersElements(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.FormalParametersElements.Bound;
@@ -8554,7 +8716,8 @@ export function buildEnumBodyElementName(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.EnumBodyElementName.Bound;
 }
@@ -8642,7 +8805,8 @@ function _buildEnumBodyElements(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.EnumBodyElements.Bound;
@@ -8735,7 +8899,8 @@ function _buildTypes(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
@@ -8842,7 +9007,8 @@ function _buildTypeParametersElements(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, elements, buildTypeParametersElements$wrapper);
 	return node as unknown as T.TypeParametersElements.Bound;
@@ -8951,7 +9117,8 @@ function _buildTupleTypeMembers(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleTypeMembers.Bound;
@@ -8981,7 +9148,8 @@ export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedI
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClauseGroup.Bound;
 }
@@ -9026,7 +9194,8 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CatchClauseGroup.Bound;
 }
@@ -9058,7 +9227,8 @@ export function buildGetAccessorSignature(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.GetAccessorSignature.Bound;
 }
@@ -9115,7 +9285,8 @@ function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.Ambie
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclarationGlobal.Bound;
 }
@@ -9182,7 +9353,8 @@ export function buildAmbientDeclarationModule(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AmbientDeclarationModule.Bound;
 }
@@ -9345,7 +9517,8 @@ function _buildObjectTypeContent(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ObjectTypeContent.Bound;
@@ -9393,7 +9566,8 @@ export function buildExportStatementNamespaceExport(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementNamespaceExport.Bound;
 }
@@ -9440,7 +9614,8 @@ export function buildExportStatementEqualsExport(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementEqualsExport.Bound;
 }
@@ -9473,7 +9648,8 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CommentLine.Bound;
 }
@@ -9506,7 +9682,8 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
 	return node as unknown as T.CommentBlock.Bound;
@@ -9535,7 +9712,8 @@ export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.Litera
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.LiteralTypeNegativeNumber.Bound;
 }
@@ -9580,7 +9758,8 @@ export function buildNumberHex(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberHex.Bound;
 }
@@ -9688,7 +9867,8 @@ export function buildNumberFloatPoint(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatPoint.Bound;
 }
@@ -9776,7 +9956,8 @@ export function buildNumberFloatLeadingPoint(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatLeadingPoint.Bound;
 }
@@ -9861,7 +10042,8 @@ export function buildNumberFloatScientific(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberFloatScientific.Bound;
 }
@@ -9888,7 +10070,8 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberDecimal.Bound;
 }
@@ -9934,7 +10117,8 @@ export function buildNumberBinary(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBinary.Bound;
 }
@@ -9980,7 +10164,8 @@ export function buildNumberOctal(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberOctal.Bound;
 }
@@ -10020,7 +10205,8 @@ export function buildNumberBigintHex(input: string | number | bigint, affix: boo
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintHex.Bound;
 }
@@ -10063,7 +10249,8 @@ export function buildNumberBigintBinary(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintBinary.Bound;
 }
@@ -10106,7 +10293,8 @@ export function buildNumberBigintOctal(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintOctal.Bound;
 }
@@ -10149,7 +10337,8 @@ export function buildNumberBigintDecimal(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.NumberBigintDecimal.Bound;
 }
@@ -10197,7 +10386,8 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.BinaryExpressionIn.Bound;
 }
@@ -10259,7 +10449,8 @@ export function buildClassBodyMemberMethod(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberMethod.Bound;
 }
@@ -10302,7 +10493,8 @@ export function buildClassBodyMemberMethodSig(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 }
@@ -10344,7 +10536,8 @@ export function buildClassBodyMemberDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 }
@@ -10419,7 +10612,8 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexSignatureColon.Bound;
 }
@@ -10479,7 +10673,8 @@ export function buildIndexSignatureMappedTypeClause(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.IndexSignatureMappedTypeClause.Bound;
 }
@@ -10520,7 +10715,8 @@ export function buildImportStatementClauseFrom(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportStatementClauseFrom.Bound;
 }
@@ -10554,7 +10750,8 @@ export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.Yiel
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.YieldExpressionDelegate.Bound;
 }
@@ -10596,7 +10793,8 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportSpecifierName.Bound;
 }
@@ -10653,7 +10851,8 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportSpecifierAs.Bound;
 }
@@ -10699,7 +10898,8 @@ export function buildParenthesizedExpressionTyped(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedExpressionTyped.Bound;
 }
@@ -10753,7 +10953,8 @@ function _buildParenthesizedExpressionSequence(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ParenthesizedExpressionSequence.Bound;
 }
@@ -10816,7 +11017,8 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionCall.Bound;
 }
@@ -10862,7 +11064,8 @@ export function buildCallExpressionTemplateCall(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionTemplateCall.Bound;
 }
@@ -10925,7 +11128,8 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.CallExpressionMember.Bound;
 }
@@ -10957,7 +11161,8 @@ export function buildStringDouble(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StringDouble.Bound;
 }
@@ -10989,7 +11194,8 @@ export function buildStringSingle(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StringSingle.Bound;
 }
@@ -11032,7 +11238,8 @@ export function buildUpdateExpressionPostfix(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UpdateExpressionPostfix.Bound;
 }
@@ -11073,7 +11280,8 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.UpdateExpressionPrefix.Bound;
 }
@@ -11106,7 +11314,8 @@ export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.Arrow
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ArrowFunctionParameter.Bound;
 }
@@ -11153,7 +11362,8 @@ export function buildClassHeritageExtendsClause(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ClassHeritageExtendsClause.Bound;
 }
@@ -11205,7 +11415,8 @@ export function buildImportClauseDefaultImport(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ImportClauseDefaultImport.Bound;
 }
@@ -11262,7 +11473,8 @@ export function buildExportStatementDefaultFrom(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFrom.Bound;
 }
@@ -11310,7 +11522,8 @@ export function buildExportStatementDefaultDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclaration.Bound;
 }
@@ -11340,7 +11553,8 @@ export function buildExportStatementDefaultFromStarFrom(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromStarFrom.Bound;
 }
@@ -11387,7 +11601,8 @@ export function buildExportStatementDefaultFromNsFrom(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromNsFrom.Bound;
 }
@@ -11441,7 +11656,8 @@ export function buildExportStatementDefaultFromClauseFrom(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
 }
@@ -11473,7 +11689,8 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKw.Bound;
 }
@@ -11524,7 +11741,8 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKwValue.Bound;
 }
@@ -11581,7 +11799,8 @@ export function buildVariableDeclaratorPlain(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaratorPlain.Bound;
 }
@@ -11626,7 +11845,8 @@ export function buildVariableDeclaratorDefinite(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.VariableDeclaratorDefinite.Bound;
 }
@@ -11677,7 +11897,8 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderLhs.Bound;
 }
@@ -11742,7 +11963,8 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderVarKind.Bound;
 }
@@ -11819,7 +12041,8 @@ export function buildForHeaderLetConstKind(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderLetConstKind.Bound;
 }
@@ -11889,7 +12112,8 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ForHeaderUsingKind.Bound;
 }
@@ -11951,7 +12175,8 @@ function _buildFormalParametersSetAccessorSignature(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersSetAccessorSignature.Bound;
 }
@@ -12011,7 +12236,8 @@ function _buildFormalParametersElementsSetAccessorSignature(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 }
@@ -12080,7 +12306,8 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.SetterParameter.Bound;
 }
@@ -12213,7 +12440,8 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionPlain.Bound;
 }
@@ -12293,7 +12521,8 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionGetter.Bound;
 }
@@ -12376,7 +12605,8 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodDefinitionSetter.Bound;
 }
@@ -12496,7 +12726,8 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignaturePlain.Bound;
 }
@@ -12569,7 +12800,8 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignatureGetter.Bound;
 }
@@ -12642,7 +12874,8 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.MethodSignatureSetter.Bound;
 }
@@ -12752,7 +12985,8 @@ export function buildAbstractMethodSignaturePlain(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignaturePlain.Bound;
 }
@@ -12827,7 +13061,8 @@ export function buildAbstractMethodSignatureGetter(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 }
@@ -12902,7 +13137,8 @@ export function buildAbstractMethodSignatureSetter(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.AbstractMethodSignatureSetter.Bound;
 }
@@ -13031,7 +13267,8 @@ export function buildPublicFieldDefinitionPlain(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PublicFieldDefinitionPlain.Bound;
 }
@@ -13142,7 +13379,8 @@ export function buildPublicFieldDefinitionAccessor(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
 }
@@ -13161,7 +13399,8 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.HtmlComment.Bound;
 }
@@ -13184,7 +13423,8 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.JsxText.Bound;
 }
@@ -13207,7 +13447,8 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TemplateChars.Bound;
 }
@@ -13280,7 +13521,8 @@ export function buildConstructorDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ConstructorDeclaration.Bound;
 }
@@ -13362,7 +13604,8 @@ export function buildReceiverParameterDeclaration(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ReceiverParameterDeclaration.Bound;
 }
@@ -13421,7 +13664,8 @@ export function buildFormalParametersElementsReceiver(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.FormalParametersElementsReceiver.Bound;
 }
@@ -13522,7 +13766,8 @@ function _buildFormalParametersElementsReceiverGroup(
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.FormalParametersElementsReceiverGroup.Bound;
@@ -13544,7 +13789,8 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TernaryQmark.Bound;
 }
@@ -13565,7 +13811,8 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ErrorRecovery.Bound;
 }
@@ -13598,7 +13845,8 @@ export function buildStatementIdentifier(value: Admit<T.Identifier>): T.Statemen
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.StatementIdentifier.Bound;
 }
@@ -13631,7 +13879,8 @@ export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ShorthandPropertyIdentifier.Bound;
 }
@@ -13667,7 +13916,8 @@ export function buildShorthandPropertyIdentifierPattern(
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.ShorthandPropertyIdentifierPattern.Bound;
 }
@@ -13695,7 +13945,8 @@ export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.Pr
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.PropertyIdentifier.Bound;
 }
@@ -13739,7 +13990,8 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.TypeIdentifier.Bound;
 }
@@ -13786,7 +14038,8 @@ export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.Interfa
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceBody.Bound;
 }
@@ -13823,7 +14076,8 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceBody.Curly.Bound;
 }
@@ -13860,7 +14114,8 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
 		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
 	};
 	return node as unknown as T.InterfaceBody.Flow.Bound;
 }
