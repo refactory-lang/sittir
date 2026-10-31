@@ -101,15 +101,27 @@ pub trait EngineGrammar: Copy {
     }
 }
 
-/// The node at descendant `index` of `tree`, or `None` past its last node.
+/// Whether descendant `index` names a node of `tree`.
 #[must_use]
-pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_sitter::Node<'_>> {
-    if index.index() >= crate::read::descendant_count(&tree.root_node()) as usize {
+pub fn names_node(tree: &tree_sitter::Tree, index: NodeIndex) -> bool {
+    index.index() < crate::read::descendant_count(&tree.root_node()) as usize
+}
+
+/// A cursor on the node at descendant `index` of `tree`, moved there once,
+/// or `None` past its last node.
+fn cursor_at(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_sitter::TreeCursor<'_>> {
+    if !names_node(tree, index) {
         return None;
     }
     let mut cursor = tree.walk();
     crate::read::goto(&mut cursor, index);
-    Some(cursor.node())
+    Some(cursor)
+}
+
+/// The node at descendant `index` of `tree`, or `None` past its last node.
+#[must_use]
+pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_sitter::Node<'_>> {
+    cursor_at(tree, index).map(|cursor| cursor.node())
 }
 
 /// The coordinate a read of `tree` names the node at descendant `index` by
@@ -122,22 +134,21 @@ pub fn row_coordinate(tree: &tree_sitter::Tree, read: &crate::read::ReadCtx<'_>,
     node_at_index(tree, index).map(|node| read.coordinate(&node, index))
 }
 
-/// The index of the outermost `ERROR` that is or holds the node at `index`,
-/// or `None` when none does. A tree whose root holds no error answers at
-/// once; otherwise the cursor goes to the node and climbs its ancestors, so
+/// The outermost `ERROR` that is or holds the node `cursor` is on, with its
+/// index, or `None` when none does. A tree whose root holds no error answers
+/// at once; otherwise a copy of the cursor climbs the node's ancestors, so
 /// the cost follows the node's depth, not how many siblings precede it.
-fn error_holding(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<NodeIndex> {
+fn error_holding<'t>(tree: &'t tree_sitter::Tree, cursor: &tree_sitter::TreeCursor<'t>) -> Option<(NodeIndex, tree_sitter::Node<'t>)> {
     if !tree.root_node().has_error() {
         return None;
     }
-    let mut cursor = tree.walk();
-    crate::read::goto(&mut cursor, index);
+    let mut up = cursor.clone();
     let mut outermost = None;
     loop {
-        if cursor.node().is_error() {
-            outermost = Some(crate::read::index_of(&cursor));
+        if up.node().is_error() {
+            outermost = Some((crate::read::index_of(&up), up.node()));
         }
-        if !cursor.goto_parent() {
+        if !up.goto_parent() {
             return outermost;
         }
     }
@@ -485,6 +496,14 @@ impl<G: EngineGrammar> Drop for ParsedTree<G> {
 /// answers, or the error its read or render refused with.
 type Record = Arc<Result<crate::baseline::Baseline, String>>;
 
+/// What a read of a node by its index answers (`ParsedTree::read_node`):
+/// the node, or, when an `ERROR` holds it, that `ERROR`.
+#[derive(Debug, Clone, PartialEq)]
+pub enum NodeRead<T> {
+    Node(T),
+    Error(crate::ErrorRead),
+}
+
 /// A node's list slots as its tree measures them (`ParsedTree::node_slots`):
 /// each slot's stored layout, and the slot and side of each run that lies in
 /// one of its gaps, by the run's place among the table's runs.
@@ -646,23 +665,57 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// interior is trivia of its tree, so a node in it is no typed node: it
     /// reads as the outermost `ERROR` it lies in, itself included.
     pub fn read_error(&self, index: crate::types::NodeIndex) -> Option<crate::ErrorRead> {
-        self.error_at(error_holding(&self.tree, index)?, &self.read_ctx())
+        if !self.tree.root_node().has_error() {
+            return None;
+        }
+        let (error, node) = error_holding(&self.tree, &cursor_at(&self.tree, index)?)?;
+        Some(self.error_at(error, node, &self.read_ctx()))
     }
 
     /// The `ERROR` holding the node at `index` (`read_error`) as `snapshot`
     /// reads one: its bytes and its span from the byte `holder`, or `None`
     /// when no `ERROR` holds it.
     pub fn snapshot_error(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<crate::ErrorRead> {
-        let error = error_holding(&self.tree, index)?;
-        let measure = self.snapshot_measure(error, holder);
-        self.error_at(error, &self.read_ctx().snapshot(measure))
+        if !self.tree.root_node().has_error() {
+            return None;
+        }
+        let (error, node) = error_holding(&self.tree, &cursor_at(&self.tree, index)?)?;
+        Some(self.snapshot_error_at(error, node, holder))
     }
 
-    fn error_at(&self, index: crate::types::NodeIndex, ctx: &crate::read::ReadCtx<'_>) -> Option<crate::ErrorRead> {
-        let node = node_at_index(&self.tree, index)?;
+    /// The node at `index` read into `T`, `depth` levels down, seating no
+    /// sides, or, when an `ERROR` holds it, that `ERROR` as `read_error`
+    /// reads it: one cursor, moved to the node once, answers both. `None`
+    /// past the tree's last node.
+    pub fn read_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
+        let mut cursor = cursor_at(&self.tree, index)?;
+        let mut ctx = self.read_ctx();
+        if let Some((error, node)) = error_holding(&self.tree, &cursor) {
+            return Some(Ok(NodeRead::Error(self.error_at(error, node, &ctx))));
+        }
+        Some(T::read(&mut cursor, &mut ctx, depth).map(NodeRead::Node))
+    }
+
+    /// A snapshot of the node at `index` (`snapshot`), or, when an `ERROR`
+    /// holds it, that `ERROR` as `snapshot_error` reads it: one cursor, moved
+    /// to the node once, answers both. `None` past the tree's last node.
+    pub fn snapshot_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
+        let mut cursor = cursor_at(&self.tree, index)?;
+        if let Some((error, node)) = error_holding(&self.tree, &cursor) {
+            return Some(Ok(NodeRead::Error(self.snapshot_error_at(error, node, holder))));
+        }
+        Some(self.snapshot_from(&mut cursor, index, holder).map(NodeRead::Node))
+    }
+
+    fn snapshot_error_at(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, holder: Option<u32>) -> crate::ErrorRead {
+        let measure = self.snapshot_measure(index, node, holder);
+        self.error_at(index, node, &self.read_ctx().snapshot(measure))
+    }
+
+    fn error_at(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, ctx: &crate::read::ReadCtx<'_>) -> crate::ErrorRead {
         let at = ctx.coordinate(&node, index);
         let text = self.source[at.span.range()].to_owned();
-        Some(crate::ErrorRead { text, kind: at.kind, at: ctx.origin(&node, index) })
+        crate::ErrorRead { text, kind: at.kind, at: ctx.origin(&node, index) }
     }
 
     pub(crate) fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
@@ -699,9 +752,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// What a snapshot of the node at `index` measures with: from the byte
     /// `holder`, or from the node's own start when it has none. The root has
     /// no holder and starts the source.
-    fn snapshot_measure(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> crate::read::SnapshotCtx<'_> {
-        let own = || node_at_index(&self.tree, index).filter(|_| index != NodeIndex::ROOT).map(|node| Span::of(&node).start);
-        crate::read::SnapshotCtx::new(self.lines(), holder.or_else(own), index)
+    fn snapshot_measure(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, holder: Option<u32>) -> crate::read::SnapshotCtx<'_> {
+        let own = (index != NodeIndex::ROOT).then(|| Span::of(&node).start);
+        crate::read::SnapshotCtx::new(self.lines(), holder.or(own), index)
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
@@ -709,8 +762,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// its sides with its text, and the node itself measured from the byte
     /// `holder`, or from its own start when absent.
     pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
-        let measure = self.snapshot_measure(index, holder);
-        crate::read::read_at::<T>(&mut self.tree.walk(), &mut self.seating_ctx().snapshot(measure), index, crate::read::Depth::All)
+        let mut cursor = self.tree.walk();
+        crate::read::goto(&mut cursor, index);
+        self.snapshot_from(&mut cursor, index, holder)
+    }
+
+    fn snapshot_from<T: crate::read::ReadNode>(&self, cursor: &mut tree_sitter::TreeCursor<'_>, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+        let measure = self.snapshot_measure(index, cursor.node(), holder);
+        T::read(cursor, &mut self.seating_ctx().snapshot(measure), crate::read::Depth::All)
     }
 
     /// Reject a handle minted by a different tree.
@@ -2246,8 +2305,11 @@ mod tests {
                     }
                     at = node.parent();
                 }
-                let found = error_holding(tree.tree(), index).and_then(|error| node_at_index(tree.tree(), error)).map(|node| node.id());
-                assert_eq!(found, outermost, "{source:?} at {index:?}");
+                let found = cursor_at(tree.tree(), index).and_then(|cursor| error_holding(tree.tree(), &cursor));
+                if let Some((error, node)) = found {
+                    assert_eq!(node_at_index(tree.tree(), error).map(|at| at.id()), Some(node.id()), "{source:?} at {index:?}: the index names the ERROR");
+                }
+                assert_eq!(found.map(|(_, node)| node.id()), outermost, "{source:?} at {index:?}");
             }
         }
     }
