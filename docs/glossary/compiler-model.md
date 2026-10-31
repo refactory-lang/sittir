@@ -6123,6 +6123,38 @@ Renders a regular expression as a source literal.
 
 Whether a node or terminal value is fixed text.
 
+### `packages/codegen/src/compiler/model/node-map.ts::suppliesNoContent`
+
+Whether a built node has no content to supply: a compound with no slots, or a builder text leaf. Such a kind's factory takes no argument.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
 Whether a render rule has a seam at the first or last edge of its arms.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
+
+The value class a slot's low-level accessor belongs to: `boolean` for a boolean slot, `flags` for a bitflag slot, `list` for a multiple slot, `choice` for a kind enum or text enum, and `single` otherwise.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorClassClashes`
+
+The accessor names that hold more than one value class across the user-facing nodes, each with its classes and the kinds that hold each class. A single slot and a list under one name are the one sanctioned pair, so `isNodePair` leaves that name out.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorClassDiagnostics`
+
+One `accessor-class-clash` warning per clashing accessor name, with the classes and the kinds that hold them, for the grammar's emit diagnostics. It is a warning, not an error, so an upstream grammar still emits.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorValueClass`
+
+The value classes an accessor can hold: `boolean`, `flags`, `choice`, `single` and `list`.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash`
+
+An accessor name that holds more than one value class, with each class and the kinds that hold it.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash::name`
+
+The accessor name that holds more than one value class.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash::classes`
+
+The value classes the name holds, each with the kinds that hold it.
