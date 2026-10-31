@@ -1691,7 +1691,7 @@ What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface
 `{ grammar, ruleNames }`: one evaluated stage. The grammar is an `EvaluatedGrammar` until the compile boundary
 canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
-### `packages/codegen/src/compiler/types.ts::derivationRecords`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::derivationRecords`
 
 The conflict-derivation records the layer pass recorded
 (`dsl/wire/derivation-records.ts::DerivationRecords`), carried from evaluation
@@ -4548,19 +4548,19 @@ under an alias reads both. `collectGeneratedKindEntries` carries it onto
 
 The symbol's position in the grammar's lexical precedence order (`collectLexicalRanks`). The generated catalog copies it onto `GeneratedKindEntry`, and the from emitter orders `_TEXT_KINDS_BY_RANK` by it.
 
-### `packages/codegen/src/compiler/types.ts::presence`
+### `packages/codegen/src/compiler/types.ts::GeneratedMetadata::presence`
 
 ```text
 /** Presence bitfield (`TSGrammar | TSNodeTypes | TSInternals`). */
 ```
 
-### `packages/codegen/src/compiler/types.ts::uses`
+### `packages/codegen/src/compiler/types.ts::GeneratedMetadata::uses`
 
 ```text
 /** Use bitfield (`Readable | Buildable | Renderable`). */
 ```
 
-### `packages/codegen/src/compiler/types.ts::parser`
+### `packages/codegen/src/compiler/types.ts::GeneratedMetadata::parser`
 
 ```text
 /** Parser-origin metadata; absent when the kind has no parser symbol. */
@@ -4594,7 +4594,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::groups`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::groups`
 
 ```text
 /**
@@ -4606,7 +4606,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::renderAs`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::renderAs`
 
 ```text
 /**
@@ -4622,7 +4622,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::visibleExternals`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::visibleExternals`
 
 ```text
 /**
@@ -4641,7 +4641,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::expectDiagnostics`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::expectDiagnostics`
 
 ```text
 /**
@@ -4657,7 +4657,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::expectTestFailures`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::expectTestFailures`
 
 ```text
 /**
@@ -4669,15 +4669,15 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::orphanedSyntheticGroups`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::orphanedSyntheticGroups`
 
 The rules enrich added that the wired grammar never reaches: the dead mints the layer passes blanked (`dsl/layer.ts::completeLayer`), read from the top layer's record. The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
 
-### `packages/codegen/src/compiler/types.ts::textTokens`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::textTokens`
 
 The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible rule holding one inline pattern or token that the parser would otherwise report as an anonymous auxiliary token. `spliceTextLeaves` reads it.
 
-### `packages/codegen/src/compiler/types.ts::bodyPatternZeroMatches`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::bodyPatternZeroMatches`
 
 ```text
 /**
@@ -4776,7 +4776,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::automaticVariants`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::automaticVariants`
 
 The automatic-variant record of the wire run that evaluated the grammar, the top layer's from its record or a
 stage's own, so link can tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
@@ -4812,7 +4812,7 @@ grammar no wire ran over; then no label is automatic.
  *  no kind adopts variants. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::contentAliasedFrom`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::contentAliasedFrom`
 
 ```text
 /**
@@ -4994,7 +4994,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/types.ts::nodeByRuleId`
+### `packages/codegen/src/compiler/types.ts::NodeMap::nodeByRuleId`
 
 ```text
 /**
@@ -5005,7 +5005,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::nodeByKindId`
+### `packages/codegen/src/compiler/types.ts::NodeMap::nodeByKindId`
 
 ```text
 /**
@@ -5020,7 +5020,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::slotByRuleId`
+### `packages/codegen/src/compiler/types.ts::NodeMap::slotByRuleId`
 
 ```text
 /**
@@ -5099,7 +5099,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::scc`
+### `packages/codegen/src/compiler/types.ts::NodeMap::scc`
 
 ```text
 /**
