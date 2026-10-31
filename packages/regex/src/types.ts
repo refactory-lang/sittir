@@ -582,7 +582,7 @@ export interface LookaroundAssertion {
 
 export interface LookaheadAssertion {
 	readonly $type: TSKindId.LookaheadAssertion;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Eq | TSKindId.Bang;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -598,13 +598,13 @@ export interface LookaheadAssertion {
 		readonly operator: SlotHint<NonNullable<T.LookaheadAssertion.Config>['operator']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
 	readonly pattern: () => Pattern;
 }
 
 export interface LookbehindAssertion {
 	readonly $type: TSKindId.LookbehindAssertion;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Eq | TSKindId.Bang;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -620,7 +620,7 @@ export interface LookbehindAssertion {
 		readonly operator: SlotHint<NonNullable<T.LookbehindAssertion.Config>['operator']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
 	readonly pattern: () => Pattern;
 }
 
@@ -734,7 +734,7 @@ export interface AnonymousCapturingGroup {
 
 export interface NamedCapturingGroup {
 	readonly $type: TSKindId.NamedCapturingGroup;
-	readonly _operator: number;
+	readonly _operator: TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt;
 	readonly _group_name: GroupName;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
@@ -753,7 +753,7 @@ export interface NamedCapturingGroup {
 		readonly groupName: SlotHint<T.GroupName>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt;
 	readonly groupName: () => GroupName;
 	readonly pattern: () => Pattern;
 }

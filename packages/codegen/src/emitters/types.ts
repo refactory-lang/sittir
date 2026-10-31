@@ -109,6 +109,7 @@ import {
 	type BuiltTypeSurface
 } from './factories.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -1188,7 +1189,8 @@ function storageFieldTypeExpr(
 		return 'number';
 	}
 	if (storageInfo.kind === 'kindEnum') {
-		return 'number';
+		const ids = enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries);
+		return hasBlankArm(f) ? `${ids} | ${BLANK_KIND_ID}` : ids;
 	}
 	if (storageInfo.kind === 'mixedEnum') {
 		return mixedEnumStorageTypeExpr(f, nodeMap, kindEntries) ?? typeExpr;

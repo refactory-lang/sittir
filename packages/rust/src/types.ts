@@ -3046,7 +3046,22 @@ export interface MacroRule {
 export interface TokenBindingPattern {
 	readonly $type: TSKindId.TokenBindingPattern;
 	readonly _name: Metavariable;
-	readonly _fragment: number;
+	readonly _fragment:
+		| TSKindId.BlockKeyword
+		| TSKindId.ExprKeyword
+		| TSKindId.Expr2021Keyword
+		| TSKindId.IdentKeyword
+		| TSKindId.ItemKeyword
+		| TSKindId.LifetimeKeyword
+		| TSKindId.LiteralKeyword
+		| TSKindId.MetaKeyword
+		| TSKindId.PatKeyword
+		| TSKindId.PatParamKeyword
+		| TSKindId.PathKeyword
+		| TSKindId.StmtKeyword
+		| TSKindId.TtKeyword
+		| TSKindId.TyKeyword
+		| TSKindId.VisKeyword;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _fragment: 'fragment';
@@ -3090,7 +3105,22 @@ export interface TokenBindingPattern {
 		readonly fragment: SlotHint<NonNullable<T.TokenBindingPattern.Config>['fragment']>;
 	};
 	readonly name: () => Metavariable;
-	readonly fragment: () => number;
+	readonly fragment: () =>
+		| TSKindId.BlockKeyword
+		| TSKindId.ExprKeyword
+		| TSKindId.Expr2021Keyword
+		| TSKindId.IdentKeyword
+		| TSKindId.ItemKeyword
+		| TSKindId.LifetimeKeyword
+		| TSKindId.LiteralKeyword
+		| TSKindId.MetaKeyword
+		| TSKindId.PatKeyword
+		| TSKindId.PatParamKeyword
+		| TSKindId.PathKeyword
+		| TSKindId.StmtKeyword
+		| TSKindId.TtKeyword
+		| TSKindId.TyKeyword
+		| TSKindId.VisKeyword;
 }
 
 export interface TokenRepetitionPattern {
@@ -3103,7 +3133,7 @@ export interface TokenRepetitionPattern {
 		| NonSpecialToken
 	)[];
 	readonly _separator?: TokenRepetitionPatternText;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Plus | TSKindId.Star | TSKindId.Qmark;
 	readonly __slotNames__?: {
 		readonly _token_patterns: 'tokenPatterns';
 		readonly _separator: 'separator';
@@ -3129,14 +3159,14 @@ export interface TokenRepetitionPattern {
 		| NonSpecialToken
 	)[];
 	readonly separator: () => TokenRepetitionPatternText | undefined;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Plus | TSKindId.Star | TSKindId.Qmark;
 }
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
 	readonly _tokens: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly _separator?: TokenRepetitionPatternText;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Plus | TSKindId.Star | TSKindId.Qmark;
 	readonly __slotNames__?: {
 		readonly _tokens: 'tokens';
 		readonly _separator: 'separator';
@@ -3152,7 +3182,7 @@ export interface TokenRepetition {
 	};
 	readonly tokens: () => readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly separator: () => TokenRepetitionPatternText | undefined;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Plus | TSKindId.Star | TSKindId.Qmark;
 }
 
 export interface NonSpecialToken {
@@ -6498,7 +6528,7 @@ export interface ScopedTypeIdentifier {
 
 export interface UnaryExpression {
 	readonly $type: TSKindId.UnaryExpression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Dash | TSKindId.Star | TSKindId.Bang;
 	readonly _argument: Expression;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -6514,7 +6544,7 @@ export interface UnaryExpression {
 		readonly operator: SlotHint<NonNullable<T.UnaryExpression.Config>['operator']>;
 		readonly argument: SlotHint<NonNullable<T.UnaryExpression.Config>['argument']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Dash | TSKindId.Star | TSKindId.Bang;
 	readonly argument: () => Expression;
 }
 
@@ -6538,7 +6568,25 @@ export interface TryExpression {
 export interface BinaryExpression {
 	readonly $type: TSKindId.BinaryExpression;
 	readonly _left: Expression;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.Caret
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.Gt
+		| TSKindId.GtEq
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent;
 	readonly _right: Expression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -6580,7 +6628,25 @@ export interface BinaryExpression {
 		readonly right: SlotHint<NonNullable<T.BinaryExpression.Config>['right']>;
 	};
 	readonly left: () => Expression;
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.Caret
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.Gt
+		| TSKindId.GtEq
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent;
 	readonly right: () => Expression;
 }
 
@@ -6611,7 +6677,17 @@ export interface AssignmentExpression {
 export interface CompoundAssignmentExpr {
 	readonly $type: TSKindId.CompoundAssignmentExpr;
 	readonly _left: Expression;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.CaretEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq;
 	readonly _right: Expression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -6645,7 +6721,17 @@ export interface CompoundAssignmentExpr {
 		readonly right: SlotHint<NonNullable<T.CompoundAssignmentExpr.Config>['right']>;
 	};
 	readonly left: () => Expression;
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.CaretEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq;
 	readonly right: () => Expression;
 }
 
@@ -7215,7 +7301,7 @@ export interface LastMatchArm {
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _match: MatchPattern;
 	readonly _body: Expression;
-	readonly _trailing_comma?: number;
+	readonly _trailing_comma?: TSKindId.Comma | 0;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
 		readonly _match: 'match';
@@ -9421,7 +9507,7 @@ export interface PointerTypeMut {
 export interface RangeExpressionBinary {
 	readonly $type: TSKindId.RangeExpressionBinary;
 	readonly _start: Expression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq;
 	readonly _end: Expression;
 	readonly __slotNames__?: {
 		readonly _start: 'start';
@@ -9443,7 +9529,7 @@ export interface RangeExpressionBinary {
 		readonly end: SlotHint<NonNullable<T.RangeExpressionBinary.Config>['end']>;
 	};
 	readonly start: () => Expression;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq;
 	readonly end: () => Expression;
 }
 
@@ -9991,7 +10077,7 @@ export interface MacroDefinitionBrace {
 
 export interface RangePatternPrefix {
 	readonly $type: TSKindId.RangePatternPrefix;
-	readonly _operator: number;
+	readonly _operator: TSKindId.DotDotEq | TSKindId.DotDot;
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10025,7 +10111,7 @@ export interface RangePatternPrefix {
 		readonly operator: SlotHint<NonNullable<T.RangePatternPrefix.Config>['operator']>;
 		readonly right: SlotHint<NonNullable<T.RangePatternPrefix.Config>['right']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.DotDotEq | TSKindId.DotDot;
 	readonly right: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10038,7 +10124,7 @@ export interface RangePatternPrefix {
 
 export interface RangePatternWithLeftWithRight {
 	readonly $type: TSKindId.RangePatternWithLeftWithRight;
-	readonly _operator: number;
+	readonly _operator: TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.SelfModule
@@ -10072,7 +10158,7 @@ export interface RangePatternWithLeftWithRight {
 		readonly operator: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>;
 		readonly right: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
 	readonly right: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
