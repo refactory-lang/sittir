@@ -16,11 +16,13 @@ import type {
 	BoundedQuantification,
 	Clause,
 	Declaration,
+	Elisions,
 	Expression,
 	File,
 	GrammarContext,
 	Identifier,
 	OptionalMembers,
+	Pattern,
 	ScopedVisibility,
 	Statement,
 	Type
@@ -239,4 +241,17 @@ export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, para
 // Typescript's `any` is the unchecked primitive, since `Any` names each namespace's union of its kinds, and the union holds it.
 export function unchecked<G extends GrammarContext<G>>(): Type.Primitive.Any<G> {
 	return { $kind: 'type.primitive.unchecked' };
+}
+
+// A hole in a list literal or list pattern is null, and only a context composing elisions admits one.
+interface Elided extends GrammarContext<Elided>, Elisions {}
+export function elided(x: Elided['expression'], p: Elided['pattern']): readonly [Expression.Collection.List<Elided>, Pattern.List<Elided>] {
+	return [
+		{ $kind: 'expression.collection.list', elements: [x, null, x] },
+		{ $kind: 'pattern.list', elements: [p, null, p] }
+	];
+}
+export function unelided(x: Bare['expression']): Expression.Collection.List<Bare> {
+	// @ts-expect-error a context without elisions has no holes
+	return { $kind: 'expression.collection.list', elements: [x, null, x] };
 }

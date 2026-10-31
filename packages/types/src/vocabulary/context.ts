@@ -1,4 +1,6 @@
 import type * as V from './index.ts';
+import type * as gate from './utils.ts';
+import type * as features from './features/index.ts';
 /**
  * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, and the
  * slot table, each slot holding its permissive fill over `G`: roles and refs where its arms are kinds, `string` where
@@ -952,7 +954,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['modifier']
 				| G['pattern']
 				| G['statement']
-				| V.Type.Primitive<G>;
+				| V.Type.Primitive<G>
+				| gate.In<G, features.Elisions, null>;
 		};
 		readonly 'expression.collection.list.repeat': {
 			readonly element:
@@ -1313,7 +1316,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| V.Literal.Null.Undefined<G>
-				| G['pattern'];
+				| G['pattern']
+				| gate.In<G, features.Elisions, null>;
 		};
 		readonly 'pattern.map': {
 			readonly elements: unknown | V.Pattern.Rest<G>;

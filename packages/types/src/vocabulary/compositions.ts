@@ -28,6 +28,7 @@ import type {
 	DefaultArguments,
 	Destructuring,
 	DynamicScope,
+	Elisions,
 	Encapsulation,
 	Enumerations,
 	ErrorPropagation,
@@ -107,7 +108,8 @@ export interface JavaScriptFeatures
 		ConditionalExpressions,
 		OptionalChaining,
 		DynamicScope,
-		DebuggerStatements {}
+		DebuggerStatements,
+		Elisions {}
 
 /** Python's features, those it spells by content included: visibility, accessors and operators by naming convention. */
 export interface PythonFeatures
