@@ -155,7 +155,7 @@ export async function grammarInput(
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(facts, leadEffectsOf(effects)),
+				projectLeadFacts(facts, leadEffectsOf(effects), model),
 				known,
 				model
 			),

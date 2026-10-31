@@ -1,5 +1,6 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
-import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotSelector } from './facts.ts';
+import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
+import { formsOf, heldInto, heldSteps, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
 	field,
@@ -131,9 +132,59 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 	};
 }
 
-function headMember(member: MemberFact, effect: LeadEffect): MemberFact | undefined {
-	if (member.route !== 'nested' || !member.via.some((step) => step.kind === effect.list)) return undefined;
-	const path = headPath([...member.via.toReversed(), member], member.owner, effect);
+const passesList = (member: MemberFact, effect: LeadEffect): boolean => member.route === 'nested' && member.via.some((step) => step.kind === effect.list);
+
+function intoList(model: SlotModel, at: string, effect: LeadEffect, seen: ReadonlySet<string> = new Set([at])): readonly SlotSelector[] | undefined {
+	const minted = [effect.receiver, effect.group];
+	for (const slot of shownSlots(model, at)) {
+		if (slot.kinds.some((kind) => reachedBy(model, kind, effect.list) !== undefined)) return [selector(effect.list, slot.name)];
+		for (const kind of slot.kinds.filter((k) => minted.includes(k) && !seen.has(k))) {
+			const rest = intoList(model, kind, effect, new Set([...seen, kind]));
+			if (rest !== undefined) return [selector(kind), ...rest];
+		}
+	}
+	return undefined;
+}
+
+function headWalk(model: SlotModel, form: string, path: readonly SlotSelector[], effect: LeadEffect): readonly SlotSelector[] | undefined {
+	const out: SlotSelector[] = [];
+	let at: string = form;
+	let parent: string | null = form;
+	let inside = form in effect.variants;
+	for (const [index, step] of path.entries()) {
+		const below = parent === effect.list;
+		parent = step.kind;
+		if (below) inside = isLead(step);
+		const prefix = below && !inside ? intoList(model, at, effect) : [];
+		if (prefix === undefined) return undefined;
+		const taken = below
+			? inside ? receiverSelector(step, effect) : restSelector(step)
+			: step.kind === effect.list ? { ...step, kind: effect.receiver }
+				: inside && step.kind !== null ? { ...step, kind: effect.variants[step.kind] ?? step.kind } : step;
+		for (const via of prefix) {
+			const into = heldInto(model, at, via);
+			if (into === undefined) return undefined;
+			at = into.next.kind;
+		}
+		if (index === path.length - 1) {
+			if (heldSteps(model, at, taken) === undefined) return undefined;
+		} else {
+			const into = heldInto(model, at, taken);
+			if (into === undefined) return undefined;
+			at = into.next.kind;
+		}
+		out.push(...prefix, taken);
+	}
+	return out;
+}
+
+function headMember(member: MemberFact, effect: LeadEffect, model: SlotModel): MemberFact | undefined {
+	if (member.route !== 'nested') return undefined;
+	const steps = [...member.via.toReversed(), member];
+	const path = formsOf(model, member.owner)
+		.map((form) => headWalk(model, form, steps, effect))
+		.find((walked) => walked !== undefined);
+	if (path === undefined) return undefined;
 	const { field, kind, after, anchor, adjacent } = path.at(-1)!;
 	return { ...member, field, kind, after, anchor, adjacent, parent: path.at(-2)?.kind ?? member.parent, via: path.slice(0, -1).toReversed() };
 }
@@ -152,13 +203,15 @@ function memberWithClaims(member: MemberFact, indices: ReadonlyMap<number, Claim
 	return claims.length === 0 ? undefined : { ...member, claims };
 }
 
-function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>): readonly MemberFact[] {
+function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly MemberFact[] {
 	return facts.members.flatMap((member, index): MemberFact[] => {
-		const head = headMember(member, effect);
-		if (head !== undefined) return [
-			...(isHeadMember(member, effect) ? [] : [memberWithClaims(member, indices, 'plain')]),
-			memberWithClaims(head, indices, 'head')
-		].filter((member) => member !== undefined);
+		if (passesList(member, effect)) {
+			const head = headMember(member, effect, model);
+			return [
+				...(isHeadMember(member, effect) ? [] : [memberWithClaims(member, indices, 'plain')]),
+				...(head === undefined ? [] : [memberWithClaims(head, indices, 'head')])
+			].filter((member) => member !== undefined);
+		}
 		if (member.owner in effect.variants) return [
 			memberWithClaims(member, indices, 'plain'), memberWithClaims(variants.members[index]!, indices, 'head')
 		].filter((member) => member !== undefined);
@@ -167,7 +220,7 @@ function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: L
 	});
 }
 
-function projectLead(facts: BindingFacts, effect: LeadEffect): BindingFacts {
+function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel): BindingFacts {
 	const variants = bindFacts(facts, (kind) => effect.variants[kind] ?? kind);
 	const claims: ClaimFact[] = [];
 	const indices = new Map<number, ClaimIndices>();
@@ -191,12 +244,12 @@ function projectLead(facts: BindingFacts, effect: LeadEffect): BindingFacts {
 	return {
 		...facts,
 		claims,
-		members: projectedMembers(facts, variants, effect, indices),
+		members: projectedMembers(facts, variants, effect, indices, model),
 		containers: [...facts.containers, ...variants.containers.filter((_, index) => facts.containers[index]!.kind in effect.variants)],
 		unclaimed: [...facts.unclaimed, ...variants.unclaimed.filter((_, index) => facts.unclaimed[index]!.kind in effect.variants)]
 	};
 }
 
-export function projectLeadFacts(facts: BindingFacts, effects: readonly LeadEffect[]): BindingFacts {
-	return effects.reduce(projectLead, facts);
+export function projectLeadFacts(facts: BindingFacts, effects: readonly LeadEffect[], model: SlotModel): BindingFacts {
+	return effects.reduce((projected, effect) => projectLead(projected, effect, model), facts);
 }

@@ -1,7 +1,53 @@
 import { describe, expect, it } from 'vitest';
-import { projectLeadFacts } from '../lead-facts.ts';
+import { projectLeadFacts as projectWith } from '../lead-facts.ts';
 import { readBindings } from '../read.ts';
+import type { BindingFacts, ModelNode, ModelSlot, SlotModel } from '../facts.ts';
 import type { LeadEffect } from '../../dsl/verbs/effects.ts';
+
+const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
+	name,
+	propertyName: name,
+	required: false,
+	multiple: false,
+	storage: 'verbatim',
+	kinds,
+	terminals: [],
+	...extra
+});
+
+const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<ModelNode> = {}): ModelNode => ({
+	kind,
+	modelType: 'branch',
+	unit: false,
+	slots,
+	subtypes: [],
+	elementKinds: [],
+	enumMembers: [],
+	text: null,
+	pattern: null,
+	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
+	shownAs: [],
+	...extra
+});
+
+const MODEL: SlotModel = new Map(
+	[
+		node('function', [slot('name', ['identifier']), slot('entries', ['entries', 'entries_receiver'])]),
+		node('setter', [slot('entries', ['entries'])]),
+		node('entries', [slot('parameter', ['parameter'], { multiple: true })], { modelType: 'list' }),
+		node('entries_receiver', [slot('receiver', ['receiver_parameter']), slot('entries_receiver_group', ['entries_receiver_group'])]),
+		node('entries_receiver_group', [slot('elements', ['entries'])]),
+		node('parameter', [slot('name', ['identifier', 'self']), slot('type', ['type_identifier', 'identifier'])]),
+		node('receiver_parameter', [slot('name', ['self']), slot('type', ['type_identifier', 'identifier'])]),
+		node('identifier'),
+		node('self'),
+		node('type_identifier')
+	].map((n) => [n.kind, n])
+);
+
+const projectLeadFacts = (facts: BindingFacts, effects: readonly LeadEffect[]): BindingFacts => projectWith(facts, effects, MODEL);
 
 const effect: LeadEffect = {
 	kind: 'lead',
@@ -88,6 +134,11 @@ describe('lead fact projection', () => {
 				]
 			})
 		);
+	});
+
+	it('adds no route through the receiver for an owner that holds no receiver form', async () => {
+		const facts = await readBindings('(setter (entries parameter: (_)* @parameters))');
+		expect(projectLeadFacts(facts, [effect]).members).toEqual(facts.members);
 	});
 
 	it('routes the tests, predicates and sibling order of ordinary parameters through the rest list, not the receiver', async () => {

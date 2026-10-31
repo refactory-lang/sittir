@@ -106,15 +106,24 @@ export function slotByField(slots: readonly ModelSlot[], field: string): ModelSl
 
 const shownKinds = (model: SlotModel, kind: string): readonly string[] => [kind, ...[...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind)];
 
-function reaches(model: SlotModel, from: string, kind: string, seen: Set<string> = new Set<string>()): boolean {
-	if (from === kind || modelNode(model, from)?.shownAs.includes(kind)) return true;
-	if (seen.has(from)) return false;
+function shownAsKind(model: SlotModel, from: string, kind: string): boolean {
+	const node = modelNode(model, from);
+	return from === kind || node?.shownAs.includes(kind) === true || (node?.splitFrom != null && shownAsKind(model, node.splitFrom, kind));
+}
+
+export function reachedBy(model: SlotModel, from: string, kind: string, seen: Set<string> = new Set<string>()): string | undefined {
+	if (shownAsKind(model, from, kind)) return from;
+	if (seen.has(from)) return undefined;
 	seen.add(from);
-	return (modelNode(model, from)?.subtypes ?? []).some((subtype) => reaches(model, subtype, kind, seen));
+	for (const subtype of modelNode(model, from)?.subtypes ?? []) {
+		const reached = reachedBy(model, subtype, kind, seen);
+		if (reached !== undefined) return reached;
+	}
+	return undefined;
 }
 
 export function slotByKind(model: SlotModel, slots: readonly ModelSlot[], kind: string): ModelSlot | undefined {
-	return slots.find((s) => s.kinds.includes(kind)) ?? slots.find((s) => s.kinds.some((k) => reaches(model, k, kind)));
+	return slots.find((s) => s.kinds.includes(kind)) ?? slots.find((s) => s.kinds.some((k) => reachedBy(model, k, kind) !== undefined));
 }
 
 export const holdsNodes = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length > 0;
@@ -418,17 +427,30 @@ const specificity = (entry: ReadEntry): number => {
 	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : literal ? 3 : 4;
 };
 
+export function heldInto(model: SlotModel, at: string, step: SlotSelector): { readonly held: readonly HeldStep[]; readonly next: ModelNode } | undefined {
+	const held = heldSteps(model, at, step);
+	const last = held?.at(-1);
+	const named = step.kind;
+	const next = named === null ? undefined : modelNode(model, last?.slot.kinds.flatMap((k) => reachedBy(model, k, named) ?? [])[0] ?? named);
+	return held === undefined || last === undefined || next === undefined ? undefined : { held, next };
+}
+
+function stepInto(model: SlotModel, at: string, step: SlotSelector): { readonly steps: readonly SlotStep[]; readonly next: ModelNode } | undefined {
+	const into = heldInto(model, at, step);
+	const last = into?.held.at(-1);
+	if (into === undefined || last === undefined) return undefined;
+	const anchor = slotAnchor(model, last.holder, step);
+	return last.slot.multiple && anchor === null ? undefined : { steps: heldPath(into.held, anchor), next: into.next };
+}
+
 function viaPath(model: SlotModel, owner: string, via: readonly SlotSelector[]): { readonly steps: SlotStep[]; readonly at: ModelNode } | undefined {
 	let at = modelNode(model, owner);
 	const steps: SlotStep[] = [];
 	for (const step of [...via].reverse()) {
-		const held = at === undefined ? undefined : heldSteps(model, at.kind, step);
-		const last = held?.at(-1);
-		const next = step.kind === null ? undefined : modelNode(model, step.kind);
-		const anchor = last === undefined ? null : slotAnchor(model, last.holder, step);
-		if (held === undefined || last === undefined || next === undefined || (last.slot.multiple && anchor === null)) return undefined;
-		steps.push(...heldPath(held, anchor));
-		at = next;
+		const into = at === undefined ? undefined : stepInto(model, at.kind, step);
+		if (into === undefined) return undefined;
+		steps.push(...into.steps);
+		at = into.next;
 	}
 	return at === undefined ? undefined : { steps, at };
 }
@@ -483,7 +505,7 @@ function deepRouteOf(model: SlotModel, kind: string, member: DeepMember): Member
 			...(spelled ? { spelled: true } : {})
 		};
 	}
-	const parent = modelNode(model, member.parent);
+	const parent = chain?.at ?? modelNode(model, member.parent);
 	const held = parent === undefined ? undefined : heldSteps(model, parent.kind, member);
 	const last = held?.at(-1);
 	const slot = last?.slot;
@@ -875,7 +897,7 @@ export function envelopeTargets(model: SlotModel, container: ContainerFact, voca
 	const named = container.element.kind;
 	const elements = formsOf(model, container.kind).flatMap((holder) => {
 		const held = slotFor(model, modelNode(model, holder)?.slots ?? [], container.element)?.kinds ?? [];
-		return named === null || named === WILDCARD ? held : held.some((kind) => reaches(model, kind, named)) ? [named] : [];
+		return named === null || named === WILDCARD ? held : held.some((kind) => reachedBy(model, kind, named) !== undefined) ? [named] : [];
 	});
 	return [
 		...new Set(

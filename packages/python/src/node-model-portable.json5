@@ -1714,11 +1714,11 @@
               "slot": "body"
             },
             {
-              "owner": "suite_block",
-              "slot": "block"
+              "owner": "suite_block_class_declaration",
+              "slot": "block_class_declaration"
             },
             {
-              "owner": "block",
+              "owner": "block_class_declaration",
               "slot": "statements",
               "anchor": "first"
             },

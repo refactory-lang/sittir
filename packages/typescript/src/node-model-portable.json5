@@ -948,66 +948,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "abstract_method_signature_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]
@@ -8991,66 +8936,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "method_definition_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]
@@ -9833,66 +9723,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "method_signature_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]

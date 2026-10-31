@@ -89,6 +89,11 @@ const MODEL = [
 	node('_chained', [slot('left', ['identifier'])], { shownAs: ['chained'] }),
 	node('dotted', [], { modelType: 'pattern', shownAs: ['qualified'] }),
 	node('member_ty', [], { modelType: 'pattern', shownAs: ['qualified'] }),
+	node('shown_outer', [slot('mid', ['_mid_copy'])]),
+	node('_mid_copy', [slot('inner', ['binary'])], { shownAs: ['mid_shown'] }),
+	node('mid_shown', [slot('inner', ['binary'])]),
+	node('split_outer', [slot('mid', ['mid_split'])]),
+	node('mid_split', [slot('inner', ['binary'])], { splitFrom: 'mid_shown' }),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
@@ -603,6 +608,24 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(member?.path).toEqual([
 			{ owner: 'outer', slot: 'mid' },
 			{ owner: 'middle', slot: 'inner' },
+			{ owner: 'binary', slot: 'left' }
+		]);
+	});
+
+	it('steps through the kind a slot holds that the parser shows by the named kind, not a node of that name', async () => {
+		const routes = resolveRoutes(await grammar('(shown_outer (mid_shown (binary left: (_) @lhs))) @expression.outer'));
+		expect(routes.members.get('shown_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
+			{ owner: 'shown_outer', slot: 'mid' },
+			{ owner: '_mid_copy', slot: 'inner' },
+			{ owner: 'binary', slot: 'left' }
+		]);
+	});
+
+	it('steps through the split a slot holds of the named kind', async () => {
+		const routes = resolveRoutes(await grammar('(split_outer (mid_shown (binary left: (_) @lhs))) @expression.outer'));
+		expect(routes.members.get('split_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
+			{ owner: 'split_outer', slot: 'mid' },
+			{ owner: 'mid_split', slot: 'inner' },
 			{ owner: 'binary', slot: 'left' }
 		]);
 	});

@@ -12486,58 +12486,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -12670,58 +12637,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -12864,58 +12798,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -13058,58 +12959,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -13997,58 +13865,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -14166,58 +14001,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -14345,58 +14147,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -14524,58 +14293,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -15289,58 +15025,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -15458,58 +15161,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -15637,58 +15307,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}
@@ -15816,58 +15453,25 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
-									builder: 'formalParameters'
+									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									}
 								},
 								{
-									key: 'items'
+									key: 'item'
 								}
 							],
 							multiple: true,
 							seats: [
 								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
+									at: [448, 'item'],
+									kinds: [449]
 								}
 							]
 						}

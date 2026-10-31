@@ -1493,11 +1493,11 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlockClassDeclaration'
 								},
 								{
-									key: 'block',
-									builder: 'block'
+									key: 'blockClassDeclaration',
+									builder: 'blockClassDeclaration'
 								},
 								{
 									key: 'statements',
