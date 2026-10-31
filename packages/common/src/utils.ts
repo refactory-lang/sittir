@@ -884,7 +884,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { handleDispose, isLeafHandle, isRecordPosition, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
+export { handleDispose, isLeafHandle, isRecordPosition, releaseNothing, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

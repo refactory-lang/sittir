@@ -99,7 +99,8 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		...(spec.root === true ? [ROOT_ERRORS_LINE] : []),
 		...(spec.tail ?? []),
 		...(spec.parsed ? ['    [TREE]: treeTokenOf(data) ?? null,'] : []),
-		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'}`
+		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
+		'    [Symbol.dispose]: releaseNothing'
 	);
 	return lines;
 }
