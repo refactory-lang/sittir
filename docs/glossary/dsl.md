@@ -9189,6 +9189,10 @@ The path the split takes.
 
 One step of a split.
 
+### `packages/codegen/src/dsl/bind.ts::fieldHoldsOnly`
+
+Whether every site of the named field, reached through the owner's transparent hidden rules, holds only the wrap target or blank. A field wrap around content that holds anything else is refused.
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::reownRuleIds`
 
 Gives each rule id a new owner.
