@@ -1600,6 +1600,22 @@ The `sittir tool glossary-keys` entry point. It measures the repo, reads the cei
 
 Lists the declarations of one in-memory TypeScript source, through a one-file program and its type checker, for tests that enumerate a snippet rather than a tree. Contextual types declared in other files are not seen; a snippet's own interfaces are.
 
+### `packages/tools/src/validate/glossary-keys.ts::isUndocumentedEligible`
+
+The one definition of a declaration the ratchet counts as undocumented-eligible: exported, and at most UNDOCUMENTED_DEPTH names deep. The declaring-node set and the undocumented count both use it.
+
+### `packages/tools/src/validate/glossary-keys.ts::isContextuallyDeclared`
+
+True when a literal's property name is declared by its contextual type through a declaring node the enumeration counts, and that node lies outside the literal. Such a property duplicates the declaration, so the enumeration leaves it out.
+
+### `packages/tools/src/validate/glossary-keys.ts::FileDeclarations`
+
+One file's enumeration: its declarations, and the declaring nodes the enumeration counts as undocumented-eligible. Internal to the enumerator.
+
+### `packages/tools/src/validate/glossary-keys.ts::SourceEntry`
+
+One source file of a checker program, keyed by its repo-relative path, as enumerateProgram takes it.
+
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::forwardsArguments`
 
 The kinds whose factory forwards its arguments, as loaded from the node model.

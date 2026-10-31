@@ -857,3 +857,7 @@ A binding effect the layer recorded.
 ### `packages/codegen/src/dsl/verbs/effects.ts::scopedAlias`
 
 The alias applied within a scope.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::leadEffectsOf`
+
+The lead effects among a binding's effects, in order. Segment and alias effects are dropped, and no effects yields an empty list.

@@ -15037,6 +15037,14 @@ The type a spliced envelope slot takes, or undefined when it has no envelope.
 
 Widens a slot's input type to admit its spliced envelope, where the slot has one.
 
+### `packages/codegen/src/emitters/factories.ts::ParamFactorySurface`
+
+The factory surface of a construction that takes one parameter: it has a param and no nullary flag. Its counterpart is NullaryFactorySurface; FactorySurface is the union of the two.
+
+### `packages/codegen/src/emitters/factories.ts::NullaryFactorySurface`
+
+The factory surface of a construction that takes no parameter: nullary is true, and there is no param, no spread facts and no leading options. FactorySurface is ParamFactorySurface or this.
+
 ### `packages/codegen/src/emitters/interior.ts::numericSlotInputs`
 
 The numeric slots of a node, each with its input type.
@@ -15420,6 +15428,10 @@ The runtime helpers a generated module imports for blank arms: `blankArmRead` an
 ### `packages/codegen/src/emitters/shared.ts::blankForRead`
 
 The read expression for a slot value: `blankArmRead(expr)` when the slot has a blank arm, and the expression unchanged otherwise.
+
+### `packages/codegen/src/emitters/shared.ts::optionalChoiceTexts`
+
+The keyword texts of an optional choice field: every value of the field must store text, and the result is the set of those texts. A field with a value that stores no text yields undefined.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 

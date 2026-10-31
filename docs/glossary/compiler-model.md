@@ -6158,3 +6158,11 @@ The accessor name that holds more than one value class.
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash::classes`
 
 The value classes the name holds, each with the kinds that hold it.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::listItemsOf`
+
+The item kinds a list kind holds, read through its lead: a kind led to another list reads that list's items, and a cycle stops at the kinds already seen. A list's items come from its multiple slots' parse kinds; any other compound has none, and the result is undefined.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::holdsAContainer`
+
+True when a slot has value kinds and each one either reads as a list or is an item of one of the value kinds' lists. Used to tell a slot that stores a container from one that stores items directly.
