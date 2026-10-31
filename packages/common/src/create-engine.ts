@@ -141,7 +141,8 @@ function scopedBuild<B, Node>(
 				inEngine(handle, () => {
 					if (typeof value !== 'function') throw new TypeError('builder is not callable');
 					const run = (): Node => Reflect.apply(value, self, args);
-					return handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
+					const built = (): Node => handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
+					return handle.builtArena === undefined ? built() : handle.builtArena.scope(built);
 				}),
 			set: refuseWrite,
 			defineProperty: refuseWrite,
