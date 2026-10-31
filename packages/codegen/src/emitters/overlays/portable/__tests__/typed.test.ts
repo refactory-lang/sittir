@@ -72,6 +72,11 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('function VisibilityModifierPubAsModifierVisibilityPublicRestricted357$scope(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted357$Held>) {\n\treturn read(this[low].visibilityModifierPubScope().content());\n}');
 	});
 
+	it('reads text and a boolean as themselves, since only a kind id or a node reads as a view', () => {
+		expect(typed.source).toContain('\t\t\t\t: N extends string | boolean\n\t\t\t\t\t? N\n\t\t\t\t\t: unknown;');
+		expect(typed.source).toContain('return read(this[low].suffix());');
+	});
+
 	it('reports what it skipped with the reason', () => {
 		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
 	});
