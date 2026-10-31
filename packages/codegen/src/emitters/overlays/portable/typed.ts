@@ -4,6 +4,8 @@ import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { concreteKinds, guaranteedBy, modelNode, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
+import { readableEntries } from '@sittir/common/engine';
+import type { PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { fixedTextKinds, hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 
@@ -12,6 +14,7 @@ export interface PortableTypedInput {
 	readonly input: GrammarInput;
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
+	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 }
 
 export interface PortableTypedUnemitted {
@@ -115,7 +118,7 @@ const PRELUDE = [
 	'}'
 ];
 
-export function emitPortableTyped({ routes, input, nodeMap, kindEntries }: PortableTypedInput): PortableTypedOutput {
+export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest }: PortableTypedInput): PortableTypedOutput {
 	const { model, vocabulary } = input;
 	const unemitted: PortableTypedUnemitted[] = [];
 	const idOf = (kind: string): string | undefined => (hasCatalogEntry(kindEntries, kind) ? kindDiscriminantExpr(kind, nodeMap, kindEntries) : undefined);
@@ -188,7 +191,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries }: Porta
 	};
 	const viewTypeOf =(node: ModelNode): string => {
 		const claimed = entriesFor(node.kind);
-		if (claimed !== undefined) return [...new Set(claimed.map((e) => `VocabViews[${q(e.vocab)}]`))].join(' | ');
+		if (claimed !== undefined) return [...new Set(readableEntries(claimed.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => `VocabViews[${q(path)}]`))].join(' | ');
 		if (unclaimed.has(node.kind)) return 'never';
 		const text = fixedText.get(node.kind) ?? node.text;
 		if (text !== null && text !== undefined) return q(text);

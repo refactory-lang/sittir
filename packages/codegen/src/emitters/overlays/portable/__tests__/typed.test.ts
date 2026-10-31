@@ -91,6 +91,10 @@ describe('emitPortableTyped', () => {
 		expect(body).not.toContain('TSKindId.ImplItemNegativeClause');
 	});
 
+	it('types a kind by the entries its node can read as: a receiver, never the parameter its own test refines', () => {
+		expect(typed.source).toContain('type VK_ReceiverParameterDeclaration = VocabViews["declaration.parameter.receiver"];');
+	});
+
 	it('reads a claim on a name the parser shows once, as the kind it shows', () => {
 		expect(typed.unemitted.filter((u) => u.kind === 'let_chain')).toEqual([]);
 		expect(typed.source.match(/function LetChainAsClauseLetChain\d*\(/g)).toHaveLength(1);

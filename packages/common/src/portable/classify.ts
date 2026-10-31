@@ -4,7 +4,7 @@ import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
 import { nodeText, spanOf } from '../node-data.ts';
-import { portablePathHasFacts } from './facts.ts';
+import { portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -21,9 +21,6 @@ export type PortableClassifier = <T extends Node>(value: T | number) => string |
 /** Whether a value is an object with a numeric kind id, the shape a classifier reads. */
 export const hasKind = (value: unknown): value is Node =>
 	typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
-
-const unplaced = (entry: PortableReadEntry): boolean =>
-	entry.within.length === 0 && entry.test.every((condition) => condition.up === 0);
 
 const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 	switch (plan.op) {
@@ -159,9 +156,9 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		return holds(condition.plan, subjectsOf(reached));
 	};
 	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
-		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), entries.filter(keep)]));
-	const nodeEntries = entriesWhere(unplaced);
-	const kindIdEntries = entriesWhere((entry) => unplaced(entry) && decidesKindId(entry));
+		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), readableEntries(entries).filter(keep)]));
+	const nodeEntries = entriesWhere(() => true);
+	const kindIdEntries = entriesWhere(decidesKindId);
 	const classify: PortableClassifier = (value) => {
 		const holding = ((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? []).filter((entry) =>
 			entry.test.every((condition) => conditionHolds(condition, value))

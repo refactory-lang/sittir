@@ -69,7 +69,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind });
 	return {
 		build: build.source,
-		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries }),
+		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest }),
 		pickDiagnostics: build.diagnostics,
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({
