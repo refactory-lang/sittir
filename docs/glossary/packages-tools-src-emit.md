@@ -257,6 +257,18 @@ loose) and the derived file in its set's directory (`<dir>/<stem>.generated.ts`,
 `<dir>/<stem>-loose.generated.ts`).
 The spelling rule lives here alone; a consumer never rebuilds a name.
 
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodRebuild::exportName`
+
+The name the rebuilt factory is exported under in the generated file.
+
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodRebuild::file`
+
+The path of the generated file the rebuild target writes.
+
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodRebuild::surface`
+
+The dogfood surface the rebuild covers: `strict` or `loose`.
+
 ### `packages/tools/src/emit/factory-source.ts::hoistSeatElement`
 
 A seated element whose config sets nothing but the seat's one required slot

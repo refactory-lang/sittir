@@ -295,6 +295,17 @@ describe('enumeration edge cases', { timeout: 120_000 }, () => {
 		expect(names).not.toContain('G::rules::pattern::type');
 	});
 
+	it('enumerates the members of a conditional type arm', () => {
+		expect(paths('export type D<P> = P extends "x" ? { readonly h: 1 } : { readonly h: 2 };')).toContain('D::h');
+	});
+
+	it('enumerates a name declared in both arms of a conditional type once', () => {
+		const names = paths(
+			'export type C<P> = { readonly a: 1 } & (P extends "x" ? { readonly f: string } : { readonly f: number; readonly g: boolean });'
+		);
+		expect(names).toEqual(['C', 'C::a', 'C::f', 'C::g']);
+	});
+
 	it('keeps a const property whose declaring member is not counted, such as an inline variable annotation', () => {
 		const names = paths('export const A: { readonly d: number } = { d: 1 };');
 		expect(names).toContain('A::d');

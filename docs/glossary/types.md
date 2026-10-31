@@ -1043,7 +1043,7 @@ narrowing guard.
  *  needs the effective parse identity). */
 ```
 
-### `packages/codegen/src/types/rule.ts::AliasRule.kindId`
+### `packages/codegen/src/types/rule.ts::AliasRule::kindId`
 
 ```text
 /** Parser-issued kindId of the ALIAS node's own occurrence (the alias
@@ -1223,7 +1223,7 @@ narrowing guard.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/types/rule.ts::RuleBase.tokenized`
+### `packages/codegen/src/types/rule.ts::RuleBase::tokenized`
 
 ```text
 /**
@@ -1241,7 +1241,7 @@ narrowing guard.
 	 */
 ```
 
-### `packages/codegen/src/types/rule.ts::RuleBase.fieldName`
+### `packages/codegen/src/types/rule.ts::RuleBase::fieldName`
 
 ```text
 // All stamped attributes below are populated by
@@ -1262,7 +1262,7 @@ narrowing guard.
 // trailing delimiter (rust `(1,)` vs parenthesized `(1)`).
 ```
 
-### `packages/codegen/src/types/rule.ts::RuleBase.optionalElement`
+### `packages/codegen/src/types/rule.ts::RuleBase::optionalElement`
 
 ```text
 // The deleted wrapper was an optional at the ELEMENT POSITION of a
@@ -1272,7 +1272,7 @@ narrowing guard.
 // element, distinct from absence of the position.
 ```
 
-### `packages/codegen/src/types/rule.ts::RuleBase.prec`
+### `packages/codegen/src/types/rule.ts::RuleBase::prec`
 
 ```text
 // Precedence vocabulary stamped by the `prec` rule builder. Link
@@ -1301,14 +1301,14 @@ narrowing guard.
 /** See RuleBase.separator — comma-terminated list family. */
 ```
 
-### `packages/codegen/src/types/rule.ts::SupertypeRule.declared`
+### `packages/codegen/src/types/rule.ts::SupertypeRule::declared`
 
 `true` when the grammar's `supertypes` names this kind: upstream,
 enrich-minted, or added in `grammar.sittir.ts`. Link stamps it where it
 builds the rule (`classifyHiddenChoiceRule`); a hidden choice that is a
 supertype only by shape has none.
 
-### `packages/codegen/src/types/rule.ts::SupertypeRule.subtypes`
+### `packages/codegen/src/types/rule.ts::SupertypeRule::subtypes`
 
 ```text
 // Each subtype is a real SymbolRule reference (or, for a bare STRING
@@ -1474,7 +1474,7 @@ A literal aliased to a named symbol carries `aliasedTo` and `aliasedToId`, the p
 // they conservatively share one collision group.
 ```
 
-### `packages/codegen/src/types/rule.ts::RuleBase.staticSeamBefore`
+### `packages/codegen/src/types/rule.ts::RuleBase::staticSeamBefore`
 
 ```text
 /**
@@ -1552,3 +1552,183 @@ a gap sits on.
 ### `packages/codegen/src/types/rule.ts::SymbolRule::copyOf`
 
 The copy a symbol rule refers to, when it is a copy.
+
+### `packages/codegen/src/types/rule.ts::RuleBase::multiplicity`
+
+The repetition shape of a normalized rule, a `Multiplicity` value that says how many elements the rule admits. Present only in the normalize and simplify phases; the link and evaluate phases do not carry it.
+
+### `packages/codegen/src/types/rule.ts::RuleBase::immediate`
+
+Set on a normalized rule that must match with no extras before it. Present only in the normalize and simplify phases.
+
+### `packages/codegen/src/types/rule.ts::RuleBase::separator`
+
+The separator a normalized repeat or list places between its elements, as a `RuleSeparator`. Present only in the normalize and simplify phases; the link and evaluate phases carry the separator on the repeat arm instead.
+
+### `packages/codegen/src/types/rule.ts::AliasRule::content`
+
+The rule the alias wraps. Its matched text is re-labelled as the alias `value`.
+
+### `packages/codegen/src/types/rule.ts::AliasRule::type`
+
+The `ALIAS` tag that identifies an alias rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::AliasRule::named`
+
+Whether the alias produces a named node (`true`) or an anonymous one (`false`).
+
+### `packages/codegen/src/types/rule.ts::AliasRule::value`
+
+The alias target name the content is re-labelled as.
+
+### `packages/codegen/src/types/rule.ts::AliasRule::relaxation`
+
+Optional marker set on aliases that the word-relaxation pass admits. Absent on every other alias.
+
+### `packages/codegen/src/types/rule.ts::BlankRule::type`
+
+The `'BLANK'` tag, the only arm of the evaluate-phase blank rule, which matches the empty alternative.
+
+### `packages/codegen/src/types/rule.ts::FieldRule::_needsContent`
+
+Placeholder flag on a field whose content is not yet filled in. The patch step replaces such a field before evaluation completes, and the post-evaluate invariant rejects one that survives.
+
+### `packages/codegen/src/types/rule.ts::FieldRule::content`
+
+The rule the field wraps. Its matched node is exposed under the field `name`.
+
+### `packages/codegen/src/types/rule.ts::FieldRule::name`
+
+The field name the wrapped child is exposed under in the node's accessors.
+
+### `packages/codegen/src/types/rule.ts::FieldRule::type`
+
+The `FIELD` tag that identifies a field rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::ImmediateTokenRule::content`
+
+The rule whose match must be immediate, with no extras before it.
+
+### `packages/codegen/src/types/rule.ts::ImmediateTokenRule::type`
+
+The `IMMEDIATE_TOKEN` tag that identifies an immediate-token rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::OptionalRule::content`
+
+The rule that may be absent. The enclosing sequence or choice matches with or without it.
+
+### `packages/codegen/src/types/rule.ts::OptionalRule::type`
+
+The `OPTIONAL` tag that identifies an optional rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::PrecRule::content`
+
+The rule the precedence applies to.
+
+### `packages/codegen/src/types/rule.ts::PrecRule::type`
+
+The `PREC` tag that identifies a precedence rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::PrecRule::value`
+
+The precedence level, a number or a name the parser resolves.
+
+### `packages/codegen/src/types/rule.ts::PrecLeftRule::content`
+
+The rule the left-associative precedence applies to.
+
+### `packages/codegen/src/types/rule.ts::PrecLeftRule::type`
+
+The `PREC_LEFT` tag that identifies a left-associative precedence rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::PrecLeftRule::value`
+
+The precedence level, a number or a name the parser resolves, applied with left associativity.
+
+### `packages/codegen/src/types/rule.ts::PrecRightRule::content`
+
+The rule the right-associative precedence applies to.
+
+### `packages/codegen/src/types/rule.ts::PrecRightRule::type`
+
+The `PREC_RIGHT` tag that identifies a right-associative precedence rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::PrecRightRule::value`
+
+The precedence level, a number or a name the parser resolves, applied with right associativity.
+
+### `packages/codegen/src/types/rule.ts::PrecDynamicRule::content`
+
+The rule the dynamic precedence applies to.
+
+### `packages/codegen/src/types/rule.ts::PrecDynamicRule::type`
+
+The `PREC_DYNAMIC` tag that identifies a dynamic-precedence rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::PrecDynamicRule::value`
+
+The numeric dynamic precedence the parser uses to resolve conflicts at run time. Unlike the other precedence arms, it is always a number.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::leading`
+
+Whether a separator is required before the first element: `mandatory` or `optional`. Set on the evaluate-phase arm only.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::trailing`
+
+Whether a separator is required after the last element: `mandatory` or `optional`. Set on the evaluate-phase arm only.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::leading`
+
+Whether a separator is required before the first element: `mandatory` or `optional`. Set on the evaluate-phase arm only.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::trailing`
+
+Whether a separator is required after the last element: `mandatory` or `optional`. Set on the evaluate-phase arm only.
+
+### `packages/codegen/src/types/rule.ts::ReservedRule::content`
+
+The rule matched within the reserved-word context named by `context_name`.
+
+### `packages/codegen/src/types/rule.ts::ReservedRule::context_name`
+
+The name of the reserved-word context the rule is checked against. The canonical rules attach it as the word-set name.
+
+### `packages/codegen/src/types/rule.ts::ReservedRule::type`
+
+The `RESERVED` tag that identifies a reserved-word rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::TokenRule::content`
+
+The rule the token wraps. Its matched text is one lexical token.
+
+### `packages/codegen/src/types/rule.ts::TokenRule::type`
+
+The `TOKEN` tag that identifies a token rule in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::content`
+
+The element repeated one or more times.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::separator`
+
+The separator between elements. A `RuleSeparator` in the link phase and a plain string in the evaluate phase.
+
+### `packages/codegen/src/types/rule.ts::Repeat1Rule::type`
+
+The `REPEAT1` tag that identifies a one-or-more repeat in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::content`
+
+The element repeated zero or more times.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::separator`
+
+The separator between elements. A `RuleSeparator` in the link phase and a plain string in the evaluate phase.
+
+### `packages/codegen/src/types/rule.ts::RepeatRule::type`
+
+The `REPEAT` tag that identifies a zero-or-more repeat in the discriminated union.
+
+### `packages/codegen/src/types/rule.ts::TokenRule::immediate`
+
+Whether the token must match with no extras before it. Required in the link phase and optional in the evaluate phase.
