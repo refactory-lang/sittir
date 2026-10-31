@@ -48,6 +48,7 @@ import {
 	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
+	admitHoles,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
@@ -1771,7 +1772,12 @@ export function buildObject(
 ): T.Object.Bound {
 	currentHandle()?.admit(TSKindId.Object, children);
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
-		rejectReservedText(children, 'Object.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'Object.properties'),
+			'Object.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -1820,7 +1826,12 @@ export function buildObjectPattern(
 ): T.ObjectPattern.Bound {
 	currentHandle()?.admit(TSKindId.ObjectPattern, children);
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
-		rejectReservedText(children, 'ObjectPattern.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'ObjectPattern.properties'),
+			'ObjectPattern.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]
 	);
 	const handle = currentHandle();
@@ -1952,7 +1963,12 @@ export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
 ): T.Array.Bound;
 export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
-	const _elements = rejectReservedText(children, 'Array.elements', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _elements = rejectReservedText(
+		admitHoles(children, 'Array.elements'),
+		'Array.elements',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Array as const,
@@ -1982,7 +1998,7 @@ export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPatte
 ): T.ArrayPattern.Bound;
 export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
-	const _elements = children;
+	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArrayPattern as const,
@@ -3521,7 +3537,7 @@ export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[
 export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
-		children,
+		admitHoles(children, 'Arguments.elements'),
 		'Arguments.elements',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier

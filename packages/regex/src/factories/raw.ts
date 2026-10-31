@@ -17,6 +17,7 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	admitHoles,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -69,7 +70,7 @@ export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
 ): T.Alternation.Bound;
 export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
-	const _terms = children;
+	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Alternation as const,
