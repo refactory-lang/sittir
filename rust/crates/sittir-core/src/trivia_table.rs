@@ -119,6 +119,20 @@ pub struct SurfaceKinds {
     pub depth: &'static [DepthRegion],
 }
 
+impl SurfaceKinds {
+    /// Whether the grammar has a depth member at all.
+    #[must_use]
+    pub fn has_depth_members(&self) -> bool {
+        self.indent != KindId::BLANK || self.dedent != KindId::BLANK
+    }
+
+    /// Whether `kind` is one of the grammar's depth members.
+    #[must_use]
+    pub fn is_depth_member(&self, kind: KindId) -> bool {
+        kind != KindId::BLANK && (kind == self.indent || kind == self.dedent)
+    }
+}
+
 /// The nodes of a tree by descendant index, as far as the walk reads them.
 struct Nodes {
     kind: Vec<KindId>,

@@ -796,7 +796,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router };
         let mut at = self.tree.walk();
         let surface = self.grammar.surface_kinds();
-        let depth_member = |node: &tree_sitter::Node<'_>| { let kind = crate::read::grammar_id(node); kind != KindId::BLANK && [surface.indent, surface.dedent].contains(&kind) };
+        let depth_member = |node: &tree_sitter::Node<'_>| surface.is_depth_member(crate::read::grammar_id(node));
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -1849,6 +1849,9 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
             return 0;
         };
         let surface = tree.grammar.surface_kinds();
+        if !surface.has_depth_members() {
+            return 0;
+        }
         let Some(node) = node_at_index(&tree.tree, coord.index).filter(|node| Span::of(node) == coord.span) else {
             return 0;
         };
@@ -1856,7 +1859,7 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         let mut net = 0;
         loop {
             let kind = crate::read::grammar_id(&cursor.node());
-            if kind != KindId::BLANK {
+            if surface.is_depth_member(kind) {
                 net += i32::from(kind == surface.indent) - i32::from(kind == surface.dedent);
             }
             if cursor.goto_first_child() {
