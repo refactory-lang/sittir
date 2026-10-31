@@ -663,7 +663,11 @@ function membersOf(
 		const held = routes.filter((route) => guaranteed.holds(route.path));
 		return held.length === 0 ? [] : [[m, held] as const];
 	}));
-	const via = new Set([...reached.keys()].flatMap((m) => m.via.flatMap((step) => step.kind ?? [])));
+	const via = new Set(
+		[...reached].flatMap(([m, routes]) =>
+			routes.flatMap((route) => (route.path === undefined ? m.via.flatMap((step) => step.kind ?? []) : route.path.flatMap((step) => (step.owner === kind || step.owner === holder ? [] : [step.owner]))))
+		)
+	);
 	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
 		m.route === 'rename' && attaches(m, inherited) && (captureReaches(input.model, m, kind) || (claims !== kind && captureReaches(input.model, m, claims))) ? [m] : []
 	);
@@ -735,8 +739,38 @@ function membersOf(
 		}
 		routes.push(...((isDeep(member) ? reached.get(member) : undefined) ?? []));
 	}
+	for (const route of routes) {
+		const landed = landedKinds(input.model, route);
+		const deeper = routes.find((other) => {
+			const next = other !== route && other.name === route.name ? stepPast(route.path, other.path) : undefined;
+			return next !== undefined && landed.includes(next.owner);
+		});
+		if (deeper !== undefined)
+			throw new Error(`bindings: ${kind}'s member ${route.name} is routed both through ${pathText(route.path)} and deeper through ${pathText(deeper.path)}; one member has one route through a slot`);
+	}
 	return routes;
 }
+
+function landedKinds(model: SlotModel, route: MemberRoute): readonly string[] {
+	switch (route.route) {
+		case 'slot':
+			return route.slot.kinds.filter((kind) => !(route.except ?? []).includes(kind));
+		case 'nested': {
+			const named = route.selector.kind;
+			const held = route.slot?.kinds ?? [];
+			return named === null || named === WILDCARD ? held : held.filter((kind) => reachedBy(model, kind, named).length > 0);
+		}
+		case 'kind':
+			return [route.kind];
+		case 'presence':
+			return [];
+	}
+}
+
+const stepPast = (path: readonly SlotStep[] | undefined, longer: readonly SlotStep[] | undefined): SlotStep | undefined =>
+	path === undefined || longer === undefined || !path.every((step, i) => step.owner === longer[i]?.owner && step.slot === longer[i]?.slot) ? undefined : longer[path.length];
+
+const pathText = (path: readonly SlotStep[] | undefined): string => (path ?? []).map((step) => `${step.owner}.${step.slot}`).join(' > ');
 
 function flagRouteOf(kind: string, member: Extract<MemberFact, { readonly route: 'rename' }>, slot: ModelSlot, path: readonly SlotStep[]): MemberRoute {
 	const name = camel(member.name);

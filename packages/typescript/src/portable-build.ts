@@ -14267,32 +14267,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [454, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'body',
 							steps: [
 								{
@@ -14438,32 +14412,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [454, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}
@@ -14631,32 +14579,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [454, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'body',
 							steps: [
 								{
@@ -14812,32 +14734,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [454, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}
@@ -15846,32 +15742,6 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [460, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
 									key: 'parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
@@ -15986,32 +15856,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [460, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}
@@ -16154,32 +15998,6 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [460, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
 									key: 'parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
@@ -16304,32 +16122,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [460, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}
@@ -17162,32 +16954,6 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [457, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
 									key: 'parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
@@ -17315,32 +17081,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [457, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}
@@ -17496,32 +17236,6 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [457, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
 									key: 'parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
@@ -17659,32 +17373,6 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'computedPropertyName',
 											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [457, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [448, 'item'],
-									kinds: [449],
-									within: [
-										{
-											builder: 'formalParametersSetAccessorSignature.elements',
-											key: 'item',
-											through: ['elements']
 										}
 									]
 								}

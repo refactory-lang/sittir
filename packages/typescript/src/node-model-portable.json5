@@ -888,17 +888,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "abstract_method_signature_setter",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -8865,17 +8854,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_definition_setter",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -9659,17 +9637,6 @@
             {
               "owner": "method_signature_setter",
               "slot": "name"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_signature_setter",
-              "slot": "parameters"
             }
           ]
         },

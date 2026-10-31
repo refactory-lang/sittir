@@ -103,6 +103,10 @@ const MODEL = [
 	node('_pair_copy', [slot('inner', ['binary'])], { shownAs: ['pair_shown'] }),
 	node('pair_shown', [slot('inner', ['binary'])]),
 	node('twin', [slot('a', ['twin_mid']), slot('b', ['twin_mid'])]),
+	node('setter_x', [slot('params', ['_params_copy'])]),
+	node('_params_copy', [slot('elements', ['params_items'])], { modelType: 'envelope', shownAs: ['params_shown'] }),
+	node('params_shown', [slot('elements', ['params_items'])]),
+	node('params_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
 	node('twin_mid', [slot('detail', ['identifier'], { required: false })]),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
@@ -670,6 +674,17 @@ describe("keptKinds over a supertype the slot holds", () => {
 				{ owner: 'binary', slot: 'left' }
 			])
 		);
+	});
+
+	it('routes a member captured through the copy a slot holds once, deeper, and not also as the slot itself', async () => {
+		const routes = resolveRoutes(await grammar('(setter_x (params_shown (params_items item: (_)* @params))) @expression.setter'));
+		expect(routes.members.get('setter_x')?.filter((m) => m.name === 'params').map((m) => m.path)).toEqual([
+			[
+				{ owner: 'setter_x', slot: 'params' },
+				{ owner: '_params_copy', slot: 'elements' },
+				{ owner: 'params_items', slot: 'item' }
+			]
+		]);
 	});
 
 	it('steps through a slot that admits the next kind by a supertype', async () => {
