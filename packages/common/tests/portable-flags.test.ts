@@ -6,7 +6,7 @@ describe('Flags', () => {
 		expect(Flags.Abstract).toBe(1 << 0);
 		expect(Flags.Async).toBe(1 << 1);
 		expect(Flags.Prefix).toBe(1 << 19);
-		expect(Object.keys(Flags).filter((key) => Number.isNaN(Number(key)))).toHaveLength(29);
+		expect(Object.keys(Flags).filter((key) => Number.isNaN(Number(key)))).toHaveLength(30);
 	});
 
 	it('combines flags with | and tests one with &', () => {

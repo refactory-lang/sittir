@@ -706,22 +706,6 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'trailingComma',
-							steps: [
-								{
-									key: 'trailingComma',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [244, 'trailingComma'],
-									kinds: [6]
-								}
-							]
 						}
 					],
 					presets: [],

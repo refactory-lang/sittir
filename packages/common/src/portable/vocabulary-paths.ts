@@ -606,6 +606,7 @@ export const vocabularyPaths = Object.freeze([
 export const vocabularyFlags = Object.freeze([
 	['clause.catch', 'group', 'group'],
 	['clause.comprehension.for', 'async', 'async'],
+	['clause.comprehension.for', 'trailing_comma', 'trailingComma'],
 	['clause.export.specifier', 'type_only', 'typeOnly'],
 	['clause.export.specifier.typeof', 'type_only', 'typeOnly'],
 	['clause.import.specifier', 'type_only', 'typeOnly'],

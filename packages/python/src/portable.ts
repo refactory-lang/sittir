@@ -2934,7 +2934,10 @@ const table: PortableTable = {
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
-	[TSKindId.ForInClause]: { async: { op: 'present', slots: { '244': 0 } } },
+	[TSKindId.ForInClause]: {
+		async: { op: 'present', slots: { '244': 0 } },
+		trailingComma: { op: 'present', slots: { '244': 3 } }
+	},
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
@@ -2950,7 +2953,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	178: { definition: { async: { types: [], kinds: [165] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
-	282: { contents: { async: { types: [], kinds: [244] } } },
+	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
 	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
 	306: { definition: { async: { types: [], kinds: [302, 345] } } }
 } satisfies QuerySlotFlags);
@@ -2964,7 +2967,7 @@ declare module './types.js' {
 		readonly __flags__?: 'group';
 	}
 	interface ForInClause {
-		readonly __flags__?: 'async';
+		readonly __flags__?: 'async' | 'trailingComma';
 	}
 	interface ForStatement {
 		readonly __flags__?: 'async';
@@ -2997,7 +3000,7 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly contents: 'debug' };
 	}
 	interface ComprehensionClauses {
-		readonly __slotFlags__?: { readonly contents: 'async' };
+		readonly __slotFlags__?: { readonly contents: 'async' | 'trailingComma' };
 	}
 	interface BlockClassDeclaration {
 		readonly __slotFlags__?: { readonly statements: 'async' };
