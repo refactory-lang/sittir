@@ -523,7 +523,7 @@ function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefi
 		name: camel(member.name),
 		via: member.via,
 		parent: member.parent,
-		selector: member,
+		selector: slotSelectorOf(member),
 		slot,
 		multiple: member.multiple,
 		path: chain && held && last ? [...chain.steps, ...heldPath(held, slotAnchor(model, last.holder, member))] : undefined,
@@ -737,7 +737,8 @@ function membersOf(
 			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(member) });
 			continue;
 		}
-		routes.push(...((isDeep(member) ? reached.get(member) : undefined) ?? []));
+		const known = new Set(routes.map((route) => JSON.stringify(route)));
+		routes.push(...((isDeep(member) ? reached.get(member) : undefined) ?? []).filter((route) => !known.has(JSON.stringify(route))));
 	}
 	for (const route of routes) {
 		const landed = landedKinds(input.model, route);
@@ -750,6 +751,8 @@ function membersOf(
 	}
 	return routes;
 }
+
+const slotSelectorOf = ({ field, kind, after, anchor, adjacent }: SlotSelector): SlotSelector => ({ field, kind, after, anchor, ...(adjacent === undefined ? {} : { adjacent }) });
 
 function landedKinds(model: SlotModel, route: MemberRoute): readonly string[] {
 	switch (route.route) {

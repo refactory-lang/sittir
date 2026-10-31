@@ -497,6 +497,39 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const what = typeof item === 'string' ? `the text "${item}"` : hasKind(item) ? `a ${nameOf(item.$type)}` : 'these values';
 			throw new Error(`portable build: ${path}'s ${name} has no route that seats ${what}; it sits in ${slotsOf(offered)}`);
 		};
+		const refuseUnmet = (path: string, name: string, routes: readonly PortableMemberStep[], unmet: (route: PortableMemberStep) => readonly (readonly string[])[]): never => {
+			throw new Error(`portable build: ${path}: ${name} builds only beside ${[...new Set(routes.map((route) => unmet(route).map((group) => group.join(' or ')).join(' and ')))].join(', or beside ')}`);
+		};
+		const fitsShape = (route: PortableMemberStep, value: unknown): boolean =>
+			Array.isArray(value) ? takesList(route) && value.every((item) => seats(route, item)) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true), value);
+		const ownerFor = (
+			arm: PortableBuildArm,
+			values: ReadonlyMap<string, unknown>,
+			unmet: (route: PortableMemberStep) => readonly (readonly string[])[],
+			path: string
+		): ReadonlySet<PortableMemberStep> | undefined => {
+			if (arm.owners === undefined) return undefined;
+			const names = [...values.keys()];
+			const fitting = arm.owners.map((owner) =>
+				owner.flatMap((i) => {
+					const route = arm.members[i]!;
+					return values.has(route.name) && unmet(route).length === 0 && fitsShape(route, values.get(route.name)) ? [i] : [];
+				})
+			);
+			const takesAll = (fit: readonly number[]): boolean => names.every((name) => fit.some((i) => arm.members[i]!.name === name));
+			const shapes = [...new Set(fitting.filter(takesAll).map((fit) => fit.join(' ')))];
+			if (shapes.length === 0) {
+				const alone = names.filter((name) => !fitting.some((fit) => fit.some((i) => arm.members[i]!.name === name)));
+				const waiting = alone.find((name) => arm.members.some((route) => route.name === name && unmet(route).length > 0 && fitsShape(route, values.get(name))));
+				if (waiting !== undefined)
+					refuseUnmet(path, waiting, arm.members.filter((route) => route.name === waiting && fitsShape(route, values.get(waiting))), unmet);
+				const [refused] = alone;
+				if (refused !== undefined) refuseValue(path, refused, values.get(refused), arm.members.filter((route) => route.name === refused));
+				throw new Error(`portable build: ${path}: no ${language} form of ${nameOf(arm.kind)} takes ${names.join(', ')} together`);
+			}
+			if (shapes.length > 1) throw new Error(`portable build: ${path}: ${nameOf(arm.kind)} takes ${names.join(', ')} through more than one ${language} form`);
+			return new Set(shapes[0]!.split(' ').filter((i) => i !== '').map((i) => arm.members[Number(i)]!));
+		};
 		const routesOf = (arm: PortableBuildArm, name: string): readonly PortableMemberStep[] =>
 			arm.members.filter((member, i) => member.name === name && !arm.members.slice(0, i).some((other) => other.name === name && sameSteps(other, member)));
 		const spelledBy = (arm: PortableBuildArm, structure: PortableStructure): boolean =>
@@ -562,13 +595,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			});
 			const present = (other: string): boolean => structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other);
 			const unmet = (route: PortableMemberStep): readonly (readonly string[])[] => (route.requires ?? []).filter((group) => !group.some(present));
+			const owner = ownerFor(arm, values, unmet, structure.$path);
 			for (const [name, all] of [...routed].sort(([, a], [, b]) => a.length - b.length)) {
 				const value = values.get(name);
-				const routes = all.filter((route) => unmet(route).length === 0);
-				if (routes.length === 0)
-					throw new Error(
-						`portable build: ${structure.$path}: ${name} builds only beside ${all.map((route) => unmet(route).map((group) => group.join(' or ')).join(' and ')).join(', or beside ')}`
-					);
+				const routes = all.filter((route) => (owner === undefined || owner.has(route)) && unmet(route).length === 0);
+				if (routes.length === 0) refuseUnmet(structure.$path, name, all, unmet);
 				const open = routes.flatMap((candidate) => {
 					const reach = descend(frame, candidate.steps.slice(0, -1), false);
 					return reach === undefined ? [] : [{ candidate, reached: reach.reached }];

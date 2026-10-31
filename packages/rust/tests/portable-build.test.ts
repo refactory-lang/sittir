@@ -72,8 +72,10 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'type.function', trait: 'Fn', extern: 'x', parameters: [] })).toThrow(/no rust form of type\.function/);
 	});
 
-	it("builds a restricted visibility's scope as given, a path through the scope's path form in place of the token the first claim fixes", () => {
-		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: rust.kinds.Super }))).toBe('pub(super)');
+	it("builds a restricted visibility's path scope through the scope's path form, and refuses a `super` scope that two forms take alike", () => {
+		expect(() => runtime.build({ $path: 'modifier.visibility.public.restricted', scope: rust.kinds.Super })).toThrow(
+			'portable build: modifier.visibility.public.restricted: visibility_modifier takes scope through more than one rust form'
+		);
 		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: 'a' }))).toBe('pub(in a)');
 	});
 

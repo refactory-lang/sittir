@@ -617,6 +617,10 @@ export const build: PortableBuildTable = {
 							reads: [285]
 						}
 					],
+					owners: [
+						[0, 1, 2],
+						[0, 3]
+					],
 					presets: [],
 					flags: {
 						group: {
@@ -1354,6 +1358,7 @@ export const build: PortableBuildTable = {
 							requires: [['value']]
 						}
 					],
+					owners: [[0], [1, 2]],
 					presets: [],
 					flags: {},
 					when: []
@@ -1603,6 +1608,10 @@ export const build: PortableBuildTable = {
 							],
 							reads: [248]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
 					],
 					presets: [],
 					flags: {},
@@ -2196,6 +2205,10 @@ export const build: PortableBuildTable = {
 							reads: [248]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
 					presets: [
 						{
 							steps: [
@@ -2453,6 +2466,10 @@ export const build: PortableBuildTable = {
 							reads: [248]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
 					presets: [],
 					flags: {
 						async: {
@@ -2695,6 +2712,10 @@ export const build: PortableBuildTable = {
 							reads: [248]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
 					presets: [],
 					flags: {
 						async: {
@@ -2936,6 +2957,10 @@ export const build: PortableBuildTable = {
 							],
 							reads: [248]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -7131,8 +7156,8 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'function'],
 									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 209, 210, 222, 224, 233, 234, 235, 236,
+										238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
 									],
 									leaf: 'identifier',
 									texts: [1],
@@ -7209,16 +7234,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [224, 'function'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
+									kinds: [206, 221]
 								}
 							]
 						},

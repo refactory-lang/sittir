@@ -1349,6 +1349,7 @@ export const build: PortableBuildTable = {
 							requires: [['default']]
 						}
 					],
+					owners: [[0], [1, 2]],
 					presets: [],
 					flags: {},
 					when: []
@@ -2231,6 +2232,10 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 6]
+					],
 					presets: [],
 					flags: {},
 					when: [
@@ -2514,6 +2519,10 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 6]
+					],
 					presets: [],
 					flags: {},
 					when: [
@@ -2571,41 +2580,6 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
 						}
 					],
 					presets: [],
@@ -2642,41 +2616,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
 								},
 								{
 									key: 'elements',
@@ -2759,41 +2698,6 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
 						}
 					],
 					presets: [
@@ -2840,41 +2744,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
 								},
 								{
 									key: 'elements',
@@ -5157,7 +5026,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -5183,6 +5053,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [],
 					flags: {
@@ -5393,7 +5267,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -5419,6 +5294,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [],
 					flags: {
@@ -5619,7 +5498,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -5645,6 +5525,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [],
 					flags: {
@@ -5987,7 +5871,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -6013,6 +5898,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [],
 					flags: {
@@ -6343,7 +6232,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -6369,6 +6259,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [
 						{
@@ -6709,7 +6603,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -6735,6 +6630,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [
 						{
@@ -7075,7 +6974,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -7101,6 +7001,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [
 						{
@@ -7426,7 +7330,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -7452,6 +7357,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [],
 					flags: {
@@ -7758,7 +7667,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -7784,6 +7694,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [],
 					flags: {
@@ -8051,7 +7965,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -8077,6 +7992,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -8354,7 +8273,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -8380,6 +8300,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -8657,7 +8581,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -8683,6 +8608,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -8960,7 +8889,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -8986,6 +8916,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -9302,7 +9236,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -9328,6 +9263,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -9644,7 +9583,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -9670,6 +9610,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4, 5]
 					],
 					presets: [
 						{
@@ -12387,6 +12331,133 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
+					kind: 327,
+					builder: 'requiredParameter',
+					members: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									kinds: [284],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'default',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							kind: 278
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 326
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38
+								}
+							]
+						}
+					},
+					when: [],
+					holders: [[386, 'items']]
+				},
+				{
 					kind: 467,
 					builder: 'receiverParameterDeclaration',
 					members: [
@@ -12501,177 +12572,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: [
-						{
-							absent: ['name'],
-							required: []
-						}
-					],
+					when: [],
 					holders: [[469, 'receiver']]
-				},
-				{
-					kind: 327,
-					builder: 'requiredParameter',
-					members: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [327, 'decorators'],
-									kinds: [284],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [327, 'name'],
-									kinds: [290, 291]
-								},
-								{
-									at: [260, 'content'],
-									kinds: [1, 129, 238, 242, 258, 259, 299],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'lhsExpression',
-											key: 'content'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [327, 'type'],
-									kinds: []
-								},
-								{
-									at: [333, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
-										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'default',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [327, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
-										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
-										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
-										439, 440
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							kind: 278
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 326
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					],
-					holders: [[386, 'items']]
 				}
 			]
 		},
@@ -17625,7 +17527,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -17651,6 +17554,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3, 4]
 					],
 					presets: [],
 					flags: {},
@@ -17738,41 +17645,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
 								},
 								{
 									key: 'elements',
@@ -18593,7 +18465,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [437, 'name'],
-									kinds: [1, 238, 242],
+									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -18737,14 +18609,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [437, 'name'],
-									kinds: [1, 238, 242],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
+									kinds: [238, 242]
 								}
 							]
 						},
@@ -22708,10 +22573,9 @@ export const build: PortableBuildTable = {
 								{
 									at: [420, 'function'],
 									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 196, 233, 234, 235, 236, 237, 241,
-										244, 247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277,
-										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 439, 440
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 196, 233, 236, 237, 241, 244, 247,
+										249, 251, 255, 256, 257, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278, 279, 280,
+										281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440
 									],
 									leaf: 'identifier',
 									texts: [1],
@@ -22966,19 +22830,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [420, 'function'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 196, 233, 234, 235, 236, 237, 241,
-										244, 247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277,
-										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 439, 440
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
+									kinds: [234, 235, 258]
 								}
 							]
 						},
@@ -23665,6 +23517,10 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 6]
+					],
 					presets: [],
 					flags: {},
 					when: []
@@ -24037,7 +23893,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -24063,6 +23920,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [],
 					flags: {
@@ -24274,7 +24135,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -24300,6 +24162,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5, 6]
 					],
 					presets: [],
 					flags: {
@@ -24543,45 +24409,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'content',
-									builder: 'callSignature'
-								},
-								{
-									key: 'parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [386, 'items'],
-									kinds: [327, 328],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'typeParameters',
 							steps: [
 								{
@@ -24614,8 +24441,13 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							requires: [['parameters']]
 						}
+					],
+					owners: [
+						[0, 1],
+						[0, 2, 3]
 					],
 					presets: [],
 					flags: {
@@ -28441,202 +28273,6 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 430,
-					builder: 'exportStatementDefaultFrom',
-					members: [
-						{
-							name: 'exportClause',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom',
-									mounted: {
-										call: 'merge',
-										key: 'content'
-									}
-								},
-								{
-									key: 'exportClause'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [434, 'exportClause'],
-									kinds: [192]
-								}
-							]
-						},
-						{
-							name: 'source',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom',
-									mounted: {
-										call: 'merge',
-										key: 'content'
-									}
-								},
-								{
-									key: 'source',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [434, 'source'],
-									kinds: [272, 423, 424]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom',
-									mounted: {
-										call: 'merge',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {
-						typeOnly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'typeOnly',
-											optional: true
-										}
-									],
-									kind: 7
-								}
-							]
-						}
-					},
-					when: [
-						{
-							member: 'exportClause',
-							kinds: [192]
-						},
-						{
-							absent: ['declaration', 'decorators', 'name', 'value'],
-							required: []
-						}
-					]
-				},
-				{
-					kind: 430,
-					builder: 'exportStatementDefaultFrom',
-					members: [
-						{
-							name: 'exportClause',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom',
-									mounted: {
-										call: 'merge',
-										key: 'content'
-									}
-								},
-								{
-									key: 'namespaceExport'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [433, 'namespaceExport'],
-									kinds: [191]
-								}
-							],
-							requires: [['source']]
-						},
-						{
-							name: 'source',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom',
-									mounted: {
-										call: 'merge',
-										key: 'content'
-									}
-								},
-								{
-									key: 'source'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [433, 'source'],
-									kinds: [272, 423, 424]
-								}
-							],
-							requires: [['exportClause']]
-						},
-						{
-							name: 'source',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultFrom.starFrom',
-									mounted: {
-										call: 'keyed',
-										key: 'content',
-										seats: 'direct'
-									}
-								},
-								{
-									key: 'source'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [432, 'source'],
-									kinds: [272, 423, 424]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						typeOnly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'typeOnly',
-											optional: true
-										}
-									],
-									kind: 7
-								}
-							]
-						}
-					},
-					when: [
-						{
-							member: 'exportClause',
-							kinds: [191]
-						},
-						{
-							absent: ['declaration', 'decorators', 'name', 'value'],
-							required: []
-						}
-					]
-				},
-				{
 					kind: 431,
 					builder: 'exportStatementDefaultDeclaration',
 					members: [
@@ -28669,114 +28305,20 @@ export const build: PortableBuildTable = {
 								{
 									at: [431, 'content'],
 									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
-								},
-								{
-									at: [435, 'content'],
-									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 436],
-									within: [
-										{
-											builder: 'exportStatementDefaultDeclaration.defaultKw',
-											key: 'content',
-											mounted: {
-												call: 'keyed',
-												key: 'content',
-												seats: 'direct'
-											}
-										}
-									]
 								}
 							],
 							reads: [206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
-						},
-						{
-							name: 'declaration',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw',
-									mounted: {
-										call: 'keyed',
-										key: 'content',
-										seats: 'direct'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [435, 'content'],
-									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 436]
-								}
-							],
-							reads: [206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw',
-									mounted: {
-										call: 'keyed',
-										key: 'content',
-										seats: 'direct'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw.value',
-									mounted: {
-										call: 'child',
-										key: 'content',
-										outer: {
-											call: 'keyedArgs',
-											key: 'content',
-											seats: 'direct'
-										}
-									}
-								},
-								{
-									key: 'value'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [436, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
-										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
-										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
-										439, 440
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
 						}
 					],
 					presets: [],
 					flags: {},
 					when: [
 						{
-							absent: ['exportClause', 'name', 'source'],
+							absent: ['exportClause', 'name', 'source', 'value'],
 							required: ['declaration']
 						}
 					]
-				}
-			]
-		},
-		'statement.export.all': {
-			root: true,
-			arms: [
+				},
 				{
 					kind: 430,
 					builder: 'exportStatementDefaultFrom',
@@ -28850,7 +28392,8 @@ export const build: PortableBuildTable = {
 									at: [434, 'source'],
 									kinds: [272, 423, 424]
 								}
-							]
+							],
+							requires: [['exportClause']]
 						},
 						{
 							name: 'source',
@@ -28875,7 +28418,44 @@ export const build: PortableBuildTable = {
 								}
 							],
 							requires: [['exportClause']]
-						},
+						}
+					],
+					owners: [
+						[0, 2],
+						[1, 3]
+					],
+					presets: [],
+					flags: {
+						typeOnly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'typeOnly',
+											optional: true
+										}
+									],
+									kind: 7
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: ['declaration', 'decorators', 'name', 'value'],
+							required: []
+						}
+					]
+				}
+			]
+		},
+		'statement.export.all': {
+			root: true,
+			arms: [
+				{
+					kind: 430,
+					builder: 'exportStatementDefaultFrom',
+					members: [
 						{
 							name: 'source',
 							steps: [
@@ -28963,37 +28543,6 @@ export const build: PortableBuildTable = {
 							name: 'declaration',
 							steps: [
 								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [431, 'content'],
-									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
-								},
-								{
-									at: [435, 'content'],
-									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 436],
-									within: [
-										{
-											builder: 'exportStatementDefaultDeclaration.defaultKw',
-											key: 'content',
-											mounted: {
-												call: 'keyed',
-												key: 'content',
-												seats: 'direct'
-											}
-										}
-									]
-								}
-							],
-							reads: [206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
-						},
-						{
-							name: 'declaration',
-							steps: [
-								{
 									key: 'content',
 									builder: 'exportStatementDefaultDeclaration.defaultKw',
 									mounted: {
@@ -29064,6 +28613,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1],
+						[0, 2]
 					],
 					presets: [
 						{
@@ -29278,6 +28831,10 @@ export const build: PortableBuildTable = {
 							requires: [['source']]
 						}
 					],
+					owners: [
+						[0, 1],
+						[1, 2, 3]
+					],
 					presets: [],
 					flags: {
 						typeOnly: {
@@ -29443,6 +29000,10 @@ export const build: PortableBuildTable = {
 							],
 							requires: [['source']]
 						}
+					],
+					owners: [
+						[0, 1],
+						[1, 2, 3]
 					],
 					presets: [
 						{
@@ -30336,7 +29897,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -30362,6 +29924,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3, 4]
 					],
 					presets: [],
 					flags: {},
@@ -30490,7 +30056,8 @@ export const build: PortableBuildTable = {
 									kinds: [327, 328],
 									many: true
 								}
-							]
+							],
+							requires: [['receiver']]
 						},
 						{
 							name: 'receiver',
@@ -30516,6 +30083,10 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3, 4]
 					],
 					presets: [],
 					flags: {

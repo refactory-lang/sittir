@@ -283,12 +283,21 @@ describe('the portable build table', () => {
 		});
 	});
 
-	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic', (grammar) => {
+	const undecided: Partial<Record<keyof typeof languages, readonly { readonly code: string; readonly message: string }[]>> = {
+		rust: [
+			{
+				code: 'portable-owner-undecided',
+				message: 'modifier.visibility.public.restricted: visibility_modifier_pub takes scope through two forms with the same members and kinds; nothing in the input tells them apart'
+			}
+		]
+	};
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic but the undecided owners it names', (grammar) => {
 		const diagnostics = JSON.parse(readFileSync(new URL(`../../${grammar}/.sittir/grammar-diagnostics.json`, import.meta.url), 'utf8')) as
-			| readonly { readonly code: string }[]
-			| { readonly diagnostics: readonly { readonly code: string }[] };
-		const codes = (Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string }[] }).diagnostics).map((d) => d.code);
-		expect(codes.filter((code) => code.startsWith('portable-'))).toEqual([]);
+			| readonly { readonly code: string; readonly message: string }[]
+			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
+		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
+		expect(entries.filter(({ code }) => code.startsWith('portable-')).map(({ code, message }) => ({ code, message }))).toEqual(undecided[grammar] ?? []);
 	});
 
 	it('builds the default form of a variant family, and the others by render option', () => {
@@ -325,5 +334,48 @@ describe('the portable build of a registered option', () => {
 
 	it('passes no options when the structure states none of them', () => {
 		expect(build({ holder: ['spelling'] }, { value: 'v' })).toEqual([['v']]);
+	});
+});
+
+describe('the portable build of an arm whose routes run through two forms of one slot', () => {
+	const route = (name: string, form: 'formA' | 'formB', pattern?: RegExp) => ({
+		name,
+		steps: [{ key: 'content', builder: form }, { key: name }],
+		multiple: false,
+		seats: [{ at: [form === 'formA' ? 2 : 3, name] as const, kinds: [], ...(pattern === undefined ? {} : { pattern: { source: pattern.source, flags: pattern.flags } }) }]
+	});
+	const table: PortableBuildTable = {
+		builders: { outer: 'config', formA: 'config', formB: 'config' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [{ kind: 1, builder: 'outer', members: [route('left', 'formA'), route('left', 'formB'), route('right', 'formA', /^z$/), route('right', 'formB')], owners: [[0, 2], [1, 3]], presets: [], flags: {}, when: [] }]
+			}
+		}
+	};
+	const build = (structure: Readonly<Record<string, unknown>>): readonly (readonly [string, unknown])[] => {
+		const calls: [string, unknown][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				outer: (input: unknown) => (calls.push(['outer', input]), { $type: 1 }),
+				formA: (input: unknown) => (calls.push(['formA', input]), { $type: 2 }),
+				formB: (input: unknown) => (calls.push(['formB', input]), { $type: 3 })
+			},
+			kindName: () => undefined,
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', ...structure } as never);
+		return calls;
+	};
+
+	it('builds every member through the one form that takes them all, whatever order the structure states them in', () => {
+		for (const structure of [{ left: 'x', right: 'y' }, { right: 'y', left: 'x' }]) expect(build(structure)[0]).toEqual(['formB', { left: 'x', right: 'y' }]);
+	});
+
+	it('refuses members two forms take alike, and a list where every form takes one value', () => {
+		expect(() => build({ left: 'x', right: 'z' })).toThrow('takes left, right through more than one test form');
+		expect(() => build({ left: ['x'] })).toThrow("statement.held's left holds one value, not a list");
 	});
 });

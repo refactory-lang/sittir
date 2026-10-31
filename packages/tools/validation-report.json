@@ -2,7 +2,7 @@
 	"grammars": {
 		"python": {"digest":"88311d24e1fca162138bf34feca061519603fc727ad8ed9d0264448f227787ce","counts":{"conflict-resolution":{"info":11},"conflict-unnecessary-upstream":{"info":2},"conflict-dynamic-precedence-authored":{"info":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
-		"rust": {"digest":"a372b16c795a24537bbf5fbdb5686be8c4781d20ea52e37ce6a30bcf47594fd3","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
+		"rust": {"digest":"4a2b1fe06d0cae442d2c09ebdf7d03a16fa4c375415df77fba6c4b8256899738","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3},"portable-owner-undecided":{"warning":1}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
 		"typescript": {"digest":"65876e31c1eae409ebea253b2fb446a7ba0bef78574e88ce7958b691b4679886","counts":{"conflict-resolution":{"info":75},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},

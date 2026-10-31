@@ -19,6 +19,14 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F: pass\n');
 	});
 
+	it('builds an except clause with and without a name through the form that takes its members, in any order, and refuses a name beside a list of exceptions', () => {
+		const body = [{ $path: 'statement.empty' }];
+		expect(render(runtime.build({ $path: 'clause.catch', body, type: 'E' }))).toBe('except E: pass\n');
+		for (const structure of [{ type: 'E', body, name: 'e' }, { name: 'e', body, type: 'E' }, { body, name: 'e', type: 'E' }])
+			expect(render(runtime.build({ $path: 'clause.catch', ...structure }))).toBe('except E as e: pass\n');
+		expect(() => runtime.build({ $path: 'clause.catch', type: ['E', 'F'], name: 'e', body })).toThrow(/no python form of except_clause takes .* together/);
+	});
+
 	it('builds a float $value split into its form\'s parts, and a boolean by its declared value', () => {
 		expect(render(runtime.build({ $path: 'literal.number.float', $value: 2 }))).toBe('2.0');
 		expect(render(runtime.build({ $path: 'literal.number.float', $value: 1.5 }))).toBe('1.5');

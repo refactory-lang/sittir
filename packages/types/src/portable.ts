@@ -175,7 +175,9 @@ export interface PortableDecimalParts {
  * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
- * holds) are the path's read tests, which a built node must pass.
+ * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
+ * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
+ * member it states, by the member's kinds and whether it is a list.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -187,6 +189,7 @@ export interface PortableBuildArm {
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
+	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
 	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
