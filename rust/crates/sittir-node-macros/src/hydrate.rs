@@ -148,7 +148,8 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
     let end = record_end(&delimiter);
     Ok(quote! {
         #start
-        let depth = depth.map(|depth| depth.at_least(#min_depth));
+        let __starts = ctx.starts();
+        let depth = depth.map(|depth| if __starts { depth.at_least(#min_depth) } else { depth });
         let children = __rt::survey(cursor);
         let routes = children
             .iter()

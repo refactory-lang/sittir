@@ -163,6 +163,8 @@ pub struct ReadCtx<'s> {
     /// the list (`ReadCtx::inline_items`): a list kind reads its items at its
     /// own depth, so they arrive with it as read nodes.
     pub inline_items: bool,
+    /// Whether the next node read is where a read starts (`ReadCtx::starts`).
+    pub(crate) start: bool,
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -174,6 +176,7 @@ impl std::fmt::Debug for ReadCtx<'_> {
             .field("changed", &self.changed)
             .field("inline_units", &self.inline_units)
             .field("inline_items", &self.inline_items)
+            .field("start", &self.start)
             .finish_non_exhaustive()
     }
 }
@@ -282,7 +285,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, start: true }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -315,6 +318,21 @@ impl<'s> ReadCtx<'s> {
     #[must_use]
     pub fn inline_items(self) -> Self {
         Self { inline_items: true, ..self }
+    }
+
+    /// Whether the node asking is where this read starts, answered once: the
+    /// first node to ask is told yes, and every node the read reaches below
+    /// it no. Only the start takes its kind's minimum depth, so no step below
+    /// a read's start raises the depth the read was asked for. A context
+    /// starts armed; an entry that reads through one context more than once
+    /// arms it again before each read (`begin_read`).
+    pub fn starts(&mut self) -> bool {
+        std::mem::take(&mut self.start)
+    }
+
+    /// Marks the next node read as where a read starts (`starts`).
+    pub fn begin_read(&mut self) {
+        self.start = true;
     }
 
     /// The depth a list kind read at `depth` hands its item slot. On a read
@@ -1388,10 +1406,11 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
     flags
 }
 
-/// Read the node at `index` into `T`. The cursor was created at the tree's
-/// root.
+/// Read the node at `index` into `T`, a read of its own that starts there
+/// (`ReadCtx::begin_read`). The cursor was created at the tree's root.
 pub fn read_at<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth) -> Result<T, ReadError> {
     goto(cursor, index);
+    ctx.begin_read();
     T::read(cursor, ctx, depth)
 }
 
@@ -1553,6 +1572,16 @@ mod tests {
             assert_eq!(depth.above().below(), Some(depth));
         }
         assert_eq!(Depth::Levels(NonZeroU32::MAX).above(), Depth::Levels(NonZeroU32::MAX), "the deepest count stays");
+    }
+
+    #[test]
+    fn a_read_starts_once_until_an_entry_begins_another() {
+        let mut ctx = ReadCtx::new("", crate::types::TreeId(1), |_| false);
+        assert!(ctx.starts(), "a new context starts armed");
+        assert!(!ctx.starts(), "a node below the start does not start");
+        ctx.begin_read();
+        assert!(ctx.starts());
+        assert!(!ctx.starts());
     }
 
     #[test]

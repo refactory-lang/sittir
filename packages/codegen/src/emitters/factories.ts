@@ -2509,11 +2509,15 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
 }
 
-export function wrappedItemLists(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly AssembledList[] {
-	return [...nodeMap.nodes.values()].filter(
-		(node): node is AssembledList =>
-			node instanceof AssembledList && separatedListSurface(node, nodeMap, kindEntries).wrapper !== undefined
-	);
+export function wrappedItemLists(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): readonly { readonly list: AssembledList; readonly content: AssembledNonterminal }[] {
+	return [...nodeMap.nodes.values()].flatMap((node) => {
+		if (!(node instanceof AssembledList)) return [];
+		const wrapper = separatedListSurface(node, nodeMap, kindEntries).wrapper;
+		return wrapper === undefined ? [] : [{ list: node, content: wrapper.contentSlot }];
+	});
 }
 
 export interface ListViewPlan {
@@ -2668,6 +2672,7 @@ export function separatedListSurface(
 		readonly factory: string;
 		readonly contentKey: string;
 		readonly contentProperty: string;
+		readonly contentSlot: AssembledNonterminal;
 		readonly decorationAccessors: readonly string[];
 		readonly typeName: string;
 	};
@@ -2692,6 +2697,7 @@ export function separatedListSurface(
 				factory: factoryName,
 				contentKey: content.propertyName,
 				contentProperty: content.propertyName,
+				contentSlot: content,
 				decorationAccessors: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.propertyName),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};

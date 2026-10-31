@@ -1385,7 +1385,7 @@ function readPrintOf(
 			kindEntries,
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
 			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
-			wrappedLists: new Set(wrappedItemLists(nodeMap, kindEntries).map((node) => node.kind)),
+			wrappedLists: new Map(wrappedItemLists(nodeMap, kindEntries).map(({ list, content }) => [list.kind, content])),
 			displayIds: displayClaimedIds(nodeMap),
 			folds: foldsWithRelaxed(generatedIdTables.folds, nodeMap, kindEntries),
 			grammar

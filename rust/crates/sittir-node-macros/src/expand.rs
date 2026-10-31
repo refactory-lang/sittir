@@ -699,7 +699,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
 /// The survey and routes every node's own pass starts with.
 fn pass(min_depth: u32) -> TokenStream {
     quote! {
-        let depth = depth.at_least(#min_depth);
+        let depth = if ctx.starts() { depth.at_least(#min_depth) } else { depth };
         let index = __rt::index_of(cursor);
         let __at = ctx.at_of(cursor);
         ctx.hold(cursor);

@@ -7,6 +7,7 @@ import {
 	AssembledAlias,
 	AssembledList,
 	AssembledSupertype,
+	concreteKindsOf,
 	isFixedTextLeaf,
 	isNodeRef,
 	kindIdText,
@@ -191,7 +192,7 @@ export interface ReadFactsCtx {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly names: ReadNames;
 	readonly listOwners: ReadonlySet<string>;
-	readonly wrappedLists: ReadonlySet<string>;
+	readonly wrappedLists: ReadonlyMap<string, AssembledNonterminal>;
 	readonly displayIds: ReadonlySet<number>;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly grammar: string;
@@ -295,9 +296,22 @@ export function nodeArgs(
 	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
 	const item = listItemSlot(node);
+	const wrapperContent = ctx.wrappedLists.get(node.kind);
+	for (const slot of [item, wrapperContent]) if (slot !== undefined) refuseFlatListCycle(node, slot, ctx);
 	if (item !== undefined) args.push(`item = ${rustFieldIdent(item.storageName)}`);
-	if (ctx.wrappedLists.has(node.kind)) args.push('wrapped_items');
+	if (wrapperContent !== undefined) args.push('wrapped_items');
 	return args.join(', ');
+}
+
+function refuseFlatListCycle(list: AssembledNode, slot: AssembledNonterminal, ctx: ReadFactsCtx): void {
+	for (const kind of slotKindNames(slot).flatMap((name) => concreteKindsOf(name, ctx.nodeMap))) {
+		const held = ctx.nodeMap.nodes.get(kind);
+		if (held !== undefined && listItemSlot(held) !== undefined) {
+			throw new Error(
+				`node read facts: the list ${list.kind} reads its items at its own depth, and its ${slot.propertyName} can be the list ${kind}, which would read its own items there too, without end`
+			);
+		}
+	}
 }
 
 export function takesUntagged(slot: AssembledNonterminal, ctx: ReadFactsCtx): boolean {

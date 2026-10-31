@@ -619,7 +619,7 @@ describe('node read facts', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			wrappedLists: new Set(wrappedItemLists(model.nodeMap, model.kindEntries).map((node) => node.kind)),
+			wrappedLists: new Map(wrappedItemLists(model.nodeMap, model.kindEntries).map(({ list, content }) => [list.kind, content])),
 			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'rust'
@@ -666,6 +666,13 @@ describe('node read facts', () => {
 	it('marks a list whose items are wrappers its view reads through, and only such a list', () => {
 		expect(args('ArgumentsElementsNode')).toBe('kind = kind::ARGUMENTS_ELEMENTS, item = item, wrapped_items');
 		expect(args('FieldInitializerListElementsNode')).toBe('kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item');
+	});
+
+	it('refuses a list whose items or wrapper content can be a list kind, which would read itself at one depth without end', () => {
+		const list = node('ArgumentsElementsNode');
+		const holdsList = slot('ArgumentsNode', 'elements');
+		const cyclic = { ...ctx, wrappedLists: new Map([[list.kind, holdsList]]) };
+		expect(() => nodeArgs(list, ownId(list), cyclic, list.slots)).toThrow(/the list arguments_elements reads its items at its own depth, and its elements can be the list arguments_elements/);
 	});
 
 	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
@@ -742,7 +749,7 @@ describe('node read facts for an aliased presence keyword', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			wrappedLists: new Set(wrappedItemLists(model.nodeMap, model.kindEntries).map((node) => node.kind)),
+			wrappedLists: new Map(wrappedItemLists(model.nodeMap, model.kindEntries).map(({ list, content }) => [list.kind, content])),
 			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'typescript'

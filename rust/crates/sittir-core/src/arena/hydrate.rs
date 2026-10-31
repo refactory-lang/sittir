@@ -445,13 +445,15 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// read `depth` levels down into `N` as its walk writes it: `None` for a node
 /// with no record, a leaf or a unit. A refused walk leaves the tree's arena
 /// as it found it: the words, chunks and record starts it and its children's
-/// walks wrote are dropped.
+/// walks wrote are dropped. The walk is a read of its own: the node at
+/// `index` is where it starts (`ReadCtx::begin_read`).
 ///
 /// # Errors
 ///
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
+    ctx.begin_read();
     let mark = records.tree.mark();
     match N::hydrate(cursor, ctx, Some(depth), records, None) {
         Ok(Hydrated::Record { at, .. }) => Ok(Some(at)),
