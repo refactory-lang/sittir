@@ -107,8 +107,35 @@ function unwrapExpression(expression: ts.Expression | undefined): ts.Expression 
 	return current;
 }
 
-export function enumerateDeclarations(file: string, source: string): readonly Declaration[] {
-	const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+function isCountedMember(declaration: ts.Declaration): boolean {
+	const source = declaration.getSourceFile();
+	if (source.isDeclarationFile || !GLOSSARY_TREES.some((tree) => source.fileName.includes(`/${tree}`))) return false;
+	if (
+		!ts.isPropertySignature(declaration) &&
+		!ts.isMethodSignature(declaration) &&
+		!ts.isGetAccessorDeclaration(declaration) &&
+		!ts.isSetAccessorDeclaration(declaration) &&
+		!ts.isPropertyDeclaration(declaration)
+	)
+		return false;
+	if (nameOf(declaration.name) === undefined || hasModifier(declaration, ts.SyntaxKind.PrivateKeyword)) return false;
+	const member = declaration.parent;
+	const owner = ts.isTypeLiteralNode(member) && ts.isTypeAliasDeclaration(member.parent) ? member.parent : member;
+	const namedOwner = ts.isInterfaceDeclaration(owner) || ts.isTypeAliasDeclaration(owner) || ts.isClassLike(owner);
+	return namedOwner && ts.isSourceFile(owner.parent) && hasModifier(owner, ts.SyntaxKind.ExportKeyword);
+}
+
+function isContextuallyDeclared(literal: ts.ObjectLiteralExpression, name: string, checker: ts.TypeChecker): boolean {
+	const contextual = checker.getContextualType(literal);
+	const property = contextual === undefined ? undefined : checker.getPropertyOfType(contextual, name);
+	return (property?.declarations ?? []).some(
+		(declaration) =>
+			isCountedMember(declaration) &&
+			(declaration.getSourceFile() !== literal.getSourceFile() || declaration.end <= literal.pos || declaration.pos >= literal.end)
+	);
+}
+
+export function enumerateDeclarations(sourceFile: ts.SourceFile, checker: ts.TypeChecker): readonly Declaration[] {
 	const listed = namesExportedByList(sourceFile);
 	const found = new Map<string, Declaration>();
 	const add = (path: readonly string[], exported: boolean, isStatic = false): void => {
@@ -179,7 +206,7 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 			const name = ts.isShorthandPropertyAssignment(property) ? property.name.text : nameOf(property.name);
 			if (name === undefined) continue;
 			const own = [...path, name];
-			add(own, exported);
+			if (!isContextuallyDeclared(literal, name, checker)) add(own, exported);
 			if (ts.isPropertyAssignment(property)) objectMembers(property.initializer, own, exported);
 		}
 	};
@@ -241,6 +268,20 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 	return [...found.values()];
 }
 
+export function enumerateSource(file: string, source: string): readonly Declaration[] {
+	const name = resolve(file);
+	const host = ts.createCompilerHost(CHECKER_OPTIONS);
+	const readSourceFile = host.getSourceFile;
+	host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) =>
+		fileName === name
+			? ts.createSourceFile(name, source, languageVersion, true)
+			: readSourceFile(fileName, languageVersion, onError, shouldCreate);
+	const program = ts.createProgram({ rootNames: [name], options: CHECKER_OPTIONS, host });
+	const sourceFile = program.getSourceFile(name);
+	if (sourceFile === undefined) throw new Error(`glossary-keys: no source for ${file}`);
+	return enumerateDeclarations(sourceFile, program.getTypeChecker());
+}
+
 function isTestFile(path: string): boolean {
 	return path.split('/').includes('__tests__') || /\.(test|spec)(-d)?\.ts$/.test(path);
 }
@@ -264,13 +305,27 @@ export function inGlossaryTrees(file: string): boolean {
 	return file.endsWith('.ts') && GLOSSARY_TREES.some((tree) => file.startsWith(tree));
 }
 
+const CHECKER_OPTIONS: ts.CompilerOptions = {
+	noEmit: true,
+	strict: true,
+	allowImportingTsExtensions: true,
+	module: ts.ModuleKind.ESNext,
+	moduleResolution: ts.ModuleResolutionKind.Bundler,
+	target: ts.ScriptTarget.ES2022,
+	skipLibCheck: true,
+	types: []
+};
+
 export function enumerateTrees(root: string): ReadonlyMap<string, readonly Declaration[]> {
 	const files: string[] = [];
 	for (const tree of GLOSSARY_TREES) if (existsSync(join(root, tree))) walkTs(root, tree, files);
+	const sources = files.sort().filter((file) => !isGeneratedSource(readFileSync(join(root, file), 'utf8')));
+	const program = ts.createProgram({ rootNames: sources.map((file) => join(root, file)), options: CHECKER_OPTIONS });
+	const checker = program.getTypeChecker();
 	const byFile = new Map<string, readonly Declaration[]>();
-	for (const file of files.sort()) {
-		const source = readFileSync(join(root, file), 'utf8');
-		if (!isGeneratedSource(source)) byFile.set(file, enumerateDeclarations(file, source));
+	for (const file of sources) {
+		const sourceFile = program.getSourceFile(join(root, file));
+		if (sourceFile !== undefined) byFile.set(file, enumerateDeclarations(sourceFile, checker));
 	}
 	return byFile;
 }

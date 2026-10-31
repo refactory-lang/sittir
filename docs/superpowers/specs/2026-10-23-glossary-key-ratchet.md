@@ -47,7 +47,8 @@ every level of nesting. The enumerator reports, for each file in scope:
    property, at any depth, keyed `Owner::member`;
 3. members of an enum: keyed `Enum::Member`;
 4. named properties of a named const object literal, at any depth, keyed
-   `Const::prop` and `Const::prop::nested`;
+   `Const::prop` and `Const::prop::nested`, except a property its contextual type
+   declares by name (see the resolved questions);
 5. members of a type literal (`type T = { … }`, including generic aliases), at any
    depth, keyed `Alias::member` and `Alias::member::nested`.
 
@@ -133,6 +134,15 @@ These settle the cases the rule above leaves open. Implement builds to them.
   own type is a type literal nests: `A::prop::inner`.
 - An object-literal const is followed through `as const`, `satisfies` and parentheses only.
   `Object.freeze(...)` is not followed.
+- A property of a named const object literal is not a declaration when its contextual type
+  declares that name: an interface or type-literal member, or a key of a mapped type over
+  `keyof` a declared type. The compiler resolves such a property to a declaration outside
+  the literal, and that declaration must itself be counted: a member of an exported interface,
+  type alias or class at the top of a source file in the glossary trees. Otherwise (an inline
+  variable annotation, a `node_modules` type) the literal property stays counted. Each nested
+  property is decided on its own, against its own contextual type. An index signature (`Record<string, …>`) declares no name, so its properties still
+  count, and so do properties whose contextual type has no declaration (for example
+  `Record<K, …>` over a union of literal keys).
 - A key names exactly one declaration in its file, as the rule above states: the bare name when
   that name is declared once in the file (a top-level declaration, or a member of exactly one
   owner), otherwise the full path (`Namespace::Owner::member`). A bare name that is a unique

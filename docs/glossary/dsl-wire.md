@@ -929,15 +929,15 @@ once counts once.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::currentDollar`
 
-The `$` of the rule callback running under this context, set and restored with `currentRuleKind` (`wrapOneRuleFn`); undefined between callbacks.
+The `$` of the rule callback running under this context, set and restored with `currentRuleKind` (`wrapOneRuleFn`); undefined between callbacks. Under a refused entry it is `'scoped'`: it holds only while one entry is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::inlineWrites`
 
-The rule nodes a verb wrote while a rule callback ran, each with the kind whose callback wrote it (`wireNoteInlineWrite`). Keys are the nodes themselves, so a site is the member a path resolves to, however the path is spelt. A copy of a node is not in the map unless it is noted itself.
+The rule nodes a verb wrote while a rule callback ran, each with the kind whose callback wrote it (`wireNoteInlineWrite`). Keys are the nodes themselves, so a site is the member a path resolves to, however the path is spelt. A copy of a node is not in the map unless it is noted itself. Under a refused entry it is `'unreached'`: no entry reaches it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::applyingEntries`
 
-True while a kind's `edits:` sets apply (`wireApplyingEntries`). Verb writes in that span are entries, not inline writes.
+True while a kind's `edits:` sets apply (`wireApplyingEntries`). Verb writes in that span are entries, not inline writes. Under a refused entry it is `'scoped'`: it holds only while one entry is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::baseRuleBodies`
 
@@ -1021,7 +1021,7 @@ Runs `fn` while a path is inside the hidden rule `rule` (`WireContext.entering`)
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::entering`
 
-The hidden rules a path walk is inside (`wireEnteringRule`).
+The hidden rules a path walk is inside (`wireEnteringRule`). Under a refused entry it is `'scoped'`: it holds only while one entry is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::insideCopy`
 
@@ -1634,7 +1634,7 @@ Refuses an `edits` key that names no rule when the layer evaluates: no rule of t
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::layer`
 
-The layer pass's handle (`WireLayer`), where wire's refusals and the lead entries it queues go. Absent outside a layer pass, where a refusal throws and a lead entry has no phase to run in.
+The layer pass's handle (`WireLayer`), where wire's refusals and the lead entries it queues go. Absent outside a layer pass, where a refusal throws and a lead entry has no phase to run in. Under a refused entry each field has its own role: `name` and `depth` are `'outside'`, `diagnostics` is `'kept'`, and `narrows`, `leads` and `renames` are `'undone'`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
 
@@ -1666,7 +1666,7 @@ Queues a `narrow` entry for the layer's whole-grammar phase, as a `verbs/narrow.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::editedMints`
 
-The `edits` keys that name neither a rule of the base nor one of the config's `rules:` (`composeOrSynthesizePatchedParents`). Each must name a kind the layer mints; wire's entry refuses one it reaches with no minted body (`refuseEditSite`).
+The `edits` keys that name neither a rule of the base nor one of the config's `rules:` (`composeOrSynthesizePatchedParents`). Each must name a kind the layer mints; wire's entry refuses one it reaches with no minted body (`refuseEditSite`). Under a refused entry it is `'outside'`: an entry does not touch it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::returnEvaluatedBodies`
 
@@ -1702,7 +1702,7 @@ One of the base's lists (`extras`, `supertypes` or `precedences`), from a gramma
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::lists`
 
-The lists the entry evaluated (`evaluateWireLists`); absent until the runtime calls it.
+The lists the entry evaluated (`evaluateWireLists`); absent until the runtime calls it. Under a refused entry it is `'outside'`: an entry does not touch it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::evaluatedBodies`
 
@@ -2244,31 +2244,31 @@ The `edits` block: the per-kind edit entries the layer applies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::activeEntryPath`
 
-The path of the entry being applied, for diagnostics.
+The path of the entry being applied, for diagnostics. Under a refused entry it is `'scoped'`: it holds only while one entry is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::aliasTargets`
 
-The alias targets the layer registered.
+The alias targets the layer registered. Under a refused entry it is `'outside'`: an entry does not touch it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copies`
 
-The copies minted during the layer pass.
+The copies minted during the layer pass. Under a refused entry it is `'undone'`: an entry that is refused restores it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copyReferences`
 
-The copy references the walk has made.
+The copy references the walk has made. Under a refused entry it is `'unreached'`: no entry reaches it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::keywordMints`
 
-Keyword mints by name, so a text token reuses its mint.
+Keyword mints by name, so a text token reuses its mint. Under a refused entry it is `'undone'`: an entry that is refused restores it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::layerBodies`
 
-The bodies of the layer's rules.
+The bodies of the layer's rules. Under a refused entry it is `'undone'`: an entry that is refused restores it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::pendingRules`
 
-Rules registered but not yet built.
+Rules registered but not yet built. Under a refused entry it is `'undone'`: an entry that is refused restores it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest::from`
 
@@ -2318,73 +2318,13 @@ The refusal's extra details.
 
 The message the refusal carries.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::activeEntryPath`
-
-The `WireContext` field `activeEntryPath`: `'scoped'`: it holds only while one entry is applied.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::aliasTargets`
-
-The `WireContext` field `aliasTargets`: `'outside'`: an entry does not touch it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::applyingEntries`
-
-The `WireContext` field `applyingEntries`: `'scoped'`: it holds only while one entry is applied.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copies`
-
-The `WireContext` field `copies`: `'undone'`: an entry that is refused restores it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copyReferences`
-
-The `WireContext` field `copyReferences`: `'unreached'`: no entry reaches it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::currentDollar`
-
-The `WireContext` field `currentDollar`: `'scoped'`: it holds only while one entry is applied.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::editedMints`
-
-The `WireContext` field `editedMints`: `'outside'`: an entry does not touch it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::entering`
-
-The `WireContext` field `entering`: `'scoped'`: it holds only while one entry is applied.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::inlineWrites`
-
-The `WireContext` field `inlineWrites`: `'unreached'`: no entry reaches it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::keywordMints`
-
-The `WireContext` field `keywordMints`: `'undone'`: an entry that is refused restores it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::layerBodies`
-
-The `WireContext` field `layerBodies`: `'undone'`: an entry that is refused restores it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::lists`
-
-The `WireContext` field `lists`: `'outside'`: an entry does not touch it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::pendingRules`
-
-The `WireContext` field `pendingRules`: `'undone'`: an entry that is refused restores it.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::layer`
-
-The role of each field of the layer record, as a nested object: `name`, `depth` and `narrows`, `leads`, `renames` and `diagnostics`.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::editing`
-
-The role of the editing state: it is scoped to the entry being applied.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAliasSite`
 
 Records an alias site in the wire context.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::editing`
 
-Whether an entry is being edited right now.
+Whether an entry is being edited right now. Under a refused entry it is scoped to the entry being applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireInPathEdit`
 
