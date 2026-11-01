@@ -154,6 +154,12 @@ describe('the portable read', () => {
 		}
 	});
 
+	it('reads the return type of an arrow function, and builds it back', () => {
+		const source = 'const f = (x): number => x;';
+		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', returnType: 'number' } }] });
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

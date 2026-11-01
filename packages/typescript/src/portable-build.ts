@@ -27205,11 +27205,86 @@ export const build: PortableBuildTable = {
 								}
 							],
 							requires: [['parameters']]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'content',
+									builder: 'callSignature'
+								},
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [369, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									tokens: {
+										'*': 363,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 503,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							],
+							requires: [['parameters']]
 						}
 					],
 					owners: [
 						[0, 1],
-						[0, 2, 3]
+						[0, 2, 3, 4]
 					],
 					presets: [],
 					flags: {

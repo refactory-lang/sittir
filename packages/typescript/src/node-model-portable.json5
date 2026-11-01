@@ -1365,6 +1365,31 @@
               "slot": "type_parameters"
             }
           ]
+        },
+        {
+          "name": "returnType",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "call_signature",
+          "slot": "return_type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "content"
+            },
+            {
+              "owner": "call_signature",
+              "slot": "return_type"
+            }
+          ]
         }
       ]
     },
