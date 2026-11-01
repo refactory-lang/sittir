@@ -22,6 +22,10 @@ on:
         type: choice
         default: release
         options: [release, gate]
+      arena:
+        description: paired-refs only. Also measure the feature tree in arena storage.
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -54,3 +58,4 @@ jobs:
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}
+      arena: ${{ inputs.arena }}

@@ -2,7 +2,8 @@
 # Reads <out-dir>/refs.json ({"base", "master", "feature", "profile"}), the
 # workers' results under <out-dir>/runs and each tree's fingerprint
 # (<out-dir>/before-<tree>.json). The versions are base, master and feature in
-# object storage and feature-arena (the feature tree in arena storage). Every
+# object storage and, when it ran, feature-arena (the feature tree in arena
+# storage). Every
 # ratio is the median of the per-round ratios of process medians, with a
 # seeded bootstrap 95% range of that median, beside the earlier summary's
 # feature/master. Pipeline ratios against base above <bar> (default 1.10) are
@@ -17,14 +18,15 @@ runs = out / 'runs'
 earlier = json.loads(Path(sys.argv[2]).read_text())
 BAR = float(sys.argv[3]) if len(sys.argv) > 3 else 1.10
 refs = json.loads((out / 'refs.json').read_text())
-TREES = ['base', 'master', 'feature']
-VERSIONS = ['base', 'master', 'feature', 'feature-arena']
-TREE_OF = {'feature-arena': 'feature'}
-PAIRS = [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')]
-AGAINST_BASE = [a for a, b in PAIRS if b == 'base' and a != 'master']
-GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
 median = statistics.median
 read = lambda name: json.loads((runs / name).read_text())
+receipts = read('receipts.json')
+TREES = ['base', 'master', 'feature']
+VERSIONS = [v for v in ['base', 'master', 'feature', 'feature-arena'] if any(r['version'] == v for r in receipts)]
+TREE_OF = {'feature-arena': 'feature'}
+PAIRS = [(a, b) for a, b in [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')] if a in VERSIONS and b in VERSIONS]
+AGAINST_BASE = [a for a, b in PAIRS if b == 'base' and a != 'master']
+GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
 
 
 def interval(values, seed=20261029):
@@ -42,7 +44,6 @@ def pairs(med):
     return {f'{a}/{b}': {ph: ratio(med[a][ph], med[b][ph]) for ph in med[a]} for a, b in PAIRS}
 
 
-receipts = read('receipts.json')
 profiles = set()
 mismatches = []
 corpus = []
@@ -96,8 +97,9 @@ ms = lambda ph, row: ' | '.join(f"{row['ms'][v][ph]:.3f}" for v in VERSIONS)
 msHeads = ' | '.join(f'ms {v}' for v in VERSIONS)
 EMPTY_DIFF = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 lines = [
-    '## Paired refs: feature (object and arena) and master against their merge base', '',
-    f"Trees: base `{refs['base'][:9]}` (merge base), master `{refs['master'][:9]}`, feature `{refs['feature'][:9]}`; build profile {', '.join(sorted(profiles))}. feature-arena is the feature tree read with `nodeStorage: 'arena'`; the others use object storage.",
+    '## Paired refs: feature and master against their merge base', '',
+    f"Trees: base `{refs['base'][:9]}` (merge base), master `{refs['master'][:9]}`, feature `{refs['feature'][:9]}`; build profile {', '.join(sorted(profiles))}. "
+    + ("feature-arena is the feature tree read with `nodeStorage: 'arena'`; the others use object storage." if 'feature-arena' in VERSIONS else 'Every version uses object storage.'),
     f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
     'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',

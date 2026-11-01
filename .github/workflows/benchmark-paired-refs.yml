@@ -12,6 +12,9 @@ on:
       profile:
         type: string
         required: true
+      arena:
+        type: boolean
+        required: true
 
 permissions:
   contents: read
@@ -41,6 +44,7 @@ jobs:
           FEATURE_REF: ${{ inputs.feature-ref }}
           MASTER_REF: ${{ inputs.master-ref }}
           PROFILE: ${{ inputs.profile }}
+          ARENA: ${{ inputs.arena }}
         run: |
           mkdir -p "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees"
           resolve() { git rev-parse --verify --quiet "origin/$1^{commit}" || git rev-parse --verify "$1^{commit}"; }
@@ -48,8 +52,8 @@ jobs:
           master=$(resolve "$MASTER_REF")
           base=$(git merge-base "$feature" "$master")
           jq -n --arg base "$base" --arg master "$master" --arg feature "$feature" \
-            --arg featureRef "$FEATURE_REF" --arg masterRef "$MASTER_REF" --arg profile "$PROFILE" \
-            '{base: $base, master: $master, feature: $feature, featureRef: $featureRef, masterRef: $masterRef, profile: $profile}' \
+            --arg featureRef "$FEATURE_REF" --arg masterRef "$MASTER_REF" --arg profile "$PROFILE" --argjson arena "$ARENA" \
+            '{base: $base, master: $master, feature: $feature, featureRef: $featureRef, masterRef: $masterRef, profile: $profile, arena: $arena}' \
             | tee "$RUNNER_TEMP/paired-refs/refs.json"
       - name: Build the merge base
         shell: bash
@@ -66,13 +70,14 @@ jobs:
           for tree in base master feature; do
             (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
           done
-      - name: Measure base, master and feature (object and arena) in alternating fresh processes
+      - name: Measure base, master and feature in alternating fresh processes
         shell: bash
+        env:
+          ARENA: ${{ inputs.arena }}
         run: |
-          python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" \
-            base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" \
-            feature="$RUNNER_TEMP/trees/feature" feature-arena="$RUNNER_TEMP/trees/feature@arena" \
-            2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
+          versions=(base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature")
+          if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
+          python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
       - name: Check the trees did not change during measurement
         shell: bash
         run: |
