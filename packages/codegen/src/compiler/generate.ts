@@ -161,6 +161,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 							? `${path}: a ${slot} value builds as any of ${kinds.join(', ')}, and the grammar declares no default arm among them`
 							: code === 'portable-owner-undecided'
 								? `${path}: ${kinds[0]} takes ${(members ?? []).join(', ')} through two forms with the same members and kinds; nothing in the input tells them apart`
+								: code === 'portable-token-ambiguous'
+									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${(members ?? [])[0]}", so the text alone does not pick one`
 								: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);

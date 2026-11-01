@@ -107,14 +107,15 @@ export interface PortableContainer {
 
 /**
  * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has, the
- * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), and the containers the
- * build puts around it, outermost first. A seat that holds many (`many`) takes a list.
+ * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), the kind each
+ * fixed-text token the seat admits has, keyed by its text (`tokens`), and the containers the build puts around it, outermost first. A seat that holds many (`many`) takes a list.
  */
 export interface PortableSeat {
 	readonly at: readonly [holder: number, key: string];
 	readonly kinds: readonly number[];
 	readonly leaf?: string;
 	readonly texts?: readonly number[];
+	readonly tokens?: Readonly<Record<string, number>>;
 	readonly pattern?: { readonly source: string; readonly flags: string };
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;

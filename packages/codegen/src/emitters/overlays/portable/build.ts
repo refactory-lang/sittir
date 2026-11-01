@@ -46,7 +46,8 @@ export type PickDiagnosticCode =
 	| 'portable-pick-undecided'
 	| 'portable-form-product'
 	| 'portable-value-undecided'
-	| 'portable-owner-undecided';
+	| 'portable-owner-undecided'
+	| 'portable-token-ambiguous';
 
 const FORM_PRODUCT_LIMIT = 8;
 
@@ -327,13 +328,28 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const owner = path.at(-1)?.owner;
 		return slot === undefined || holder === undefined || key === undefined || owner === undefined ? undefined : seatsOf(holder, key, owner, slot, [], []);
 	};
+	const tokenDiagnostics = new Map<string, PickDiagnostic>();
+	const tokensOf = (seat: Seat): Readonly<Record<string, number>> | undefined => {
+		const byText = new Map<string, string[]>();
+		for (const kind of seat.kinds) {
+			const text = fixedText.get(kind);
+			if (text !== undefined && typeOf(kind) !== undefined) (byText.get(text) ?? byText.set(text, []).get(text)!).push(kind);
+		}
+		for (const [text, kinds] of byText)
+			if (kinds.length > 1)
+				tokenDiagnostics.set(`${seat.holder.kind} ${seat.slot.name} ${text}`, { code: 'portable-token-ambiguous', path: seat.holder.kind, kinds: kinds.sort(), holder: seat.holder.kind, slot: seat.slot.name, members: [text] });
+		const tokens = [...byText].filter(([, kinds]) => kinds.length === 1).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+		return tokens.length === 0 ? undefined : Object.fromEntries(tokens.map(([text, [kind]]) => [text, typeOf(kind!)!]));
+	};
 	const seatRecord = (seat: Seat): PortableSeat => {
 		const leaf = defaultLeaf(seat.slot, seat.kinds);
+		const tokens = tokensOf(seat);
 		const guard = leaf === undefined ? interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name)?.regex : leaf.pattern;
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
 		...(leaf === undefined ? {} : { leaf: leaf.leaf, texts: leaf.texts }),
+		...(tokens === undefined ? {} : { tokens }),
 		...(guard === undefined ? {} : { pattern: { source: guard.source, flags: guard.flags } }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),
 		...(seat.many ? { many: true as const } : {})
@@ -789,7 +805,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (pickable.length > 0 && pickable.length < arms.length) byPath.set(path, pickable);
 	}
 
-	const diagnostics: PickDiagnostic[] = [...formDiagnostics];
+	const diagnostics: PickDiagnostic[] = [...formDiagnostics, ...tokenDiagnostics.values()];
 	const storageKinds = (refs: readonly NodeRef[], seen = new Set<string>()): string[] =>
 		refs.flatMap((ref) => {
 			const kind = ref.node === undefined ? ref.parseKind?.name : storageKindOfRef(ref.node);
