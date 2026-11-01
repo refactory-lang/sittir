@@ -3,7 +3,8 @@
 # (joint: each member read just before its setter; split: every read, then
 # every setter), in three rounds of fresh processes, the version order rotating
 # by round and reversing on odd rounds. Then writes probe.md: per grammar, the
-# median over rounds of each version's microseconds per tree for every phase,
+# median over rounds of each version's microseconds per tree for every phase
+# (release: the edit results' explicit release),
 # native call and garbage-collection kind, beside the first version's. Parse,
 # render, edit and the garbage collections come from the joint runs; read and
 # set from the split runs.
@@ -56,9 +57,9 @@ for grammar in grammars:
         meds = {n: statistics.median(value(r) for r in runs[mode][n]) for n in names}
         lines.append(f'| {label} | ' + ' | '.join(f'{meds[n]:.2f}' for n in names) + ' | ' + ' | '.join(f'{meds[n] - meds[first]:+.2f}' for n in names[1:]) + ' |')
 
-    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('read', 'split'), ('set', 'split')]:
+    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('release', 'joint'), ('read', 'split'), ('set', 'split')]:
         row(f'**{phase}**', lambda r, phase=phase: r['usPerTree'][phase], mode)
-    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('read', 'split'), ('set', 'split')]:
+    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('release', 'joint'), ('read', 'split'), ('set', 'split')]:
         for call in sorted({c for n in names for r in runs[mode][n] for c in r['calls'] if c.startswith(phase + ' ')}):
             row(f'call {call} (calls/tree {max(statistics.median(r["calls"].get(call, {"perTree": 0})["perTree"] for r in runs[mode][n]) for n in names):.2f})',
                 lambda r, call=call: r['calls'].get(call, {'usPerTree': 0})['usPerTree'], mode)

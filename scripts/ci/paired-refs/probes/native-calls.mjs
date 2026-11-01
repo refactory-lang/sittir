@@ -5,7 +5,8 @@
 // by kind. The addon's exports are wrapped before the engine binds them.
 // `joint` edits as the corpus worker does, each member read just before its
 // setter (phase `edit`); `split` reads every member first (phase `read`) and
-// then calls every setter with the value read (phase `set`). One second of
+// then calls every setter with the value read (phase `set`). Every edit result
+// is then released (phase `release`), as explicit release requires. One second of
 // warmup; then enough batches for about three seconds of timed work.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -52,7 +53,13 @@ new PerformanceObserver((list) => {
 	}
 }).observe({ entryTypes: ['gc'] });
 let sink = 0;
-const time = editMode === 'split' ? { parse: 0, render: 0, read: 0, set: 0 } : { parse: 0, render: 0, edit: 0 };
+const time = editMode === 'split' ? { parse: 0, render: 0, read: 0, set: 0, release: 0 } : { parse: 0, render: 0, edit: 0, release: 0 };
+function release(results) {
+	phase = 'release';
+	const t = performance.now();
+	for (const node of results) node?.[Symbol.dispose]?.();
+	time.release += performance.now() - t;
+}
 const set = (setter, node, value) => (Array.isArray(value) && setter.length === 0 ? setter.call(node.$with, ...value) : setter.call(node.$with, value));
 function batch() {
 	phase = 'parse';
@@ -80,19 +87,24 @@ function batch() {
 		time.read += performance.now() - t;
 		phase = 'set';
 		t = performance.now();
-		for (const [setter, node, value] of reads) sink += set(setter, node, value) ? 1 : 0;
+		const results = reads.map(([setter, node, value]) => set(setter, node, value));
 		time.set += performance.now() - t;
+		sink += results.length;
+		release(results);
 		return;
 	}
 	phase = 'edit';
 	t = performance.now();
+	const results = [];
 	for (const node of roots)
 		for (const key of Object.keys(node.$with ?? {}).sort()) {
 			const setter = node.$with[key];
 			if (typeof setter !== 'function' || typeof node[key] !== 'function') continue;
-			sink += set(setter, node, node[key]()) ? 1 : 0;
+			results.push(set(setter, node, node[key]()));
 		}
 	time.edit += performance.now() - t;
+	sink += results.length;
+	release(results);
 }
 const warm = performance.now();
 let warmBatches = 0;

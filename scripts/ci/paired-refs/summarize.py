@@ -41,7 +41,19 @@ def ratio(num, den):
 
 
 def pairs(med):
-    return {f'{a}/{b}': {ph: ratio(med[a][ph], med[b][ph]) for ph in med[a]} for a, b in PAIRS}
+    return {f'{a}/{b}': {ph: ratio(med[a][ph], med[b][ph]) for ph in med[a] if ph != 'releaseMs'} for a, b in PAIRS}
+
+
+def phase(sample, ph):
+    if ph == 'releaseMs':
+        return sample.get('releaseMs', 0)
+    if ph == 'editReleaseMs':
+        return sample['editMs'] + sample.get('releaseMs', 0)
+    return sample[ph]
+
+
+CORPUS_PHASES = ['pipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
+CONSTRUCTION_PHASES = ['pipelineMs', 'buildMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
 
 
 profiles = set()
@@ -52,7 +64,7 @@ for g in GRAMMARS:
     signature = results['base'][0]['signature']
     mismatches += [f'corpus {g} {v} round {r}' for v, xs in results.items() for r, x in enumerate(xs) if x['signature'] != signature]
     profiles.update(x['buildProfile'] for xs in results.values() for x in xs)
-    med = {v: {ph: [median(s[ph] for s in x['samples']) for x in results[v]] for ph in ['pipelineMs', 'parseMs', 'renderMs', 'editMs']} for v in VERSIONS}
+    med = {v: {ph: [median(phase(s, ph) for s in x['samples']) for x in results[v]] for ph in CORPUS_PHASES} for v in VERSIONS}
     corpus.append({'grammar': g, 'signature': signature, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
 construction = []
 for n in [2000, 8000]:
@@ -67,7 +79,7 @@ for n in [2000, 8000]:
         assert all(len(x) == 7 for xs in data.values() for x in xs)
         hashes = {v: {(s['renderSha256'], s['editedSha256']) for x in xs for s in x} for v, xs in data.items()}
         mismatches += [f'construction {n} {"reused" if reuse else "distinct"} {v}' for v in VERSIONS if hashes[v] != hashes['base'] or len(hashes[v]) != 1]
-        med = {v: {ph: [median(s[ph] for s in x) for x in data[v]] for ph in ['pipelineMs', 'buildMs', 'renderMs', 'editMs']} for v in VERSIONS}
+        med = {v: {ph: [median(phase(s, ph) for s in x) for x in data[v]] for ph in CONSTRUCTION_PHASES} for v in VERSIONS}
         construction.append({'functionRoots': n, 'reusedName': reuse, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
 memory = {}
 for v in VERSIONS:
@@ -90,7 +102,7 @@ result = {'refs': refs, 'versions': {v: {'tree': TREE_OF.get(v, v), 'nodeStorage
 
 old = {r['grammar']: r['timings'] for r in earlier['corpus']}
 oldConstruction = {(r['functionRoots'], r['reusedName']): r['timings'] for r in earlier['construction']}
-cell = lambda p, ph, row: f"{row['pairs'][p][ph]['ratio']:.3f} [{row['pairs'][p][ph]['range95'][0]:.3f}, {row['pairs'][p][ph]['range95'][1]:.3f}]"
+cell = lambda p, ph, row: f"{row['pairs'][p][ph]['ratio']:.3f} [{row['pairs'][p][ph]['range95'][0]:.3f}, {row['pairs'][p][ph]['range95'][1]:.3f}]" if ph in row['pairs'][p] else '-'
 ratios = lambda ph, row: ' | '.join(cell(f'{a}/{b}', ph, row) for a, b in PAIRS)
 heads = ' | '.join(f'{a}/{b}' for a, b in PAIRS)
 ms = lambda ph, row: ' | '.join(f"{row['ms'][v][ph]:.3f}" for v in VERSIONS)
@@ -102,23 +114,25 @@ lines = [
     + ("feature-arena is the feature tree read with `nodeStorage: 'arena'`; the others use object storage." if 'feature-arena' in VERSIONS else 'Every version uses object storage.'),
     f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
-    'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
+    'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
     f"Pipeline (parse + render) against base above ×{BAR:.2f}: {', '.join(over) if over else 'none'}.",
     f"Renders and edits that differ from base: {', '.join(mismatches) if mismatches else 'none'}.", '',
     '### Corpus', '',
     f'| grammar | phase | 10-29 f/m | {heads} | {msHeads} |',
     '|' + '---|' * (3 + len(PAIRS) + len(VERSIONS)),
 ]
+NAMES = {'editReleaseMs': 'edit+release'}
+earlierCell = lambda timings, ph: f"{timings[ph]['featureOverMaster']:.3f}" if ph in timings else '-'
 for row in corpus:
-    for ph in ['pipelineMs', 'parseMs', 'renderMs', 'editMs']:
-        lines.append(f"| {row['grammar']} | {ph[:-2]} | {old[row['grammar']][ph]['featureOverMaster']:.3f} | {ratios(ph, row)} | {ms(ph, row)} |")
+    for ph in CORPUS_PHASES:
+        lines.append(f"| {row['grammar']} | {NAMES.get(ph, ph[:-2])} | {earlierCell(old[row['grammar']], ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
 lines += ['', '### Rust construction (function items)', '',
           f'| roots | name | phase | 10-29 f/m | {heads} | {msHeads} |',
           '|' + '---|' * (4 + len(PAIRS) + len(VERSIONS))]
 for row in construction:
     o = oldConstruction[(row['functionRoots'], row['reusedName'])]
-    for ph in ['pipelineMs', 'buildMs', 'renderMs', 'editMs']:
-        lines.append(f"| {row['functionRoots']} | {'reused' if row['reusedName'] else 'distinct'} | {ph[:-2]} | {o[ph]['featureOverMaster']:.3f} | {ratios(ph, row)} | {ms(ph, row)} |")
+    for ph in CONSTRUCTION_PHASES:
+        lines.append(f"| {row['functionRoots']} | {'reused' if row['reusedName'] else 'distinct'} | {NAMES.get(ph, ph[:-2])} | {earlierCell(o, ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
 lines += ['', '### Retained memory (32,000 function roots, forced GC)', '', '| version | heap + external MiB | rss MiB | 10-29 heap + external MiB |', '|---|---|---|---|']
 for v in VERSIONS:
     before = earlier['memory'].get(v)

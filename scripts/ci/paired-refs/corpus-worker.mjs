@@ -31,17 +31,20 @@ function batch(record) {
   }));
   const editMs = performance.now() - start;
   const editedRenders = changed.map(node => node.$render());
+  start = performance.now();
+  for (const node of changed) node[Symbol.dispose]?.();
+  const releaseMs = performance.now() - start;
   const current = { rendered: hash(renders), edits: hash(editedRenders), entries: roots.length, editCount: changed.length };
   if (signature === undefined) signature = current;
   else assert.deepEqual(current, signature);
   sink += renders.reduce((sum, text) => sum + text.length, 0) + editedRenders.reduce((sum, text) => sum + text.length, 0);
-  if (record) samples.push({ parseMs, renderMs, editMs, pipelineMs: parseMs + renderMs });
+  if (record) samples.push({ parseMs, renderMs, editMs, releaseMs, pipelineMs: parseMs + renderMs });
 }
 try {
   const warmupStart = performance.now();
   let warmupBatches = 0;
   do { batch(false); warmupBatches++; await new Promise(setImmediate); } while (performance.now() - warmupStart < 2000);
   for (let i = 0; i < 50; i++) { batch(true); await new Promise(setImmediate); }
-  writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), root, grammar, nodeStorage, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), protocol: 'Public parse/render and same-value root edits over the identical complete corpus; at least two seconds of warmup, fifty timed batches; event-loop yield between batches; no forced GC. Hashes compared across all iterations and versions by runner.', warmupBatches, signature, samples, memory: process.memoryUsage(), sink }, null, 2) + '\n');
+  writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), root, grammar, nodeStorage, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), protocol: 'Public parse/render and same-value root edits over the identical complete corpus, each edit result released after the timed edit (releaseMs); at least two seconds of warmup, fifty timed batches; event-loop yield between batches; no forced GC. Hashes compared across all iterations and versions by runner.', warmupBatches, signature, samples, memory: process.memoryUsage(), sink }, null, 2) + '\n');
   console.log(JSON.stringify({ grammar, signature, samples: samples.length }));
 } finally { engine.dispose(); }
