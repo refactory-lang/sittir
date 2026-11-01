@@ -1,0 +1,85 @@
+name: Native call probe
+
+on:
+  workflow_call:
+    inputs:
+      feature-ref:
+        type: string
+        required: true
+      master-ref:
+        type: string
+        required: true
+      profile:
+        type: string
+        required: true
+      arena:
+        type: boolean
+        required: true
+      grammars:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  probe:
+    name: Native calls per tree, feature against its merge base (Linux x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+          cache: pnpm
+      - uses: ./.github/actions/rust-toolchain
+      - name: Resolve the feature commit and its merge base
+        shell: bash
+        env:
+          FEATURE_REF: ${{ inputs.feature-ref }}
+          MASTER_REF: ${{ inputs.master-ref }}
+          PROFILE: ${{ inputs.profile }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees"
+          resolve() { git rev-parse --verify --quiet "origin/$1^{commit}" || git rev-parse --verify "$1^{commit}"; }
+          feature=$(resolve "$FEATURE_REF")
+          base=$(git merge-base "$feature" "$(resolve "$MASTER_REF")")
+          jq -n --arg base "$base" --arg feature "$feature" --arg profile "$PROFILE" '{base: $base, feature: $feature, profile: $profile}' \
+            | tee "$RUNNER_TEMP/paired-refs/refs.json"
+      - name: Build the merge base
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh base "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-base.log"
+      - name: Build feature
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-feature.log"
+      - name: Fingerprint the built trees
+        shell: bash
+        run: |
+          for tree in base feature; do
+            (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
+          done
+      - name: Probe native calls per tree
+        shell: bash
+        env:
+          ARENA: ${{ inputs.arena }}
+          GRAMMARS: ${{ inputs.grammars }}
+        run: |
+          versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
+          if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
+          python3 scripts/ci/paired-refs/probes/run-probe.py "$RUNNER_TEMP/paired-refs/probe" "${GRAMMARS// /,}" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/probe.log"
+      - name: Upload probe results and fingerprints
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/paired-refs/
+          retention-days: 30
+          if-no-files-found: warn
