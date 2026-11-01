@@ -386,7 +386,7 @@ macro_rules! napi_engine {
         /// spanning exactly the node's bytes. Refuses a tree that is not live
         /// and an index naming no node of it.
         #[::napi_derive::napi]
-        pub fn siblings(tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
+        pub fn siblings(tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<Vec<u32>> {
             LIVE_TREES.with(|trees| {
                 let trees = trees.borrow();
                 let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
@@ -398,7 +398,7 @@ macro_rules! napi_engine {
                         words.extend(sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]));
                     }
                 }
-                Ok(::napi::bindgen_prelude::Uint32Array::new(words))
+                Ok(words)
             })
         }
 
