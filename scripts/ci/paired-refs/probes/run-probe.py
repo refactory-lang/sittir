@@ -1,9 +1,12 @@
 # Usage: python3 run-probe.py <out-dir> <grammar,...> <name>=<tree>[@<storage>] <name>=<tree>[@<storage>]...
-# Runs native-calls.mjs for every grammar and version in three rounds of fresh
-# processes, the version order rotating by round and reversing on odd rounds.
-# Then writes probe.md: per grammar, the median over rounds of each version's
-# microseconds per tree for every phase, native call and garbage-collection
-# kind, beside the first version's.
+# Runs native-calls.mjs for every grammar and version, in both edit modes
+# (joint: each member read just before its setter; split: every read, then
+# every setter), in three rounds of fresh processes, the version order rotating
+# by round and reversing on odd rounds. Then writes probe.md: per grammar, the
+# median over rounds of each version's microseconds per tree for every phase,
+# native call and garbage-collection kind, beside the first version's. Parse,
+# render, edit and the garbage collections come from the joint runs; read and
+# set from the split runs.
 import json, os, statistics, subprocess, sys
 from pathlib import Path
 
@@ -18,6 +21,7 @@ for arg in sys.argv[3:]:
 names = list(versions)
 out.mkdir(parents=True, exist_ok=True)
 ROUNDS = 3
+MODES = ['joint', 'split']
 
 
 def orderOf(index):
@@ -29,9 +33,10 @@ def orderOf(index):
 for index in range(ROUNDS):
     for grammar in grammars:
         for name in orderOf(index):
+          for mode in MODES:
             tree, storage = versions[name]
-            label = f'{grammar}-{name}-{index}'
-            run = subprocess.run(['node', '--expose-gc', str(here / 'native-calls.mjs'), str(tree), grammar, storage, str(out / f'{label}.json')],
+            label = f'{grammar}-{name}-{mode}-{index}'
+            run = subprocess.run(['node', '--expose-gc', str(here / 'native-calls.mjs'), str(tree), grammar, storage, str(out / f'{label}.json'), mode],
                                  cwd=tree, env=dict(os.environ, NODE_ENV='production'), capture_output=True, text=True)
             print(label, run.returncode, run.stdout.strip(), flush=True)
             if run.returncode:
@@ -41,20 +46,22 @@ for index in range(ROUNDS):
 lines = []
 first = names[0]
 for grammar in grammars:
-    results = {n: [json.loads((out / f'{grammar}-{n}-{i}.json').read_text()) for i in range(ROUNDS)] for n in names}
+    runs = {mode: {n: [json.loads((out / f'{grammar}-{n}-{mode}-{i}.json').read_text()) for i in range(ROUNDS)] for n in names} for mode in MODES}
+    results = runs['joint']
     lines += [f'### {grammar} ({results[first][0]["cpu"]}, {results[first][0]["trees"]} trees per process)', '',
               '| µs per tree | ' + ' | '.join(names) + ' | ' + ' | '.join(f'{n} − {first}' for n in names[1:]) + ' |',
               '|---|' + '---|' * (2 * len(names) - 1)]
 
-    def row(label, value):
-        meds = {n: statistics.median(value(r) for r in results[n]) for n in names}
+    def row(label, value, mode='joint'):
+        meds = {n: statistics.median(value(r) for r in runs[mode][n]) for n in names}
         lines.append(f'| {label} | ' + ' | '.join(f'{meds[n]:.2f}' for n in names) + ' | ' + ' | '.join(f'{meds[n] - meds[first]:+.2f}' for n in names[1:]) + ' |')
 
-    for phase in ['parse', 'render', 'edit']:
-        row(f'**{phase}**', lambda r, phase=phase: r['usPerTree'][phase])
-    for call in sorted({c for n in names for r in results[n] for c in r['calls']}):
-        row(f'call {call} (calls/tree {max(statistics.median(r["calls"].get(call, {"perTree": 0})["perTree"] for r in results[n]) for n in names):.2f})',
-            lambda r, call=call: r['calls'].get(call, {'usPerTree': 0})['usPerTree'])
+    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('read', 'split'), ('set', 'split')]:
+        row(f'**{phase}**', lambda r, phase=phase: r['usPerTree'][phase], mode)
+    for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('read', 'split'), ('set', 'split')]:
+        for call in sorted({c for n in names for r in runs[mode][n] for c in r['calls'] if c.startswith(phase + ' ')}):
+            row(f'call {call} (calls/tree {max(statistics.median(r["calls"].get(call, {"perTree": 0})["perTree"] for r in runs[mode][n]) for n in names):.2f})',
+                lambda r, call=call: r['calls'].get(call, {'usPerTree': 0})['usPerTree'], mode)
     for kind in sorted({k for n in names for r in results[n] for k in r['gc']}):
         row(f'gc {kind} (per batch {max(statistics.median(r["gc"].get(kind, {"perBatch": 0})["perBatch"] for r in results[n]) for n in names):.2f})',
             lambda r, kind=kind: r['gc'].get(kind, {'usPerTree': 0})['usPerTree'])
