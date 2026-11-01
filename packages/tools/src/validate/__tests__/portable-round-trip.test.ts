@@ -3,8 +3,8 @@ import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
 	python: 54,
-	rust: 23,
-	typescript: 24
+	rust: 29,
+	typescript: 25
 };
 
 describe('the portable round trip', () => {

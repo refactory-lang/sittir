@@ -4,7 +4,10 @@ import { hasKind, type PortableClassifier } from './classify.ts';
 
 type Node = { readonly $type: number };
 
-export type PortableCarry = { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' } | { readonly reason: 'flags'; readonly flags: readonly string[] };
+export type PortableCarry =
+	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' }
+	| { readonly reason: 'flags'; readonly flags: readonly string[] }
+	| { readonly reason: 'unread'; readonly slot: string };
 
 export type PortableCarried = (node: Node, carry: PortableCarry) => void;
 
@@ -19,12 +22,9 @@ export interface PortableReadContext {
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
 	readonly flagsOf: (kind: number) => readonly string[];
 	readonly textOf: (value: unknown) => string | undefined;
+	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
+	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 }
-
-const accessed = (node: object, key: string): unknown => {
-	const read = (node as Record<string, unknown>)[key];
-	return typeof read === 'function' ? (read as () => unknown).call(node) : read;
-};
 
 const present = (value: unknown): boolean => value !== undefined && value !== null && !(Array.isArray(value) && value.length === 0);
 
@@ -32,20 +32,6 @@ interface Hop {
 	readonly key: string;
 	readonly builds: string | undefined;
 }
-
-const walk = (value: unknown, hops: readonly Hop[]): unknown => {
-	if (Array.isArray(value)) return value.flatMap((item) => [walk(item, hops) ?? []].flat());
-	let at = value;
-	for (let i = 0; i < hops.length; i++) {
-		if (Array.isArray(at)) return walk(at, hops.slice(i));
-		if (!hasKind(at)) return undefined;
-		const next = accessed(at, hops[i]!.key);
-		if (next === undefined || next === null) return undefined;
-		if (Array.isArray(next) && hops[i]!.builds !== undefined) i++;
-		at = next;
-	}
-	return at;
-};
 
 const stepHops = (steps: readonly PortableSlotStep[]): readonly Hop[] => steps.map((step) => ({ key: step.key, builds: step.builder }));
 
@@ -75,7 +61,36 @@ const floatOf = (text: string): number | undefined => {
 	return Number.isFinite(value) ? value : undefined;
 };
 
-export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: PortableReadContext): (value: unknown, carried?: PortableCarried) => unknown {
+export function portableReader({ table, classify, flagHolds, flagsOf, textOf, slotsOf, readSlots }: PortableReadContext): (value: unknown, carried?: PortableCarried) => unknown {
+	interface Read {
+		readonly keys: Set<string>;
+		path?: string;
+		flags?: readonly string[];
+	}
+	const frames: Map<object, Read>[] = [];
+	const structures = new Map<object, Read>();
+	const touch = (node: object): Read => {
+		const frame = frames.at(-1)!;
+		return frame.get(node) ?? frame.set(node, { keys: new Set() }).get(node)!;
+	};
+	const accessed = (node: object, key: string): unknown => {
+		if (frames.length > 0) touch(node).keys.add(key);
+		const read = (node as Record<string, unknown>)[key];
+		return typeof read === 'function' ? (read as () => unknown).call(node) : read;
+	};
+	const walk = (value: unknown, hops: readonly Hop[]): unknown => {
+		if (Array.isArray(value)) return value.flatMap((item) => [walk(item, hops) ?? []].flat());
+		let at = value;
+		for (let i = 0; i < hops.length; i++) {
+			if (Array.isArray(at)) return walk(at, hops.slice(i));
+			if (!hasKind(at)) return undefined;
+			const next = accessed(at, hops[i]!.key);
+			if (next === undefined || next === null) return undefined;
+			if (Array.isArray(next) && hops[i]!.builds !== undefined) i++;
+			at = next;
+		}
+		return at;
+	};
 	interface Pending {
 		readonly seat: PortableSeat;
 		readonly containers: readonly PortableContainer[];
@@ -176,6 +191,22 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		seats === undefined || seats.some((seat) => (seat.leaf === undefined ? seat.kinds.length === 0 : (seat.texts ?? []).includes(kind)));
 	const read = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		if (Array.isArray(value)) return value.map((item) => read(item, carried, seats));
+		if (!hasKind(value)) return readValue(value, carried, seats);
+		frames.push(new Map());
+		try {
+			const result = readValue(value, carried, seats);
+			if (typeof result === 'object' && result !== null && '$path' in result && !('$value' in result))
+				for (const [node, { keys, path, flags }] of frames.at(-1)!) {
+					const merged = structures.get(node) ?? structures.set(node, { keys: new Set() }).get(node)!;
+					for (const key of keys) merged.keys.add(key);
+					if (path !== undefined) Object.assign(merged, { path, flags });
+				}
+			return result;
+		} finally {
+			frames.pop();
+		}
+	};
+	const readValue = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		const kind = kindOfValue(value);
 		if (kind === undefined) return value;
 		const path = classify(typeof value === 'number' ? value : (value as Node));
@@ -201,6 +232,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		const unbuilt = flagsOf(kind).filter((flag) => !buildable.has(flag) && flagHolds(node, flag));
 		if (unbuilt.length > 0) return kept(node, { reason: 'flags', flags: unbuilt }, carried);
 		const flags = [...buildable].filter((flag) => flagHolds(node, flag));
+		Object.assign(touch(node), { path, flags });
 		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }) };
 		type Chosen = { readonly value: unknown; readonly member: PortableMemberStep; readonly fitted: boolean };
 		const candidates = new Map<string, Chosen[]>();
@@ -230,5 +262,20 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf }: 
 		for (const member of arms.flatMap((arm) => arm.members)) if (member.multiple && !(member.name in structure)) structure[member.name] = [];
 		return structure;
 	};
-	return (value, carried) => read(value, carried);
+	const unread = (carried: PortableCarried): void => {
+		for (const [node, { keys, path, flags }] of structures) {
+			const tested = path === undefined ? new Set<string>() : readSlots(node as Node, path, flags ?? []);
+			for (const [slot, items] of slotsOf(node as Node)) {
+				if (keys.has(slot) || tested.has(slot)) continue;
+				for (const item of items) if (hasKind(item) && (textOf(item) ?? '') !== '') carried(item, { reason: 'unread', slot });
+			}
+		}
+	};
+	return (value, carried) => {
+		structures.clear();
+		const result = read(value, carried);
+		if (carried !== undefined) unread(carried);
+		structures.clear();
+		return result;
+	};
 }
