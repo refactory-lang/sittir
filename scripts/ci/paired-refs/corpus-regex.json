@@ -1,0 +1,150 @@
+[
+  {
+    "name": "sequence match",
+    "source": "hello"
+  },
+  {
+    "name": "sequence match w/ '.' atom",
+    "source": "he..o"
+  },
+  {
+    "name": "quantifiers",
+    "source": "h*?e*l+.?"
+  },
+  {
+    "name": "quantifiers - count",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
+  },
+  {
+    "name": "open brace reads as a pattern character when not closed",
+    "source": "{a"
+  },
+  {
+    "name": "alternations",
+    "source": "he..o|wo.ld"
+  },
+  {
+    "name": "alternations with empty terms",
+    "source": "||he..o||wo.ld|||"
+  },
+  {
+    "name": "assertions - line start / end",
+    "source": "^he..o$"
+  },
+  {
+    "name": "assertions - word boundary",
+    "source": "\\Bhe..o\\b"
+  },
+  {
+    "name": "alternation w empty terms & assertions",
+    "source": "^he..o$||w..ld$"
+  },
+  {
+    "name": "lookahead",
+    "source": "Jack(?=Sprat)"
+  },
+  {
+    "name": "negative lookahead",
+    "source": "Jack(?!Sprat)"
+  },
+  {
+    "name": "lookbehind",
+    "source": "(?<=Jack)Sprat"
+  },
+  {
+    "name": "negative lookbehind",
+    "source": "(?<!Jack)Sprat"
+  },
+  {
+    "name": "character classes",
+    "source": "[A-Za-z][^Xx]"
+  },
+  {
+    "name": "character classes - '-' is an atom",
+    "source": "[-]"
+  },
+  {
+    "name": "character classes - 'a-' is atoms",
+    "source": "[a-]"
+  },
+  {
+    "name": "character classes - /[---]/ is odd but valid",
+    "source": "[---]"
+  },
+  {
+    "name": "character classes - identity escapes",
+    "source": "[\\-\\.]"
+  },
+  {
+    "name": "identity escapes",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
+  },
+  {
+    "name": "non-capturing groups",
+    "source": "Jack(?:Sprat)"
+  },
+  {
+    "name": "atom escapes - character class escapes",
+    "source": "\\S\\w\\cZ"
+  },
+  {
+    "name": "atom escapes - control escapes",
+    "source": "\\f\\n\\r\\t\\v\\0"
+  },
+  {
+    "name": "atom escapes - decimal escapes",
+    "source": "\\8230"
+  },
+  {
+    "name": "atom escapes - unicode property value expressions",
+    "source": "\\p{General_Category=Decimal_Number}"
+  },
+  {
+    "name": "atom escapes - lone unicode property names",
+    "source": "\\p{Decimal_Number}"
+  },
+  {
+    "name": "capturing groups",
+    "source": "hello (.*)"
+  },
+  {
+    "name": "named capturing groups",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
+  },
+  {
+    "name": "named capturing groups - backreferences",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
+  },
+  {
+    "name": "a date regex",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
+  },
+  {
+    "name": "a multiline url regex",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+  },
+  {
+    "name": "POSIX Character Class",
+    "source": "\n[[:alnum:]]+\n"
+  },
+  {
+    "name": "Unicode escape",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
+  },
+  {
+    "name": "\\u without hex codes treated as identity escape",
+    "source": "\n\\u0048ow r \\u\\?\n"
+  },
+  {
+    "name": "Unicode escaped characters as atoms in character classes",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
+  },
+  {
+    "name": "Hexadecimal digits escape sequence",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
+  },
+  {
+    "name": "Inline regex flags",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
+  }
+]

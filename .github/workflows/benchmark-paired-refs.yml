@@ -1,0 +1,92 @@
+name: Paired refs benchmark
+
+on:
+  workflow_call:
+    inputs:
+      feature-ref:
+        type: string
+        required: true
+      master-ref:
+        type: string
+        required: true
+      profile:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  measure:
+    name: Feature, master and their merge base on one runner (Linux x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+          cache: pnpm
+      - uses: ./.github/actions/rust-toolchain
+      - name: Resolve the three commits
+        shell: bash
+        env:
+          FEATURE_REF: ${{ inputs.feature-ref }}
+          MASTER_REF: ${{ inputs.master-ref }}
+          PROFILE: ${{ inputs.profile }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees"
+          resolve() { git rev-parse --verify --quiet "origin/$1^{commit}" || git rev-parse --verify "$1^{commit}"; }
+          feature=$(resolve "$FEATURE_REF")
+          master=$(resolve "$MASTER_REF")
+          base=$(git merge-base "$feature" "$master")
+          jq -n --arg base "$base" --arg master "$master" --arg feature "$feature" \
+            --arg featureRef "$FEATURE_REF" --arg masterRef "$MASTER_REF" --arg profile "$PROFILE" \
+            '{base: $base, master: $master, feature: $feature, featureRef: $featureRef, masterRef: $masterRef, profile: $profile}' \
+            | tee "$RUNNER_TEMP/paired-refs/refs.json"
+      - name: Build the merge base
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh base "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-base.log"
+      - name: Build master
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh master "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-master.log"
+      - name: Build feature
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-feature.log"
+      - name: Fingerprint the built trees
+        shell: bash
+        run: |
+          for tree in base master feature; do
+            (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
+          done
+      - name: Measure the three trees in alternating fresh processes
+        shell: bash
+        run: |
+          python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" \
+            base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature" \
+            2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
+      - name: Check the trees did not change during measurement
+        shell: bash
+        run: |
+          for tree in base master feature; do
+            (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/after-$tree.json")
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/paired-refs/before-$tree.json" "$RUNNER_TEMP/paired-refs/after-$tree.json"
+          done
+      - name: Summarize the three ratios beside 2026-10-29
+        shell: bash
+        run: python3 scripts/ci/paired-refs/summarize.py "$RUNNER_TEMP/paired-refs" docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json
+      - name: Upload raw samples, fingerprints and summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paired-refs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/paired-refs/
+          retention-days: 30
+          if-no-files-found: warn

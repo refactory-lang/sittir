@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Named nodes",
+    "source": "\n(program)\n"
+  },
+  {
+    "name": "Anonymous nodes",
+    "source": "\n(program)\n\"it\"\n\n\";\"\n"
+  },
+  {
+    "name": "Anonymous nodes (series)",
+    "source": "\n(\"it\" \"blorg\")\n"
+  },
+  {
+    "name": "Wildcard nodes",
+    "source": "\n_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n"
+  },
+  {
+    "name": "Field names",
+    "source": "\n(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n"
+  },
+  {
+    "name": "Negated fields",
+    "source": "\n(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n"
+  },
+  {
+    "name": "Quantifiers (+)",
+    "source": "\n(program\n  (identifier)+)\n"
+  },
+  {
+    "name": "Quantifiers (?)",
+    "source": "\n(program\n  (identifier)?)\n"
+  },
+  {
+    "name": "Quantifiers (*)",
+    "source": "\n(program\n  (identifier)*)\n"
+  },
+  {
+    "name": "Quantifiers (complex)",
+    "source": "\n(program\n  (identifier)? @variable* @spell)\n"
+  },
+  {
+    "name": "Groups",
+    "source": "\n((comment) (function_declaration))\n\n((node) [(node) \"test\"])\n"
+  },
+  {
+    "name": "Captures",
+    "source": "\n(class_declaration\n  body: (class_body) @class.body @test) @blorg\n"
+  },
+  {
+    "name": "Lists",
+    "source": "\n[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n"
+  },
+  {
+    "name": "Predicates",
+    "source": "\n((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n"
+  },
+  {
+    "name": "Anchor Operator",
+    "source": "\n((comment) . (function_declaration))\n((identifier) . \"and\" . (identifier))\n\n(\"test\" . \"test\")\n((identifier) . \"test\")\n(\"test\" . (identifier))\n\n((node) . [(node) \"test\"] . (node))\n((node) [(node) \"test\"] . (node))\n((node) . [(node) \"test\"] (node))\n\n((node) . [(node) \"test\"] [(node)])\n((node) . [(node) \"test\"] . [(node)])\n\n(array . (identifier))\n(array (identifier) .)\n(array . (identifier) .)\n\n(string . \"'\")\n(string \"'\" .)\n(string . \"'\" . \"'\" .)\n\n(node (a) . \"b\" . (c))\n(node . (a) . \"b\" . (c))\n(node (a) . \"b\" . (c) .)\n(node . (a) . \"b\" . (c) .)\n\n(node . name: (identifier))\n(node name: (identifier) .)\n(node . name: (identifier) .)\n\n(node . name: (identifier) (identifier))\n(node name: (identifier) . (identifier))\n(node . name: (identifier) . (identifier) .)\n\n(node . name: (identifier) . another: (identifier) .)\n(node . name: (identifier) . another: (identifier))\n(node name: (identifier) . another: (identifier) .)\n(node name: (identifier) . another: (identifier))\n\n(trailing_anchor ((grouping_anchor) .) .)\n"
+  },
+  {
+    "name": "Strings",
+    "source": "\n((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n"
+  },
+  {
+    "name": "Comments",
+    "source": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
+  },
+  {
+    "name": "Supertypes",
+    "source": "\n(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n"
+  },
+  {
+    "name": "Missing keyword",
+    "source": "\n(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n"
+  }
+]

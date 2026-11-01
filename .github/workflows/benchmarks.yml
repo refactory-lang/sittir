@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }}, paired node backends)
+run-name: Arena benchmarks (${{ inputs.benchmark == 'paired-refs' && format('paired refs {0} vs {1}', inputs.feature-ref, inputs.master-ref) || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,13 +8,27 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus]
+        options: [all, corpus, paired-refs]
+      feature-ref:
+        description: paired-refs only. The feature branch or commit.
+        type: string
+        default: feat/records
+      master-ref:
+        description: paired-refs only. The master branch or commit; the merge base is the third tree.
+        type: string
+        default: master
+      profile:
+        description: paired-refs only. The cargo profile every addon is built with.
+        type: choice
+        default: release
+        options: [release, gate]
 
 permissions:
   contents: read
 
 jobs:
   prepare:
+    if: inputs.benchmark != 'paired-refs'
     uses: ./.github/workflows/benchmark-build.yml
   native:
     needs: prepare
@@ -33,3 +47,10 @@ jobs:
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
+  paired-refs:
+    if: inputs.benchmark == 'paired-refs'
+    uses: ./.github/workflows/benchmark-paired-refs.yml
+    with:
+      feature-ref: ${{ inputs.feature-ref }}
+      master-ref: ${{ inputs.master-ref }}
+      profile: ${{ inputs.profile }}
