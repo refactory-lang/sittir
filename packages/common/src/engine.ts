@@ -19,7 +19,7 @@ import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
-import { recordOf, recordStub } from './record-view.ts';
+import { readStub, recordOf } from './record-view.ts';
 import { readEntries, readUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
@@ -195,6 +195,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	text(treeId: number, span: ByteSpan): string;
 	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
+	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
 	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
@@ -308,6 +309,7 @@ const TREE_FUNCTIONS = [
 	'isEmpty',
 	'text',
 	'readRecord',
+	'readRecordStub',
 	'hydrateRecord',
 	'recordCandidates',
 	'chunk',
@@ -489,8 +491,8 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 }>(({ release, treeId }) => release(treeId));
 
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, readCell, chunk, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
+	const { readRecord, readRecordStub, readCell, chunk, renderRecord, coordinate } = engine;
+	if (readRecord === undefined || readRecordStub === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
 	const chunks: ChunkWords[] = [];
@@ -498,6 +500,8 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 	return {
 		format,
 		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
+		stub: (index, depth) => readRecordStub.call(engine, treeId, index, depth) ?? undefined,
+		exported: (address) => chunks[chunkOf(address, format)],
 		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
 		hydrate(index, depth) {
 			if (engine.hydrateRecord === undefined)
@@ -599,9 +603,9 @@ export function createNativeEngine<
 				records === undefined
 					? readObjectAt
 					: (index: number, depth: number): TNode => {
-							const at = records.record(index, depth);
-							if (at === undefined) return readObjectAt(index, depth);
-							const stub = recordStub(tree, at);
+							const facts = records.stub(index, depth);
+							if (facts === undefined) return readObjectAt(index, depth);
+							const stub = readStub(tree, facts);
 							holdReadTree(stub, liveToken);
 							return stub as TNode;
 						};

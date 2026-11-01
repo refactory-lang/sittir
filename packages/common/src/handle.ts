@@ -10,7 +10,7 @@ export interface RecordPosition {
 }
 
 export interface RecordHandle extends RecordPosition {
-	readonly $words: ChunkWords;
+	readonly $words: ChunkWords | undefined;
 	$cache: Record<number, unknown> | undefined;
 }
 

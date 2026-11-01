@@ -791,6 +791,24 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// `read_record`'s record with what a view of it is named by,
+            /// read without its chunk (`ParsedTree::record_stub`):
+            /// `[address, header, row, end, span start, span end, kind]`.
+            /// Null for a node with no record. Refuses as `read_record` does.
+            #[::napi_derive::napi]
+            pub fn read_record_stub(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<Option<Vec<u32>>> {
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let at = record_of(parsed, index, depth, false)?;
+                    report_tree(&env, tree_id, parsed)?;
+                    let Some(at) = at else { return Ok(None) };
+                    let stub = parsed.record_stub($crate::arena::Address(at)).map_err(::napi::Error::from_reason)?;
+                    Ok(Some([at].into_iter().chain(stub).collect()))
+                })
+            }
+
             /// Materializes the node at `index` in the live tree `treeId`
             /// to `depth` (one when absent, `Infinity` for all), including
             /// children of records already present. Returns only the root

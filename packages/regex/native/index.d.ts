@@ -384,6 +384,14 @@ export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, dept
  */
 export declare function readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
 
+/**
+ * r" `read_record`'s record with what a view of it is named by,
+ * r" read without its chunk (`ParsedTree::record_stub`):
+ * r" `[address, header, row, end, span start, span end, kind]`.
+ * r" Null for a node with no record. Refuses as `read_record` does.
+ */
+export declare function readRecordStub(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): Array<number> | null
+
 /** r" The flag above a link record's kind field (`arena::cell::flag`). */
 export declare const RECORD_FLAG_LINK: number
 

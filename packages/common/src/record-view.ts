@@ -19,8 +19,11 @@ import {
 import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
-export function positionWords(position: RecordPosition): ChunkWords {
-	return recordsOf(position.$tree).words(position.$at, 2);
+export function positionWords(position: RecordPosition): ChunkWords | undefined {
+	const parsed = position.$tree.records;
+	if (parsed === undefined) return recordsOf(position.$tree).words(position.$at, 2);
+	const words = parsed.exported(position.$at);
+	return words !== undefined && words.length >= wordOf(position.$at, parsed.format) + 2 ? words : undefined;
 }
 
 /** The address a record position or handle holds, `undefined` for any other value. */
@@ -58,7 +61,7 @@ export function freedRecord(at: number): string {
 }
 
 export function liveWords(holder: RecordPosition): ChunkWords | undefined {
-	const own = (holder as Partial<RecordHandle>).$words;
+	const own = (holder as Partial<RecordHandle>).$words ?? holder.$tree.records?.exported(holder.$at);
 	if (own?.length !== 0) return own;
 	holder.$tree.records?.words(holder.$at, 1);
 	throw new Error(freedRecord(holder.$at));
@@ -87,6 +90,10 @@ function sideOf(records: RecordWords, at: number): number {
 /** The coordinate of the row the node at `index` is, spanning `span`: its kind and subtree end as a read names them (`RecordReader.coordinate`). */
 function coordinateAt(tree: TreeHandle, index: number, span: ByteSpan): NodeCoordinate {
 	const { kind, end } = parsedRecordsOf(tree).coordinate(index);
+	return rowAt(tree, index, end, span, kind);
+}
+
+function rowAt(tree: TreeHandle, index: number, end: number, span: ByteSpan, kind: number): NodeCoordinate {
 	return { $treeHandle: encodeHandle(idOf(tree), index), $end: end, $span: span, $type: kind };
 }
 
@@ -104,7 +111,15 @@ export function recordStub(tree: TreeHandle, at: number): RecordPosition {
 	const records = parsedRecordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
 	const kind = words[start]!;
-	return { $type: kind, $tree: tree, $at: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
+	return positionAt(tree, at, kind, rowCoordinate(tree, records, words[start + 1]!, kind));
+}
+
+export function readStub(tree: TreeHandle, [at, kind, row, end, start, spanEnd, rowKind]: readonly number[]): RecordPosition {
+	return positionAt(tree, at!, kind!, rowAt(tree, row!, end!, { start: start!, end: spanEnd! }, rowKind!));
+}
+
+function positionAt(tree: TreeHandle, at: number, kind: number, coordinate: NodeCoordinate): RecordPosition {
+	return { $type: kind, $tree: tree, $at: at, $_layout: { at: coordinate } };
 }
 
 export function recordDelimiter(holder: RecordPosition): number | undefined {
