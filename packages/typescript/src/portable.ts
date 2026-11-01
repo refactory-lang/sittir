@@ -465,6 +465,7 @@ export interface PortableIds {
 	'expression.yield.delegate': TSKindId.YieldExpressionDelegate;
 	file: TSKindId.Program;
 	identifier:
+		| TSKindId.DefaultKeyword
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
 		| TSKindId.NestedTypeIdentifier
@@ -945,7 +946,7 @@ export interface PortableTexts {
 	'expression.yield': never;
 	'expression.yield.delegate': never;
 	file: never;
-	identifier: 'super' | 'this';
+	identifier: 'default' | 'super' | 'this';
 	'identifier.label': never;
 	'identifier.qualified': never;
 	'identifier.receiver': 'this';
@@ -4656,6 +4657,7 @@ const table: PortableTable = {
 		file: { ids: [TSKindId.Program], exact: true },
 		identifier: {
 			ids: [
+				TSKindId.DefaultKeyword,
 				TSKindId.Identifier,
 				TSKindId.NestedIdentifier,
 				TSKindId.NestedTypeIdentifier,
@@ -5346,6 +5348,7 @@ const table: PortableTable = {
 		[TSKindId.DecoratorCallExpression]: [{ path: 'attribute.content.call', within: [], test: [] }],
 		[TSKindId.DecoratorMemberExpression]: [{ path: 'attribute.content.member', within: [], test: [] }],
 		[TSKindId.DecoratorParenthesizedExpression]: [{ path: 'attribute.content.parenthesized', within: [], test: [] }],
+		[TSKindId.DefaultKeyword]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.DefaultType]: [{ path: 'clause.default', within: [], test: [] }],
 		[TSKindId.DoStatement]: [{ path: 'statement.loop.do_while', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],

@@ -1642,3 +1642,15 @@ describe('derive', () => {
 		expect([...(d.members.get('statement.plain')?.get('text')?.kinds ?? [])]).toEqual(['<g:_plain_text>']);
 	});
 });
+
+describe('a claim on an anonymous token', () => {
+	it('reads the fixed-text node the token is, and reports a claim that names no kind the model has', async () => {
+		const input = await grammar(['"self" @identifier.receiver', '"nothing" @identifier', '(missing_kind) @declaration'].join('\n'));
+		const routes = resolveRoutes(input);
+		expect(routes.readEntries.get('self_kw')?.map((entry) => entry.vocab)).toEqual(['identifier.receiver']);
+		expect(routes.unplaced.map((claim) => [claim.kind, claim.token, claim.vocab])).toEqual([
+			[null, 'nothing', 'identifier'],
+			['missing_kind', undefined, 'declaration']
+		]);
+	});
+});

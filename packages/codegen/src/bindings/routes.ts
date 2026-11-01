@@ -100,6 +100,7 @@ export interface GrammarRoutes {
 	readonly members: ReadonlyMap<string, readonly MemberRoute[]>;
 	readonly containers: ReadonlyMap<string, ContainerUnwrap>;
 	readonly stopped: readonly StoppedRead[];
+	readonly unplaced: readonly ClaimFact[];
 }
 
 export function slotByField(slots: readonly ModelSlot[], field: string): ModelSlot | undefined {
@@ -898,11 +899,16 @@ interface ClaimRead {
 
 type ClaimReads = ReadonlyMap<string, readonly ClaimRead[]>;
 
+function tokenKindOf(model: SlotModel, token: string): string | null {
+	const [kind, ...more] = [...model.values()].filter((node) => isFixedText(node) && node.slots.length === 0 && node.text === token);
+	return kind === undefined || more.length > 0 ? null : kind.kind;
+}
+
 export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): ClaimReads {
 	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 	const reads = new Map<string, ClaimRead[]>();
 	claims.forEach((claim, index) => {
-		const owner = claim.kind;
+		const owner = claim.kind ?? (claim.token === undefined ? null : tokenKindOf(model, claim.token));
 		if (owner === null) return;
 		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
 		const literal = owner !== WILDCARD && literalClaimOf(claim) !== undefined;
@@ -1090,7 +1096,10 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		containers.set(node.kind, members.length === 0 ? unwrap : { ...unwrap, members });
 	}
 
-	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped };
+	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));
+	const unplaced = input.bindings.claims.filter((claim) => !placed.has(claim));
+
+	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped, unplaced };
 }
 
 export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): string[] {

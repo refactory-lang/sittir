@@ -28259,6 +28259,23 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
+					kind: 9,
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							text: 'default'
+						}
+					],
+					holders: [
+						[191, 'moduleExportName'],
+						[193, 'name'],
+						[193, 'alias'],
+						[417, 'name']
+					]
+				},
+				{
 					kind: 1,
 					builder: 'identifier',
 					members: [],

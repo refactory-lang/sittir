@@ -163,6 +163,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 								? `${path}: ${kinds[0]} takes ${(members ?? []).join(', ')} through two forms with the same members and kinds; nothing in the input tells them apart`
 								: code === 'portable-token-ambiguous'
 									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${(members ?? [])[0]}", so the text alone does not pick one`
+								: code === 'portable-claim-unplaced'
+									? `${path}: the claim on ${kinds[0]} names no kind the grammar's model has, so nothing reads as ${path} through it`
 								: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);

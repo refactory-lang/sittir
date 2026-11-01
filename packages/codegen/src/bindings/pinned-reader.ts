@@ -501,6 +501,8 @@ function claimFact(
 	}));
 	const first = v.children[0];
 	const kind = isGroup(v) ? (first === undefined ? null : kindOf(first)) : kindOf(v);
+	const anonymous = isGroup(v) ? first : v;
+	const token = kind === null && anonymous !== undefined ? tokenText(anonymous) : null;
 	const fieldLiterals: Record<string, string> = {};
 	const tokens: string[] = [];
 	for (const child of v.children) {
@@ -519,7 +521,20 @@ function claimFact(
 	const read = isGroup(v) || v.children.length === 0 ? undefined : matchOf(v, nodes, patternPredicates);
 	const match = read !== undefined && 'match' in read && read.match.within !== undefined ? { match: read.match } : {};
 	const absent = isGroup(v) ? [] : v.negated.map((negated) => leafText(negated.identifier()));
-	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, absent, tokens, children: isGroup(v) ? [] : childFacts(v, origin), ...match };
+	return {
+		vocab,
+		kind,
+		field: v.field,
+		predicates,
+		toplevel,
+		within,
+		fieldLiterals,
+		absent,
+		tokens,
+		children: isGroup(v) ? [] : childFacts(v, origin),
+		...match,
+		...(token === null ? {} : { token })
+	};
 }
 
 function memberFact(

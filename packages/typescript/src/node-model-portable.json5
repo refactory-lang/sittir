@@ -4449,6 +4449,19 @@
         }
       ]
     },
+    "default_keyword": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "default_type": {
       "vocab": "clause.default",
       "read": [
@@ -14769,7 +14782,7 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 7,
+        "kinds": 8,
         "refinements": 0
       },
       {

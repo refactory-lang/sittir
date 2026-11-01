@@ -104,6 +104,15 @@ describe('the portable read', () => {
 		expect(typescript.is.portable.type.receiver('this')).toBe(true);
 	});
 
+	it('reads the `default` keyword as an identifier where a specifier names it, and builds it back as the keyword', () => {
+		const exported = (source: string) => ((firstOf(source) as Read).exportClause as Read).exportSpecifiers;
+		expect(exported('export { x as default };')).toEqual([{ $path: 'clause.export.specifier', name: 'x', alias: 'default' }]);
+		expect(exported('export { default } from "y";')).toEqual([{ $path: 'clause.export.specifier', name: 'default' }]);
+		expect(((firstOf('import { default as z } from "y";') as Read).importClause as Read).content).toEqual([{ $path: 'clause.import.specifier', name: 'default', alias: 'z' }]);
+		for (const source of ['export { x as default };', 'export { default } from "y";', 'import { default as z } from "y";']) expect(roundTrip(source)).toBe(`${source}\n`);
+		expect(typescript.is.portable.identifier('default')).toBe(true);
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

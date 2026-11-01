@@ -454,6 +454,7 @@
 (nested_type_identifier module: (_) @qualifier)
 (statement_identifier) @identifier.label
 (this) @identifier.this
+"default" @identifier
 (super) @identifier.super
 
 

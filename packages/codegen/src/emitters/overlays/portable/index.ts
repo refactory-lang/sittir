@@ -70,7 +70,12 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	return {
 		build: build.source,
 		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest }),
-		pickDiagnostics: build.diagnostics,
+		pickDiagnostics: [
+			...build.diagnostics,
+			...routes.unplaced.map(
+				(claim): PickDiagnostic => ({ code: 'portable-claim-unplaced', path: claim.vocab, kinds: [claim.kind ?? (claim.token === undefined ? '(_)' : `"${claim.token}"`)] })
+			)
+		],
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({
 			nodeType: grammarNodeTypeName(nodeMap.name),

@@ -68,6 +68,7 @@ export interface ClaimFact {
 	readonly flag?: string;
 	readonly match?: LeadMatch;
 	readonly value?: boolean;
+	readonly token?: string;
 }
 
 export interface UnclaimedFact {

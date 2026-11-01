@@ -47,7 +47,8 @@ export type PickDiagnosticCode =
 	| 'portable-form-product'
 	| 'portable-value-undecided'
 	| 'portable-owner-undecided'
-	| 'portable-token-ambiguous';
+	| 'portable-token-ambiguous'
+	| 'portable-claim-unplaced';
 
 const FORM_PRODUCT_LIMIT = 8;
 
