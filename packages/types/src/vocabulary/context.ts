@@ -4,8 +4,9 @@ import type * as features from './features/index.ts';
 /**
  * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, the
  * slot table, each slot holding its permissive fill over `G`: roles and refs where its arms are kinds, `string` where
- * they are text, and the text table, holding for each path a token may claim the texts it reads as. A grammar's
- * context extends the map over itself and narrows each key to what the grammar realizes.
+ * they are text, plus the unclaimed kinds the grammar can read there, the text table, holding for each path a token
+ * may claim the texts it reads as, and the unmapped table, holding for each namespace member the unclaimed kinds the
+ * grammar can read there. A grammar's context extends the map over itself and narrows each key to what the grammar realizes.
  */
 export interface GrammarContext<G extends GrammarContext<G>> {
 	readonly argument: V.Argument.Any<G>;
@@ -65,7 +66,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'type.receiver': string;
 		readonly 'type.unit': string;
 	};
-	readonly slots: {
+	readonly slots: Seated<G, {
 		readonly argument: {
 			readonly value:
 				| G['expression']
@@ -1802,7 +1803,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly left: G['identifier'] | G['type'];
 			readonly right: G['identifier'] | G['type'];
 		};
-	};
+	}>;
+	readonly unmapped: object;
 }
 
 /** A grammar kind a member admits that no binding claims yet; the name says which. */
@@ -1810,3 +1812,9 @@ export interface Unmapped<K extends string> {
 	readonly $unmapped: K;
 }
 
+/** The top-level namespace of path `P`. */
+export type NamespaceOf<P> = P extends `${infer Namespace}.${string}` ? Namespace : P;
+
+type UnmappedAt<G extends GrammarContext<G>, N, M> = N extends keyof G['unmapped'] ? (M extends keyof G['unmapped'][N] ? G['unmapped'][N][M] : never) : never;
+
+type Seated<G extends GrammarContext<G>, S> = { readonly [P in keyof S]: { readonly [M in keyof S[P]]: S[P][M] | UnmappedAt<G, NamespaceOf<P>, M> } };

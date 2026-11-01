@@ -15,6 +15,7 @@ import type {
 	Accessors,
 	BoundedQuantification,
 	Clause,
+	Comment,
 	Declaration,
 	Elisions,
 	Expression,
@@ -25,7 +26,8 @@ import type {
 	Pattern,
 	ScopedVisibility,
 	Statement,
-	Type
+	Type,
+	Unmapped
 } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
@@ -258,3 +260,13 @@ export function unelided(x: Bare['expression']): Expression.Collection.List<Bare
 	// @ts-expect-error a context without elisions has no holes
 	return { $kind: 'expression.collection.list', elements: [x, null, x] };
 }
+
+// A context's unmapped table adds the unclaimed kinds its grammar reads in a member to that member, and a refinement
+// narrowing the member reads its parent's entry; a context without the table admits none.
+interface Unclaimed extends GrammarContext<Unclaimed> {
+	readonly unmapped: { readonly comment: { readonly content: Unmapped<'g:doc_text'> } };
+}
+export const unclaimedContent: Comment.Line<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
+export const unclaimedDocContent: Comment.Line.Doc.Inner<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
+// @ts-expect-error the bare context admits no unclaimed kind
+export const bareContent: Comment.Line<Bare>['content'] = { $unmapped: 'g:doc_text' };

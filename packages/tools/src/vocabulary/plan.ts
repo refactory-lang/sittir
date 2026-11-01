@@ -148,7 +148,7 @@ function checkedFeatures(source: VocabularySource, issues: string[]): Map<string
 		if (prior === undefined) features.set(feature.name, feature);
 		else issues.push(`${feature.name}: declared by features/${prior.dir} and features/${feature.dir}`);
 	}
-	const contextKeys = new Set([...source.kinds.map((d) => topSegment(d.path)), 'slots']);
+	const contextKeys = new Set([...source.kinds.map((d) => topSegment(d.path)), 'slots', 'texts', 'unmapped']);
 	const byDir = new Map([...features.values()].map((f) => [f.dir, f]));
 	const byKey = new Map<string, Feature>();
 	const byAlias = new Map<string, Feature>();
