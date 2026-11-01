@@ -1,11 +1,12 @@
-// Usage: node --expose-gc native-calls.mjs <tree> <grammar> <object|arena> <out.json> [joint|split]
+// Usage: node --expose-gc native-calls.mjs <tree> <grammar> <object|arena> <out.json> [joint|split|noedit]
 // Runs the corpus worker's batch (parse every entry, render every root, edit
 // every root through $with) and times, per tree, each phase, every native call
 // the engine makes (by the phase it is made in), and the garbage collections
 // by kind. The addon's exports are wrapped before the engine binds them.
 // `joint` edits as the corpus worker does, each member read just before its
 // setter (phase `edit`); `split` reads every member first (phase `read`) and
-// then calls every setter with the value read (phase `set`). Every edit result
+// then calls every setter with the value read (phase `set`); `noedit` makes no
+// edits, so parse and render run without the garbage edits leave. Every edit result
 // is then released (phase `release`), as explicit release requires. One second of
 // warmup; then enough batches for about three seconds of timed work.
 import { createRequire } from 'node:module';
@@ -53,7 +54,7 @@ new PerformanceObserver((list) => {
 	}
 }).observe({ entryTypes: ['gc'] });
 let sink = 0;
-const time = editMode === 'split' ? { parse: 0, render: 0, read: 0, set: 0, release: 0 } : { parse: 0, render: 0, edit: 0, release: 0 };
+const time = editMode === 'split' ? { parse: 0, render: 0, read: 0, set: 0, release: 0 } : editMode === 'noedit' ? { parse: 0, render: 0 } : { parse: 0, render: 0, edit: 0, release: 0 };
 function release(results) {
 	phase = 'release';
 	const t = performance.now();
@@ -74,6 +75,7 @@ function batch() {
 		r[Symbol.dispose]?.();
 	}
 	time.render += performance.now() - t;
+	if (editMode === 'noedit') return;
 	if (editMode === 'split') {
 		phase = 'read';
 		t = performance.now();

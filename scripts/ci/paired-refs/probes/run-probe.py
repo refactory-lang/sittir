@@ -1,7 +1,7 @@
 # Usage: python3 run-probe.py <out-dir> <grammar,...> <name>=<tree>[@<storage>] <name>=<tree>[@<storage>]...
-# Runs native-calls.mjs for every grammar and version, in both edit modes
+# Runs native-calls.mjs for every grammar and version, in each edit mode
 # (joint: each member read just before its setter; split: every read, then
-# every setter), in three rounds of fresh processes, the version order rotating
+# every setter; noedit: no edits), in three rounds of fresh processes, the version order rotating
 # by round and reversing on odd rounds. Then writes probe.md: per grammar, the
 # median over rounds of each version's microseconds per tree for every phase
 # (release: the edit results' explicit release),
@@ -22,7 +22,7 @@ for arg in sys.argv[3:]:
 names = list(versions)
 out.mkdir(parents=True, exist_ok=True)
 ROUNDS = 3
-MODES = ['joint', 'split']
+MODES = ['joint', 'split', 'noedit']
 
 
 def orderOf(index):
@@ -59,6 +59,9 @@ for grammar in grammars:
 
     for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('release', 'joint'), ('read', 'split'), ('set', 'split')]:
         row(f'**{phase}**', lambda r, phase=phase: r['usPerTree'][phase], mode)
+    for phase in ['parse', 'render']:
+        row(f'**{phase} without edits**', lambda r, phase=phase: r['usPerTree'][phase], 'noedit')
+    row('gc, all kinds, without edits', lambda r: sum(g['usPerTree'] for g in r['gc'].values()), 'noedit')
     for phase, mode in [('parse', 'joint'), ('render', 'joint'), ('edit', 'joint'), ('release', 'joint'), ('read', 'split'), ('set', 'split')]:
         for call in sorted({c for n in names for r in runs[mode][n] for c in r['calls'] if c.startswith(phase + ' ')}):
             row(f'call {call} (calls/tree {max(statistics.median(r["calls"].get(call, {"perTree": 0})["perTree"] for r in runs[mode][n]) for n in names):.2f})',
