@@ -2,6 +2,7 @@ import { join, relative } from 'node:path';
 import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
 import { REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
+import { vocabularyPaths } from '@sittir/common/portable';
 
 export interface ConformanceCause {
 	readonly name: string;
@@ -47,6 +48,8 @@ const isList = (type: string): boolean => {
 
 const source = (reason: string): string => sides(reason)?.[0] ?? '';
 
+const PATHS: ReadonlySet<string> = new Set(vocabularyPaths);
+
 export const CAUSES: readonly Cause[] = [
 	{ name: 'context fill', why: "an arm of the grammar's own context fill that the namespace map's fill does not admit", test: (d) => d.code === 'TS2344' },
 	{ name: 'extra member', why: 'a member the bindings route that the interface does not declare', test: (d) => d.code === 'TS2353' || d.code === 'TS2561' },
@@ -69,7 +72,7 @@ export const CAUSES: readonly Cause[] = [
 		}
 	},
 	{ name: 'absent', why: 'the read can be absent where the member is required', test: (_, reason) => source(reason) === 'undefined' },
-	{ name: 'token text', why: 'a token read as its const string that the member type does not admit', test: (_, reason) => /^"[^"]*"$/.test(source(reason)) },
+	{ name: 'token text', why: 'a token read as its const string that the member type does not admit', test: (_, reason) => /^"[^"]*"$/.test(source(reason)) && !PATHS.has(source(reason).slice(1, -1)) },
 	{
 		name: 'unmapped',
 		why: 'an unmapped marker on one side where the other is a mapped kind',
