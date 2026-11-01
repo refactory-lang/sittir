@@ -378,15 +378,27 @@ macro_rules! napi_engine {
             with_live_node(tree_id, index, |parsed, index| Ok(parsed.edited_within(index, own_sides)))
         }
 
-        /// The siblings that hold sides beside the node at `index` of the
-        /// live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
-        /// end }` span of each, taken at the outermost node spanning exactly
-        /// the node's bytes, `null` when that node starts (ends) its parent.
-        /// Refuses a tree that is not live and an index naming no node of it.
+        /// The siblings that hold sides beside each node at `indexes` of the
+        /// live tree `treeId` (`ParsedTree::siblings`), in order, eight words
+        /// a node: the previous sibling, then the next, each as 1, its kind,
+        /// its start and its end, or as four zeros where that node starts
+        /// (ends) its parent. Each span is taken at the outermost node
+        /// spanning exactly the node's bytes. Refuses a tree that is not live
+        /// and an index naming no node of it.
         #[::napi_derive::napi]
-        pub fn siblings(tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<String> {
-            with_live_node(tree_id, index, |parsed, index| {
-                ::serde_json::to_string(&parsed.siblings(index)).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+        pub fn siblings(tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
+            LIVE_TREES.with(|trees| {
+                let trees = trees.borrow();
+                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                let mut words = Vec::with_capacity(indexes.len() * 8);
+                for index in indexes {
+                    $crate::napi_engine::check_node(parsed, index)?;
+                    let siblings = parsed.siblings(index);
+                    for sibling in [siblings.previous, siblings.next] {
+                        words.extend(sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]));
+                    }
+                }
+                Ok(::napi::bindgen_prelude::Uint32Array::new(words))
             })
         }
 

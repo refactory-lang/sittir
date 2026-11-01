@@ -100,6 +100,6 @@ describe('a read node carries the whitespace before it that differs from the rea
 		};
 		visit(root);
 		expect(coordinates.some(({ $span }) => $span.start === $span.end)).toBe(true);
-		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.(decodeIndex($treeHandle))).not.toThrow();
+		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.([decodeIndex($treeHandle)])).not.toThrow();
 	});
 });

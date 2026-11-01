@@ -492,13 +492,15 @@ export declare function renderToFile(engine: object, node: object, path: string,
 export declare function separatorBefore(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
 
 /**
- * The siblings that hold sides beside the node at `index` of the
- * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
- * end }` span of each, taken at the outermost node spanning exactly
- * the node's bytes, `null` when that node starts (ends) its parent.
- * Refuses a tree that is not live and an index naming no node of it.
+ * The siblings that hold sides beside each node at `indexes` of the
+ * live tree `treeId` (`ParsedTree::siblings`), in order, eight words
+ * a node: the previous sibling, then the next, each as 1, its kind,
+ * its start and its end, or as four zeros where that node starts
+ * (ends) its parent. Each span is taken at the outermost node
+ * spanning exactly the node's bytes. Refuses a tree that is not live
+ * and an index naming no node of it.
  */
-export declare function siblings(treeId: TreeId, index: NodeIndex): string
+export declare function siblings(treeId: TreeId, indexes: Array<NodeIndex>): Uint32Array
 
 /**
  * r" A side record's fields before a list's delimiters setting, each

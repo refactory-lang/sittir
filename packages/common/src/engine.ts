@@ -13,7 +13,7 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type ChunkWords, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
@@ -240,12 +240,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, options?: object): string;
 	/**
-	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
-	 * `Siblings`.
+	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
+	 * previous sibling, then the next, each as 1, its kind, its start and its end, or as four zeros for none.
 	 *
-	 * @throws when the tree is not live or `index` is past its last node.
+	 * @throws when the tree is not live or an index is past its last node.
 	 */
-	siblings(treeId: number, index: number): string;
+	siblings(treeId: number, indexes: readonly number[]): ArrayLike<number>;
 	/**
 	 * Every run of whitespace a side of tree `treeId` takes, each with the line breaks the options in
 	 * effect when the tree was read write at that gap: read from the record of the run's region, or
@@ -636,7 +636,7 @@ export function createNativeEngine<
 				separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
 				editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 				isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
-				siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,
+				siblings: (indexes) => engine.siblings(parsed.treeId, indexes),
 				query: {
 					descendants: (walk) =>
 						JSON.parse(

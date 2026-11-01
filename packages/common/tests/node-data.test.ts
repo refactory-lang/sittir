@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { markEdited, detachCoordinates, carryPlace, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
-import type { Siblings } from '../src/read.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
 // hand-written node below is given one, the way a read gives it to what it
@@ -186,11 +185,13 @@ describe('the tree token a parsed object holds', () => {
 	});
 });
 
-/** A live tree whose table answers each side as `<index>:<side>`, and whose siblings are `siblings`. */
-function tableTree(id: number, siblings: (index: number) => Siblings = () => ({ previous: null, next: null })) {
+const NO_SIBLINGS: readonly number[] = [0, 0, 0, 0, 0, 0, 0, 0];
+
+/** A live tree whose table answers each side as `<index>:<side>`, and whose siblings are `siblings`, eight words a node. */
+function tableTree(id: number, siblings: (index: number) => readonly number[] = () => NO_SIBLINGS) {
 	const token = mintTreeToken(id);
 	const written: string[] = [];
-	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings });
+	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings: (indexes) => indexes.flatMap(siblings) });
 	return { token, written };
 }
 
@@ -253,7 +254,7 @@ describe("a rebuilt list item's changed edges", () => {
 	const ATTRIBUTED = 20;
 	const ALIAS_ENVELOPE = 21;
 	const OTHER = 30;
-	const { token } = tableTree(1, (index) => (index === 3 ? { previous: { start: 1, end: 2, kind: OTHER }, next: null } : { previous: null, next: null }));
+	const { token } = tableTree(1, (index) => (index === 3 ? [1, OTHER, 1, 2, 0, 0, 0, 0] : NO_SIBLINGS));
 	const a = deep(1, 2, {});
 	const b = deep(3, 4, {});
 	const owner = deep(0, 5, {});

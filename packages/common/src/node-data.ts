@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
-import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { builtRefOf, siteOf } from './built-ref.ts';
@@ -628,29 +628,39 @@ export function aliasContentOf(holder: object): Record<string, unknown> | undefi
 	return undefined;
 }
 
-/** The siblings beside the node a source identity names, while its tree lives. */
-function siblingsOf(source: SourceIdentity): Siblings | undefined {
-	return sourceTree(source)?.siblings?.(decodeIndex(source.treeHandle));
-}
-
-/** Whether `neighbour`, beside a node in its holder, is the sibling its source had there (`span`, `null` for none). */
-function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: TreeToken, view: KindView): boolean {
-	if (span === null) return neighbour === undefined;
-	if (typeof neighbour === 'number') return neighbour === span.kind;
+function keepsNeighbour(siblings: ArrayLike<number>, at: number, neighbour: unknown, token: TreeToken, view: KindView): boolean {
+	if (siblings[at] === 0) return neighbour === undefined;
+	if (typeof neighbour === 'number') return neighbour === siblings[at + 1];
 	if (!isRecord(neighbour)) return false;
 	const other = placeOf(evidenceOf(neighbour, view));
-	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;
+	return other !== undefined && other.token === token && other.span.start === siblings[at + 2] && other.span.end === siblings[at + 3];
 }
 
-export function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
-	const entry = list[index];
-	const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
-	const siblings = source === undefined ? undefined : siblingsOf(source);
-	if (source === undefined || siblings === undefined) return NO_EDGES;
-	return {
-		leading: !keepsNeighbour(siblings.previous, list[index - 1], source.token, view),
-		trailing: !keepsNeighbour(siblings.next, list[index + 1], source.token, view)
-	};
+export function listEdges(list: readonly unknown[], view: KindView): readonly ChangedEdges[] | undefined {
+	let sources: (SourceIdentity | undefined)[] | undefined;
+	for (let n = 0; n < list.length; n++) {
+		const entry = list[n];
+		const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
+		if (source !== undefined) (sources ??= new Array<SourceIdentity | undefined>(list.length))[n] = source;
+	}
+	if (sources === undefined) return undefined;
+	const byTree = new Map<TreeHandle, number[]>();
+	sources.forEach((source, n) => {
+		const tree = source === undefined ? undefined : sourceTree(source);
+		if (tree?.siblings === undefined) return;
+		const items = byTree.get(tree);
+		if (items === undefined) byTree.set(tree, [n]);
+		else items.push(n);
+	});
+	const edges: ChangedEdges[] = list.map(() => NO_EDGES);
+	for (const [tree, items] of byTree) {
+		const siblings = tree.siblings!(items.map((n) => decodeIndex(sources[n]!.treeHandle)));
+		items.forEach((n, k) => {
+			const { token } = sources[n]!;
+			edges[n] = { leading: !keepsNeighbour(siblings, 8 * k, list[n - 1], token, view), trailing: !keepsNeighbour(siblings, 8 * k + 4, list[n + 1], token, view) };
+		});
+	}
+	return edges;
 }
 
 function isPresent(value: unknown): boolean {
@@ -722,9 +732,10 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 
 function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
 	if (Array.isArray(value)) {
+		const edges = listEdges(value, view);
 		return value.map((entry, index) => {
 			if (!isRecord(entry)) return toNodeValue(entry, view, NO_EDGES, fold);
-			return toNodeValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
+			return toNodeValue(entry, view, edges?.[index] ?? NO_EDGES, fold, evidenceOf(entry, view));
 		});
 	}
 	if (!isRecord(value)) return value;

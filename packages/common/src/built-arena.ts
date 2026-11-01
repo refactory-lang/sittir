@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, NO_EDGES, setTriviaOf, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, listEdges, NO_EDGES, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -1100,7 +1100,8 @@ export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, w
 	if (items.length === 0) return;
 	const run = arena.run(items.length);
 	record.data[record.base + cell] = builtCell(run.at);
-	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, changedEdges(items, n, arena.kinds));
+	const edges = listEdges(items, arena.kinds);
+	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, edges?.[n] ?? NO_EDGES);
 }
 
 export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {
