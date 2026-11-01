@@ -216,6 +216,8 @@ export const build: PortableBuildTable = {
 		typeQuery: 'direct',
 		typeQueryCallExpression: 'config',
 		typeQueryCallExpressionInTypeAnnotation: 'config',
+		typeQueryInstantiationExpression: 'config',
+		typeQueryMemberExpression: 'config',
 		typeQueryMemberExpressionInTypeAnnotation: 'config',
 		types: 'elements',
 		unaryExpression: 'config',
@@ -26766,7 +26768,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.instantiation': {
-			root: true,
+			root: false,
 			arms: [
 				{
 					kind: 307,
@@ -26862,7 +26864,162 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: ['function'],
+							required: ['expression', 'typeArguments']
+						}
+					],
+					holders: [
+						[205, 'expression'],
+						[214, 'initializer'],
+						[214, 'condition'],
+						[214, 'increment'],
+						[224, 'expression'],
+						[225, 'expression'],
+						[229, 'value'],
+						[236, 'expression'],
+						[239, 'right'],
+						[240, 'right'],
+						[241, 'elements'],
+						[251, 'body'],
+						[257, 'expression'],
+						[258, 'object'],
+						[259, 'object'],
+						[259, 'index'],
+						[261, 'right'],
+						[263, 'right'],
+						[266, 'expression'],
+						[267, 'condition'],
+						[267, 'consequence'],
+						[267, 'alternative'],
+						[268, 'left'],
+						[268, 'right'],
+						[269, 'argument'],
+						[271, 'expressions'],
+						[274, 'expression'],
+						[283, 'elements'],
+						[293, 'value'],
+						[296, 'expression'],
+						[299, 'expression'],
+						[304, 'expression'],
+						[305, 'expression'],
+						[306, 'expression'],
+						[307, 'expression'],
+						[310, 'value'],
+						[323, 'value'],
+						[327, 'value'],
+						[328, 'value'],
+						[403, 'value'],
+						[406, 'left'],
+						[406, 'right'],
+						[414, 'expression'],
+						[418, 'expression'],
+						[420, 'function'],
+						[425, 'argument'],
+						[426, 'argument'],
+						[436, 'value'],
+						[437, 'value'],
+						[441, 'right'],
+						[442, 'value'],
+						[442, 'right'],
+						[443, 'right'],
+						[444, 'right'],
+						[461, 'value'],
+						[462, 'value'],
+						[467, 'value']
+					]
+				},
+				{
+					kind: 356,
+					builder: 'typeQueryInstantiationExpression',
+					members: [
+						{
+							name: 'function',
+							steps: [
+								{
+									key: 'function'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [356, 'function'],
+									kinds: [1, 353, 354],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeArguments',
+							steps: [
+								{
+									key: 'typeArguments'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [356, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									tokens: {
+										'*': 363,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 503,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['expression'],
+							required: ['function', 'typeArguments']
+						}
+					],
+					holders: [[357, 'expression']]
 				}
 			]
 		},
@@ -28530,6 +28687,297 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
+					kind: 353,
+					builder: 'typeQueryMemberExpression',
+					members: [
+						{
+							name: 'qualifier',
+							steps: [
+								{
+									key: 'object'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [353, 'object'],
+									kinds: [1, 278, 353, 354, 355],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 278
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'property'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [353, 'property'],
+									kinds: [128, 499],
+									leaf: 'identifier',
+									texts: [1, 499],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 63
+						}
+					],
+					flags: {},
+					when: [],
+					holders: [
+						[353, 'object'],
+						[354, 'object'],
+						[355, 'function'],
+						[356, 'function'],
+						[357, 'expression']
+					]
+				},
+				{
+					kind: 334,
+					builder: 'typeQueryMemberExpressionInTypeAnnotation',
+					members: [
+						{
+							name: 'qualifier',
+							steps: [
+								{
+									key: 'object'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [334, 'object'],
+									kinds: [196, 334, 335],
+									tokens: {
+										import: 196
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'property'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [334, 'property'],
+									kinds: [128, 499],
+									leaf: 'identifier',
+									texts: [1, 499],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						},
+						{
+							member: 'qualifier',
+							kinds: [196, 334, 335]
+						}
+					],
+					holders: [
+						[305, 'type'],
+						[306, 'type'],
+						[311, 'types'],
+						[324, 'value'],
+						[330, 'type'],
+						[331, 'type'],
+						[332, 'type'],
+						[333, 'type'],
+						[334, 'object'],
+						[335, 'function'],
+						[341, 'type'],
+						[342, 'type'],
+						[344, 'type'],
+						[348, 'type'],
+						[349, 'left'],
+						[349, 'right'],
+						[349, 'consequence'],
+						[349, 'alternative'],
+						[351, 'type'],
+						[359, 'indexType'],
+						[360, 'type'],
+						[360, 'alias'],
+						[365, 'type'],
+						[373, 'type'],
+						[374, 'bounds'],
+						[379, 'type'],
+						[380, 'left'],
+						[380, 'right'],
+						[381, 'left'],
+						[381, 'right'],
+						[382, 'returnType'],
+						[390, 'items'],
+						[392, 'items'],
+						[399, 'type'],
+						[411, 'indexType']
+					]
+				},
+				{
 					kind: 243,
 					builder: 'nestedIdentifier',
 					members: [
@@ -28580,12 +29028,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							member: 'qualifier',
-							kinds: [1, 243]
-						}
-					],
+					when: [],
 					holders: [
 						[243, 'qualifier'],
 						[314, 'name'],
@@ -28649,6 +29092,134 @@ export const build: PortableBuildTable = {
 						{
 							member: 'qualifier',
 							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
+						},
+						{
+							member: 'qualifier',
+							kinds: [1, 243]
 						}
 					],
 					holders: [
@@ -28682,97 +29253,6 @@ export const build: PortableBuildTable = {
 						[373, 'type'],
 						[374, 'bounds'],
 						[377, 'type'],
-						[379, 'type'],
-						[380, 'left'],
-						[380, 'right'],
-						[381, 'left'],
-						[381, 'right'],
-						[382, 'returnType'],
-						[390, 'items'],
-						[392, 'items'],
-						[399, 'type'],
-						[411, 'indexType']
-					]
-				},
-				{
-					kind: 334,
-					builder: 'typeQueryMemberExpressionInTypeAnnotation',
-					members: [
-						{
-							name: 'qualifier',
-							steps: [
-								{
-									key: 'object'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [334, 'object'],
-									kinds: [196, 334, 335],
-									tokens: {
-										import: 196
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'property'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [334, 'property'],
-									kinds: [128, 499],
-									leaf: 'identifier',
-									texts: [1, 499],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							member: 'qualifier',
-							kinds: [196, 334, 335]
-						}
-					],
-					holders: [
-						[305, 'type'],
-						[306, 'type'],
-						[311, 'types'],
-						[324, 'value'],
-						[330, 'type'],
-						[331, 'type'],
-						[332, 'type'],
-						[333, 'type'],
-						[334, 'object'],
-						[335, 'function'],
-						[341, 'type'],
-						[342, 'type'],
-						[344, 'type'],
-						[348, 'type'],
-						[349, 'left'],
-						[349, 'right'],
-						[349, 'consequence'],
-						[349, 'alternative'],
-						[351, 'type'],
-						[359, 'indexType'],
-						[360, 'type'],
-						[360, 'alias'],
-						[365, 'type'],
-						[373, 'type'],
-						[374, 'bounds'],
 						[379, 'type'],
 						[380, 'left'],
 						[380, 'right'],

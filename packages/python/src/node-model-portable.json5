@@ -2152,6 +2152,17 @@
           ]
         },
         {
+          "name": "comparators",
+          "route": "slot",
+          "slot": "comparators",
+          "path": [
+            {
+              "owner": "comparison_operator",
+              "slot": "comparators"
+            }
+          ]
+        },
+        {
           "name": "right",
           "route": "nested",
           "via": [
@@ -2182,17 +2193,6 @@
             {
               "owner": "comparison_operator_comparator",
               "slot": "primary_expression"
-            }
-          ]
-        },
-        {
-          "name": "comparators",
-          "route": "slot",
-          "slot": "comparators",
-          "path": [
-            {
-              "owner": "comparison_operator",
-              "slot": "comparators"
             }
           ]
         }

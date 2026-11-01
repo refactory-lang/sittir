@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, containerCaptureSlot, containerMembers, formsOf, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, formsOf, guaranteedBy, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -356,11 +356,14 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				const node = modelNode(input.model, gk);
 				if (!node) continue;
 				if (node.modelType !== 'supertype') tally(readFrom, `${vocab}${KEY_SEPARATOR}${input.grammar}`, gk);
+				const guaranteed = guaranteedBy(input.model, entry);
 				for (const route of entry.members) {
 					const f = memberOf(vocab, route.name);
 					tally(carriedBy, `${vocab}${KEY_SEPARATOR}${input.grammar}${KEY_SEPARATOR}${route.name}`, gk);
 					if (route.route === 'slot') {
-						const resolved = slotResolution(input, gk, route.slot);
+						const held = concreteKinds(input.model, route.slot.kinds);
+						const tested = held.filter((k) => guaranteed.present(route.path)?.includes(k) === true);
+						const resolved = slotResolution(input, gk, tested.length > 0 && tested.length < held.length ? { ...route.slot, kinds: tested } : route.slot);
 						for (const t of resolved.tokens) f.kinds.add(t);
 						f.optional ||= !route.slot.required;
 						f.multiple ||= route.slot.multiple || resolved.list;

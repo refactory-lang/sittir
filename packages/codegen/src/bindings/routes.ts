@@ -548,11 +548,12 @@ export interface Guaranteed {
 	readonly holds: (path: readonly SlotStep[] | undefined) => boolean;
 	readonly many: (path: readonly SlotStep[]) => boolean;
 	readonly present: (path: readonly SlotStep[]) => readonly string[] | undefined;
+	readonly pinned: (path: readonly SlotStep[]) => string | undefined;
 }
 
 const pathKey = (path: readonly SlotStep[]): string => path.map((step) => `${step.owner} ${step.slot} ${step.anchor ?? ''}`).join(' > ');
 
-export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[] }): Guaranteed {
+export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[]; readonly pins?: readonly Pin[] }): Guaranteed {
 	const one = new Map<string, Set<string>>();
 	const many = new Set<string>();
 	const walk = (child: ChildTest, holder: string, path: readonly SlotStep[], i: number): void => {
@@ -570,7 +571,9 @@ export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; r
 		for (const next of heldInto(model, holder, selector)?.next ?? []) walk(child, next.kind, at, i + 1);
 	};
 	for (const child of entry.children) if (child.subject.up === 0) walk(child, entry.kind, [], 0);
+	const pinned = new Map((entry.pins ?? []).map((pin) => [pathKey([{ owner: entry.kind, slot: pin.slot }]), pin.text]));
 	return {
+		pinned: (path) => pinned.get(pathKey(path)),
 		holds: (path = []) => path.every((step, i) => step.anchor !== 'only' || one.has(pathKey(path.slice(0, i + 1)))),
 		many: (path) => many.has(pathKey(path)),
 		present: (path) => {
@@ -729,7 +732,13 @@ function membersOf(
 		const rest = except.length === 0 ? slot : { ...read, required: false };
 		const captured = capturesOf(slot).length > 0;
 		const present = captured ? [] : concreteKinds(input.model, rest.kinds).filter((k) => guaranteed.present(pathTo(slot))?.includes(k) === true);
-		const tested = present.length === 0 ? rest : { ...rest, required: true, terminals: [], kinds: present };
+		const pin = captured ? undefined : guaranteed.pinned(pathTo(slot));
+		const tested =
+			present.length > 0
+				? { ...rest, required: true, terminals: [], kinds: present }
+				: pin !== undefined
+					? { ...rest, required: true, terminals: rest.terminals.filter((t) => t === pin), kinds: concreteKinds(input.model, rest.kinds).filter((k) => textOfKind(input.model, k) === pin) }
+					: rest;
 		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
 			continue;
@@ -1078,14 +1087,21 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries) {
 		const routed = entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries)) }));
 		readEntries.set(kind, routed);
-		const [first, ...rest] = routed.map((entry) => entry.members);
-		const union = [...(first ?? [])];
-		const held = new Set(union.map((route) => JSON.stringify(route)));
-		for (const route of rest.flat()) {
-			const key = JSON.stringify(route);
-			if (held.has(key)) continue;
-			held.add(key);
-			union.push(route);
+		const union: MemberRoute[] = [];
+		const keys: string[] = [];
+		for (const entry of routed) {
+			let at = -1;
+			for (const route of entry.members) {
+				const key = JSON.stringify(route);
+				const found = keys.indexOf(key);
+				if (found >= 0) {
+					at = found;
+					continue;
+				}
+				at += 1;
+				keys.splice(at, 0, key);
+				union.splice(at, 0, route);
+			}
 		}
 		members.set(kind, union);
 	}

@@ -131,6 +131,29 @@ describe('the portable read', () => {
 		}
 	});
 
+	it('reads a typeof operand as the entity name it is, a qualified name over an identifier, this or an import type, and builds each back', () => {
+		const queried = (source: string) => (((firstOf(source) as Read).declarators as readonly Read[])[0]!.type as Read).expression;
+		expect(queried('let a: typeof Person.P;')).toEqual({ $path: 'identifier.qualified', qualifier: 'Person', name: 'P' });
+		expect(queried('let b: typeof this.colors;')).toEqual({ $path: 'identifier.qualified', qualifier: 'this', name: 'colors' });
+		expect(queried('let c: typeof f<T>;')).toEqual({ $path: 'expression.instantiation', function: 'f', typeArguments: ['T'] });
+		expect(queried('let d: typeof import("./m").T;')).toEqual({
+			$path: 'identifier.qualified',
+			qualifier: { $path: 'type.import', source: { $path: 'literal.string', elements: ['./m'] } },
+			name: 'T'
+		});
+		for (const source of ['let a: typeof Person.P;', 'let b: typeof this.colors;', 'let c: typeof f<T>;', 'let d: typeof import("./m").T;', 'let e: A.B;', 'let f: import("./m").T;'])
+			expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('carries a typeof operand typescript does not accept: a call, an optional chain', () => {
+		for (const source of ['let g: typeof a.b();', 'let h: typeof a?.b;']) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried, source).toEqual([{ reason: 'unclaimed' }]);
+			expect(roundTrip(source)).toBe(`${source}\n`);
+		}
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

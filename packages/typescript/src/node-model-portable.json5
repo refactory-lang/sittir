@@ -14159,6 +14159,112 @@
         }
       ]
     },
+    "type_query_instantiation_expression": {
+      "vocab": "expression",
+      "read": [
+        {
+          "vocab": "expression.instantiation",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1,
+                  353,
+                  354
+                ],
+                "slots": {
+                  "356": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "function",
+          "route": "slot",
+          "slot": "function",
+          "path": [
+            {
+              "owner": "type_query_instantiation_expression",
+              "slot": "function"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "slot",
+          "slot": "type_arguments",
+          "path": [
+            {
+              "owner": "type_query_instantiation_expression",
+              "slot": "type_arguments"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_member_expression": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "."
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ".",
+                "slots": {
+                  "353": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "qualifier",
+          "route": "slot",
+          "slot": "object",
+          "path": [
+            {
+              "owner": "type_query_member_expression",
+              "slot": "object"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "property",
+          "path": [
+            {
+              "owner": "type_query_member_expression",
+              "slot": "property"
+            }
+          ]
+        }
+      ]
+    },
     "type_query_member_expression_in_type_annotation": {
       "vocab": "identifier.qualified",
       "read": [
@@ -14980,7 +15086,7 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 149,
+        "kinds": 151,
         "refinements": 4
       },
       {

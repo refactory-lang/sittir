@@ -963,6 +963,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const hit = group.filter((arm) => held.has(arm.builds));
 				if (hit.length === 1 && !holders.has(hit[0]!)) holders.set(hit[0]!, []);
 				if (hit.length === 1 && !holders.get(hit[0]!)!.some(([h, k]) => h === holder.kindId && k === slot.propertyName)) holders.get(hit[0]!)!.push([holder.kindId!, slot.propertyName]);
+				else if (hit.length > 1 && hit.length < group.length) decide(hit);
 				else if (hit.length > 1 && !leaves) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: hit.map((arm) => arm.kind), holder: holder.kind, slot: slot.name });
 			}
 			if (!leaves && group.every((arm) => admittedAt(arm).length === 0)) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: group.map((arm) => arm.kind) });

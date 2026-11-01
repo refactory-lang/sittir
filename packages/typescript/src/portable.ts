@@ -359,6 +359,7 @@ export interface PortableIds {
 		| TSKindId.TemplateSubstitution
 		| TSKindId.TernaryExpression
 		| TSKindId.TypeAssertion
+		| TSKindId.TypeQueryInstantiationExpression
 		| TSKindId.UnaryExpression
 		| TSKindId.UpdateExpressionPostfix
 		| TSKindId.UpdateExpressionPrefix
@@ -439,7 +440,7 @@ export interface PortableIds {
 	'expression.collection.object': TSKindId.Object;
 	'expression.conditional': TSKindId.TernaryExpression;
 	'expression.function': TSKindId.FunctionExpression | TSKindId.GeneratorFunction;
-	'expression.instantiation': TSKindId.InstantiationExpression;
+	'expression.instantiation': TSKindId.InstantiationExpression | TSKindId.TypeQueryInstantiationExpression;
 	'expression.interpolation': TSKindId.TemplateSubstitution;
 	'expression.lambda': TSKindId.ArrowFunction;
 	'expression.member': TSKindId.MemberExpression;
@@ -477,11 +478,13 @@ export interface PortableIds {
 		| TSKindId.Super
 		| TSKindId.This
 		| TSKindId.TypeIdentifier
+		| TSKindId.TypeQueryMemberExpression
 		| TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 	'identifier.label': TSKindId.StatementIdentifier;
 	'identifier.qualified':
 		| TSKindId.NestedIdentifier
 		| TSKindId.NestedTypeIdentifier
+		| TSKindId.TypeQueryMemberExpression
 		| TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 	'identifier.receiver': TSKindId.This;
 	'identifier.super': TSKindId.Super;
@@ -4537,13 +4540,14 @@ const table: PortableTable = {
 				TSKindId.TemplateSubstitution,
 				TSKindId.TernaryExpression,
 				TSKindId.TypeAssertion,
+				TSKindId.TypeQueryInstantiationExpression,
 				TSKindId.UnaryExpression,
 				TSKindId.UpdateExpressionPostfix,
 				TSKindId.UpdateExpressionPrefix,
 				TSKindId.YieldExpression,
 				TSKindId.YieldExpressionDelegate
 			],
-			exact: true
+			exact: false
 		},
 		'expression.assignment': {
 			ids: [TSKindId.AssignmentExpression, TSKindId.AugmentedAssignmentExpression],
@@ -4629,7 +4633,10 @@ const table: PortableTable = {
 		'expression.collection.object': { ids: [TSKindId.Object], exact: true },
 		'expression.conditional': { ids: [TSKindId.TernaryExpression], exact: true },
 		'expression.function': { ids: [TSKindId.FunctionExpression, TSKindId.GeneratorFunction], exact: true },
-		'expression.instantiation': { ids: [TSKindId.InstantiationExpression], exact: true },
+		'expression.instantiation': {
+			ids: [TSKindId.InstantiationExpression, TSKindId.TypeQueryInstantiationExpression],
+			exact: false
+		},
 		'expression.interpolation': { ids: [TSKindId.TemplateSubstitution], exact: true },
 		'expression.lambda': { ids: [TSKindId.ArrowFunction], exact: true },
 		'expression.member': { ids: [TSKindId.MemberExpression], exact: true },
@@ -4681,18 +4688,20 @@ const table: PortableTable = {
 				TSKindId.Super,
 				TSKindId.This,
 				TSKindId.TypeIdentifier,
+				TSKindId.TypeQueryMemberExpression,
 				TSKindId.TypeQueryMemberExpressionInTypeAnnotation
 			],
-			exact: true
+			exact: false
 		},
 		'identifier.label': { ids: [TSKindId.StatementIdentifier], exact: true },
 		'identifier.qualified': {
 			ids: [
 				TSKindId.NestedIdentifier,
 				TSKindId.NestedTypeIdentifier,
+				TSKindId.TypeQueryMemberExpression,
 				TSKindId.TypeQueryMemberExpressionInTypeAnnotation
 			],
-			exact: true
+			exact: false
 		},
 		'identifier.receiver': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
@@ -6025,6 +6034,20 @@ const table: PortableTable = {
 						plan: { op: 'is', types: [423, 424], self: true }
 					}
 				]
+			}
+		],
+		[TSKindId.TypeQueryInstantiationExpression]: [
+			{
+				path: 'expression.instantiation',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [1, 353, 354], slots: { '356': 0 } } }]
+			}
+		],
+		[TSKindId.TypeQueryMemberExpression]: [
+			{
+				path: 'identifier.qualified',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '.', slots: { '353': 1 } } }]
 			}
 		],
 		[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: [{ path: 'identifier.qualified', within: [], test: [] }],

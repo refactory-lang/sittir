@@ -928,6 +928,13 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
 	});
 
+	it("routes no member through a slot the entry's own pin narrows to one text, as a terminal or as a fixed-text kind", async () => {
+		const names = async (bindings: string, kind: string) => (resolveRoutes(await grammar(bindings)).members.get(kind) ?? []).map((r) => r.name);
+		expect(await names('(binary operator: "+") @expression.binary.add', 'binary')).toEqual(['left', 'right']);
+		expect(await names('(span "..") @expression.range.exclusive', 'span')).toEqual(['lo']);
+		expect(await names('(binary) @expression.binary', 'binary')).toEqual(['left', 'operator', 'right']);
+	});
+
 	it('pins a token on the slot whose fixed-text kind is that text, and counts it as a value the refinement tells', async () => {
 		const routes = resolveRoutes(
 			await grammar(['(span) @expression.range', '(span "..") @expression.range.exclusive', '(span "..=") @expression.range.inclusive'].join('\n'))
