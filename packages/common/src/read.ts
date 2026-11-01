@@ -38,7 +38,7 @@ export interface TreeHandle {
 	editedWithin?(index: number, ownSides: boolean): boolean;
 	/** Whether the node at descendant `index` is empty: no child of it has width. */
 	isEmpty?(index: number): boolean;
-	siblings?(indexes: readonly number[]): ArrayLike<number>;
+	siblings?(indexes: readonly number[]): readonly number[];
 	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
 	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */

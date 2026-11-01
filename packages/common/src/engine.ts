@@ -245,7 +245,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws when the tree is not live or an index is past its last node.
 	 */
-	siblings(treeId: number, indexes: readonly number[]): ArrayLike<number>;
+	siblings(treeId: number, indexes: readonly number[]): number[];
 	/**
 	 * Every run of whitespace a side of tree `treeId` takes, each with the line breaks the options in
 	 * effect when the tree was read write at that gap: read from the record of the run's region, or

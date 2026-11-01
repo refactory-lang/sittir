@@ -500,7 +500,7 @@ export declare function separatorBefore(treeId: TreeId, index: NodeIndex): impor
  * spanning exactly the node's bytes. Refuses a tree that is not live
  * and an index naming no node of it.
  */
-export declare function siblings(treeId: TreeId, indexes: Array<NodeIndex>): Uint32Array
+export declare function siblings(treeId: TreeId, indexes: Array<NodeIndex>): Array<number>
 
 /**
  * r" A side record's fields before a list's delimiters setting, each

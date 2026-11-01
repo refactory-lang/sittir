@@ -628,7 +628,7 @@ export function aliasContentOf(holder: object): Record<string, unknown> | undefi
 	return undefined;
 }
 
-function keepsNeighbour(siblings: ArrayLike<number>, at: number, neighbour: unknown, token: TreeToken, view: KindView): boolean {
+function keepsNeighbour(siblings: readonly number[], at: number, neighbour: unknown, token: TreeToken, view: KindView): boolean {
 	if (siblings[at] === 0) return neighbour === undefined;
 	if (typeof neighbour === 'number') return neighbour === siblings[at + 1];
 	if (!isRecord(neighbour)) return false;
