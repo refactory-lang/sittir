@@ -812,6 +812,15 @@ export class BuiltArena {
 	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
 		const at = builtRecordOf(node, this);
 		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
+		if (own && this.#heldOnlyByHandle(at)) {
+			const words = this.#chunk(at, 2);
+			const head = wordOf(at, this.format);
+			const side = words[head + 1]!;
+			words[head + 1] = this.#sidesNaming(side, [tree.id, index, end, span.start, span.end]);
+			if (side !== 0) this.drop(side, this.format.held.side);
+			this.holdTree(tree, token);
+			return node;
+		}
 		return this.scope(() => {
 			const kind = this.kindAt(at);
 			const record = this.record(kind);
@@ -823,6 +832,11 @@ export class BuiltArena {
 			if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, record.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
 			return this.#view(record.at);
 		});
+	}
+
+	#heldOnlyByHandle(at: number): boolean {
+		const { counts, index } = this.#countAt(at);
+		return counts[index] === (this.format.countOwned | 1);
 	}
 
 	#sidesNaming(side: number, sides: readonly number[]): number {
