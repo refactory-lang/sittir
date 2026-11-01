@@ -5,6 +5,12 @@ export type SubKindOf<T extends { readonly $kind: string }> = {
 };
 
 /**
+ * A kind that is a token, typed as its text, declaring the flags its texts carry: `T` itself. The flags name the kind's flag segments,
+ * which claims and portable guards use, without adding a member to the text.
+ */
+export type Flagged<T, F extends string> = [F] extends [never] ? T : T;
+
+/**
  * An owner refined by one value of an axis many owners share: the owner's members, with a `$kind` beneath the owner's,
  * and the members the value's kind adds.
  */

@@ -28,11 +28,15 @@ export interface PortablePath {
 	readonly exact: boolean;
 }
 
-/** A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, and the text of each fixed-literal kind id. */
+/**
+ * A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, the text of each
+ * fixed-literal kind id, and the fixed-literal kinds whose meaning is a value, which read as their path and not as their text.
+ */
 export interface PortableTable {
 	readonly paths: Readonly<Record<string, PortablePath>>;
 	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
 	readonly fixedText: Readonly<Record<number, string>>;
+	readonly literals: readonly number[];
 }
 
 /** What a bound grammar's engine reads portable classifications from: its {@link PortableTable}, the slots its conditions name, and each kind's flag plans. */
@@ -178,7 +182,8 @@ export interface PortableDecimalParts {
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
  * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
- * member it states, by the member's kinds and whether it is a list.
+ * member it states, by the member's kinds and whether it is a list. A `literal` arm's kind is a token whose meaning is a value: it reads as its
+ * path, with the `$value` its claim declares, never as its text.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -187,6 +192,7 @@ export interface PortableBuildArm {
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
 	readonly numeric?: string | PortableDecimalParts;
+	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
@@ -234,21 +240,26 @@ export interface PortableBuildTable {
 }
 
 /**
- * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
+ * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there, or to their texts.
  *
  * @typeParam Ids - The grammar kinds read at or under the path.
  * @typeParam Node - The grammar's node union; a node of another language, or one whose language is unknown, is refused.
  * @typeParam Kind - The grammar's kind-id enum: a bare kind id of the language is read by its kind and fixed text. A value typed as
  * a plain `number` is still admitted by the type, since a numeric enum accepts one.
- * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, or a kind id of the
- * language, read by the rows its engine loaded.
- * @throws When given a kind id before an engine of the language has loaded.
+ * @typeParam Text - The fixed texts of the tokens read at or under the path. Where there are any, a string is admitted and holds when
+ * it is the text of one of those tokens.
+ * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, a kind id of the
+ * language, or a token's text, each read by the rows its engine loaded.
+ * @throws When given a kind id or a text before an engine of the language has loaded.
  */
-export type PortableGuard<Ids extends number, Node extends { readonly $type: number } = { readonly $type: number }, Kind extends number = never> = <
-	T extends Node | Kind
->(
+export type PortableGuard<
+	Ids extends number,
+	Node extends { readonly $type: number } = { readonly $type: number },
+	Kind extends number = never,
+	Text extends string = never
+> = <T extends Node | Kind | ([Text] extends [never] ? never : string)>(
 	value: T
-) => value is T extends number ? T & Ids : T & { readonly $type: Ids };
+) => value is T extends string ? T & Text : T extends number ? T & Ids : T & { readonly $type: Ids };
 
 /** What a bound grammar adds for the portable engine: its vocabulary namespaces of kind ids and of guards. */
 export interface PortableSurface {

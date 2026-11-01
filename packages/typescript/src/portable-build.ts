@@ -372,14 +372,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -655,14 +651,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3116,14 +3108,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3184,14 +3172,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3227,14 +3211,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3311,14 +3291,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3425,14 +3401,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3620,14 +3592,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3734,14 +3702,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -3939,14 +3903,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4053,14 +4013,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4258,14 +4214,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4372,14 +4324,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4560,14 +4508,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4755,14 +4699,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -4960,14 +4900,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -5165,14 +5101,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -6235,14 +6167,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -6620,14 +6548,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -7015,14 +6939,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -7410,14 +7330,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -7805,14 +7721,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -8166,14 +8078,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -8488,14 +8396,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -8820,14 +8724,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -9152,14 +9052,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -9484,14 +9380,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -9855,14 +9747,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -10226,14 +10114,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -10783,9 +10667,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -10871,14 +10752,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -11018,14 +10895,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -11116,9 +10989,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -11204,14 +11074,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -11305,9 +11171,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -11461,9 +11324,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -11549,14 +11409,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -11706,14 +11562,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -11814,9 +11666,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -11902,14 +11751,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -12013,9 +11858,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -12179,9 +12021,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -12267,14 +12106,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -12424,14 +12259,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -12532,9 +12363,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -12620,14 +12448,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -12731,9 +12555,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -12897,9 +12718,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -12985,14 +12803,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -13142,14 +12956,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -13250,9 +13060,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -13338,14 +13145,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -13449,9 +13252,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -13665,14 +13465,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -13816,14 +13612,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -13923,14 +13715,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14017,14 +13805,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14130,14 +13914,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14334,14 +14114,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14548,14 +14324,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14762,14 +14534,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -14993,14 +14761,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15087,14 +14851,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15227,14 +14987,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15321,14 +15077,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15461,14 +15213,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15555,14 +15303,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15678,14 +15422,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -15839,14 +15579,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16010,14 +15746,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16181,14 +15913,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16369,14 +16097,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16463,14 +16187,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16586,14 +16306,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16762,14 +16478,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -16948,14 +16660,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17134,14 +16842,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17320,14 +17024,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17453,14 +17153,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17596,14 +17292,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17739,14 +17431,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -17882,14 +17570,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18071,14 +17755,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18270,14 +17950,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18469,14 +18145,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18668,14 +18340,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18814,14 +18482,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -18970,14 +18634,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -19126,14 +18786,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -20680,14 +20336,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -20841,14 +20493,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -20972,14 +20620,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21015,14 +20659,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21079,14 +20719,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21351,9 +20987,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -21388,14 +21021,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21479,14 +21108,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21561,14 +21186,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21643,14 +21264,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21725,14 +21342,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21807,14 +21420,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21889,14 +21498,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -21971,14 +21576,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22053,14 +21654,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22135,14 +21732,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22217,14 +21810,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22299,14 +21888,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22381,14 +21966,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22463,14 +22044,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22545,14 +22122,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22627,14 +22200,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22687,14 +22256,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22739,14 +22304,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22777,14 +22338,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22829,14 +22386,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22867,14 +22420,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22929,14 +22478,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -22967,14 +22512,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23029,14 +22570,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23067,14 +22604,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23129,14 +22662,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23167,14 +22696,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23229,14 +22754,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23267,14 +22788,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23329,14 +22846,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23367,14 +22880,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23429,14 +22938,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23467,14 +22972,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23529,14 +23030,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23567,14 +23064,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23629,14 +23122,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23667,14 +23156,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23729,14 +23214,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23767,14 +23248,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23829,14 +23306,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23867,14 +23340,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23929,14 +23398,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -23967,14 +23432,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24029,14 +23490,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24067,14 +23524,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24129,14 +23582,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24167,14 +23616,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24229,14 +23674,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24267,14 +23708,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24329,14 +23766,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24367,14 +23800,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24429,14 +23858,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24467,14 +23892,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24529,14 +23950,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24567,14 +23984,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24629,14 +24042,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24667,14 +24076,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24729,14 +24134,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24767,14 +24168,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24829,14 +24226,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24867,14 +24260,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24914,14 +24303,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -24961,14 +24346,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25028,14 +24409,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25066,14 +24443,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25128,14 +24501,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25166,14 +24535,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25228,14 +24593,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25266,14 +24627,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25328,14 +24685,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25366,14 +24719,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25426,14 +24775,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25522,14 +24867,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25580,15 +24921,11 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										import: 196,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25677,14 +25014,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25740,14 +25073,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25837,14 +25166,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -25982,14 +25307,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26049,14 +25370,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26115,14 +25432,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26206,14 +25519,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26311,14 +25620,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26362,14 +25667,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26772,14 +26073,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26862,14 +26159,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26899,14 +26192,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -26936,14 +26225,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -27504,14 +26789,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -27609,14 +26890,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -27660,14 +26937,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -27825,15 +27098,11 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										import: 196,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -27994,14 +27263,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28104,14 +27369,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28156,14 +27417,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28193,14 +27450,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28262,14 +27515,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28322,14 +27571,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28382,14 +27627,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28442,14 +27683,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28502,14 +27739,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28562,14 +27795,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28622,14 +27851,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28686,14 +27911,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28746,14 +27967,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28811,14 +28028,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28871,14 +28084,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28937,14 +28146,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -28992,14 +28197,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -29494,6 +28695,9 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 281,
+					literal: {
+						value: false
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -29506,6 +28710,9 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 280,
+					literal: {
+						value: true
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -29518,6 +28725,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 282,
+					literal: {},
 					members: [],
 					presets: [],
 					flags: {},
@@ -29530,6 +28738,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 129,
+					literal: {},
 					members: [],
 					presets: [],
 					flags: {},
@@ -31220,9 +30429,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -31257,14 +30463,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -31308,9 +30510,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -31419,14 +30618,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -31481,14 +30676,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -31522,9 +30713,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -31580,9 +30768,6 @@ export const build: PortableBuildTable = {
 									kinds: [1, 129, 238, 242, 258, 259, 299],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										undefined: 129
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -31791,14 +30976,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -32188,14 +31369,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -32257,14 +31434,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -32726,14 +31899,10 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										';': 226,
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -32764,14 +31933,10 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										';': 226,
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -32802,14 +31967,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -33043,14 +32204,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -33201,14 +32358,10 @@ export const build: PortableBuildTable = {
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										false: 281,
 										'import.meta': 440,
 										'new.target': 439,
-										null: 282,
 										super: 279,
-										this: 278,
-										true: 280,
-										undefined: 129
+										this: 278
 									},
 									pattern: {
 										source:
@@ -34223,13 +33376,7 @@ export const build: PortableBuildTable = {
 									kinds: [
 										129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 280, 281, 282, 404, 405, 423,
 										424
-									],
-									tokens: {
-										false: 281,
-										null: 282,
-										true: 280,
-										undefined: 129
-									}
+									]
 								}
 							]
 						}

@@ -226,7 +226,8 @@ declare module './clause.ts' {
 				| V.Clause.Import.Require<G>
 				| V.Clause.Import.Specifier<G>
 				| V.Clause.Import.Specifier.Typeof<G>
-				| V.Clause.Import.Wildcard<G>;
+				| V.Clause.Import.Wildcard<G>
+				| G['texts']['clause.import.wildcard'];
 		}
 		interface Let<G extends GrammarContext<G>> extends matchExpressions.Clause.Let<G> {}
 		namespace Let {
@@ -304,7 +305,8 @@ declare module './clause.ts' {
 			| V.Clause.Resource<G>
 			| V.Clause.Resource.Item<G>
 			| V.Clause.Where<G>
-			| V.Clause.Where.Predicate<G>;
+			| V.Clause.Where.Predicate<G>
+			| G['texts']['clause.import.wildcard'];
 	}
 }
 
@@ -1657,7 +1659,7 @@ declare module './element.ts' {
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro<G> {}
 		namespace Macro {
-			interface Fragment<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.Fragment<G> {}
+			type Fragment<G extends GrammarContext<G>> = syntacticMetaprogramming.Element.Macro.Fragment<G>;
 			interface TokenBinding<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro
 				.TokenBinding<G> {}
 			interface TokenRepetition<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro
@@ -2033,7 +2035,7 @@ declare module './expression.ts' {
 					parametricPolymorphism.Expression.Call.Construct<G>['typeArguments']
 				>;
 			}
-			interface Import<G extends GrammarContext<G>> extends modules.Expression.Call.Import<G> {}
+			type Import<G extends GrammarContext<G>> = modules.Expression.Call.Import<G>;
 			interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Expression.Call.Macro<G> {}
 			interface Member<G extends GrammarContext<G>> {
 				readonly typeArguments?: gate.In<
@@ -2207,7 +2209,7 @@ declare module './expression.ts' {
 				| V.Expression.Unary.Typeof<G>
 				| V.Expression.Unary.Void<G>;
 		}
-		interface Unit<G extends GrammarContext<G>> extends tuples.Expression.Unit<G> {}
+		type Unit<G extends GrammarContext<G>> = tuples.Expression.Unit<G>;
 		namespace Update {
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Update<G>
@@ -2348,7 +2350,8 @@ declare module './expression.ts' {
 			| V.Expression.Update.Decrement<G>
 			| V.Expression.Update.Increment<G>
 			| V.Expression.Yield<G>
-			| V.Expression.Yield.Delegate<G>;
+			| V.Expression.Yield.Delegate<G>
+			| G['texts']['expression.meta'];
 	}
 }
 
@@ -2365,7 +2368,7 @@ declare module './identifier.ts' {
 		interface Metavariable<G extends GrammarContext<G>> extends syntacticMetaprogramming.Identifier.Metavariable<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G>['attributes']>;
 		}
-		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
+		type Receiver<G extends GrammarContext<G>> = methods.Identifier.Receiver<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
 			| V.Identifier.Label<G>
@@ -2373,7 +2376,8 @@ declare module './identifier.ts' {
 			| V.Identifier.Metavariable<G>
 			| V.Identifier.Qualified<G>
 			| V.Identifier.Receiver<G>
-			| V.Identifier.Super<G>;
+			| V.Identifier.Super<G>
+			| G['texts']['identifier'];
 	}
 }
 
@@ -2589,7 +2593,9 @@ declare module './modifier.ts' {
 				type Any<G extends GrammarContext<G>> =
 					| V.Modifier.Visibility.Public<G>
 					| V.Modifier.Visibility.Public.Internal<G>
-					| V.Modifier.Visibility.Public.Restricted<G>;
+					| V.Modifier.Visibility.Public.Restricted<G>
+					| G['texts']['modifier.visibility.public']
+					| G['texts']['modifier.visibility.public.internal'];
 			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Modifier.Visibility<G>
@@ -2597,7 +2603,12 @@ declare module './modifier.ts' {
 				| V.Modifier.Visibility.Protected<G>
 				| V.Modifier.Visibility.Public<G>
 				| V.Modifier.Visibility.Public.Internal<G>
-				| V.Modifier.Visibility.Public.Restricted<G>;
+				| V.Modifier.Visibility.Public.Restricted<G>
+				| G['texts']['modifier.visibility']
+				| G['texts']['modifier.visibility.private']
+				| G['texts']['modifier.visibility.protected']
+				| G['texts']['modifier.visibility.public']
+				| G['texts']['modifier.visibility.public.internal'];
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Modifier<G>
@@ -2607,7 +2618,12 @@ declare module './modifier.ts' {
 			| V.Modifier.Visibility.Protected<G>
 			| V.Modifier.Visibility.Public<G>
 			| V.Modifier.Visibility.Public.Internal<G>
-			| V.Modifier.Visibility.Public.Restricted<G>;
+			| V.Modifier.Visibility.Public.Restricted<G>
+			| G['texts']['modifier.visibility']
+			| G['texts']['modifier.visibility.private']
+			| G['texts']['modifier.visibility.protected']
+			| G['texts']['modifier.visibility.public']
+			| G['texts']['modifier.visibility.public.internal'];
 	}
 }
 
@@ -2666,7 +2682,7 @@ declare module './pattern.ts' {
 		interface Struct<G extends GrammarContext<G>> extends structs.Pattern.Struct<G> {}
 		namespace Struct {
 			interface Field<G extends GrammarContext<G>> extends structs.Pattern.Struct.Field<G> {}
-			interface Rest<G extends GrammarContext<G>> extends structs.Pattern.Struct.Rest<G> {}
+			type Rest<G extends GrammarContext<G>> = structs.Pattern.Struct.Rest<G>;
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Struct<G>
 				| V.Pattern.Struct.Field<G>
@@ -2677,7 +2693,7 @@ declare module './pattern.ts' {
 			interface Bare<G extends GrammarContext<G>> extends destructuring.Pattern.Tuple.Bare<G> {}
 			type Any<G extends GrammarContext<G>> = V.Pattern.Tuple<G> | V.Pattern.Tuple.Bare<G>;
 		}
-		interface Wildcard<G extends GrammarContext<G>> extends destructuring.Pattern.Wildcard<G> {}
+		type Wildcard<G extends GrammarContext<G>> = destructuring.Pattern.Wildcard<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Pattern<G>
 			| V.Pattern.As<G>
@@ -2876,7 +2892,9 @@ declare module './statement.ts' {
 			| V.Statement.Scope<G>
 			| V.Statement.Switch<G>
 			| V.Statement.Throw<G>
-			| V.Statement.Try<G>;
+			| V.Statement.Try<G>
+			| G['texts']['statement.break']
+			| G['texts']['statement.continue'];
 	}
 }
 
@@ -2901,7 +2919,7 @@ declare module './type.ts' {
 			>;
 		}
 		interface Dynamic<G extends GrammarContext<G>> extends typeAnnotations.Type.Dynamic<G> {}
-		interface Existential<G extends GrammarContext<G>> extends typeAnnotations.Type.Existential<G> {}
+		type Existential<G extends GrammarContext<G>> = typeAnnotations.Type.Existential<G>;
 		interface Function<G extends GrammarContext<G>> extends typeAnnotations.Type.Function<G> {
 			readonly forLifetimes?: gate.In<G, features.Lifetimes, lifetimes.Type.Function<G>['forLifetimes']>;
 			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Type.Function<G>['receiver']>;
@@ -2949,27 +2967,27 @@ declare module './type.ts' {
 			interface Asserts<G extends GrammarContext<G>> extends typeAnnotations.Type.Predicate.Asserts<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 		}
-		interface Primitive<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive<G> {}
+		type Primitive<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive<G>;
 		namespace Primitive {
-			interface Boolean<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Boolean<G> {}
-			interface Character<G extends GrammarContext<G>> extends characters.Type.Primitive.Character<G> {}
-			interface Floating<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating<G> {}
+			type Boolean<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Boolean<G>;
+			type Character<G extends GrammarContext<G>> = characters.Type.Primitive.Character<G>;
+			type Floating<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating<G>;
 			namespace Floating {
-				interface Float32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float32<G> {}
-				interface Float64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float64<G> {}
+				type Float32<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating.Float32<G>;
+				type Float64<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Floating.Float64<G>;
 				type Any<G extends GrammarContext<G>> =
 					| V.Type.Primitive.Floating<G>
 					| V.Type.Primitive.Floating.Float32<G>
 					| V.Type.Primitive.Floating.Float64<G>;
 			}
-			interface Integral<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral<G> {}
+			type Integral<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral<G>;
 			namespace Integral {
-				interface Int128<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int128<G> {}
-				interface Int16<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int16<G> {}
-				interface Int32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int32<G> {}
-				interface Int64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int64<G> {}
-				interface Int8<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int8<G> {}
-				interface Size<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Size<G> {}
+				type Int128<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int128<G>;
+				type Int16<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int16<G>;
+				type Int32<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int32<G>;
+				type Int64<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int64<G>;
+				type Int8<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Int8<G>;
+				type Size<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Integral.Size<G>;
 				type Any<G extends GrammarContext<G>> =
 					| V.Type.Primitive.Integral<G>
 					| V.Type.Primitive.Integral.Int128<G>
@@ -2979,13 +2997,13 @@ declare module './type.ts' {
 					| V.Type.Primitive.Integral.Int8<G>
 					| V.Type.Primitive.Integral.Size<G>;
 			}
-			interface Never<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Never<G> {}
-			interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Object<G> {}
-			interface String<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.String<G> {}
-			interface Symbol<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Symbol<G> {}
-			interface Unchecked<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unchecked<G> {}
-			interface Unknown<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unknown<G> {}
-			interface Void<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Void<G> {}
+			type Never<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Never<G>;
+			type Object<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Object<G>;
+			type String<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.String<G>;
+			type Symbol<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Symbol<G>;
+			type Unchecked<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Unchecked<G>;
+			type Unknown<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Unknown<G>;
+			type Void<G extends GrammarContext<G>> = typeAnnotations.Type.Primitive.Void<G>;
 			type Any<G extends GrammarContext<G>> =
 				| V.Type.Primitive<G>
 				| V.Type.Primitive.Boolean<G>
@@ -3023,7 +3041,7 @@ declare module './type.ts' {
 		interface Template<G extends GrammarContext<G>> extends typeAnnotations.Type.Template<G> {}
 		interface Tuple<G extends GrammarContext<G>> extends typeAnnotations.Type.Tuple<G> {}
 		interface Union<G extends GrammarContext<G>> extends typeAnnotations.Type.Union<G> {}
-		interface Unit<G extends GrammarContext<G>> extends typeAnnotations.Type.Unit<G> {}
+		type Unit<G extends GrammarContext<G>> = typeAnnotations.Type.Unit<G>;
 		type Any<G extends GrammarContext<G>> =
 			| V.Type<G>
 			| V.Type.Abstract<G>

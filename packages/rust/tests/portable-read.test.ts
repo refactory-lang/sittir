@@ -14,7 +14,7 @@ describe('the portable read', () => {
 	it('reads a function as its most specific path, the flags that hold, its name and one parameter structure', () => {
 		const fn = readFirst('pub async fn f(a: u8) {}');
 		expect(fn).toMatchObject({ $path: 'declaration.function.public', $flags: ['async'], name: 'f' });
-		expect(fn.parameters).toEqual([{ $path: 'declaration.parameter', name: 'a', type: rust.kinds.U8Keyword }]);
+		expect(fn.parameters).toEqual([{ $path: 'declaration.parameter', name: 'a', type: 'u8' }]);
 	});
 
 	it.each([

@@ -16,6 +16,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
+import { tokenKind, tokenText } from './facts.ts';
 
 export interface PortableBuildContext {
 	readonly language: string;
@@ -254,7 +255,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const kindOf = (value: unknown, member: PortableMemberStep): number | undefined => {
 			if (isStructure(value)) return pick(value, member.seats)?.arm.kind;
-			const placed = typeof value === 'string' ? textOf(value, member.seats) : value;
+			const placed = typeof value === 'string' ? (tokenKind(value, member.seats) ?? textOf(value, member.seats)) : value;
 			return hasKind(placed) ? placed.$type : typeof placed === 'number' ? placed : undefined;
 		};
 		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure): boolean => {
@@ -416,6 +417,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					);
 				return seated(built.value, within(built.seat ?? seats[0]!).slice(depth), false, fill);
 			}
+			const token = typeof value === 'string' ? tokenKind(value, seats) : undefined;
+			if (token !== undefined) {
+				const seat = seats.find((s) => s.kinds.includes(token)) ?? seats[0]!;
+				return seated(token, within(seat).slice(depth), false);
+			}
 			if (typeof value === 'string') {
 				const seat = leafSeatOf(value, seats) ?? seats[0]!;
 				return seated(textOf(value, [seat]), within(seat).slice(depth), false);
@@ -430,6 +436,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			return placed.value;
 		};
 		const valueOf = (value: unknown, member: PortableMemberStep, path: string): Placed => {
+			for (const item of listOf(value)) {
+				const text = typeof item === 'number' ? tokenText(item, member.seats) : undefined;
+				if (text !== undefined) throw new Error(`portable build: ${path}'s ${member.name} takes the token "${text}" as its text, not as kind id ${item}`);
+			}
 			if (member.multiple) return { value: listOf(value).map((item) => unmounted(element(item, member, member.seats, 0), member, path)) };
 			if (!Array.isArray(value)) return element(value, member, member.seats, 0);
 			const lists = member.seats.filter((seat) => seat.many === true);
@@ -484,7 +494,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			isStructure(item)
 				? pick(item, offered) !== undefined
 				: typeof item === 'string'
-					? offered.some((seat) => (seat.leaf !== undefined || seat.kinds.length === 0) && spells(seat, item))
+					? tokenKind(item, offered) !== undefined || offered.some((seat) => (seat.leaf !== undefined || seat.kinds.length === 0) && spells(seat, item))
 					: !hasKind(item) || offered.some((seat) => seat.kinds.includes(item.$type));
 		const seats = (route: PortableMemberStep, item: unknown): boolean => seatsIn(route.seats, item);
 		const admits = (route: PortableMemberStep, value: unknown): boolean =>

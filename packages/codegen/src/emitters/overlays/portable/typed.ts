@@ -2,7 +2,7 @@ import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { concreteKinds, guaranteedBy, modelNode, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
 import { readableEntries } from '@sittir/common/engine';
 import type { PortableCondition } from '@sittir/types';
@@ -133,7 +133,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		const node = nodeOf(kind);
 		return node !== undefined && !isEnum(kind) && (node.pattern !== null || input.textTokens.has(kind)) && !fixedText.has(kind);
 	};
+	const literals = valueTokensOf(routes, fixedText);
 	const token = (kind: string): boolean => isEnum(kind) || fixedText.has(kind);
+	const textual = (kind: string): boolean => token(kind) && !literals.has(kind);
+	const tokenTypeOf = (kind: string): string | undefined => {
+		if (isEnum(kind)) return nodeOf(kind)!.enumMembers.map((m) => q(m.text)).join(' | ') || 'string';
+		const text = fixedText.get(kind) ?? nodeOf(kind)?.text;
+		return text === null || text === undefined ? undefined : q(text);
+	};
 	const lowOf = (kind: string): string | undefined => (token(kind) ? 'TSKindId' : typeNameOf(kind) === undefined ? undefined : `T.${typeNameOf(kind)}.Parsed`);
 	const aliasOf = (kind: string): string => `VK_${kindIdMemberName(nodeMap, kind)}`;
 
@@ -141,6 +148,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const claimedPaths = [...new Set(entries.flatMap(([, list]) => list.map((e) => e.vocab)))].sort();
 	const claimersOf = new Map<string, string[]>();
 	for (const [kind, list] of entries) for (const e of list) (claimersOf.get(e.vocab) ?? claimersOf.set(e.vocab, []).get(e.vocab)!).push(kind);
+
+	const claimedBy = (path: string, holds: (kind: string) => boolean): boolean => (claimersOf.get(path) ?? []).some(holds);
+	const viewed = claimedPaths.filter((path) => claimedBy(path, (kind) => !textual(kind)));
+	const textPaths = claimedPaths.filter((path) => claimedBy(path, textual));
+	const roleArmsOf = (path: string): readonly string[] => [
+		...(viewed.includes(path) ? [interfaceOf(path)] : []),
+		...(textPaths.includes(path) ? [`Ctx['texts'][${q(path)}]`] : [])
+	];
 
 	const own = derive([input]);
 	const lines: string[] = [];
@@ -152,14 +167,15 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		"import type { Flag } from '../../types/src/vocabulary/utils.ts';",
 		"import type * as T from '../src/types.ts';",
 		"import { TSKindId } from '../src/kinds.ts';",
+		"import type { PortableTexts } from '../src/portable.ts';",
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, interfaceOf, slotArm: slotArmOf(own, vocabulary, model) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
-	for (const path of claimedPaths) {
+	for (const path of viewed) {
 		const leaf = (claimersOf.get(path) ?? []).every(varies);
 		emit(`\t${q(path)}: ViewForm<${interfaceOf(path)}>${leaf ? ' & PortableLeaf' : ''};`);
 	}
@@ -189,13 +205,13 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		const held = concreteKinds(model, slot.kinds);
 		return held.length > 0 && held.every((k) => entriesFor(k) === undefined && (nodeOf(k)?.modelType === 'list' || routes.containers.get(k)?.list === true));
 	};
-	const viewTypeOf =(node: ModelNode): string => {
+	const viewTypeOf = (node: ModelNode): string => {
+		if (textual(node.kind)) return tokenTypeOf(node.kind)!;
 		const claimed = entriesFor(node.kind);
 		if (claimed !== undefined) return [...new Set(readableEntries(claimed.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => `VocabViews[${q(path)}]`))].join(' | ');
 		if (unclaimed.has(node.kind)) return 'never';
-		const text = fixedText.get(node.kind) ?? node.text;
-		if (text !== null && text !== undefined) return q(text);
-		if (isEnum(node.kind)) return node.enumMembers.map((m) => q(m.text)).join(' | ') || 'string';
+		const text = tokenTypeOf(node.kind);
+		if (text !== undefined) return text;
 		if (varies(node.kind)) return `{ readonly $type: ${idOf(node.kind)}; readonly $value: () => string }`;
 		const unwrap = routes.containers.get(node.kind);
 		if (unwrap !== undefined) {
@@ -219,7 +235,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		if (enumNode === undefined || !typed.has(enumNode.kind)) continue;
 		for (const m of enumNode.enumMembers) {
 			const id = idOf(m.kind);
-			if (id !== undefined) emit(`\t[${id}]: ${aliasOf(enumNode.kind)};`);
+			if (id !== undefined) emit(`\t[${id}]: ${tokenTypeOf(m.kind) ?? q(m.text)};`);
 		}
 	}
 	emit('}', '');
@@ -330,6 +346,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const factoryNameOf = (entry: ReadEntry): string => `${kindIdMemberName(nodeMap, entry.kind)}As${entry.vocab.split('.').map(tsname).join('')}${entry.index > 0 ? entry.index : ''}`;
 	const names = new Set<string>();
 	for (const [kind, list] of entries) {
+		if (textual(kind)) continue;
 		const low = lowOf(kind);
 		if (low === undefined || idOf(kind) === undefined) {
 			for (const e of list) unemitted.push({ kind, vocab: e.vocab, reason: 'no typed surface' });
@@ -383,11 +400,12 @@ interface ContextInput {
 	readonly own: Derivation;
 	readonly vocabulary: Vocabulary;
 	readonly claimedPaths: readonly string[];
-	readonly interfaceOf: (path: string) => string;
+	readonly roleArmsOf: (path: string) => readonly string[];
+	readonly textPaths: readonly string[];
 	readonly slotArm: (kind: string) => string;
 }
 
-function contextOf({ grammar, own, vocabulary, claimedPaths, interfaceOf, slotArm }: ContextInput): string[] {
+function contextOf({ grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, slotArm }: ContextInput): string[] {
 	const roleText = new Map<string, Set<string>>();
 	for (const path of levelsWithMembers(own))
 		for (const facts of levelMembers(own, path).values()) {
@@ -405,6 +423,8 @@ function contextOf({ grammar, own, vocabulary, claimedPaths, interfaceOf, slotAr
 	};
 	const out = [
 		"type Slots = V.GrammarContext<Ctx>['slots'];",
+		'',
+		"type Texts = V.GrammarContext<Ctx>['texts'];",
 		'',
 		'type SlotOf<P, M> = P extends keyof Slots ? (M extends keyof Slots[P] ? Slots[P][M] : unknown) : unknown;',
 		'',
@@ -425,18 +445,23 @@ function contextOf({ grammar, own, vocabulary, claimedPaths, interfaceOf, slotAr
 		if (filled.length > 0) out.push(`\treadonly ${q(path)}: {`, ...filled, '\t};');
 	}
 	const roles: string[] = [];
-	const ctx = [`export interface Ctx extends V.GrammarContext<Ctx>, V.${compositionOf(grammar)} {`];
+	const ctx = [
+		`export interface Ctx extends V.GrammarContext<Ctx>, V.${compositionOf(grammar)} {`,
+		'\treadonly texts: { readonly [P in keyof Texts]: P extends keyof PortableTexts ? PortableTexts[P] : never };'
+	];
 	for (const ns of namespaces) {
 		const paths = claimedPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
 		const text = [...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort();
 		if (text.length > 0) roles.push(`type Role${roles.length} = Fit<${text.join(' | ')}, V.GrammarContext<Ctx>[${q(ns)}]>;`);
-		ctx.push(`\treadonly ${ns}: ${paths.length > 0 ? paths.map(interfaceOf).join(' | ') : 'never'};`);
+		const arms = paths.flatMap(roleArmsOf);
+		ctx.push(`\treadonly ${ns}: ${arms.length > 0 ? arms.join(' | ') : 'never'};`);
 	}
-	out.push('}', '', ...fits, ...roles, '', ...ctx, '}');
+	const keyed = textPaths.length > 0 ? [`type TextKeys = Fit<${textPaths.map(q).join(' | ')}, keyof Texts>;`] : [];
+	out.push('}', '', ...fits, ...roles, ...keyed, '', ...ctx, '}');
 	return out;
 }
 
-function slotArmOf(own: Derivation, vocabulary: Vocabulary, model: GrammarInput['model']): (kind: string) => string {
+function slotArmOf(own: Derivation, vocabulary: Vocabulary, model: GrammarInput['model'], tokenTypeOf: (kind: string) => string | undefined): (kind: string) => string {
 	const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
 	const qname = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
 	return (k) => {
@@ -450,10 +475,7 @@ function slotArmOf(own: Derivation, vocabulary: Vocabulary, model: GrammarInput[
 			case 'ref':
 				return k.startsWith('set:') ? `V.${qname(k.slice(4))}.Any<Ctx>` : `V.${qname(k)}<Ctx>`;
 			case 'text': {
-				if (k.startsWith('literal:')) {
-					const text = modelNode(model, k.slice(8))?.text;
-					return text === null || text === undefined ? 'string' : q(text);
-				}
+				if (k.startsWith('literal:')) return tokenTypeOf(k.slice(8)) ?? 'string';
 				return patterns.has(k.slice(5)) ? 'string' : q(k.slice(5));
 			}
 		}

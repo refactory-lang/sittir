@@ -80,6 +80,23 @@ describe('the portable read', () => {
 		expect(firstOf('function f(a) {}')).toMatchObject({ parameters: [{ $path: 'declaration.parameter', name: 'a' }] });
 	});
 
+	it('reads a word token as its text and a value token as its path and value, and builds both back', () => {
+		const declarators = (source: string) => ((firstOf(source) as Read).declarators as readonly Read[])[0];
+		expect(declarators('let a: any = null;')).toMatchObject({ type: 'any', value: { $path: 'literal.null' } });
+		expect(declarators('let b = undefined;')).toMatchObject({ value: { $path: 'literal.null.undefined' } });
+		expect(declarators('let c = true;')).toMatchObject({ value: { $path: 'literal.boolean.true', $value: true } });
+		for (const source of ['let a: any = null;', 'let b = undefined;', 'let c = true;']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('tests a token by its text, and refuses the text of a value token', () => {
+		const is = typescript.is.portable;
+		expect(is.type.primitive.unchecked('any')).toBe(true);
+		expect(is.type.primitive('number')).toBe(true);
+		expect(is.type.primitive('u8')).toBe(false);
+		// @ts-expect-error a value token reads as its path and value, so its guard takes no text
+		expect(is.literal.null('null')).toBe(false);
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

@@ -12,6 +12,9 @@ export const COMPOSITIONS = 'compositions.ts';
 export const compositionOf = (grammar: string): string => `${grammarDisplayName(grammar)}Features`;
 export const FEATURES = 'features';
 export const FLAG = 'Flag';
+export const FLAGGED = 'Flagged';
+export const TEXTS = 'texts';
+export const CONTEXT = 'GrammarContext';
 export const REFINED_BY = 'RefinedBy';
 export const SYNONYMS = 'Synonyms';
 
@@ -22,6 +25,7 @@ export interface Member {
 	readonly flag: boolean;
 	readonly references: readonly string[];
 	readonly literals: readonly string[];
+	readonly keys?: readonly string[];
 }
 
 export interface Declared {
@@ -31,6 +35,7 @@ export interface Declared {
 	readonly refines: string | undefined;
 	readonly heritage: readonly string[];
 	readonly members: readonly Member[];
+	readonly text?: true;
 }
 
 export interface DeclaredKind extends Declared {
@@ -63,6 +68,7 @@ export interface VocabularySource {
 	readonly synonyms: Synonyms;
 	readonly features: readonly Feature[];
 	readonly compositions: ReadonlyMap<string, readonly string[]>;
+	readonly texts: readonly string[];
 }
 
 export interface FeatureIndex {
@@ -129,6 +135,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const levels = new Map<string, SynonymTable>();
 	const flags: Declared[] = [];
 	const compositions = new Map<string, readonly string[]>();
+	const texts: string[] = [];
 	const declared = await Promise.all(files.map((file) => declaredIn(dir, file)));
 	for (const [i, file] of files.entries()) {
 		const all = declared[i] ?? [];
@@ -143,6 +150,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
+			if (d.qname === CONTEXT) texts.push(...(d.members.find((member) => member.name === TEXTS)?.keys ?? []));
 		}
 	}
 	if (flags.length > 1) throw new Error(`vocabulary: ${FLAG}${SYNONYMS} is declared ${flags.length} times; the flags have one table`);
@@ -152,7 +160,8 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 		modules,
 		synonyms: { levels, flags: flags[0] === undefined ? new Map() : synonymTable(flags[0]) },
 		features: existsSync(root) ? await readFeatures(dir, sources) : [],
-		compositions
+		compositions,
+		texts: texts.sort(byCodepoint)
 	};
 }
 

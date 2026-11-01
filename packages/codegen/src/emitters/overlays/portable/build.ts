@@ -18,7 +18,7 @@ import type {
 	QueryPlan
 } from '@sittir/types';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, heldSteps, modelNode, reachedBy, shownSlots } from '../../../bindings/routes.ts';
+import { concreteKinds, heldSteps, modelNode, reachedBy, shownSlots, valueTokensOf } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import {
@@ -176,6 +176,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const flagOnly: ReadonlySet<string> = new Set(
 		[...routes.members.values()].flatMap((members) => members.flatMap((route) => (route.flag === true && route.route === 'kind' ? [storageName(route.kind)] : [])))
 	);
+	const literals = valueTokensOf(routes, fixedText);
 	const declaredValues = new Map<string, boolean>();
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
 	const register = (key: string, shape: PortableCallShape): string => {
@@ -333,7 +334,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const byText = new Map<string, string[]>();
 		for (const kind of seat.kinds) {
 			const text = fixedText.get(kind);
-			if (text !== undefined && typeOf(kind) !== undefined) (byText.get(text) ?? byText.set(text, []).get(text)!).push(kind);
+			if (text !== undefined && !literals.has(kind) && typeOf(kind) !== undefined) (byText.get(text) ?? byText.set(text, []).get(text)!).push(kind);
 		}
 		for (const [text, kinds] of byText)
 			if (kinds.length > 1)
@@ -779,6 +780,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
 						...(seated === undefined ? {} : { seated }),
 						...(numeric === undefined ? {} : { numeric }),
+						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						members: armMembers,
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,

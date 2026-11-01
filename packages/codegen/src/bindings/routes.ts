@@ -142,6 +142,16 @@ export function slotAnchor(model: SlotModel, holder: string, selector: SlotSelec
 	return first && last ? 'only' : first ? 'first' : last ? 'last' : null;
 }
 
+const VALUE_NAMESPACE = 'literal';
+
+export function valueTokensOf(routes: GrammarRoutes, fixedText: { has(kind: string): boolean }): ReadonlySet<string> {
+	return new Set(
+		[...routes.readEntries].flatMap(([kind, entries]) =>
+			fixedText.has(kind) && entries.length > 0 && entries.every((entry) => entry.vocab.split('.')[0] === VALUE_NAMESPACE) ? [kind] : []
+		)
+	);
+}
+
 export function modelNode(model: SlotModel, kind: string): ModelNode | undefined {
 	return model.get(kind) ?? model.get(`_${kind}`);
 }

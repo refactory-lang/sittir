@@ -1,4 +1,4 @@
-import type { PortableCondition, PortableReadEntry } from '@sittir/types';
+import type { PortableCondition, PortableReadEntry, PortableSeat } from '@sittir/types';
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
@@ -26,4 +26,25 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 		if (always(entry) && !candidates.some((other) => refines(other, entry))) break;
 	}
 	return readable;
+}
+
+const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
+
+export function tokenText(kind: number, seats: readonly PortableSeat[] | undefined): string | undefined {
+	for (const seat of seats ?? []) {
+		if (seat.tokens === undefined) continue;
+		let texts = tokenTexts.get(seat);
+		if (texts === undefined) tokenTexts.set(seat, (texts = new Map(Object.entries(seat.tokens).map(([text, id]) => [id, text]))));
+		const text = texts.get(kind);
+		if (text !== undefined) return text;
+	}
+	return undefined;
+}
+
+export function tokenKind(text: string, seats: readonly PortableSeat[]): number | undefined {
+	for (const seat of seats) {
+		const kind = seat.tokens?.[text];
+		if (kind !== undefined) return kind;
+	}
+	return undefined;
 }

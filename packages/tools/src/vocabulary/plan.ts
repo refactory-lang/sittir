@@ -7,6 +7,7 @@ export interface Kind {
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
 	readonly feature: Feature | undefined;
+	readonly text: boolean;
 }
 
 export interface Owned {
@@ -83,7 +84,7 @@ export function plan(source: VocabularySource): Plan {
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
-		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature };
+		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
 		for (const member of d.members) declare(d.path, { gated: false, by: feature, member });

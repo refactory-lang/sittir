@@ -1,6 +1,7 @@
 import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
 import { nodeText } from '../node-data.ts';
 import { hasKind, type PortableClassifier } from './classify.ts';
+import { tokenText } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -183,12 +184,8 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		const kind = kindOfValue(held);
 		return kind !== undefined && kind !== preset.kind;
 	};
-	const booleanOf = (arms: readonly PortableBuildArm[]): boolean | undefined => {
-		for (const arm of arms) for (const test of arm.when) if ('boolean' in test) return test.boolean;
-		return undefined;
-	};
 	const rebuilds = (kind: number, seats: readonly PortableSeat[] | undefined): boolean =>
-		seats === undefined || seats.some((seat) => (seat.leaf === undefined ? seat.kinds.length === 0 : (seat.texts ?? []).includes(kind)));
+		seats === undefined || tokenText(kind, seats) !== undefined || seats.some((seat) => (seat.leaf === undefined ? seat.kinds.length === 0 : (seat.texts ?? []).includes(kind)));
 	const read = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		if (Array.isArray(value)) return value.map((item) => read(item, carried, seats));
 		if (!hasKind(value)) return readValue(value, carried, seats);
@@ -211,12 +208,12 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		if (kind === undefined) return value;
 		const path = classify(typeof value === 'number' ? value : (value as Node));
 		const claimed = path === undefined ? [] : armsAt(path, kind);
-		if (path === undefined || claimed.length === 0) return typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried);
+		if (path === undefined || claimed.length === 0) return tokenText(kind, seats) ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
 		const arms = typeof value === 'number' ? claimed : claimed.filter((arm) => !arm.presets.some((preset) => contradicts(value as Node, preset)));
 		if (arms.length === 0) return kept(value as Node, { reason: 'preset' }, carried);
-		const truth = booleanOf(arms);
-		if (truth !== undefined) return { $path: path, $value: truth };
-		if (typeof value === 'number') return value;
+		const literal = arms.find((arm) => arm.literal !== undefined)?.literal;
+		if (literal !== undefined) return literal.value === undefined ? { $path: path } : { $path: path, $value: literal.value };
+		if (typeof value === 'number') return tokenText(value, seats) ?? value;
 		const node = value as Node;
 		for (const arm of arms) {
 			if (arm.scalar === undefined) continue;

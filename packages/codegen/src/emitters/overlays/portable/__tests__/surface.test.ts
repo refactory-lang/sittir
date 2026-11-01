@@ -33,6 +33,7 @@ const emit = async (scm: string) =>
 				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }],
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 		fixedText: [['TSKindId.Plus', '+']],
+		literals: [],
 		flags: [],
 		flagTypes: [],
 		slotFlags: [],
@@ -92,7 +93,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 		});
-		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
@@ -105,16 +106,36 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\t"expression.binary.add": TSKindId.Binary;');
 	});
 
-	it('types a kinds node and a guard per path, each holding only its child segments', async () => {
+	it('types a kinds node and a guard per path, each holding only its child segments and taking the texts read there', async () => {
 		const text = await emit(SCM);
+		expect(text).toContain('\t"expression.call": never;');
 		expect(text).toContain(
 			'\t"expression": { readonly $path: "expression"; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
 		expect(text).toContain(
-			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode, TSKindId> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
+			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode, TSKindId, PortableTexts["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
 		);
 		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
 		expect(text).toContain("import type { TestNode } from './types.js';");
+	});
+
+	it('types a path by the fixed texts of the kinds read at or under it', async () => {
+		const routes = resolveRoutes(await input(SCM));
+		const text = emitPortableSurface({
+			nodeType: 'TestNode',
+			routes,
+			readTest: () => [],
+			kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
+			fixedText: [['TSKindId.Call', 'go']],
+			literals: [],
+			flags: [],
+			flagTypes: [],
+			slotFlags: [],
+			slotFlagTypes: []
+		});
+		expect(text).toContain('\t"expression.call": "go";');
+		expect(text).toContain('\t"expression": "go";');
+		expect(text).toContain('\t"expression.binary": never;');
 	});
 
 	it('writes the table: paths, entries in read order with placements nearest first, and fixed texts', async () => {
@@ -148,13 +169,14 @@ describe('emitPortableSurface', () => {
 			readTest: () => [],
 			kindIdOf: () => 'TSKindId.Call',
 			fixedText: [],
+			literals: [],
 			flags: [],
 			flagTypes: [['Call', ['async', 'static']]],
 			slotFlags: [],
 			slotFlagTypes: []
 		});
 		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
-		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(none).not.toContain('__flags__');
 	});
 

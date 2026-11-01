@@ -332,9 +332,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -758,9 +756,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -795,9 +791,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -860,9 +854,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -895,9 +887,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -932,9 +922,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1002,9 +990,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1037,9 +1023,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1074,9 +1058,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1359,9 +1341,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1391,9 +1371,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1437,9 +1415,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -1470,9 +1446,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -2215,9 +2189,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -2328,9 +2300,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -2472,9 +2442,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -2603,9 +2571,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -2747,9 +2713,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4025,9 +3989,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4178,9 +4140,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4362,9 +4322,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4533,9 +4491,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4717,9 +4673,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -4946,9 +4900,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -5109,9 +5061,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -5302,9 +5252,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -5482,9 +5430,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -5675,9 +5621,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -5876,9 +5820,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -6039,9 +5981,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -6232,9 +6172,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -6412,9 +6350,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -6605,9 +6541,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -20277,9 +20211,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -20323,9 +20255,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -20666,9 +20596,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -25202,10 +25130,6 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										false: 117,
-										true: 116
-									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
@@ -26417,9 +26341,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -26493,9 +26415,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -26572,9 +26492,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -26720,9 +26638,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -26891,9 +26807,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -27049,9 +26963,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -27220,9 +27132,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -27678,7 +27588,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -27703,7 +27612,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -27872,7 +27780,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -27897,7 +27804,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28066,7 +27972,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28091,7 +27996,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28219,7 +28123,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28244,7 +28147,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28371,7 +28273,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28396,7 +28297,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28528,7 +28428,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28553,7 +28452,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28680,7 +28578,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28705,7 +28602,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28835,7 +28731,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -28860,7 +28755,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -28991,7 +28885,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29016,7 +28909,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29146,7 +29038,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29171,7 +29062,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29306,7 +29196,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29331,7 +29220,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29461,7 +29349,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29486,7 +29373,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29616,7 +29502,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29641,7 +29526,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29768,7 +29652,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29793,7 +29676,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -29920,7 +29802,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -29945,7 +29826,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30073,7 +29953,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -30098,7 +29977,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30225,7 +30103,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -30250,7 +30127,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30382,7 +30258,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -30407,7 +30282,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30534,7 +30408,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -30559,7 +30432,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30686,7 +30558,6 @@ export const build: PortableBuildTable = {
 										enum: 33,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										fn: 38,
 										for: 41,
 										gen: 51,
@@ -30711,7 +30582,6 @@ export const build: PortableBuildTable = {
 										struct: 140,
 										super: 125,
 										trait: 40,
-										true: 116,
 										type: 36,
 										u128: 66,
 										u16: 60,
@@ -30776,9 +30646,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -30912,9 +30780,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -30967,7 +30833,6 @@ export const build: PortableBuildTable = {
 										char: 74,
 										f32: 70,
 										f64: 71,
-										false: 117,
 										i128: 67,
 										i16: 61,
 										i32: 63,
@@ -30975,7 +30840,6 @@ export const build: PortableBuildTable = {
 										i8: 59,
 										isize: 68,
 										str: 73,
-										true: 116,
 										u128: 66,
 										u16: 60,
 										u32: 62,
@@ -31187,9 +31051,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31219,9 +31081,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31269,9 +31129,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31301,9 +31159,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31356,9 +31212,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31388,9 +31242,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31443,9 +31295,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31475,9 +31325,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31530,9 +31378,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31562,9 +31408,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31617,9 +31461,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31649,9 +31491,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31704,9 +31544,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31736,9 +31574,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31791,9 +31627,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31823,9 +31657,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31878,9 +31710,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31910,9 +31740,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31965,9 +31793,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -31997,9 +31823,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32052,9 +31876,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32084,9 +31906,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32139,9 +31959,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32189,9 +32007,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32221,9 +32037,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32276,9 +32090,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32308,9 +32120,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32363,9 +32173,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32395,9 +32203,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32450,9 +32256,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32482,9 +32286,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32537,9 +32339,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32569,9 +32369,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32624,9 +32422,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32656,9 +32452,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32711,9 +32505,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32743,9 +32535,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32798,9 +32588,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32830,9 +32618,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32885,9 +32671,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32917,9 +32701,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -32972,9 +32754,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33004,9 +32784,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33059,9 +32837,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33091,9 +32867,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33146,9 +32920,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33178,9 +32950,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33233,9 +33003,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33265,9 +33033,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33320,9 +33086,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33352,9 +33116,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33407,9 +33169,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33439,9 +33199,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33494,9 +33252,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33526,9 +33282,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33581,9 +33335,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33613,9 +33365,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33668,9 +33418,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33700,9 +33448,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33928,9 +33674,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -33980,9 +33724,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34125,9 +33867,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34229,9 +33969,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34289,9 +34027,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34413,9 +34149,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34490,9 +34224,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34522,9 +34254,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34594,9 +34324,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34626,9 +34354,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -34759,9 +34485,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35059,9 +34783,7 @@ export const build: PortableBuildTable = {
 									tokens: {
 										'()': 281,
 										_: 136,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35159,9 +34881,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35226,9 +34946,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35272,9 +34990,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35331,9 +35047,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35377,9 +35091,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35441,9 +35153,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35487,9 +35197,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35533,9 +35241,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35565,9 +35271,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35625,9 +35329,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35657,9 +35359,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35712,9 +35412,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35744,9 +35442,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35799,9 +35495,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35845,9 +35539,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35899,9 +35591,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -35953,9 +35643,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36008,9 +35696,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36040,9 +35726,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36090,9 +35774,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36145,9 +35827,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36200,9 +35880,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -36268,9 +35946,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -37044,6 +36720,9 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 116,
+					literal: {
+						value: true
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -37055,6 +36734,9 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 117,
+					literal: {
+						value: false
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -37071,6 +36753,9 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 117,
+					literal: {
+						value: false
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -37083,6 +36768,9 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 116,
+					literal: {
+						value: true
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -38156,9 +37844,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38271,9 +37957,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38323,9 +38007,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38368,9 +38050,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38413,9 +38093,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38444,9 +38122,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38497,10 +38173,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38551,10 +38225,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38590,10 +38262,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38657,10 +38327,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38711,10 +38379,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38750,10 +38416,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38817,10 +38481,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38856,10 +38518,8 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										crate: 126,
-										false: 117,
 										self: 478,
-										super: 125,
-										true: 116
+										super: 125
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38919,9 +38579,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -38964,9 +38622,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39114,9 +38770,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39254,9 +38908,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39348,9 +39000,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39453,9 +39103,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39516,9 +39164,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39608,9 +39254,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -39664,9 +39308,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -40630,9 +40272,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'..': 321,
-										_: 426,
-										false: 117,
-										true: 116
+										_: 426
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -40662,9 +40302,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -40739,9 +40377,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -40800,9 +40436,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -40873,9 +40507,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -41067,9 +40699,7 @@ export const build: PortableBuildTable = {
 									texts: [1],
 									tokens: {
 										'()': 281,
-										false: 117,
-										self: 124,
-										true: 116
+										self: 124
 									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',

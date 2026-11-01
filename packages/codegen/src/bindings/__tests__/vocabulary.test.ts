@@ -56,6 +56,29 @@ describe('readVocabulary', () => {
 		]);
 	});
 
+	it('reads a token alias as a kind: its path from the text table key, its parent from its namespace, its flags from Flagged', async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Type<G> { readonly $kind: 'type'; }",
+			'export namespace Type {',
+			"\texport type Primitive<G extends GrammarContext<G>> = Flagged<G['texts']['type.primitive'], 'unsigned' | 'wide'>;",
+			'\texport namespace Primitive {',
+			"\t\texport type Unchecked<G extends GrammarContext<G>> = G['texts']['type.primitive.unchecked'];",
+			'\t}',
+			"\texport type Other<G extends GrammarContext<G>> = G['slots']['type']['other'];",
+			'}'
+		);
+		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name, kind.parent])).toEqual([
+			['type', 'Type', undefined],
+			['type.primitive', 'Type.Primitive', 'type'],
+			['type.primitive.unchecked', 'Type.Primitive.Unchecked', 'type.primitive']
+		]);
+		expect([...vocabulary.members('type.primitive')].map(([name, facts]) => [name, facts.flag])).toEqual([
+			['unsigned', true],
+			['wide', true]
+		]);
+		expect(flagSegment(vocabulary, 'type.primitive.unchecked.unsigned')).toEqual({ parent: 'type.primitive.unchecked', flag: 'unsigned' });
+	});
+
 	it('refuses a name spelled with an escape, which a syntactic reader would read as a different name', async () => {
 		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly accessor?: Fla\\u0067;', '}')).rejects.toThrow(
 			/Fla\\u0067.*escape/
