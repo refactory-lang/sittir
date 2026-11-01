@@ -3,9 +3,9 @@ import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 import os from 'node:os';
-const [root, phase, out] = process.argv.slice(2);
+const [root, phase, out, nodeStorage = 'object'] = process.argv.slice(2);
 const rust = (await import(root + '/packages/rust/dist/index.js')).default;
-const engine = await rust.createEngine({ nodeStorage: 'object' });
+const engine = await rust.createEngine({ nodeStorage });
 const b = engine.build;
 let sink = 0;
 function build(n, reuse) {
@@ -49,7 +49,8 @@ try {
         const changed = edit(tree);
         const editMs = performance.now() - start;
         const edited = rendered(changed);
-        if (reuse) assert.equal(tree.roots[0].name(), tree.name);
+        if (reuse && nodeStorage === 'object') assert.equal(tree.roots[0].name(), tree.name);
+        if (reuse && nodeStorage !== 'object') assert.equal(rendered([tree.roots[0].name()]), rendered([tree.name]));
         assert.equal(rendered(tree.roots), text);
         assert.equal(text, Array(n).fill('fn x() {}').join('\n'));
         assert.equal(edited, Array(n).fill('fn g() {}').join('\n'));
@@ -68,7 +69,7 @@ try {
     samples.push({ retainedBatches: retained.length, retainedFunctionRoots: 32000, baseline, after, delta: Object.fromEntries(Object.keys(after).map(key => [key, after[key] - baseline[key]])) });
   } else throw new Error('unknown phase');
   const builtMemory = engine.diagnostics.builtMemory?.();
-  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), mode: { storage: 'object', construction: 'object' }, protocol: 'Public Rust function builders and name edits; seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
+  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits; seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
   writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({ phase, samples: samples.length, sink, builtMemory }));
 } finally { retained = undefined; engine.dispose(); }

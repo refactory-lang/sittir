@@ -4,9 +4,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 import path from 'node:path';
 import os from 'node:os';
-const [root, grammar, out] = process.argv.slice(2);
+const [root, grammar, out, nodeStorage = 'object'] = process.argv.slice(2);
 const language = (await import(root + '/packages/' + grammar + '/dist/index.js')).default;
-const engine = await language.createEngine({ nodeStorage: 'object' });
+const engine = await language.createEngine({ nodeStorage });
 const entries = JSON.parse(readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname), 'corpus-' + grammar + '.json'), 'utf8'));
 const hash = texts => createHash('sha256').update(JSON.stringify(texts)).digest('hex');
 let signature;
@@ -42,6 +42,6 @@ try {
   let warmupBatches = 0;
   do { batch(false); warmupBatches++; await new Promise(setImmediate); } while (performance.now() - warmupStart < 2000);
   for (let i = 0; i < 50; i++) { batch(true); await new Promise(setImmediate); }
-  writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), root, grammar, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), protocol: 'Public object parse/render and same-value root edits over the identical complete corpus; at least two seconds of warmup, fifty timed batches; event-loop yield between batches; no forced GC. Hashes compared across all iterations and versions by runner.', warmupBatches, signature, samples, memory: process.memoryUsage(), sink }, null, 2) + '\n');
+  writeFileSync(out, JSON.stringify({ at: new Date().toISOString(), root, grammar, nodeStorage, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), protocol: 'Public parse/render and same-value root edits over the identical complete corpus; at least two seconds of warmup, fifty timed batches; event-loop yield between batches; no forced GC. Hashes compared across all iterations and versions by runner.', warmupBatches, signature, samples, memory: process.memoryUsage(), sink }, null, 2) + '\n');
   console.log(JSON.stringify({ grammar, signature, samples: samples.length }));
 } finally { engine.dispose(); }

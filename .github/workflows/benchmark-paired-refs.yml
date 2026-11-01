@@ -66,11 +66,12 @@ jobs:
           for tree in base master feature; do
             (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
           done
-      - name: Measure the three trees in alternating fresh processes
+      - name: Measure base, master and feature (object and arena) in alternating fresh processes
         shell: bash
         run: |
           python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" \
-            base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature" \
+            base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" \
+            feature="$RUNNER_TEMP/trees/feature" feature-arena="$RUNNER_TEMP/trees/feature@arena" \
             2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
       - name: Check the trees did not change during measurement
         shell: bash
@@ -79,7 +80,7 @@ jobs:
             (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/after-$tree.json")
             node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/paired-refs/before-$tree.json" "$RUNNER_TEMP/paired-refs/after-$tree.json"
           done
-      - name: Summarize the three ratios beside 2026-10-29
+      - name: Summarize the ratios beside 2026-10-29
         shell: bash
         run: python3 scripts/ci/paired-refs/summarize.py "$RUNNER_TEMP/paired-refs" docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json
       - name: Upload raw samples, fingerprints and summary
