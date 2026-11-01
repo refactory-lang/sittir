@@ -1,7 +1,8 @@
 // Usage: node --expose-gc native-calls.mjs <tree> <grammar> <object|arena> <out.json>
 // Runs the corpus worker's batch (parse every entry, render every root, edit
 // every root through $with) and times, per tree, each phase, every native call
-// the engine makes, and the garbage collections by kind. The addon's exports
+// the engine makes (by the phase it is made in), and the garbage collections
+// by kind. The addon's exports
 // are wrapped before the engine binds them. One second of warmup; then enough
 // batches for about three seconds of timed work.
 import { createRequire } from 'node:module';
@@ -14,6 +15,7 @@ const require = createRequire(import.meta.url);
 const native = require(`${root}/packages/${grammar}/native/index.cjs`);
 const calls = new Map();
 let recording = false;
+let phase = 'parse';
 const wrap = (owner, name, label) => {
 	const f = owner[name];
 	owner[name] = function (...args) {
@@ -22,10 +24,11 @@ const wrap = (owner, name, label) => {
 		try {
 			return f.apply(this, args);
 		} finally {
-			const c = calls.get(label) ?? { n: 0, ms: 0 };
+			const key = `${phase} ${label}`;
+			const c = calls.get(key) ?? { n: 0, ms: 0 };
 			c.n++;
 			c.ms += performance.now() - t;
-			calls.set(label, c);
+			calls.set(key, c);
 		}
 	};
 };
@@ -49,9 +52,11 @@ new PerformanceObserver((list) => {
 let sink = 0;
 const time = { parse: 0, render: 0, edit: 0 };
 function batch() {
+	phase = 'parse';
 	let t = performance.now();
 	const roots = entries.map((entry) => engine.parse(entry.source));
 	time.parse += performance.now() - t;
+	phase = 'render';
 	t = performance.now();
 	for (const node of roots) {
 		const r = engine.render(node);
@@ -59,6 +64,7 @@ function batch() {
 		r[Symbol.dispose]?.();
 	}
 	time.render += performance.now() - t;
+	phase = 'edit';
 	t = performance.now();
 	for (const node of roots)
 		for (const key of Object.keys(node.$with ?? {}).sort()) {
