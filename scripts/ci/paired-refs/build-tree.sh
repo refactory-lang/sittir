@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Usage: build-tree.sh <tree> <out-dir> <trees-dir>
-# Checks the commit <out-dir>/refs.json names for <tree> out as a detached
+# Checks the commit <out-dir>/refs.json names for <tree> (base, master,
+# feature or a candidate's name) out as a detached
 # worktree at <trees-dir>/<tree>, installs from that commit's own lockfile,
 # compiles packages/*/dist and builds every stable grammar's addon with the
 # profile refs.json names. The tree's own build-native script chooses the crate
@@ -10,7 +11,7 @@ set -euo pipefail
 name=$1
 out=$2
 trees=$3
-commit=$(jq -r --arg name "$name" '.[$name]' "$out/refs.json")
+commit=$(jq -er --arg name "$name" '.[$name] // .candidates[$name].commit' "$out/refs.json")
 profile=$(jq -r .profile "$out/refs.json")
 tree="$trees/$name"
 git worktree add --detach "$tree" "$commit"

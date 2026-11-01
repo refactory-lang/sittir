@@ -1,9 +1,9 @@
 # Usage: python3 summarize.py <out-dir> <earlier-summary.json> [<bar>]
-# Reads <out-dir>/refs.json ({"base", "master", "feature", "profile"}), the
-# workers' results under <out-dir>/runs and each tree's fingerprint
-# (<out-dir>/before-<tree>.json). The versions are base, master and feature in
-# object storage and, when it ran, feature-arena (the feature tree in arena
-# storage). Every
+# Reads <out-dir>/refs.json (resolve-refs.sh), the workers' results under
+# <out-dir>/runs and each tree's fingerprint (<out-dir>/before-<tree>.json).
+# The versions are base, master, feature and each candidate in object storage
+# and, when they ran, <tree>-arena (that tree in arena storage). A candidate
+# is compared with base and with feature in the same storage. Every
 # ratio is the median of the per-round ratios of process medians, with a
 # seeded bootstrap 95% range of that median, beside the earlier summary's
 # feature/master. Pipeline ratios against base above <bar> (default 1.10) are
@@ -21,10 +21,13 @@ refs = json.loads((out / 'refs.json').read_text())
 median = statistics.median
 read = lambda name: json.loads((runs / name).read_text())
 receipts = read('receipts.json')
-TREES = ['base', 'master', 'feature']
-VERSIONS = [v for v in ['base', 'master', 'feature', 'feature-arena'] if any(r['version'] == v for r in receipts)]
-TREE_OF = {'feature-arena': 'feature'}
-PAIRS = [(a, b) for a, b in [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')] if a in VERSIONS and b in VERSIONS]
+CANDIDATES = list(refs.get('candidates', {}))
+TREES = ['base', 'master', 'feature'] + CANDIDATES
+VERSIONS = [v for t in TREES for v in [t, t + '-arena'] if any(r['version'] == v for r in receipts)]
+treeOf = lambda v: v.removesuffix('-arena')
+storageOf = lambda v: 'arena' if v.endswith('-arena') else 'object'
+PAIRS = [(a, b) for a, b in [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')]
+         + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base'), (c, 'feature'), (c + '-arena', 'feature-arena')]] if a in VERSIONS and b in VERSIONS]
 AGAINST_BASE = [a for a, b in PAIRS if b == 'base' and a != 'master']
 GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
 
@@ -89,12 +92,13 @@ for v in VERSIONS:
                  'medianDeltaBytes': {k: median(d['samples'][0]['delta'][k] for d in ds) for k in ['heapUsed', 'external', 'arrayBuffers', 'rss']},
                  'builtMemory': [d.get('builtMemory') for d in ds]}
 trees = {t: json.loads((out / f'before-{t}.json').read_text()) for t in TREES}
+commitOf = lambda t: refs['candidates'][t]['commit'] if t in CANDIDATES else refs[t]
 for t in TREES:
-    assert trees[t]['commit'] == refs[t], f'{t}: measured {trees[t]["commit"]}, expected {refs[t]}'
+    assert trees[t]['commit'] == commitOf(t), f'{t}: measured {trees[t]["commit"]}, expected {commitOf(t)}'
 load = [r['load1'] for r in receipts]
 machine, runner = trees['feature']['machine'], trees['feature']['runner']
 over = [f"{row['grammar']} {a} ×{row['pairs'][f'{a}/base']['pipelineMs']['ratio']:.3f}" for row in corpus for a in AGAINST_BASE if row['pairs'][f'{a}/base']['pipelineMs']['ratio'] > BAR]
-result = {'refs': refs, 'versions': {v: {'tree': TREE_OF.get(v, v), 'nodeStorage': 'arena' if v == 'feature-arena' else 'object'} for v in VERSIONS}, 'bar': BAR, 'overBar': over, 'mismatches': mismatches,
+result = {'refs': refs, 'versions': {v: {'tree': treeOf(v), 'nodeStorage': storageOf(v)} for v in VERSIONS}, 'bar': BAR, 'overBar': over, 'mismatches': mismatches,
           'buildProfiles': sorted(profiles), 'processes': len(receipts), 'meanLoad1': statistics.mean(load), 'maxLoad1': max(load), 'machine': machine, 'runner': runner,
           'trees': {t: {'commit': x['commit'], 'workingTreeDiffSha256': x['workingTreeDiffSha256'], 'sections': {k: {'files': s['files'], 'sha256': s['sha256']} for k, s in x['sections'].items()}} for t, x in trees.items()},
           'corpus': corpus, 'construction': construction, 'memory': memory}
@@ -110,8 +114,9 @@ msHeads = ' | '.join(f'ms {v}' for v in VERSIONS)
 EMPTY_DIFF = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 lines = [
     '## Paired refs: feature and master against their merge base', '',
-    f"Trees: base `{refs['base'][:9]}` (merge base), master `{refs['master'][:9]}`, feature `{refs['feature'][:9]}`; build profile {', '.join(sorted(profiles))}. "
-    + ("feature-arena is the feature tree read with `nodeStorage: 'arena'`; the others use object storage." if 'feature-arena' in VERSIONS else 'Every version uses object storage.'),
+    f"Trees: base `{refs['base'][:9]}` (merge base), master `{refs['master'][:9]}`, feature `{refs['feature'][:9]}`"
+    + ''.join(f", {c} `{refs['candidates'][c]['commit'][:9]}` ({refs['candidates'][c]['ref']})" for c in CANDIDATES) + f"; build profile {', '.join(sorted(profiles))}. "
+    + ("A version ending in -arena is its tree read with `nodeStorage: 'arena'`; the others use object storage." if any(v.endswith('-arena') for v in VERSIONS) else 'Every version uses object storage.'),
     f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
     'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',

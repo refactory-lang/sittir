@@ -15,6 +15,9 @@ on:
       arena:
         type: boolean
         required: true
+      candidates:
+        type: string
+        required: true
 
 permissions:
   contents: read
@@ -25,7 +28,7 @@ env:
 
 jobs:
   measure:
-    name: Feature, master and their merge base on one runner (Linux x64)
+    name: Feature, master, the candidates and the merge base on one runner (Linux x64)
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -38,23 +41,17 @@ jobs:
           node-version: '26.12.0'
           cache: pnpm
       - uses: ./.github/actions/rust-toolchain
-      - name: Resolve the three commits
+      - name: Resolve the commits
         shell: bash
         env:
           FEATURE_REF: ${{ inputs.feature-ref }}
           MASTER_REF: ${{ inputs.master-ref }}
           PROFILE: ${{ inputs.profile }}
           ARENA: ${{ inputs.arena }}
+          CANDIDATES: ${{ inputs.candidates }}
         run: |
-          mkdir -p "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees"
-          resolve() { git rev-parse --verify --quiet "origin/$1^{commit}" || git rev-parse --verify "$1^{commit}"; }
-          feature=$(resolve "$FEATURE_REF")
-          master=$(resolve "$MASTER_REF")
-          base=$(git merge-base "$feature" "$master")
-          jq -n --arg base "$base" --arg master "$master" --arg feature "$feature" \
-            --arg featureRef "$FEATURE_REF" --arg masterRef "$MASTER_REF" --arg profile "$PROFILE" --argjson arena "$ARENA" \
-            '{base: $base, master: $master, feature: $feature, featureRef: $featureRef, masterRef: $masterRef, profile: $profile, arena: $arena}' \
-            | tee "$RUNNER_TEMP/paired-refs/refs.json"
+          mkdir -p "$RUNNER_TEMP/trees"
+          scripts/ci/paired-refs/resolve-refs.sh "$RUNNER_TEMP/paired-refs"
       - name: Build the merge base
         shell: bash
         run: scripts/ci/paired-refs/build-tree.sh base "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-base.log"
@@ -64,24 +61,34 @@ jobs:
       - name: Build feature
         shell: bash
         run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-feature.log"
+      - name: Build the candidates
+        shell: bash
+        run: |
+          for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            scripts/ci/paired-refs/build-tree.sh "$tree" "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-$tree.log"
+          done
       - name: Fingerprint the built trees
         shell: bash
         run: |
-          for tree in base master feature; do
+          for tree in base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
             (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
           done
-      - name: Measure base, master and feature in alternating fresh processes
+      - name: Measure every version in alternating fresh processes
         shell: bash
         env:
           ARENA: ${{ inputs.arena }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
+          for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            versions+=("$tree=$RUNNER_TEMP/trees/$tree")
+            if [[ $ARENA == true ]]; then versions+=("$tree-arena=$RUNNER_TEMP/trees/$tree@arena"); fi
+          done
           python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
       - name: Check the trees did not change during measurement
         shell: bash
         run: |
-          for tree in base master feature; do
+          for tree in base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
             (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/after-$tree.json")
             node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/paired-refs/before-$tree.json" "$RUNNER_TEMP/paired-refs/after-$tree.json"
           done

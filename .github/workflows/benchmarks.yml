@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe') && format('{0} {1} vs {2}', inputs.benchmark, inputs.feature-ref, inputs.master-ref) || format('{0}, paired node backends', inputs.benchmark) }})
+run-name: Arena benchmarks (${{ (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -30,6 +30,10 @@ on:
         description: probe only. The grammars to probe, space-separated.
         type: string
         default: python regex typescript
+      candidates:
+        description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -63,6 +67,7 @@ jobs:
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}
       arena: ${{ inputs.arena }}
+      candidates: ${{ inputs.candidates }}
   probe:
     if: inputs.benchmark == 'probe'
     uses: ./.github/workflows/benchmark-probe.yml
@@ -72,3 +77,4 @@ jobs:
       profile: ${{ inputs.profile }}
       arena: ${{ inputs.arena }}
       grammars: ${{ inputs.grammars }}
+      candidates: ${{ inputs.candidates }}
