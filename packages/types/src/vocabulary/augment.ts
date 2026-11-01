@@ -3029,6 +3029,7 @@ declare module './type.ts' {
 		interface Qualified<G extends GrammarContext<G>> extends typeAnnotations.Type.Qualified<G> {}
 		interface Query<G extends GrammarContext<G>> extends typeAnnotations.Type.Query<G> {}
 		interface Readonly<G extends GrammarContext<G>> extends typeAnnotations.Type.Readonly<G> {}
+		type Receiver<G extends GrammarContext<G>> = explicitReceivers.Type.Receiver<G>;
 		interface Reference<G extends GrammarContext<G>> extends typeAnnotations.Type.Reference<G> {
 			readonly exclusive?: gate.In<G, features.References, references.Type.Reference<G>['exclusive']>;
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G>['lifetime']>;
@@ -3091,6 +3092,7 @@ declare module './type.ts' {
 			| V.Type.Qualified<G>
 			| V.Type.Query<G>
 			| V.Type.Readonly<G>
+			| V.Type.Receiver<G>
 			| V.Type.Reference<G>
 			| V.Type.Rest<G>
 			| V.Type.Rest.Map<G>

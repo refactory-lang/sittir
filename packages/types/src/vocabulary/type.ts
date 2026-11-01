@@ -13,6 +13,7 @@ export interface TypeSynonyms {
 	readonly int16: 'short';
 	readonly int8: 'byte';
 	readonly nullable: 'maybe';
+	readonly receiver: 'self' | 'this';
 	readonly reference: 'borrow';
 	readonly rest: 'splat' | 'unpack';
 	readonly string: 'str';

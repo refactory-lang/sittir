@@ -333,7 +333,8 @@ export interface PortableIds {
 		| TSKindId.SplatPatternDictionary
 		| TSKindId.SplatPatternList
 		| TSKindId.TuplePattern
-		| TSKindId.UnionPattern;
+		| TSKindId.UnionPattern
+		| TSKindId.WildcardPattern;
 	'pattern.as': TSKindId.CaseAsPattern;
 	'pattern.complex': TSKindId.ComplexPattern;
 	'pattern.complex.add': TSKindId.ComplexPattern;
@@ -351,6 +352,7 @@ export interface PortableIds {
 	'pattern.struct.field': TSKindId.KeywordPattern;
 	'pattern.tuple': TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
 	'pattern.tuple.bare': TSKindId.CasePatternList | TSKindId.PatternList;
+	'pattern.wildcard': TSKindId.WildcardPattern;
 	statement:
 		| TSKindId.AssertStatement
 		| TSKindId.Block
@@ -585,7 +587,7 @@ export interface PortableTexts {
 	'literal.string.raw': never;
 	'literal.string.raw.multiline': never;
 	'literal.string.text': never;
-	pattern: never;
+	pattern: '_';
 	'pattern.as': never;
 	'pattern.complex': never;
 	'pattern.complex.add': never;
@@ -599,6 +601,7 @@ export interface PortableTexts {
 	'pattern.struct.field': never;
 	'pattern.tuple': never;
 	'pattern.tuple.bare': never;
+	'pattern.wildcard': '_';
 	statement: 'break' | 'continue' | 'pass';
 	'statement.assert': never;
 	'statement.block': never;
@@ -1065,6 +1068,7 @@ export interface PortableKindsAt {
 		readonly rest: PortableKindsAt['pattern.rest'];
 		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
+		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
 	'pattern.as': { readonly $path: 'pattern.as' };
 	'pattern.complex': {
@@ -1083,6 +1087,7 @@ export interface PortableKindsAt {
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly bare: PortableKindsAt['pattern.tuple.bare'] };
 	'pattern.tuple.bare': { readonly $path: 'pattern.tuple.bare' };
+	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
 		readonly assert: PortableKindsAt['statement.assert'];
@@ -2310,6 +2315,7 @@ export interface PortableIsAt {
 		readonly rest: PortableIsAt['pattern.rest'];
 		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
+		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
 	'pattern.as': PortableGuard<PortableIds['pattern.as'], PythonNode, TSKindId, PortableTexts['pattern.as']> & {};
 	'pattern.complex': PortableGuard<
@@ -2365,6 +2371,12 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['pattern.tuple.bare']
+	> & {};
+	'pattern.wildcard': PortableGuard<
+		PortableIds['pattern.wildcard'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.wildcard']
 	> & {};
 	statement: PortableGuard<PortableIds['statement'], PythonNode, TSKindId, PortableTexts['statement']> & {
 		readonly assert: PortableIsAt['statement.assert'];
@@ -2987,7 +2999,8 @@ const table: PortableTable = {
 				TSKindId.SplatPatternDictionary,
 				TSKindId.SplatPatternList,
 				TSKindId.TuplePattern,
-				TSKindId.UnionPattern
+				TSKindId.UnionPattern,
+				TSKindId.WildcardPattern
 			],
 			exact: true
 		},
@@ -3015,6 +3028,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'pattern.tuple.bare': { ids: [TSKindId.CasePatternList, TSKindId.PatternList], exact: true },
+		'pattern.wildcard': { ids: [TSKindId.WildcardPattern], exact: true },
 		statement: {
 			ids: [
 				TSKindId.AssertStatement,
@@ -3688,6 +3702,7 @@ const table: PortableTable = {
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WildcardImport]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
+		[TSKindId.WildcardPattern]: [{ path: 'pattern.wildcard', within: [], test: [] }],
 		[TSKindId.WithClause]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseBare]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseParen]: [{ path: 'clause.resource', within: [], test: [] }],

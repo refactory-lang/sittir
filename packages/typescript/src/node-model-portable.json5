@@ -13507,6 +13507,19 @@
       ],
       "members": []
     },
+    "this_type": {
+      "vocab": "type.receiver",
+      "read": [
+        {
+          "vocab": "type.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "throw_statement": {
       "vocab": "statement.throw",
       "read": [
@@ -14761,8 +14774,8 @@
       },
       {
         "depth": 2,
-        "paths": 109,
-        "kinds": 145,
+        "paths": 110,
+        "kinds": 146,
         "refinements": 4
       },
       {

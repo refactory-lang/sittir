@@ -62,6 +62,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'type.primitive.unchecked': string;
 		readonly 'type.primitive.unknown': string;
 		readonly 'type.primitive.void': string;
+		readonly 'type.receiver': string;
 		readonly 'type.unit': string;
 	};
 	readonly slots: {

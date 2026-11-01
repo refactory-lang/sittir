@@ -11,6 +11,13 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it('reads the wildcard case pattern as the wildcard pattern, by its text', () => {
+		const source = 'match x:\n    case _:\n        pass\n';
+		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'clause.case.match', pattern: '_' }] });
+		expect(roundTrip(source)).toBe(source);
+		expect(python.is.portable.pattern.wildcard('_')).toBe(true);
+	});
+
 	it('reads True, None and the ellipsis as their path and value, `pass` as its text, and builds them back', () => {
 		const value = (source: string) => ((firstOf(source) as Read).content as Read).value;
 		expect(value('x = True')).toEqual({ $path: 'literal.boolean.true', $value: true });

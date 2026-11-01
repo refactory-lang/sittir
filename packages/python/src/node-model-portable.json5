@@ -7425,6 +7425,19 @@
       ],
       "members": []
     },
+    "wildcard_pattern": {
+      "vocab": "pattern.wildcard",
+      "read": [
+        {
+          "vocab": "pattern.wildcard",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "with_clause": {
       "vocab": "clause.resource",
       "read": [
@@ -7724,8 +7737,8 @@
       },
       {
         "depth": 2,
-        "paths": 76,
-        "kinds": 78,
+        "paths": 77,
+        "kinds": 79,
         "refinements": 5
       },
       {

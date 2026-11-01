@@ -11044,6 +11044,18 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: []
 		},
+		'pattern.wildcard': {
+			root: true,
+			arms: [
+				{
+					kind: 280,
+					members: [],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
+		},
 		'statement.assert': {
 			root: true,
 			arms: [

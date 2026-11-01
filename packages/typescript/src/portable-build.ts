@@ -34174,6 +34174,18 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'type.receiver': {
+			root: true,
+			arms: [
+				{
+					kind: 503,
+					members: [],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
+		},
 		'type.rest': {
 			root: true,
 			arms: [

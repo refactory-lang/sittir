@@ -594,6 +594,7 @@ export const vocabularyPaths = Object.freeze([
 	'type.qualified',
 	'type.query',
 	'type.readonly',
+	'type.receiver',
 	'type.reference',
 	'type.rest',
 	'type.rest.map',

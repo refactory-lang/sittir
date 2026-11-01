@@ -378,6 +378,7 @@
 (assignment_pattern) @pattern.assignment
 
 ; ── type ───────────────────────────────────────────────────────────────────────
+(this_type) @type.receiver
 (predefined_type) @type.primitive
 ((predefined_type) @type.primitive.unchecked (#eq? @type.primitive.unchecked "any"))
 ((predefined_type) @type.primitive.floating.float64 (#eq? @type.primitive.floating.float64 "number"))

@@ -675,6 +675,7 @@ export interface PortableIds {
 		| TSKindId.StringKeyword
 		| TSKindId.SymbolKeyword
 		| TSKindId.TemplateLiteralType
+		| TSKindId.ThisType
 		| TSKindId.TupleType
 		| TSKindId.TypePredicate
 		| TSKindId.TypeQuery
@@ -722,6 +723,7 @@ export interface PortableIds {
 	'type.primitive.void': TSKindId.VoidKeyword;
 	'type.query': TSKindId.TypeQuery;
 	'type.readonly': TSKindId.ReadonlyType;
+	'type.receiver': TSKindId.ThisType;
 	'type.rest': TSKindId.RestType;
 	'type.template': TSKindId.TemplateLiteralType;
 	'type.tuple': TSKindId.TupleType;
@@ -1021,6 +1023,7 @@ export interface PortableTexts {
 		| 'object'
 		| 'string'
 		| 'symbol'
+		| 'this'
 		| 'unique symbol'
 		| 'unknown'
 		| 'void';
@@ -1064,6 +1067,7 @@ export interface PortableTexts {
 	'type.primitive.void': 'void';
 	'type.query': never;
 	'type.readonly': never;
+	'type.receiver': 'this';
 	'type.rest': never;
 	'type.template': never;
 	'type.tuple': never;
@@ -1797,6 +1801,7 @@ export interface PortableKindsAt {
 		readonly primitive: PortableKindsAt['type.primitive'];
 		readonly query: PortableKindsAt['type.query'];
 		readonly readonly: PortableKindsAt['type.readonly'];
+		readonly receiver: PortableKindsAt['type.receiver'];
 		readonly rest: PortableKindsAt['type.rest'];
 		readonly template: PortableKindsAt['type.template'];
 		readonly tuple: PortableKindsAt['type.tuple'];
@@ -1849,6 +1854,7 @@ export interface PortableKindsAt {
 	'type.primitive.void': { readonly $path: 'type.primitive.void' };
 	'type.query': { readonly $path: 'type.query' };
 	'type.readonly': { readonly $path: 'type.readonly' };
+	'type.receiver': { readonly $path: 'type.receiver' };
 	'type.rest': { readonly $path: 'type.rest' };
 	'type.template': { readonly $path: 'type.template' };
 	'type.tuple': { readonly $path: 'type.tuple' };
@@ -3810,6 +3816,7 @@ export interface PortableIsAt {
 		readonly primitive: PortableIsAt['type.primitive'];
 		readonly query: PortableIsAt['type.query'];
 		readonly readonly: PortableIsAt['type.readonly'];
+		readonly receiver: PortableIsAt['type.receiver'];
 		readonly rest: PortableIsAt['type.rest'];
 		readonly template: PortableIsAt['type.template'];
 		readonly tuple: PortableIsAt['type.tuple'];
@@ -3979,6 +3986,12 @@ export interface PortableIsAt {
 		TypescriptNode,
 		TSKindId,
 		PortableTexts['type.readonly']
+	> & {};
+	'type.receiver': PortableGuard<
+		PortableIds['type.receiver'],
+		TypescriptNode,
+		TSKindId,
+		PortableTexts['type.receiver']
 	> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest'], TypescriptNode, TSKindId, PortableTexts['type.rest']> & {};
 	'type.template': PortableGuard<
@@ -4901,6 +4914,7 @@ const table: PortableTable = {
 				TSKindId.StringKeyword,
 				TSKindId.SymbolKeyword,
 				TSKindId.TemplateLiteralType,
+				TSKindId.ThisType,
 				TSKindId.TupleType,
 				TSKindId.TypePredicate,
 				TSKindId.TypeQuery,
@@ -4955,6 +4969,7 @@ const table: PortableTable = {
 		'type.primitive.void': { ids: [TSKindId.VoidKeyword], exact: true },
 		'type.query': { ids: [TSKindId.TypeQuery], exact: true },
 		'type.readonly': { ids: [TSKindId.ReadonlyType], exact: true },
+		'type.receiver': { ids: [TSKindId.ThisType], exact: true },
 		'type.rest': { ids: [TSKindId.RestType], exact: true },
 		'type.template': { ids: [TSKindId.TemplateLiteralType], exact: true },
 		'type.tuple': { ids: [TSKindId.TupleType], exact: true },
@@ -5943,6 +5958,7 @@ const table: PortableTable = {
 		[TSKindId.TemplateType]: [{ path: 'element.template.substitution', within: [], test: [] }],
 		[TSKindId.TernaryExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
 		[TSKindId.This]: [{ path: 'identifier.receiver', within: [], test: [] }],
+		[TSKindId.ThisType]: [{ path: 'type.receiver', within: [], test: [] }],
 		[TSKindId.ThrowStatement]: [{ path: 'statement.throw', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],

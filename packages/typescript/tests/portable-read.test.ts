@@ -97,6 +97,13 @@ describe('the portable read', () => {
 		expect(is.literal.null('null')).toBe(false);
 	});
 
+	it('reads the `this` type as the receiver type, by its text', () => {
+		const source = 'class C {\n  m(): this {\n    return this;\n  }\n}\n';
+		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', returnType: 'this' }] });
+		expect(roundTrip(source)).toBe(source);
+		expect(typescript.is.portable.type.receiver('this')).toBe(true);
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });
