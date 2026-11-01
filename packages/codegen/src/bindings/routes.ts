@@ -728,7 +728,9 @@ function membersOf(
 		const read = except.length === 0 ? slot : { ...slot, kinds: slot.kinds.filter((k) => !except.includes(k)) };
 		const rest = except.length === 0 ? slot : { ...read, required: false };
 		const captured = capturesOf(slot).length > 0;
-		if (toldByRead(input.model, rest, told.get(slot.name) ?? new Set<string>())) {
+		const present = captured ? [] : concreteKinds(input.model, rest.kinds).filter((k) => guaranteed.present(pathTo(slot))?.includes(k) === true);
+		const tested = present.length === 0 ? rest : { ...rest, required: true, terminals: [], kinds: present };
+		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
 			continue;
 		}

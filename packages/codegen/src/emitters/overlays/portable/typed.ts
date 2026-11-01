@@ -286,13 +286,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 			}
 			optional ||= !slot.required && !slot.multiple && tested === undefined;
 			pinned = tested !== undefined && tested.length > 0 ? tested : slot.required || tested !== undefined ? held : undefined;
-			if (slot.multiple && i < path.length - 1) {
+			const final = i === path.length - 1;
+			if (slot.multiple && (!final || step.anchor !== undefined)) {
 				if (step.anchor === undefined) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
 				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
-				optional = true;
-				pinned = undefined;
+				optional = !final || tested === undefined;
+				pinned = final ? pinned : undefined;
 			}
-			last = slot;
+			last = final && step.anchor !== undefined ? { ...slot, multiple: false } : slot;
 		}
 		const through = present.findLastIndex((s) => s.tested) + 1;
 		return last === undefined ? 'an empty path' : { expr, last, optional, present: present.slice(0, through), pinned };

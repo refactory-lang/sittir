@@ -559,6 +559,7 @@ export const vocabularyPaths = Object.freeze([
 	'type.function.constructor',
 	'type.generic',
 	'type.generic.turbofish',
+	'type.import',
 	'type.index_query',
 	'type.infer',
 	'type.intersection',

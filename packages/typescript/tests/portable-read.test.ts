@@ -113,6 +113,24 @@ describe('the portable read', () => {
 		expect(typescript.is.portable.identifier('default')).toBe(true);
 	});
 
+	it('reads an import type as its one source string, a member of it as a qualified name, and builds each back', () => {
+		const typeOf = (source: string) => ((firstOf(source) as Read).declarators as readonly Read[])[0]!.type;
+		const imported = { $path: 'type.import', source: { $path: 'literal.string', elements: ['./m'] } };
+		expect(typeOf('let a: import("./m");')).toEqual(imported);
+		expect(typeOf('let b: import("./m").T;')).toEqual({ $path: 'identifier.qualified', qualifier: imported, name: 'T' });
+		expect(typeOf('let c: import("./m").A.B;')).toEqual({ $path: 'identifier.qualified', qualifier: { $path: 'identifier.qualified', qualifier: imported, name: 'A' }, name: 'B' });
+		expect(typeOf('let d: typeof import("./m");')).toEqual({ $path: 'type.query', expression: imported });
+		for (const source of ['let a: import("./m");', 'let b: import("./m").T;', 'let c: import("./m").A.B;', 'let d: typeof import("./m");']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('carries an import type whose argument is not one string', () => {
+		for (const source of ['let f: import(x);', 'let g: typeof import("./m", { with: {} });']) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried).toEqual([{ reason: 'unclaimed' }]);
+		}
+	});
+
 	it('reads the type parameters of an arrow function', () => {
 		const source = 'const f = <T>(x: T) => x;';
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });

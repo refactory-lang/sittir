@@ -476,9 +476,13 @@ export interface PortableIds {
 		| TSKindId.StatementIdentifier
 		| TSKindId.Super
 		| TSKindId.This
-		| TSKindId.TypeIdentifier;
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 	'identifier.label': TSKindId.StatementIdentifier;
-	'identifier.qualified': TSKindId.NestedIdentifier | TSKindId.NestedTypeIdentifier;
+	'identifier.qualified':
+		| TSKindId.NestedIdentifier
+		| TSKindId.NestedTypeIdentifier
+		| TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 	'identifier.receiver': TSKindId.This;
 	'identifier.super': TSKindId.Super;
 	literal:
@@ -680,6 +684,8 @@ export interface PortableIds {
 		| TSKindId.TupleType
 		| TSKindId.TypePredicate
 		| TSKindId.TypeQuery
+		| TSKindId.TypeQueryCallExpression
+		| TSKindId.TypeQueryCallExpressionInTypeAnnotation
 		| TSKindId.UnionType
 		| TSKindId.Unique
 		| TSKindId.UnknownKeyword
@@ -690,6 +696,7 @@ export interface PortableIds {
 	'type.function': TSKindId.ConstructorType | TSKindId.FunctionType;
 	'type.function.constructor': TSKindId.ConstructorType;
 	'type.generic': TSKindId.GenericType;
+	'type.import': TSKindId.TypeQueryCallExpression | TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 	'type.index_query': TSKindId.IndexTypeQuery;
 	'type.infer': TSKindId.InferType;
 	'type.intersection': TSKindId.IntersectionType;
@@ -1034,6 +1041,7 @@ export interface PortableTexts {
 	'type.function': never;
 	'type.function.constructor': never;
 	'type.generic': never;
+	'type.import': never;
 	'type.index_query': never;
 	'type.infer': never;
 	'type.intersection': never;
@@ -1789,6 +1797,7 @@ export interface PortableKindsAt {
 		readonly existential: PortableKindsAt['type.existential'];
 		readonly function: PortableKindsAt['type.function'];
 		readonly generic: PortableKindsAt['type.generic'];
+		readonly import: PortableKindsAt['type.import'];
 		readonly index_query: PortableKindsAt['type.index_query'];
 		readonly infer: PortableKindsAt['type.infer'];
 		readonly intersection: PortableKindsAt['type.intersection'];
@@ -1817,6 +1826,7 @@ export interface PortableKindsAt {
 	};
 	'type.function.constructor': { readonly $path: 'type.function.constructor' };
 	'type.generic': { readonly $path: 'type.generic' };
+	'type.import': { readonly $path: 'type.import' };
 	'type.index_query': { readonly $path: 'type.index_query' };
 	'type.infer': { readonly $path: 'type.infer' };
 	'type.intersection': { readonly $path: 'type.intersection' };
@@ -3804,6 +3814,7 @@ export interface PortableIsAt {
 		readonly existential: PortableIsAt['type.existential'];
 		readonly function: PortableIsAt['type.function'];
 		readonly generic: PortableIsAt['type.generic'];
+		readonly import: PortableIsAt['type.import'];
 		readonly index_query: PortableIsAt['type.index_query'];
 		readonly infer: PortableIsAt['type.infer'];
 		readonly intersection: PortableIsAt['type.intersection'];
@@ -3854,6 +3865,7 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['type.generic']
 	> & {};
+	'type.import': PortableGuard<PortableIds['type.import'], TypescriptNode, TSKindId, PortableTexts['type.import']> & {};
 	'type.index_query': PortableGuard<
 		PortableIds['type.index_query'],
 		TypescriptNode,
@@ -4668,12 +4680,20 @@ const table: PortableTable = {
 				TSKindId.StatementIdentifier,
 				TSKindId.Super,
 				TSKindId.This,
-				TSKindId.TypeIdentifier
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeQueryMemberExpressionInTypeAnnotation
 			],
 			exact: true
 		},
 		'identifier.label': { ids: [TSKindId.StatementIdentifier], exact: true },
-		'identifier.qualified': { ids: [TSKindId.NestedIdentifier, TSKindId.NestedTypeIdentifier], exact: true },
+		'identifier.qualified': {
+			ids: [
+				TSKindId.NestedIdentifier,
+				TSKindId.NestedTypeIdentifier,
+				TSKindId.TypeQueryMemberExpressionInTypeAnnotation
+			],
+			exact: true
+		},
 		'identifier.receiver': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		literal: {
@@ -4920,12 +4940,14 @@ const table: PortableTable = {
 				TSKindId.TupleType,
 				TSKindId.TypePredicate,
 				TSKindId.TypeQuery,
+				TSKindId.TypeQueryCallExpression,
+				TSKindId.TypeQueryCallExpressionInTypeAnnotation,
 				TSKindId.UnionType,
 				TSKindId.Unique,
 				TSKindId.UnknownKeyword,
 				TSKindId.VoidKeyword
 			],
-			exact: true
+			exact: false
 		},
 		'type.array': { ids: [TSKindId.ArrayType], exact: true },
 		'type.conditional': { ids: [TSKindId.ConditionalType], exact: true },
@@ -4933,6 +4955,10 @@ const table: PortableTable = {
 		'type.function': { ids: [TSKindId.ConstructorType, TSKindId.FunctionType], exact: true },
 		'type.function.constructor': { ids: [TSKindId.ConstructorType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
+		'type.import': {
+			ids: [TSKindId.TypeQueryCallExpression, TSKindId.TypeQueryCallExpressionInTypeAnnotation],
+			exact: false
+		},
 		'type.index_query': { ids: [TSKindId.IndexTypeQuery], exact: true },
 		'type.infer': { ids: [TSKindId.InferType], exact: true },
 		'type.intersection': { ids: [TSKindId.IntersectionType], exact: true },
@@ -5973,6 +5999,35 @@ const table: PortableTable = {
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.TypePredicate]: [{ path: 'type.predicate', within: [], test: [] }],
 		[TSKindId.TypeQuery]: [{ path: 'type.query', within: [], test: [] }],
+		[TSKindId.TypeQueryCallExpression]: [
+			{
+				path: 'type.import',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [196], slots: { '355': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '355': 1 } }, { slots: { '283': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [423, 424], self: true }
+					}
+				]
+			}
+		],
+		[TSKindId.TypeQueryCallExpressionInTypeAnnotation]: [
+			{
+				path: 'type.import',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [196], slots: { '335': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '335': 1 } }, { slots: { '283': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [423, 424], self: true }
+					}
+				]
+			}
+		],
+		[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.UnaryExpression]: [
 			{
 				path: 'expression.unary.negation',

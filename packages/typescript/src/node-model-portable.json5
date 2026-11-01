@@ -14003,6 +14003,198 @@
         }
       ]
     },
+    "type_query_call_expression": {
+      "vocab": "type",
+      "read": [
+        {
+          "vocab": "type.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  196
+                ],
+                "slots": {
+                  "355": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "355": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "283": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  423,
+                  424
+                ],
+                "self": true
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": "arguments",
+              "kind": "arguments",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "arguments",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_query_call_expression",
+              "slot": "arguments"
+            },
+            {
+              "owner": "arguments",
+              "slot": "elements",
+              "anchor": "only"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_call_expression_in_type_annotation": {
+      "vocab": "type",
+      "read": [
+        {
+          "vocab": "type.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  196
+                ],
+                "slots": {
+                  "335": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "335": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "283": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  423,
+                  424
+                ],
+                "self": true
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": "arguments",
+              "kind": "arguments",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "arguments",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_query_call_expression_in_type_annotation",
+              "slot": "arguments"
+            },
+            {
+              "owner": "arguments",
+              "slot": "elements",
+              "anchor": "only"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_member_expression_in_type_annotation": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "qualifier",
+          "route": "slot",
+          "slot": "object",
+          "path": [
+            {
+              "owner": "type_query_member_expression_in_type_annotation",
+              "slot": "object"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "property",
+          "path": [
+            {
+              "owner": "type_query_member_expression_in_type_annotation",
+              "slot": "property"
+            }
+          ]
+        }
+      ]
+    },
     "types": {
       "container": {
         "slot": "item",
@@ -14787,8 +14979,8 @@
       },
       {
         "depth": 2,
-        "paths": 110,
-        "kinds": 146,
+        "paths": 111,
+        "kinds": 149,
         "refinements": 4
       },
       {

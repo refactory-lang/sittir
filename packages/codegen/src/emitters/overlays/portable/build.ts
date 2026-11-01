@@ -328,7 +328,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const holder = at === undefined ? undefined : nodeOf(at.owner);
 		const key = at === undefined ? undefined : slotOf(at.owner, at.slot)?.propertyName;
 		const owner = path.at(-1)?.owner;
-		return slot === undefined || holder === undefined || key === undefined || owner === undefined ? undefined : seatsOf(holder, key, owner, slot, [], []);
+		if (slot === undefined || holder === undefined || key === undefined || owner === undefined) return undefined;
+		const [seat, ...nested] = seatsOf(holder, key, owner, slot, [], []);
+		return seat === undefined || path.at(-1)?.anchor === undefined ? [...(seat === undefined ? [] : [seat]), ...nested] : [{ ...seat, many: false }, ...nested];
 	};
 	const tokenDiagnostics = new Map<string, PickDiagnostic>();
 	const tokensOf = (seat: Seat): Readonly<Record<string, number>> | undefined => {

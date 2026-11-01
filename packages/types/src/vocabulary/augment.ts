@@ -2950,6 +2950,7 @@ declare module './type.ts' {
 			interface Turbofish<G extends GrammarContext<G>> extends typeAnnotations.Type.Generic.Turbofish<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 		}
+		interface Import<G extends GrammarContext<G>> extends modules.Type.Import<G> {}
 		interface IndexQuery<G extends GrammarContext<G>> extends typeAnnotations.Type.IndexQuery<G> {}
 		interface Infer<G extends GrammarContext<G>> extends typeAnnotations.Type.Infer<G> {}
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
@@ -3057,6 +3058,7 @@ declare module './type.ts' {
 			| V.Type.Function.Constructor<G>
 			| V.Type.Generic<G>
 			| V.Type.Generic.Turbofish<G>
+			| V.Type.Import<G>
 			| V.Type.IndexQuery<G>
 			| V.Type.Infer<G>
 			| V.Type.Intersection<G>
