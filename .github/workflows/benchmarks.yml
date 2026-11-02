@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
+run-name: Arena benchmarks (${{ (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus, paired-refs, probe]
+        options: [all, corpus, paired-refs, probe, profile]
       feature-ref:
         description: paired-refs and probe. The feature branch or commit.
         type: string
@@ -69,9 +69,10 @@ jobs:
       arena: ${{ inputs.arena }}
       candidates: ${{ inputs.candidates }}
   probe:
-    if: inputs.benchmark == 'probe'
+    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile'
     uses: ./.github/workflows/benchmark-probe.yml
     with:
+      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || 'run-probe.py' }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}

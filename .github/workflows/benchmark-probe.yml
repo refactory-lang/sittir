@@ -21,6 +21,9 @@ on:
       candidates:
         type: string
         required: true
+      script:
+        type: string
+        required: true
 
 permissions:
   contents: read
@@ -78,6 +81,7 @@ jobs:
         env:
           ARENA: ${{ inputs.arena }}
           GRAMMARS: ${{ inputs.grammars }}
+          SCRIPT: ${{ inputs.script }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
@@ -85,7 +89,7 @@ jobs:
             versions+=("$tree=$RUNNER_TEMP/trees/$tree")
             if [[ $ARENA == true ]]; then versions+=("$tree-arena=$RUNNER_TEMP/trees/$tree@arena"); fi
           done
-          python3 scripts/ci/paired-refs/probes/run-probe.py "$RUNNER_TEMP/paired-refs/probe" "${GRAMMARS// /,}" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/probe.log"
+          python3 "scripts/ci/paired-refs/probes/$SCRIPT" "$RUNNER_TEMP/paired-refs/probe" "${GRAMMARS// /,}" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/probe.log"
       - name: Upload probe results and fingerprints
         if: always()
         uses: actions/upload-artifact@v4
