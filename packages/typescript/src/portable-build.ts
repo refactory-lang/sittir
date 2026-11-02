@@ -27433,16 +27433,16 @@ export const build: PortableBuildTable = {
 					builder: 'instantiationExpression',
 					members: [
 						{
-							name: 'expression',
+							name: 'function',
 							steps: [
 								{
-									key: 'expression'
+									key: 'function'
 								}
 							],
 							multiple: false,
 							seats: [
 								{
-									at: [307, 'expression'],
+									at: [307, 'function'],
 									kinds: [
 										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
 										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
@@ -27524,8 +27524,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['function'],
-							required: ['expression', 'typeArguments']
+							absent: [],
+							required: ['function', 'typeArguments']
 						}
 					],
 					holders: [
@@ -27563,7 +27563,7 @@ export const build: PortableBuildTable = {
 						[304, 'expression'],
 						[305, 'expression'],
 						[306, 'expression'],
-						[307, 'expression'],
+						[307, 'function'],
 						[310, 'value'],
 						[323, 'value'],
 						[327, 'value'],
@@ -27673,7 +27673,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['expression'],
+							absent: [],
 							required: ['function', 'typeArguments']
 						}
 					],
@@ -29337,7 +29337,7 @@ export const build: PortableBuildTable = {
 						[304, 'expression'],
 						[305, 'expression'],
 						[306, 'expression'],
-						[307, 'expression'],
+						[307, 'function'],
 						[308, 'name'],
 						[310, 'value'],
 						[314, 'name'],

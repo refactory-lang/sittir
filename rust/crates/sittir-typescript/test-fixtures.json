@@ -59415,7 +59415,7 @@
               },
               "_value": {
                 "$type": 307,
-                "_expression": {
+                "_function": {
                   "$type": 1,
                   "$text": "makeBox"
                 },
@@ -59452,7 +59452,7 @@
               },
               "_value": {
                 "$type": 307,
-                "_expression": {
+                "_function": {
                   "$type": 1,
                   "$text": "makeBox"
                 },
@@ -59483,7 +59483,7 @@
               },
               "_value": {
                 "$type": 307,
-                "_expression": {
+                "_function": {
                   "$type": 1,
                   "$text": "Map"
                 },
@@ -59534,7 +59534,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nconst makeHammerBox = makeBox<Hammer>;\nconst makeStringBox = makeBox<string>;\nconst ErrorMap = Map<string, Error>;\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type)))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type)))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier)))))))",
     "wrappedText": "\nconst makeHammerBox = makeBox<Hammer>;\nconst makeStringBox = makeBox<string>;\nconst ErrorMap = Map<string, Error>;\n",
     "wrappedOffset": 0
   },
@@ -59554,7 +59554,7 @@
           },
           "_value": {
             "$type": 307,
-            "_expression": {
+            "_function": {
               "$type": 1,
               "$text": "makeBox"
             },
@@ -59593,7 +59593,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const makeHammerBox = makeBox<Hammer>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
     "wrappedText": "const makeHammerBox = makeBox<Hammer>;",
     "wrappedOffset": 0
   },
@@ -59613,7 +59613,7 @@
           },
           "_value": {
             "$type": 307,
-            "_expression": {
+            "_function": {
               "$type": 1,
               "$text": "makeBox"
             },
@@ -59646,7 +59646,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const makeStringBox = makeBox<string>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type))))))",
     "wrappedText": "const makeStringBox = makeBox<string>;",
     "wrappedOffset": 0
   },
@@ -59666,7 +59666,7 @@
           },
           "_value": {
             "$type": 307,
-            "_expression": {
+            "_function": {
               "$type": 1,
               "$text": "Map"
             },
@@ -59714,7 +59714,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const ErrorMap = Map<string, Error>;",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier))))))",
     "wrappedText": "const ErrorMap = Map<string, Error>;",
     "wrappedOffset": 0
   },
@@ -59730,7 +59730,7 @@
       },
       "_value": {
         "$type": 307,
-        "_expression": {
+        "_function": {
           "$type": 1,
           "$text": "makeBox"
         },
@@ -59766,7 +59766,7 @@
     "pattern": "variable_declarator_plain",
     "edits": [],
     "expectedSourceOut": "makeHammerBox = makeBox<Hammer>",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))",
     "wrappedText": "let makeHammerBox = makeBox<Hammer>;",
     "wrappedOffset": 4
   },
@@ -59782,7 +59782,7 @@
       },
       "_value": {
         "$type": 307,
-        "_expression": {
+        "_function": {
           "$type": 1,
           "$text": "makeBox"
         },
@@ -59812,7 +59812,7 @@
     "pattern": "variable_declarator_plain",
     "edits": [],
     "expectedSourceOut": "makeStringBox = makeBox<string>",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type)))))",
     "wrappedText": "let makeStringBox = makeBox<string>;",
     "wrappedOffset": 4
   },
@@ -59828,7 +59828,7 @@
       },
       "_value": {
         "$type": 307,
-        "_expression": {
+        "_function": {
           "$type": 1,
           "$text": "Map"
         },
@@ -59873,7 +59873,7 @@
     "pattern": "variable_declarator_plain",
     "edits": [],
     "expectedSourceOut": "ErrorMap = Map<string, Error>",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier)))))",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) value: (instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier)))))",
     "wrappedText": "let ErrorMap = Map<string, Error>;",
     "wrappedOffset": 4
   },
@@ -59883,7 +59883,7 @@
     "pattern": "instantiation_expression",
     "input": {
       "$type": 307,
-      "_expression": {
+      "_function": {
         "$type": 1,
         "$text": "makeBox"
       },
@@ -59918,7 +59918,7 @@
     "pattern": "instantiation_expression",
     "edits": [],
     "expectedSourceOut": "makeBox<Hammer>",
-    "expectedReparseTree": "(instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))",
+    "expectedReparseTree": "(instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))",
     "wrappedText": "let _ = makeBox<Hammer>;",
     "wrappedOffset": 8
   },
@@ -59928,7 +59928,7 @@
     "pattern": "instantiation_expression",
     "input": {
       "$type": 307,
-      "_expression": {
+      "_function": {
         "$type": 1,
         "$text": "makeBox"
       },
@@ -59957,7 +59957,7 @@
     "pattern": "instantiation_expression",
     "edits": [],
     "expectedSourceOut": "makeBox<string>",
-    "expectedReparseTree": "(instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type))))",
+    "expectedReparseTree": "(instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type))))",
     "wrappedText": "let _ = makeBox<string>;",
     "wrappedOffset": 8
   },
@@ -59967,7 +59967,7 @@
     "pattern": "instantiation_expression",
     "input": {
       "$type": 307,
-      "_expression": {
+      "_function": {
         "$type": 1,
         "$text": "Map"
       },
@@ -60011,7 +60011,7 @@
     "pattern": "instantiation_expression",
     "edits": [],
     "expectedSourceOut": "Map<string, Error>",
-    "expectedReparseTree": "(instantiation_expression expression: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier))))",
+    "expectedReparseTree": "(instantiation_expression function: (identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (type_identifier))))",
     "wrappedText": "let _ = Map<string, Error>;",
     "wrappedOffset": 8
   },

@@ -359,6 +359,7 @@
 (type_assertion) @expression.cast.assertion.angle_bracket
 (type_assertion (type_arguments (_) @type))
 (instantiation_expression) @expression.instantiation
+(instantiation_expression expression: (_) @function)
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class

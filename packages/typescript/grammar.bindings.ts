@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "e2ada3464fdd20e0087ca56c5179a47d4547b9ac8fb88393c513b854cdf072df";
+export const hash = "811a4a8a753164fb9b38d62c6e00d21e4aecff284f2317e652d3d34838c9ee15";
 
 export const renames = {
 	program: "file",
@@ -144,6 +144,7 @@ export default grammar(
 			generic_type: { "0/0/1": alias("qualified_identifier") },
 			import_alias: { "3/0/1": alias("qualified_identifier") },
 			index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
+			instantiation_expression: { "0": field("function") },
 			method_definition_plain: { "5/0": field("generator") },
 			method_signature_plain: { "5/0": field("generator") },
 			nested_identifier: [{ "0": field("qualifier"), "2": field("name") }, { "0/0/1": alias("qualified_identifier") }],

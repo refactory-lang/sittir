@@ -5436,14 +5436,14 @@ export interface SatisfiesExpression {
 
 export interface InstantiationExpression {
 	readonly $type: TSKindId.InstantiationExpression;
-	readonly _expression: Expression;
+	readonly _function: Expression;
 	readonly _type_arguments: TypeArguments;
 	readonly __slotNames__?: {
-		readonly _expression: 'expression';
+		readonly _function: 'function';
 		readonly _type_arguments: 'typeArguments';
 	};
 	readonly __inputHints__?: {
-		readonly expression:
+		readonly function:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
 					| TSKindId.Undefined
@@ -5459,7 +5459,7 @@ export interface InstantiationExpression {
 		readonly type_arguments: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly expression: SlotHint<NonNullable<T.InstantiationExpression.Config>['expression']>;
+		readonly function: SlotHint<NonNullable<T.InstantiationExpression.Config>['function']>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
@@ -5468,7 +5468,7 @@ export interface InstantiationExpression {
 			>;
 		};
 	};
-	readonly expression: () => Expression;
+	readonly function: () => Expression;
 	readonly typeArguments: () => TypeArguments;
 }
 

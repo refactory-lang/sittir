@@ -1099,12 +1099,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'expression.instantiation': {
-			readonly expression:
+			readonly function:
 				| V.Declaration.Module<G>
+				| V.Expression.Member<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly function: V.Expression.Member<G> | G['identifier'];
 			readonly typeArguments: V.Element.TypeArgument<G> | G['identifier'] | G['type'];
 		};
 		readonly 'expression.interpolation': {

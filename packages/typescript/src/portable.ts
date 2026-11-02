@@ -6930,7 +6930,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		type: { abstract: { types: [], kinds: [344] }, unique: { types: [144], kinds: [] } }
 	},
 	307: {
-		expression: {
+		function: {
 			async: { types: [], kinds: [247, 249, 251] },
 			disposable: { types: [], kinds: [261] },
 			generator: { types: [249], kinds: [] },
@@ -7685,7 +7685,7 @@ declare module './types.js' {
 	}
 	interface InstantiationExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly function: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ExtendsClauseSingle {

@@ -7609,13 +7609,13 @@
       ],
       "members": [
         {
-          "name": "expression",
+          "name": "function",
           "route": "slot",
-          "slot": "expression",
+          "slot": "function",
           "path": [
             {
               "owner": "instantiation_expression",
-              "slot": "expression"
+              "slot": "function"
             }
           ]
         },

@@ -246,7 +246,7 @@ export const records = {
 	TypeAssertionNode: { words: 12, type_arguments: { word: 2, width: 5 }, expression: { word: 7, width: 5 } },
 	AsExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	SatisfiesExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
-	InstantiationExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
+	InstantiationExpressionNode: { words: 12, function: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	ImportRequireClauseNode: { words: 12, name: { word: 2, width: 5 }, source: { word: 7, width: 5 } },
 	ExtendsClauseNode: { words: 4, types: { word: 2, width: 2, run: 5 } },
 	ExtendsClauseSingleNode: { words: 12, value: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },

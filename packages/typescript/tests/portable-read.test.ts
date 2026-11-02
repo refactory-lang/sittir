@@ -172,6 +172,14 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
+	it('reads an instantiation by its function, as rust does, in an expression and in a type query, and builds each back', () => {
+		const instantiation = { $path: 'expression.instantiation', function: 'f', typeArguments: ['T'] };
+		expect(firstOf('f<T>;')).toMatchObject({ expression: instantiation });
+		expect(firstOf('type X = typeof f<T>;')).toMatchObject({ value: { $path: 'type.query', expression: instantiation } });
+		expect(roundTrip('f<T>;')).toBe('f<T>;\n');
+		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');
+	});
+
 	it('refuses a destructuring declarator given no pattern', () => {
 		const declarator = ((firstOf('let { a } = b;') as Read).declarators as readonly Read[])[0]!;
 		expect(declarator.$path).toBe('declaration.variable.pattern');

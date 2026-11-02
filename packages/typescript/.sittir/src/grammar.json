@@ -9757,13 +9757,13 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "expression",
+            "name": "function",
             "content": {
               "type": "SYMBOL",
               "name": "expression"
             },
             "metadata": {
-              "fieldSource": "enriched"
+              "fieldSource": "override"
             }
           },
           {

@@ -5195,9 +5195,9 @@ export const coerceToSatisfiesExpression: ConfigSeat<
 	});
 };
 
-export function resolveInstantiationExpression_expression(
-	value: T.InstantiationExpression.LooseConfig['expression']
-): Admit<T.InstantiationExpression['_expression']> {
+export function resolveInstantiationExpression_function(
+	value: T.InstantiationExpression.LooseConfig['function']
+): Admit<T.InstantiationExpression['_function']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K6, _K14)),
 		[]
@@ -5218,7 +5218,7 @@ export const coerceToInstantiationExpression: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildInstantiationExpression>;
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [input]);
 	return F.buildInstantiationExpression({
-		expression: resolveInstantiationExpression_expression(input.expression),
+		function: resolveInstantiationExpression_function(input.function),
 		typeArguments: resolveInstantiationExpression_typeArguments(input.typeArguments)
 	});
 };

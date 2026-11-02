@@ -25137,9 +25137,9 @@ impl ::sittir_core::prepare::Prepare for SatisfiesExpressionNode {
 pub struct InstantiationExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
-    pub expression: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_function")]
+    #[slot(field = field::FUNCTION, word = 2, width = 5)]
+    pub function: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_type_arguments")]
     #[slot(field = field::TYPE_ARGUMENTS, word = 7, width = 5)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
@@ -25167,7 +25167,7 @@ impl ::sittir_core::prepare::Prepare for InstantiationExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.expression.prepare(ctx)?;
+        self.function.prepare(ctx)?;
         self.type_arguments.prepare(ctx)?;
         Ok(())
     }
@@ -43384,10 +43384,10 @@ fn render_satisfies_expression(node: &SatisfiesExpressionNode, w: &mut dyn ::sit
 }
 
 fn render_instantiation_expression(node: &InstantiationExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
+    let function = &node.function;
     let type_arguments = &node.type_arguments;
     w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_function", ::sittir_core::types::ItemIndex(0), w, |w| function.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_arguments", ::sittir_core::types::ItemIndex(0), w, |w| type_arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())

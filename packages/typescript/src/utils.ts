@@ -387,7 +387,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', 1, undefined, '_type']
 	],
 	307: [
-		['expression', 0, undefined, '_expression'],
+		['function', 0, undefined, '_function'],
 		['typeArguments', 1, undefined, '_type_arguments']
 	],
 	308: [
@@ -2127,18 +2127,18 @@ export const structure: StructureTable = Object.freeze({
 	307: {
 		kind: 'instantiation_expression',
 		required: [
-			['_expression', 'expression'],
+			['_function', 'function'],
 			['_type_arguments', 'typeArguments']
 		],
 		single: [
-			['_expression', 'InstantiationExpression.expression'],
+			['_function', 'InstantiationExpression.function'],
 			['_type_arguments', 'InstantiationExpression.typeArguments']
 		],
 		nodeOnly: [
-			['_expression', 'InstantiationExpression.expression', 'a built Expression', [234]],
+			['_function', 'InstantiationExpression.function', 'a built Expression', [234]],
 			['_type_arguments', 'InstantiationExpression.typeArguments', 'a built TypeArguments', [367]]
 		],
-		config: ['expression', 'typeArguments']
+		config: ['function', 'typeArguments']
 	},
 	308: {
 		kind: 'import_require_clause',

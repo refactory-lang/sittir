@@ -4331,21 +4331,18 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 }
 
 export function buildInstantiationExpression<
-	ExpressionSlot extends T.InstantiationExpression.Config['expression'],
+	FunctionSlot extends T.InstantiationExpression.Config['function'],
 	TypeArgumentsSlot extends T.InstantiationExpression.Config['typeArguments']
 >(
-	config: RefusingConfig<
-		T.InstantiationExpression.Config,
-		{ expression: ExpressionSlot; typeArguments: TypeArgumentsSlot }
-	>
+	config: RefusingConfig<T.InstantiationExpression.Config, { function: FunctionSlot; typeArguments: TypeArgumentsSlot }>
 ): T.InstantiationExpression.Bound;
 export function buildInstantiationExpression(
 	config: T.InstantiationExpression.Config
 ): T.InstantiationExpression.Bound {
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [config]);
-	const _expression = rejectReservedText(
-		kindIdStorage<NonNullable<T.InstantiationExpression['_expression']>>(config.expression),
-		'InstantiationExpression.expression',
+	const _function = rejectReservedText(
+		kindIdStorage<NonNullable<T.InstantiationExpression['_function']>>(config.function),
+		'InstantiationExpression.function',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
@@ -4354,11 +4351,11 @@ export function buildInstantiationExpression(
 	const node = {
 		$type: TSKindId.InstantiationExpression as const,
 		$named: true as const,
-		_expression,
+		_function,
 		_type_arguments,
 		$with: {
-			expression: (value: Admit<NonNullable<T.InstantiationExpression.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, expression: value })),
+			function: (value: Admit<NonNullable<T.InstantiationExpression.Config>['function']>) =>
+				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -4368,7 +4365,7 @@ export function buildInstantiationExpression(
 					)
 				)
 		},
-		expression: () => hydrateStoredSlot(node, '_expression'),
+		function: () => hydrateStoredSlot(node, '_function'),
 		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

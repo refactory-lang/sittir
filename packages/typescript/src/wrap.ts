@@ -3077,15 +3077,15 @@ export function wrapInstantiationExpression(
 	const node = {
 		...data,
 		$type: TSKindId.InstantiationExpression as const,
-		expression() {
-			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		function() {
+			return hydrateSlot<T.Expression>(this, '_function', tree);
 		},
 		typeArguments() {
 			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 		},
 		$with: {
-			expression: (v: NonNullable<T.InstantiationExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapInstantiationExpression({ ...$edited(data), _expression: v }, tree)),
+			function: (v: NonNullable<T.InstantiationExpression['_function']>) =>
+				rebuilt(node, handle, () => wrapInstantiationExpression({ ...$edited(data), _function: v }, tree)),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(

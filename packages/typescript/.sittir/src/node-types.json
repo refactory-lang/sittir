@@ -5048,7 +5048,7 @@
     "type": "instantiation_expression",
     "named": true,
     "fields": {
-      "expression": {
+      "function": {
         "multiple": false,
         "required": true,
         "types": [
