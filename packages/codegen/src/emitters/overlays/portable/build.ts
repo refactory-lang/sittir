@@ -1117,7 +1117,7 @@ function valueBuilds(
 	);
 }
 
-export function emitPortableBuild(input: PortableBuildInput): { readonly source: string; readonly diagnostics: readonly PickDiagnostic[] } {
+export function emitPortableBuild(input: PortableBuildInput): { readonly source: string; readonly diagnostics: readonly PickDiagnostic[]; readonly table: PortableBuildTable } {
 	const { table, diagnostics } = portableBuildTable(input);
 	return {
 		source: [
@@ -1128,6 +1128,7 @@ export function emitPortableBuild(input: PortableBuildInput): { readonly source:
 			`export const build: PortableBuildTable = ${JSON.stringify(table, null, '\t')};`,
 			''
 		].join('\n'),
-		diagnostics
+		diagnostics,
+		table
 	};
 }

@@ -1,6 +1,7 @@
-import { join, relative } from 'node:path';
+import { readdirSync } from 'node:fs';
+import { basename, dirname, join, relative } from 'node:path';
 import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
-import { REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
+import { PORTABLE_TYPE_TESTS, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { vocabularyPaths } from '@sittir/common/portable';
 
@@ -11,11 +12,18 @@ export interface ConformanceCause {
 	readonly example: string | undefined;
 }
 
+export interface ConformanceTypeTest {
+	readonly file: string;
+	readonly errors: number;
+	readonly example: string | undefined;
+}
+
 export interface ConformanceReport {
 	readonly grammar: string;
 	readonly causes: readonly ConformanceCause[];
 	readonly unemitted: readonly PortableTypedUnemitted[];
 	readonly total: number;
+	readonly typeTests: readonly ConformanceTypeTest[];
 }
 
 
@@ -94,13 +102,36 @@ const typedDir = (grammar: string): string => sittirDirOf({ dir: grammarPackageD
 
 export const portableTypedPath = (grammar: string): string => join(typedDir(grammar), PORTABLE_TYPED_FILE);
 
-export function classify(diagnostics: readonly TypeCheckDiagnostic[], module: string, unemitted: readonly PortableTypedUnemitted[]): { readonly causes: readonly ConformanceCause[]; readonly total: number } {
+export function portableTypeTests(grammar: string): readonly string[] {
+	const dir = join(grammarPackageDir(grammar as GrammarName), dirname(PORTABLE_TYPE_TESTS));
+	const suffix = basename(PORTABLE_TYPE_TESTS).replace('*', '');
+	return readdirSync(dir)
+		.filter((name) => name.endsWith(suffix))
+		.sort()
+		.map((name) => join(dir, name));
+}
+
+export function typeTestErrors(diagnostics: readonly TypeCheckDiagnostic[], files: readonly string[]): readonly ConformanceTypeTest[] {
+	return files.map((file) => {
+		const found = diagnostics.filter((d) => d.file !== undefined && join(REPO_ROOT, d.file) === file);
+		const first = found[0];
+		return { file: relative(REPO_ROOT, file), errors: found.length, example: first === undefined ? undefined : `${first.line ?? ''} ${first.code} ${first.message.slice(0, 160)}` };
+	});
+}
+
+export function classify(
+	diagnostics: readonly TypeCheckDiagnostic[],
+	module: string,
+	unemitted: readonly PortableTypedUnemitted[],
+	typeTests: readonly string[] = []
+): { readonly causes: readonly ConformanceCause[]; readonly total: number } {
 	const counts = new Map<string, { count: number; example: string | undefined }>();
 	const count = (name: string, example: string): void => {
 		const at = counts.get(name) ?? counts.set(name, { count: 0, example }).get(name)!;
 		at.count++;
 	};
 	for (const d of diagnostics) {
+		if (d.file !== undefined && typeTests.includes(join(REPO_ROOT, d.file))) continue;
 		const where = `${d.file === undefined ? '' : relative(REPO_ROOT, join(REPO_ROOT, d.file))}${d.line === undefined ? '' : `:${d.line}`}`;
 		if (d.file === undefined || !join(REPO_ROOT, d.file).endsWith(module)) {
 			count(OUTSIDE_CAUSE.name, `${where} ${d.code}`);
@@ -125,7 +156,8 @@ export async function portableConformance(grammar: string): Promise<ConformanceR
 	const typed = await writeTypedModule(grammar);
 	if (typed === undefined) return undefined;
 	const diagnostics = parseTypeCheckDiagnostics(typeCheckOutput('pnpm', ['exec', 'tsrs', '-p', join(typedDir(grammar), PORTABLE_TYPED_TSCONFIG), '--noEmit'], REPO_ROOT));
-	return { grammar, ...classify(diagnostics, portableTypedPath(grammar), typed.unemitted), unemitted: typed.unemitted };
+	const typeTests = portableTypeTests(grammar);
+	return { grammar, ...classify(diagnostics, portableTypedPath(grammar), typed.unemitted, typeTests), unemitted: typed.unemitted, typeTests: typeTestErrors(diagnostics, typeTests) };
 }
 
 export function formatConformance(report: ConformanceReport): string {
@@ -136,6 +168,7 @@ export function formatConformance(report: ConformanceReport): string {
 		if (cause.name === UNEMITTED_CAUSE.name) for (const u of report.unemitted) lines.push(`        ${u.kind} as ${u.vocab}${u.member === undefined ? '' : `.${u.member}`}: ${u.reason}`);
 		else if (cause.example !== undefined) lines.push(`        e.g. ${cause.example}`);
 	}
+	for (const test of report.typeTests) lines.push(`  type test ${test.file}: ${test.errors} errors${test.example === undefined ? '' : `\n        e.g. ${test.example}`}`);
 	return lines.join('\n');
 }
 

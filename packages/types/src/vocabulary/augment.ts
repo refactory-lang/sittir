@@ -363,7 +363,7 @@ declare module './declaration.ts' {
 			>;
 		}
 		interface Constant<G extends GrammarContext<G>> {
-			readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G>['type']>;
+			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Constant<G>['type']>;
 		}
 		namespace Constant {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Constant.Private<G> {}

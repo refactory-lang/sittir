@@ -25,6 +25,14 @@ export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { 
  */
 export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
 
+/**
+ * `T` as one form a build accepts: the members `R` given, and the members `A` left out. A path whose forms differ by
+ * what they need is the union of its forms, so a build the types admit is one the runtime picks a form for.
+ */
+export type RequiredBy<T, R extends PropertyKey, A extends PropertyKey = never> = Omit<T, (R | A) & keyof T> & {
+	readonly [P in R & keyof T]-?: Exclude<T[P], undefined>;
+} & { readonly [P in A & keyof T]?: never };
+
 declare const flag: unique symbol;
 
 export type Flag = typeof flag;

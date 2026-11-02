@@ -2,10 +2,11 @@ import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
+import { PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
 import { readableEntries } from '@sittir/common/engine';
-import type { PortableCondition } from '@sittir/types';
+import type { PortableBuildPath, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { fixedTextKinds, hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 
@@ -15,6 +16,7 @@ export interface PortableTypedInput {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
+	readonly picks: Readonly<Record<string, PortableBuildPath>>;
 }
 
 export interface PortableTypedUnemitted {
@@ -24,15 +26,22 @@ export interface PortableTypedUnemitted {
 	readonly reason: string;
 }
 
+export interface PortableTypedExcludedForm {
+	readonly path: string;
+	readonly kind: number;
+	readonly absent: readonly string[];
+}
+
 export interface PortableTypedOutput {
 	readonly source: string;
 	readonly unemitted: readonly PortableTypedUnemitted[];
+	readonly excluded: readonly PortableTypedExcludedForm[];
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
 export const PORTABLE_TYPED_TSCONFIG = 'tsconfig.portable.json';
 
-export const PORTABLE_TYPED_TSCONFIG_TEXT = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [PORTABLE_TYPED_FILE] }, null, '\t')}\n`;
+export const PORTABLE_TYPED_TSCONFIG_TEXT = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [PORTABLE_TYPED_FILE, `../${PORTABLE_TYPE_TESTS}`] }, null, '\t')}\n`;
 
 const PRELUDE = [
 	'declare const low: unique symbol;',
@@ -118,9 +127,33 @@ const PRELUDE = [
 	'}'
 ];
 
-export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest }: PortableTypedInput): PortableTypedOutput {
+interface PathForms {
+	readonly forms: readonly string[];
+	readonly excluded: readonly PortableTypedExcludedForm[];
+}
+
+function formsOf(path: string, built: PortableBuildPath | undefined, base: string, required: ReadonlySet<string>): PathForms {
+	const arms = (built?.arms ?? []).map((arm) => {
+		const tests = arm.when.filter((test) => 'absent' in test);
+		return { arm, tests, required: tests.flatMap((test) => test.required), absent: tests.flatMap((test) => test.absent) };
+	});
+	if (arms.length === 0 || arms.some(({ tests }) => tests.length === 0)) return { forms: [base], excluded: [] };
+	const keys = (names: readonly string[]): string => (names.length === 0 ? 'never' : [...new Set(names)].sort().map(q).join(' | '));
+	const kept = arms.filter(({ absent }) => !absent.some((member) => required.has(member)));
+	const excluded = arms.filter((form) => !kept.includes(form)).map(({ arm, absent }) => ({ path, kind: arm.kind, absent: absent.filter((member) => required.has(member)) }));
+	return { forms: [...new Set(kept.map((form) => `gate.RequiredBy<${base}, ${keys(form.required)}, ${keys(form.absent)}>`))], excluded };
+}
+
+export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, picks }: PortableTypedInput): PortableTypedOutput {
 	const { model, vocabulary } = input;
 	const unemitted: PortableTypedUnemitted[] = [];
+	const excluded = new Map<string, PathForms>();
+	const formsAt = (path: string, base: string): readonly string[] => {
+		const declared = [...vocabulary.members(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member]));
+		const found = excluded.get(path) ?? formsOf(path, picks[path], base, new Set(declared));
+		excluded.set(path, found);
+		return found.forms;
+	};
 	const idOf = (kind: string): string | undefined => (hasCatalogEntry(kindEntries, kind) ? kindDiscriminantExpr(kind, nodeMap, kindEntries) : undefined);
 	const typeNameOf = (kind: string): string | undefined => nodeMap.nodes.get(kind)?.typeName;
 	const nodeOf = (kind: string): ModelNode | undefined => modelNode(model, kind);
@@ -153,7 +186,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const viewed = claimedPaths.filter((path) => claimedBy(path, (kind) => !textual(kind)));
 	const textPaths = claimedPaths.filter((path) => claimedBy(path, textual));
 	const roleArmsOf = (path: string): readonly string[] => [
-		...(viewed.includes(path) ? [interfaceOf(path)] : []),
+		...(viewed.includes(path) ? formsAt(path, interfaceOf(path)) : []),
 		...(textPaths.includes(path) ? [`Ctx['texts'][${q(path)}]`] : [])
 	];
 
@@ -246,13 +279,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		'',
 		"import type * as V from '../../types/src/vocabulary/index.ts';",
 		"import type { Flag } from '../../types/src/vocabulary/utils.ts';",
+		"import type * as gate from '../../types/src/vocabulary/utils.ts';",
 		"import type * as T from '../src/types.ts';",
 		"import { TSKindId } from '../src/kinds.ts';",
 		"import type { PortableTexts } from '../src/portable.ts';",
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
@@ -432,7 +466,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 			);
 		}
 	}
-	return { source: `${lines.join('\n').trimEnd()}\n`, unemitted };
+	return { source: `${lines.join('\n').trimEnd()}\n`, unemitted, excluded: [...excluded.values()].flatMap((found) => found.excluded) };
 }
 
 interface ContextInput {
@@ -509,9 +543,22 @@ function contextOf({ grammar, own, vocabulary, claimedPaths, roleArmsOf, textPat
 	return out;
 }
 
-function slotArmOf(own: Derivation, vocabulary: Vocabulary, model: GrammarInput['model'], tokenTypeOf: (kind: string) => string | undefined): (kind: string) => string {
+function slotArmOf(
+	own: Derivation,
+	vocabulary: Vocabulary,
+	model: GrammarInput['model'],
+	tokenTypeOf: (kind: string) => string | undefined,
+	formsAt: (path: string, base: string) => readonly string[]
+): (kind: string) => string {
 	const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
 	const qname = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
+	const setOf = (path: string): string => {
+		const forms = [...vocabulary.kinds.keys()]
+			.filter((member) => member === path || member.startsWith(`${path}.`))
+			.sort()
+			.map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
+		return forms.every(({ base, forms: [only, ...rest] }) => only === base && rest.length === 0) ? `V.${qname(path)}.Any<Ctx>` : forms.flatMap(({ forms: arms }) => arms).join(' | ');
+	};
 	return (k) => {
 		switch (armClass(k)) {
 			case 'scalar':
@@ -521,7 +568,7 @@ function slotArmOf(own: Derivation, vocabulary: Vocabulary, model: GrammarInput[
 			case 'unmapped':
 				return `V.Unmapped<'${k.slice(1, -1)}'>`;
 			case 'ref':
-				return k.startsWith('set:') ? `V.${qname(k.slice(4))}.Any<Ctx>` : `V.${qname(k)}<Ctx>`;
+				return k.startsWith('set:') ? setOf(k.slice(4)) : formsAt(k, `V.${qname(k)}<Ctx>`).join(' | ');
 			case 'text': {
 				if (k.startsWith('literal:')) return tokenTypeOf(k.slice(8)) ?? 'string';
 				return patterns.has(k.slice(5)) ? 'string' : q(k.slice(5));
