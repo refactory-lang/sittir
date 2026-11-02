@@ -23,7 +23,10 @@ import {
 	holdReadItems,
 	storedElements,
 	ownerView,
+	ownerRead,
 	ownerElements,
+	isCoordinate,
+	readNode,
 	listOption,
 	rebuilt,
 	renderText,
@@ -145,7 +148,9 @@ function wrapSimpleStatements$listRead(this: { readonly elements: () => unknown 
 }
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle): T.SimpleStatements.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.SimpleStatements as const,
@@ -216,7 +221,10 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapSimpleStatements$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapSimpleStatements$listRead)
+	);
 	return node as unknown as T.SimpleStatements.Parsed;
 }
 
@@ -225,7 +233,9 @@ function wrapImportStatement$listRead(this: { readonly names: () => unknown }): 
 }
 export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): T.ImportStatement.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._names, '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(data._names, '_name', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.ImportStatement as const,
@@ -289,7 +299,10 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapImportStatement$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapImportStatement$listRead)
+	);
 	return node as unknown as T.ImportStatement.Parsed;
 }
 
@@ -1472,7 +1485,9 @@ function wrapParameters$listRead(this: { readonly elements: () => unknown }): re
 }
 export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Parameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.Parameters as const,
@@ -1537,7 +1552,10 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapParameters$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapParameters$listRead)
+	);
 	return node as unknown as T.Parameters.Parsed;
 }
 
@@ -1546,7 +1564,9 @@ function wrapLambdaParameters$listRead(this: { readonly parametersElements: () =
 }
 export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle): T.LambdaParameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._parameters_elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._parameters_elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.LambdaParameters as const,
@@ -1616,7 +1636,10 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapLambdaParameters$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapLambdaParameters$listRead)
+	);
 	return node as unknown as T.LambdaParameters.Parsed;
 }
 
@@ -1911,7 +1934,9 @@ function wrapTypeParameter$listRead(this: { readonly types: () => unknown }): re
 }
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._types, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._types, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameter as const,
@@ -1975,7 +2000,10 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapTypeParameter$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapTypeParameter$listRead)
+	);
 	return node as unknown as T.TypeParameter.Parsed;
 }
 
@@ -2021,7 +2049,9 @@ function wrapArgumentList$listRead(this: { readonly arguments: () => unknown }):
 }
 export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.ArgumentList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._arguments, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._arguments, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.ArgumentList as const,
@@ -2089,7 +2119,10 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapArgumentList$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapArgumentList$listRead)
+	);
 	return node as unknown as T.ArgumentList.Parsed;
 }
 
@@ -2542,7 +2575,9 @@ function wrapDictPattern$listRead(this: { readonly elements: () => unknown }): r
 }
 export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.DictPattern as const,
@@ -2607,7 +2642,10 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapDictPattern$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapDictPattern$listRead)
+	);
 	return node as unknown as T.DictPattern.Parsed;
 }
 
@@ -2993,7 +3031,9 @@ function wrapTuplePattern$listRead(this: { readonly elements: () => unknown }): 
 }
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.TuplePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.TuplePattern as const,
@@ -3058,7 +3098,10 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapTuplePattern$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapTuplePattern$listRead)
+	);
 	return node as unknown as T.TuplePattern.Parsed;
 }
 
@@ -3067,7 +3110,9 @@ function wrapListPattern$listRead(this: { readonly elements: () => unknown }): r
 }
 export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.ListPattern as const,
@@ -3132,7 +3177,10 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapListPattern$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapListPattern$listRead)
+	);
 	return node as unknown as T.ListPattern.Parsed;
 }
 
@@ -4311,7 +4359,9 @@ function wrapList$listRead(this: { readonly elements: () => unknown }): readonly
 }
 export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.List as const,
@@ -4376,7 +4426,10 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapList$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapList$listRead)
+	);
 	return node as unknown as T.List.Parsed;
 }
 
@@ -4385,7 +4438,9 @@ function wrapSet$listRead(this: { readonly elements: () => unknown }): readonly 
 }
 export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.Set as const,
@@ -4449,7 +4504,10 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapSet$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapSet$listRead)
+	);
 	return node as unknown as T.Set.Parsed;
 }
 
@@ -4458,7 +4516,9 @@ function wrapTuple$listRead(this: { readonly elements: () => unknown }): readonl
 }
 export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.Tuple as const,
@@ -4523,7 +4583,10 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapTuple$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapTuple$listRead)
+	);
 	return node as unknown as T.Tuple.Parsed;
 }
 
@@ -4532,7 +4595,9 @@ function wrapDictionary$listRead(this: { readonly elements: () => unknown }): re
 }
 export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictionary.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.Dictionary as const,
@@ -4597,7 +4662,10 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapDictionary$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapDictionary$listRead)
+	);
 	return node as unknown as T.Dictionary.Parsed;
 }
 
@@ -6332,7 +6400,9 @@ function wrapCaseTuplePattern$listRead(this: { readonly elements: () => unknown 
 }
 export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle): T.CaseTuplePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.CaseTuplePattern as const,
@@ -6400,7 +6470,10 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapCaseTuplePattern$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapCaseTuplePattern$listRead)
+	);
 	return node as unknown as T.CaseTuplePattern.Parsed;
 }
 
@@ -6409,7 +6482,9 @@ function wrapCaseListPattern$listRead(this: { readonly elements: () => unknown }
 }
 export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): T.CaseListPattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.CaseListPattern as const,
@@ -6477,7 +6552,10 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapCaseListPattern$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapCaseListPattern$listRead)
+	);
 	return node as unknown as T.CaseListPattern.Parsed;
 }
 
@@ -6692,7 +6770,9 @@ function wrapPrintStatementPlain$listRead(this: { readonly printArguments: () =>
 }
 export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeHandle): T.PrintStatementPlain.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._print_arguments, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._print_arguments, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
@@ -6759,7 +6839,10 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapPrintStatementPlain$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapPrintStatementPlain$listRead)
+	);
 	return node as unknown as T.PrintStatementPlain.Parsed;
 }
 
@@ -6771,7 +6854,9 @@ export function wrapParenthesizedImportList(
 	tree: TreeHandle
 ): T.ParenthesizedImportList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._import_list, '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(data._import_list, '_name', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.ParenthesizedImportList as const,
@@ -6838,7 +6923,10 @@ export function wrapParenthesizedImportList(
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapParenthesizedImportList$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapParenthesizedImportList$listRead)
+	);
 	return node as unknown as T.ParenthesizedImportList.Parsed;
 }
 
@@ -7927,7 +8015,9 @@ function wrapWithClauseParen$listRead(this: { readonly items: () => unknown }): 
 }
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._items, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._items, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
@@ -7994,7 +8084,10 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapWithClauseParen$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapWithClauseParen$listRead)
+	);
 	return node as unknown as T.WithClauseParen.Parsed;
 }
 
@@ -8075,7 +8168,9 @@ function wrapSuiteInline$listRead(this: { readonly elements: () => unknown }): r
 }
 export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteInline.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
 	const node = {
 		...data,
 		$type: TSKindId.SuiteInline as const,
@@ -8158,7 +8253,10 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
 	};
-	holdReadItems(node, wrapSuiteInline$listRead);
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapSuiteInline$listRead)
+	);
 	return node as unknown as T.SuiteInline.Parsed;
 }
 

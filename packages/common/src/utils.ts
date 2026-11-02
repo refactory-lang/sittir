@@ -528,6 +528,16 @@ export function ownerView(stored: unknown, count: string, hydrate?: (list: objec
 	return { list: source as Record<string, unknown>, stored: items, length: items.length };
 }
 
+export function ownerRead<N extends object>(
+	view: OwnerView,
+	hydrate: (value: unknown) => unknown,
+	wrapper: ListViewWrapper | undefined,
+	read: (this: N) => readonly unknown[]
+): (this: N) => readonly unknown[] {
+	const stored = view.stored;
+	return stored === undefined ? read : () => listItems(stored.map(hydrate), wrapper);
+}
+
 /** The elements a list stores: its array, or the one element it holds, or none. */
 export function storedElements(stored: unknown): readonly unknown[] {
 	return Array.isArray(stored) ? stored : stored == null ? [] : [stored];

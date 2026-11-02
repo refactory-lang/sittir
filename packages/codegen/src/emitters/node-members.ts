@@ -198,10 +198,14 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 						`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
 						`  if (listView.length === undefined) refuseReadStub(${JSON.stringify(storage)});`
 					]
-				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
+				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => (isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)));`],
 		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options],
 		tail: LIST_SYMBOL_LINES,
-		postlude: [environment === 'factory' ? '  holdListItems(node, heldItems(listView.list));' : listReadPostlude(prefix)]
+		postlude: [
+			environment === 'factory'
+				? '  holdListItems(node, heldItems(listView.list));'
+				: `  holdReadItems(node, ownerRead(listView, (value) => hydrate(value, tree), ${wrapper.ref}, ${prefix}$listRead));`
+		]
 	};
 }
 
