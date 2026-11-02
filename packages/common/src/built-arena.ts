@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, listEdges, NO_EDGES, setTriviaOf, triviaOf } from './node-data.ts';
+import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, listEdges, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -81,6 +81,7 @@ export type WriteLeafSites = (leaf: object, sites: readonly number[]) => void;
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 10;
 const ENTRY_HEAD_BYTES = 4;
+const DEFERRED_PRUNE = 256;
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -246,6 +247,9 @@ export class BuiltArena {
 	readonly #minted: number[] = [];
 	readonly #moved: number[] = [];
 	readonly #undos: (() => void)[] = [];
+	readonly #deferred: (Map<number, () => void> | undefined)[] = [];
+	#deferredCount = 0;
+	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
 	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
@@ -271,8 +275,12 @@ export class BuiltArena {
 				const sided = (this.#sided[chunkOf(at, format)] ??= new Map());
 				sided.set(at, (sided.get(at) ?? 0) | SIDE_BITS[side]);
 			},
-			unitSides: (at) => (this.#unitSided[chunkOf(at, format)]?.has(at) === true ? readUnits(this.tree, trivia.unitSides(at)) : []),
+			unitSides: (at) => {
+				this.settle(at);
+				return this.#unitSided[chunkOf(at, format)]?.has(at) === true ? readUnits(this.tree, trivia.unitSides(at)) : [];
+			},
 			writeUnitSides: (at, units) => {
+				this.#undefer(at);
 				trivia.writeUnitSides(at, units);
 				(this.#unitSided[chunkOf(at, format)] ??= new Set()).add(at);
 			}
@@ -326,7 +334,62 @@ export class BuiltArena {
 			this.#sided[chunk] = undefined;
 			this.#unitSided[chunk] = undefined;
 			this.#leafSited[chunk] = undefined;
+			this.#deferredCount -= this.#deferred[chunk]?.size ?? 0;
+			this.#deferred[chunk] = undefined;
 		}
+	}
+
+	defer(at: number, work: () => void): void {
+		const deferred = (this.#deferred[chunkOf(at, this.format)] ??= new Map());
+		const earlier = deferred.get(at);
+		if (earlier === undefined) this.#deferredCount++;
+		deferred.set(
+			at,
+			earlier === undefined
+				? work
+				: () => {
+						earlier();
+						work();
+					}
+		);
+		if (this.#deferredCount >= this.#pruneAt) this.#prune();
+	}
+
+	settle(at?: number): void {
+		if (this.#deferredCount === 0) return;
+		if (at !== undefined) {
+			const work = this.#undefer(at);
+			if (work !== undefined && this.#siteAlive(at)) work();
+			return;
+		}
+		for (let chunk = 0; chunk < this.#deferred.length; chunk++) {
+			const deferred = this.#deferred[chunk];
+			if (deferred === undefined) continue;
+			this.#deferred[chunk] = undefined;
+			this.#deferredCount -= deferred.size;
+			for (const [held, work] of deferred) if (this.#siteAlive(held)) work();
+		}
+	}
+
+	#undefer(at: number): (() => void) | undefined {
+		const deferred = this.#deferred[chunkOf(at, this.format)];
+		const work = deferred?.get(at);
+		if (work === undefined) return undefined;
+		deferred!.delete(at);
+		this.#deferredCount--;
+		return work;
+	}
+
+	#prune(): void {
+		for (const deferred of this.#deferred) {
+			if (deferred === undefined) continue;
+			for (const held of deferred.keys()) {
+				if (this.#siteAlive(held)) continue;
+				deferred.delete(held);
+				this.#deferredCount--;
+			}
+		}
+		this.#pruneAt = Math.max(DEFERRED_PRUNE, 2 * this.#deferredCount);
 	}
 
 	engine(): EngineIdentity {
@@ -1045,10 +1108,10 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 
 /** Writes the cell at `cell` of the drafted `record`, its slot `word`, holding `value`. */
 export function storeCell(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, value: unknown): void {
-	record.data[record.base + cell] = cellOf(arena, value, record, word, 0, NO_EDGES);
+	record.data[record.base + cell] = cellOf(arena, value, record, word, 0);
 }
 
-function cellOf(arena: BuiltArena, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): number {
+function cellOf(arena: BuiltArena, value: unknown, record: BuiltDraft, word: number, item: number): number {
 	if (value === undefined || value === null) return 0;
 	if (typeof value === 'number') return unitCell(value, arena.format);
 	if (typeof value === 'string') {
@@ -1057,16 +1120,16 @@ function cellOf(arena: BuiltArena, value: unknown, record: BuiltDraft, word: num
 		return builtCell(entry.at);
 	}
 	const ref = builtRefOf(value);
-	if (ref === undefined && typeof value === 'object') return parsedCell(arena, value, changed);
+	if (ref === undefined && typeof value === 'object') return parsedCell(arena, value);
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
 	if (ref.at !== undefined) {
 		arena.hold(ref.at);
-		return builtCell(ref.at, changedWord(changed));
+		return builtCell(ref.at);
 	}
 	const entry = arena.placeEntry(value as object, (value as { readonly $type: number }).$type, ref.text);
 	arena.holdText(entry.at);
 	(record.placed ??= []).push(value, word, item);
-	return builtCell(entry.at, changedWord(changed));
+	return builtCell(entry.at);
 }
 
 /** Sets the presence bits `mask` of the word at `at` of a fresh record. */
@@ -1080,7 +1143,7 @@ export function storeFlag(data: WritableWords, at: number, mask: number): void {
  *
  * @throws For a node no read produced, or one read through an engine that does not read trees as records.
  */
-function parsedCell(arena: BuiltArena, value: object, changed: ChangedEdges): number {
+function parsedCell(arena: BuiltArena, value: object): number {
 	const coordinate = isCoordinate(value) ? value : coordinateOf(value);
 	const token = treeTokenOf(value);
 	const tree = coordinate === undefined ? undefined : treeOf(value);
@@ -1092,7 +1155,7 @@ function parsedCell(arena: BuiltArena, value: object, changed: ChangedEdges): nu
 	if (kind === undefined) throw new Error('a built record cannot name a parsed node whose coordinate stamps no kind');
 	const index = decodeIndex(coordinate.$treeHandle);
 	const record = recordOf(value) ?? rowRecordOf(tree.records, index, kind) ?? 0;
-	return builtCell(arena.link(kind, tree as TreeHandle & { readonly id: number }, token, index, coordinate.$end, record, coordinate.$span), changedWord(changed));
+	return builtCell(arena.link(kind, tree as TreeHandle & { readonly id: number }, token, index, coordinate.$end, record, coordinate.$span));
 }
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {
@@ -1114,8 +1177,16 @@ export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, w
 	if (items.length === 0) return;
 	const run = arena.run(items.length);
 	record.data[record.base + cell] = builtCell(run.at);
+	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n);
+	arena.defer(run.at, () => markChangedEdges(arena, run, items));
+}
+
+function markChangedEdges(arena: BuiltArena, run: BuiltPlace, items: readonly unknown[]): void {
 	const edges = listEdges(items, arena.kinds);
-	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, edges?.[n] ?? NO_EDGES);
+	for (let n = 0; edges !== undefined && n < items.length; n++) {
+		const changed = changedWord(edges[n]!);
+		if (changed !== 0) run.data[run.base + 1 + n] = (run.data[run.base + 1 + n]! | changed) >>> 0;
+	}
 }
 
 export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {

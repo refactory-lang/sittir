@@ -229,6 +229,12 @@ export function writeUnitSides(node: object, units: readonly UnitSidesData[]): v
 }
 
 function carryUnitSides(from: object, to: object): void {
+	const built = builtRefOf(to);
+	if (built?.at !== undefined && builtRefOf(from) === undefined) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
+	else carryUnitSidesNow(from, to);
+}
+
+function carryUnitSidesNow(from: object, to: object): void {
 	const units = (builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from)) as readonly UnitSidesData[] | undefined;
 	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
 }
