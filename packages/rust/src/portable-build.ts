@@ -257,6 +257,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [437, 'attributeItems'],
@@ -273,6 +274,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [437, 'expression'],
@@ -322,6 +324,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [190, 'content'],
@@ -356,6 +359,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [192, 'path'],
@@ -392,6 +396,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [368, 'value'],
@@ -432,6 +437,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [368, 'arguments'],
@@ -466,6 +472,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [191, 'content'],
@@ -500,6 +507,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -565,6 +573,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [217, 'typeParameters'],
@@ -631,6 +640,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [217, 'type'],
@@ -695,6 +705,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [218, 'type'],
@@ -760,6 +771,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [249, 'bounds'],
@@ -807,6 +819,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [398, 'attributes'],
@@ -823,6 +836,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [398, 'body'],
@@ -842,6 +856,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'pattern'],
@@ -876,6 +891,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'condition'],
@@ -927,6 +943,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [397, 'attributes'],
@@ -943,6 +960,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [397, 'body'],
@@ -977,6 +995,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'pattern'],
@@ -1011,6 +1030,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'condition'],
@@ -1067,6 +1087,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [295, 'attributes'],
@@ -1083,6 +1104,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [295, 'body'],
@@ -1117,6 +1139,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'pattern'],
@@ -1151,6 +1174,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [296, 'condition'],
@@ -1211,6 +1235,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [291, 'body'],
@@ -1245,6 +1270,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [228, 'name'],
@@ -1271,6 +1297,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [228, 'alias'],
@@ -1312,6 +1339,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [227, 'useClauses'],
@@ -1364,6 +1392,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [226, 'path'],
@@ -1390,6 +1419,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [226, 'list'],
@@ -1425,6 +1455,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [229, 'useWildcardGroup'],
@@ -1454,6 +1485,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [288, 'pattern'],
@@ -1483,6 +1515,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [288, 'value'],
@@ -1532,6 +1565,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [289, 'left'],
@@ -1563,6 +1597,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [289, 'rights'],
@@ -1613,6 +1648,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [241, 'lifetimes'],
@@ -1658,6 +1694,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [181, 'left'],
@@ -1673,6 +1710,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [181, 'right'],
@@ -1708,6 +1746,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [211, 'wherePredicates'],
@@ -1748,6 +1787,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [212, 'left'],
@@ -1795,6 +1835,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -1861,6 +1902,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [340, 'content'],
@@ -1897,6 +1939,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [402, 'doc'],
@@ -1958,6 +2001,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [403, 'doc'],
@@ -2049,6 +2093,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [337, 'content'],
@@ -2088,6 +2133,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [400, 'doc'],
@@ -2151,6 +2197,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [401, 'doc'],
@@ -2273,6 +2320,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'name'],
@@ -2294,6 +2342,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'type'],
@@ -2340,6 +2389,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'value'],
@@ -2389,6 +2439,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'name'],
@@ -2410,6 +2461,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'type'],
@@ -2456,6 +2508,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'value'],
@@ -2536,6 +2589,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'name'],
@@ -2557,6 +2611,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'type'],
@@ -2603,6 +2658,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'value'],
@@ -2670,6 +2726,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'name'],
@@ -2691,6 +2748,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'type'],
@@ -2737,6 +2795,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'value'],
@@ -2817,6 +2876,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'name'],
@@ -2838,6 +2898,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'type'],
@@ -2884,6 +2945,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [205, 'value'],
@@ -2928,6 +2990,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -3025,6 +3088,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'name'],
@@ -3047,6 +3111,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [198, 'typeParameters'],
@@ -3114,6 +3179,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'whereClause'],
@@ -3216,6 +3282,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'name'],
@@ -3238,6 +3305,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [198, 'typeParameters'],
@@ -3305,6 +3373,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'whereClause'],
@@ -3438,6 +3507,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'name'],
@@ -3460,6 +3530,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [198, 'typeParameters'],
@@ -3527,6 +3598,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'whereClause'],
@@ -3647,6 +3719,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'name'],
@@ -3669,6 +3742,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [198, 'typeParameters'],
@@ -3736,6 +3810,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'whereClause'],
@@ -3869,6 +3944,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'name'],
@@ -3891,6 +3967,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [198, 'typeParameters'],
@@ -3958,6 +4035,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [198, 'whereClause'],
@@ -4055,6 +4133,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -4152,6 +4231,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -4174,6 +4254,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -4190,6 +4271,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -4239,6 +4321,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -4261,6 +4344,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -4346,6 +4430,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -4426,6 +4511,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -4448,6 +4534,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -4533,6 +4620,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -4600,6 +4688,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -4622,6 +4711,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -4707,6 +4797,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -4787,6 +4878,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -4809,6 +4901,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -4894,6 +4987,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -4938,6 +5032,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -5035,6 +5130,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -5057,6 +5153,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -5126,6 +5223,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -5185,6 +5283,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -5207,6 +5306,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -5292,6 +5392,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -5381,6 +5482,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -5403,6 +5505,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -5488,6 +5591,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -5564,6 +5668,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -5586,6 +5691,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -5671,6 +5777,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -5760,6 +5867,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -5782,6 +5890,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -5867,6 +5976,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -5911,6 +6021,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -6017,6 +6128,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -6039,6 +6151,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -6071,6 +6184,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -6130,6 +6244,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -6152,6 +6267,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -6237,6 +6353,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -6326,6 +6443,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -6348,6 +6466,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -6433,6 +6552,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -6509,6 +6629,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -6531,6 +6652,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -6616,6 +6738,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -6705,6 +6828,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'name'],
@@ -6727,6 +6851,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [200, 'body'],
@@ -6812,6 +6937,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [200, 'value'],
@@ -6856,6 +6982,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -6963,6 +7090,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [378, 'typeParameters'],
@@ -7030,6 +7158,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [378, 'traitClause'],
@@ -7045,6 +7174,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [378, 'type'],
@@ -7091,6 +7221,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [378, 'whereClause'],
@@ -7135,6 +7266,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [377, 'typeParameters'],
@@ -7202,6 +7334,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'traitClause'],
@@ -7218,6 +7351,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'type'],
@@ -7264,6 +7398,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'whereClause'],
@@ -7279,6 +7414,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [377, 'body'],
@@ -7346,6 +7482,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [377, 'typeParameters'],
@@ -7413,6 +7550,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'traitClause'],
@@ -7429,6 +7567,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'type'],
@@ -7475,6 +7614,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [377, 'whereClause'],
@@ -7490,6 +7630,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [377, 'body'],
@@ -7533,6 +7674,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [375, 'trait'],
@@ -7606,6 +7748,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'name'],
@@ -7627,6 +7770,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'type'],
@@ -7688,6 +7832,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [432, 'attributeItems'],
@@ -7704,6 +7849,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [432, 'type'],
@@ -7769,6 +7915,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'name'],
@@ -7790,6 +7937,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'type'],
@@ -7882,6 +8030,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [432, 'attributeItems'],
@@ -7898,6 +8047,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [432, 'type'],
@@ -7994,6 +8144,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'name'],
@@ -8015,6 +8166,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'type'],
@@ -8094,6 +8246,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [432, 'attributeItems'],
@@ -8110,6 +8263,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [432, 'type'],
@@ -8193,6 +8347,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'name'],
@@ -8214,6 +8369,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'type'],
@@ -8306,6 +8462,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [432, 'attributeItems'],
@@ -8322,6 +8479,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [432, 'type'],
@@ -8418,6 +8576,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'name'],
@@ -8439,6 +8598,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [202, 'type'],
@@ -8498,6 +8658,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -8592,6 +8753,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [432, 'attributeItems'],
@@ -8608,6 +8770,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [432, 'type'],
@@ -8667,6 +8830,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -8765,6 +8929,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'name'],
@@ -8854,6 +9019,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'returnType'],
@@ -8900,6 +9066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'whereClause'],
@@ -8915,6 +9082,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'body'],
@@ -8935,6 +9103,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -8967,6 +9136,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -9042,6 +9212,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -9108,6 +9279,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -9225,6 +9397,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'name'],
@@ -9314,6 +9487,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'returnType'],
@@ -9360,6 +9534,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'whereClause'],
@@ -9375,6 +9550,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'body'],
@@ -9395,6 +9571,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -9427,6 +9604,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -9502,6 +9680,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -9568,6 +9747,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -9716,6 +9896,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'name'],
@@ -9805,6 +9986,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'returnType'],
@@ -9851,6 +10033,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'whereClause'],
@@ -9866,6 +10049,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'body'],
@@ -9886,6 +10070,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -9918,6 +10103,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -9993,6 +10179,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -10059,6 +10246,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -10194,6 +10382,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'name'],
@@ -10283,6 +10472,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'returnType'],
@@ -10329,6 +10519,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'whereClause'],
@@ -10344,6 +10535,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'body'],
@@ -10364,6 +10556,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -10396,6 +10589,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -10471,6 +10665,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -10537,6 +10732,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -10685,6 +10881,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'name'],
@@ -10774,6 +10971,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'returnType'],
@@ -10820,6 +11018,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'whereClause'],
@@ -10835,6 +11034,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [208, 'body'],
@@ -10855,6 +11055,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -10892,6 +11093,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -10961,6 +11163,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11036,6 +11239,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11102,6 +11306,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -11238,6 +11443,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'functionModifiers'],
@@ -11270,6 +11476,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'name'],
@@ -11292,6 +11499,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'typeParameters'],
@@ -11359,6 +11567,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'returnType'],
@@ -11405,6 +11614,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'whereClause'],
@@ -11429,6 +11639,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11504,6 +11715,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11570,6 +11782,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -11619,6 +11832,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'functionModifiers'],
@@ -11651,6 +11865,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'name'],
@@ -11673,6 +11888,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'typeParameters'],
@@ -11740,6 +11956,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'returnType'],
@@ -11786,6 +12003,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'whereClause'],
@@ -11810,6 +12028,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11885,6 +12104,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -11951,6 +12171,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -12031,6 +12252,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'functionModifiers'],
@@ -12063,6 +12285,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'name'],
@@ -12085,6 +12308,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'typeParameters'],
@@ -12152,6 +12376,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'returnType'],
@@ -12198,6 +12423,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'whereClause'],
@@ -12222,6 +12448,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -12297,6 +12524,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -12363,6 +12591,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -12430,6 +12659,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'functionModifiers'],
@@ -12462,6 +12692,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'name'],
@@ -12484,6 +12715,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'typeParameters'],
@@ -12551,6 +12783,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'returnType'],
@@ -12597,6 +12830,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'whereClause'],
@@ -12621,6 +12855,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -12696,6 +12931,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -12762,6 +12998,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -12842,6 +13079,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'functionModifiers'],
@@ -12874,6 +13112,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'name'],
@@ -12896,6 +13135,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [209, 'typeParameters'],
@@ -12963,6 +13203,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'returnType'],
@@ -13009,6 +13250,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [209, 'whereClause'],
@@ -13038,6 +13280,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -13107,6 +13350,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -13182,6 +13426,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -13248,6 +13493,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -13314,6 +13560,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'name'],
@@ -13336,6 +13583,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'typeParameters'],
@@ -13403,6 +13651,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'whereClause'],
@@ -13418,6 +13667,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'body'],
@@ -13456,6 +13706,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -13535,6 +13786,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'name'],
@@ -13557,6 +13809,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'typeParameters'],
@@ -13624,6 +13877,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'whereClause'],
@@ -13639,6 +13893,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'body'],
@@ -13677,6 +13932,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -13787,6 +14043,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'name'],
@@ -13809,6 +14066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'typeParameters'],
@@ -13876,6 +14134,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'whereClause'],
@@ -13891,6 +14150,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'body'],
@@ -13929,6 +14189,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -14026,6 +14287,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'name'],
@@ -14048,6 +14310,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'typeParameters'],
@@ -14115,6 +14378,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'whereClause'],
@@ -14130,6 +14394,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'body'],
@@ -14168,6 +14433,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -14278,6 +14544,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'name'],
@@ -14300,6 +14567,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'typeParameters'],
@@ -14367,6 +14635,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [214, 'whereClause'],
@@ -14382,6 +14651,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [214, 'body'],
@@ -14420,6 +14690,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -14480,6 +14751,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -14591,6 +14863,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [416, 'name'],
@@ -14613,6 +14886,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [416, 'macroRules'],
@@ -14658,6 +14932,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [418, 'name'],
@@ -14680,6 +14955,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [418, 'macroRules'],
@@ -14724,6 +15000,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [417, 'name'],
@@ -14746,6 +15023,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [417, 'macroRules'],
@@ -14795,6 +15073,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [418, 'name'],
@@ -14817,6 +15096,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [418, 'macroRules'],
@@ -14862,6 +15142,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [417, 'name'],
@@ -14884,6 +15165,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [417, 'macroRules'],
@@ -14929,6 +15211,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [416, 'name'],
@@ -14951,6 +15234,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [416, 'macroRules'],
@@ -14996,6 +15280,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'name'],
@@ -15085,6 +15370,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'returnType'],
@@ -15131,6 +15417,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'whereClause'],
@@ -15146,6 +15433,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'body'],
@@ -15166,6 +15454,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -15198,6 +15487,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -15232,6 +15522,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -15307,6 +15598,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -15456,6 +15748,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'name'],
@@ -15545,6 +15838,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'returnType'],
@@ -15591,6 +15885,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'whereClause'],
@@ -15606,6 +15901,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'body'],
@@ -15626,6 +15922,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -15658,6 +15955,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -15692,6 +15990,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -15767,6 +16066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -15947,6 +16247,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'name'],
@@ -16036,6 +16337,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'returnType'],
@@ -16082,6 +16384,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'whereClause'],
@@ -16097,6 +16400,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'body'],
@@ -16117,6 +16421,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -16149,6 +16454,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -16183,6 +16489,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -16258,6 +16565,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -16425,6 +16733,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'name'],
@@ -16514,6 +16823,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'returnType'],
@@ -16560,6 +16870,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'whereClause'],
@@ -16575,6 +16886,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'body'],
@@ -16595,6 +16907,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -16627,6 +16940,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -16661,6 +16975,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -16736,6 +17051,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -16916,6 +17232,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'name'],
@@ -17005,6 +17322,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'returnType'],
@@ -17051,6 +17369,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'whereClause'],
@@ -17066,6 +17385,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [480, 'body'],
@@ -17086,6 +17406,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -17118,6 +17439,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -17157,6 +17479,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -17226,6 +17549,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -17301,6 +17625,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -17469,6 +17794,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'functionModifiers'],
@@ -17501,6 +17827,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'name'],
@@ -17523,6 +17850,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'typeParameters'],
@@ -17590,6 +17918,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'returnType'],
@@ -17636,6 +17965,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'whereClause'],
@@ -17660,6 +17990,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -17735,6 +18066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -17801,6 +18133,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -17850,6 +18183,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'functionModifiers'],
@@ -17882,6 +18216,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'name'],
@@ -17904,6 +18239,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'typeParameters'],
@@ -17971,6 +18307,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'returnType'],
@@ -18017,6 +18354,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'whereClause'],
@@ -18041,6 +18379,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18116,6 +18455,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18182,6 +18522,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -18262,6 +18603,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'functionModifiers'],
@@ -18294,6 +18636,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'name'],
@@ -18316,6 +18659,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'typeParameters'],
@@ -18383,6 +18727,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'returnType'],
@@ -18429,6 +18774,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'whereClause'],
@@ -18453,6 +18799,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18528,6 +18875,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18594,6 +18942,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -18661,6 +19010,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'functionModifiers'],
@@ -18693,6 +19043,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'name'],
@@ -18715,6 +19066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'typeParameters'],
@@ -18782,6 +19134,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'returnType'],
@@ -18828,6 +19181,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'whereClause'],
@@ -18852,6 +19206,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18927,6 +19282,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -18993,6 +19349,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -19073,6 +19430,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'functionModifiers'],
@@ -19105,6 +19463,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'name'],
@@ -19127,6 +19486,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [483, 'typeParameters'],
@@ -19194,6 +19554,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'returnType'],
@@ -19240,6 +19601,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [483, 'whereClause'],
@@ -19269,6 +19631,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -19338,6 +19701,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -19413,6 +19777,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -19479,6 +19844,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [441, 'receiver'],
@@ -19545,6 +19911,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [384, 'name'],
@@ -19580,6 +19947,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [385, 'name'],
@@ -19653,6 +20021,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [395, 'externModifier'],
@@ -19705,6 +20074,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [396, 'externModifier'],
@@ -19795,6 +20165,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [384, 'name'],
@@ -19861,6 +20232,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [385, 'name'],
@@ -19965,6 +20337,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [384, 'name'],
@@ -20018,6 +20391,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [385, 'name'],
@@ -20109,6 +20483,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [384, 'name'],
@@ -20175,6 +20550,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [385, 'name'],
@@ -20279,6 +20655,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [384, 'name'],
@@ -20314,6 +20691,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -20406,6 +20784,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [385, 'name'],
@@ -20474,6 +20853,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -20571,6 +20951,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [439, 'type'],
@@ -20645,6 +21026,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [476, 'content'],
@@ -20689,6 +21071,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [233, 'name'],
@@ -20718,6 +21101,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [233, 'type'],
@@ -20800,6 +21184,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [233, 'type'],
@@ -20886,6 +21271,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [439, 'type'],
@@ -20961,6 +21347,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [231, 'reference'],
@@ -20980,6 +21367,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [231, 'lifetime'],
@@ -21030,6 +21418,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [232, 'pattern'],
@@ -21087,6 +21476,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -21109,6 +21499,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -21189,6 +21580,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'name'],
@@ -21211,6 +21603,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'typeParameters'],
@@ -21278,6 +21671,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'whereClause'],
@@ -21293,6 +21687,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'body'],
@@ -21379,6 +21774,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -21401,6 +21797,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -21467,6 +21864,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -21499,6 +21897,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -21537,6 +21936,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'name'],
@@ -21559,6 +21959,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'typeParameters'],
@@ -21626,6 +22027,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'whereClause'],
@@ -21641,6 +22043,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'body'],
@@ -21759,6 +22162,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'name'],
@@ -21781,6 +22185,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'typeParameters'],
@@ -21848,6 +22253,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'whereClause'],
@@ -21863,6 +22269,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'body'],
@@ -21968,6 +22375,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'name'],
@@ -21990,6 +22398,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'typeParameters'],
@@ -22057,6 +22466,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'whereClause'],
@@ -22072,6 +22482,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'body'],
@@ -22190,6 +22601,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'name'],
@@ -22212,6 +22624,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'typeParameters'],
@@ -22279,6 +22692,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [423, 'whereClause'],
@@ -22294,6 +22708,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [423, 'body'],
@@ -22376,6 +22791,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -22473,6 +22889,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -22495,6 +22912,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -22561,6 +22979,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -22593,6 +23012,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -22627,6 +23047,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -22649,6 +23070,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -22715,6 +23137,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -22747,6 +23170,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -22812,6 +23236,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -22834,6 +23259,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -22900,6 +23326,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -22932,6 +23359,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -22984,6 +23412,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -23006,6 +23435,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -23072,6 +23502,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -23104,6 +23535,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -23169,6 +23601,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'name'],
@@ -23191,6 +23624,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'typeParameters'],
@@ -23257,6 +23691,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [424, 'body'],
@@ -23289,6 +23724,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [424, 'whereClause'],
@@ -23318,6 +23754,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -23415,6 +23852,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -23437,6 +23875,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -23522,6 +23961,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -23544,6 +23984,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -23660,6 +24101,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -23682,6 +24124,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -23785,6 +24228,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -23807,6 +24251,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -23923,6 +24368,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [425, 'name'],
@@ -23945,6 +24391,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [425, 'typeParameters'],
@@ -24025,6 +24472,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -24122,6 +24570,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'name'],
@@ -24144,6 +24593,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [207, 'typeParameters'],
@@ -24211,6 +24661,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'whereClause'],
@@ -24226,6 +24677,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'value'],
@@ -24272,6 +24724,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'trailingWhereClause'],
@@ -24306,6 +24759,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [215, 'name'],
@@ -24328,6 +24782,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [215, 'typeParameters'],
@@ -24395,6 +24850,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [215, 'whereClause'],
@@ -24415,6 +24871,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -24480,6 +24937,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'name'],
@@ -24502,6 +24960,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [207, 'typeParameters'],
@@ -24569,6 +25028,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'whereClause'],
@@ -24584,6 +25044,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'value'],
@@ -24630,6 +25091,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'trailingWhereClause'],
@@ -24695,6 +25157,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'name'],
@@ -24717,6 +25180,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [207, 'typeParameters'],
@@ -24784,6 +25248,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'whereClause'],
@@ -24799,6 +25264,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'value'],
@@ -24845,6 +25311,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'trailingWhereClause'],
@@ -24897,6 +25364,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'name'],
@@ -24919,6 +25387,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [207, 'typeParameters'],
@@ -24986,6 +25455,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'whereClause'],
@@ -25001,6 +25471,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'value'],
@@ -25047,6 +25518,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'trailingWhereClause'],
@@ -25112,6 +25584,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'name'],
@@ -25134,6 +25607,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [207, 'typeParameters'],
@@ -25201,6 +25675,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'whereClause'],
@@ -25216,6 +25691,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'value'],
@@ -25262,6 +25738,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [207, 'trailingWhereClause'],
@@ -25291,6 +25768,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -25388,6 +25866,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [221, 'name'],
@@ -25410,6 +25889,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [221, 'default'],
@@ -25460,6 +25940,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -25525,6 +26006,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [222, 'name'],
@@ -25545,6 +26027,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -25610,6 +26093,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [220, 'name'],
@@ -25631,6 +26115,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [220, 'type'],
@@ -25677,6 +26162,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [220, 'default'],
@@ -25720,6 +26206,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'name'],
@@ -25742,6 +26229,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'typeParameters'],
@@ -25809,6 +26297,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'whereClause'],
@@ -25824,6 +26313,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'body'],
@@ -25911,6 +26401,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'name'],
@@ -25933,6 +26424,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'typeParameters'],
@@ -26000,6 +26492,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'whereClause'],
@@ -26015,6 +26508,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'body'],
@@ -26133,6 +26627,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'name'],
@@ -26155,6 +26650,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'typeParameters'],
@@ -26222,6 +26718,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'whereClause'],
@@ -26237,6 +26734,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'body'],
@@ -26342,6 +26840,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'name'],
@@ -26364,6 +26863,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'typeParameters'],
@@ -26431,6 +26931,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'whereClause'],
@@ -26446,6 +26947,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'body'],
@@ -26564,6 +27066,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'name'],
@@ -26586,6 +27089,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'typeParameters'],
@@ -26653,6 +27157,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [197, 'whereClause'],
@@ -26668,6 +27173,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [197, 'body'],
@@ -26750,6 +27256,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -26847,6 +27354,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'name'],
@@ -26868,6 +27376,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'type'],
@@ -26914,6 +27423,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'value'],
@@ -26989,6 +27499,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [223, 'name'],
@@ -27019,6 +27530,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [223, 'type'],
@@ -27065,6 +27577,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [223, 'value'],
@@ -27096,6 +27609,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [223, 'alternative'],
@@ -27148,6 +27662,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'name'],
@@ -27169,6 +27684,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'type'],
@@ -27215,6 +27731,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'value'],
@@ -27322,6 +27839,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'name'],
@@ -27343,6 +27861,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'type'],
@@ -27389,6 +27908,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'value'],
@@ -27483,6 +28003,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'name'],
@@ -27504,6 +28025,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'type'],
@@ -27550,6 +28072,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'value'],
@@ -27657,6 +28180,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'name'],
@@ -27678,6 +28202,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'type'],
@@ -27724,6 +28249,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [206, 'value'],
@@ -27768,6 +28294,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -28062,6 +28589,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [184, 'name'],
@@ -28077,6 +28605,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [184, 'fragment'],
@@ -28129,6 +28658,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [188, 'tokens'],
@@ -28265,6 +28795,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [188, 'separator'],
@@ -28286,6 +28817,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [188, 'operator'],
@@ -28326,6 +28858,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [185, 'tokenPatterns'],
@@ -28462,6 +28995,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [185, 'separator'],
@@ -28483,6 +29017,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [185, 'operator'],
@@ -28523,6 +29058,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [408, 'tokens'],
@@ -28674,6 +29210,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [410, 'tokens'],
@@ -28824,6 +29361,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [409, 'tokens'],
@@ -28979,6 +29517,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [410, 'tokens'],
@@ -29129,6 +29668,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [409, 'tokens'],
@@ -29279,6 +29819,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [411, 'delimTokens'],
@@ -29433,6 +29974,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [413, 'delimTokens'],
@@ -29586,6 +30128,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [412, 'delimTokens'],
@@ -29744,6 +30287,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [413, 'delimTokens'],
@@ -29897,6 +30441,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [412, 'delimTokens'],
@@ -30050,6 +30595,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [411, 'delimTokens'],
@@ -30203,6 +30749,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [408, 'tokens'],
@@ -30353,6 +30900,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [405, 'tokenPatterns'],
@@ -30504,6 +31052,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [407, 'tokenPatterns'],
@@ -30654,6 +31203,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [406, 'tokenPatterns'],
@@ -30809,6 +31359,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [407, 'tokenPatterns'],
@@ -30959,6 +31510,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [406, 'tokenPatterns'],
@@ -31109,6 +31661,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [405, 'tokenPatterns'],
@@ -31258,6 +31811,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [286, 'value'],
@@ -31308,6 +31862,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [284, 'attributes'],
@@ -31324,6 +31879,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [284, 'field'],
@@ -31360,6 +31916,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [285, 'attributes'],
@@ -31376,6 +31933,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [285, 'field'],
@@ -31397,6 +31955,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [285, 'value'],
@@ -31446,6 +32005,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [433, 'content'],
@@ -31497,6 +32057,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [216, 'bounds'],
@@ -31562,6 +32123,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [251, 'name'],
@@ -31584,6 +32146,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [251, 'typeArguments'],
@@ -31614,6 +32177,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [251, 'type'],
@@ -31678,6 +32242,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [271, 'left'],
@@ -31708,6 +32273,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [271, 'right'],
@@ -31761,6 +32327,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -31791,6 +32358,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -31849,6 +32417,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -31879,6 +32448,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -31937,6 +32507,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -31967,6 +32538,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32025,6 +32597,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32055,6 +32628,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32113,6 +32687,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32143,6 +32718,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32201,6 +32777,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32231,6 +32808,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32289,6 +32867,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32319,6 +32898,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32377,6 +32957,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32407,6 +32988,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32465,6 +33047,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32495,6 +33078,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32553,6 +33137,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'left'],
@@ -32583,6 +33168,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [272, 'right'],
@@ -32641,6 +33227,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [307, 'expression'],
@@ -32694,6 +33281,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -32724,6 +33312,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -32782,6 +33371,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -32812,6 +33402,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -32870,6 +33461,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -32900,6 +33492,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -32958,6 +33551,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -32988,6 +33582,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33046,6 +33641,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33076,6 +33672,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33134,6 +33731,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33164,6 +33762,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33222,6 +33821,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33252,6 +33852,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33310,6 +33911,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33340,6 +33942,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33398,6 +34001,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33428,6 +34032,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33486,6 +34091,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33516,6 +34122,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33574,6 +34181,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33604,6 +34212,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33662,6 +34271,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33692,6 +34302,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33750,6 +34361,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33780,6 +34392,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33838,6 +34451,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33868,6 +34482,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -33926,6 +34541,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -33956,6 +34572,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -34014,6 +34631,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -34044,6 +34662,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -34102,6 +34721,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -34132,6 +34752,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -34190,6 +34811,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'left'],
@@ -34220,6 +34842,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [270, 'right'],
@@ -34278,6 +34901,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [310, 'body'],
@@ -34326,6 +34950,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [300, 'body'],
@@ -34360,6 +34985,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [311, 'body'],
@@ -34408,6 +35034,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [312, 'body'],
@@ -34442,6 +35069,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [309, 'body'],
@@ -34476,6 +35104,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [276, 'function'],
@@ -34590,6 +35219,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [259, 'function'],
@@ -34611,6 +35241,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [259, 'arguments'],
@@ -34645,6 +35276,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [276, 'function'],
@@ -34744,6 +35376,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [276, 'function'],
@@ -34759,6 +35392,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [276, 'arguments'],
@@ -34843,6 +35477,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [273, 'expression'],
@@ -34873,6 +35508,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [273, 'type'],
@@ -34938,6 +35574,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [367, 'attributes'],
@@ -34955,6 +35592,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [367, 'elements'],
@@ -35029,6 +35667,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [366, 'attributes'],
@@ -35129,6 +35768,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [366, 'attributes'],
@@ -35145,6 +35785,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [366, 'element'],
@@ -35175,6 +35816,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [366, 'length'],
@@ -35224,6 +35866,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [282, 'name'],
@@ -35245,6 +35888,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [282, 'body'],
@@ -35296,6 +35940,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [280, 'attributes'],
@@ -35312,6 +35957,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [280, 'elements'],
@@ -35372,6 +36018,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [245, 'function'],
@@ -35393,6 +36040,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [245, 'typeArguments'],
@@ -35476,6 +36124,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [369, 'returnType'],
@@ -35521,6 +36170,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [369, 'body'],
@@ -35627,6 +36277,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [370, 'body'],
@@ -35726,6 +36377,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [308, 'object'],
@@ -35756,6 +36408,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [308, 'property'],
@@ -35796,6 +36449,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [279, 'expression'],
@@ -35845,6 +36499,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [268, 'argument'],
@@ -35907,6 +36562,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [391, 'start'],
@@ -35951,6 +36607,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [392, 'end'],
@@ -36013,6 +36670,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [391, 'start'],
@@ -36057,6 +36715,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [392, 'end'],
@@ -36101,6 +36760,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'start'],
@@ -36131,6 +36791,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'end'],
@@ -36189,6 +36850,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'start'],
@@ -36219,6 +36881,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'end'],
@@ -36277,6 +36940,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'start'],
@@ -36307,6 +36971,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [390, 'end'],
@@ -36365,6 +37030,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [373, 'argument'],
@@ -36413,6 +37079,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [372, 'argument'],
@@ -36469,6 +37136,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [371, 'argument'],
@@ -36525,6 +37193,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [374, 'argument'],
@@ -36582,6 +37251,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [306, 'object'],
@@ -36665,6 +37335,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [267, 'argument'],
@@ -36723,6 +37394,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [267, 'argument'],
@@ -36781,6 +37453,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [267, 'argument'],
@@ -36852,6 +37525,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [275, 'expression'],
@@ -36901,6 +37575,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [123, 'content'],
@@ -36921,6 +37596,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [176, 'statements'],
@@ -37260,6 +37936,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [303, 'name'],
@@ -37300,6 +37977,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [239, 'name'],
@@ -37345,6 +38023,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [264, 'qualifier'],
@@ -37371,6 +38050,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [264, 'name'],
@@ -37412,6 +38092,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [263, 'qualifier'],
@@ -37438,6 +38119,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [263, 'name'],
@@ -37570,6 +38252,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [265, 'qualifier'],
@@ -37596,6 +38279,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [265, 'name'],
@@ -37760,6 +38444,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [145, 'content'],
@@ -37815,6 +38500,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [150, 'content'],
@@ -37852,6 +38538,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [147, 'content'],
@@ -37889,6 +38576,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [149, 'content'],
@@ -37926,6 +38614,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [148, 'content'],
@@ -37983,6 +38672,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [141, 'content'],
@@ -38003,6 +38693,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [141, 'suffix'],
@@ -38043,6 +38734,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [143, 'content'],
@@ -38063,6 +38755,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [143, 'suffix'],
@@ -38103,6 +38796,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [142, 'content'],
@@ -38123,6 +38817,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [142, 'suffix'],
@@ -38163,6 +38858,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [144, 'content'],
@@ -38183,6 +38879,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [144, 'suffix'],
@@ -38222,6 +38919,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [330, 'value'],
@@ -38257,6 +38955,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [332, 'elements'],
@@ -38304,6 +39003,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [332, 'elements'],
@@ -38351,6 +39051,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [332, 'elements'],
@@ -38397,6 +39098,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [151, 'content'],
@@ -38435,6 +39137,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [154, 'content'],
@@ -38472,6 +39175,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [153, 'content'],
@@ -38509,6 +39213,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [152, 'content'],
@@ -38579,6 +39284,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [234, 'abi'],
@@ -38742,6 +39448,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [380, 'content'],
@@ -38780,6 +39487,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [379, 'path'],
@@ -38839,6 +39547,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [325, 'name'],
@@ -38860,6 +39569,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [325, 'pattern'],
@@ -38908,6 +39618,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [315, 'name'],
@@ -38929,6 +39640,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [315, 'typeArguments'],
@@ -38979,6 +39691,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [317, 'elements'],
@@ -39033,6 +39746,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [322, 'pattern'],
@@ -39081,6 +39795,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [387, 'right'],
@@ -39124,6 +39839,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [386, 'left'],
@@ -39153,6 +39869,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [386, 'right'],
@@ -39205,6 +39922,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [419, 'right'],
@@ -39257,6 +39975,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [422, 'left'],
@@ -39294,6 +40013,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [420, 'right'],
@@ -39359,6 +40079,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [419, 'right'],
@@ -39411,6 +40132,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [422, 'left'],
@@ -39448,6 +40170,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [420, 'right'],
@@ -39513,6 +40236,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [422, 'left'],
@@ -39550,6 +40274,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [420, 'right'],
@@ -39615,6 +40340,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [324, 'pattern'],
@@ -39663,6 +40389,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [326, 'pattern'],
@@ -39725,6 +40452,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [319, 'type'],
@@ -39747,6 +40475,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [319, 'fields'],
@@ -39794,6 +40523,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [318, 'type'],
@@ -39816,6 +40546,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [318, 'fields'],
@@ -39879,6 +40610,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [414, 'name'],
@@ -39941,6 +40673,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [415, 'name'],
@@ -39962,6 +40695,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [415, 'pattern'],
@@ -40050,6 +40784,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [316, 'elements'],
@@ -40117,6 +40852,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [313, 'label'],
@@ -40133,6 +40869,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [313, 'statements'],
@@ -40156,6 +40893,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [313, 'trailingExpression'],
@@ -40201,6 +40939,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [304, 'label'],
@@ -40217,6 +40956,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [304, 'expression'],
@@ -40262,6 +41002,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [305, 'label'],
@@ -40366,6 +41107,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [287, 'condition'],
@@ -40396,6 +41138,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [287, 'consequence'],
@@ -40412,6 +41155,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [287, 'alternative'],
@@ -40446,6 +41190,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [224, 'argument'],
@@ -40491,6 +41236,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'name'],
@@ -40513,6 +41259,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'alias'],
@@ -40553,6 +41300,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'name'],
@@ -40575,6 +41323,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'alias'],
@@ -40646,6 +41395,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'name'],
@@ -40668,6 +41418,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'alias'],
@@ -40726,6 +41477,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'name'],
@@ -40748,6 +41500,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'alias'],
@@ -40819,6 +41572,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'name'],
@@ -40841,6 +41595,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [204, 'alias'],
@@ -40876,6 +41631,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -40973,6 +41729,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [224, 'argument'],
@@ -41049,6 +41806,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [224, 'argument'],
@@ -41112,6 +41870,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [224, 'argument'],
@@ -41188,6 +41947,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [224, 'argument'],
@@ -41228,6 +41988,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [381, 'visibilityModifierPubScope'],
@@ -41326,6 +42087,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [298, 'label'],
@@ -41341,6 +42103,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [298, 'body'],
@@ -41376,6 +42139,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [299, 'label'],
@@ -41391,6 +42155,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [299, 'left'],
@@ -41420,6 +42185,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [299, 'right'],
@@ -41450,6 +42216,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [299, 'body'],
@@ -41485,6 +42252,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [297, 'label'],
@@ -41500,6 +42268,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [297, 'condition'],
@@ -41530,6 +42299,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [297, 'body'],
@@ -41640,6 +42410,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [274, 'expression'],
@@ -41685,6 +42456,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [255, 'typeParameters'],
@@ -41751,6 +42523,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [255, 'trait'],
@@ -41791,6 +42564,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [240, 'element'],
@@ -41837,6 +42611,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [240, 'length'],
@@ -41886,6 +42661,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [248, 'left'],
@@ -41931,6 +42707,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [248, 'right'],
@@ -41995,6 +42772,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [237, 'type'],
@@ -42059,6 +42837,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [256, 'trait'],
@@ -42100,6 +42879,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [242, 'forLifetimes'],
@@ -42116,6 +42896,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [242, 'returnType'],
@@ -42170,6 +42951,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -42240,6 +43022,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [210, 'modifiers'],
@@ -42319,6 +43102,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [242, 'forLifetimes'],
@@ -42335,6 +43119,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [242, 'returnType'],
@@ -42389,6 +43174,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							list: true,
 							seats: [
 								{
 									at: [349, 'items'],
@@ -42454,6 +43240,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [382, 'trait'],
@@ -42494,6 +43281,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [246, 'type'],
@@ -42515,6 +43303,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [246, 'typeArguments'],
@@ -42564,6 +43353,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [247, 'type'],
@@ -42585,6 +43375,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [247, 'typeArguments'],
@@ -42634,6 +43425,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [389, 'type'],
@@ -42697,6 +43489,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [388, 'type'],
@@ -43191,6 +43984,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [238, 'type'],
@@ -43236,6 +44030,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [238, 'alias'],
@@ -43301,6 +44096,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [252, 'lifetime'],
@@ -43316,6 +44112,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
 									at: [252, 'type'],
@@ -43394,6 +44191,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [243, 'types'],

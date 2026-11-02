@@ -68,6 +68,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		readonly keys: Set<string>;
 		path?: string;
 		flags?: readonly string[];
+		extra?: string;
 	}
 	const frames: Map<object, Read>[] = [];
 	const touched = new Map<object, Set<string>>();
@@ -146,14 +147,20 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 				return within[0]?.builder === undefined ? [{ seat, containers: within }] : [{ seat, containers: within }, { seat, containers: within.slice(1) }];
 			})
 		) ?? { found: slotted, many: false, fitted: false };
-	const routeValue = (node: Node, member: PortableMemberStep): { readonly value: unknown; readonly fitted: boolean } | undefined => {
+	const routeValue = (node: Node, member: PortableMemberStep): { readonly value: unknown; readonly fitted: boolean; readonly extra?: string } | undefined => {
 		const kept = (item: unknown): boolean => member.reads === undefined || member.reads.includes(kindOfValue(item) ?? -1);
 		const walked = walk(node, stepHops(member.steps));
 		const slotted = Array.isArray(walked) ? walked.filter(kept) : kept(walked) ? walked : undefined;
 		if (!present(slotted)) return undefined;
 		const { found, many, fitted } = seatedIn(slotted, member);
 		if (found === undefined) return undefined;
-		const value = !Array.isArray(found) ? (member.multiple ? [found] : found) : found.length === 0 || member.multiple || many ? found : found[0];
+		if (member.list === false && Array.isArray(found)) {
+			if (found.length === 0) return undefined;
+			const extra = found.length > 1 ? member.steps.at(-1)?.key : undefined;
+			return { value: found[0], fitted: fitted !== false, ...(extra === undefined ? {} : { extra }) };
+		}
+		const listed = member.list ?? member.multiple;
+		const value = !Array.isArray(found) ? (listed ? [found] : found) : found.length === 0 || listed || many ? found : found[0];
 		return { value, fitted: fitted !== false };
 	};
 	const memberValue = (node: Node, member: PortableMemberStep): unknown => routeValue(node, member)?.value;
@@ -231,14 +238,14 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		const flags = [...buildable].filter((flag) => flagHolds(node, flag));
 		Object.assign(touch(node), { path, flags });
 		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }) };
-		type Chosen = { readonly value: unknown; readonly member: PortableMemberStep; readonly fitted: boolean };
+		type Chosen = { readonly value: unknown; readonly member: PortableMemberStep; readonly fitted: boolean; readonly extra?: string };
 		const candidates = new Map<string, Chosen[]>();
 		for (const arm of arms)
 			for (const member of arm.members) {
 				const found = routeValue(node, member);
 				if (found === undefined || found.value === null) continue;
 				const list = candidates.get(member.name) ?? candidates.set(member.name, []).get(member.name)!;
-				list.push({ value: found.value, member, fitted: found.fitted });
+				list.push({ value: found.value, member, fitted: found.fitted, ...(found.extra === undefined ? {} : { extra: found.extra }) });
 			}
 		for (const list of candidates.values()) list.sort((a, b) => Number(b.fitted) - Number(a.fitted) || (a.fitted ? b.member.steps.length - a.member.steps.length : 0));
 		const met = (member: PortableMemberStep, names: ReadonlySet<string>): boolean => (member.requires ?? []).every((group) => group.some((name) => names.has(name)));
@@ -253,14 +260,17 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		}
 		for (const name of new Set(arms.flatMap((arm) => arm.members.map((member) => member.name)))) {
 			const pick = chosen.get(name);
-			if (pick !== undefined) structure[name] = read(pick.value, carried, pick.member.seats);
+			if (pick === undefined) continue;
+			if (pick.extra !== undefined) touch(node).extra ??= pick.extra;
+			structure[name] = read(pick.value, carried, pick.member.seats);
 		}
 		for (const { member, value } of held.get(node) ?? []) if (!(member.name in structure)) structure[member.name] = read(value, carried, member.seats);
-		for (const member of arms.flatMap((arm) => arm.members)) if (member.multiple && !(member.name in structure)) structure[member.name] = [];
+		for (const member of arms.flatMap((arm) => arm.members)) if ((member.list ?? member.multiple) && !(member.name in structure)) structure[member.name] = [];
 		return structure;
 	};
 	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
-		for (const [node, { path, flags }] of frame) {
+		for (const [node, { path, flags, extra }] of frame) {
+			if (extra !== undefined) return { reason: 'unread', slot: extra };
 			const keys = touched.get(node) ?? new Set<string>();
 			const tested = path === undefined ? new Set<string>() : readSlots(node as Node, path, flags ?? []);
 			const meaning = path === undefined ? new Set<string>() : otherTested(node as Node, path);

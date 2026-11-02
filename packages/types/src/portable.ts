@@ -129,6 +129,8 @@ export interface PortableSeat {
 
 /**
  * A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first.
+ * `list` is the member's arity as the vocabulary declares it: a list member reads and builds as a list whatever its slot holds, and a member
+ * of one value reads one value from a slot that holds many. It is absent for a member the vocabulary does not declare.
  * A route that enters a kind the arm does not make `requires` other members to fill that kind's required slots: each group names the members
  * any one of which fills one slot, so the route is taken only when every group has a member present. `reads` lists the kinds the member
  * reads from its slot where its binding captures only some of what the slot holds; a read keeps only values of those kinds.
@@ -137,6 +139,7 @@ export interface PortableMemberStep {
 	readonly name: string;
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
+	readonly list?: boolean;
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
 	readonly reads?: readonly number[];

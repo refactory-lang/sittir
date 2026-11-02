@@ -77,7 +77,14 @@ export type MemberRoute = (
 			readonly multiple: boolean;
 			readonly path: readonly SlotStep[] | undefined;
 	  }
-) & { readonly flag?: true; readonly spelled?: true };
+) & { readonly flag?: true; readonly spelled?: true; readonly list?: boolean };
+
+export const readsList = (route: MemberRoute, slotHoldsList: boolean): boolean => route.list ?? slotHoldsList;
+
+const declaredArity = (vocabulary: Vocabulary, path: string, route: MemberRoute): MemberRoute => {
+	const declared = vocabulary.members(path).get(route.name);
+	return declared === undefined || declared.arity === 'either' ? route : { ...route, list: declared.arity === 'list' };
+};
 
 export interface ContainerUnwrap {
 	readonly slot: string;
@@ -1119,7 +1126,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, entries] of readEntries) {
-		const routed = entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)) }));
+		const routed = entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, route)) }));
 		readEntries.set(kind, routed);
 		const union: MemberRoute[] = [];
 		const keys: string[] = [];

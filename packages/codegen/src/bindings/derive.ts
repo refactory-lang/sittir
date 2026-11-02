@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -370,7 +370,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						const resolved = slotResolution(input, gk, tested.length > 0 && tested.length < held.length ? { ...route.slot, kinds: tested } : route.slot);
 						for (const t of resolved.tokens) f.kinds.add(t);
 						f.optional ||= !route.slot.required;
-						f.multiple ||= route.slot.multiple || resolved.list;
+						f.multiple ||= readsList(route, route.slot.multiple || resolved.list);
 						f.scalar ||= !route.slot.multiple && resolved.scalar;
 						f.grammars.add(input.grammar);
 						continue;
@@ -395,7 +395,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						scalar ||= resolved.scalar;
 					}
 					f.optional ||= route.route !== 'nested' || !route.multiple;
-					f.multiple ||= list;
+					f.multiple ||= readsList(route, list);
 					f.scalar ||= !multiple && (scalar || !list);
 					f.grammars.add(input.grammar);
 				}

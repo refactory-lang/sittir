@@ -36,7 +36,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads an empty list as an empty list, so its form builds back', () => {
-		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.struct', name: 'S', body: [] });
+		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.struct', name: 'S', body: [], typeParameters: [] });
 		expect(roundTrip('struct S {}')).toBe('struct S {}\n');
 		expect(roundTrip('f();')).toBe('f();\n');
 	});
@@ -111,6 +111,32 @@ describe('the portable read', () => {
 		]);
 		expect(roundTrip('f(#[cfg(x)] a, b);')).toBe('f(#[cfg(x)] a, b);\n');
 		expect(roundTrip('f(a, b);')).toBe('f(a, b);\n');
+	});
+
+	it('reads one extern as one value and builds it back, refuses to build a list of them, and keeps a function stating two whole', () => {
+		const fn = readFirst('extern "C" fn f() {}');
+		expect(fn.extern).toEqual({ $path: 'modifier.extern', abi: { $path: 'literal.string', elements: ['C'] } });
+		expect(roundTrip('extern "C" fn f() {}')).toBe('extern "C" fn f() {}\n');
+		expect(roundTrip('type F = extern "C" fn();')).toBe('type F = extern "C" fn();\n');
+		for (const extern of [[fn.extern, fn.extern], [fn.extern]])
+			expect(() => runtime.build({ ...fn, extern } as Read)).toThrow("declaration.function's extern holds one value, not a list");
+		const carries: unknown[] = [];
+		runtime.read(runtime.engine.parse('extern "C" extern "C" fn f() {}'), (_, carry) => carries.push(carry));
+		expect(carries).toEqual([{ reason: 'unread', slot: 'modifiers' }]);
+		expect(roundTrip('extern "C" extern "C" fn f() {}')).toBe('extern "C" extern "C" fn f() {}');
+	});
+
+	it.each([
+		['fn f<T: A + B>() {}', 'typeParameters', ['A', 'B']],
+		['fn f<T: A>() {}', 'typeParameters', ['A']],
+		['fn f() where T: A + B {}', 'whereClause', ['A', 'B']],
+		['trait T: A + B {}', 'extends', ['A', 'B']],
+		['trait T: A {}', 'extends', ['A']]
+	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, member, bounds) => {
+		const read = readFirst(source);
+		const listed = member === 'extends' ? read.extends : member === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
+		expect(listed).toEqual(bounds);
+		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
 	it("reads an interpreter line as the file's shebang text, and builds it back", () => {

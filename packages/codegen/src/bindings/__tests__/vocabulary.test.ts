@@ -103,6 +103,21 @@ describe('readVocabulary', () => {
 		await expect(vocabularyIn("interface Declaration<G> { $kind: 'declaration'; abstract?: Flag; accessor?: Flag; }")).rejects.toThrow(/declaration\.ts: .*parse/is);
 	});
 
+	it('stamps the arity of a member from its type: a list where it is an array, either where a union holds an array arm, and one value otherwise', async () => {
+		const vocabulary = await vocabularyIn(
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly extern?: V.Modifier.Extern<G>;',
+			"\treadonly name: G['slots']['declaration']['name'];",
+			'\treadonly bounds?: V.Type.Any<G>[];',
+			'\treadonly extends?: readonly (V.Type<G> | V.Clause<G>)[];',
+			'\treadonly arguments: V.Expression<G> | V.Expression<G>[];',
+			'}'
+		);
+		const members = vocabulary.members('declaration');
+		expect(Object.fromEntries([...members].map(([name, member]) => [name, member.arity ?? 'one']))).toEqual({ extern: 'one', name: 'one', bounds: 'list', extends: 'list', arguments: 'either' });
+	});
+
 	it('reads a member named by a keyword like any other', async () => {
 		const vocabulary = await vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
 		expect([...vocabulary.members('declaration')]).toEqual([

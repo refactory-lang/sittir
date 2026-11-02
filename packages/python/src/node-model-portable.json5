@@ -5415,6 +5415,17 @@
           ]
         },
         {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
           "name": "typeParameters",
           "route": "slot",
           "slot": "type_parameters",
@@ -5455,6 +5466,73 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "doc",
+          "route": "nested",
+          "via": [
+            {
+              "field": "item",
+              "kind": "expression_statement",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "simple_statements_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "simple_statements",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "expression_statement",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
             }
           ]
         },

@@ -17,3 +17,9 @@ export const open: Ctx['expression'] = { $kind: 'expression.range', start: value
 export const typed: Ctx['declaration'] = { $kind: 'declaration.constant', name, type, value };
 // @ts-expect-error a rust constant states its type
 export const untyped: Ctx['declaration'] = { $kind: 'declaration.constant', name, value };
+
+declare const fn: Extract<Ctx['declaration'], { readonly $kind: 'declaration.function' }>;
+declare const extern: NonNullable<typeof fn.extern>;
+export const externed: Ctx['declaration'] = { ...fn, extern };
+// @ts-expect-error a function states one extern
+export const twice: Ctx['declaration'] = { ...fn, extern: [extern, extern] };

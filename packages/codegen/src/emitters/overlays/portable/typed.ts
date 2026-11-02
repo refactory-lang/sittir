@@ -3,7 +3,7 @@ import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, sole
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
-import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, readsList, valueTokensOf, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
 import { readableEntries } from '@sittir/common/engine';
 import type { PortableBuildPath, PortableCondition } from '@sittir/types';
@@ -331,7 +331,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		readonly present: readonly PresentStep[];
 		readonly pinned: readonly string[] | undefined;
 	}
-	const chainOf = (kind: string, path: readonly SlotStep[], sure: Guaranteed): Chain | string | null => {
+	const chainOf = (kind: string, path: readonly SlotStep[], sure: Guaranteed, single: boolean): Chain | string | null => {
 		let expr = 'this[low]';
 		let optional = false;
 		let last: ModelSlot | undefined;
@@ -360,13 +360,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 			optional ||= !slot.required && !slot.multiple && tested === undefined;
 			pinned = tested !== undefined && tested.length > 0 ? tested : slot.required || tested !== undefined ? held : undefined;
 			const final = i === path.length - 1;
-			if (slot.multiple && (!final || step.anchor !== undefined)) {
-				if (step.anchor === undefined) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
+			const one = step.anchor !== undefined || (final && single);
+			if (slot.multiple && (!final || one)) {
+				if (!one) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
 				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
 				optional = !final || tested === undefined;
 				pinned = final ? pinned : undefined;
 			}
-			last = final && step.anchor !== undefined ? { ...slot, multiple: false } : slot;
+			last = final && one ? { ...slot, multiple: false } : slot;
 		}
 		const through = present.findLastIndex((s) => s.tested) + 1;
 		return last === undefined ? 'an empty path' : { expr, last, optional, present: present.slice(0, through), pinned };
@@ -380,7 +381,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed): RouteRead | { readonly reason: string } | null => {
 		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
-		const chain = chainOf(kind, route.path, sure);
+		const chain = chainOf(kind, route.path, sure, route.list === false);
 		if (chain === null) return null;
 		if (typeof chain === 'string') return { reason: chain };
 		const { present } = chain;
@@ -393,7 +394,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false, present };
 		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];
 		const body = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
-		return { body, list: chain.last.multiple || listsOnly(chain.last), optional: chain.optional, present };
+		return { body, list: readsList(route, chain.last.multiple) || listsOnly(chain.last), optional: chain.optional, present };
 	};
 	interface PresentTree {
 		readonly ids: string;

@@ -471,6 +471,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				name: route.name,
 				steps,
 				multiple: route.route === 'nested' ? route.multiple : isMultiple(slot),
+				...(route.list === undefined ? {} : { list: route.list }),
 				seats: seats.map(seatRecord),
 				...(reads === undefined ? {} : { reads })
 			},

@@ -194,6 +194,21 @@ describe('the portable read', () => {
 		expect(carries).toEqual([]);
 	});
 
+	it.each([
+		['class C implements A, B {}', 'implements', ['A', 'B']],
+		['class C implements A {}', 'implements', ['A']],
+		['interface I extends A, B {}', 'extends', ['A', 'B']],
+		['interface I extends A {}', 'extends', ['A']]
+	])('reads the heritage of %j as a list, one type or many, and builds it back', (source, member, types) => {
+		expect((firstOf(source) as Read)[member]).toEqual(types);
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('reads the implements of a class expression as a list', () => {
+		expect(((firstOf('const c = class implements A, B {};') as Read).declarators as readonly Read[])[0]!.value).toMatchObject({ $path: 'expression.class', implements: ['A', 'B'] });
+		expect(roundTrip('const c = class implements A, B {};')).toBe('const c = class implements A, B {};\n');
+	});
+
 	it('refuses a destructuring declarator given no pattern', () => {
 		const declarator = ((firstOf('let { a } = b;') as Read).declarators as readonly Read[])[0]!;
 		expect(declarator.$path).toBe('declaration.variable.pattern');

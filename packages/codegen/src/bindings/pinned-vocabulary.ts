@@ -13,7 +13,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, REFINED_BY, TEXTS } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, TEXTS } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -170,6 +170,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			name,
 			optional: member.optional(),
 			type: annotation === undefined ? 'any' : text(annotation),
+			...arityOf(annotation, source),
 			flag: isNode(annotation) && annotation.$type === K.TypeIdentifier && text(annotation) === FLAG,
 			references: typed === undefined ? [] : references(typed, source),
 			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? []),
@@ -209,6 +210,24 @@ function vocabularyReference(heritage: ExtendsTypeClause.Parsed, source: Source,
 type PropertySignatureType = NonNullable<ReturnType<PropertySignature.Parsed['type']>>;
 
 type Annotation = ReturnType<PropertySignatureType['type']>;
+
+function arrayType(type: Annotation | undefined, source: Source): boolean {
+	const { K } = source;
+	if (!isNode(type)) return false;
+	if (type.$type === K.ArrayType) return true;
+	return type.$type === K.ReadonlyType && arrayType(type.type(), source);
+}
+
+function hasArrayArm(type: Annotation | undefined, source: Source): boolean {
+	const { K } = source;
+	if (!isNode(type) || type.$type !== K.UnionType) return arrayType(type, source);
+	const left = type.left();
+	return (left !== undefined && hasArrayArm(left, source)) || hasArrayArm(type.right(), source);
+}
+
+function arityOf(type: Annotation | undefined, source: Source): { readonly arity?: MemberArity } {
+	return arrayType(type, source) ? { arity: 'list' } : hasArrayArm(type, source) ? { arity: 'either' } : {};
+}
 
 function stringLiterals(type: Annotation, source: Source): string[] | undefined {
 	const { K, text } = source;
