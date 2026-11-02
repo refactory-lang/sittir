@@ -1,5 +1,5 @@
-import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
-import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
+import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
+import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
 import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, listEdges, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
@@ -82,6 +82,14 @@ const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 10;
 const ENTRY_HEAD_BYTES = 4;
 const DEFERRED_PRUNE = 256;
+
+interface CommitMark {
+	readonly id: number;
+	readonly minted: number;
+	readonly parked: number;
+	readonly kept: Set<unknown>;
+	closed: boolean;
+}
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -245,6 +253,10 @@ export class BuiltArena {
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 	readonly #minted: number[] = [];
+	readonly #mintedWords: WritableWords[] = [];
+	readonly #parked: object[] = [];
+	readonly #commits: CommitMark[] = [];
+	#commitCount = 0;
 	readonly #moved: number[] = [];
 	readonly #undos: (() => void)[] = [];
 	readonly #deferred: (Map<number, () => void> | undefined)[] = [];
@@ -412,7 +424,10 @@ export class BuiltArena {
 
 	#mint(size: number): BuiltPlace {
 		const place = this.#place(size, this.format.countOwned | 1);
-		if (this.#scopes > 0) this.#minted.push(place.at);
+		if (this.#scopes > 0 || this.#commits.length > 0) {
+			this.#minted.push(place.at);
+			this.#mintedWords.push(place.data);
+		}
 		return place;
 	}
 
@@ -428,7 +443,7 @@ export class BuiltArena {
 			throw error;
 		} finally {
 			if (--this.#scopes === 0) {
-				this.#minted.length = 0;
+				if (this.#commits.length === 0) this.#forgetMinted(0);
 				this.#moved.length = 0;
 				this.#undos.length = 0;
 			}
@@ -441,7 +456,75 @@ export class BuiltArena {
 		for (let n = this.#minted.length - 1; n >= minted; n--) this.release(this.#minted[n]!);
 		this.#moved.length = moved;
 		this.#undos.length = undos;
-		this.#minted.length = minted;
+		this.#forgetMinted(minted);
+	}
+
+	#forgetMinted(from: number): void {
+		this.#minted.length = from;
+		this.#mintedWords.length = from;
+	}
+
+	commit(): CommitScope {
+		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#minted.length, parked: this.#parked.length, kept: new Set(), closed: false };
+		this.#commits.push(mark);
+		return {
+			keep: <N extends object>(node: N): N => this.#keep(mark, node),
+			[Symbol.dispose]: () => this.#close(mark)
+		};
+	}
+
+	#keep<N extends object>(mark: CommitMark, node: N): N {
+		if (mark.closed || !isLive(this.#handle.current)) throw new Error(`keep: commit scope ${mark.id} is closed, so it keeps nothing more`);
+		const arena = handleArenaOf(node);
+		if (arena === undefined) return node;
+		if (arena !== this) throw new Error('an engine keeps only the nodes its own builders returned');
+		const at = (node as { readonly $at?: unknown }).$at;
+		if (typeof at !== 'number') {
+			mark.kept.add(node);
+			return node;
+		}
+		this.refuseReleased(this.liveAt(node, at));
+		if (!this.#ownedByHandle(at)) this.#giveBack(at);
+		mark.kept.add(at);
+		return node;
+	}
+
+	#ownedByHandle(at: number): boolean {
+		const { counts, index } = this.#countAt(at);
+		return (counts[index]! & this.format.countOwned) !== 0 && (counts[index]! & this.format.countSaturated) !== 0;
+	}
+
+	#close(mark: CommitMark): void {
+		if (mark.closed) return;
+		if (!isLive(this.#handle.current)) {
+			for (const open of this.#commits) open.closed = true;
+			this.#commits.length = 0;
+			return;
+		}
+		const inner = this.#commits.at(-1)!;
+		if (inner !== mark) throw new Error(`commit scope ${mark.id} closed while scope ${inner.id}, opened inside it, is still open: close scope ${inner.id} first`);
+		if (this.#scopes > 0) throw new Error(`commit scope ${mark.id} closed while a build is running`);
+		this.#commits.pop();
+		mark.closed = true;
+		const keptAt: number[] = [];
+		const keptWords: WritableWords[] = [];
+		for (let n = mark.minted; n < this.#minted.length; n++) {
+			const at = this.#minted[n]!;
+			const words = this.#mintedWords[n]!;
+			if (this.#words.chunks[chunkOf(at, this.format)] !== words) continue;
+			if (mark.kept.has(at)) {
+				keptAt.push(at);
+				keptWords.push(words);
+			} else if (this.#ownedByHandle(at)) this.release(at);
+		}
+		const keptLeaves = this.#parked.slice(mark.parked).filter((leaf) => mark.kept.has(leaf));
+		for (let n = mark.parked; n < this.#parked.length; n++) if (!mark.kept.has(this.#parked[n])) this.releaseHandle(this.#parked[n]!);
+		this.#forgetMinted(mark.minted);
+		this.#parked.length = mark.parked;
+		if (this.#commits.length === 0) return;
+		this.#minted.push(...keptAt);
+		this.#mintedWords.push(...keptWords);
+		this.#parked.push(...keptLeaves);
 	}
 
 	#giveBack(at: number): void {
@@ -559,6 +642,7 @@ export class BuiltArena {
 		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		const parked = this.#parkedOf(leaf);
 		this.#park(leaf, next);
+		if (this.#commits.length > 0) this.#parked.push(leaf);
 		this.#unpark(parked);
 		if (this.#scopes > 0) {
 			this.#undos.push(() => {
@@ -596,6 +680,10 @@ export class BuiltArena {
 	refuseReleased(at: number): void {
 		const { counts, index } = this.#countAt(at);
 		if ((counts[index]! & this.format.countSaturated) === 0) throw new Error(releasedRecord(at));
+	}
+
+	refuseRender(at: number): void {
+		if (isLive(this.#handle.current)) this.refuseReleased(at);
 	}
 
 	#released(trees: readonly number[]): void {

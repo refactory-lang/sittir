@@ -667,6 +667,7 @@ export function createNativeEngine<
 				const at = built.at;
 				if (at !== undefined) {
 					return createRenderHandle(() => {
+						built.arena.refuseRender(at);
 						built.arena.settle();
 						return renderBuilt.call(engine, built.arena.owner, at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall);
 					});

@@ -2,6 +2,7 @@ import type {
 	AnyUntypedNode,
 	BuildSurface,
 	BuilderMode,
+	CommitScope,
 	Engine,
 	EngineIdentity,
 	EngineOptions,
@@ -216,6 +217,11 @@ function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: 
 	};
 }
 
+const OBJECT_SCOPE: CommitScope = Object.freeze({
+	keep: <N extends object>(node: N): N => node,
+	[Symbol.dispose]: () => undefined
+});
+
 function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
@@ -348,6 +354,10 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		release(node) {
 			native.release(node);
+		},
+		scope() {
+			if (handle.current !== engine) throw new Error('scope: engine disposed; open a scope on a live engine');
+			return handle.builtArena?.commit() ?? OBJECT_SCOPE;
 		},
 		dispose() {
 			handle.current = identity;

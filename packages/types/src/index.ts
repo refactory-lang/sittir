@@ -1219,6 +1219,7 @@ export type {
 	ApiSurface,
 	BuilderMode,
 	BuildSurface,
+	CommitScope,
 	Engine,
 	EngineDiagnostics,
 	EmptyFormOf,
