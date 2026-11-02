@@ -54,7 +54,7 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'clause.catch', name: 'e', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch: name builds only beside type/);
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a', name: 'b' }))).toBe('a as b');
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a' }))).toBe('a');
-		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item: name builds only beside value/);
+		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item builds this structure \(members name\); it needs value/);
 	});
 
 	it('builds a list given for a slot that holds one value through the container that holds the list', () => {

@@ -94,7 +94,7 @@ describe('the portable build table', () => {
 	});
 
 	it('picks a form that implies a flag by the flag', () => {
-		expect(armOf('rust', 'expression.reference', rust.kinds.ReferenceExpressionMut).when).toEqual([{ flag: 'exclusive', set: true }]);
+		expect(armOf('rust', 'expression.reference', rust.kinds.ReferenceExpressionMut).when).toEqual([{ flag: 'exclusive', set: true }, { absent: [], required: ['argument'] }]);
 	});
 
 	it("orders a match arm by its body's kinds, narrower first, and keys the last arm by the slot that holds it", () => {
@@ -120,9 +120,13 @@ describe('the portable build table', () => {
 	});
 
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
-		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] }]);
+		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
+			{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
+			{ absent: [], required: ['type'] }
+		]);
 		expect(armOf('rust', 'pattern.struct', rust.kinds.TupleStructPattern).when).toEqual([
-			{ member: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] }
+			{ member: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] },
+			{ absent: [], required: ['type'] }
 		]);
 		expect(armOf('typescript', 'expression.parenthesized', typescript.kinds.ParenthesizedExpressionSequence).when).toContainEqual({
 			member: 'expression',
@@ -209,7 +213,7 @@ describe('the portable build table', () => {
 
 	it('never takes an arm for a structure stating a member the arm lacks', () => {
 		const [sequence, typed] = armsOf('typescript', 'expression.parenthesized');
-		expect(sequence!.when).toContainEqual({ absent: ['type'], required: [] });
+		expect(sequence!.when).toContainEqual({ absent: ['type'], required: ['expression'] });
 		expect(typed!.kind).toBe(typescript.kinds.ParenthesizedExpressionTyped);
 	});
 

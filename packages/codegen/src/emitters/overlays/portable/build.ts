@@ -749,24 +749,40 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
 				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
 			}
-			const committed = (path: readonly SlotStep[], i: number): boolean =>
-				entry.members.every((route) => {
-					const other = route.path;
-					if (other === undefined || !keeps({ path: other }) || other.length < i || !path.slice(0, i).every((step, j) => sameStep(step, other[j]!))) return true;
-					return other.length > i && storageName(other[i]!.owner) === storageName(path[i]!.owner);
-				});
+			const sharingAt = (path: readonly SlotStep[], i: number): readonly { readonly name: string; readonly path: readonly SlotStep[] }[] =>
+				survivors.flatMap(({ name, site: { path: other } }) => (other.length < i || !path.slice(0, i).every((step, j) => sameStep(step, other[j]!)) ? [] : [{ name, path: other }]));
 			const holdsOnly = (step: SlotStep, kind: string): boolean => {
 				const slot = slotOf(step.owner, step.slot);
 				const kinds = slot === undefined ? [] : [...new Set(admitted(slot).map(storageName))];
 				return kinds.length === 1 && kinds[0] === storageName(kind);
 			};
-			const requiredPath = (path: readonly SlotStep[]): boolean =>
-				path.every(
-					(step, i) =>
+			const covered = (name: string, path: readonly SlotStep[], i: number): boolean => {
+				const sharing = sharingAt(path, i);
+				if (sharing.some((other) => other.path.length === i)) return false;
+				const forms = new Set(sharing.map((other) => storageName(other.path[i]!.owner)));
+				return [...forms].every((form) => sharing.some((other) => other.name === name && storageName(other.path[i]!.owner) === form && requiredPath(name, other.path, i)));
+			};
+			const requiredPath = (name: string, path: readonly SlotStep[], from = 0): boolean =>
+				path.slice(from).every((step, k) => {
+					const i = from + k;
+					return (
 						requiredSlot(step.owner, step.slot) &&
-						(i === 0 || holdsOnly(path[i - 1]!, step.owner) || armKeys.has(frameKey({ prefix: path.slice(0, i), owner: step.owner })) || committed(path, i))
-				);
+						(i === 0 ||
+							(k === 0 && from > 0) ||
+							holdsOnly(path[i - 1]!, step.owner) ||
+							armKeys.has(frameKey({ prefix: path.slice(0, i), owner: step.owner })) ||
+							covered(name, path, i))
+					);
+				});
 			const dropped = new Set(members.flatMap(({ site }) => (survivors.some((member) => member.site === site) ? [] : [site.path])));
+			const sharedSlot = (name: string, path: readonly SlotStep[]): boolean =>
+				completed.some(
+					({ name: other, site, member }) =>
+						other !== name &&
+						site.path.length >= path.length &&
+						path.every((step, i) => sameStep(step, site.path[i]!)) &&
+						!(member.requires ?? []).some((group) => group.every((needed) => needed === name))
+				);
 			const required = new Set([
 				...[...tested].filter((name) => survivors.some((member) => member.name === name)),
 				...entry.members.flatMap((route) =>
@@ -776,7 +792,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					keeps({ path: route.path }) &&
 					!dropped.has(route.path) &&
 					!pinnedOut.has(route.path) &&
-					requiredPath(route.path)
+					!sharedSlot(route.name, route.path) &&
+					requiredPath(route.name, route.path)
 						? [route.name]
 						: []
 				)
@@ -1029,7 +1046,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const lacking = [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
 			const own = tests.get(arm)!;
 			const presence = own.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
-			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.tested])].sort();
+			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required])].sort();
 			const kept = own.filter((test) => test !== presence);
 			tests.set(arm, lacking.length === 0 && required.length === 0 ? kept : [...kept, { absent: lacking, required }]);
 		}

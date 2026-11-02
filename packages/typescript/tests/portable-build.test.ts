@@ -28,7 +28,7 @@ describe('the portable build through the strict table', () => {
 			expect(render(built)).toBe('export { a } from "m";');
 			expect(runtime.read(built as never)).toEqual({ $path: 'statement.export', exportClause, source });
 		}
-		expect(() => runtime.build({ $path: 'statement.export', source })).toThrow('statement.export: source builds only beside exportClause');
+		expect(() => runtime.build({ $path: 'statement.export', source })).toThrow('statement.export builds this structure (members source); it needs exportClause');
 	});
 
 	it('builds an exported declaration in the plain form at statement.export and through the default keyword at statement.export.default, each reading back as its path', () => {

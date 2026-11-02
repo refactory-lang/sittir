@@ -244,7 +244,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'value']
+						}
+					]
 				}
 			]
 		},
@@ -283,7 +288,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -430,7 +440,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'pattern']
+						}
+					]
 				}
 			]
 		},
@@ -656,7 +671,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body']
+						}
+					]
 				}
 			]
 		},
@@ -686,7 +706,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['contents']
+						}
+					]
 				}
 			]
 		},
@@ -774,7 +799,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'rights']
+						}
+					]
 				}
 			]
 		},
@@ -813,7 +843,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['condition']
+						}
+					]
 				}
 			]
 		},
@@ -885,7 +920,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body']
+						}
+					]
 				}
 			]
 		},
@@ -982,7 +1022,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['condition', 'consequence']
+						}
+					]
 				}
 			]
 		},
@@ -1054,7 +1099,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body']
+						}
+					]
 				}
 			]
 		},
@@ -1104,7 +1154,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['alias', 'name']
+						}
+					]
 				}
 			]
 		},
@@ -1155,7 +1210,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['prefix']
+						}
+					]
 				}
 			]
 		},
@@ -1219,7 +1279,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -1254,6 +1319,10 @@ export const build: PortableBuildTable = {
 							variant: 'with_clause',
 							value: 293,
 							default: true
+						},
+						{
+							absent: [],
+							required: ['items']
 						}
 					]
 				},
@@ -1294,6 +1363,10 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'with_clause',
 							value: 294
+						},
+						{
+							absent: [],
+							required: ['items']
 						}
 					]
 				}
@@ -1404,7 +1477,12 @@ export const build: PortableBuildTable = {
 					owners: [[0], [1, 2]],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['value']
+						}
+					]
 				}
 			]
 		},
@@ -1437,7 +1515,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -1666,7 +1749,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
 				}
 			]
 		},
@@ -2313,7 +2401,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'parameters']
+							required: ['name', 'parameters']
 						}
 					]
 				}
@@ -2573,7 +2661,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
 				}
 			]
 		},
@@ -2831,7 +2924,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
 				}
 			]
 		},
@@ -3094,7 +3192,12 @@ export const build: PortableBuildTable = {
 						pattern: '__${string}__',
 						holes: ['stem']
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
 				}
 			]
 		},
@@ -3154,7 +3257,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['default', 'name']
+						}
+					]
 				}
 			]
 		},
@@ -3204,7 +3312,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'type']
+						}
+					]
 				}
 			]
 		},
@@ -3279,7 +3392,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['default', 'name', 'type']
+						}
+					]
 				}
 			]
 		},
@@ -3323,7 +3441,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -3363,7 +3486,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['types']
+						}
+					]
 				}
 			]
 		},
@@ -3604,7 +3732,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3651,7 +3784,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3698,7 +3836,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3745,7 +3888,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3792,7 +3940,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3839,7 +3992,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3886,7 +4044,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3933,7 +4096,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -3980,7 +4148,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -4027,7 +4200,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -4074,7 +4252,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['right']
+						}
+					]
 				}
 			]
 		},
@@ -4138,7 +4321,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['key', 'value']
+						}
+					]
 				}
 			]
 		},
@@ -4177,7 +4365,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -4216,7 +4409,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -4245,7 +4443,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -4305,7 +4508,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4378,7 +4586,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4447,7 +4660,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4516,7 +4734,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4585,7 +4808,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4654,7 +4882,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4723,7 +4956,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4792,7 +5030,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4861,7 +5104,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4930,7 +5178,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -4999,7 +5252,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5068,7 +5326,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5137,7 +5400,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5206,7 +5474,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5244,7 +5517,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -5319,7 +5597,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5390,7 +5673,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5461,7 +5749,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5532,7 +5825,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5603,7 +5901,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5674,7 +5977,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5745,7 +6053,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5816,7 +6129,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5887,7 +6205,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -5958,7 +6281,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6012,7 +6340,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['comparators', 'left']
+						}
+					]
 				}
 			]
 		},
@@ -6091,7 +6424,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6170,7 +6508,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6249,7 +6592,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6328,7 +6676,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6407,7 +6760,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6486,7 +6844,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6565,7 +6928,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6644,7 +7012,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6723,7 +7096,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6800,7 +7178,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6873,7 +7256,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -6944,7 +7332,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -7023,7 +7416,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -7102,7 +7500,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -7173,7 +7576,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -7244,7 +7652,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -7323,7 +7736,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['arguments', 'function']
+						}
+					]
 				}
 			]
 		},
@@ -7402,7 +7820,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['arguments', 'function']
+						}
+					]
 				}
 			]
 		},
@@ -7544,7 +7967,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['elements']
+						}
+					]
 				}
 			]
 		},
@@ -7653,7 +8081,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'clauses']
+						}
+					]
 				}
 			]
 		},
@@ -7707,7 +8140,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'clauses']
+						}
+					]
 				}
 			]
 		},
@@ -7751,7 +8189,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'clauses']
+						}
+					]
 				}
 			]
 		},
@@ -7805,7 +8248,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'clauses']
+						}
+					]
 				}
 			]
 		},
@@ -7894,7 +8342,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['alternative', 'condition', 'consequence']
+						}
+					]
 				}
 			]
 		},
@@ -7985,7 +8438,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -8122,6 +8580,10 @@ export const build: PortableBuildTable = {
 								1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210, 213,
 								214, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248, 255, 256, 257, 283
 							]
+						},
+						{
+							absent: [],
+							required: ['body']
 						}
 					]
 				},
@@ -8205,6 +8667,10 @@ export const build: PortableBuildTable = {
 								1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210, 213,
 								214, 215, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248, 255, 256, 257, 283
 							]
+						},
+						{
+							absent: [],
+							required: ['body']
 						}
 					],
 					holders: [
@@ -8269,7 +8735,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['object', 'property']
+						}
+					]
 				}
 			]
 		},
@@ -8308,7 +8779,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -8479,7 +8955,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['index', 'object']
+						}
+					]
 				}
 			]
 		},
@@ -8530,7 +9011,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['argument']
+						}
+					]
 				}
 			]
 		},
@@ -8577,7 +9063,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['argument']
+						}
+					]
 				}
 			]
 		},
@@ -8616,7 +9107,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['argument']
+						}
+					]
 				}
 			]
 		},
@@ -8663,7 +9159,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['argument']
+						}
+					]
 				}
 			]
 		},
@@ -8746,7 +9247,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					]
 				}
 			]
 		},
@@ -8892,6 +9398,10 @@ export const build: PortableBuildTable = {
 						{
 							member: 'qualifier',
 							kinds: [226]
+						},
+						{
+							absent: [],
+							required: ['name', 'qualifier']
 						}
 					],
 					holders: [[226, 'content']]
@@ -8944,6 +9454,10 @@ export const build: PortableBuildTable = {
 						{
 							member: 'qualifier',
 							kinds: [182]
+						},
+						{
+							absent: [],
+							required: ['name']
 						}
 					],
 					holders: [
@@ -9156,7 +9670,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['integer']
+						}
+					]
 				}
 			]
 		},
@@ -9297,7 +9816,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['fraction']
+						}
+					]
 				}
 			]
 		},
@@ -9415,7 +9939,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['exponent', 'integer', 'marker']
+						}
+					]
 				}
 			]
 		},
@@ -9495,7 +10024,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'integer',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content', 'radixPrefix']
+						}
+					]
 				}
 			]
 		},
@@ -9548,7 +10082,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'integer',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content', 'radixPrefix']
+						}
+					]
 				}
 			]
 		},
@@ -9614,7 +10153,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'integer',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content', 'radixPrefix']
+						}
+					]
 				}
 			]
 		},
@@ -9647,7 +10191,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['value']
+						}
+					]
 				}
 			]
 		},
@@ -9697,7 +10246,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['strings']
+						}
+					]
 				}
 			]
 		},
@@ -10096,7 +10650,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'pattern']
+						}
+					]
 				}
 			]
 		},
@@ -10172,7 +10731,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['imaginary', 'real']
+						}
+					]
 				}
 			]
 		},
@@ -10244,7 +10808,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['imaginary', 'real']
+						}
+					]
 				}
 			]
 		},
@@ -10493,7 +11062,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -10528,7 +11102,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['pattern']
+						}
+					],
 					holders: [
 						[140, 'expression'],
 						[141, 'expressions'],
@@ -10644,7 +11223,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['pattern']
+						}
+					],
 					holders: [
 						[184, 'content'],
 						[186, 'left'],
@@ -10687,7 +11271,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['pattern']
+						}
+					],
 					holders: [
 						[193, 'items'],
 						[225, 'name']
@@ -10724,7 +11313,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['pattern']
+						}
+					],
 					holders: [
 						[184, 'content'],
 						[186, 'left'],
@@ -10826,7 +11420,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['type']
+						}
+					]
 				}
 			]
 		},
@@ -10882,7 +11481,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'pattern']
+						}
+					]
 				}
 			]
 		},
@@ -11092,7 +11696,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expressions']
+						}
+					]
 				}
 			]
 		},
@@ -11310,7 +11919,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['expressions']
+						}
+					]
 				}
 			]
 		},
@@ -11384,7 +11998,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['code']
+						}
+					]
 				}
 			]
 		},
@@ -11448,7 +12067,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -11484,7 +12108,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['names']
+						}
+					]
 				}
 			]
 		},
@@ -11598,7 +12227,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['condition', 'consequence']
+						}
+					]
 				}
 			]
 		},
@@ -11638,7 +12272,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['names']
+						}
+					]
 				}
 			]
 		},
@@ -11716,7 +12355,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content', 'moduleName']
+						}
+					]
 				}
 			]
 		},
@@ -11775,7 +12419,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -11923,7 +12572,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -12036,7 +12690,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'condition']
+						}
+					]
 				}
 			]
 		},
@@ -12120,7 +12779,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'subject']
+						}
+					]
 				}
 			]
 		},
@@ -12156,7 +12820,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['names']
+						}
+					]
 				}
 			]
 		},
@@ -12311,7 +12980,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['chevron']
+						}
+					]
 				}
 			]
 		},
@@ -12412,7 +13086,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body', 'withClause']
+						}
+					]
 				}
 			]
 		},
@@ -12639,7 +13318,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['body']
+						}
+					]
 				}
 			]
 		},
@@ -12678,7 +13362,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -12722,7 +13411,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['baseType', 'constraint']
+						}
+					]
 				}
 			]
 		},
@@ -12772,7 +13466,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name', 'typeParameter']
+						}
+					]
 				}
 			]
 		},
@@ -12820,7 +13519,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['type']
+						}
+					]
 				}
 			]
 		},
@@ -12864,7 +13568,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		}

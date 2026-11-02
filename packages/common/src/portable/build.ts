@@ -306,7 +306,18 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				...(members.length === 0 && structure.$value === undefined ? ['no members'] : members.length === 0 ? [] : [`members ${members.join(', ')}`]),
 				...(flags.length === 0 ? [] : [`flags ${flags.join(', ')}`])
 			];
-			throw new Error(`portable build: no ${language} form of ${structure.$path} builds this structure (${stated.join(', ')})`);
+			const needed = [
+				...new Set(
+					path.arms.flatMap((arm) => {
+						const presence = arm.when.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
+						if (presence === undefined || (seats !== undefined && seatOf(arm, seats) === undefined)) return [];
+						const missing = presence.required.filter((name) => structure[name] === undefined);
+						const otherwise = presence.absent.every((name) => structure[name] === undefined) && arm.when.every((test) => test === presence || passes(test, arm, structure));
+						return missing.length > 0 && otherwise ? [missing.join(' and ')] : [];
+					})
+				)
+			];
+			throw new Error(`portable build: no ${language} form of ${structure.$path} builds this structure (${stated.join(', ')})${needed.length === 0 ? '' : `; it needs ${needed.join(', or ')}`}`);
 		};
 
 		const enter = (frame: Frame, builder: string, mounted: PortableMount, create: boolean): Reached | undefined => {
