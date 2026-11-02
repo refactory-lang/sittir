@@ -27,6 +27,7 @@ import {
 	isCoordinate,
 	readNode,
 	listOption,
+	checkDelimited,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -6645,32 +6646,59 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 		},
 		$with: {
 			rawStringLiteralStart: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) =>
-				rebuilt(node, handle, () =>
-					wrapRawStringLiteral(
+				rebuilt(node, handle, () => {
+					const edited = wrapRawStringLiteral(
 						{
 							...$edited(data),
 							_raw_string_literal_start: admitSlot(handle, 'raw_string_literal', 'rawStringLiteralStart', v)
 						},
 						tree
-					)
-				),
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildRawStringLiteral,
+						[edited.stringContent()],
+						edited.rawStringLiteralStart(),
+						edited.rawStringLiteralEnd()
+					);
+					return edited;
+				}),
 			stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapRawStringLiteral(
+				rebuilt(node, handle, () => {
+					const edited = wrapRawStringLiteral(
 						{ ...$edited(data), _string_content: admitSlot(handle, 'raw_string_literal', 'stringContent', v) },
 						tree
-					)
-				),
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildRawStringLiteral,
+						[edited.stringContent()],
+						edited.rawStringLiteralStart(),
+						edited.rawStringLiteralEnd()
+					);
+					return edited;
+				}),
 			rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) =>
-				rebuilt(node, handle, () =>
-					wrapRawStringLiteral(
+				rebuilt(node, handle, () => {
+					const edited = wrapRawStringLiteral(
 						{
 							...$edited(data),
 							_raw_string_literal_end: admitSlot(handle, 'raw_string_literal', 'rawStringLiteralEnd', v)
 						},
 						tree
-					)
-				)
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildRawStringLiteral,
+						[edited.stringContent()],
+						edited.rawStringLiteralStart(),
+						edited.rawStringLiteralEnd()
+					);
+					return edited;
+				})
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6732,9 +6760,14 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 		},
 		$with: {
 			content: (v: NonNullable<T.BlockComment['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapBlockComment({ ...$edited(data), _content: admitSlot(handle, 'block_comment', 'content', v) }, tree)
-				)
+				rebuilt(node, handle, () => {
+					const edited = wrapBlockComment(
+						{ ...$edited(data), _content: admitSlot(handle, 'block_comment', 'content', v) },
+						tree
+					);
+					checkDelimited(handle, edited, RAW._delimited_buildBlockComment, [edited.content()]);
+					return edited;
+				})
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

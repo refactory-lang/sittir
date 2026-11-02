@@ -29,6 +29,7 @@ import {
 	isCoordinate,
 	readNode,
 	listOption,
+	checkDelimited,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -8381,9 +8382,14 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle): T.Comm
 		},
 		$with: {
 			content: (v: NonNullable<T.CommentBlock['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapCommentBlock({ ...$edited(data), _content: admitSlot(handle, 'comment_block', 'content', v) }, tree)
-				)
+				rebuilt(node, handle, () => {
+					const edited = wrapCommentBlock(
+						{ ...$edited(data), _content: admitSlot(handle, 'comment_block', 'content', v) },
+						tree
+					);
+					checkDelimited(handle, edited, RAW._delimited_buildCommentBlock, [edited.content()]);
+					return edited;
+				})
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

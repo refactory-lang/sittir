@@ -45,3 +45,33 @@ describe('a string whose content or delimiters would not read back as one string
 		expect(() => raw('"', 'abc', '"')).toThrow(/its delimiters need an engine/);
 	});
 });
+
+describe.each([
+	['objects', await createEngine(python, { nodeStorage: 'object' })],
+	['records', py]
+] as const)('a read string edited under %s construction', (_construction, engine) => {
+	type Read = { readonly $type: number; readonly $with?: Record<string, unknown> } & Record<string, unknown>;
+	type Quoted = { contents(): readonly unknown[]; readonly $with: { contents(...items: unknown[]): { $render(): string } } };
+	const stringIn = (node: Read): Quoted | undefined => {
+		if (typeof node.stringStart === 'function' && typeof node.contents === 'function') return node as unknown as Quoted;
+		for (const key of Object.keys(node.$with ?? {})) {
+			const value = typeof node[key] === 'function' ? (node[key] as () => unknown)() : undefined;
+			for (const child of Array.isArray(value) ? value : [value]) {
+				const found = child !== null && typeof child === 'object' ? stringIn(child as Read) : undefined;
+				if (found !== undefined) return found;
+			}
+		}
+		return undefined;
+	};
+	const contentsOf = (source: string): Quoted => stringIn(engine.parse(source) as unknown as Read)!;
+
+	it.each([`f"""a"{b}c"""\n`, `f"""a""{b}c"""\n`])('refuses contents that put a quote before the closing delimiter of %j', (source) => {
+		const string = contentsOf(source);
+		expect(() => string.$with.contents(...[...string.contents()].reverse())).toThrow(/string: content .* cannot sit between/);
+	});
+
+	it('accepts contents that read back as the same string', () => {
+		const string = contentsOf(`f"""a"{b}c"""\n`);
+		expect(string.$with.contents(...string.contents().slice(1)).$render()).toBe('f"""{b}c"""');
+	});
+});

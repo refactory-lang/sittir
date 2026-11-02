@@ -28,6 +28,7 @@ import {
 	isCoordinate,
 	readNode,
 	listOption,
+	checkDelimited,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -5186,20 +5187,53 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		},
 		$with: {
 			stringStart: (v: NonNullable<T.String['_string_start']>) =>
-				rebuilt(node, handle, () =>
-					wrapString({ ...$edited(data), _string_start: admitSlot(handle, 'string', 'stringStart', v) }, tree)
-				),
+				rebuilt(node, handle, () => {
+					const edited = wrapString(
+						{ ...$edited(data), _string_start: admitSlot(handle, 'string', 'stringStart', v) },
+						tree
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildString,
+						[edited.contents()],
+						edited.stringStart(),
+						edited.stringEnd()
+					);
+					return edited;
+				}),
 			contents: (...v: NonNullable<T.String['_content']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapString(
+				rebuilt(node, handle, () => {
+					const edited = wrapString(
 						{ ...$edited(data), _content: admitSlot(handle, 'string', 'contents', restItems('contents', v)) },
 						tree
-					)
-				),
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildString,
+						[edited.contents()],
+						edited.stringStart(),
+						edited.stringEnd()
+					);
+					return edited;
+				}),
 			stringEnd: (v: NonNullable<T.String['_string_end']>) =>
-				rebuilt(node, handle, () =>
-					wrapString({ ...$edited(data), _string_end: admitSlot(handle, 'string', 'stringEnd', v) }, tree)
-				)
+				rebuilt(node, handle, () => {
+					const edited = wrapString(
+						{ ...$edited(data), _string_end: admitSlot(handle, 'string', 'stringEnd', v) },
+						tree
+					);
+					checkDelimited(
+						handle,
+						edited,
+						RAW._delimited_buildString,
+						[edited.contents()],
+						edited.stringStart(),
+						edited.stringEnd()
+					);
+					return edited;
+				})
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
