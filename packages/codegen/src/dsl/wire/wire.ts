@@ -29,6 +29,7 @@ import {
 import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
+import { divergeSharedLifts } from './shared-lifts.ts';
 import { keywordRuleName, resolveKeywordNames, spelledKeywordRuleName } from './keyword-names.ts';
 import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
@@ -110,6 +111,7 @@ export interface WireContext {
 	readonly baseSupertypeNames: ReadonlySet<string>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 	readonly liftClaims: Map<string, Set<string>>;
+	readonly liftEditors: Map<string, Set<string>>;
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	activeEntryPath: string | null;
@@ -173,6 +175,7 @@ export const WIRE_ENTRY_ROLES = {
 	baseSupertypeNames: 'outside',
 	liftBodies: 'undone',
 	liftClaims: 'undone',
+	liftEditors: 'undone',
 	elementSupertypes: 'outside',
 	activePatchSites: 'scoped',
 	activeEntryPath: 'scoped',
@@ -710,7 +713,10 @@ export function wireWithLiftScope<T>(liftName: string, fn: () => T): T {
 
 export function wireSetLiftBody(name: string, body: RuntimeRule): void {
 	recordLiftClaim(name);
-	currentContext?.liftBodies.set(name, body);
+	const context = currentContext;
+	if (!context) return;
+	context.liftBodies.set(name, body);
+	if (context.currentRuleKind !== null) (context.liftEditors.get(name) ?? context.liftEditors.set(name, new Set()).get(name)!).add(context.currentRuleKind);
 }
 
 function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, RuntimeRule>> {
@@ -791,6 +797,7 @@ export function withWireContext<T>(
 		baseSupertypeNames: baseSupertypeNamesOf(base as BaseArg | undefined),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		liftEditors: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
@@ -1025,6 +1032,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		baseSupertypeNames: baseSupertypeNamesOf(baseArg),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		liftEditors: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
@@ -1068,6 +1076,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	}
 	recordAliasTargets(outRules, context);
 	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
+		(bodies) => divergeSharedLifts(bodies, context.liftEditors, context.baseRuleBodies, context.symbols(), (name) => (outRules[name] = evaluatedRuleOf(name, context))),
 		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals),
 		(bodies) => resolveKeywordNames(bodies, context)
 	]);
@@ -1281,19 +1290,21 @@ export function namedSymbols(names: unknown): unknown[] {
 }
 
 function returnEvaluatedBodies(rules: Record<string, RuleFn>, context: WireContext): void {
-	for (const name of Object.keys(rules)) {
-		rules[name] = function evaluatedRule(_$, previous) {
-			if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
-				throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
-			}
-			if (context.evaluatedBodies === undefined) {
-				throw new Error(
-					`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
-				);
-			}
-			return context.evaluatedBodies.get(name);
-		};
-	}
+	for (const name of Object.keys(rules)) rules[name] = evaluatedRuleOf(name, context);
+}
+
+function evaluatedRuleOf(name: string, context: WireContext): RuleFn {
+	return function evaluatedRule(_$, previous) {
+		if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
+			throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
+		}
+		if (context.evaluatedBodies === undefined) {
+			throw new Error(
+				`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
+			);
+		}
+		return context.evaluatedBodies.get(name);
+	};
 }
 
 function renamingCallback<F extends (...args: never[]) => unknown>(

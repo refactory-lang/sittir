@@ -218,6 +218,22 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		expect(JSON.stringify(raw.rules.call)).not.toContain('callee');
 	}, 120_000);
 
+	it('keeps the other holders of a shared group lift on a copy of it when an edit changes the lift', async () => {
+		const shared = join(dir, 'shared-lift.mjs');
+		writeFileSync(
+			shared,
+			`export default grammar({ name: 'bindtest', rules: { source_file: $ => repeat(choice($.call, $.array)), call: $ => seq($.identifier, '(', optional(seq($._arg, repeat(seq(',', $._arg)))), ')'), array: $ => seq('[', optional(seq($._arg, repeat(seq(',', $._arg)))), ']'), _arg: $ => choice($.identifier, $.number), number: _ => /[0-9]+/, identifier: _ => /[a-z]+/ } });`
+		);
+		const unbound = await evaluateSittirGrammar(shared, 'bindtest');
+		const bound = await evaluateSittirGrammar(shared, 'bindtest', '', undefined, { bindings: "edits: { call: { '2/0/0': field('first') } }" });
+		expect(JSON.stringify(unbound.rules.array)).toContain('"name":"_call_optional1"');
+		expect(JSON.stringify(bound.rules.call)).toContain('"name":"_call_optional1"');
+		expect(JSON.stringify(bound.rules._call_optional1)).toContain('"name":"first"');
+		expect(JSON.stringify(bound.rules.array)).toContain('"name":"array_group1"');
+		expect(JSON.stringify(bound.rules.array_group1)).not.toContain('"name":"first"');
+		expect(JSON.stringify(bound.rules.array_group1).replaceAll(/"id":"[^"]*"/g, '')).toBe(JSON.stringify(unbound.rules._call_optional1).replaceAll(/"id":"[^"]*"/g, ''));
+	}, 120_000);
+
 	it('refuses an alias whose target its base already names, as a blocking diagnostic of the layer', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { call: { '0/0': alias('type') } }" });
 		expect(raw.layerDiagnostics).toContainEqual(
