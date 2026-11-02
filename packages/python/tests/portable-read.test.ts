@@ -64,4 +64,9 @@ describe('the portable read', () => {
 		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.class', name: 'C', decorators });
 		for (const source of ['@d\ndef f():\n    pass\n', '@d\nclass C:\n    pass\n', 'class C:\n    @staticmethod\n    def m():\n        pass\n']) expect(roundTrip(source)).toBe(source);
 	});
+
+	it.each(['except* A:', 'except* A as e:', 'except* (A, B):'])('builds an exception group handler %j back in its spelling', (handler) => {
+		const source = `try:\n    pass\n${handler}\n    pass\n`;
+		expect(roundTrip(source)).toBe(source);
+	});
 });
