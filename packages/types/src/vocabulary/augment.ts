@@ -87,6 +87,9 @@ import type * as untaggedUnions from './features/untagged-unions/index.ts';
 import type * as visibility from './features/visibility/index.ts';
 
 declare module './argument.ts' {
+	interface Argument<G extends GrammarContext<G>> {
+		readonly attributes?: gate.In<G, features.Attributes, attributes.Argument<G>['attributes']>;
+	}
 	namespace Argument {
 		interface Named<G extends GrammarContext<G>> extends namedArguments.Argument.Named<G> {}
 		type Any<G extends GrammarContext<G>> = V.Argument<G> | V.Argument.Named<G>;

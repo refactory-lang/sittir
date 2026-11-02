@@ -3381,7 +3381,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 							kind: TSKindId.Arguments as const,
 							optional: false,
 							make: RAW.buildArguments,
-							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: RAW.buildArgument }
 						},
 						(v: NonNullable<T.CallExpression['_arguments']>) =>
 							wrapCallExpression({ ...$edited(data), _arguments: v }, tree)
@@ -3420,7 +3420,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: RAW.buildArgumentsElements,
-							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: RAW.buildArgument }
 						},
 						(v: NonNullable<T.Arguments['_elements']>) => wrapArguments({ ...$edited(data), _elements: v }, tree)
 					)
@@ -3430,7 +3430,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node.elements(), 'items'), {
-				kind: TSKindId.AttributedArgument,
+				kind: TSKindId.Argument,
 				content: 'expression',
 				decorations: ['_attribute_item']
 			}),
@@ -5516,14 +5516,14 @@ export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandl
 		...data,
 		$type: TSKindId.ArgumentsElements as const,
 		items() {
-			return hydrateSlots<T.AttributedArgument>(this, '_item', tree);
+			return hydrateSlots<T.Argument>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node, 'items'), {
-				kind: TSKindId.AttributedArgument,
+				kind: TSKindId.Argument,
 				content: 'expression',
 				decorations: ['_attribute_item']
 			}),
@@ -6280,7 +6280,7 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
 		elements() {
-			return hydrateSlot<T.ArgumentsElements | undefined>(this, '_elements', tree);
+			return hydrateSlot<T.ArrayExpressionListElements | undefined>(this, '_elements', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) =>
@@ -6292,9 +6292,9 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 					listSlotWith(
 						args,
 						{
-							kind: TSKindId.ArgumentsElements as const,
+							kind: TSKindId.ArrayExpressionListElements as const,
 							optional: true,
-							make: RAW.buildArgumentsElements,
+							make: RAW.buildArrayExpressionListElements,
 							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.ArrayExpressionList['_elements']>) =>
@@ -8705,6 +8705,80 @@ export function wrapExtensionDeclarationBody(
 	return node as unknown as T.ExtensionDeclarationBody.Parsed;
 }
 
+export function wrapArgument(data: T.Argument, tree: TreeHandle): T.Argument.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Argument as const,
+		attributeItems() {
+			return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+		},
+		expression() {
+			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		},
+		$with: {
+			attributeItems: (...v: NonNullable<T.Argument['_attribute_item']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapArgument({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
+			expression: (v: NonNullable<T.Argument['_expression']>) =>
+				rebuilt(node, handle, () => wrapArgument({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Argument.Parsed;
+}
+
+export function wrapArrayExpressionListElements(
+	data: T.ArrayExpressionListElements,
+	tree: TreeHandle
+): T.ArrayExpressionListElements.Parsed {
+	const handle = currentHandle();
+	const listedStored = storedElements(data._item);
+	const node = {
+		...data,
+		$type: TSKindId.ArrayExpressionListElements as const,
+		items() {
+			return hydrateSlots<T.AttributedArgument>(this, '_item', tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'items'), {
+				kind: TSKindId.AttributedArgument,
+				content: 'expression',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ArrayExpressionListElements.Parsed;
+}
+
 export function wrapReceiverParameterDeclaration(
 	data: T.ReceiverParameterDeclaration,
 	tree: TreeHandle
@@ -9474,6 +9548,9 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 		wrapTraitInterfaceDeclarationBody(d as unknown as T.TraitInterfaceDeclarationBody, t),
 	[TSKindId.ExtensionDeclarationBody]: (d, t) =>
 		wrapExtensionDeclarationBody(d as unknown as T.ExtensionDeclarationBody, t),
+	[TSKindId.Argument]: (d, t) => wrapArgument(d as unknown as T.Argument, t),
+	[TSKindId.ArrayExpressionListElements]: (d, t) =>
+		wrapArrayExpressionListElements(d as unknown as T.ArrayExpressionListElements, t),
 	[TSKindId.ReceiverParameterDeclaration]: (d, t) =>
 		wrapReceiverParameterDeclaration(d as unknown as T.ReceiverParameterDeclaration, t),
 	[TSKindId.AttributedParameterReceiver]: (d, t) =>

@@ -230,8 +230,9 @@
 (for_lifetimes) @clause.lifetimes
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
-; none: every Rust argument is an expression
-((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "the element is the _expression supertype, so an attributes capture would have no direct target"))
+((arguments (arguments_elements (attributed_argument (attribute_item) (_) @value) @argument)) (#set! claim argument))
+(attributed_argument (attribute_item)* @attributes)
+((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "a call argument with attributes reads as argument; one without, or an array element, reads as its expression"))
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (field_initializer) @element.struct.field

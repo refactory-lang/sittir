@@ -268,6 +268,8 @@ export {
 	coerceToDedent as buildDedent,
 	coerceToTraitInterfaceDeclarationBody as buildTraitInterfaceDeclarationBody,
 	coerceToExtensionDeclarationBody as buildExtensionDeclarationBody,
+	coerceToArgument as buildArgument,
+	coerceToArrayExpressionListElements as buildArrayExpressionListElements,
 	coerceToReceiverParameterDeclaration as buildReceiverParameterDeclaration,
 	coerceToAttributedParameterReceiver as buildAttributedParameterReceiver,
 	coerceToParametersElementsReceiver as buildParametersElementsReceiver,
@@ -345,12 +347,12 @@ export const typeArguments$seated: Seat<
 export const argumentsElements$seated: Seat<
 	T.ArgumentsElements.LooseArgs,
 	ReturnType<typeof C.coerceToArgumentsElements>
-> = K.argumentsElements$items(C.coerceToArgumentsElements, C.coerceToAttributedArgument);
+> = K.argumentsElements$items(C.coerceToArgumentsElements, C.coerceToArgument);
 
 export const arguments_$seated: EmptyForm<
 	T.EmptyArguments,
 	Seat<T.Arguments.LooseArgs, ReturnType<typeof C.coerceToArguments>>
-> = withEmptyForm(K.arguments_$items(C.coerceToArguments, C.coerceToAttributedArgument));
+> = withEmptyForm(K.arguments_$items(C.coerceToArguments, C.coerceToArgument));
 
 export const tupleExpression$seated: Seat<
 	T.TupleExpression.LooseArgs,
@@ -382,10 +384,15 @@ export const parametersElements$seated: Seat<
 	ReturnType<typeof C.coerceToParametersElements>
 > = K.parametersElements$items(C.coerceToParametersElements, C.coerceToAttributedParameter);
 
+export const arrayExpressionListElements$seated: Seat<
+	T.ArrayExpressionListElements.LooseArgs,
+	ReturnType<typeof C.coerceToArrayExpressionListElements>
+> = K.arrayExpressionListElements$items(C.coerceToArrayExpressionListElements, C.coerceToAttributedArgument);
+
 export const arrayExpressionList$seated: EmptyForm<
 	T.EmptyArrayExpressionList,
 	Seat<T.ArrayExpressionList.LooseArgs, ReturnType<typeof C.coerceToArrayExpressionList>>
-> = withEmptyForm(K.arrayExpressionList$elements(C.coerceToArrayExpressionList, argumentsElements$seated));
+> = withEmptyForm(K.arrayExpressionList$elements(C.coerceToArrayExpressionList, arrayExpressionListElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.LooseArgs,

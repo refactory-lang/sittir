@@ -86,7 +86,7 @@ it('two adjacent seam requests at the same gap coalesce to a single line break',
 		render: {
 			argumentsElements: {
 				item: {
-					attributedArgument: { after: rs.kinds.Newline },
+					argument: { after: rs.kinds.Newline },
 					separator: { comma: { before: rs.kinds.Newline } }
 				}
 			}

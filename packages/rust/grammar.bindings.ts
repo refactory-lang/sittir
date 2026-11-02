@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import sittir from './grammar.sittir.ts';
-import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, copy, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "2737cd33f0b68954573058c1c4bf34d13cd417b694321bd5af3606f504fbf99e";
+export const hash = "62ca303c657b4eae89e30ad3bd05463e26a0c33883e7cfb9effc0eda0b66421f";
 
 export const renames = {
 	source_file: "file",
@@ -188,7 +188,8 @@ export default grammar(
 			where_predicate: { "0/0/2": alias("qualified_identifier") },
 			parameters_elements: { ".": lead("attributed_parameter", "receiver", match("attributed_parameter", [match("self_parameter"), match("parameter", { "name": [match("self")] }, "receiver_parameter_declaration")])) },
 			trait_item: { "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_signature_item)": alias("signature_method_declaration"), "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_item)": alias("method_declaration") },
-			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/declarations:/(function_item)": alias("method_declaration") }
+			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/declarations:/(function_item)": alias("method_declaration") },
+			arguments: { "(attributed_argument)": ($) => alias(copy("_attributed_argument"), $.argument) }
 		}
 	})
 );

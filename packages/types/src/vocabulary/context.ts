@@ -72,14 +72,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern'];
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'argument.named': {
 			readonly value:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern'];
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly attribute: {
 			readonly content:
@@ -328,7 +330,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.class': {
 			readonly bases:
-				| V.Argument.Named<G>
+				| G['argument']
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -880,7 +882,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call': {
 			readonly arguments:
-				| V.Argument.Named<G>
+				| G['argument']
 				| V.Declaration.Module<G>
 				| G['element']
 				| G['expression']
@@ -910,7 +912,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call.member': {
 			readonly arguments:
-				| V.Argument.Named<G>
+				| G['argument']
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
@@ -929,6 +931,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call.qualified': {
 			readonly arguments:
+				| G['argument']
 				| G['expression']
 				| G['identifier']
 				| G['literal']

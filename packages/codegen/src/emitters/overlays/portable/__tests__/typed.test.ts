@@ -69,7 +69,9 @@ describe('emitPortableTyped', () => {
 	});
 
 	it('writes no route through a kind the claim rules out', () => {
-		expect(typed.source).toContain('function VisibilityModifierPubAsModifierVisibilityPublicRestricted357$scope(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted357$Held>) {\n\treturn read(this[low].visibilityModifierPubScope().content());\n}');
+		expect(typed.source).toMatch(
+			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted\1\$Held>\) \{\n\treturn read\(this\[low\]\.visibilityModifierPubScope\(\)\.content\(\)\);\n\}/
+		);
 	});
 
 	it('reads text and a boolean as themselves, since only a kind id or a node reads as a view', () => {

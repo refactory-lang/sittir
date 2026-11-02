@@ -1,3 +1,4 @@
+export type * from './argument.ts';
 export type * from './attribute.ts';
 export type * from './clause.ts';
 export type * from './declaration.ts';

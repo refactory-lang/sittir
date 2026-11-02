@@ -103,6 +103,16 @@ describe('the portable read', () => {
 		for (const source of ['let s = "";', 'let s = "x\\n";', 'let s = b"x";', 'let s = c"x";']) expect(roundTrip(`fn f() {\n    ${source}\n}\n`)).toBe(`fn f() {\n    ${source}\n}\n`);
 	});
 
+	it('reads a call argument with attributes as an argument, one without as its expression, and builds both back', () => {
+		const call = readFirst('f(#[cfg(x)] a, b);').content as Read;
+		expect(call.arguments).toEqual([
+			{ $path: 'argument', attributes: [expect.objectContaining({ $path: 'attribute' })], value: 'a' },
+			'b'
+		]);
+		expect(roundTrip('f(#[cfg(x)] a, b);')).toBe('f(#[cfg(x)] a, b);\n');
+		expect(roundTrip('f(a, b);')).toBe('f(a, b);\n');
+	});
+
 	it("reads an interpreter line as the file's shebang text, and builds it back", () => {
 		const source = '#!/usr/bin/env run-cargo-script\nfn main() {}\n';
 		expect(runtime.read(runtime.engine.parse(source))).toMatchObject({ $path: 'file', shebang: '/usr/bin/env run-cargo-script' });

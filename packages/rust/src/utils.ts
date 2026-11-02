@@ -28,10 +28,10 @@ export const triviaFacts = Object.freeze({
 		352, 353, 354, 355, 356, 357, 358, 359, 360, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379,
 		380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 400, 401, 402, 403,
 		405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 422, 423, 424, 425, 427, 428, 429,
-		430, 431, 432, 433, 434, 438, 440, 473, 475, 479, 481
+		430, 431, 432, 433, 434, 437, 438, 440, 442, 476, 478, 482, 484
 	]),
 	listKinds: new Set<number>([
-		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359
+		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 438
 	]),
 	layout: new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]),
 	innerRegions: new Map<number, readonly string[]>([
@@ -63,7 +63,7 @@ export const triviaFacts = Object.freeze({
 		[435, ['_declarations']],
 		[436, ['_declarations']]
 	]),
-	namedUnits: new Set<number>([57, 124, 125, 126, 163, 164, 178, 244, 254, 281, 321, 338, 339, 421, 426, 474, 478]),
+	namedUnits: new Set<number>([57, 124, 125, 126, 163, 164, 178, 244, 254, 281, 321, 338, 339, 421, 426, 477, 481]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
 		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
@@ -746,21 +746,26 @@ export const querySlots: QuerySlots = Object.freeze({
 	435: [['declarations', 0, undefined, '_declarations']],
 	436: [['declarations', 0, undefined, '_declarations']],
 	437: [
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['expression', 1, undefined, '_expression']
+	],
+	438: [['items', 0, undefined, '_item']],
+	439: [
 		['mutable', 0, 'mut', '_mutable', 57],
 		['type', 1, undefined, '_type']
 	],
-	438: [
+	440: [
 		['attributeItem', 0, undefined, '_attribute_item'],
 		['content', 1, undefined, '_content']
 	],
-	439: [
+	441: [
 		['receiver', 0, undefined, '_receiver'],
 		['parametersElementsReceiverGroup', 1, undefined, '_parameters_elements_receiver_group']
 	],
-	440: [['elements', 0, undefined, '_elements']],
-	473: [['content', 0, undefined, '_content']],
-	475: [['content', 0, undefined, '_content']],
-	477: [
+	442: [['elements', 0, undefined, '_elements']],
+	476: [['content', 0, undefined, '_content']],
+	478: [['content', 0, undefined, '_content']],
+	480: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
 		['functionModifiers', 1, undefined, '_function_modifiers'],
 		['name', 2, undefined, '_name'],
@@ -770,8 +775,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['whereClause', 6, undefined, '_where_clause'],
 		['body', 7, undefined, '_body']
 	],
-	479: [['content', 0, undefined, '_content']],
-	480: [
+	482: [['content', 0, undefined, '_content']],
+	483: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
 		['functionModifiers', 1, undefined, '_function_modifiers'],
 		['name', 2, undefined, '_name'],
@@ -780,7 +785,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', 5, undefined, '_return_type'],
 		['whereClause', 6, undefined, '_where_clause']
 	],
-	481: [['content', 0, undefined, '_content']]
+	484: [['content', 0, undefined, '_content']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
@@ -790,13 +795,13 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
 		195, 210, 216, 302, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 405,
-		406, 407, 408, 409, 410, 411, 412, 413, 435, 436
+		406, 407, 408, 409, 410, 411, 412, 413, 435, 436, 438
 	]),
 	leaves: new Set<number>([1, 132, 133, 146, 155, 157, 159, 160, 161, 162, 165, 166, 399, 404]),
 	textEnvelopes: new Map<number, number>([
-		[475, 1],
-		[479, 1],
-		[481, 1]
+		[478, 1],
+		[482, 1],
+		[484, 1]
 	]),
 	units: new Set<number>([
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
@@ -804,7 +809,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
 		92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 		117, 118, 121, 122, 124, 125, 126, 128, 129, 130, 131, 136, 137, 138, 139, 140, 156, 158, 163, 164, 168, 169, 170,
-		171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426, 474, 478
+		171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426, 477, 481
 	]),
 	options: Object.freeze<NodeJSONFacts['options']>({ 295: ['trailingComma'] })
 });
@@ -1056,7 +1061,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'UnionItem.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'UnionItem.name', 'a built TypeIdentifier', [481]],
+			['_name', 'UnionItem.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'UnionItem.typeParameters', 'a built TypeParameters', [219]],
 			['_where_clause', 'UnionItem.whereClause', 'a built WhereClause', [211]],
 			['_body', 'UnionItem.body', 'a built FieldDeclarationList', [201]]
@@ -1078,7 +1083,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'EnumItem.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'EnumItem.name', 'a built TypeIdentifier', [481]],
+			['_name', 'EnumItem.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'EnumItem.typeParameters', 'a built TypeParameters', [219]],
 			['_where_clause', 'EnumItem.whereClause', 'a built WhereClause', [211]],
 			['_body', 'EnumItem.body', 'a built EnumVariantList', [199]]
@@ -1125,7 +1130,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'FieldDeclaration.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'FieldDeclaration.name', 'a built FieldIdentifier', [475]],
+			['_name', 'FieldDeclaration.name', 'a built FieldIdentifier', [478]],
 			['_type', 'FieldDeclaration.type', 'a built Type', [236]]
 		],
 		config: ['visibilityModifier', 'name', 'type']
@@ -1212,7 +1217,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'TypeItem.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'TypeItem.name', 'a built TypeIdentifier', [481]],
+			['_name', 'TypeItem.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'TypeItem.typeParameters', 'a built TypeParameters', [219]],
 			['_where_clause', 'TypeItem.whereClause', 'a built WhereClause', [211]],
 			['_value', 'TypeItem.value', 'a built Type', [236]],
@@ -1339,7 +1344,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'TraitItem.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'TraitItem.name', 'a built TypeIdentifier', [481]],
+			['_name', 'TraitItem.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'TraitItem.typeParameters', 'a built TypeParameters', [219]],
 			['_bounds', 'TraitItem.bounds', 'a built TraitBounds', [216]],
 			['_where_clause', 'TraitItem.whereClause', 'a built WhereClause', [211]],
@@ -1358,7 +1363,7 @@ export const structure: StructureTable = Object.freeze({
 			['_where_clause', 'AssociatedType.whereClause']
 		],
 		nodeOnly: [
-			['_name', 'AssociatedType.name', 'a built TypeIdentifier', [481]],
+			['_name', 'AssociatedType.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'AssociatedType.typeParameters', 'a built TypeParameters', [219]],
 			['_bounds', 'AssociatedType.bounds', 'a built TraitBounds', [216]],
 			['_where_clause', 'AssociatedType.whereClause', 'a built WhereClause', [211]]
@@ -1426,7 +1431,7 @@ export const structure: StructureTable = Object.freeze({
 			['_default', 'TypeParameter.default']
 		],
 		nodeOnly: [
-			['_name', 'TypeParameter.name', 'a built TypeIdentifier', [481]],
+			['_name', 'TypeParameter.name', 'a built TypeIdentifier', [484]],
 			['_bounds', 'TypeParameter.bounds', 'a built TraitBounds', [216]],
 			['_default', 'TypeParameter.default', 'a built Type', [236]]
 		],
@@ -1519,7 +1524,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'parameters',
 		single: [['_elements', 'Parameters.elements']],
 		nodeOnly: [
-			['_elements', 'Parameters.elements', 'a built ParametersElements / ParametersElementsReceiver', [349, 439]]
+			['_elements', 'Parameters.elements', 'a built ParametersElements / ParametersElementsReceiver', [349, 441]]
 		]
 	},
 	231: {
@@ -1667,7 +1672,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type_arguments', 'GenericType.typeArguments']
 		],
 		nodeOnly: [
-			['_type', 'GenericType.type', 'buildIdentifier(…)', [1, 265, 481]],
+			['_type', 'GenericType.type', 'buildIdentifier(…)', [1, 265, 484]],
 			['_type_arguments', 'GenericType.typeArguments', 'a built TypeArguments', [250]]
 		],
 		config: ['type', 'typeArguments']
@@ -1683,7 +1688,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type_arguments', 'GenericTypeWithTurbofish.typeArguments']
 		],
 		nodeOnly: [
-			['_type', 'GenericTypeWithTurbofish.type', 'a built TypeIdentifier / ScopedIdentifier', [263, 481]],
+			['_type', 'GenericTypeWithTurbofish.type', 'a built TypeIdentifier / ScopedIdentifier', [263, 484]],
 			['_type_arguments', 'GenericTypeWithTurbofish.typeArguments', 'a built TypeArguments', [250]]
 		],
 		config: ['type', 'typeArguments']
@@ -1727,7 +1732,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'TypeBinding.type']
 		],
 		nodeOnly: [
-			['_name', 'TypeBinding.name', 'a built TypeIdentifier', [481]],
+			['_name', 'TypeBinding.name', 'a built TypeIdentifier', [484]],
 			['_type_arguments', 'TypeBinding.typeArguments', 'a built TypeArguments', [250]],
 			['_type', 'TypeBinding.type', 'a built Type', [236]]
 		],
@@ -1760,7 +1765,7 @@ export const structure: StructureTable = Object.freeze({
 				'_trait',
 				'AbstractType.trait',
 				'a built TypeIdentifier / ScopedTypeIdentifier / RemovedTraitBound / GenericType / FunctionType / TupleType / BoundedType',
-				[218, 242, 243, 246, 248, 265, 481]
+				[218, 242, 243, 246, 248, 265, 484]
 			]
 		],
 		config: ['typeParameters', 'trait']
@@ -1774,7 +1779,7 @@ export const structure: StructureTable = Object.freeze({
 				'_trait',
 				'DynamicType.trait',
 				'a built HigherRankedTraitBound / TypeIdentifier / ScopedTypeIdentifier / GenericType / FunctionType / TupleType',
-				[217, 242, 243, 246, 265, 481]
+				[217, 242, 243, 246, 265, 484]
 			]
 		]
 	},
@@ -1816,7 +1821,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_qualifier', 'ScopedTypeIdentifierInExpressionPosition.qualifier', 'buildIdentifier(…)'],
-			['_name', 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier', [481]]
+			['_name', 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier', [484]]
 		],
 		config: ['qualifier', 'name']
 	},
@@ -1829,7 +1834,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_qualifier', 'ScopedTypeIdentifier.qualifier', 'buildIdentifier(…)'],
-			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [481]]
+			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [484]]
 		],
 		config: ['qualifier', 'name']
 	},
@@ -1983,7 +1988,7 @@ export const structure: StructureTable = Object.freeze({
 				'_name',
 				'StructExpression.name',
 				'a built TypeIdentifier / ScopedTypeIdentifierInExpressionPosition / GenericTypeWithTurbofish',
-				[247, 264, 481]
+				[247, 264, 484]
 			],
 			['_body', 'StructExpression.body', 'a built FieldInitializerList', [283]]
 		],
@@ -2017,7 +2022,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_attributes', 'FieldInitializer.attributes', 'a built AttributeItem', [190]],
-			['_field', 'FieldInitializer.field', 'a built FieldIdentifier / IntegerLiteral', [331, 475]],
+			['_field', 'FieldInitializer.field', 'a built FieldIdentifier / IntegerLiteral', [331, 478]],
 			['_value', 'FieldInitializer.value', 'a built Expression', [258]]
 		],
 		config: ['attributes', 'field', 'value'],
@@ -2193,7 +2198,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	302: {
 		kind: 'closure_parameters',
-		nodeOnly: [['_parameters', 'ClosureParameters.parameters', 'a built ClosureParameter / Parameter', [233, 473]]],
+		nodeOnly: [['_parameters', 'ClosureParameters.parameters', 'a built ClosureParameter / Parameter', [233, 476]]],
 		lists: [['parameters', false, 0]]
 	},
 	303: {
@@ -2253,7 +2258,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_object', 'FieldExpression.object', 'a built Expression', [258]],
-			['_property', 'FieldExpression.property', 'a built FieldIdentifier / IntegerLiteral', [331, 475]]
+			['_property', 'FieldExpression.property', 'a built FieldIdentifier / IntegerLiteral', [331, 478]]
 		],
 		config: ['object', 'property']
 	},
@@ -2346,7 +2351,7 @@ export const structure: StructureTable = Object.freeze({
 			['_fields', 'StructPattern.fields']
 		],
 		nodeOnly: [
-			['_type', 'StructPattern.type', 'a built TypeIdentifier / ScopedTypeIdentifier', [265, 481]],
+			['_type', 'StructPattern.type', 'a built TypeIdentifier / ScopedTypeIdentifier', [265, 484]],
 			['_fields', 'StructPattern.fields', 'a built StructPatternElements', [359]]
 		],
 		config: ['type', 'fields']
@@ -2504,7 +2509,7 @@ export const structure: StructureTable = Object.freeze({
 	352: {
 		kind: 'use_bounds_elements',
 		nonEmpty: [['_item', 'use_bounds_elements.elements']],
-		nodeOnly: [['_item', 'UseBoundsElements.items', 'a built Lifetime / TypeIdentifier', [239, 481]]],
+		nodeOnly: [['_item', 'UseBoundsElements.items', 'a built Lifetime / TypeIdentifier', [239, 484]]],
 		lists: [['items', false, 0]]
 	},
 	353: {
@@ -2516,7 +2521,7 @@ export const structure: StructureTable = Object.freeze({
 	354: {
 		kind: 'arguments_elements',
 		nonEmpty: [['_item', 'arguments_elements.elements']],
-		nodeOnly: [['_item', 'ArgumentsElements.items', 'a built AttributedArgument', [431]]],
+		nodeOnly: [['_item', 'ArgumentsElements.items', 'a built Argument', [437]]],
 		lists: [['items', false, 0]]
 	},
 	355: {
@@ -2584,7 +2589,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_elements', 'ArrayExpressionList.elements']],
 		nodeOnly: [
 			['_attributes', 'ArrayExpressionList.attributes', 'a built AttributeItem', [190]],
-			['_elements', 'ArrayExpressionList.elements', 'a built ArgumentsElements', [354]]
+			['_elements', 'ArrayExpressionList.elements', 'a built ArrayExpressionListElements', [438]]
 		],
 		config: ['attributes', 'elements'],
 		lists: [['attributes', false, 'key']]
@@ -2678,7 +2683,7 @@ export const structure: StructureTable = Object.freeze({
 				'_trait',
 				'ImplItemPositiveClause.trait',
 				'a built TypeIdentifier / ScopedTypeIdentifier / GenericType',
-				[246, 265, 481]
+				[246, 265, 484]
 			]
 		]
 	},
@@ -2691,7 +2696,7 @@ export const structure: StructureTable = Object.freeze({
 				'_trait',
 				'ImplItemNegativeClause.trait',
 				'a built TypeIdentifier / ScopedTypeIdentifier / GenericType',
-				[246, 265, 481]
+				[246, 265, 484]
 			]
 		]
 	},
@@ -2774,7 +2779,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'function_type_trait_form',
 		required: [['_trait', 'trait']],
 		single: [['_trait', 'FunctionTypeTraitForm.trait']],
-		nodeOnly: [['_trait', 'FunctionTypeTraitForm.trait', 'a built TypeIdentifier / ScopedTypeIdentifier', [265, 481]]]
+		nodeOnly: [['_trait', 'FunctionTypeTraitForm.trait', 'a built TypeIdentifier / ScopedTypeIdentifier', [265, 484]]]
 	},
 	383: {
 		kind: 'function_type_fn_form',
@@ -3061,7 +3066,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'field_pattern_shorthand',
 		required: [['_name', 'name']],
 		single: [['_name', 'FieldPatternShorthand.name']],
-		nodeOnly: [['_name', 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier', [479]]],
+		nodeOnly: [['_name', 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier', [482]]],
 		booleans: [
 			['_by_reference', 'FieldPatternShorthand.byReference'],
 			['_mutable', 'FieldPatternShorthand.mutable']
@@ -3079,7 +3084,7 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'FieldPatternNamed.pattern']
 		],
 		nodeOnly: [
-			['_name', 'FieldPatternNamed.name', 'a built FieldIdentifier', [475]],
+			['_name', 'FieldPatternNamed.name', 'a built FieldIdentifier', [478]],
 			['_pattern', 'FieldPatternNamed.pattern', 'a built Pattern', [314]]
 		],
 		booleans: [
@@ -3180,7 +3185,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'StructItemBrace.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'StructItemBrace.name', 'a built TypeIdentifier', [481]],
+			['_name', 'StructItemBrace.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'StructItemBrace.typeParameters', 'a built TypeParameters', [219]],
 			['_where_clause', 'StructItemBrace.whereClause', 'a built WhereClause', [211]],
 			['_body', 'StructItemBrace.body', 'a built FieldDeclarationList', [201]]
@@ -3202,7 +3207,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'StructItemTuple.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'StructItemTuple.name', 'a built TypeIdentifier', [481]],
+			['_name', 'StructItemTuple.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'StructItemTuple.typeParameters', 'a built TypeParameters', [219]],
 			['_body', 'StructItemTuple.body', 'a built OrderedFieldDeclarationList', [203]],
 			['_where_clause', 'StructItemTuple.whereClause', 'a built WhereClause', [211]]
@@ -3219,7 +3224,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'StructItemUnit.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_name', 'StructItemUnit.name', 'a built TypeIdentifier', [481]],
+			['_name', 'StructItemUnit.name', 'a built TypeIdentifier', [484]],
 			['_type_parameters', 'StructItemUnit.typeParameters', 'a built TypeParameters', [219]]
 		],
 		config: ['visibilityModifier', 'name', 'typeParameters']
@@ -3343,6 +3348,23 @@ export const structure: StructureTable = Object.freeze({
 		lists: [['declarations', false, 0]]
 	},
 	437: {
+		kind: 'argument',
+		required: [['_expression', 'expression']],
+		single: [['_expression', 'Argument.expression']],
+		nodeOnly: [
+			['_attribute_item', 'Argument.attributeItems', 'a built AttributeItem', [190]],
+			['_expression', 'Argument.expression', 'a built Expression', [258]]
+		],
+		config: ['attributeItems', 'expression'],
+		lists: [['attributeItems', false, 'key']]
+	},
+	438: {
+		kind: 'array_expression_list_elements',
+		nonEmpty: [['_item', 'array_expression_list_elements.elements']],
+		nodeOnly: [['_item', 'ArrayExpressionListElements.items', 'a built AttributedArgument', [431]]],
+		lists: [['items', false, 0]]
+	},
+	439: {
 		kind: 'receiver_parameter_declaration',
 		required: [['_type', 'type']],
 		single: [['_type', 'ReceiverParameterDeclaration.type']],
@@ -3350,7 +3372,7 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_mutable', 'ReceiverParameterDeclaration.mutable']],
 		config: ['mutable', 'type']
 	},
-	438: {
+	440: {
 		kind: 'attributed_parameter_receiver',
 		required: [['_content', 'content']],
 		single: [
@@ -3363,12 +3385,12 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'AttributedParameterReceiver.content',
 				'a built ReceiverParameterDeclaration / SelfParameter',
-				[231, 437]
+				[231, 439]
 			]
 		],
 		config: ['attributeItem', 'content']
 	},
-	439: {
+	441: {
 		kind: 'parameters_elements_receiver',
 		required: [['_receiver', 'receiver']],
 		single: [
@@ -3376,34 +3398,34 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters_elements_receiver_group', 'ParametersElementsReceiver.parametersElementsReceiverGroup']
 		],
 		nodeOnly: [
-			['_receiver', 'ParametersElementsReceiver.receiver', 'a built AttributedParameterReceiver', [438]],
+			['_receiver', 'ParametersElementsReceiver.receiver', 'a built AttributedParameterReceiver', [440]],
 			[
 				'_parameters_elements_receiver_group',
 				'ParametersElementsReceiver.parametersElementsReceiverGroup',
 				'a built ParametersElementsReceiverGroup',
-				[440]
+				[442]
 			]
 		],
 		config: ['receiver', 'parametersElementsReceiverGroup']
 	},
-	440: {
+	442: {
 		kind: 'parameters_elements_receiver_group',
 		single: [['_elements', 'ParametersElementsReceiverGroup.elements']],
 		nodeOnly: [['_elements', 'ParametersElementsReceiverGroup.elements', 'a built ParametersElements', [349]]]
 	},
-	473: {
+	476: {
 		kind: 'closure_parameter',
 		required: [['_content', 'content']],
 		single: [['_content', 'ClosureParameter.content']],
 		nodeOnly: [['_content', 'ClosureParameter.content', 'a built Pattern', [314]]]
 	},
-	475: {
+	478: {
 		kind: 'field_identifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'FieldIdentifier.content']],
 		nodeOnly: [['_content', 'FieldIdentifier.content', 'buildIdentifier(…)', [1]]]
 	},
-	477: {
+	480: {
 		kind: 'method_declaration',
 		required: [
 			['_name', 'name'],
@@ -3441,13 +3463,13 @@ export const structure: StructureTable = Object.freeze({
 			'body'
 		]
 	},
-	479: {
+	482: {
 		kind: 'shorthand_field_identifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'ShorthandFieldIdentifier.content']],
 		nodeOnly: [['_content', 'ShorthandFieldIdentifier.content', 'buildIdentifier(…)', [1]]]
 	},
-	480: {
+	483: {
 		kind: 'signature_method_declaration',
 		required: [
 			['_name', 'name'],
@@ -3481,7 +3503,7 @@ export const structure: StructureTable = Object.freeze({
 			'whereClause'
 		]
 	},
-	481: {
+	484: {
 		kind: 'type_identifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'TypeIdentifier.content']],

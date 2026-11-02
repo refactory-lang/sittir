@@ -541,6 +541,8 @@ export const records = {
 	BlockCommentContentNode: { words: 2 },
 	TraitInterfaceDeclarationBodyNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
 	ExtensionDeclarationBodyNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
+	ArgumentNode: { words: 9, attribute_item: { word: 2, width: 2, run: 5 }, expression: { word: 4, width: 5 } },
+	ArrayExpressionListElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ReceiverParameterDeclarationNode: { words: 8, mutable: { word: 2, bit: 0 }, type_: { word: 3, width: 5 } },
 	AttributedParameterReceiverNode: { words: 12, attribute_item: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
 	ParametersElementsReceiverNode: {

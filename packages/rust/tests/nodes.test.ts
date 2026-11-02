@@ -3604,7 +3604,7 @@ describe('arguments_elements', () => {
 		const node = ir.argumentsElements(
 			...[
 				stampBuilt({
-					$type: TSKindId.AttributedArgument,
+					$type: TSKindId.Argument,
 					$text: 'test',
 					$named: true,
 					_attribute_item: [],
@@ -3619,7 +3619,7 @@ describe('arguments_elements', () => {
 		const node = ir.argumentsElements(
 			...[
 				stampBuilt({
-					$type: TSKindId.AttributedArgument,
+					$type: TSKindId.Argument,
 					$text: 'test',
 					$named: true,
 					_attribute_item: [],
@@ -4987,6 +4987,38 @@ describe('extension_declaration_body', () => {
 	it('render does not throw on minimal config', () => {
 		const node = ir.extensionDeclarationBody();
 		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('array_expression_list_elements', () => {
+	it('factory produces correct type', () => {
+		const node = ir.arrayExpressionListElements(
+			...[
+				stampBuilt({
+					$type: TSKindId.AttributedArgument,
+					$text: 'test',
+					$named: true,
+					_attribute_item: [],
+					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$type).toBe(TSKindId.ArrayExpressionListElements);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.arrayExpressionListElements(
+			...[
+				stampBuilt({
+					$type: TSKindId.AttributedArgument,
+					$text: 'test',
+					$named: true,
+					_attribute_item: [],
+					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

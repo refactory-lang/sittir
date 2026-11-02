@@ -1099,6 +1099,12 @@ export interface IsGuards {
 	extensionDeclarationBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtensionDeclarationBody };
+	argument<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Argument };
+	arrayExpressionListElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionListElements };
 	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
@@ -1607,7 +1613,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 481, 255, 252, 127, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 58, 59, 60, 61, 62, 63, 64,
+	263, 484, 255, 252, 127, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 58, 59, 60, 61, 62, 63, 64,
 	65, 66, 67, 68, 69, 70, 71, 72, 73, 74
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1642,11 +1648,11 @@ const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_declarationStatementTraitItem_ids = new Set<number>([
-	477, 480, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
+	480, 483, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatementImplItemBody_ids = new Set<number>([
-	477, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
+	480, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 
@@ -1977,6 +1983,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
 	const _kind_TraitInterfaceDeclarationBody_guard = _g(TSKindId.TraitInterfaceDeclarationBody);
 	const _kind_ExtensionDeclarationBody_guard = _g(TSKindId.ExtensionDeclarationBody);
+	const _kind_Argument_guard = _g(TSKindId.Argument);
+	const _kind_ArrayExpressionListElements_guard = _g(TSKindId.ArrayExpressionListElements);
 	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
 	const _kind_AttributedParameterReceiver_guard = _g(TSKindId.AttributedParameterReceiver);
 	const _kind_ParametersElementsReceiver_guard = _g(TSKindId.ParametersElementsReceiver);
@@ -2413,6 +2421,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		matchBlockArms: _kind_MatchBlockArms_guard,
 		traitInterfaceDeclarationBody: _kind_TraitInterfaceDeclarationBody_guard,
 		extensionDeclarationBody: _kind_ExtensionDeclarationBody_guard,
+		argument: _kind_Argument_guard,
+		arrayExpressionListElements: _kind_ArrayExpressionListElements_guard,
 		receiverParameterDeclaration: _kind_ReceiverParameterDeclaration_guard,
 		attributedParameterReceiver: _kind_AttributedParameterReceiver_guard,
 		parametersElementsReceiver: _kind_ParametersElementsReceiver_guard,
