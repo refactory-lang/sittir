@@ -71,6 +71,28 @@ describe('the portable read', () => {
 		for (const source of ['class C extends B implements I {}', 'class C implements I, J {}']) expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
+	it("reads an interface body as its members, empty or not, and builds the braces back", () => {
+		expect(firstOf('interface I {\n  a: string;\n  m(): void;\n}')).toMatchObject({
+			$path: 'declaration.interface',
+			body: [
+				{ $path: 'declaration.field.signature', name: 'a', type: 'string' },
+				{ $path: 'declaration.method.signature', name: 'm' }
+			]
+		});
+		expect(firstOf('interface I {}')).toMatchObject({ $path: 'declaration.interface', body: [] });
+		for (const source of ['interface I {\n  a: string;\n  m(): void;\n}', 'interface I {}', 'interface J extends I {\n  b: number;\n}']) {
+			expect(roundTrip(source)).toBe(`${source}\n`);
+		}
+	});
+
+	it("keeps an interface with a Flow exact body whole: its claim tests the opening brace", () => {
+		const source = 'interface I {| a: string |}';
+		const carried: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+		expect(carried).toEqual([{ reason: 'unclaimed' }]);
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
 		expect(firstOf('function f() {}')).toMatchObject({ $path: 'declaration.function', parameters: [] });
 		expect(firstOf('class C { m() {} }')).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });

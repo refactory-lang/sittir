@@ -4187,7 +4187,7 @@ const table: PortableTable = {
 				TSKindId.VariableDeclaratorDefinite,
 				TSKindId.VariableDeclaratorPlain
 			],
-			exact: true
+			exact: false
 		},
 		'declaration.ambient': { ids: [TSKindId.AmbientDeclaration], exact: true },
 		'declaration.class': { ids: [TSKindId.AbstractClassDeclaration, TSKindId.ClassDeclaration], exact: true },
@@ -4219,7 +4219,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignature], exact: true },
-		'declaration.interface': { ids: [TSKindId.InterfaceDeclaration], exact: true },
+		'declaration.interface': { ids: [TSKindId.InterfaceDeclaration], exact: false },
 		'declaration.method': {
 			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: true
@@ -5480,7 +5480,16 @@ const table: PortableTable = {
 		[TSKindId.IndexTypeQuery]: [{ path: 'type.index_query', within: [], test: [] }],
 		[TSKindId.InferType]: [{ path: 'type.infer', within: [], test: [] }],
 		[TSKindId.InstantiationExpression]: [{ path: 'expression.instantiation', within: [], test: [] }],
-		[TSKindId.InterfaceDeclaration]: [{ path: 'declaration.interface', within: [], test: [] }],
+		[TSKindId.InterfaceDeclaration]: [
+			{
+				path: 'declaration.interface',
+				within: [],
+				test: [
+					{ up: 0, via: [{ slots: { '319': 3 } }], plan: { op: 'eq', text: '{', slots: { '497': 0 } } },
+					{ up: 0, via: [{ slots: { '319': 3 } }], plan: { op: 'eq', text: '}', slots: { '497': 2 } } }
+				]
+			}
+		],
 		[TSKindId.InternalModule]: [{ path: 'declaration.module', within: [], test: [] }],
 		[TSKindId.IntersectionType]: [{ path: 'type.intersection', within: [], test: [] }],
 		[TSKindId.LabeledStatement]: [{ path: 'statement.labeled', within: [], test: [] }],

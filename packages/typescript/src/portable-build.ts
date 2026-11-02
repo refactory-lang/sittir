@@ -117,6 +117,7 @@ export const build: PortableBuildTable = {
 		indexTypeQuery: 'direct',
 		inferType: 'config',
 		instantiationExpression: 'config',
+		interfaceBody: 'config',
 		interfaceDeclaration: 'config',
 		internalModule: 'config',
 		intersectionType: 'config',
@@ -6409,21 +6410,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [319, 'body'],
-									kinds: [497]
-								}
-							]
-						},
-						{
 							name: 'extends',
 							steps: [
 								{
@@ -6451,14 +6437,65 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									builder: 'interfaceBody'
+								},
+								{
+									key: 'members',
+									builder: 'objectTypeContent',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [400, 'items'],
+									kinds: [190, 300, 369, 370, 375, 376, 401, 402, 403, 411, 412, 430, 431, 455, 456, 457],
+									many: true
+								}
+							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'body',
+									builder: 'interfaceBody'
+								},
+								{
+									key: 'opening'
+								}
+							],
+							kind: 5
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									builder: 'interfaceBody'
+								},
+								{
+									key: 'closing'
+								}
+							],
+							kind: 6
+						}
+					],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}

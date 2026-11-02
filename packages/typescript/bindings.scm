@@ -19,7 +19,7 @@
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
+(interface_declaration (extends_type_clause type: (_) @extends)? body: (interface_body opening: "{" (object_type_content (_) @body)? closing: "}")) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body_element_name name: (_) @name) @declaration.enum_member

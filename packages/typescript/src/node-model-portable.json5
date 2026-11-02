@@ -7644,14 +7644,49 @@
       ]
     },
     "interface_declaration": {
-      "vocab": "declaration.interface",
+      "vocab": "declaration",
       "read": [
         {
           "vocab": "declaration.interface",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "319": 3
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "{",
+                "slots": {
+                  "497": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "319": 3
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "}",
+                "slots": {
+                  "497": 2
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -7678,17 +7713,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "interface_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "extends",
           "route": "nested",
           "via": [
@@ -7710,6 +7734,41 @@
             {
               "owner": "extends_type_clause",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "object_type_content",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "interface_body",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "object_type_content",
+          "slot": "item",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "interface_body",
+              "slot": "members"
+            },
+            {
+              "owner": "object_type_content",
+              "slot": "item"
             }
           ]
         }
