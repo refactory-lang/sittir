@@ -64,6 +64,8 @@ import {
 	wireRefuse,
 	wireAliasTargetIssue,
 	wireSiteFlipIssue,
+	wireBindingEffectCount,
+	wireRecordSiteAlias,
 	wireCopyOf,
 	wireAliasSite,
 	wireGetLiftBody,
@@ -803,8 +805,13 @@ function replacingDollar(key: string): unknown {
 
 function resolveAt(patch: PatchValue, member: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	refuseSameSite(member, key);
+	const since = wireBindingEffectCount();
 	const resolved = resolvePatch(patch, member, key, enclosing);
-	refuseFlippedSite(member, resolved, key);
+	const aliasEdit = aliasEditOf(member, resolved);
+	if (aliasEdit !== undefined) {
+		refuseFlippedSite(aliasEdit, key);
+		recordSiteAlias(aliasEdit, since);
+	}
 	return wireNoteInlineWrite(wireIsInsideCopy() && replacesMember(patch) ? carriedLabel(resolved, member, wireAutomaticVariants()) : resolved);
 }
 
@@ -837,15 +844,29 @@ function siteDisplay(shape: SiteShape): string | undefined {
 	return shape.type === 'ALIAS' && shape.named === true && typeof shape.value === 'string' ? shape.value : undefined;
 }
 
-function refuseFlippedSite(member: RuntimeRule, resolved: RuntimeRule, key: string): void {
+interface AliasEdit {
+	readonly before: string;
+	readonly after: string;
+}
+
+function aliasEditOf(member: RuntimeRule, resolved: RuntimeRule): AliasEdit | undefined {
 	const replaced = siteShapeOf(member);
 	const shown = siteShapeOf(resolved);
-	if (shown.type !== 'ALIAS') return;
+	if (shown.type !== 'ALIAS') return undefined;
 	const storage = siteStorage(replaced);
-	if (storage === undefined || storage !== siteStorage(shown)) return;
+	if (storage === undefined || storage !== siteStorage(shown)) return undefined;
 	const before = siteDisplay(replaced);
 	const after = siteDisplay(shown);
-	if (before === undefined || after === undefined) return;
+	return before === undefined || after === undefined ? undefined : { before, after };
+}
+
+function recordSiteAlias({ before, after }: AliasEdit, since: number): void {
+	if (before === after) return;
+	const site = wireAliasSite();
+	wireRecordSiteAlias(since, { kind: 'alias', from: before, to: after, ...(site === undefined ? {} : { site }) });
+}
+
+function refuseFlippedSite({ before, after }: AliasEdit, key: string): void {
 	const issue = wireSiteFlipIssue(before, after);
 	if (issue === undefined) return;
 	const owner = wireGetCurrentRuleKind() ?? '';

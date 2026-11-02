@@ -20,7 +20,7 @@ import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
-import { isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
+import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
 import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
@@ -141,8 +141,6 @@ type FieldRequest = FieldRename | FieldWrap;
 
 const SEVERAL_FIELDS = 'placement reaches a kind through several fields';
 const SINGLE = new Set(['OPTIONAL', 'REPEAT', 'REPEAT1', 'FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS']);
-const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.metadata : {});
-const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
 
 interface ReferenceField {
 	readonly name: string;
@@ -236,7 +234,7 @@ function placedStepsOf(rules: Readonly<Record<string, unknown>>, stop: ReadonlyS
 function liftedIn(rule: unknown, kind: string): boolean {
 	if (Array.isArray(rule)) return rule.some((r) => liftedIn(r, kind));
 	if (!isRecord(rule)) return false;
-	return (rule.type === 'SYMBOL' && rule.name === kind && isEnrichGroupLiftSymbol(rule)) || Object.values(rule).some((v) => liftedIn(v, kind));
+	return (rule.name === kind && isGroupLiftReference(rule)) || Object.values(rule).some((v) => liftedIn(v, kind));
 }
 
 function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
@@ -765,15 +763,7 @@ export function grammarBindingsPatches(
 		return name === rule.name ? undefined : { field: name };
 	};
 
-	const liftNames = new Set<string>();
-	const collectLifts = (r: unknown): void => {
-		if (Array.isArray(r)) r.forEach(collectLifts);
-		else if (isRecord(r)) {
-			if (isLift(r) && typeof r.name === 'string') liftNames.add(r.name);
-			Object.values(r).forEach(collectLifts);
-		}
-	};
-	Object.values(rules).forEach(collectLifts);
+	const liftNames = groupLiftNames(rules);
 	const roots = Object.keys(rules).filter((name) => !liftNames.has(name));
 
 	const fieldPatches = new Map<string, GrammarBindingsPatch[]>();
@@ -792,7 +782,7 @@ export function grammarBindingsPatches(
 			const container = wrapped ? 'FIELD' : site.container;
 			if (rule.type === 'SYMBOL' && typeof rule.name === 'string' && Object.hasOwn(aliases, rule.name) && (aliasPath.length === 0 || container !== 'ALIAS'))
 				aliased.push({ path: pathText(aliasPath), edit: { alias: aliases[rule.name]! } });
-			if (isLift(rule)) {
+			if (isGroupLiftReference(rule)) {
 				const name = rule.name as string;
 				if (reached.has(name)) return;
 				reached.add(name);

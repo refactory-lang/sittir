@@ -1,4 +1,4 @@
-import type { AliasSite, CopyEffect, Lead, RecordedBindingEffect } from '../verbs/effects.ts';
+import type { AliasSite, CopyEffect, Lead, RecordedAlias, RecordedBindingEffect } from '../verbs/effects.ts';
 import { copyNameOf, VerbRefusal } from '../verbs/copy.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
@@ -320,6 +320,18 @@ export function wireRecordPatchSite(site: PatchSite): void {
 
 export function wireRecordBindingEffect(effect: RecordedBindingEffect): void {
 	currentContext?.bindingEffects.push(effect);
+}
+
+export function wireBindingEffectCount(): number {
+	return currentContext?.bindingEffects.length ?? 0;
+}
+
+export function wireRecordSiteAlias(since: number, alias: RecordedAlias): void {
+	const effects = currentContext?.bindingEffects;
+	if (effects === undefined) return;
+	const recorded = effects.slice(since);
+	const kept = recorded.filter((effect) => effect.kind !== 'alias' || effect.to !== alias.to);
+	if (kept.length < recorded.length) effects.splice(since, recorded.length, ...kept, alias);
 }
 
 export function wireInPathEdit(): boolean {

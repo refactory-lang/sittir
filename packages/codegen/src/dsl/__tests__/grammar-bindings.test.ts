@@ -262,6 +262,14 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		);
 	}, 120_000);
 
+	it('records an alias edit as the display its site showed before and the display after, not the source it copies', async () => {
+		const shown = "edits: { source_file: { '0/0': alias('item') } }";
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', shown, undefined, { bindings: "edits: { source_file: { '0/0': ($) => alias(copy('_item'), $.entry) } }" });
+		const aliases = (raw.bindingEffects ?? []).filter((effect) => effect.kind === 'alias');
+		expect(aliases).toContainEqual(expect.objectContaining({ from: 'item', to: 'entry' }));
+		expect(aliases).not.toContainEqual(expect.objectContaining({ from: '_item' }));
+	}, 120_000);
+
 	it('reads a literal shown under an alias in place of a member as a replacement, not an alias edit of the member', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { source_file: { '0/0': ($) => alias('main', $.identifier) } }" });
 		expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));

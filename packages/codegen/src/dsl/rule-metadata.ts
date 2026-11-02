@@ -1,6 +1,6 @@
 import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
 import type { ChoiceRule, StringRule } from '../types/rule.ts';
-import { ALIAS, CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 
 export const GLOBAL_WORDSET = 'global';
 
@@ -27,6 +27,29 @@ export function reservedWordsetsOf(meta: unknown): readonly string[] | undefined
 export function isVisibleGroupAlias(rule: unknown): boolean {
 	const shown = rule as { readonly type?: unknown; readonly metadata?: unknown } | null | undefined;
 	return shown?.type === ALIAS && readRuleMetadata(shown.metadata)?.aliasSource === 'visible-group';
+}
+
+export function isGroupLiftReference(rule: unknown): boolean {
+	const shown = rule as { readonly type?: unknown; readonly metadata?: unknown; readonly annotations?: unknown } | null | undefined;
+	const annotations = shown?.annotations;
+	return (
+		shown?.type === SYMBOL &&
+		readRuleMetadata(shown.metadata)?.symbolSource === 'group-lift' &&
+		!(typeof annotations === 'object' && annotations !== null && 'variant' in annotations)
+	);
+}
+
+export function groupLiftNames(rules: Readonly<Record<string, unknown>>): ReadonlySet<string> {
+	const names = new Set<string>();
+	const visit = (rule: unknown): void => {
+		if (Array.isArray(rule)) return rule.forEach(visit);
+		if (typeof rule !== 'object' || rule === null) return;
+		const name = (rule as { readonly name?: unknown }).name;
+		if (isGroupLiftReference(rule) && typeof name === 'string') names.add(name);
+		Object.values(rule).forEach(visit);
+	};
+	Object.values(rules).forEach(visit);
+	return names;
 }
 
 export function aliasStorageOf(meta: unknown): string | undefined {

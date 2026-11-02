@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
+import { groupLiftNames } from '../dsl/rule-metadata.ts';
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
@@ -150,7 +151,7 @@ export async function grammarInput(
 			effects.filter((effect) => effect.kind === 'segment'),
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
 		),
-		boundNameAt(nameOf, aliases)
+		boundNameAt(nameOf, aliases, groupLiftNames(raw.rules ?? {}))
 	);
 	const known = (vocabulary ?? (await readVocabulary(VOCABULARY_DIR))).composedAs(compositionOf(grammar));
 	return {
