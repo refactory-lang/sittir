@@ -652,6 +652,11 @@ declare module './declaration.ts' {
 			}
 			interface Signature<G extends GrammarContext<G>> {
 				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function.Signature<G>['async']>;
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Function.Signature<G>['receiver']
+				>;
 				readonly returnType?: gate.In<
 					G,
 					features.TypeAnnotations,
@@ -817,6 +822,11 @@ declare module './declaration.ts' {
 					G,
 					features.ReadonlyMembers,
 					readonlyMembers.Declaration.Method.Signature<G>['readonly']
+				>;
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Method.Signature<G>['receiver']
 				>;
 				readonly returnType?: gate.In<
 					G,

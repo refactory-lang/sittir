@@ -35,6 +35,7 @@ import type {
 	Exceptions,
 	ExecStatements,
 	ExplicitOverrides,
+	ExplicitReceivers,
 	ForeignFunctionInterface,
 	Generators,
 	HigherRankPolymorphism,
@@ -152,6 +153,7 @@ export interface RustFeatures
 	extends AsyncBlocks,
 		Coroutines,
 		Methods,
+		ExplicitReceivers,
 		Structs,
 		UntaggedUnions,
 		Interfaces,
@@ -186,6 +188,7 @@ export interface RustFeatures
 export interface TypeScriptFeatures
 	extends JavaScriptFeatures,
 		TypeAnnotations,
+		ExplicitReceivers,
 		NonNullAssertions,
 		OptionalMembers,
 		ReadonlyMembers,
