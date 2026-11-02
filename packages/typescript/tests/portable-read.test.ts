@@ -171,4 +171,11 @@ describe('the portable read', () => {
 		expect(read(source)).toMatchObject({ $path: 'file', shebang: '/usr/bin/env node' });
 		expect(roundTrip(source)).toBe(source);
 	});
+
+	it('refuses a destructuring declarator given no pattern', () => {
+		const declarator = ((firstOf('let { a } = b;') as Read).declarators as readonly Read[])[0]!;
+		expect(declarator.$path).toBe('declaration.variable.pattern');
+		const { name: _name, ...rest } = declarator;
+		expect(() => runtime.build(rest as Read)).toThrow('no typescript form of declaration.variable.pattern builds this structure');
+	});
 });

@@ -18,7 +18,7 @@ import type {
 	QueryPlan
 } from '@sittir/types';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, heldSteps, modelNode, reachedBy, shownSlots, valueTokensOf } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, heldSteps, modelNode, reachedBy, shownSlots, valueTokensOf, type Guaranteed } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import {
@@ -75,6 +75,12 @@ export interface PortableBuildInput {
 export interface PortableBuildOutput {
 	readonly table: PortableBuildTable;
 	readonly diagnostics: readonly PickDiagnostic[];
+}
+
+interface RoutedFill {
+	readonly name: string;
+	readonly site: { readonly path: readonly SlotStep[] };
+	readonly seats: readonly { readonly kinds: ReadonlySet<string> }[];
 }
 
 interface Arm {
@@ -617,6 +623,16 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const kinds = new Set([...at.kinds].filter((held) => pinHolds(pin, held) === pin.own));
 			return kinds.size === 0 ? undefined : { ...at, kinds, refined: new Set([...at.refined].filter((held) => kinds.has(held))) };
 		}, seat);
+	const requiredMember = (guaranteed: Guaranteed, routed: readonly RoutedFill[], path: readonly SlotStep[]): string | undefined => {
+		const tested = guaranteed.present(path);
+		if (tested === undefined) return undefined;
+		const reaching = routed.filter(({ site }) => site.path.length >= path.length && path.every((step, i) => sameStep(step, site.path[i]!)));
+		const [only] = reaching;
+		if (only === undefined || reaching.some(({ name }) => name !== only.name)) return undefined;
+		const fills = ({ site, seats }: RoutedFill): boolean =>
+			site.path.length === path.length && seats.length > 0 && seats.every((seat) => seat.kinds.size > 0 && [...seat.kinds].every((held) => tested.includes(held)));
+		return reaching.every(fills) ? only.name : undefined;
+	};
 	const armsOf = (kind: string, entry: ReadEntry): Arm[] => {
 		const node = nodeOf(kind);
 		const id = typeOf(kind);
@@ -650,16 +666,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const placed = placedFlag(route);
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];
 		});
-		const fills = (path: readonly SlotStep[], kinds: readonly string[]): string | undefined => {
-			const tested = new Set(concreteKinds(model, kinds));
-			return routed.find(
-				({ site, seats }) =>
-					site.path.length === path.length &&
-					site.path.every((step, i) => sameStep(step, path[i]!)) &&
-					seats.length > 0 &&
-					seats.every((seat) => seat.kinds.size > 0 && [...seat.kinds].every((held) => tested.has(held)))
-			)?.name;
-		};
+		const guaranteed = guaranteedBy(model, entry);
 		const tested = new Set<string>();
 		const claimed = [
 			...entry.pins.flatMap((pin) => {
@@ -671,10 +678,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const path = held(kind, child.subject);
 				if (path === undefined) return [];
 				if ('text' in child) return placedText(path, child.text) ?? [];
-				if ('kinds' in child && child.kinds.length === 1) {
-					const filler = fills(path, child.kinds);
+				if ('kinds' in child) {
+					const filler = requiredMember(guaranteed, routed, path);
 					if (filler !== undefined) return (tested.add(filler), []);
-					return placedValue(path, child.kinds[0]!) ?? [];
+					return child.kinds.length === 1 ? (placedValue(path, child.kinds[0]!) ?? []) : [];
 				}
 				return [];
 			}),

@@ -20515,7 +20515,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
 				}
 			]
 		},

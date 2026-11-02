@@ -108,4 +108,11 @@ describe('the portable read', () => {
 		expect(runtime.read(runtime.engine.parse(source))).toMatchObject({ $path: 'file', shebang: '/usr/bin/env run-cargo-script' });
 		expect(roundTrip(source)).toBe(source);
 	});
+
+	it('builds a trait impl through the clause its implemented trait sits in, and refuses a method call given no callee', () => {
+		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
+		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');
+		expect(roundTrip('fn g() { a.b.c(); }')).toBe('fn g() {\n    a.b.c();\n}\n');
+		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (members arguments)');
+	});
 });
