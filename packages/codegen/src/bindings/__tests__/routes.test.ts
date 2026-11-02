@@ -27,6 +27,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	variantOf: null,
 	splitFrom: null,
 	aliasStorage: null,
+	interiorPart: null,
 	shownAs: [],
 	...extra
 });
@@ -171,7 +172,9 @@ const MODEL = [
 	node('attr_param', [slot('element', ['recv_self', 'param_x'])]),
 	node('recv_self'),
 	node('param_x', [slot('name', ['self_kw', 'identifier'])]),
-	node('self_kw', [], { modelType: 'keyword', unit: true, text: 'self' })
+	node('self_kw', [], { modelType: 'keyword', unit: true, text: 'self' }),
+	node('script', [slot('line', ['interp_line'], { required: false })]),
+	node('interp_line', [slot('content', [])], { interiorPart: 'content' })
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -926,6 +929,17 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(await names('(param_x name: (self_kw)) @identifier.receiver')).toEqual([]);
 		expect(await names('(param_x name: (self_kw) @name) @identifier.receiver')).toEqual(['name']);
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
+	});
+
+	it("routes a slot that holds only an unclaimed token on into the token's one interior part, and stops at a claimed one", async () => {
+		const paths = async (bindings: string) => (resolveRoutes(await grammar(bindings)).members.get('script') ?? []).map((r) => (r.route === 'slot' ? r.path : undefined));
+		expect(await paths('(script) @file\n(script line: (_) @line)')).toEqual([
+			[
+				{ owner: 'script', slot: 'line' },
+				{ owner: 'interp_line', slot: 'content' }
+			]
+		]);
+		expect(await paths('(script) @file\n(script line: (_) @line)\n(interp_line) @identifier')).toEqual([[{ owner: 'script', slot: 'line' }]]);
 	});
 
 	it("routes no member through a slot the entry's own pin narrows to one text, as a terminal or as a fixed-text kind", async () => {

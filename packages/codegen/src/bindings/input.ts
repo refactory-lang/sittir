@@ -49,6 +49,7 @@ export interface NodeModelNode {
 	readonly variantOf?: string;
 	readonly splitFrom?: string;
 	readonly aliasStorage?: string;
+	readonly interiorPart?: string;
 	readonly shownAs?: readonly string[];
 }
 
@@ -102,6 +103,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			variantOf: n.variantOf ?? null,
 			splitFrom: n.splitFrom ?? null,
 			aliasStorage: n.aliasStorage ?? null,
+			interiorPart: n.interiorPart ?? null,
 			shownAs: n.shownAs ?? []
 		});
 	}

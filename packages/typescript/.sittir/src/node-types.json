@@ -6851,7 +6851,7 @@
     "named": true,
     "root": true,
     "fields": {
-      "hash_bang_line": {
+      "shebang": {
         "multiple": false,
         "required": false,
         "types": [

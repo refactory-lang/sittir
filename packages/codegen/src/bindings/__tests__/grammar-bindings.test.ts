@@ -186,6 +186,7 @@ describe('deriveGrammarBindings', () => {
 			variantOf: '_item',
 			splitFrom: null,
 			aliasStorage: null,
+			interiorPart: null,
 			shownAs: [],
 			...extra
 		});
@@ -220,6 +221,7 @@ describe('deriveGrammarBindings', () => {
 			variantOf: '_item',
 			splitFrom: null,
 			aliasStorage: null,
+			interiorPart: null,
 			shownAs: [],
 			...extra
 		});
@@ -782,6 +784,7 @@ describe('a child that shares a union slot', () => {
 					variantOf: null,
 					splitFrom: null,
 					aliasStorage: null,
+					interiorPart: null,
 					shownAs: []
 				} as ModelNode
 			]
@@ -857,6 +860,7 @@ describe('a claim on a supertype owner', () => {
 		variantOf: null,
 		splitFrom: null,
 		aliasStorage: null,
+		interiorPart: null,
 		shownAs: [],
 		...extra
 	});

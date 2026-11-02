@@ -4,6 +4,7 @@
 
 ; ── file ───────────────────────────────────────────────────────────────────────
 (source_file) @file
+(source_file shebang: (_) @shebang)
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_item) @declaration.function
@@ -478,7 +479,6 @@
 ["," ";" ":" "::" "->" "=>"] @punctuation.delimiter
 
 ; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
-((shebang) @unclaimed (#set! reason "interpreter line, not an item"))
 ((string_open) @unclaimed (#set! reason "string delimiter, not content"))
 ((raw_string_literal_start) @unclaimed (#set! reason "string delimiter, not content"))
 ((raw_string_literal_end) @unclaimed (#set! reason "string delimiter, not content"))

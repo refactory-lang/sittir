@@ -148,28 +148,28 @@ const _delimited_buildCommentBlock: DelimitedSpec = {
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram<
-	HashBangLineSlot extends T.Program.Config['hashBangLine'],
+	ShebangSlot extends T.Program.Config['shebang'],
 	StatementsSlot extends T.Program.Config['statements']
 >(
-	config?: RefusingConfig<Partial<T.Program.Config>, { hashBangLine: HashBangLineSlot; statements: StatementsSlot }>
+	config?: RefusingConfig<Partial<T.Program.Config>, { shebang: ShebangSlot; statements: StatementsSlot }>
 ): T.Program.Bound;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Bound {
 	currentHandle()?.admit(TSKindId.Program, [config]);
-	const _hash_bang_line = config.hashBangLine;
+	const _shebang = config.shebang;
 	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Program as const,
 		$named: true as const,
-		_hash_bang_line,
+		_shebang,
 		_statements,
 		$with: {
-			hashBangLine: (value?: Admit<T.HashBangLine>) =>
-				rebuilt(node, handle, () => buildProgram({ ...config, hashBangLine: value })),
+			shebang: (value?: Admit<T.HashBangLine>) =>
+				rebuilt(node, handle, () => buildProgram({ ...config, shebang: value })),
 			statements: (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
 				rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
 		},
-		hashBangLine: () => hydrateStoredSlot(node, '_hash_bang_line'),
+		shebang: () => hydrateStoredSlot(node, '_shebang'),
 		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

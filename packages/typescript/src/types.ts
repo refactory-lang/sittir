@@ -2880,20 +2880,20 @@ export enum MethodDefinitionClassBodyMemberMethodKind {
 // Node types — concrete interfaces
 export interface Program {
 	readonly $type: TSKindId.Program;
-	readonly _hash_bang_line?: HashBangLine;
+	readonly _shebang?: HashBangLine;
 	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
-		readonly _hash_bang_line: 'hashBangLine';
+		readonly _shebang: 'shebang';
 		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
-		readonly hashBangLine: SlotHint<T.HashBangLine, true>;
+		readonly shebang: SlotHint<T.HashBangLine, true>;
 		readonly statements: SlotHint<NonNullable<NonNullable<T.Program.Config>['statements']>[number][], true, true>;
 	};
-	readonly hashBangLine: () => HashBangLine | undefined;
+	readonly shebang: () => HashBangLine | undefined;
 	readonly statements: () => readonly Statement[];
 }
 

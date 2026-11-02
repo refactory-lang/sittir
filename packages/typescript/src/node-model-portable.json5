@@ -11314,6 +11314,21 @@
       ],
       "members": [
         {
+          "name": "shebang",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "program",
+              "slot": "shebang"
+            },
+            {
+              "owner": "hash_bang_line",
+              "slot": "content"
+            }
+          ]
+        },
+        {
           "name": "statements",
           "route": "slot",
           "slot": "statements",

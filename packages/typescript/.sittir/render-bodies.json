@@ -7065,11 +7065,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "hash_bang_line",
+					"test": "shebang",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "hash_bang_line"
+							"name": "shebang"
 						}
 					]
 				}

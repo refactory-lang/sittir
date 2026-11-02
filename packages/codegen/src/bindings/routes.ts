@@ -500,6 +500,13 @@ function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind:
 	return [];
 }
 
+function interiorPartOf(model: SlotModel, slot: ModelSlot, claimed: (kind: string) => boolean): { readonly slot: ModelSlot; readonly step: SlotStep } | undefined {
+	const [held, ...more] = slot.terminals.length === 0 ? concreteKinds(model, slot.kinds) : [];
+	const node = held === undefined || more.length > 0 || claimed(held) ? undefined : modelNode(model, held);
+	const part = node?.slots.find((inner) => inner.name === node.interiorPart);
+	return node === undefined || part === undefined ? undefined : { slot: part, step: stepOf(node.kind, part.name, null) };
+}
+
 const holdsOnlyText = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length === 0 && slot.terminals.length === 0;
 
 type DeepMember = Extract<MemberFact, { readonly route: 'presence' | 'nested' }>;
@@ -589,7 +596,8 @@ function membersOf(
 	entries: readonly ReadEntry[],
 	slotNamesOf: (kind: string) => SlotNames,
 	guaranteed: Guaranteed,
-	inherited: ReadonlySet<number>
+	inherited: ReadonlySet<number>,
+	claimed: (kind: string) => boolean
 ): MemberRoute[] {
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
@@ -751,6 +759,11 @@ function membersOf(
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = pathTo(slot);
 		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
+		const part = interiorPartOf(input.model, read, claimed);
+		if (part !== undefined) {
+			routes.push({ route: 'slot', name, slot: part.slot, path: [...path, part.step], ...flag });
+			continue;
+		}
 		routes.push(except.length === 0 ? { route: 'slot', name, slot, path, ...flag } : { route: 'slot', name, slot: read, except, path, ...flag });
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot, pathTo(slot)));
@@ -1085,7 +1098,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, entries] of readEntries) {
-		const routed = entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries)) }));
+		const routed = entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)) }));
 		readEntries.set(kind, routed);
 		const union: MemberRoute[] = [];
 		const keys: string[] = [];

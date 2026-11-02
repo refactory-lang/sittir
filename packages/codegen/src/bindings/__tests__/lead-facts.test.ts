@@ -28,6 +28,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	variantOf: null,
 	splitFrom: null,
 	aliasStorage: null,
+	interiorPart: null,
 	shownAs: [],
 	...extra
 });

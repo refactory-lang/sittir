@@ -102,4 +102,10 @@ describe('the portable read', () => {
 		expect(valueOf('let s = c"x";')).toMatchObject({ $path: 'literal.string.c' });
 		for (const source of ['let s = "";', 'let s = "x\\n";', 'let s = b"x";', 'let s = c"x";']) expect(roundTrip(`fn f() {\n    ${source}\n}\n`)).toBe(`fn f() {\n    ${source}\n}\n`);
 	});
+
+	it("reads an interpreter line as the file's shebang text, and builds it back", () => {
+		const source = '#!/usr/bin/env run-cargo-script\nfn main() {}\n';
+		expect(runtime.read(runtime.engine.parse(source))).toMatchObject({ $path: 'file', shebang: '/usr/bin/env run-cargo-script' });
+		expect(roundTrip(source)).toBe(source);
+	});
 });

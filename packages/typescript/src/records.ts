@@ -6,7 +6,7 @@
 export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
-	ProgramNode: { words: 9, hash_bang_line: { word: 2, width: 5 }, statements: { word: 7, width: 2, run: 5 } },
+	ProgramNode: { words: 9, shebang: { word: 2, width: 5 }, statements: { word: 7, width: 2, run: 5 } },
 	HashBangLineNode: { words: 6, content: { word: 2, width: 4 } },
 	NamespaceExportNode: { words: 7, module_export_name: { word: 2, width: 5 } },
 	ExportClauseNode: { words: 7, export_specifiers: { word: 2, width: 5 } },

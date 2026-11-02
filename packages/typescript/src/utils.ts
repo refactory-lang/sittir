@@ -33,7 +33,7 @@ export const triviaFacts = Object.freeze({
 	listKinds: new Set<number>([383, 384, 386, 389, 390, 391, 392, 400]),
 	layout: new Set<number>([181, 182, 183, 184, 185, 186, 187, 188]),
 	innerRegions: new Map<number, readonly string[]>([
-		[189, ['_hash_bang_line', '_statements']],
+		[189, ['_shebang', '_statements']],
 		[192, ['_export_specifiers']],
 		[201, ['_import_specifiers']],
 		[210, ['_statements']],
@@ -99,7 +99,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	164: [['content', 0, undefined, '_content']],
 	165: [['content', 0, undefined, '_content']],
 	189: [
-		['hashBangLine', 0, undefined, '_hash_bang_line'],
+		['shebang', 0, undefined, '_shebang'],
 		['statements', 1, undefined, '_statements']
 	],
 	191: [['moduleExportName', 0, undefined, '_module_export_name']],
@@ -1077,12 +1077,12 @@ export const structure: StructureTable = Object.freeze({
 	},
 	189: {
 		kind: 'program',
-		single: [['_hash_bang_line', 'Program.hashBangLine']],
+		single: [['_shebang', 'Program.shebang']],
 		nodeOnly: [
-			['_hash_bang_line', 'Program.hashBangLine', 'a built HashBangLine', [2]],
+			['_shebang', 'Program.shebang', 'a built HashBangLine', [2]],
 			['_statements', 'Program.statements', 'a built Statement', [204]]
 		],
-		config: ['hashBangLine', 'statements'],
+		config: ['shebang', 'statements'],
 		lists: [['statements', false, 'key']]
 	},
 	191: {

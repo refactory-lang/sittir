@@ -165,4 +165,10 @@ describe('the portable read', () => {
 		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
+
+	it("reads a hash-bang line as the file's shebang text, and builds it back", () => {
+		const source = '#!/usr/bin/env node\nlet x = 1;\n';
+		expect(read(source)).toMatchObject({ $path: 'file', shebang: '/usr/bin/env node' });
+		expect(roundTrip(source)).toBe(source);
+	});
 });

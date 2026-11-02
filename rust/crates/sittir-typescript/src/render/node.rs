@@ -19496,9 +19496,9 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionPlainOptionalityNode
 pub struct ProgramNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_hash_bang_line")]
-    #[slot(field = field::HASH_BANG_LINE, word = 2, width = 5)]
-    pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineNode>>,
+    #[wire(key = "_shebang")]
+    #[slot(field = field::SHEBANG, word = 2, width = 5)]
+    pub shebang: Option<::sittir_core::SlotValue<HashBangLineNode>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS, word = 7, width = 2, run = 5)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
@@ -19528,8 +19528,8 @@ impl ::sittir_core::prepare::Prepare for ProgramNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);
-        let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.hash_bang_line), ::sittir_core::prepare::EdgeItems::first_item(&self.statements)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
-        let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.statements), ::sittir_core::prepare::EdgeItems::last_item(&self.hash_bang_line)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+        let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.shebang), ::sittir_core::prepare::EdgeItems::first_item(&self.statements)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
+        let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.statements), ::sittir_core::prepare::EdgeItems::last_item(&self.shebang)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
         let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
         let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
@@ -19537,7 +19537,7 @@ impl ::sittir_core::prepare::Prepare for ProgramNode {
         ::sittir_core::prepare::fill_slot_gaps(self.statements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_statements"));
         self.statements_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_PROGRAM_STATEMENTS, ctx);
-        self.hash_bang_line.prepare(ctx)?;
+        self.shebang.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -41979,7 +41979,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
 
 
 fn render_program(node: &ProgramNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let hash_bang_line = View::new(&node.hash_bang_line, "{}");
+    let shebang = View::new(&node.shebang, "{}");
     let statements = ListView {
         items: &node.statements,
         template: "{}",
@@ -41994,7 +41994,7 @@ fn render_program(node: &ProgramNode, w: &mut dyn ::sittir_core::render::RenderS
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_statements"),
     };
     w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_hash_bang_line", ::sittir_core::types::ItemIndex(0), w, |w| hash_bang_line.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_shebang", ::sittir_core::types::ItemIndex(0), w, |w| shebang.render(w))?;
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     statements.render(w)?;
     w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, node.layout.edges().after);

@@ -12,13 +12,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "hash_bang_line",
+              "name": "shebang",
               "content": {
                 "type": "SYMBOL",
                 "name": "hash_bang_line"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {

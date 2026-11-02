@@ -68,15 +68,15 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 	const node = {
 		...data,
 		$type: TSKindId.Program as const,
-		hashBangLine() {
-			return hydrateSlot<T.HashBangLine | undefined>(this, '_hash_bang_line', tree);
+		shebang() {
+			return hydrateSlot<T.HashBangLine | undefined>(this, '_shebang', tree);
 		},
 		statements() {
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: {
-			hashBangLine: (v: NonNullable<T.Program['_hash_bang_line']>) =>
-				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _hash_bang_line: v }, tree)),
+			shebang: (v: NonNullable<T.Program['_shebang']>) =>
+				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _shebang: v }, tree)),
 			statements: (...v: NonNullable<T.Program['_statements']>[number][]) =>
 				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _statements: restItems('statements', v) }, tree))
 		},

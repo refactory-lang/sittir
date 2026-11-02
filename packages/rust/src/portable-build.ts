@@ -171,6 +171,7 @@ export const build: PortableBuildTable = {
 		scopedTypeIdentifierInExpressionPosition: 'config',
 		scopedUseList: 'config',
 		selfParameter: 'config',
+		shebang: 'direct',
 		shorthandFieldInitializer: 'config',
 		signatureMethodDeclaration: 'config',
 		slicePattern: 'forwarded',
@@ -35969,6 +35970,30 @@ export const build: PortableBuildTable = {
 					kind: 176,
 					builder: 'sourceFile',
 					members: [
+						{
+							name: 'shebang',
+							steps: [
+								{
+									key: 'shebang',
+									builder: 'shebang',
+									optional: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [123, 'content'],
+									kinds: [],
+									pattern: {
+										source: '^(?:[\\r\\f\\t\\v ]*(?:[^[\\n].*)?)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
 						{
 							name: 'statements',
 							steps: [

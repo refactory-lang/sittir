@@ -4,6 +4,7 @@
 
 ; ── file ───────────────────────────────────────────────────────────────────────
 (program) @file
+(program hash_bang_line: (_) @shebang)
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
@@ -497,4 +498,3 @@
 ["," ";" ":" "." "?." "=>"] @punctuation.delimiter
 
 ; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
-((hash_bang_line) @unclaimed (#set! reason "interpreter line, not a statement"))

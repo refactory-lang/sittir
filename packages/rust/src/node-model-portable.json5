@@ -14119,6 +14119,21 @@
       ],
       "members": [
         {
+          "name": "shebang",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "source_file",
+              "slot": "shebang"
+            },
+            {
+              "owner": "shebang",
+              "slot": "content"
+            }
+          ]
+        },
+        {
           "name": "statements",
           "route": "slot",
           "slot": "statements",

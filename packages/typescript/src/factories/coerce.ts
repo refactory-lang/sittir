@@ -2261,9 +2261,7 @@ const _K81: readonly string[] = [
 ];
 const _K82: readonly string[] = ['_lhs_expression'];
 
-export function resolveProgram_hashBangLine(
-	value: T.Program.LooseConfig['hashBangLine']
-): Admit<T.Program['_hash_bang_line']> {
+export function resolveProgram_shebang(value: T.Program.LooseConfig['shebang']): Admit<T.Program['_shebang']> {
 	return _resolveOneBranch<T.HashBangLine>(value, 'hash_bang_line', undefined, true);
 }
 
@@ -2282,7 +2280,7 @@ export const coerceToProgram: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildProgram>;
 	currentHandle()?.admit(TSKindId.Program, [input]);
 	return F.buildProgram({
-		hashBangLine: resolveProgram_hashBangLine(input?.hashBangLine),
+		shebang: resolveProgram_shebang(input?.shebang),
 		statements: resolveProgram_statements(input?.statements)
 	});
 });

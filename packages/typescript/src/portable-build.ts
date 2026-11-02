@@ -96,6 +96,7 @@ export const build: PortableBuildTable = {
 		generatorFunction: 'config',
 		generatorFunctionDeclaration: 'config',
 		genericType: 'config',
+		hashBangLine: 'direct',
 		htmlComment: 'text',
 		identifier: 'text',
 		ifStatement: 'config',
@@ -28459,6 +28460,30 @@ export const build: PortableBuildTable = {
 					kind: 189,
 					builder: 'program',
 					members: [
+						{
+							name: 'shebang',
+							steps: [
+								{
+									key: 'shebang',
+									builder: 'hashBangLine',
+									optional: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [2, 'content'],
+									kinds: [],
+									pattern: {
+										source: '^(?:.*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
 						{
 							name: 'statements',
 							steps: [

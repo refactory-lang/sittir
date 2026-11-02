@@ -35,6 +35,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	variantOf: null,
 	splitFrom: null,
 	aliasStorage: null,
+	interiorPart: null,
 	shownAs: []
 });
 

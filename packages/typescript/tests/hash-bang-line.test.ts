@@ -16,10 +16,10 @@ const letX = (value: string) =>
 
 describe('hash_bang_line', () => {
 	it('breaks the line after a built hash-bang, and the text reparses to the same program', () => {
-		const text = tsStrict.build.program({ hashBangLine: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
+		const text = tsStrict.build.program({ shebang: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
 		expect(text).toBe('#!/usr/bin/env node\nlet x = 1;\n');
 		const reparsed = ts.parse(text);
-		expect(reparsed.hashBangLine()?.$render()).toBe('#!/usr/bin/env node\n');
+		expect(reparsed.shebang()?.$render()).toBe('#!/usr/bin/env node\n');
 		expect(reparsed.statements()).toHaveLength(1);
 	});
 
