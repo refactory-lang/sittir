@@ -1,7 +1,7 @@
 import type { Engine, LanguageAPI, PortableStructure, TriviaFacts } from '@sittir/types';
 import { inLanguage } from '../language.ts';
 import { portableBuilder } from './build.ts';
-import { builtReadsAs, classifierOf, flagHolds, portableTextOf, readSlots, readsAs, slotsOf } from './classify.ts';
+import { builtReadsAs, classifierOf, flagHolds, otherTested, portableTextOf, readSlots, readsAs, slotsOf } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableReader, type PortableCarried } from './read.ts';
 import { portableTrees, type LanguageGuard, type PortableGuardTree } from './tree.ts';
@@ -53,7 +53,8 @@ export async function portableRuntime<API extends LanguageAPI>(engine: Engine<AP
 		flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
 		textOf: (value) => portableTextOf(rows, value),
 		slotsOf: (node) => slotsOf(rows, node),
-		readSlots: (node, path, flags) => readSlots(rows, node, path, flags)
+		readSlots: (node, path, flags) => readSlots(rows, node, path, flags),
+		otherTested: (node, path) => otherTested(rows, node, path)
 	});
 	return Object.freeze({ engine, is: portableRuntimeTree(language), build, read });
 }

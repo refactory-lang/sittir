@@ -180,6 +180,12 @@ describe('the portable read', () => {
 		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');
 	});
 
+	it.each(['a + b;', '-a;', 'a.f(x);', 'a in b;', 'import type X from "m";', 'class K { m(this: K) {} }'])('carries nothing for %j, whose tokens its own entry reads or tests', (source) => {
+		const carries: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry));
+		expect(carries).toEqual([]);
+	});
+
 	it('refuses a destructuring declarator given no pattern', () => {
 		const declarator = ((firstOf('let { a } = b;') as Read).declarators as readonly Read[])[0]!;
 		expect(declarator.$path).toBe('declaration.variable.pattern');

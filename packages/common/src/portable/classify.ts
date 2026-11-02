@@ -46,6 +46,7 @@ interface RowsReader {
 	readonly classify: PortableClassifier;
 	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
+	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
 	readonly builtReadsAs: (path: string, node: Node) => boolean;
 	readonly textOf: (value: unknown) => string | undefined;
@@ -97,6 +98,10 @@ export function slotsOf(rows: PortableRows, node: Node): readonly (readonly [acc
 
 export function readSlots(rows: PortableRows, node: Node, path: string, flags: readonly string[]): ReadonlySet<string> {
 	return readerOf(rows).readSlots(node, path, flags);
+}
+
+export function otherTested(rows: PortableRows, node: Node, path: string): ReadonlySet<string> {
+	return readerOf(rows).otherTested(node, path);
 }
 
 export function builtReadsAs(rows: PortableRows, path: string, node: Node): boolean {
@@ -198,10 +203,32 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		for (const flag of flagNames) numbersIn(flags[kind]?.[flag], kind, numbers);
 		return new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : [])));
 	};
+	const NONE: ReadonlySet<string> = new Set();
+	const tested = new Map<number, ReadonlyMap<string, ReadonlySet<string>>>();
+	const testedBy = (kind: number): ReadonlyMap<string, ReadonlySet<string>> => {
+		const known = tested.get(kind);
+		if (known !== undefined) return known;
+		const entries = table.entries[kind] ?? [];
+		const paths = [...new Set(entries.map((entry) => entry.path))];
+		const slotsAt = (path: string): Set<number> => {
+			const numbers = new Set<number>();
+			for (const entry of entries) if (entry.path === path) numbersIn(entry.test, kind, numbers);
+			return numbers;
+		};
+		const own = new Map(paths.map((path) => [path, slotsAt(path)] as const));
+		const others = new Map<string, ReadonlySet<string>>();
+		for (const path of paths) {
+			const numbers = new Set(paths.flatMap((other) => (other === path ? [] : [...own.get(other)!].filter((number) => !own.get(path)!.has(number)))));
+			if (numbers.size > 0) others.set(path, new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : []))));
+		}
+		tested.set(kind, others);
+		return others;
+	};
+	const otherTested = (node: Node, path: string): ReadonlySet<string> => testedBy(node.$type).get(path) ?? NONE;
 	const builtReadsAs = (path: string, node: Node): boolean => {
 		const entries = (table.entries[node.$type] ?? []).filter((entry) => portablePathHasFacts(path, entry.path));
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
 	};
-	return { classify, slotsOf, readSlots, flagHolds, builtReadsAs, textOf };
+	return { classify, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
 }

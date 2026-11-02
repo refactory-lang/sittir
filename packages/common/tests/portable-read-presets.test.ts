@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import rust from '@sittir/rust';
 import { createEngine } from '../src/create-engine.ts';
-import { classifierOf, flagHolds, hasKind, portableTextOf, readSlots, slotsOf } from '../src/portable/classify.ts';
+import { classifierOf, flagHolds, hasKind, otherTested, portableTextOf, readSlots, slotsOf } from '../src/portable/classify.ts';
 import { portableReader, type PortableCarry } from '../src/portable/read.ts';
 
 const engine = await createEngine(rust, { api: 'strict' });
@@ -15,7 +15,8 @@ const read = portableReader({
 	flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
 	textOf: (value) => portableTextOf(rows, value),
 	slotsOf: (node) => slotsOf(rows, node),
-	readSlots: (node, path, flags) => readSlots(rows, node, path, flags)
+	readSlots: (node, path, flags) => readSlots(rows, node, path, flags),
+	otherTested: (node, path) => otherTested(rows, node, path)
 });
 
 describe('the portable read of an arm whose presets the node contradicts', () => {

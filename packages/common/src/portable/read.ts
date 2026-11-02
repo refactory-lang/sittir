@@ -25,6 +25,7 @@ export interface PortableReadContext {
 	readonly textOf: (value: unknown) => string | undefined;
 	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
+	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 }
 
 const present = (value: unknown): boolean => value !== undefined && value !== null && !(Array.isArray(value) && value.length === 0);
@@ -62,20 +63,21 @@ const floatOf = (text: string): number | undefined => {
 	return Number.isFinite(value) ? value : undefined;
 };
 
-export function portableReader({ table, classify, flagHolds, flagsOf, textOf, slotsOf, readSlots }: PortableReadContext): (value: unknown, carried?: PortableCarried) => unknown {
+export function portableReader({ table, classify, flagHolds, flagsOf, textOf, slotsOf, readSlots, otherTested }: PortableReadContext): (value: unknown, carried?: PortableCarried) => unknown {
 	interface Read {
 		readonly keys: Set<string>;
 		path?: string;
 		flags?: readonly string[];
 	}
 	const frames: Map<object, Read>[] = [];
-	const structures = new Map<object, Read>();
+	const touched = new Map<object, Set<string>>();
 	const touch = (node: object): Read => {
 		const frame = frames.at(-1)!;
 		return frame.get(node) ?? frame.set(node, { keys: new Set() }).get(node)!;
 	};
 	const accessed = (node: object, key: string): unknown => {
 		if (frames.length > 0) touch(node).keys.add(key);
+		(touched.get(node) ?? touched.set(node, new Set()).get(node)!).add(key);
 		const read = (node as Record<string, unknown>)[key];
 		return typeof read === 'function' ? (read as () => unknown).call(node) : read;
 	};
@@ -194,13 +196,9 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		frames.push(new Map());
 		try {
 			const result = readValue(value, carried, seats);
-			if (typeof result === 'object' && result !== null && '$path' in result && !('$value' in result))
-				for (const [node, { keys, path, flags }] of frames.at(-1)!) {
-					const merged = structures.get(node) ?? structures.set(node, { keys: new Set() }).get(node)!;
-					for (const key of keys) merged.keys.add(key);
-					if (path !== undefined) Object.assign(merged, { path, flags });
-				}
-			return result;
+			if (typeof result !== 'object' || result === null || !('$path' in result) || '$value' in result) return result;
+			const carry = unreadIn(frames.at(-1)!);
+			return carry === undefined ? result : kept(value, carry, carried);
 		} finally {
 			frames.pop();
 		}
@@ -261,20 +259,25 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		for (const member of arms.flatMap((arm) => arm.members)) if (member.multiple && !(member.name in structure)) structure[member.name] = [];
 		return structure;
 	};
-	const unread = (carried: PortableCarried): void => {
-		for (const [node, { keys, path, flags }] of structures) {
+	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
+		for (const [node, { path, flags }] of frame) {
+			const keys = touched.get(node) ?? new Set<string>();
 			const tested = path === undefined ? new Set<string>() : readSlots(node as Node, path, flags ?? []);
+			const meaning = path === undefined ? new Set<string>() : otherTested(node as Node, path);
 			for (const [slot, items] of slotsOf(node as Node)) {
 				if (keys.has(slot) || tested.has(slot)) continue;
-				for (const item of items) if (hasKind(item) && (textOf(item) ?? '') !== '') carried(item, { reason: 'unread', slot });
+				const lost = items.some((item) => (hasKind(item) ? (textOf(item) ?? '') !== '' : typeof item === 'number' && meaning.has(slot)));
+				if (lost) return { reason: 'unread', slot };
 			}
 		}
+		return undefined;
 	};
 	return (value, carried) => {
-		structures.clear();
-		const result = read(value, carried);
-		if (carried !== undefined) unread(carried);
-		structures.clear();
-		return result;
+		touched.clear();
+		try {
+			return read(value, carried);
+		} finally {
+			touched.clear();
+		}
 	};
 }
