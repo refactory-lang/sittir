@@ -936,6 +936,7 @@ export class BuiltArena {
 	}
 
 	#copySites(from: number, to: number, skip: readonly number[]): void {
+		this.settle(from);
 		const units = this.#unitSided[chunkOf(from, this.format)]?.has(from) === true;
 		const leaves = this.#leafSited[chunkOf(from, this.format)]?.has(from) === true;
 		if (!units && !leaves) return;
@@ -1109,6 +1110,7 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	if (built === undefined) return readCoordinateOf(entry);
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
 	built.arena.refuseReleased(built.at);
+	built.arena.settle();
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 

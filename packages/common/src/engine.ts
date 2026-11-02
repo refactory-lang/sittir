@@ -22,7 +22,7 @@ import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts
 import { readStub, recordOf } from './record-view.ts';
 import { readEntries, readUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
-import { nodeStorageOf, treeBuiltArena } from './engine-scope.ts';
+import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -673,10 +673,7 @@ export function createNativeEngine<
 					});
 				}
 				const kind = (node as AnyUntypedNode).$type as number;
-				return createRenderHandle(() => {
-					built.arena.settle();
-					return renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall);
-				});
+				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -690,7 +687,6 @@ export function createNativeEngine<
 					throw new Error('arena node storage needs an addon built with the `arena` feature');
 				return createRenderHandle(() => {
 					holdsTrees();
-					treeBuiltArena(tree)?.settle();
 					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
 				});
 			}
