@@ -48,6 +48,8 @@ def pairs(med):
 
 
 def phase(sample, ph):
+    if ph == 'matchedPipelineMs':
+        return sample['pipelineMs']
     if ph == 'releaseMs':
         return sample.get('releaseMs', 0)
     if ph == 'editReleaseMs':
@@ -55,7 +57,8 @@ def phase(sample, ph):
     return sample[ph]
 
 
-CORPUS_PHASES = ['pipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
+CORPUS_PHASES = ['pipelineMs', 'matchedPipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
+samplesOf = lambda x, ph: x['samplesMatched'] if ph == 'matchedPipelineMs' else x['samples']
 CONSTRUCTION_PHASES = ['pipelineMs', 'buildMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
 
 
@@ -67,8 +70,9 @@ for g in GRAMMARS:
     signature = results['base'][0]['signature']
     mismatches += [f'corpus {g} {v} round {r}' for v, xs in results.items() for r, x in enumerate(xs) if x['signature'] != signature]
     profiles.update(x['buildProfile'] for xs in results.values() for x in xs)
-    med = {v: {ph: [median(phase(s, ph) for s in x['samples']) for x in results[v]] for ph in CORPUS_PHASES} for v in VERSIONS}
-    corpus.append({'grammar': g, 'signature': signature, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
+    med = {v: {ph: [median(phase(s, ph) for s in samplesOf(x, ph)) for x in results[v]] for ph in CORPUS_PHASES} for v in VERSIONS}
+    peakRss = {v: median(x['peakRssMB'] for x in results[v]) for v in VERSIONS}
+    corpus.append({'grammar': g, 'signature': signature, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'peakRssMB': peakRss, 'pairs': pairs(med)})
 construction = []
 for n in [2000, 8000]:
     for reuse in [False, True]:
@@ -126,11 +130,14 @@ lines = [
     f'| grammar | phase | 10-29 f/m | {heads} | {msHeads} |',
     '|' + '---|' * (3 + len(PAIRS) + len(VERSIONS)),
 ]
-NAMES = {'editReleaseMs': 'edit+release'}
+NAMES = {'editReleaseMs': 'edit+release', 'matchedPipelineMs': 'pipeline after GC'}
 earlierCell = lambda timings, ph: f"{timings[ph]['featureOverMaster']:.3f}" if ph in timings else '-'
 for row in corpus:
     for ph in CORPUS_PHASES:
         lines.append(f"| {row['grammar']} | {NAMES.get(ph, ph[:-2])} | {earlierCell(old[row['grammar']], ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
+lines += ['', '### Peak RSS per corpus worker (MiB, median over rounds)', '', '| grammar | ' + ' | '.join(VERSIONS) + ' |', '|' + '---|' * (1 + len(VERSIONS))]
+for row in corpus:
+    lines.append(f"| {row['grammar']} | " + ' | '.join(f"{row['peakRssMB'][v]:.0f}" for v in VERSIONS) + ' |')
 lines += ['', '### Rust construction (function items)', '',
           f'| roots | name | phase | 10-29 f/m | {heads} | {msHeads} |',
           '|' + '---|' * (4 + len(PAIRS) + len(VERSIONS))]
