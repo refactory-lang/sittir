@@ -734,6 +734,13 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.containers.has('binary')).toBe(false);
 	});
 
+	it('reads a member capture inside a pattern grouped with its directives under that pattern, as it reads the bare pattern', async () => {
+		const bare = (await grammar('(outer (middle (binary) @inner))')).bindings.members;
+		const grouped = (await grammar('((outer (middle (binary) @inner)) (#set! reason "grouped with a directive"))')).bindings.members;
+		expect(bare).toEqual([expect.objectContaining({ route: 'nested', owner: 'outer', name: 'inner', parent: 'middle' })]);
+		expect(grouped).toEqual(bare);
+	});
+
 	it('reads a nested capture of a bare path as a claim only where #set! claim names it, and as a member otherwise', async () => {
 		const claimed = resolveRoutes(await grammar('((outer (middle (binary) @argument)) (#set! claim argument))'));
 		expect(claimed.readEntries.get('binary')?.map((e) => [e.vocab, e.claim.within])).toEqual([['argument', ['middle', 'outer']]]);

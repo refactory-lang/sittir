@@ -676,7 +676,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		for (const name of captures(v)) {
 			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
-			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed, leadMatch);
+			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
 			if (member !== null) members.push(member);
 		}
 		facts.members.push(...slotNamed(members));
