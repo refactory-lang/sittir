@@ -174,7 +174,9 @@ const MODEL = [
 	node('param_x', [slot('name', ['self_kw', 'identifier'])]),
 	node('self_kw', [], { modelType: 'keyword', unit: true, text: 'self' }),
 	node('script', [slot('line', ['interp_line'], { required: false })]),
-	node('interp_line', [slot('content', [])], { interiorPart: 'content' })
+	node('interp_line', [slot('content', [])], { interiorPart: 'content' }),
+	node('attr_arg', [slot('attrs', ['attr'], { required: false, multiple: true }), slot('element', ['expr'])]),
+	node('attr')
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -730,6 +732,25 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.containers.get('values')).toEqual({ slot: 'rest', kinds: ['identifier'], terminals: [], list: true });
 		expect(routes.containers.get('wrapper')).toEqual({ slot: 'inner', kinds: ['identifier'], terminals: [], list: false });
 		expect(routes.containers.has('binary')).toBe(false);
+	});
+
+	it('reads a nested capture of a bare path as a claim only where #set! claim names it, and as a member otherwise', async () => {
+		const claimed = resolveRoutes(await grammar('((outer (middle (binary) @argument)) (#set! claim argument))'));
+		expect(claimed.readEntries.get('binary')?.map((e) => [e.vocab, e.claim.within])).toEqual([['argument', ['middle', 'outer']]]);
+		const member = resolveRoutes(await grammar('(outer (middle (binary) @argument))'));
+		expect(member.readEntries.has('binary')).toBe(false);
+		await expect(grammar('((outer (middle (binary) @argument)) (#set! claim other))')).rejects.toThrow(/#set! claim names @other, which the pattern does not capture/);
+	});
+
+	it('stamps a declared container whose only claims are refinements as refined: it names no path of its own, and reads through its element where no claim holds', async () => {
+		const container = '((attr_arg (attr)* @dropped (_) @element) (#set! reason "read as its element unless it has an attribute"))';
+		const refined = resolveRoutes(await grammar(['(attr_arg (attr) (_) @value) @argument', '(attr_arg (attr)* @attributes)', container].join('\n')));
+		expect(refined.containers.get('attr_arg')).toEqual({ slot: 'element', kinds: ['expr'], terminals: [], list: false, refined: true });
+		expect(refined.vocabOf.has('attr_arg')).toBe(false);
+		expect(refined.readEntries.get('attr_arg')?.map((e) => e.vocab)).toEqual(['argument']);
+		const plain = resolveRoutes(await grammar(['(attr_arg (attr)* @attributes (_) @value) @argument', container].join('\n')));
+		expect(plain.containers.get('attr_arg')?.refined).toBeUndefined();
+		expect(plain.vocabOf.get('attr_arg')).toBe('argument');
 	});
 
 	it("enters a claim on a kind the reader stores as its member's kind id on each member, an equality on its text decided by the member's", async () => {

@@ -376,7 +376,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const held = frame.config[key];
 			if (held instanceof Frame) {
 				if (held.input !== undefined || Object.keys(held.config).length > 0) throw new Error(`portable build: ${path} sets ${key} twice`);
-				if (held.mount === undefined && hasKind(value)) frame.config[key] = value;
+				if (held.mount === undefined && (hasKind(value) || (Array.isArray(value) && value.length > 0 && value.every(hasKind)))) frame.config[key] = value;
 				else held.input = value;
 			} else if (frame.presets.delete(key) && !Array.isArray(held) && !Array.isArray(value)) frame.config[key] = value;
 			else frame.config[key] = held === undefined ? value : [...listOf(held), ...listOf(value)];

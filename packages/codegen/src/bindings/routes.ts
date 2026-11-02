@@ -85,6 +85,7 @@ export interface ContainerUnwrap {
 	readonly terminals: readonly string[];
 	readonly list: boolean;
 	readonly members?: readonly { readonly name: string; readonly slot: ModelSlot }[];
+	readonly refined?: true;
 }
 
 export interface StoppedRead {
@@ -946,12 +947,29 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): Cla
 	return reads;
 }
 
-export function kindVocabs(model: SlotModel, reads: ClaimReads): ReadonlyMap<string, string> {
+const plainRead =
+	(model: SlotModel, kind: string) =>
+	({ claim }: ClaimRead): boolean =>
+		claim.predicates.length === 0 && pinnedLiterals(model, modelNode(model, kind)?.slots ?? [], claim).length === 0 && claimChildTests(model, kind, claim).length === 0;
+
+export const declaredContainerKinds = (model: SlotModel, containers: readonly ContainerFact[]): ReadonlySet<string> =>
+	new Set(containers.flatMap((container) => formsOf(model, container.kind)));
+
+export function refinedContainers(model: SlotModel, reads: ClaimReads, containers: readonly ContainerFact[]): ReadonlySet<string> {
+	const declared = declaredContainerKinds(model, containers);
+	return new Set(
+		[...reads].flatMap(([kind, at]) => {
+			const plain = plainRead(model, kind);
+			return declared.has(kind) && !at.some((read) => read.claim.toplevel && plain(read)) ? [kind] : [];
+		})
+	);
+}
+
+export function kindVocabs(model: SlotModel, reads: ClaimReads, refined: ReadonlySet<string>): ReadonlyMap<string, string> {
 	const vocabOf = new Map<string, string>();
 	for (const [kind, at] of reads) {
-		const slots = modelNode(model, kind)?.slots ?? [];
-		const plain = ({ claim }: ClaimRead): boolean =>
-			claim.predicates.length === 0 && pinnedLiterals(model, slots, claim).length === 0 && claimChildTests(model, kind, claim).length === 0;
+		if (refined.has(kind)) continue;
+		const plain = plainRead(model, kind);
 		const top = at.filter((read) => read.claim.toplevel);
 		const own = top.filter((read) => read.form === read.claimed);
 		const vocab = own.find(plain)?.vocab ?? top.find(plain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
@@ -1084,7 +1102,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				})
 			);
 
-	const vocabOf = kindVocabs(input.model, reads);
+	const refined = refinedContainers(input.model, reads, input.bindings.containers);
+	const vocabOf = kindVocabs(input.model, reads, refined);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	for (const entries of readEntries.values())
 		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
@@ -1124,7 +1143,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		const unwrap = containerOf(input, node);
 		if (unwrap === undefined) continue;
 		const members = containerDataMembers(input, node, vocabOf);
-		containers.set(node.kind, members.length === 0 ? unwrap : { ...unwrap, members });
+		containers.set(node.kind, { ...unwrap, ...(members.length === 0 ? {} : { members }), ...(refined.has(node.kind) ? { refined: true as const } : {}) });
 	}
 
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));

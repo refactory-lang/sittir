@@ -7263,22 +7263,7 @@ export const build: PortableBuildTable = {
 						[0, 1, 2, 3, 4],
 						[0, 2, 3, 4, 5]
 					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'traitClause',
-									optional: true,
-									builder: 'implItemBody.positiveClause',
-									mounted: {
-										call: 'keyed',
-										key: 'traitClause',
-										seats: 'direct'
-									}
-								}
-							]
-						}
-					],
+					presets: [],
 					flags: {
 						unsafe: {
 							presets: [
@@ -7294,7 +7279,12 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['traitClause']
+						}
+					]
 				}
 			]
 		},
@@ -33892,18 +33882,14 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'function'
-								}
-							],
-							builder: 'fieldExpression'
-						}
-					],
+					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['function']
+						}
+					]
 				}
 			]
 		},

@@ -2,7 +2,7 @@ import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { armClass, collapsedKinds, derive, levelMembers, levelsWithMembers, soleRole, type Derivation, type MemberFacts } from '../../../bindings/derive.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import { compositionOf, type Vocabulary } from '../../../bindings/vocabulary.ts';
 import { readableEntries } from '@sittir/common/engine';
 import type { PortableCondition } from '@sittir/types';
@@ -187,21 +187,27 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		readonly elements?: readonly string[];
 		readonly unmapped?: true;
 	}
+	const containerView = (node: ModelNode, unwrap: ContainerUnwrap): View => {
+		const slot = node.slots.find((s) => s.name === unwrap.slot);
+		const elements = refsOf(unwrap.kinds, unwrap.terminals);
+		if (unwrap.list || slot?.multiple === true) return { type: `readonly (${elements})[]`, elements: unwrap.kinds };
+		return { type: slot !== undefined && (slot.required || listsOnly(slot)) ? elements : `${elements} | undefined`, elements: unwrap.kinds };
+	};
 	const viewOf = (node: ModelNode): View => {
 		if (textual(node.kind)) return { type: tokenTypeOf(node.kind)! };
 		const claimed = entriesFor(node.kind);
-		if (claimed !== undefined) return { type: [...new Set(readableEntries(claimed.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => `VocabViews[${q(path)}]`))].join(' | ') };
+		const unwrap = routes.containers.get(node.kind);
+		if (claimed !== undefined) {
+			const type = [...new Set(readableEntries(claimed.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => `VocabViews[${q(path)}]`))].join(' | ');
+			if (unwrap?.refined !== true) return { type };
+			const contained = containerView(node, unwrap);
+			return { ...contained, type: `${type} | ${contained.type}` };
+		}
 		if (unclaimed.has(node.kind)) return { type: 'never' };
 		const text = tokenTypeOf(node.kind);
 		if (text !== undefined) return { type: text };
 		if (varies(node.kind)) return { type: `{ readonly $type: ${idOf(node.kind)}; readonly $value: () => string }` };
-		const unwrap = routes.containers.get(node.kind);
-		if (unwrap !== undefined) {
-			const slot = node.slots.find((s) => s.name === unwrap.slot);
-			const elements = refsOf(unwrap.kinds, unwrap.terminals);
-			if (unwrap.list || slot?.multiple === true) return { type: `readonly (${elements})[]`, elements: unwrap.kinds };
-			return { type: slot !== undefined && (slot.required || listsOnly(slot)) ? elements : `${elements} | undefined`, elements: unwrap.kinds };
-		}
+		if (unwrap !== undefined) return containerView(node, unwrap);
 		return { type: unmappedOf(node.kind), unmapped: true };
 	};
 	const unmappedIn = (kinds: readonly string[], seen = new Set<string>()): readonly string[] =>

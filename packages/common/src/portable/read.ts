@@ -105,12 +105,14 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		});
 		if (values.length > 0) held.set(element, [...(held.get(element) ?? []), ...values]);
 	};
+	const holds = (seat: PortableSeat, value: unknown): boolean =>
+		fits(seat, value) && !(hasKind(value) && seat.refined?.includes(value.$type) === true && classify(value) === undefined);
 	const resolve = (value: unknown, pending: readonly Pending[]): { readonly found: unknown; readonly many: boolean } | undefined => {
 		if (Array.isArray(value)) {
 			const parts = value.map((item) => resolve(item, pending) ?? { found: item, many: false });
 			return { found: parts.flatMap((part) => [part.found].flat()), many: parts.some((part) => part.many) };
 		}
-		for (const { seat, containers } of pending) if (containers.length === 0 && fits(seat, value)) return { found: value, many: seat.many === true };
+		for (const { seat, containers } of pending) if (containers.length === 0 && holds(seat, value)) return { found: value, many: seat.many === true };
 		if (!hasKind(value)) return undefined;
 		const keys = [...new Set(pending.flatMap(({ containers }) => (containers.length === 0 ? [] : [containers[0]!.key])))];
 		let empty = false;

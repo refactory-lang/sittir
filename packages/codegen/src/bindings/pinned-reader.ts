@@ -88,6 +88,7 @@ interface Visit {
 	readonly inherited: readonly ListElement.Parsed[];
 	readonly children: Visit[];
 	readonly negated: NegatedField.Parsed[];
+	readonly claimed: Set<string>;
 }
 
 interface Anchored {
@@ -197,10 +198,11 @@ const UNCLAIMED = 'unclaimed';
 const DROPPED = 'dropped';
 const isPath = (capture: string): boolean => capture.includes('.');
 const TOKEN_CLASSES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
-const inClaimPosition = (capture: string, atTop: boolean): boolean =>
-	isPath(capture) || (atTop && !capture.startsWith('_'));
+const vocabCapture = (v: Visit, capture: string): boolean => isPath(capture) || v.claimed.has(capture);
+const inClaimPosition = (v: Visit, capture: string, atTop: boolean): boolean =>
+	vocabCapture(v, capture) || (atTop && !capture.startsWith('_'));
 const isTokenClass = (capture: string): boolean => TOKEN_CLASSES.has(capture.split('.')[0] ?? capture);
-const isClaim = (capture: string, atTop: boolean): boolean => inClaimPosition(capture, atTop) && !isTokenClass(capture);
+const isClaim = (v: Visit, capture: string, atTop: boolean): boolean => inClaimPosition(v, capture, atTop) && !isTokenClass(capture);
 
 function placement(v: Visit): SlotSelector {
 	const kind = namedKind(v);
@@ -290,7 +292,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 		alternation: Expression | null,
 		inherited: readonly ListElement.Parsed[]
 	): Visit => {
-		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [], negated: [] };
+		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [], negated: [], claimed: new Set() };
 		nodes.push(v);
 		for (const { expression, anchor, adjacent } of expressionsOf(node, origin)) place(expression, null, anchor, adjacent, v, null, []);
 		refuseLooseAnchors(v, origin);
@@ -331,7 +333,15 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 				return;
 		}
 	};
-	return { top: visit(top, null, null, false, null, null, inherited), nodes, predicates };
+	const pattern = { top: visit(top, null, null, false, null, null, inherited), nodes, predicates };
+	const claim = directivesOf(predicates).get('claim');
+	if (claim === true) refuse(origin, '#set! claim names the capture it makes a claim');
+	if (claim !== undefined) {
+		const holders = nodes.filter((v) => captures(v).includes(claim));
+		if (holders.length === 0) refuse(origin, `#set! claim names @${claim}, which the pattern does not capture`);
+		for (const v of holders) v.claimed.add(claim);
+	}
+	return pattern;
 }
 
 function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> | null {
@@ -392,10 +402,10 @@ function leadsToPresence(v: Visit): boolean {
 }
 
 function placesClaim(v: Visit): boolean {
-	return captures(v).some((name) => isPath(name) && !isTokenClass(name)) || v.children.some(placesClaim);
+	return captures(v).some((name) => vocabCapture(v, name) && !isTokenClass(name)) || v.children.some(placesClaim);
 }
 
-const capturesMember = (v: Visit): boolean => captures(v).some((name) => !isPath(name) && !name.startsWith('_') && name !== 'element');
+const capturesMember = (v: Visit): boolean => captures(v).some((name) => !vocabCapture(v, name) && !name.startsWith('_') && name !== 'element');
 
 const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesMember(v);
 
@@ -595,7 +605,7 @@ function containerFact(
 	};
 }
 
-const DIRECTIVES: ReadonlySet<string> = new Set(['reason', 'value']);
+const DIRECTIVES: ReadonlySet<string> = new Set(['claim', 'reason', 'value']);
 
 function directivesOf(predicates: readonly Predicate.Parsed[]): ReadonlyMap<string, string | true> {
 	const out = new Map<string, string | true>();
@@ -620,7 +630,7 @@ function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
 }
 
 function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin: PatternOrigin): void {
-	for (const key of directivesOf(predicates).keys()) if (!DIRECTIVES.has(key)) refuse(origin, `#set! ${key} is not a bindings directive; the bindings read ${[...DIRECTIVES].join(' and ')}`);
+	for (const key of directivesOf(predicates).keys()) if (!DIRECTIVES.has(key)) refuse(origin, `#set! ${key} is not a bindings directive; the bindings read ${[...DIRECTIVES].slice(0, -1).join(', ')} and ${[...DIRECTIVES].at(-1)}`);
 	const unclaimed = nodes.filter((v) => captures(v).includes(UNCLAIMED));
 	if (unclaimed.length > 0) {
 		const reason = reasonOf(predicates);
@@ -639,12 +649,12 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		owner !== undefined &&
 		ownerKind !== null &&
 		element !== undefined &&
-		!captures(owner).some((name) => isPath(name) && !isTokenClass(name))
+		!captures(owner).some((name) => vocabCapture(owner, name) && !isTokenClass(name))
 	) {
 		facts.containers.push(containerFact(ownerKind, element, nodes, reasonOf(predicates), origin));
 		return;
 	}
-	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => isPath(name) && !isTokenClass(name)));
+	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => vocabCapture(v, name) && !isTokenClass(name)));
 	for (const predicate of predicates) {
 		const template = templateOf(predicate);
 		if (template !== null) facts.templates.push({ vocabs, ...template });
@@ -653,7 +663,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 	const claimed = new Map<Visit, number[]>();
 	for (const v of nodes) {
 		for (const name of captures(v)) {
-			if (!inClaimPosition(name, v === top) || !isClaim(name, v === top)) continue;
+			if (!inClaimPosition(v, name, v === top) || !isClaim(v, name, v === top)) continue;
 			refuseAnchoredPlacement(v, name, origin);
 			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
 			const claim = claimFact(v, name, top, nodes, claimPredicates, origin);
@@ -664,7 +674,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 	for (const v of nodes) {
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
-			if (inClaimPosition(name, v === top) || name.startsWith('_') || name === 'element') continue;
+			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
 			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed, leadMatch);
 			if (member !== null) members.push(member);

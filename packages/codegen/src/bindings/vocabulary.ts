@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind } from './routes.ts';
+import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind, refinedContainers } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
 import { runPinned } from './read.ts';
@@ -348,7 +348,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
 	const reads = readsByKind(model, flagResolved(vocabulary, claims));
-	const vocabs = kindVocabs(model, reads);
+	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = memberTargets(model, reads);
 	const pathsOf = (member: NamedMemberFact): string[] => {

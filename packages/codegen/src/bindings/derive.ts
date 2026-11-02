@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, formsOf, guaranteedBy, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -56,7 +56,7 @@ function wildcardUnrouted(
 function wildcardContainers(inputs: readonly GrammarInput[], routesOf: (grammar: string) => GrammarRoutes | undefined): string[] {
 	const out: string[] = [];
 	for (const input of inputs) {
-		const declared = new Set(input.bindings.containers.flatMap((c) => formsOf(input.model, c.kind)));
+		const declared = declaredContainerKinds(input.model, input.bindings.containers);
 		for (const [kind, entries] of routesOf(input.grammar)?.readEntries ?? []) {
 			const lands = modelNode(input.model, kind)?.modelType === 'list' ? 'list' : declared.has(kind) ? 'container' : undefined;
 			if (lands === undefined) continue;
@@ -225,6 +225,9 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 		return undefined;
 	};
+	const refiningVocabs = (g: string, kind: string): readonly string[] => [
+		...new Set((routesOf(g)?.readEntries.get(kind) ?? []).filter((entry) => entry.claim.toplevel).map((entry) => entry.vocab))
+	];
 	const directVocab = (input: GrammarInput, k: string, context: readonly string[]): string | undefined =>
 		placed(input, k, context) ?? vocabOf(input.grammar).get(k);
 
@@ -291,12 +294,13 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const container = node !== undefined && !context.includes(node.kind) ? (routesOf(g)?.containers.get(node.kind) ?? null) : null;
 		if (node !== undefined && container !== null) {
 			const inner = [...context, node.kind];
+			const claimed = container.refined === true ? refiningVocabs(g, node.kind) : [];
 			const texts = container.terminals.map((t) => `text:${t}`);
 			const parts = container.kinds.map((element) => resolveKind(input, element, inner));
 			return {
-				tokens: [...texts, ...parts.flatMap((p) => p.tokens)],
+				tokens: [...claimed, ...texts, ...parts.flatMap((p) => p.tokens)],
 				list: container.list || parts.some((p) => p.list),
-				scalar: !container.list && (texts.length > 0 || parts.some((p) => p.scalar))
+				scalar: !container.list && (claimed.length > 0 || texts.length > 0 || parts.some((p) => p.scalar))
 			};
 		}
 		if (node && node.subtypes.length > 0) {
