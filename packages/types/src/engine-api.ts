@@ -432,7 +432,8 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 * own scope's nodes. Parsed trees are left alone. Under object construction a scope holds nothing, so its close
 	 * does nothing and its `keep` returns what it is given.
 	 *
-	 * @throws When the engine is disposed.
+	 * @throws When the engine is disposed, and under record construction while a build is running, as inside a build
+	 * interceptor.
 	 */
 	readonly scope: () => CommitScope;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
@@ -444,9 +445,9 @@ export interface CommitScope extends Disposable {
 	/**
 	 * Keeps `node` past this scope's close and returns it. It moves to the enclosing scope, which releases it unless
 	 * that scope keeps it too; with no scope open around this one, the caller releases it (`[Symbol.dispose]`,
-	 * `engine.release`), or the engine's dispose does. A node placed in a parent is given a count of its own, so it
-	 * outlives that parent. A parsed node, a node of object construction and a leaf whose sides hold no records are
-	 * returned as they are.
+	 * `engine.release`), or the engine's dispose does. A kept node holds a count of its own (a leaf, of the records its
+	 * sides hold) whether it is placed in a parent before or after the keep, so it outlives every parent it sits in. A
+	 * parsed node, a node of object construction and a leaf whose sides hold no records are returned as they are.
 	 *
 	 * @throws When the scope is closed or its engine disposed, when `node` was released, and when another engine built it.
 	 */

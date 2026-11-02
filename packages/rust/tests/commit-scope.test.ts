@@ -135,6 +135,83 @@ describe('a commit scope under record construction', () => {
 		expect(() => engine.scope()).toThrow(/engine disposed/);
 	});
 
+	it('keeps a node it kept before a parent it releases took the node in', () => {
+		const before = live(records);
+		let child: unknown;
+		{
+			using scope = records.scope();
+			child = scope.keep(records.build.expressionStatement(records.build.callExpression({ function: records.build.identifier('y'), arguments: records.build.arguments() })));
+			records.build.block({ statements: [child as never] });
+			blockOf(records).$with.statements(child);
+		}
+		expect(rendered(records, child)).toBe('y();');
+		dispose(child);
+		expect(live(records)).toBe(before);
+	});
+
+	it('refuses to open while a build is running, so a build rolled back leaves every scope as it opened', async () => {
+		let refusal: unknown;
+		const engine = (await createEngine(rust, {
+			intercept: [
+				{
+					build(_call, next) {
+						const built = next();
+						if (refusal === undefined) {
+							try {
+								(engine as Engine).scope();
+							} catch (error) {
+								refusal = error;
+							}
+						}
+						return built;
+					}
+				}
+			]
+		})) as never as Engine;
+		engine.build.identifier('x');
+		expect(String(refusal)).toMatch(/while a build is running/);
+		const before = live(engine);
+		{
+			using scope = engine.scope();
+			rebuilt(blockOf(engine));
+		}
+		expect(live(engine)).toBe(before);
+		engine.dispose();
+	});
+
+	it('keeps a node it kept through a parent that took the node in and was released before the scope closed', () => {
+		const before = live(records);
+		let child: unknown;
+		{
+			using scope = records.scope();
+			child = scope.keep(records.build.expressionStatement(records.build.identifier('y')));
+			dispose(records.build.block({ statements: [child as never] }));
+		}
+		expect(rendered(records, child)).toBe('y;');
+		dispose(child);
+		expect(live(records)).toBe(before);
+	});
+
+	it.each([
+		['kept before a parent took it in', 'keep', '/* c */ x'],
+		['kept after a parent took it in', 'place', '/* c */ x'],
+		['given a side after a parent took it in', 'write', '/* d */ x']
+	] as const)('keeps the sides of a built leaf %s, so the leaf renders them after the parent goes', (_case, order, text) => {
+		const before = live(records);
+		let leaf: object;
+		{
+			using scope = records.scope();
+			leaf = records.build.identifier('x').$trivia.leading(records.build.blockComment('/* c */'));
+			if (order !== 'place') scope.keep(leaf);
+			records.build.expressionStatement(leaf as never);
+			if (order === 'place') scope.keep(leaf);
+			if (order === 'write') (leaf as { readonly $trivia: { leading(...items: unknown[]): unknown } }).$trivia.leading(records.build.blockComment('/* d */'));
+		}
+		expect(rendered(records, leaf)).toBe(text);
+		dispose(leaf);
+		expect(live(records)).toBe(before);
+	});
+
 	it('keeps a parsed node as it is', () => {
 		using scope = records.scope();
 		const parsed = blockOf(records);

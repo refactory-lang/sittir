@@ -465,6 +465,7 @@ export class BuiltArena {
 	}
 
 	commit(): CommitScope {
+		if (this.#scopes > 0) throw new Error('engine.scope() called while a build is running: open the scope before the build');
 		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#minted.length, parked: this.#parked.length, kept: new Set(), closed: false };
 		this.#commits.push(mark);
 		return {
@@ -481,12 +482,21 @@ export class BuiltArena {
 		const at = (node as { readonly $at?: unknown }).$at;
 		if (typeof at !== 'number') {
 			mark.kept.add(node);
+			if (this.#parkedOf(node) === undefined) this.#parkOwn(node);
 			return node;
 		}
 		this.refuseReleased(this.liveAt(node, at));
 		if (!this.#ownedByHandle(at)) this.#giveBack(at);
 		mark.kept.add(at);
 		return node;
+	}
+
+	#parkOwn(leaf: object): void {
+		const own = triviaOf(leaf);
+		if (own === undefined) return;
+		forEachTriviaList(own as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
+		this.#park(leaf, own);
+		this.#parked.push(leaf);
 	}
 
 	#ownedByHandle(at: number): boolean {
@@ -512,13 +522,14 @@ export class BuiltArena {
 			const at = this.#minted[n]!;
 			const words = this.#mintedWords[n]!;
 			if (this.#words.chunks[chunkOf(at, this.format)] !== words) continue;
-			if (mark.kept.has(at)) {
+			if (mark.kept.has(at) || this.#kept(at)) {
 				keptAt.push(at);
 				keptWords.push(words);
 			} else if (this.#ownedByHandle(at)) this.release(at);
 		}
-		const keptLeaves = this.#parked.slice(mark.parked).filter((leaf) => mark.kept.has(leaf));
-		for (let n = mark.parked; n < this.#parked.length; n++) if (!mark.kept.has(this.#parked[n])) this.releaseHandle(this.#parked[n]!);
+		const keptLeaf = (leaf: object): boolean => mark.kept.has(leaf) || this.#kept(leaf);
+		const keptLeaves = this.#parked.slice(mark.parked).filter(keptLeaf);
+		for (let n = mark.parked; n < this.#parked.length; n++) if (!keptLeaf(this.#parked[n]!)) this.releaseHandle(this.#parked[n]!);
 		this.#forgetMinted(mark.minted);
 		this.#parked.length = mark.parked;
 		if (this.#commits.length === 0) return;
@@ -562,12 +573,16 @@ export class BuiltArena {
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
 		const { countOwned } = this.format;
-		if ((byte & countOwned) !== 0) {
+		if ((byte & countOwned) !== 0 && !this.#kept(at)) {
 			counts[index] = byte & ~countOwned;
 			if (this.#scopes > 0) this.#moved.push(at);
 			return;
 		}
 		this.#countOneMore(at, counts, index);
+	}
+
+	#kept(held: unknown): boolean {
+		return this.#commits.length > 0 && this.#commits.some((mark) => mark.kept.has(held));
 	}
 
 	/** Holds once more what the cell `cell` names: a record or run, or a leaf entry's string chunk. */
@@ -638,7 +653,7 @@ export class BuiltArena {
 
 	repark(leaf: object, own: NodeTrivia | undefined, written: NodeTrivia, placed: boolean): NodeTrivia {
 		const next = { ...own, ...written };
-		if (placed) return next;
+		if (placed && !this.#kept(leaf)) return next;
 		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		const parked = this.#parkedOf(leaf);
 		this.#park(leaf, next);
@@ -896,7 +911,7 @@ export class BuiltArena {
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
-		const parked = this.#parkedOf(leaf);
+		const parked = this.#kept(leaf) ? undefined : this.#parkedOf(leaf);
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		this.#unpark(parked);
