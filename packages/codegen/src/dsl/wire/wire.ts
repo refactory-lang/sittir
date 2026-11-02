@@ -1227,12 +1227,19 @@ export function wireRefuse(refusal: WireRefusal): void {
 	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
 }
 
-export function wireAliasTargetIssue(from: string, to: string): string | undefined {
+function aboveFirstLayer(context: WireContext | null): context is WireContext {
+	return context?.layer !== undefined && context.layer.depth !== 1;
+}
+
+export function wireAliasTargetIssue(to: string): string | undefined {
 	const context = currentContext;
-	if (context?.layer === undefined || context.layer.depth === 1) return undefined;
-	if (isParserHiddenName(from) !== isParserHiddenName(to)) return 'flips hiddenness';
-	if (Object.hasOwn(context.baseRuleBodies, to)) return 'the grammar already names the target';
-	return undefined;
+	if (!aboveFirstLayer(context)) return undefined;
+	return Object.hasOwn(context.baseRuleBodies, to) ? 'the grammar already names the target' : undefined;
+}
+
+export function wireSiteFlipIssue(before: string, after: string): string | undefined {
+	if (!aboveFirstLayer(currentContext)) return undefined;
+	return isParserHiddenName(before) !== isParserHiddenName(after) ? 'flips hiddenness' : undefined;
 }
 
 export function wireQueueLead(entry: LeadPlaceholder): void {

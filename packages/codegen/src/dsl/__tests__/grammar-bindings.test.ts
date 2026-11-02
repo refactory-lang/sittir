@@ -250,6 +250,24 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		expect(JSON.stringify(first.rules.call)).toContain('"value":"_callee"');
 	}, 120_000);
 
+	it('lets an alias above the first layer change the display of a member a lower layer already shows, and refuses one that shows a member that sat bare', async () => {
+		const shown = "edits: { source_file: { '0/0': alias('item') } }";
+		const display = { bindings: "edits: { source_file: { '0/0': ($) => alias(copy('_item'), $.entry) } }" };
+		const redisplayed = await evaluateSittirGrammar(baseModule, 'bindtest', shown, undefined, display);
+		expect(redisplayed.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
+		expect(JSON.stringify(redisplayed.rules.source_file)).toContain('"value":"entry"');
+		const elided = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, display);
+		expect(elided.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'alias-target-invalid', ownerKind: 'source_file', message: expect.stringMatching(/alias '_item' → 'entry': flips hiddenness/) })
+		);
+	}, 120_000);
+
+	it('reads a literal shown under an alias in place of a member as a replacement, not an alias edit of the member', async () => {
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { source_file: { '0/0': ($) => alias('main', $.identifier) } }" });
+		expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
+		expect(JSON.stringify(raw.rules.source_file)).toContain('"value":"identifier"');
+	}, 120_000);
+
 	it('derives the base conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
 		const unbound = evaluateForDerivation(grammarPackageWith());
