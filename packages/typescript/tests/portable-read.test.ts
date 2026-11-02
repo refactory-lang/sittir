@@ -180,6 +180,14 @@ describe('the portable read', () => {
 		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');
 	});
 
+	it.each(['private', 'protected', 'public'])('keeps a receiver whole that states %s, which no receiver member holds, and builds it back as written', (modifier) => {
+		const source = `class K { m(${modifier} this: K) {} }`;
+		const carries: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry));
+		expect(carries).toEqual([{ reason: 'unread', slot: 'accessibilityModifier' }]);
+		expect(roundTrip(source)).toBe(`class K {\n  m(${modifier} this: K) {}\n}\n`);
+	});
+
 	it.each(['a + b;', '-a;', 'a.f(x);', 'a in b;', 'import type X from "m";', 'class K { m(this: K) {} }'])('carries nothing for %j, whose tokens its own entry reads or tests', (source) => {
 		const carries: unknown[] = [];
 		runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry));

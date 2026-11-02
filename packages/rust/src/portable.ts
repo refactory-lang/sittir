@@ -5372,6 +5372,7 @@ const table: PortableTable = {
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BaseFieldInitializer]: [{ path: 'element.struct.base', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
+			{ path: 'expression.binary', within: [], test: [] },
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
@@ -5461,11 +5462,11 @@ const table: PortableTable = {
 				path: 'expression.binary.logical.or',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '270': 1 } } }]
-			},
-			{ path: 'expression.binary', within: [], test: [] }
+			}
 		],
 		[TSKindId.Block]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.BlockComment]: [
+			{ path: 'comment.block', within: [], test: [] },
 			{
 				path: 'comment.block.doc',
 				within: [],
@@ -5475,8 +5476,7 @@ const table: PortableTable = {
 				path: 'comment.block.doc.inner',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [403], slots: { '340': 0 } } }]
-			},
-			{ path: 'comment.block', within: [], test: [] }
+			}
 		],
 		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -5488,6 +5488,7 @@ const table: PortableTable = {
 		[TSKindId.BracketedType]: [{ path: 'type.bracketed', within: [], test: [] }],
 		[TSKindId.BreakExpression]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.CallExpression]: [
+			{ path: 'expression.call', within: [], test: [] },
 			{
 				path: 'expression.call.member',
 				within: [],
@@ -5497,8 +5498,7 @@ const table: PortableTable = {
 				path: 'expression.call.qualified',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], slots: { '276': 0 } } }]
-			},
-			{ path: 'expression.call', within: [], test: [] }
+			}
 		],
 		[TSKindId.CapturedPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.CharKeyword]: [
@@ -6036,6 +6036,7 @@ const table: PortableTable = {
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
 		[TSKindId.FieldDeclaration]: [
+			{ path: 'declaration.field', within: [], test: [] },
 			{
 				path: 'declaration.field.private',
 				within: [],
@@ -6100,8 +6101,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
 					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.field', within: [], test: [] }
+			}
 		],
 		[TSKindId.FieldExpression]: [{ path: 'expression.member', within: [], test: [] }],
 		[TSKindId.FieldIdentifier]: [{ path: 'identifier', within: [], test: [] }],
@@ -6309,6 +6309,7 @@ const table: PortableTable = {
 		[TSKindId.LifetimeKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.LifetimeParameter]: [{ path: 'declaration.type_parameter.lifetime', within: [], test: [] }],
 		[TSKindId.LineComment]: [
+			{ path: 'comment.line', within: [], test: [] },
 			{
 				path: 'comment.line.doc',
 				within: [],
@@ -6318,8 +6319,7 @@ const table: PortableTable = {
 				path: 'comment.line.doc.inner',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [401], slots: { '337': 0 } } }]
-			},
-			{ path: 'comment.line', within: [], test: [] }
+			}
 		],
 		[TSKindId.LineCommentExtraSlashes]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LineCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
@@ -6370,6 +6370,7 @@ const table: PortableTable = {
 					}
 				]
 			},
+			{ path: 'declaration.method', within: [], test: [] },
 			{
 				path: 'declaration.method.private',
 				within: [],
@@ -6434,8 +6435,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
 					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.method', within: [], test: [] }
+			}
 		],
 		[TSKindId.ModItem]: [{ path: 'declaration.module', within: [], test: [] }],
 		[TSKindId.ModItemExternal]: [
@@ -6676,8 +6676,8 @@ const table: PortableTable = {
 		[TSKindId.RawStringLiteral]: [{ path: 'literal.string.raw', within: [], test: [] }],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
-			{ path: 'declaration.parameter', within: [], test: [] },
-			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+			{ path: 'declaration.parameter.receiver', within: [], test: [] },
+			{ path: 'declaration.parameter', within: [], test: [] }
 		],
 		[TSKindId.RefPattern]: [{ path: 'pattern.reference', within: [], test: [] }],
 		[TSKindId.ReferenceExpression]: [{ path: 'expression.reference', within: [], test: [] }],
@@ -6711,6 +6711,7 @@ const table: PortableTable = {
 					}
 				]
 			},
+			{ path: 'declaration.method.signature', within: [], test: [] },
 			{
 				path: 'declaration.method.signature.private',
 				within: [],
@@ -6775,8 +6776,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
 					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.method.signature', within: [], test: [] }
+			}
 		],
 		[TSKindId.SlicePattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
@@ -6860,6 +6860,7 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '"', slots: { '332': 0 } } }]
 			},
+			{ path: 'literal.string', within: [], test: [] },
 			{
 				path: 'literal.string.bytes',
 				within: [],
@@ -6869,8 +6870,7 @@ const table: PortableTable = {
 				path: 'literal.string.c',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'c"', slots: { '332': 0 } } }]
-			},
-			{ path: 'literal.string', within: [], test: [] }
+			}
 		],
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
@@ -7286,6 +7286,7 @@ const table: PortableTable = {
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.UnaryExpression]: [
+			{ path: 'expression.unary', within: [], test: [] },
 			{
 				path: 'expression.unary.negation',
 				within: [],
@@ -7300,8 +7301,7 @@ const table: PortableTable = {
 				path: 'expression.unary.deref',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '267': 0 } } }]
-			},
-			{ path: 'expression.unary', within: [], test: [] }
+			}
 		],
 		[TSKindId.UnionItem]: [
 			{

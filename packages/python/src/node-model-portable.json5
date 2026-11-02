@@ -2502,6 +2502,13 @@
       "vocab": "pattern.complex",
       "read": [
         {
+          "vocab": "pattern.complex",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "pattern.complex.add",
           "toplevel": true,
           "within": [],
@@ -2550,13 +2557,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "pattern.complex",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -5331,6 +5331,20 @@
       "vocab": "declaration.method",
       "read": [
         {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -5374,20 +5388,6 @@
               "stem"
             ]
           }
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [

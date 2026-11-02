@@ -1105,8 +1105,10 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const refined = refinedContainers(input.model, reads, input.bindings.containers);
 	const vocabOf = kindVocabs(input.model, reads, refined);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
-	for (const entries of readEntries.values())
-		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
+	for (const [kind, entries] of readEntries) {
+		const named = (e: ReadEntry): number => (boundKindName(e.vocab, isParserHiddenName(kind)) === kind ? 0 : 1);
+		entries.sort((a, b) => named(a) - named(b) || specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
+	}
 	const stopped: StoppedRead[] = [];
 	for (const [kind, entries] of readEntries) {
 		const own = entries.filter((entry) => !inherited.has(entry) && unconditional(entry));

@@ -5190,6 +5190,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
+			{ path: 'expression.binary', within: [], test: [] },
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
@@ -5314,8 +5315,7 @@ const table: PortableTable = {
 				path: 'expression.binary.membership.instanceof',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '268': 1 } } }]
-			},
-			{ path: 'expression.binary', within: [], test: [] }
+			}
 		],
 		[TSKindId.BooleanKeyword]: [
 			{ path: 'type.primitive.boolean', within: [], test: [] },
@@ -5464,12 +5464,12 @@ const table: PortableTable = {
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
 		[TSKindId.ImportStatement]: [
+			{ path: 'statement.import', within: [], test: [] },
 			{
 				path: 'statement.import.typeof',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '197': 0 } } }]
-			},
-			{ path: 'statement.import', within: [], test: [] }
+			}
 		],
 		[TSKindId.IndexSignature]: [{ path: 'declaration.signature.index', within: [], test: [] }],
 		[TSKindId.IndexSignatureColon]: [{ path: 'declaration.signature.index', within: [], test: [] }],
@@ -5875,6 +5875,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.ReadonlyType]: [{ path: 'type.readonly', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
+			{ path: 'declaration.parameter.receiver', within: [], test: [] },
 			{
 				path: 'declaration.parameter.private',
 				within: [],
@@ -5899,8 +5900,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '467': 1 } } }
 				]
 			},
-			{ path: 'declaration.parameter', within: [], test: [] },
-			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+			{ path: 'declaration.parameter', within: [], test: [] }
 		],
 		[TSKindId.Regex]: [{ path: 'literal.regex', within: [], test: [] }],
 		[TSKindId.RegexFlags]: [{ path: 'literal.regex.flags', within: [], test: [] }],
@@ -6052,6 +6052,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.UnaryExpression]: [
+			{ path: 'expression.unary', within: [], test: [] },
 			{
 				path: 'expression.unary.negation',
 				within: [],
@@ -6086,8 +6087,7 @@ const table: PortableTable = {
 				path: 'expression.unary.delete',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '269': 0 } } }]
-			},
-			{ path: 'expression.unary', within: [], test: [] }
+			}
 		],
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
 		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],

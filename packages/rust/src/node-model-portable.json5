@@ -1159,6 +1159,13 @@
       "vocab": "expression.binary",
       "read": [
         {
+          "vocab": "expression.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "expression.binary.arithmetic.add",
           "toplevel": true,
           "within": [],
@@ -1607,13 +1614,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "expression.binary",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -1692,6 +1692,13 @@
       "vocab": "comment.block",
       "read": [
         {
+          "vocab": "comment.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "comment.block.doc",
           "toplevel": true,
           "within": [],
@@ -1732,13 +1739,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "comment.block",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -1932,6 +1932,13 @@
       "vocab": "expression.call",
       "read": [
         {
+          "vocab": "expression.call",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "expression.call.member",
           "toplevel": true,
           "within": [],
@@ -1972,13 +1979,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "expression.call",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -5997,6 +5997,13 @@
       "vocab": "declaration.field",
       "read": [
         {
+          "vocab": "declaration.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.field.private",
           "toplevel": true,
           "within": [],
@@ -6331,13 +6338,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "declaration.field",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -9565,6 +9565,13 @@
       "vocab": "comment.line",
       "read": [
         {
+          "vocab": "comment.line",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "comment.line.doc",
           "toplevel": true,
           "within": [],
@@ -9605,13 +9612,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "comment.line",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -10305,6 +10305,13 @@
           ]
         },
         {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.method.private",
           "toplevel": true,
           "within": [],
@@ -10639,13 +10646,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -12827,14 +12827,14 @@
       "vocab": "declaration.parameter",
       "read": [
         {
-          "vocab": "declaration.parameter",
+          "vocab": "declaration.parameter.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.parameter.receiver",
+          "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13580,6 +13580,13 @@
           ]
         },
         {
+          "vocab": "declaration.method.signature",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.method.signature.private",
           "toplevel": true,
           "within": [],
@@ -13914,13 +13921,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "declaration.method.signature",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -14735,6 +14735,13 @@
           ]
         },
         {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "literal.string.bytes",
           "toplevel": true,
           "within": [],
@@ -14771,13 +14778,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "literal.string",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -18180,6 +18180,13 @@
       "vocab": "expression.unary",
       "read": [
         {
+          "vocab": "expression.unary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "expression.unary.negation",
           "toplevel": true,
           "within": [],
@@ -18253,13 +18260,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "expression.unary",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
