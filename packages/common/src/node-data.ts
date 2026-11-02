@@ -641,7 +641,7 @@ export function listEdges(list: readonly unknown[], view: KindView): readonly Ch
 	for (let n = 0; n < list.length; n++) {
 		const entry = list[n];
 		const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
-		if (source !== undefined) (sources ??= new Array<SourceIdentity | undefined>(list.length))[n] = source;
+		if (source !== undefined) (sources ??= [])[n] = source;
 	}
 	if (sources === undefined) return undefined;
 	const byTree = new Map<TreeHandle, number[]>();

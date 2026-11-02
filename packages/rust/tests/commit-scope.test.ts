@@ -54,10 +54,10 @@ describe('a commit scope under record construction', () => {
 	});
 
 	it('releases only its own nodes, leaving those of the scope around it', () => {
-		using outer = records.scope();
+		using _outer = records.scope();
 		const first = rebuilt(blockOf(records));
 		{
-			using inner = records.scope();
+			using _inner = records.scope();
 			rebuilt(blockOf(records));
 		}
 		expect(rendered(records, first)).toBe(text);
@@ -94,7 +94,7 @@ describe('a commit scope under record construction', () => {
 	it('releases the records a built leaf parks on its sides when the leaf was made inside it', () => {
 		const before = live(records);
 		{
-			using scope = records.scope();
+			using _scope = records.scope();
 			records.build.identifier('x').$trivia.trailing(records.build.blockComment('/* c */'));
 		}
 		expect(live(records)).toBe(before);
@@ -172,7 +172,7 @@ describe('a commit scope under record construction', () => {
 		expect(String(refusal)).toMatch(/while a build is running/);
 		const before = live(engine);
 		{
-			using scope = engine.scope();
+			using _scope = engine.scope();
 			rebuilt(blockOf(engine));
 		}
 		expect(live(engine)).toBe(before);
