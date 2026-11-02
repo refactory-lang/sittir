@@ -39,6 +39,7 @@ export interface Split {
 	readonly owner: string;
 	readonly path: readonly SplitStep[];
 	readonly as: string;
+	readonly copies?: string;
 	readonly literal?: LiteralSplit;
 }
 

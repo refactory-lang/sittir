@@ -15,6 +15,7 @@ import { isPrecWrapper, isTokenWrapperType } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
+import { isVisibleGroupAlias } from './rule-metadata.ts';
 import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
@@ -38,10 +39,6 @@ export interface DistributeAliasCtx {
 	readonly inlineBodyOf: (name: string) => AnyRule | undefined;
 }
 
-function isGroupAlias(rule: unknown): boolean {
-	return (rule as { metadata?: { aliasSource?: string } } | null | undefined)?.metadata?.aliasSource === 'visible-group';
-}
-
 export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: DistributeAliasCtx): R {
 	const walker = new SyntacticRuleWalker<R>();
 	const distributed = new WeakSet<object>();
@@ -61,7 +58,7 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 			return { ...choice, members } as unknown as R;
 		}
 		const alias = r as unknown as NamedAliasShape<R>;
-		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isGroupAlias(alias)) return r;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isVisibleGroupAlias(alias)) return r;
 		const arms = armsOf(innermostNamedAliasContent(alias.content));
 		if (arms === undefined) return r;
 		const split = {
@@ -296,7 +293,7 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 	};
 	const siteOf = (r: R): AliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
-		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isGroupAlias(alias)) return undefined;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isVisibleGroupAlias(alias)) return undefined;
 		return declared(alias as AliasSite<R>) ? undefined : (alias as AliasSite<R>);
 	};
 	const terminalContent = (content: R): boolean => terminalContentOf(content, ctx.symbols.isTerminal);

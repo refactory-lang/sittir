@@ -268,6 +268,21 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		expect(JSON.stringify(raw.rules.source_file)).toContain('"value":"identifier"');
 	}, 120_000);
 
+	it('refuses a hidden rule shown under two displays, and passes a site that shows a copy of it instead', async () => {
+		const twoSites = join(dir, 'two-sites.mjs');
+		writeFileSync(
+			twoSites,
+			`export default grammar({ name: 'bindtest', rules: { source_file: $ => seq(repeat($._item), $.block), block: $ => seq('{', $._item, '}'), _item: $ => choice($.call, $.identifier), call: $ => seq($.identifier, '(', ')'), identifier: _ => /[a-z]+/ } });`
+		);
+		const shown = "edits: { source_file: { '0/0/0': alias('item') }, block: { 1: alias('item') } }";
+		const folded = await evaluateSittirGrammar(twoSites, 'bindtest', shown, undefined, { bindings: "edits: { block: { 1: alias('entry') } }" });
+		expect(folded.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'hidden-display-fold', canProceed: false, ownerKind: '_item', details: { kind: '_item', displays: ['entry', 'item'] } })
+		);
+		const copied = await evaluateSittirGrammar(twoSites, 'bindtest', shown, undefined, { bindings: "edits: { block: { 1: ($) => alias(copy('_item'), $.entry) } }" });
+		expect(copied.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'hidden-display-fold' }));
+	}, 120_000);
+
 	it('derives the base conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
 		const unbound = evaluateForDerivation(grammarPackageWith());

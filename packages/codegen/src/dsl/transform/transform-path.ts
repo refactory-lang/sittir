@@ -9,7 +9,7 @@ import {
 	isTokenWrapperType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
-import { readRuleMetadata } from '../rule-metadata.ts';
+import { isVisibleGroupAlias, readRuleMetadata } from '../rule-metadata.ts';
 import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
@@ -146,7 +146,7 @@ export function applyPath(
 		return descendThroughGroupLiftSymbol(rule, segments, patch, enclosing);
 	}
 
-	if (isEnrichContentAlias(rule)) {
+	if (isVisibleGroupAlias(rule)) {
 		return descendThroughEnrichContentAlias(rule, segments, patch, enclosing);
 	}
 
@@ -234,12 +234,6 @@ function editGroupLift(rule: RuntimeRule, edit: (body: RuntimeRule) => WalkResul
 	const edited = wireWithLiftScope(name, () => edit(body));
 	if (edited.matched) wireSetLiftBody(name, edited.rule);
 	return { rule, matched: edited.matched };
-}
-
-function isEnrichContentAlias(rule: RuntimeRule): boolean {
-	const t = (rule as { type?: string }).type;
-	if (t !== 'ALIAS') return false;
-	return readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.aliasSource === 'visible-group';
 }
 
 function descendThroughEnrichContentAlias(

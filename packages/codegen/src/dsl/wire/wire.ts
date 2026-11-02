@@ -30,6 +30,7 @@ import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { divergeSharedLifts } from './shared-lifts.ts';
+import { foldedDisplays } from './hidden-displays.ts';
 import { keywordRuleName, resolveKeywordNames, spelledKeywordRuleName } from './keyword-names.ts';
 import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
@@ -1078,7 +1079,8 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
 		(bodies) => divergeSharedLifts(bodies, context.liftEditors, context.baseRuleBodies, context.symbols(), (name) => (outRules[name] = evaluatedRuleOf(name, context))),
 		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals),
-		(bodies) => resolveKeywordNames(bodies, context)
+		(bodies) => resolveKeywordNames(bodies, context),
+		(bodies) => refuseFoldedDisplays(bodies, context)
 	]);
 	returnEvaluatedBodies(outRules, context);
 
@@ -1107,6 +1109,16 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		configurable: true
 	});
 	return wired;
+}
+
+function refuseFoldedDisplays(bodies: ReadonlyMap<string, unknown>, context: WireContext): void {
+	for (const [rule, displays] of foldedDisplays(bodies))
+		recordRefusal(context, context.layer?.name ?? '', {
+			code: 'hidden-display-fold',
+			ownerKind: rule,
+			message: `'${rule}' is shown as ${displays.map((display) => `'${display}'`).join(' and ')}: a hidden rule takes one display, and a site that shows it as another shows a copy of it`,
+			details: { kind: rule, displays }
+		});
 }
 
 export function protectedWireRuleNames(context: WireContext): string[] {

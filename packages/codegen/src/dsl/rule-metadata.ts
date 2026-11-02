@@ -1,6 +1,6 @@
 import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
 import type { ChoiceRule, StringRule } from '../types/rule.ts';
-import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 
 export const GLOBAL_WORDSET = 'global';
 
@@ -22,6 +22,11 @@ export function readRuleMetadata(meta: unknown): RuleMetadataShape | undefined {
 
 export function reservedWordsetsOf(meta: unknown): readonly string[] | undefined {
 	return readRuleMetadata(meta)?.reservedWordsets;
+}
+
+export function isVisibleGroupAlias(rule: unknown): boolean {
+	const shown = rule as { readonly type?: unknown; readonly metadata?: unknown } | null | undefined;
+	return shown?.type === ALIAS && readRuleMetadata(shown.metadata)?.aliasSource === 'visible-group';
 }
 
 export function aliasStorageOf(meta: unknown): string | undefined {

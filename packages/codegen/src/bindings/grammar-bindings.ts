@@ -20,6 +20,7 @@ import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
+import { isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
 import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
@@ -142,7 +143,6 @@ const SEVERAL_FIELDS = 'placement reaches a kind through several fields';
 const SINGLE = new Set(['OPTIONAL', 'REPEAT', 'REPEAT1', 'FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS']);
 const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.metadata : {});
 const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
-const isGroupAlias = (r: GrammarRecord): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
 
 interface ReferenceField {
 	readonly name: string;
@@ -165,11 +165,38 @@ interface PlacedSplit {
 function reachesThroughHidden(rules: Readonly<Record<string, unknown>>, rule: unknown, child: string, entered: Set<string>): boolean {
 	if (Array.isArray(rule)) return rule.some((r) => reachesThroughHidden(rules, r, child, entered));
 	if (!isRecord(rule) || (OPAQUE_RULES.has(rule.type) && !isEnrichedField(rule))) return false;
+	if (rule.type === 'ALIAS' && rule.named === true && rule.value === child) return true;
 	if (rule.type !== 'SYMBOL' || typeof rule.name !== 'string') return Object.values(rule).some((v) => reachesThroughHidden(rules, v, child, entered));
 	if (rule.name === child) return true;
 	if (!isParserHiddenName(rule.name) || isEnrichGroupLiftSymbol(rule) || entered.has(rule.name)) return false;
 	entered.add(rule.name);
 	return reachesThroughHidden(rules, rules[rule.name], child, entered);
+}
+
+function aliasValuesOf(rule: unknown, out: Set<string> = new Set()): ReadonlySet<string> {
+	if (Array.isArray(rule)) for (const r of rule) aliasValuesOf(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'ALIAS' && rule.named === true && typeof rule.value === 'string') out.add(rule.value);
+		for (const v of Object.values(rule)) aliasValuesOf(v, out);
+	}
+	return out;
+}
+
+function aliasSourceOf(rule: unknown, display: string): string | undefined {
+	if (Array.isArray(rule)) {
+		for (const member of rule) {
+			const found = aliasSourceOf(member, display);
+			if (found !== undefined) return found;
+		}
+		return undefined;
+	}
+	if (!isRecord(rule)) return undefined;
+	if (rule.type === 'ALIAS' && rule.named === true && rule.value === display && isRecord(rule.content) && rule.content.type === 'SYMBOL' && typeof rule.content.name === 'string') return rule.content.name;
+	for (const value of Object.values(rule)) {
+		const found = aliasSourceOf(value, display);
+		if (found !== undefined) return found;
+	}
+	return undefined;
 }
 
 function supertypesBetween(
@@ -194,15 +221,22 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 	if (field === undefined) return undefined;
 	if (fields.some((f) => f.name !== field.name)) return 'several';
 	const content = unwrappedPrec(field.content);
-	return { name: field.name, whole: isRecord(content) && content.type === 'SYMBOL' && content.name === child };
+	return { name: field.name, whole: isRecord(content) && ((content.type === 'SYMBOL' && content.name === child) || (content.type === 'ALIAS' && content.value === child)) };
 }
 
 function placedStepsOf(rules: Readonly<Record<string, unknown>>, stop: ReadonlySet<string>, kind: string, within: readonly string[]): readonly PlacedStep[] | 'several' {
 	const owner = within[within.length - 1]!;
 	const claimed = [...within.slice(0, -1).toReversed(), kind];
-	const kinds = claimed.flatMap((k, i) => [...(supertypesBetween(rules, stop, i === 0 ? owner : claimed[i - 1]!, k) ?? []), k]);
+	const between = claimed.flatMap((k, i) => [...(supertypesBetween(rules, stop, i === 0 ? owner : claimed[i - 1]!, k) ?? []), k]);
+	const kinds = between.filter((k, i) => i === between.length - 1 || !liftedIn(rules[i === 0 ? owner : between[i - 1]!], k));
 	const steps = kinds.map((k, i) => ({ kind: k, field: fieldOfReference(rules, i === 0 ? owner : kinds[i - 1]!, k) }));
 	return steps.some((step) => step.field === 'several') ? 'several' : (steps as PlacedStep[]);
+}
+
+function liftedIn(rule: unknown, kind: string): boolean {
+	if (Array.isArray(rule)) return rule.some((r) => liftedIn(r, kind));
+	if (!isRecord(rule)) return false;
+	return (rule.type === 'SYMBOL' && rule.name === kind && isEnrichGroupLiftSymbol(rule)) || Object.values(rule).some((v) => liftedIn(v, kind));
 }
 
 function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
@@ -290,6 +324,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
+	const aliasedKinds = aliasValuesOf(rules);
 	const checks = { ...base, rules } as unknown as GrammarRecord;
 	const stop = supertypesOf(checks);
 	const residue: GrammarBindingsResidue[] = [];
@@ -402,7 +437,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			left(placed(c) ? 'wildcard placement' : 'wildcard claim', row);
 			continue;
 		}
-		if (!ruleNames.has(c.kind)) {
+		if (!ruleNames.has(c.kind) && !(placed(c) && aliasedKinds.has(c.kind))) {
 			left('not a base rule', row);
 			continue;
 		}
@@ -412,15 +447,13 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				left('placed claim', row);
 				continue;
 			}
-			const outer = c.within[c.within.length - 1]!;
-			const reference = c.within[c.within.length - 2] ?? c.kind;
-			if (fieldOfReference(rules, outer, reference) === undefined) {
-				left('placement container has no member name', row);
-				continue;
-			}
 			const steps = placedStepsOf(rules, stop, c.kind, c.within);
 			if (steps === 'several') {
 				left(SEVERAL_FIELDS, row);
+				continue;
+			}
+			if (steps.length > 1 && fieldOfReference(rules, c.within[c.within.length - 1]!, c.within[c.within.length - 2] ?? c.kind) === undefined) {
+				left('placement container has no member name', row);
 				continue;
 			}
 			placedSplits.push({ kind: c.kind, within: c.within, as: to, steps });
@@ -500,10 +533,12 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			if (i === split.steps.length - 1 || stop.has(kind)) return null;
 			return i === 0 && first?.whole === true ? `${ownerName}_${first.name}` : `${kind}_${ownerName}`;
 		};
+		const copies = ruleNames.has(split.kind) ? undefined : aliasSourceOf(rules, split.kind);
 		return {
 			owner,
 			path: split.steps.map(({ kind, field }, i) => ({ field: field?.name ?? null, kind, as: cloneName(kind, i) })),
 			as: split.as,
+			...(copies === undefined ? {} : { copies }),
 			...(split.literal === undefined ? {} : { literal: split.literal })
 		};
 	});
@@ -763,7 +798,7 @@ export function grammarBindingsPatches(
 				reached.add(name);
 				return walk(rules[name], { host: name, wrappable: true, fieldPath: site.fieldPath, aliasPath, container });
 			}
-			if (isGroupAlias(rule)) return walk(rule.content, { ...site, wrappable: false, aliasPath, container });
+			if (isVisibleGroupAlias(rule)) return walk(rule.content, { ...site, wrappable: false, aliasPath, container });
 			const child = (fieldPath: readonly number[], index: number): WalkSite => ({
 				host: site.host,
 				wrappable: site.wrappable && !wrapped && !OPAQUE_RULES.has(rule.type) && rule.type !== 'ALIAS',
