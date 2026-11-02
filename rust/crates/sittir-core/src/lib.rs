@@ -20,6 +20,7 @@ pub mod line_endings;
 pub mod list_slots;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
+pub mod tree_memory;
 pub mod options;
 pub mod points;
 pub mod trivia_table;

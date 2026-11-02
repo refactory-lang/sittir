@@ -171,6 +171,7 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
+                $crate::tree_memory::route_tree_sitter();
                 let table = match options.and_then(|opts| opts.options) {
                     Some(opts) => {
                         opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?
