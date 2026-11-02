@@ -118,6 +118,10 @@ const PRELUDE = [
 	'declare function kindOf(node: { readonly $type: TSKindId } | TSKindId): TSKindId;',
 	'declare function textOf(node: unknown): string;',
 	'',
+	'type Listed<V> = V extends undefined ? undefined : V extends readonly unknown[] ? V : readonly V[];',
+	'',
+	'declare function listed<V>(value: V): Listed<V>;',
+	'',
 	'function none(): undefined {',
 	'\treturn undefined;',
 	'}',
@@ -393,7 +397,9 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		}
 		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false, present };
 		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];
-		const body = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
+		const read = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
+		const holdsList = chain.last.multiple || listsOnly(chain.last);
+		const body = route.list === true && !holdsList ? `listed(${read})` : read;
 		return { body, list: readsList(route, chain.last.multiple) || listsOnly(chain.last), optional: chain.optional, present };
 	};
 	interface PresentTree {
