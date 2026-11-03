@@ -74,7 +74,9 @@ fn parse(source: &str) -> tree_sitter::Tree {
     parser.parse(source, None).unwrap()
 }
 
-fn read_on_thread(probe: Probe, stack: usize) {
+/// Reads `probe` on a thread of `stack` bytes and drops the read there:
+/// how many segments the read moved to.
+fn read_on_thread(probe: Probe, stack: usize) -> usize {
     let source = probe.source();
     std::thread::Builder::new()
         .stack_size(stack)
@@ -82,29 +84,40 @@ fn read_on_thread(probe: Probe, stack: usize) {
             let tree = parse(&source);
             let mut ctx = ReadCtx::new(&source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
             RenderRoot::read_root(&mut tree.walk(), &mut ctx, Depth::All).unwrap();
+            sittir_core::stack::segments_grown()
         })
         .unwrap()
         .join()
-        .unwrap_or_else(|_| panic!("the typed read failed"));
+        .unwrap_or_else(|_| panic!("the typed read failed"))
 }
 
 #[test]
 fn a_nesting_of_250_levels_reads_on_two_mib() {
-    read_on_thread(Probe::Nested(250), TWO_MIB);
+    assert_eq!(read_on_thread(Probe::Nested(250), TWO_MIB), 0);
+}
+
+/// A Worker thread's stack: the read outgrows it and moves to segments; the
+/// drop, which recurses in place, fits it.
+const FOUR_MIB: usize = 4 * 1024 * 1024;
+
+#[test]
+fn a_nesting_of_10000_levels_reads_past_and_drops_on_four_mib() {
+    assert!(read_on_thread(Probe::Nested(10_000), FOUR_MIB) > 0);
 }
 
 /// A child of the depth test: reads `STACK_PROBE` on a thread of `STACK_KIB`
-/// KiB, and aborts if that overflows. A plain run of the suite has neither
-/// variable and passes.
+/// KiB, and fails if the read moved to a segment or overflowed. A plain run
+/// of the suite has neither variable and passes.
 #[test]
 fn stack_probe_child() {
     let Ok(probe) = std::env::var("STACK_PROBE") else { return };
     let kib: usize = std::env::var("STACK_KIB").unwrap().parse().unwrap();
-    read_on_thread(Probe::from_env(&probe), kib * 1024);
+    assert_eq!(read_on_thread(Probe::from_env(&probe), kib * 1024), 0, "the read moved to a segment");
 }
 
-/// Whether the typed read reads `probe` on a stack of `kib` KiB: the child
-/// test ran (it reports one test passed) and did not overflow.
+/// Whether the typed read reads `probe` in place on a stack of `kib` KiB:
+/// the child test ran (it reports one test passed), never moved to a
+/// segment, and did not overflow.
 fn survives(probe: Probe, kib: usize) -> bool {
     let output = Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "stack_probe_child", "--test-threads=1"])
@@ -115,8 +128,10 @@ fn survives(probe: Probe, kib: usize) -> bool {
     output.status.success() && String::from_utf8_lossy(&output.stdout).contains("1 passed")
 }
 
-/// The least stack, in KiB, on which the typed read reads `probe`, found by
-/// running the child on smaller and larger stacks.
+/// The least stack, in KiB, the typed read of `probe` uses in place: the
+/// least thread stack on which it reads without moving to a segment, found
+/// by running the child on smaller and larger stacks, less the red zone each
+/// step keeps free.
 fn least_stack_kib(probe: Probe) -> usize {
     let (mut lo, mut hi) = (16, 16 * 1024);
     assert!(survives(probe, hi), "the typed read overflows {hi} KiB reading {probe:?}, or the probe did not run");
@@ -128,7 +143,7 @@ fn least_stack_kib(probe: Probe) -> usize {
             lo = mid;
         }
     }
-    hi
+    hi - sittir_core::stack::RED_ZONE / 1024
 }
 
 /// The typed read's least stack at each of `LEVELS`, held to its target's

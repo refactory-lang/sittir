@@ -8,12 +8,13 @@
 use std::cell::Cell;
 
 /// The stack a step must have left to run in place.
-const RED_ZONE: usize = 256 * 1024;
+pub const RED_ZONE: usize = 256 * 1024;
 /// The size of each segment a step moves to.
 const SEGMENT: usize = 4 * 1024 * 1024;
 
 thread_local! {
     static SEGMENTS: Cell<usize> = const { Cell::new(0) };
+    static GROWN: Cell<usize> = const { Cell::new(0) };
 }
 
 struct OnSegment;
@@ -21,6 +22,7 @@ struct OnSegment;
 impl OnSegment {
     fn enter() -> Self {
         SEGMENTS.with(|segments| segments.set(segments.get() + 1));
+        GROWN.with(|grown| grown.set(grown.get() + 1));
         OnSegment
     }
 }
@@ -49,6 +51,12 @@ pub fn grown<R>(step: impl FnOnce() -> R) -> R {
 #[must_use]
 pub fn on_segment() -> bool {
     SEGMENTS.with(Cell::get) > 0
+}
+
+/// How many times this thread has moved a step to a new segment.
+#[must_use]
+pub fn segments_grown() -> usize {
+    GROWN.with(Cell::get)
 }
 
 /// Asserts, in debug builds, that `what` is not reached from a grown
