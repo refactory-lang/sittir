@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
-import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { coordinateOf, enterPath, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
@@ -41,21 +41,27 @@ interface SnapshotTask {
 	readonly key: string | number;
 }
 
-type SnapshotWork = (SnapshotTask | (() => void))[];
+interface SnapshotWalk {
+	readonly work: (SnapshotTask | (() => void))[];
+	readonly path: Set<object>;
+}
 
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined): unknown {
 	const root: Record<string, unknown> = {};
-	const work: SnapshotWork = [{ value, holderByte, holderTree, holder: root, key: 'value' }];
-	while (work.length > 0) {
-		const task = work.pop()!;
+	const walk: SnapshotWalk = { work: [{ value, holderByte, holderTree, holder: root, key: 'value' }], path: new Set() };
+	while (walk.work.length > 0) {
+		const task = walk.work.pop()!;
 		if (typeof task === 'function') task();
-		else (task.holder as Record<string | number, unknown>)[task.key] = snapshotStep(task, work);
+		else (task.holder as Record<string | number, unknown>)[task.key] = snapshotStep(task, walk);
 	}
 	return root.value;
 }
 
-function snapshotStep({ value, holderByte, holderTree }: SnapshotTask, work: SnapshotWork): unknown {
+function snapshotStep({ value, holderByte, holderTree }: SnapshotTask, walk: SnapshotWalk): unknown {
+	const { work, path } = walk;
 	if (Array.isArray(value)) {
+		enterPath(path, value);
+		work.push(() => path.delete(value));
 		const out = value.map(() => undefined) as unknown[];
 		const items: SnapshotTask[] = [];
 		value.forEach((entry, index) => items.push({ value: entry, holderByte, holderTree, holder: out, key: index }));
@@ -65,7 +71,7 @@ function snapshotStep({ value, holderByte, holderTree }: SnapshotTask, work: Sna
 	if (!isRecord(value)) return value;
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
-	if (at === undefined || tree === undefined) return copyStep(value, work);
+	if (at === undefined || tree === undefined) return copyStep(value, walk);
 	const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
 	return detached(read, { tree, own: treeTokenOf(value) });
 }
@@ -102,7 +108,8 @@ function detached(read: unknown, from: Detaching): unknown {
 	return read;
 }
 
-function copyStep(value: Record<string, unknown>, work: SnapshotWork): Record<string, unknown> {
+function copyStep(value: Record<string, unknown>, { work, path }: SnapshotWalk): Record<string, unknown> {
+	enterPath(path, value);
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		const raw = value[key];
@@ -118,7 +125,10 @@ function copyStep(value: Record<string, unknown>, work: SnapshotWork): Record<st
 		out[key] = undefined;
 		children.push({ value: stored, holderByte: undefined, holderTree: undefined, holder: out, key });
 	}
-	work.push(() => finishCopy(value, out));
+	work.push(() => {
+		finishCopy(value, out);
+		path.delete(value);
+	});
 	for (let at = children.length - 1; at >= 0; at -= 1) work.push(children[at]!);
 	return out;
 }

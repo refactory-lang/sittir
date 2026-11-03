@@ -1,6 +1,7 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { isLive, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { applyHost } from './reparse.ts';
+import { enterPath } from './node-data.ts';
 import { storedSlotValues } from './record-view.ts';
 import { isNode, nodeText, spanOf } from './utils.ts';
 
@@ -28,14 +29,27 @@ type Facet = { readonly $descendants: { ofType(kind: number): Iterable<Spanned> 
 const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
 
+class Leave {
+	constructor(readonly value: object) {}
+}
+
 function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): string[] {
 	const work: unknown[] = [value];
+	const path = new Set<object>();
 	const pushReversed = (items: readonly unknown[]): void => {
 		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]);
 	};
 	while (work.length > 0) {
 		const next = work.pop();
+		if (next instanceof Leave) {
+			path.delete(next.value);
+			continue;
+		}
 		if (next === undefined || next === null) continue;
+		if (typeof next === 'object') {
+			enterPath(path, next);
+			work.push(new Leave(next));
+		}
 		if (typeof next === 'object' && !isNode(next) && Symbol.iterator in next) {
 			pushReversed([...(next as Iterable<unknown>)]);
 			continue;

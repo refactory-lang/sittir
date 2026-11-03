@@ -133,10 +133,20 @@ export function carryReadTree<T extends object>(from: object, to: T): T {
 	return carryRead(from, to);
 }
 
+export function enterPath(path: Set<object>, value: object): void {
+	if (path.has(value)) throw new TypeError('a node tree holds itself: a value is its own descendant');
+	path.add(value);
+}
+
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
 	const work: unknown[] = [value];
+	const seen = new Set<object>();
 	while (work.length > 0) {
 		const next = work.pop();
+		if (typeof next === 'object' && next !== null) {
+			if (seen.has(next)) continue;
+			seen.add(next);
+		}
 		if (Array.isArray(next)) {
 			for (let at = next.length - 1; at >= 0; at -= 1) work.push(next[at]);
 			continue;
@@ -680,12 +690,14 @@ function isPresent(value: unknown): boolean {
  */
 function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
 	let at = entry;
+	let path: Set<object> | undefined;
 	for (;;) {
 		if (placeOf(at) !== undefined || typeof at.$type !== 'number' || !view.isWrapper(at.$type)) return at;
 		const node = at;
 		const held = Object.keys(node).flatMap((key) => (isSlotKey(key) && isPresent(node[key]) ? [node[key]] : []));
 		const [only] = held;
 		if (held.length !== 1 || !isRecord(only)) return at;
+		enterPath((path ??= new Set([entry])), only);
 		at = only;
 	}
 }
@@ -750,20 +762,29 @@ interface NodeValueTask {
 	readonly key: string | number;
 }
 
+interface NodeValueWalk {
+	readonly view: KindView;
+	readonly fold: boolean;
+	readonly work: (NodeValueTask | (() => void))[];
+	readonly path: Set<object>;
+}
+
 function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
 	const root: Record<string, unknown> = {};
-	const work: (NodeValueTask | (() => void))[] = [{ value, changed, bearer, sided, holder: root, key: 'value' }];
-	while (work.length > 0) {
-		const task = work.pop()!;
+	const walk: NodeValueWalk = { view, fold, work: [{ value, changed, bearer, sided, holder: root, key: 'value' }], path: new Set() };
+	while (walk.work.length > 0) {
+		const task = walk.work.pop()!;
 		if (typeof task === 'function') task();
-		else (task.holder as Record<string | number, unknown>)[task.key] = nodeValueStep(task, view, fold, work);
+		else (task.holder as Record<string | number, unknown>)[task.key] = nodeValueStep(task, walk);
 	}
 	return root.value;
 }
 
-function nodeValueStep(task: NodeValueTask, view: KindView, fold: boolean, work: (NodeValueTask | (() => void))[]): unknown {
+function nodeValueStep(task: NodeValueTask, { view, fold, work, path }: NodeValueWalk): unknown {
 	const { value, changed, bearer, sided } = task;
 	if (Array.isArray(value)) {
+		enterPath(path, value);
+		work.push(() => path.delete(value));
 		const edges = listEdges(value, view);
 		const out = value.map(() => undefined) as unknown[];
 		const items: NodeValueTask[] = [];
@@ -786,6 +807,7 @@ function nodeValueStep(task: NodeValueTask, view: KindView, fold: boolean, work:
 		const out = fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
 		return out;
 	}
+	enterPath(path, value);
 	const out: Record<string, unknown> = {};
 	const children: NodeValueTask[] = [];
 	for (const key of Object.keys(value)) {
@@ -803,7 +825,10 @@ function nodeValueStep(task: NodeValueTask, view: KindView, fold: boolean, work:
 		out[key] = undefined;
 		children.push({ value: raw, changed: bears ? NO_EDGES : changed, bearer: bears ? undefined : bearer, sided: fold || !isAliasContent(value, raw), holder: out, key });
 	}
-	work.push(() => finishNodeValue(value, out, edges, fold, sided));
+	work.push(() => {
+		finishNodeValue(value, out, edges, fold, sided);
+		path.delete(value);
+	});
 	for (let index = children.length - 1; index >= 0; index -= 1) work.push(children[index]!);
 	return out;
 }
