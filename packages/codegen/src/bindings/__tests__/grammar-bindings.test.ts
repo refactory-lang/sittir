@@ -55,6 +55,27 @@ const LEADS = [lead('parameters_elements', 'item', 'receiver', match('required_p
 const named = (...names: string[]): MemberRoute[] => names.map((name) => ({ route: 'kind', name, kind: name, path: undefined }));
 const NO_MEMBERS: ReadonlyMap<string, readonly MemberRoute[]> = new Map();
 const NO_MODEL: SlotModel = new Map();
+const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
+	kind,
+	modelType: 'branch',
+	unit: false,
+	slots: [],
+	subtypes: [],
+	elementKinds: [],
+	enumMembers: [],
+	text: null,
+	pattern: null,
+	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
+	interiorPart: null,
+	shownAs: [],
+	...extra
+});
+const MODEL: SlotModel = new Map([
+	['let_item', node('let_item')],
+	['call', node('call')]
+]);
 const ROUTES = {
 	members: NO_MEMBERS,
 	vocabOf: new Map([
@@ -151,7 +172,7 @@ describe('deriveGrammarBindings', () => {
 		]);
 	});
 
-	it("names a kind claimed plainly twice by its first claim, and checks its members against that claim's vocabulary kind", () => {
+	it('names a kind claimed plainly twice by its first claim, and checks its members against the paths of the claims they attach to', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
@@ -161,9 +182,9 @@ describe('deriveGrammarBindings', () => {
 			file: FILE,
 			facts,
 			base,
-			vocabMembers: VOCABULARY,
+			vocabMembers: new Map([...VOCABULARY, ['expression.invocation', new Set<string>()]]),
 			routes: ROUTES,
-			model: NO_MODEL
+			model: MODEL
 		});
 		expect(bindings.renames).toEqual({ call: 'call_expression' });
 		expect(report.residue).toEqual([
@@ -207,7 +228,7 @@ describe('deriveGrammarBindings', () => {
 		expect(report.residue).toContainEqual({ cause: 'child-pattern refinement', row: 'call → expression.call' });
 	});
 
-	it("checks a form's members against the vocabulary kind the routes name it by, though its own claims all refine its supertype's", () => {
+	it("checks a form's members against every claim path they attach to, its supertype's among them", () => {
 		const form = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 			kind,
 			modelType: 'branch',
@@ -233,8 +254,10 @@ describe('deriveGrammarBindings', () => {
 		const parenthesized = { subject: { up: 0, down: [] }, kinds: ['identifier'], captured: false };
 		const facts: BindingFacts = { ...FACTS, claims: [claim('expression', '_item'), claim('expression.call', 'call', { children: [parenthesized] })], members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }] };
 		const routes = { members: NO_MEMBERS, vocabOf: new Map([['_item', 'expression'], ['call', 'expression']]) };
-		const { report } = bind({ file: FILE, facts, base, vocabMembers: new Map([['expression', new Set(['identifier'])]]), routes, model });
+		const { report } = bind({ file: FILE, facts, base, vocabMembers: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set<string>()]]), routes, model });
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
+		const declared = bind({ file: FILE, facts, base, vocabMembers: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set(['callee'])]]), routes, model });
+		expect(declared.report.residue).not.toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
 	});
 
 	describe('two kinds claiming one path', () => {
@@ -329,7 +352,7 @@ describe('deriveGrammarBindings', () => {
 	});
 
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
-		const { bindings, report } = bind({ file: FILE, facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routes: ROUTES, model: NO_MODEL });
+		const { bindings, report } = bind({ file: FILE, facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routes: ROUTES, model: MODEL });
 		expect(bindings.patches.size).toBe(0);
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
 	});

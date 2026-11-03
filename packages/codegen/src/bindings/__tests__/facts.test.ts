@@ -192,12 +192,14 @@ describe('bindFacts', () => {
 });
 
 const SAME = (kind: string): readonly string[] => [kind];
+const UNMOUNTED = (): readonly string[] => [];
 
 describe('refineClaims', () => {
 	it('marks a claim that extends another claim of the same kind and placement as its refinement', () => {
 		const [parent, child] = refineClaims(
 			[claim('expression.binary', 'binary_expression'), claim('expression.binary.add', 'binary_expression', { fieldLiterals: { operator: '+' } })],
-			SAME
+			SAME,
+			UNMOUNTED
 		);
 		expect([parent?.refines, parent?.refinement]).toEqual([null, null]);
 		expect([child?.refines, child?.refinement]).toEqual(['expression.binary', 'field-literal']);
@@ -211,8 +213,8 @@ describe('refineClaims', () => {
 			claim('literal.number.integer.big', 'number', { within: ['call'], tokens: ['n'] })
 		];
 		const expected = [null, 'literal.number', 'literal.number.integer', null];
-		expect(refineClaims(claims, SAME).map((c) => c.refines)).toEqual(expected);
-		expect(refineClaims([...claims].reverse(), SAME).map((c) => c.refines)).toEqual([...expected].reverse());
+		expect(refineClaims(claims, SAME, UNMOUNTED).map((c) => c.refines)).toEqual(expected);
+		expect(refineClaims([...claims].reverse(), SAME, UNMOUNTED).map((c) => c.refines)).toEqual([...expected].reverse());
 	});
 
 	it('names how a refinement tells its nodes apart: predicate, field literal, token, negated field or child pattern', () => {
@@ -224,7 +226,8 @@ describe('refineClaims', () => {
 				claim('identifier.receiver.token.child', 'identifier'),
 				claim('identifier.receiver.untyped', 'identifier', { absent: ['type'] })
 			],
-			SAME
+			SAME,
+			UNMOUNTED
 		);
 		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern', 'negated-field']);
 	});
@@ -235,7 +238,8 @@ describe('refineClaims', () => {
 		const unit = { subject: { up: 0, down: [] }, kinds: ['unit_marker'], captured: false };
 		const claims = refineClaims(
 			[claim('declaration.struct', '_struct'), claim('declaration.struct.named', 'struct_named'), claim('declaration.struct.unit', 'struct_unit', { children: [unit] })],
-			formsOf
+			formsOf,
+			UNMOUNTED
 		);
 		expect(claims.map((c) => [c.refines, c.refinement])).toEqual([
 			[null, null],
@@ -244,8 +248,24 @@ describe('refineClaims', () => {
 		]);
 	});
 
+	it("refines a mounted kind's claim by its holder's claim, names the holder, and takes no child pattern for its refinement", () => {
+		const holders = (kind: string): readonly string[] => (kind === 'yield_from_clause' ? ['yield'] : []);
+		const operand = { subject: { up: 0, down: [] }, kinds: ['expression'], captured: true };
+		const [holder, delegate] = refineClaims([claim('expression.yield', 'yield'), claim('expression.yield.delegate', 'yield_from_clause', { children: [operand] })], SAME, holders);
+		expect([holder?.refines, holder?.mountedIn]).toEqual([null, null]);
+		expect([delegate?.refines, delegate?.refinement, delegate?.mountedIn]).toEqual(['expression.yield', null, 'yield']);
+		expect(refineClaims([claim('expression.yield.delegate', 'yield_from_clause', { children: [operand] })], SAME, holders)[0]?.refines).toBeNull();
+	});
+
+	it('refuses a mounted claim that refines one parent through one holder and another through another', () => {
+		const holders = (kind: string): readonly string[] => (kind === 'negative' ? ['pattern', 'key'] : []);
+		const claims = [claim('literal', 'pattern'), claim('literal.number', 'key'), claim('literal.number.negative', 'negative')];
+		expect(() => refineClaims(claims, SAME, holders)).toThrow('bindings: negative is mounted by pattern and key');
+		expect(refineClaims([claim('literal.number', 'pattern'), claim('literal.number', 'key'), claim('literal.number.negative', 'negative')], SAME, holders)[2]?.refines).toBe('literal.number');
+	});
+
 	it("keeps an unrefined claim's own predicate, field literal or token as its refinement kind", () => {
-		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME);
+		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME, UNMOUNTED);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
 	});
 });

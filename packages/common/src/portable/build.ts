@@ -36,12 +36,14 @@ interface Picked {
 interface Built {
 	readonly value: unknown;
 	readonly seat: PortableSeat | undefined;
+	readonly holder?: 'built' | 'host';
 }
 
 interface Placed {
 	readonly value: unknown;
 	readonly mount?: PortableContainer;
 	readonly key?: string;
+	readonly host?: { readonly structure: PortableStructure; readonly seats: readonly PortableSeat[] };
 }
 
 interface Reached {
@@ -426,6 +428,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const element = (value: unknown, member: PortableMemberStep, seats: readonly PortableSeat[], depth: number): Placed => {
 			if (isStructure(value)) {
 				const built = build(value, seats);
+				if (built.holder === 'host') return { value: undefined, host: { structure: value, seats } };
 				const fill = (container: PortableContainer): Readonly<Record<string, unknown>> =>
 					Object.fromEntries(
 						(container.members ?? []).flatMap((owned) => {
@@ -435,7 +438,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 							return [[owned.steps[0]!.key, unmounted(valueOf(held, owned, value.$path), owned, value.$path)]];
 						})
 					);
-				return seated(built.value, within(built.seat ?? seats[0]!).slice(depth), false, fill);
+				const containers = within(built.seat ?? seats[0]!).slice(depth);
+				if (built.holder === 'built' && containers.length === 0) throw new Error(`portable build: ${value.$path} builds its holder, which sits in a container this list does not wrap`);
+				return seated(built.value, built.holder === 'built' ? containers.slice(0, -1) : containers, false, fill);
 			}
 			const token = typeof value === 'string' ? tokenKind(value, seats) : undefined;
 			if (token !== undefined) {
@@ -451,6 +456,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			return seated(value, within(seat).slice(depth), false);
 		};
 		const unmounted = (placed: Placed, member: PortableMemberStep, path: string): unknown => {
+			if (placed.host !== undefined) throw new Error(`portable build: ${path}'s ${member.name} holds many values, each built into its holder through ${placed.host.structure.$path}'s mount`);
 			if (placed.mount !== undefined) throw new Error(`portable build: ${path}'s ${member.name} holds many values, each built through ${placed.mount.builder}`);
 			if (placed.key !== undefined) throw new Error(`portable build: ${path}'s ${member.name} holds many values, each flattened into its holder's ${placed.key}`);
 			return placed.value;
@@ -486,7 +492,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const held = owner.config[key];
 			if (typeof value === 'string' && held instanceof Frame && held.builder !== undefined) return set(owner, key, value, path);
 			const placed = valueOf(value, member, path);
-			if (placed.mount !== undefined) mountOn(owner, placed, path);
+			if (placed.host !== undefined) build(placed.host.structure, placed.host.seats, owner);
+			else if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, placed.key ?? key, placed.value, path);
 		};
 		const spelledParts = (spelling: string, parts: PortableDecimalParts, arm: PortableBuildArm): ReadonlyMap<string, string> | undefined => {
@@ -591,10 +598,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			});
 		};
 
-		const build = (structure: PortableStructure, seats: readonly PortableSeat[] | undefined): Built => {
+		const build = (structure: PortableStructure, seats: readonly PortableSeat[] | undefined, host?: Frame): Built => {
 			const path = builtPathOf(structure);
 			const { arm, seat } = pick(structure, seats) ?? refuse(structure, path, seats);
-			const top = new Frame(arm.builder);
+			const holder = arm.mounted !== undefined && seat !== undefined && seat.at[0] === arm.mounted.holder && seat.at[1] === arm.mounted.key ? (within(seat).at(-1)?.key === arm.mounted.key ? 'built' : within(seat).length === 0 ? 'host' : undefined) : undefined;
+			if (holder === 'host' && host === undefined) return { value: undefined, seat, holder };
+			const top = host ?? new Frame(arm.builder);
 			const frame = arm.mounted === undefined ? top : enter(top, arm.builder!, arm.mounted, true)?.frame;
 			if (frame === undefined) throw new Error(`portable build: ${structure.$path} builds through ${arm.builder}, which seats ${nameOf(arm.kind)} in a holder it has none of`);
 			for (const step of arm.presets) preset(frame, step, structure.$path);
@@ -657,11 +666,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					refuseValue(structure.$path, name, value, open.map(({ candidate }) => candidate));
 				placeMember(frame, route, value, structure.$path);
 			}
+			if (host !== undefined) return { value: undefined, seat, holder: 'host' };
 			if (top.builder === undefined) return { value: arm.seated === undefined ? arm.kind : arm.seated === 'config' ? configOf(top) : inputOf(top), seat };
 			const value = materialize(top);
 			if (hasKind(value) && !readsAs(structure.$path, value))
 				throw new Error(`portable build: the ${nameOf(arm.kind)} built for ${structure.$path} does not read as ${structure.$path}`);
-			return { value, seat };
+			return holder === 'built' ? { value, seat, holder } : { value, seat };
 		};
 		return build(root, undefined).value;
 	};

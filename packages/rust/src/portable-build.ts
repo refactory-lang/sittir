@@ -1984,7 +1984,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -2045,7 +2050,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},
@@ -2285,16 +2295,18 @@ export const build: PortableBuildTable = {
 					holders: [[337, 'content']]
 				},
 				{
-					kind: 337,
+					kind: 399,
 					builder: 'lineComment.extraSlashes',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 337
 					},
 					members: [],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					holders: [[337, 'content']]
 				},
 				{
 					kind: 404,
@@ -3216,7 +3228,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name', 'type']
+							required: ['name', 'scope', 'type']
 						}
 					]
 				}
@@ -4593,7 +4605,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -5679,7 +5691,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -5832,7 +5844,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -6031,7 +6043,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -6217,7 +6229,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -6416,7 +6428,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -6615,7 +6627,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -6873,7 +6885,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -6989,7 +7001,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -7188,7 +7200,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -7374,7 +7386,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -7573,7 +7585,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -7772,7 +7784,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name']
 						}
 					]
 				}
@@ -8030,7 +8042,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -9923,7 +9935,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: ['attributes'],
-							required: ['name', 'type']
+							required: ['name', 'scope', 'type']
 						}
 					],
 					holders: [[427, 'fieldDeclaration']]
@@ -10092,7 +10104,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: ['name'],
-							required: ['type']
+							required: ['scope', 'type']
 						}
 					],
 					holders: [[345, 'items']]
@@ -13102,7 +13114,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -15637,7 +15649,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -17200,7 +17212,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -20626,7 +20638,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -23161,7 +23173,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -24208,7 +24220,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: ['body'],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				},
@@ -24367,7 +24379,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -26535,7 +26547,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -27690,7 +27702,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -28545,7 +28557,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -30058,7 +30070,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name', 'value']
+							required: ['name', 'scope', 'value']
 						}
 					]
 				}
@@ -31775,7 +31787,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -33014,7 +33026,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name', 'type']
+							required: ['name', 'scope', 'type']
 						}
 					]
 				}
@@ -43942,11 +43954,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 235,
+					kind: 381,
 					builder: 'visibilityModifier.pub',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 235
 					},
 					members: [],
 					presets: [
@@ -43977,11 +43990,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 235,
+					kind: 381,
 					builder: 'visibilityModifier.pub',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 235
 					},
 					members: [],
 					presets: [],
@@ -43991,7 +44005,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'modifier.visibility.public.internal': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 477,
@@ -44002,15 +44016,15 @@ export const build: PortableBuildTable = {
 						{
 							text: 'crate'
 						}
-					],
-					holders: [[235, 'content']]
+					]
 				},
 				{
-					kind: 235,
+					kind: 381,
 					builder: 'visibilityModifier.pub',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 235
 					},
 					members: [],
 					presets: [
@@ -44033,29 +44047,7 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: [],
-					holders: [
-						[197, 'visibilityModifier'],
-						[198, 'visibilityModifier'],
-						[200, 'visibilityModifier'],
-						[202, 'visibilityModifier'],
-						[204, 'visibilityModifier'],
-						[205, 'visibilityModifier'],
-						[206, 'visibilityModifier'],
-						[207, 'visibilityModifier'],
-						[208, 'visibilityModifier'],
-						[209, 'visibilityModifier'],
-						[214, 'visibilityModifier'],
-						[224, 'visibilityModifier'],
-						[384, 'visibilityModifier'],
-						[385, 'visibilityModifier'],
-						[423, 'visibilityModifier'],
-						[424, 'visibilityModifier'],
-						[425, 'visibilityModifier'],
-						[432, 'visibilityModifier'],
-						[480, 'visibilityModifier'],
-						[483, 'visibilityModifier']
-					]
+					when: []
 				}
 			]
 		},
@@ -44063,11 +44055,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 235,
+					kind: 381,
 					builder: 'visibilityModifier.pub',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 235
 					},
 					members: [],
 					presets: [
@@ -44098,11 +44091,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 235,
+					kind: 381,
 					builder: 'visibilityModifier.pub',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 235
 					},
 					members: [
 						{
@@ -44173,7 +44167,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['scope']
+						}
+					]
 				}
 			]
 		},
@@ -46446,7 +46445,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -46877,7 +46876,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['argument']
+							required: ['argument', 'scope']
 						}
 					]
 				}

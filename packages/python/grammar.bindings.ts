@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "8bffd63cecc381249d6496098c7fa3c049d63636eb5b336fe1277958a4cfe354";
+export const hash = "3f28dad89343182de8ce05a53146213c8adb7f9adc87ea115b9321d5771ce15f";
 
 export const renames = {
 	module: "file",
@@ -117,6 +117,7 @@ export default grammar(
 			dotted_name: { "0/0/0/0": alias("qualified_identifier") },
 			expression: { "-5": alias("lambda_expression") },
 			expression_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
+			expression_statement_tuple: { "0": field("elements"), "1/0/1": field("elements") },
 			finally_clause: { "2": field("body") },
 			import_from_statement: { "1/0/1": alias("qualified_identifier") },
 			keyword_pattern: { "2": field("pattern") },

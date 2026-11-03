@@ -11,10 +11,11 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'expression.lambda', parameters: 'a', body: 'x' }))).toBe('a => x');
 	});
 
-	it('builds the bare construct refinement without parentheses, and the construct call with parentheses whether its arguments are empty or left out', () => {
+	it('builds the bare construct refinement without parentheses, and the construct call with parentheses from its arguments, which it needs as a call does', () => {
 		expect(render(runtime.build({ $path: 'expression.call.construct.bare', function: 'X' }))).toBe('new X');
 		expect(render(runtime.build({ $path: 'expression.call.construct', function: 'X', arguments: [] }))).toBe('new X()');
-		expect(render(runtime.build({ $path: 'expression.call.construct', function: 'X' }))).toBe('new X()');
+		expect(() => runtime.build({ $path: 'expression.call.construct', function: 'X' })).toThrow('it needs arguments');
+		expect(() => runtime.build({ $path: 'expression.call', function: 'f' })).toThrow('it needs arguments');
 	});
 
 	it("routes an in expression's operands through the form its operator preset mounts, not the holder's own operand slots", () => {

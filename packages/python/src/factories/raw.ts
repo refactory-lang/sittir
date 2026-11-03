@@ -7187,25 +7187,25 @@ function _buildExpressionStatementTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionStatementTuple.Bound {
 	currentHandle()?.admit(TSKindId.ExpressionStatementTuple, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatementTuple as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

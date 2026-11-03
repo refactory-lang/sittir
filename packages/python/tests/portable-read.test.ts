@@ -90,6 +90,26 @@ describe('the portable read', () => {
 		}
 	);
 
+	it.each(['def f():\n    yield from x\n', 'match x:\n    case -1:\n        pass\n', 'match x:\n    case C(x=-1):\n        pass\n', 'a,\n', 'a, b\n', '1, 2, 3,\n', 'a, b,\n'])(
+		'reads a kind its holder mounts as its own path, carrying nothing, and builds it back through the mount: %j',
+		(source) => {
+			const parsed = read(source);
+			expect(JSON.stringify(parsed, (_key, value: unknown) => (typeof value === 'bigint' ? String(value) : value))).not.toContain('"$type"');
+			const built = runtime.build(parsed);
+			expect(runtime.read(built as never)).toEqual(parsed);
+			expect(String(runtime.engine.render(built as never))).toBe(source);
+		}
+	);
+
+	it('reads a delegating yield at its holder, a negative pattern number in its seat and a statement tuple as their paths', () => {
+		const negative = { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
+		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ body: { statements: [{ content: { $path: 'expression.yield.delegate', expression: 'x' } }] } });
+		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ body: [{ pattern: negative }] });
+		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ body: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
+		expect(firstOf('a, b,\n')).toEqual({ $path: 'statement.expression', content: { $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'], elements: ['a', 'b'] } });
+		expect(() => runtime.build(negative as never)).toThrow('portable build: literal.number.negative has no root build in python; it builds in a holder slot of _simple_pattern, keyword_pattern');
+	});
+
 	it('reads a subscript or match subject list as the bare tuple by its comma, and builds its one item with the comma', () => {
 		const content = (source: string) => (firstOf(source) as Read).content as Read;
 		const one = { $path: 'literal.number.integer', $value: 1 };

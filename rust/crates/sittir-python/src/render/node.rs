@@ -21463,20 +21463,20 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 4)]
+#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = elements, words = 4)]
 pub struct ExpressionStatementTupleNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionStatementTupleNode {
@@ -21500,12 +21500,12 @@ impl ::sittir_core::render::Render for ExpressionStatementTupleNode {
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
-        self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-        self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_EXPRESSION_STATEMENT_TUPLE_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(292), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ITEM), ctx));
-        self.item.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        self.elements_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+        self.elements_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_EXPRESSION_STATEMENT_TUPLE_ELEMENTS, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(292), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ELEMENTS), ctx));
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -29332,20 +29332,20 @@ fn render_assignment_typed(node: &AssignmentTypedNode, w: &mut dyn ::sittir_core
 }
 
 fn render_expression_statement_tuple(node: &ExpressionStatementTupleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: &node.item,
+    let elements = ListView {
+        items: &node.elements,
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
-    item.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 

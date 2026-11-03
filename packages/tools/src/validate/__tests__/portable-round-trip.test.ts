@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 40,
+	python: 39,
 	rust: 25,
-	typescript: 11
+	typescript: 9
 };
 
 describe('the portable round trip', () => {

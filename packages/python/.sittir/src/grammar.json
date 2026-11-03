@@ -9005,13 +9005,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "item",
+          "name": "elements",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -9025,13 +9025,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "item",
+                "name": "elements",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
                 },
                 "metadata": {
-                  "fieldSource": "enriched"
+                  "fieldSource": "override"
                 }
               }
             ]

@@ -7019,7 +7019,7 @@ export const coerceToExpressionStatementTuple: Seat<
 	currentHandle()?.admit(TSKindId.ExpressionStatementTuple, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionStatementTuple)) {
 		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExpressionStatementTuple(
 			{

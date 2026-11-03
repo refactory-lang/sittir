@@ -52,6 +52,9 @@
 (global_statement) @statement.global
 (nonlocal_statement) @statement.nonlocal
 (expression_statement) @statement.expression
+(expression_statement_tuple ",") @expression.collection.tuple.bare
+(expression_statement_tuple item: (_) @elements)
+(expression_statement_tuple "," @trailingComma .)
 (future_import_statement) @statement.import.future
 (print_statement) @statement.print
 (print_statement_plain) @statement.print

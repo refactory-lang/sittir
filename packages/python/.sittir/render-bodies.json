@@ -1802,7 +1802,7 @@
 	"expression_statement_tuple": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "elements"
 		}
 	],
 	"finally_clause": [

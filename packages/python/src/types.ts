@@ -5379,16 +5379,16 @@ export interface AssignmentTyped {
 
 export interface ExpressionStatementTuple {
 	readonly $type: TSKindId.ExpressionStatementTuple;
-	readonly _item: NonEmptyArray<Expression>;
+	readonly _elements: NonEmptyArray<Expression>;
 	readonly __slotNames__?: {
-		readonly _item: 'items';
+		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
+		readonly elements: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<Expression>;
+	readonly elements: () => NonEmptyArray<Expression>;
 }
 
 export interface WithClauseBare {
@@ -8161,7 +8161,7 @@ export namespace AssignmentTyped {
 export namespace ExpressionStatementTuple {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly item?: {
+			readonly elements?: {
 				readonly asPattern?: { readonly after?: WhitespaceKindId };
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly await?: { readonly after?: WhitespaceKindId };
@@ -10455,7 +10455,7 @@ export interface ExpressionStatementTupleNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ExpressionStatementTuple.Bound,
-	'item',
+	'elements',
 	TSKindId.ExpressionStatementTuple,
 	ExpressionStatementTuple.Parsed,
 	never
@@ -16392,7 +16392,11 @@ export namespace ExpressionStatementTuple {
 		  ];
 	export type Kind = TSKindId.ExpressionStatementTuple;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
+		[
+			KeyRefusesEmpty<Config, 'elements'>,
+			KeyRefusesEmpty<LooseConfig, 'elements'>,
+			SetterRefusesEmpty<Bound, 'elements'>
+		]
 	>;
 }
 export namespace WithClauseBare {

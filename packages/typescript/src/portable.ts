@@ -363,8 +363,7 @@ export interface PortableIds {
 		| TSKindId.UnaryExpression
 		| TSKindId.UpdateExpressionPostfix
 		| TSKindId.UpdateExpressionPrefix
-		| TSKindId.YieldExpression
-		| TSKindId.YieldExpressionDelegate;
+		| TSKindId.YieldExpression;
 	'expression.assignment': TSKindId.AssignmentExpression | TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.add': TSKindId.AugmentedAssignmentExpression;
@@ -463,8 +462,8 @@ export interface PortableIds {
 	'expression.update': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 	'expression.update.decrement': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 	'expression.update.increment': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
-	'expression.yield': TSKindId.YieldExpression | TSKindId.YieldExpressionDelegate;
-	'expression.yield.delegate': TSKindId.YieldExpressionDelegate;
+	'expression.yield': TSKindId.YieldExpression;
+	'expression.yield.delegate': TSKindId.YieldExpression;
 	file: TSKindId.Program;
 	identifier:
 		| TSKindId.DefaultKeyword
@@ -4556,8 +4555,7 @@ const table: PortableTable = {
 				TSKindId.UnaryExpression,
 				TSKindId.UpdateExpressionPostfix,
 				TSKindId.UpdateExpressionPrefix,
-				TSKindId.YieldExpression,
-				TSKindId.YieldExpressionDelegate
+				TSKindId.YieldExpression
 			],
 			exact: false
 		},
@@ -4684,8 +4682,8 @@ const table: PortableTable = {
 			ids: [TSKindId.UpdateExpressionPostfix, TSKindId.UpdateExpressionPrefix],
 			exact: false
 		},
-		'expression.yield': { ids: [TSKindId.YieldExpression, TSKindId.YieldExpressionDelegate], exact: true },
-		'expression.yield.delegate': { ids: [TSKindId.YieldExpressionDelegate], exact: true },
+		'expression.yield': { ids: [TSKindId.YieldExpression], exact: true },
+		'expression.yield.delegate': { ids: [TSKindId.YieldExpression], exact: false },
 		file: { ids: [TSKindId.Program], exact: true },
 		identifier: {
 			ids: [
@@ -6174,8 +6172,14 @@ const table: PortableTable = {
 		],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.scope', within: [], test: [] }],
-		[TSKindId.YieldExpression]: [{ path: 'expression.yield', within: [], test: [] }],
-		[TSKindId.YieldExpressionDelegate]: [{ path: 'expression.yield.delegate', within: [], test: [] }]
+		[TSKindId.YieldExpression]: [
+			{ path: 'expression.yield', within: [], test: [] },
+			{
+				path: 'expression.yield.delegate',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [414], slots: { '236': 0 } } }]
+			}
+		]
 	},
 	fixedText: {
 		[TSKindId.Import]: 'import',

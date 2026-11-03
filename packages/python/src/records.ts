@@ -297,7 +297,7 @@ export const records = {
 		type_: { word: 7, width: 5 },
 		value: { word: 12, width: 5 }
 	},
-	ExpressionStatementTupleNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
+	ExpressionStatementTupleNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	WithClauseBareNode: { words: 4, items: { word: 2, width: 2, run: 5 } },
 	WithClauseParenNode: { words: 7, items: { word: 2, width: 5 } },
 	MatchBlockBlockNode: { words: 4, alternative: { word: 2, width: 2, run: 5 } },

@@ -3788,8 +3788,63 @@
       }
     },
     "expression_statement_tuple": {
+      "vocab": "expression.collection.tuple",
+      "read": [
+        {
+          "vocab": "expression.collection.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "or",
+                "of": [
+                  {
+                    "op": "count",
+                    "min": 2,
+                    "slots": {
+                      "292": 0
+                    }
+                  },
+                  {
+                    "op": "delimiter",
+                    "delimiter": 2
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "expression_statement_tuple",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "items": {
+            "owner": "expression_statement_tuple",
+            "slot": "elements"
+          },
+          "path": null,
+          "flag": true
+        }
+      ],
       "container": {
-        "slot": "item",
+        "slot": "elements",
         "kinds": [
           "expression"
         ],
@@ -7891,6 +7946,27 @@
       "vocab": "expression.yield",
       "read": [
         {
+          "vocab": "expression.yield.delegate",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  301
+                ],
+                "slots": {
+                  "220": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.yield",
           "toplevel": true,
           "within": [],
@@ -7909,6 +7985,21 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "yield",
+              "slot": "content"
+            },
+            {
+              "owner": "yield_from_clause",
+              "slot": "expression"
+            }
+          ]
         }
       ],
       "container": {
@@ -7924,28 +8015,6 @@
     },
     "yield_from_clause": {
       "vocab": "expression.yield.delegate",
-      "read": [
-        {
-          "vocab": "expression.yield.delegate",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "yield_from_clause",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -7979,7 +8048,7 @@
       {
         "depth": 4,
         "paths": 62,
-        "kinds": 17,
+        "kinds": 18,
         "refinements": 29
       },
       {

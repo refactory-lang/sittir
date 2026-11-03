@@ -2212,7 +2212,7 @@
     "type": "expression_statement_tuple",
     "named": true,
     "fields": {
-      "item": {
+      "elements": {
         "multiple": true,
         "required": true,
         "types": [

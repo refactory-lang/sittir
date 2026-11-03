@@ -25492,7 +25492,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
 				}
 			]
 		},
@@ -26331,7 +26336,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['function']
+							required: ['arguments', 'function']
 						}
 					]
 				}
@@ -29818,8 +29823,8 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
 										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
-										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 414, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 439, 440
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
 									],
 									leaf: 'identifier',
 									texts: [1],
@@ -29849,15 +29854,19 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 236,
-					builder: 'yieldExpression.delegate',
-					mounted: {
-						call: 'child',
-						key: 'expression'
-					},
+					builder: 'yieldExpression',
 					members: [
 						{
 							name: 'expression',
 							steps: [
+								{
+									key: 'expression',
+									builder: 'yieldExpression.delegate',
+									mounted: {
+										call: 'child',
+										key: 'expression'
+									}
+								},
 								{
 									key: 'expression'
 								}
@@ -29890,7 +29899,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'expression',
+									optional: true,
+									builder: 'yieldExpression.delegate',
+									mounted: {
+										call: 'child',
+										key: 'expression'
+									}
+								}
+							]
+						}
+					],
 					flags: {},
 					when: [
 						{
@@ -32329,11 +32352,12 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 361,
+					kind: 404,
 					builder: 'literalType.negativeNumber',
 					mounted: {
 						call: 'child',
-						key: 'content'
+						key: 'content',
+						holder: 361
 					},
 					members: [
 						{
@@ -35704,7 +35728,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['source']
+						}
+					],
 					holders: [
 						[305, 'type'],
 						[306, 'type'],
@@ -35796,7 +35825,12 @@ export const build: PortableBuildTable = {
 						}
 					],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['source']
+						}
+					],
 					holders: [
 						[353, 'object'],
 						[354, 'object'],

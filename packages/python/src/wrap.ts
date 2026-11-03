@@ -5305,17 +5305,17 @@ export function wrapExpressionStatementTuple(
 	tree: TreeHandle
 ): T.ExpressionStatementTuple.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.ExpressionStatementTuple as const,
-		items() {
-			return hydrateSlots<T.Expression>(this, '_item', tree);
+		elements() {
+			return hydrateSlots<T.Expression>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

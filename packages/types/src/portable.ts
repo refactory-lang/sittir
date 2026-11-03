@@ -189,8 +189,8 @@ export interface PortableDecimalParts {
  * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type; it takes the
  * number as its builder's input, or, where its builder takes a config, through `numeric`: the member that takes the number whole, or the member
  * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
- * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
- * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
+ * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
+ * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
  * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
  * member it states, by the member's kinds and whether it is a list. `empty` names the list members a structure that leaves them out builds
@@ -201,7 +201,7 @@ export interface PortableDecimalParts {
 export interface PortableBuildArm {
 	readonly kind: number;
 	readonly builder?: string;
-	readonly mounted?: PortableMount;
+	readonly mounted?: PortableMount & { readonly holder: number };
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
 	readonly numeric?: string | PortableDecimalParts;

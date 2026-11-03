@@ -255,6 +255,7 @@ export type RefinementKind = 'predicate' | 'field-literal' | 'token' | 'negated-
 export interface RefinedClaim extends ClaimFact {
 	readonly refines: string | null;
 	readonly refinement: RefinementKind | null;
+	readonly mountedIn: string | null;
 }
 
 const untested = (claim: ClaimFact): boolean =>
@@ -286,18 +287,39 @@ export function literalClaimOf(claim: ClaimFact): LiteralText | undefined {
 	return { field: step.field, leaf: step.kind, texts };
 }
 
-export function refineClaims(claims: readonly ClaimFact[], formsOf: (kind: string) => readonly string[]): RefinedClaim[] {
+export function refineClaims(
+	claims: readonly ClaimFact[],
+	formsOf: (kind: string) => readonly string[],
+	mountHoldersOf: (kind: string) => readonly string[]
+): RefinedClaim[] {
 	return claims.map((claim) => {
-		const unrefined = { ...claim, refines: null, refinement: null };
+		const unrefined = { ...claim, refines: null, refinement: null, mountedIn: null };
 		const kind = claim.kind;
 		if (kind === null || kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
-		const parent = claims
-			.filter((p) => p.kind !== null && p.kind !== WILDCARD && formsOf(p.kind).includes(kind) && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
-			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
+		const holders = mountHoldersOf(kind);
+		const holderOf = (p: ClaimFact): string | undefined =>
+			p.kind === null || p.kind === WILDCARD ? undefined : formsOf(p.kind).includes(kind) ? kind : holders.find((holder) => formsOf(p.kind!).includes(holder));
+		const deepestBy = new Map<string, ClaimFact>();
+		for (const p of claims) {
+			const holder = holderOf(p);
+			if (holder === undefined || p.within.join('/') !== placement || !claim.vocab.startsWith(`${p.vocab}.`)) continue;
+			const deepest = deepestBy.get(holder);
+			if (deepest === undefined || p.vocab.length > deepest.vocab.length) deepestBy.set(holder, p);
+		}
+		const parents = [...deepestBy];
+		const [first, rival] = parents.filter(([, p], i) => parents.findIndex(([, q]) => q.vocab === p.vocab) === i);
+		if (first !== undefined && rival !== undefined)
+			throw new Error(
+				`bindings: ${kind} is mounted by ${first[0]} and ${rival[0]}, and its claim ${claim.vocab} refines ${first[1].vocab} through one and ${rival[1].vocab} through the other`
+			);
 		const refinement = refinementKindOf(claim);
-		if (parent !== undefined) return { ...claim, refines: parent.vocab, refinement: parent.kind !== kind && untested(claim) ? null : refinement };
-		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement };
+		if (first !== undefined) {
+			const [holder, parent] = first;
+			if (holder !== kind) return { ...claim, refines: parent.vocab, refinement: refinement === 'child-pattern' ? null : refinement, mountedIn: holder };
+			return { ...claim, refines: parent.vocab, refinement: parent.kind !== kind && untested(claim) ? null : refinement, mountedIn: null };
+		}
+		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement, mountedIn: null };
 	});
 }
 

@@ -177,11 +177,28 @@ describe('the portable build table', () => {
 		});
 	});
 
-	it("marks an arm built through its holder's mount", () => {
+	it("keys an arm built through its holder's mount by its own kind, and names the holder", () => {
 		const pub = armsOf('rust', 'modifier.visibility.public')[0]!;
-		expect(pub.kind).toBe(rust.kinds.VisibilityModifier);
+		expect(pub.kind).toBe(rust.kinds.VisibilityModifierPub);
 		expect(pub.builder).toBe('visibilityModifier.pub');
-		expect(pub.mounted).toEqual({ call: 'child', key: 'content' });
+		expect(pub.mounted).toEqual({ call: 'child', key: 'content', holder: rust.kinds.VisibilityModifier });
+	});
+
+	it('builds a kind mounted in several holders once per mount a seat reaches, and never at the root', () => {
+		const negative = tables.python.table.paths['literal.number.negative']!;
+		expect(negative.root).toBe(false);
+		expect(negative.arms.map((arm) => [arm.kind, arm.builder, arm.holders])).toEqual([
+			[python.kinds.SimplePatternNegative, 'simplePattern.negative', [[python.kinds.SimplePattern, 'content']]],
+			[python.kinds.SimplePatternNegative, 'keywordPattern.negative', [[python.kinds.KeywordPattern, 'pattern']]]
+		]);
+	});
+
+	it("reads a mounted kind at its holder where the holder's claim is its claim's parent", () => {
+		const delegate = armsOf('python', 'expression.yield.delegate');
+		expect(delegate.map((arm) => [arm.kind, arm.builder, arm.mounted])).toEqual([[python.kinds.Yield, 'yield', undefined]]);
+		expect(delegate[0]!.members.map((member) => member.steps.map((step) => step.key))).toEqual([['content', 'expression']]);
+		expect(delegate[0]!.members[0]!.steps[0]!.mounted).toEqual({ call: 'child', key: 'content' });
+		expect(delegate[0]!.when).toEqual([{ absent: [], required: ['expression'] }]);
 	});
 
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
@@ -315,7 +332,7 @@ describe('the portable build table', () => {
 		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subjects).sole).toEqual(sole);
 		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.ExpressionList).sole).toBeUndefined();
 		const soles = Object.values(tables).flatMap(({ table }) => Object.values(table.paths).flatMap(({ arms }) => arms.filter((arm) => arm.sole !== undefined)));
-		expect(soles.map((arm) => arm.kind).sort()).toEqual([python.kinds.Subjects, python.kinds.Subscripts].sort());
+		expect(soles.map((arm) => arm.kind).sort()).toEqual([python.kinds.ExpressionStatementTuple, python.kinds.Subjects, python.kinds.Subscripts].sort());
 	});
 
 	it('builds the default form of a variant family, and the others by render option', () => {

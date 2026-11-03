@@ -447,7 +447,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', 1, undefined, '_type'],
 		['value', 2, undefined, '_value']
 	],
-	292: [['items', 0, undefined, '_item']],
+	292: [['elements', 0, undefined, '_elements']],
 	293: [['items', 0, undefined, '_items']],
 	294: [['items', 0, undefined, '_items']],
 	295: [['alternatives', 0, undefined, '_alternative']],
@@ -2122,9 +2122,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	292: {
 		kind: 'expression_statement_tuple',
-		nonEmpty: [['_item', 'expression_statement_tuple.elements']],
-		nodeOnly: [['_item', 'ExpressionStatementTuple.items', 'a built Expression', [205]]],
-		lists: [['items', false, 0]]
+		nonEmpty: [['_elements', 'expression_statement_tuple.elements']],
+		nodeOnly: [['_elements', 'ExpressionStatementTuple.elements', 'a built Expression', [205]]],
+		lists: [['elements', false, 0]]
 	},
 	293: {
 		kind: 'with_clause_bare',

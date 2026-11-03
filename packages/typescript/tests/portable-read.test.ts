@@ -11,6 +11,20 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it.each(['function* f() {\n  yield* x;\n}\n', 'type T = -1;\n'])('reads a kind its holder mounts as its own path, carrying nothing, and builds it back through the mount: %j', (source) => {
+		const parsed = read(source);
+		expect(JSON.stringify(parsed)).not.toContain('"$type"');
+		const built = runtime.build(parsed);
+		expect(runtime.read(built as never)).toEqual(parsed);
+		expect(String(runtime.engine.render(built as never))).toBe(source);
+	});
+
+	it('reads a delegating yield at its holder and a negative literal type in its seat, and builds the delegate only with its operand', () => {
+		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ expression: { $path: 'expression.yield.delegate', expression: 'x' } }] } });
+		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', content: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
+		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
+	});
+
 	it('reads the members a binding captures from its slot, and builds an import back', () => {
 		const clause = { $path: 'clause.import.names', content: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
 		expect(firstOf('import {a, b as c} from "x";')).toMatchObject({ importClause: clause });

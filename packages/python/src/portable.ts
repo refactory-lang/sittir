@@ -111,6 +111,7 @@ export interface PortableIds {
 		| TSKindId.Dictionary
 		| TSKindId.DictionaryComprehension
 		| TSKindId.ExpressionList
+		| TSKindId.ExpressionStatementTuple
 		| TSKindId.FormatSpecifier
 		| TSKindId.GeneratorExpression
 		| TSKindId.Interpolation
@@ -130,8 +131,7 @@ export interface PortableIds {
 		| TSKindId.Tuple
 		| TSKindId.TypeConversion
 		| TSKindId.UnaryOperator
-		| TSKindId.Yield
-		| TSKindId.YieldFromClause;
+		| TSKindId.Yield;
 	'expression.assignment': TSKindId.AugmentedAssignment | TSKindId.NamedExpression;
 	'expression.assignment.compound': TSKindId.AugmentedAssignment;
 	'expression.assignment.compound.add': TSKindId.AugmentedAssignment;
@@ -188,6 +188,7 @@ export interface PortableIds {
 	'expression.collection':
 		| TSKindId.Dictionary
 		| TSKindId.ExpressionList
+		| TSKindId.ExpressionStatementTuple
 		| TSKindId.List
 		| TSKindId.Set
 		| TSKindId.Subjects
@@ -196,8 +197,17 @@ export interface PortableIds {
 	'expression.collection.list': TSKindId.List;
 	'expression.collection.map': TSKindId.Dictionary;
 	'expression.collection.set': TSKindId.Set;
-	'expression.collection.tuple': TSKindId.ExpressionList | TSKindId.Subjects | TSKindId.Subscripts | TSKindId.Tuple;
-	'expression.collection.tuple.bare': TSKindId.ExpressionList | TSKindId.Subjects | TSKindId.Subscripts;
+	'expression.collection.tuple':
+		| TSKindId.ExpressionList
+		| TSKindId.ExpressionStatementTuple
+		| TSKindId.Subjects
+		| TSKindId.Subscripts
+		| TSKindId.Tuple;
+	'expression.collection.tuple.bare':
+		| TSKindId.ExpressionList
+		| TSKindId.ExpressionStatementTuple
+		| TSKindId.Subjects
+		| TSKindId.Subscripts;
 	'expression.comprehension':
 		| TSKindId.DictionaryComprehension
 		| TSKindId.GeneratorExpression
@@ -221,8 +231,8 @@ export interface PortableIds {
 	'expression.unary.negation': TSKindId.UnaryOperator;
 	'expression.unary.not': TSKindId.NotOperator;
 	'expression.unary.plus': TSKindId.UnaryOperator;
-	'expression.yield': TSKindId.Yield | TSKindId.YieldFromClause;
-	'expression.yield.delegate': TSKindId.YieldFromClause;
+	'expression.yield': TSKindId.Yield;
+	'expression.yield.delegate': TSKindId.Yield;
 	file: TSKindId.Module;
 	identifier: TSKindId.DottedName | TSKindId.Identifier | TSKindId.MemberType;
 	'identifier.qualified': TSKindId.DottedName | TSKindId.MemberType;
@@ -2746,6 +2756,7 @@ const table: PortableTable = {
 				TSKindId.Dictionary,
 				TSKindId.DictionaryComprehension,
 				TSKindId.ExpressionList,
+				TSKindId.ExpressionStatementTuple,
 				TSKindId.FormatSpecifier,
 				TSKindId.GeneratorExpression,
 				TSKindId.Interpolation,
@@ -2765,8 +2776,7 @@ const table: PortableTable = {
 				TSKindId.Tuple,
 				TSKindId.TypeConversion,
 				TSKindId.UnaryOperator,
-				TSKindId.Yield,
-				TSKindId.YieldFromClause
+				TSKindId.Yield
 			],
 			exact: false
 		},
@@ -2830,6 +2840,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.Dictionary,
 				TSKindId.ExpressionList,
+				TSKindId.ExpressionStatementTuple,
 				TSKindId.List,
 				TSKindId.Set,
 				TSKindId.Subjects,
@@ -2842,11 +2853,17 @@ const table: PortableTable = {
 		'expression.collection.map': { ids: [TSKindId.Dictionary], exact: true },
 		'expression.collection.set': { ids: [TSKindId.Set], exact: true },
 		'expression.collection.tuple': {
-			ids: [TSKindId.ExpressionList, TSKindId.Subjects, TSKindId.Subscripts, TSKindId.Tuple],
+			ids: [
+				TSKindId.ExpressionList,
+				TSKindId.ExpressionStatementTuple,
+				TSKindId.Subjects,
+				TSKindId.Subscripts,
+				TSKindId.Tuple
+			],
 			exact: false
 		},
 		'expression.collection.tuple.bare': {
-			ids: [TSKindId.ExpressionList, TSKindId.Subjects, TSKindId.Subscripts],
+			ids: [TSKindId.ExpressionList, TSKindId.ExpressionStatementTuple, TSKindId.Subjects, TSKindId.Subscripts],
 			exact: false
 		},
 		'expression.comprehension': {
@@ -2879,8 +2896,8 @@ const table: PortableTable = {
 		'expression.unary.negation': { ids: [TSKindId.UnaryOperator], exact: false },
 		'expression.unary.not': { ids: [TSKindId.NotOperator], exact: true },
 		'expression.unary.plus': { ids: [TSKindId.UnaryOperator], exact: false },
-		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
-		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
+		'expression.yield': { ids: [TSKindId.Yield], exact: true },
+		'expression.yield.delegate': { ids: [TSKindId.Yield], exact: false },
 		file: { ids: [TSKindId.Module], exact: true },
 		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier, TSKindId.MemberType], exact: true },
 		'identifier.qualified': { ids: [TSKindId.DottedName, TSKindId.MemberType], exact: true },
@@ -3527,6 +3544,25 @@ const table: PortableTable = {
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],
 		[TSKindId.ExpressionList]: [{ path: 'expression.collection.tuple.bare', within: [], test: [] }],
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
+		[TSKindId.ExpressionStatementTuple]: [
+			{
+				path: 'expression.collection.tuple.bare',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'or',
+							of: [
+								{ op: 'count', min: 2, slots: { '292': 0 } },
+								{ op: 'delimiter', delimiter: 2 }
+							]
+						}
+					}
+				]
+			}
+		],
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FinallyClause]: [{ path: 'clause.finally', within: [], test: [] }],
 		[TSKindId.FloatLeadingPoint]: [{ path: 'literal.number.float.leading_point', within: [], test: [] }],
@@ -3766,8 +3802,14 @@ const table: PortableTable = {
 		[TSKindId.WithClauseParen]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithItem]: [{ path: 'clause.resource.item', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.resource', within: [], test: [] }],
-		[TSKindId.Yield]: [{ path: 'expression.yield', within: [], test: [] }],
-		[TSKindId.YieldFromClause]: [{ path: 'expression.yield.delegate', within: [], test: [] }]
+		[TSKindId.Yield]: [
+			{
+				path: 'expression.yield.delegate',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [301], slots: { '220': 0 } } }]
+			},
+			{ path: 'expression.yield', within: [], test: [] }
+		]
 	},
 	fixedText: {
 		[TSKindId.WildcardImport]: '*',
@@ -3902,6 +3944,15 @@ export const queryFlags: QueryFlags = Object.freeze({
 			]
 		}
 	},
+	[TSKindId.ExpressionStatementTuple]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '292': 0 } }
+			]
+		}
+	},
 	[TSKindId.ForInClause]: {
 		async: { op: 'present', slots: { '244': 0 } },
 		trailingComma: { op: 'present', slots: { '244': 3 } }
@@ -3944,6 +3995,7 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
+	142: { content: { trailingComma: { types: [], kinds: [292] } } },
 	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	147: { expressions: { trailingComma: { types: [], kinds: [181] } } },
@@ -3979,6 +4031,9 @@ declare module './types.js' {
 	interface ExpressionList {
 		readonly __flags__?: 'trailingComma';
 	}
+	interface ExpressionStatementTuple {
+		readonly __flags__?: 'trailingComma';
+	}
 	interface ForInClause {
 		readonly __flags__?: 'async' | 'trailingComma';
 	}
@@ -4008,6 +4063,9 @@ declare module './types.js' {
 	}
 	interface Module {
 		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface ExpressionStatement {
+		readonly __slotFlags__?: { readonly content: 'trailingComma' };
 	}
 	interface ReturnStatement {
 		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
