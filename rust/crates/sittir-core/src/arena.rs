@@ -461,12 +461,6 @@ impl Arena {
         self.chunks.get(n as usize).map(|chunk| Arc::clone(&chunk.mem))
     }
 
-    /// The bytes every chunk of the arena takes, words and strings.
-    #[must_use]
-    pub fn allocated_bytes(&self) -> usize {
-        self.chunks.iter().map(|chunk| chunk.mem.byte_len()).chain(self.strings.iter().map(|chunk| chunk.mem.byte_len())).sum()
-    }
-
     /// `text` in the string table, written once however often it is stored.
     pub fn intern(&mut self, text: &str) -> Result<StringRef, ArenaError> {
         if let Some(&at) = self.interned.get(text) {
