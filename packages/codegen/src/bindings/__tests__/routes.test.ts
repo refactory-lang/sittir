@@ -1825,3 +1825,16 @@ describe('a list\'s trailing separator', () => {
 		expect(entries.map((entry) => [entry.vocab, entry.separated])).toEqual(expect.arrayContaining([['expression.tuple', true], ['expression.call.arguments', undefined]]));
 	});
 });
+
+describe('a claim token', () => {
+	const entriesOf = async (bindings: string, kind: string) => resolveRoutes(await grammar(bindings)).readEntries.get(kind) ?? [];
+
+	it('pins the slot that holds it, or is the kind\'s own text', async () => {
+		expect((await entriesOf('(binary "+") @expression.binary.add', 'binary')).map((entry) => entry.pins)).toEqual([[{ member: 'operator', slot: 'operator', text: '+' }]]);
+		expect((await entriesOf('(true_keyword "true") @literal.boolean.true', 'true_keyword')).map((entry) => entry.pins)).toEqual([[]]);
+	});
+
+	it('stops codegen when no slot holds it and the kind\'s own text does not spell it', async () => {
+		await expect(entriesOf('(binary "*") @expression.binary.multiply', 'binary')).rejects.toThrow('bindings: binary\'s claim as expression.binary.multiply tests "*", which no slot of binary holds and its own text does not spell');
+	});
+});

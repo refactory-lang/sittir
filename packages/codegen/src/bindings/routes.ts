@@ -311,6 +311,10 @@ function pinnedLiterals(model: SlotModel, slots: readonly ModelSlot[], claim: Cl
 
 function pinsOf(model: SlotModel, kind: string, claim: ClaimFact, renames: SlotNames): Pin[] {
 	const slots = shownSlots(model, kind);
+	const separator = modelNode(model, kind)?.list?.separator;
+	const unheld = claim.tokens.filter((text) => text !== separator && slotHoldingText(model, slots, text) === undefined && !textsOfKind(model, kind).includes(text));
+	if (unheld.length > 0)
+		throw new Error(`bindings: ${kind}'s claim as ${claim.vocab} tests ${unheld.map((text) => `"${text}"`).join(', ')}, which no slot of ${kind} holds and its own text does not spell`);
 	return pinnedLiterals(model, slots, claim).map(([field, text]) => {
 		const slot = slotByField(slots, field);
 		return { member: memberNameOf(renames, slot?.name ?? field, slot?.propertyName ?? field), slot: slot?.name ?? field, text };
