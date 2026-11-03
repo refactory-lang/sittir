@@ -7673,6 +7673,8 @@ function _buildExpressions(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7682,7 +7684,12 @@ function _buildExpressions(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExpressions(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildExpressions(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressions({ ...options, delimiter: v }, ...elements))
 		},

@@ -48,8 +48,26 @@ describe('an expression list', () => {
 		expect(list.$render()).toBe('x,');
 	});
 
-	it('renders one element with its separator whatever the delimiter option says', () => {
-		expect(build.expressionList({ delimiter: Delimiter.None }, x()).$render()).toBe('x,');
+	it('refuses a delimiter the caller writes that drops the separator one element always spells', () => {
+		const refusal = 'expression_list: one element always spells its trailing separator, so its delimiter is never None';
+		expect(() => build.expressionList({ delimiter: Delimiter.None }, x())).toThrow(refusal);
+		expect(() => build.expressionList(x()).$with.delimiter(Delimiter.None)).toThrow(refusal);
+	});
+
+	it('drops the delimiter an edit to one element carries, so the list stores it absent and spells the separator', () => {
+		const edited = build.expressionList({ delimiter: Delimiter.None }, x(), y()).$with.elements(x());
+		expect(edited.delimiter).toBeUndefined();
+		expect(edited.$render()).toBe('x,');
+		const [first] = parsedList<ExpressionList.Parsed>('a = x, y\n', is.expressionList).elements();
+		const rebuilt = build.expressionList(first);
+		expect(rebuilt.delimiter).toBeUndefined();
+		expect(rebuilt.$render()).toBe('x,');
+	});
+
+	it('keeps a trailing delimiter an edit to more elements carries', () => {
+		const edited = build.expressionList({ delimiter: Delimiter.Trailing }, x(), y()).$with.elements(x(), y(), x());
+		expect(edited.delimiter).toBe(Delimiter.Trailing);
+		expect(edited.$render()).toBe('x, y, x,');
 	});
 
 	it('renders no trailing separator after several elements unless asked', () => {

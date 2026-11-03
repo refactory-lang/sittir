@@ -1994,6 +1994,10 @@ function _buildExpressionList(
 	currentHandle()?.admit(TSKindId.ExpressionList, elements);
 	const _elements = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'expression_list: one element always spells its trailing separator, so its delimiter is never None'
+		);
 	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
@@ -2003,7 +2007,12 @@ function _buildExpressionList(
 		_delimiter,
 		$with: {
 			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildExpressionList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
@@ -3268,6 +3277,8 @@ function _buildPatternList(
 	currentHandle()?.admit(TSKindId.PatternList, elements);
 	const _elements = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('pattern_list: one element always spells its trailing separator, so its delimiter is never None');
 	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
@@ -3277,7 +3288,12 @@ function _buildPatternList(
 		_delimiter,
 		$with: {
 			elements: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
-				rebuilt(node, handle, () => buildPatternList(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildPatternList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
@@ -5382,6 +5398,10 @@ function _buildTuplePatternElements(
 	currentHandle()?.admit(TSKindId.TuplePatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'tuple_pattern_elements: one element always spells its trailing separator, so its delimiter is never None'
+		);
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -5391,7 +5411,12 @@ function _buildTuplePatternElements(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
-				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildTuplePatternElements(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
 		},
@@ -5444,6 +5469,10 @@ function _buildCasePatternList(
 	currentHandle()?.admit(TSKindId.CasePatternList, elements);
 	const _elements = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'case_pattern_list: one element always spells its trailing separator, so its delimiter is never None'
+		);
 	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
@@ -5453,7 +5482,12 @@ function _buildCasePatternList(
 		_delimiter,
 		$with: {
 			elements: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildCasePatternList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
 		},
@@ -5513,6 +5547,8 @@ function _buildTupleElements(
 	currentHandle()?.admit(TSKindId.TupleElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('tuple_elements: one element always spells its trailing separator, so its delimiter is never None');
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -5522,7 +5558,12 @@ function _buildTupleElements(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
-				rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildTupleElements(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
 		},

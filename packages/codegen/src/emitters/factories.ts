@@ -2752,15 +2752,20 @@ function emitSeparatedListFactory(
 		}
 		lines.push('  const _separator = options.separator;');
 	}
+	const soleTrailing = hasDelimiterOption && node.singleElementNeedsTrailing;
 	if (hasDelimiterOption) {
 		lines.push('  const _delimiter = options.delimiter;');
+	}
+	if (soleTrailing) {
+		lines.push(`  if (elements.length === 1 && _delimiter === Delimiter.None) throw new Error('${node.kind}: one element always spells its trailing separator, so its delimiter is never None');`);
 	}
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	{
 		const view = listSelfViewParts(plan.viewPlan!, contentStorageKey, contentAccessorName, 'factory');
 		const optionsArg = hasOptions ? 'options, ' : '';
-		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
+		const carried = soleTrailing ? '(vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options), ' : optionsArg;
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${carried}...vs)` }];
 		if (hasSeparatorKindOption) {
 			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: `${fn}({ ...options, separator: v }, ...elements)` });
 		}
