@@ -2111,69 +2111,102 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 }
 
-/// The engine's live trees as the render context's source table: a handle's
-/// tag names the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate::types::TreeId, ParsedTree<G>, H> {
+/// The live trees one call renders through, each tree a lookup hands out
+/// noted, so the call can report the trees it read (`ReadTrees::read`): a
+/// tree grows during a render only through a lookup of it.
+pub struct ReadTrees<'t, G: EngineGrammar, H = std::collections::hash_map::RandomState> {
+    trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>,
+    read: std::cell::RefCell<Vec<crate::types::TreeId>>,
+}
+
+impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
+    /// The live `trees`, none read yet.
+    #[must_use]
+    pub fn new(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>) -> Self {
+        Self { trees, read: std::cell::RefCell::default() }
+    }
+
+    /// The live tree `tree`, noted as read, or `None` when it is not live.
+    #[must_use]
+    pub fn get(&self, tree: crate::types::TreeId) -> Option<&'t ParsedTree<G>> {
+        let found = self.trees.get(&tree)?;
+        let mut read = self.read.borrow_mut();
+        if !read.contains(&tree) {
+            read.push(tree);
+        }
+        Some(found)
+    }
+
+    /// Each live tree a lookup handed out, once, in the order first read.
+    #[must_use]
+    pub fn read(self) -> Vec<crate::types::TreeId> {
+        self.read.into_inner()
+    }
+}
+
+/// The live trees as the render context's source table: a handle's tag names
+/// the tree, and the tree owns the source its spans index into.
+impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-        self.get(&tree_id)?.source_of(tree_id)
+        self.get(tree_id)?.source_of(tree_id)
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        self.get(&coord.tree)?.kind_of(coord)
+        self.get(coord.tree)?.kind_of(coord)
     }
 
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
-        self.get(&coord.tree).map_or_else(Vec::new, |tree| tree.line_starts_inside_tokens(coord))
+        self.get(coord.tree).map_or_else(Vec::new, |tree| tree.line_starts_inside_tokens(coord))
     }
 
     fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        self.get(&tree)?.last_list_child_kind(tree, span, kind)
+        self.get(tree)?.last_list_child_kind(tree, span, kind)
     }
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.get(&coord.tree)?.sides(coord)
+        self.get(coord.tree)?.sides(coord)
     }
 
     fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
-        self.get(&coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
+        self.get(coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
     }
 
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        self.get(&coord.tree).map_or_else(Vec::new, |tree| SourceTable::slot_layouts(tree, coord))
+        self.get(coord.tree).map_or_else(Vec::new, |tree| SourceTable::slot_layouts(tree, coord))
     }
 
     fn separator_before(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        SourceTable::separator_before(self.get(&coord.tree)?, coord)
+        SourceTable::separator_before(self.get(coord.tree)?, coord)
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
-        self.get(&coord.tree).map_or(coord.span, |tree| tree.framed_span(coord))
+        self.get(coord.tree).map_or(coord.span, |tree| tree.framed_span(coord))
     }
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
-        self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
+        self.get(coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
     }
 
     fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
-        self.get(&coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
+        self.get(coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
     }
 
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
-        self.get(&coord.tree)?.seat_through(coord, wrappers, seat)
+        self.get(coord.tree)?.seat_through(coord, wrappers, seat)
     }
 
     fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        SourceTable::read_ctx(self.get(&tree)?, tree)
+        SourceTable::read_ctx(self.get(tree)?, tree)
     }
 
     fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
-        if let Some(tree) = self.get(&coord.tree) {
+        if let Some(tree) = self.get(coord.tree) {
             tree.for_each_edge_level(coord, side, f);
         }
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
-        self.get(&coord.tree).map_or(0, |tree| tree.depth_move(coord))
+        self.get(coord.tree).map_or(0, |tree| tree.depth_move(coord))
     }
 }
 
@@ -2825,7 +2858,8 @@ mod tests {
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let leading = tree.trivia_side(f.index, TriviaSide::Leading);
         let trailing = tree.trivia_side(f.index, TriviaSide::Trailing);
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let sides = sources.sides(&f).expect("the function has sides");
         let sides = sides.as_any().downcast_ref::<crate::trivia::NodeTrivia<TestTrivia>>().expect("the grammar's trivia");
         assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
@@ -2835,7 +2869,7 @@ mod tests {
     fn a_coordinate_with_no_side_has_no_frame() {
         let (tree, _) = parsed("fn f() { a(); }\n");
         let a = coordinate(&tree, index_of_kind(&tree, "call_expression", 0));
-        assert!(table(tree).sides(&a).is_none());
+        assert!(ReadTrees::new(&table(tree)).sides(&a).is_none());
     }
 
     #[test]
@@ -2844,7 +2878,8 @@ mod tests {
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
         tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new()).expect("a side write");
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         assert!(sources.edited_within(&f));
         assert!(!sources.edited_within(&g));
     }
@@ -2853,7 +2888,8 @@ mod tests {
     fn the_tree_table_hands_out_a_tree_and_its_read_context() {
         let (tree, _) = parsed("fn f() {}\n");
         let id = tree.tree_id();
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let (tree, ctx) = sources.read_ctx(id).expect("the tree is live");
         assert_eq!(tree.root_node().kind(), "source_file");
         assert_eq!(ctx.text(&tree.root_node()), "fn f() {}\n");
@@ -2861,10 +2897,25 @@ mod tests {
     }
 
     #[test]
+    fn the_tree_table_notes_each_live_tree_a_lookup_hands_out_once() {
+        let (first, _) = parsed("fn f() {}\n");
+        let (second, _) = parsed("fn g() {}\n");
+        let (a, b) = (first.tree_id(), second.tree_id());
+        let trees = HashMap::from([(a, first), (b, second)]);
+        let sources = ReadTrees::new(&trees);
+        assert!(sources.read_ctx(TreeId(a.0.max(b.0) + 1)).is_none());
+        assert!(sources.read_ctx(b).is_some());
+        assert!(sources.source_of(a).is_some());
+        assert!(sources.source_of(b).is_some());
+        assert_eq!(sources.read(), vec![b, a], "each once, in the order first read, and none that is not live");
+    }
+
+    #[test]
     fn a_value_with_no_read_reads_no_coordinate() {
         let (tree, _) = parsed("fn f() {}\n");
         let id = tree.tree_id();
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let (tree, mut ctx) = sources.read_ctx(id).expect("the tree is live");
         assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &mut ctx, NodeIndex::ROOT).is_none());
     }

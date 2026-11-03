@@ -140,15 +140,22 @@ macro_rules! napi_engine {
             })
         }
 
-        /// Runs `f` on the table of live trees, through which a render reads
-        /// every tree a coordinate names, then reports each tree that grew
-        /// (`report_live`).
+        /// Runs `f` on the live trees, noting each tree it reads
+        /// (`ReadTrees`), then reports each of those that grew
+        /// (`report_tree`).
         fn with_live_trees<R>(
             env: &::napi::Env,
-            f: impl FnOnce(&::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>) -> ::napi::Result<R>,
+            f: impl FnOnce(&$crate::engine::ReadTrees<'_, $grammar>) -> ::napi::Result<R>,
         ) -> ::napi::Result<R> {
-            let out = LIVE_TREES.with(|trees| f(&trees.borrow()));
-            report_live(env)?;
+            let (out, read) = LIVE_TREES.with(|trees| {
+                let trees = trees.borrow();
+                let read = $crate::engine::ReadTrees::new(&trees);
+                (f(&read), read.read())
+            });
+            LIVE_TREES.with(|trees| {
+                let mut trees = trees.borrow_mut();
+                read.into_iter().try_for_each(|tree_id| trees.get_mut(&tree_id).map_or(Ok(()), |parsed| report_tree(env, tree_id, parsed)))
+            })?;
             out
         }
 
@@ -615,7 +622,7 @@ macro_rules! napi_engine {
             // No JavaScript runs while the table is borrowed, so the
             // borrow cannot be re-entered.
             with_live_trees(&env, |trees| {
-                let resolved = render_options(&engine, tree_id.and_then(|id| trees.get(&id)), options)?;
+                let resolved = render_options(&engine, tree_id.and_then(|id| trees.get(id)), options)?;
                 let table = &resolved;
                 let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                     let ctx = $crate::prepare::RenderContext { options: table, sources };
@@ -814,14 +821,14 @@ macro_rules! napi_engine {
                 options: Option<$options>,
                 render: impl FnOnce(
                     &dyn $crate::arena::ArenaRead,
-                    &::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
+                    &$crate::engine::ReadTrees<'_, $grammar>,
                     &$crate::prepare::RenderContext<'_>,
                 ) -> Result<String, $crate::render::RenderError>,
             ) -> ::napi::Result<String> {
                 let chunks = owner.written().built();
                 let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 with_live_trees(env, |trees| {
-                    let table = render_options(engine, tree_id.and_then(|id| trees.get(&id)), options)?;
+                    let table = render_options(engine, tree_id.and_then(|id| trees.get(id)), options)?;
                     let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                         let ctx = $crate::prepare::RenderContext { options: &table, sources };
                         ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, trees, &ctx)))
@@ -953,7 +960,7 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 with_live_trees(&env, |trees| {
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
                     let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
@@ -1207,7 +1214,7 @@ macro_rules! napi_engine {
             pub fn render_candidate(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, options: Option<$options>) -> ::napi::Result<String> {
                 let engine = engine_of(engine)?;
                 with_live_trees(&env, |trees| {
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
                     let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate::<$any>(index, &table, sources))))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
@@ -1895,7 +1902,7 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 #[cfg(feature = "arena")]
 struct ArenaSources<'a, G: crate::engine::EngineGrammar, H> {
     grammar: G,
-    trees: &'a std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+    trees: &'a crate::engine::ReadTrees<'a, G, H>,
 }
 
 #[cfg(feature = "arena")]
@@ -1984,7 +1991,7 @@ where
 #[cfg(feature = "arena")]
 pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, R>(
     grammar: G,
-    trees: &std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+    trees: &crate::engine::ReadTrees<'_, G, H>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R
 where
@@ -1998,7 +2005,7 @@ where
 #[cfg(not(feature = "arena"))]
 pub fn entry_sources<G: crate::engine::EngineGrammar, H: std::hash::BuildHasher, R>(
     _grammar: G,
-    trees: &std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+    trees: &crate::engine::ReadTrees<'_, G, H>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R {
     f(trees)
