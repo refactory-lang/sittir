@@ -1,5 +1,6 @@
 import {
 	childFields,
+	fieldHoldsOnly,
 	fieldHosts,
 	fieldRenameIssue,
 	fieldWrapIssue,
@@ -12,7 +13,7 @@ import {
 	type Split
 } from '../dsl/bind.ts';
 import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
-import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 import type { Lead } from '../dsl/verbs/effects.ts';
 import { fieldRules, fieldThrough, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
@@ -64,6 +65,7 @@ export interface GrammarBindingsInput {
 	readonly file: string;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
+	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
@@ -335,7 +337,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const wanted: { kind: string; to: string; row: string }[] = [];
 	const wantedAliases: { kind: string; to: string; row: string }[] = [];
 	const placedSplits: PlacedSplit[] = [];
-	const wordMatcher = compileWordMatcher(base.word, base.rules);
+	const wordMatcher = input.wordMatcher;
 	const wordLeaves = new Set([...(base.word === null ? [] : [base.word]), ...wordDisplaysOf(base.rules, { word: base.word ?? undefined })]);
 	const literalDiagnostics: GrammarDiagnostic[] = [];
 	const refuseLiteral = (row: string, literal: LiteralText): void => {
@@ -544,7 +546,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				else for (const request of renames) candidates.push({ row, request, group: row });
 				continue;
 			}
-			if (to === m.field) {
+			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token }))) {
 				realizedMembers.push(row);
 				continue;
 			}
@@ -576,7 +578,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		if (where.fields.length === 1) {
 			const field = where.fields[0]!;
-			if (field === to) {
+			if (field === to || (m.flag === true && target !== null && !fieldHoldsOnly(checks, m.owner, field, target))) {
 				realizedMembers.push(row);
 				continue;
 			}

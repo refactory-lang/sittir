@@ -16,7 +16,7 @@ describe('a hoisted group whose builder forwards to another kind\'s builder', ()
 		const mounts = { count_quantifier_group: 'countQuantifierGroup', unicode_property_value_expression_group: 'unicodePropertyValueExpressionGroup' };
 		for (const [group, mount] of Object.entries(mounts)) {
 			expect(seatsOf(group)).not.toEqual([]);
-			for (const seat of seatsOf(group)) expect(seat).toEqual({ kind: group, shape: 'arm', mount, seated: true });
+			for (const seat of seatsOf(group)) expect(seat).toEqual({ kind: group, shape: 'arm', mount, seated: true, call: 'keyed' });
 		}
 	}, FULL_PIPELINE_TIMEOUT);
 });

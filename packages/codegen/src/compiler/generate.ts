@@ -8,16 +8,20 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
-import { bindingsPathIn } from '../bindings/facts.ts';
+import { accessorClassDiagnostics } from './model/accessor-classes.ts';
+import { leadEffectsOf } from '../dsl/verbs/effects.ts';
+import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
+import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
+import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
 import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
-import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
@@ -32,6 +36,7 @@ export interface GeneratedFiles {
 	types: string;
 	typesInternal: string;
 	kinds: string | undefined;
+	portableTyped: PortableTypedOutput | undefined;
 	descriptor: string;
 	renderEngine: string;
 	api: string;
@@ -53,6 +58,8 @@ export interface GeneratedFiles {
 	nodeModel: string;
 	portableNodeModel: string | undefined;
 	portable: string | undefined;
+	portableBuild: string | undefined;
+	emitDiagnostics: readonly GrammarDiagnostic[];
 	is: string;
 	kindIds: string;
 	fieldIds: string;
@@ -137,8 +144,26 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const nodeModelData = buildNodeModel(nodeMap, generatedIdTables);
 		const nodeModel = printNodeModel(nodeModelData);
-		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir));
-		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
+		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, vocabulary);
+		const portableDiagnostics = (portable?.pickDiagnostics ?? []).map(
+			({ code, path, kinds, holder, slot, arms }): GrammarDiagnostic => ({
+				scope: 'grammar',
+				grammar: cfg.grammar,
+				code,
+				severity: 'warning',
+				canProceed: true,
+				...(holder === undefined ? {} : { ownerKind: holder }),
+				...(slot === undefined ? {} : { slotName: slot }),
+				message:
+					code === 'portable-form-product'
+						? `${path}: ${kinds[0]}'s required form slots make ${arms} sibling arms`
+						: code === 'portable-value-undecided'
+							? `${path}: a ${slot} value builds as any of ${kinds.join(', ')}, and the grammar declares no default arm among them`
+							: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
+			})
+		);
 
 		const rootTypeName = nodeMap.nodes.get(rootKind)?.typeName;
 		if (rootTypeName === undefined) {
@@ -185,6 +210,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeModel,
 			portableNodeModel: portable?.nodeModel,
 			portable: portable?.surface,
+			portableBuild: portable?.build,
+			portableTyped: portable?.typed,
+			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics],
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

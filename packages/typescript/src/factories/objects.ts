@@ -44,6 +44,8 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	admitSplicedEnvelope,
@@ -110,24 +112,24 @@ export const _slotRe_buildEscapeSequence_content =
 export const _slotRe_buildPrivatePropertyIdentifier_content = _leafRe_buildIdentifier;
 export const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
 export const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
-export const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
+export const _slotRe_buildNumberHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
 export const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
 export const _slotRe_buildNumberFloatPoint_fraction = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatPoint_marker = /^(?:e|E)$/u;
-export const _slotRe_buildNumberFloatPoint_sign = /^(?:-|\+)$/u;
+export const _slotRe_buildNumberFloatPoint_exponent_sign = /^(?:-|\+)$/u;
 export const _slotRe_buildNumberFloatPoint_exponent = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatLeadingPoint_fraction = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatLeadingPoint_marker = _slotRe_buildNumberFloatPoint_marker;
-export const _slotRe_buildNumberFloatLeadingPoint_sign = _slotRe_buildNumberFloatPoint_sign;
+export const _slotRe_buildNumberFloatLeadingPoint_exponent_sign = _slotRe_buildNumberFloatPoint_exponent_sign;
 export const _slotRe_buildNumberFloatLeadingPoint_exponent = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatScientific_integer = _slotRe_buildNumberFloatPoint_integer;
 export const _slotRe_buildNumberFloatScientific_marker = _slotRe_buildNumberFloatPoint_marker;
-export const _slotRe_buildNumberFloatScientific_sign = _slotRe_buildNumberFloatPoint_sign;
+export const _slotRe_buildNumberFloatScientific_exponent_sign = _slotRe_buildNumberFloatPoint_exponent_sign;
 export const _slotRe_buildNumberFloatScientific_exponent = _leafRe_buildNumberDecimal;
-export const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
+export const _slotRe_buildNumberBinary_radix_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
-export const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
+export const _slotRe_buildNumberOctal_radix_prefix = /^(?:0o|0O)$/u;
 export const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
 export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
 export const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
@@ -368,7 +370,7 @@ export function buildExportSpecifier<
 >(config: RefusingConfig<T.ExportSpecifier.Config, { name: NameSlot; alias: AliasSlot }>): T.ExportSpecifier.Bound;
 export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.ExportSpecifier.Bound {
 	currentHandle()?.admit(TSKindId.ExportSpecifier, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ExportSpecifier['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ExportSpecifier['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ExportSpecifier['_name']>>(config.name),
@@ -393,22 +395,22 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'export_specifier', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'export_specifier', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const node = {
 		$type: TSKindId.ExportSpecifier as const,
-		_type_only,
+		_type_keyword,
 		_name,
 		_alias,
 		$_layout: undefined,
 		$with: {
-			typeOnly: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildExportSpecifier({ ...config, typeOnly: value })),
+			typeKeyword: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildExportSpecifier({ ...config, typeKeyword: value })),
 			name: (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value })),
 			alias: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['alias']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value }))
 		},
-		typeOnly: () => _type_only,
+		typeKeyword: () => _type_keyword,
 		name: () => hydrateStoredSlot(node, '_name'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
@@ -442,7 +444,7 @@ export function buildImportStatement(
 	options?: T.ImportStatement.Options
 ): T.ImportStatement.Bound {
 	currentHandle()?.admit(TSKindId.ImportStatement, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportStatement['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportStatement['_type_keyword']>>(config.typeKeyword);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportStatement['_terminator']>>(options?.terminator, [
@@ -452,21 +454,21 @@ export function buildImportStatement(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'import_statement', {
-			typeOnly: _type_only,
+			typeKeyword: _type_keyword,
 			fromClause: _from_clause,
 			importAttribute: _import_attribute,
 			terminator: _terminator
 		});
 	const node = {
 		$type: TSKindId.ImportStatement as const,
-		_type_only,
+		_type_keyword,
 		_from_clause,
 		_import_attribute,
 		_terminator,
 		$_layout: undefined,
 		$with: {
-			typeOnly: (value?: Admit<NonNullable<T.ImportStatement.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportStatement({ ...config, typeOnly: value }, options)),
+			typeKeyword: (value?: Admit<NonNullable<T.ImportStatement.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportStatement({ ...config, typeKeyword: value }, options)),
 			fromClause: (value: Admit<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>) =>
 				rebuilt(node, handle, () => buildImportStatement({ ...config, fromClause: value }, options)),
 			importAttribute: (value?: Admit<T.ImportAttribute>) =>
@@ -474,7 +476,7 @@ export function buildImportStatement(
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling }))
 		},
-		typeOnly: () => _type_only,
+		typeKeyword: () => _type_keyword,
 		fromClause: () => hydrateStoredSlot(node, '_from_clause'),
 		importAttribute: () => hydrateStoredSlot(node, '_import_attribute'),
 		terminator: () => _terminator,
@@ -913,7 +915,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 	currentHandle()?.admit(TSKindId.StatementBlock, args);
 	const _statements = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -931,7 +933,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 				rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children))
 		},
 		statements: () => hydrateStoredSlots(node, '_statements'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1232,7 +1234,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 	const _body = kindIdStorage<NonNullable<T.DoStatement['_body']>>(config.body);
 	const _condition = config.condition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -1254,7 +1256,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
 		condition: () => hydrateStoredSlot(node, '_condition'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1486,13 +1488,15 @@ function _buildContinueStatement(
 	return node as unknown as T.ContinueStatement.Bound;
 }
 
-export function buildDebuggerStatement<V extends Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>>(
-	value: V & RefuseUndeclared<V>
-): T.DebuggerStatement.Bound;
 export function buildDebuggerStatement(
-	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
+	config: Partial<T.DebuggerStatement.Config> = {},
+	options?: T.DebuggerStatement.Options
 ): T.DebuggerStatement.Bound {
-	const _terminator = kindIdStorage<NonNullable<T.DebuggerStatement['_terminator']>>(value);
+	currentHandle()?.admit(TSKindId.DebuggerStatement, [config]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DebuggerStatement['_terminator']>>(options?.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'debugger_statement', { terminator: _terminator });
 	const node = {
@@ -1500,8 +1504,8 @@ export function buildDebuggerStatement(
 		_terminator,
 		$_layout: undefined,
 		$with: {
-			terminator: (value: Admit<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>) =>
-				rebuilt(node, handle, () => buildDebuggerStatement(value))
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling }))
 		},
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -2366,7 +2370,7 @@ export function buildClassDeclaration(
 	const _heritage = config.heritage;
 	const _body = orDefault(config.body, () => buildClassBody());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2415,7 +2419,7 @@ export function buildClassDeclaration(
 		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
 		heritage: () => hydrateStoredSlot(node, '_heritage'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2588,7 +2592,7 @@ export function buildFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2640,7 +2644,7 @@ export function buildFunctionDeclaration(
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2781,7 +2785,7 @@ export function buildGeneratorFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -2834,7 +2838,7 @@ export function buildGeneratorFunctionDeclaration(
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -3010,34 +3014,30 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _optional_chain = kindIdStorage<NonNullable<T.MemberExpression['_optional_chain']>>(config.optionalChain);
+	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', {
-			object: _object,
-			optionalChain: _optional_chain,
-			property: _property
-		});
+		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
 	const node = {
 		$type: TSKindId.MemberExpression as const,
 		_object,
-		_optional_chain,
+		_operator,
 		_property,
 		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value })),
-			optionalChain: (value: Admit<NonNullable<T.MemberExpression.Config>['optionalChain']>) =>
-				rebuilt(node, handle, () => buildMemberExpression({ ...config, optionalChain: value })),
+			operator: (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value })),
 			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value }))
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
-		optionalChain: () => _optional_chain,
+		operator: () => _operator,
 		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4176,7 +4176,7 @@ function _buildClassStaticBlock(
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _body = value;
@@ -4192,7 +4192,7 @@ function _buildClassStaticBlock(
 			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
 				rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling }))
 		},
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6797,7 +6797,7 @@ export function buildTypeQueryMemberExpression(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _content = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpression['_property']>>(
 		rejectReservedText(
 			config.property,
@@ -6809,23 +6809,27 @@ export function buildTypeQueryMemberExpression(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'type_query_member_expression', { object: _object, content: _content, property: _property });
+		admitChildren(handle, 'type_query_member_expression', {
+			object: _object,
+			operator: _operator,
+			property: _property
+		});
 	const node = {
 		$type: TSKindId.TypeQueryMemberExpression as const,
 		_object,
-		_content,
+		_operator,
 		_property,
 		$_layout: undefined,
 		$with: {
 			object: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, object: value })),
-			content: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['content']>) =>
-				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, operator: value })),
 			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value }))
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
-		content: () => _content,
+		operator: () => _operator,
 		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7926,15 +7930,21 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 	return node as unknown as T.DefaultType.Bound;
 }
 
-export function buildConstraint<BoundsSlot extends T.Constraint.Config['bounds']>(
-	config: RefusingConfig<T.Constraint.Config, { bounds: BoundsSlot }>
+export function buildConstraint<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.Constraint.Options
 ): T.Constraint.Bound;
-export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound {
-	currentHandle()?.admit(TSKindId.Constraint, [config]);
-	const _content = kindIdStorage<NonNullable<T.Constraint['_content']>>(config.content);
+export function buildConstraint(
+	value: Admit<T.Type | T.TypeIdentifier.Types>,
+	options?: T.Constraint.Options
+): T.Constraint.Bound {
+	const _operator = coerceKindEnumStorage<NonNullable<T.Constraint['_operator']>>(options?.operator, [
+		['extends', TSKindId.ExtendsKeyword] as const,
+		[':', TSKindId.Colon] as const
+	]);
 	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(config.bounds),
+			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
 			'Constraint.bounds',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
@@ -7942,19 +7952,19 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { content: _content, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
 	const node = {
 		$type: TSKindId.Constraint as const,
-		_content,
+		_operator,
 		_bounds,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.Constraint.Config>['content']>) =>
-				rebuilt(node, handle, () => buildConstraint({ ...config, content: value })),
-			bounds: (value: Admit<NonNullable<T.Constraint.Config>['bounds']>) =>
-				rebuilt(node, handle, () => buildConstraint({ ...config, bounds: value }))
+			bounds: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildConstraint(value, options)),
+			operator: (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
+				rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		bounds: () => hydrateStoredSlot(node, '_bounds'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8388,7 +8398,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 const buildExportSpecifiers$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeOnly', 'alias']
+	decorations: ['typeKeyword', 'alias']
 };
 export function buildExportSpecifiers<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
@@ -9322,7 +9332,7 @@ export function buildAmbientDeclarationModule(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -9344,7 +9354,7 @@ export function buildAmbientDeclarationModule(
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9726,29 +9736,29 @@ export function buildNumberHex(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberHex.Options
 ): T.NumberHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
-		throw new Error(`number_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_hex.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberHex_content.test(_content))
 		throw new Error(`number_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_hex', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_hex', { radixPrefix: _radix_prefix, content: _content });
 	const node = {
 		$type: TSKindId.NumberHex as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberHex(value, options)),
-			prefix: (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildNumberHex(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0x' | '0X') =>
+				rebuilt(node, handle, () => buildNumberHex(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9771,7 +9781,7 @@ export function buildNumberFloatPoint<
 	>,
 	IntegerSlot extends T.NumberFloatPoint.Config['integer'],
 	FractionSlot extends T.NumberFloatPoint.Config['fraction'],
-	SignSlot extends T.NumberFloatPoint.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatPoint.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatPoint.Config['exponent']
 >(
 	config: C &
@@ -9788,7 +9798,7 @@ export function buildNumberFloatPoint<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ integer: IntegerSlot; fraction: FractionSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound;
@@ -9810,16 +9820,17 @@ export function buildNumberFloatPoint(
 		throw new Error(`number_float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
 		throw new Error(`number_float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatPoint_marker.test(_marker))
 		throw new Error(`number_float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatPoint_sign.test(_sign))
-		throw new Error(`number_float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`number_float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9831,7 +9842,7 @@ export function buildNumberFloatPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const node = {
@@ -9839,7 +9850,7 @@ export function buildNumberFloatPoint(
 		_integer,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		$_layout: undefined,
 		$with: {
@@ -9847,8 +9858,8 @@ export function buildNumberFloatPoint(
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, integer: value }, options)),
 			fraction: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, fraction: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponentSign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
@@ -9857,7 +9868,7 @@ export function buildNumberFloatPoint(
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9879,7 +9890,7 @@ export function buildNumberFloatLeadingPoint<
 		{ fraction: number | bigint; exponent: number | bigint }
 	>,
 	FractionSlot extends T.NumberFloatLeadingPoint.Config['fraction'],
-	SignSlot extends T.NumberFloatLeadingPoint.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatLeadingPoint.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatLeadingPoint.Config['exponent']
 >(
 	config: C &
@@ -9890,7 +9901,7 @@ export function buildNumberFloatLeadingPoint<
 		> &
 		RefusingConfig<
 			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
-			{ fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ fraction: FractionSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound;
@@ -9904,16 +9915,21 @@ export function buildNumberFloatLeadingPoint(
 		throw new Error(`number_float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`number_float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`
+		);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9924,21 +9940,21 @@ export function buildNumberFloatLeadingPoint(
 		admitChildren(handle, 'number_float_leading_point', {
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const node = {
 		$type: TSKindId.NumberFloatLeadingPoint as const,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		$_layout: undefined,
 		$with: {
 			fraction: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponentSign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
@@ -9946,7 +9962,7 @@ export function buildNumberFloatLeadingPoint(
 		},
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9965,7 +9981,7 @@ export function buildNumberFloatLeadingPoint(
 export function buildNumberFloatScientific<
 	const C extends WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.NumberFloatScientific.Config['integer'],
-	SignSlot extends T.NumberFloatScientific.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatScientific.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatScientific.Config['exponent']
 >(
 	config: C &
@@ -9976,7 +9992,7 @@ export function buildNumberFloatScientific<
 		> &
 		RefusingConfig<
 			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
-			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ integer: IntegerSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound;
@@ -9995,11 +10011,13 @@ export function buildNumberFloatScientific(
 		throw new Error(`number_float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
 		throw new Error(`number_float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatScientific_sign.test(_sign))
-		throw new Error(`number_float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`number_float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -10010,21 +10028,21 @@ export function buildNumberFloatScientific(
 		admitChildren(handle, 'number_float_scientific', {
 			integer: _integer,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const node = {
 		$type: TSKindId.NumberFloatScientific as const,
 		_integer,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		$_layout: undefined,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, integer: value }, options)),
-			sign: (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, sign: value }, options)),
+			exponentSign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponentSign: value }, options)),
 			exponent: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
@@ -10032,7 +10050,7 @@ export function buildNumberFloatScientific(
 		},
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
-		sign: () => hydrateStoredSlot(node, '_sign'),
+		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10084,30 +10102,30 @@ export function buildNumberBinary(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberBinary.Options
 ): T.NumberBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
-		throw new Error(`number_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_binary.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberBinary_content.test(_content))
 		throw new Error(`number_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_binary', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_binary', { radixPrefix: _radix_prefix, content: _content });
 	const node = {
 		$type: TSKindId.NumberBinary as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberBinary(value, options)),
-			prefix: (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildNumberBinary(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildNumberBinary(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10131,30 +10149,30 @@ export function buildNumberOctal(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberOctal.Options
 ): T.NumberOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
-		throw new Error(`number_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_octal.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberOctal_content.test(_content))
 		throw new Error(`number_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_octal', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_octal', { radixPrefix: _radix_prefix, content: _content });
 	const node = {
 		$type: TSKindId.NumberOctal as const,
-		_prefix,
+		_radix_prefix,
 		_content,
 		$_layout: undefined,
 		$with: {
 			content: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberOctal(value, options)),
-			prefix: (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildNumberOctal(value, { ...options, prefix: spelling }))
+			radixPrefix: (spelling: '0o' | '0O') =>
+				rebuilt(node, handle, () => buildNumberOctal(value, { ...options, radixPrefix: spelling }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10412,7 +10430,7 @@ export function buildClassBodyMemberMethod(
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -10440,7 +10458,7 @@ export function buildClassBodyMemberMethod(
 		},
 		decorators: () => hydrateStoredSlots(node, '_decorator'),
 		methodDefinition: () => hydrateStoredSlot(node, '_method_definition'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10455,17 +10473,19 @@ export function buildClassBodyMemberMethod(
 	return node as unknown as T.ClassBodyMemberMethod.Bound;
 }
 
-export function buildClassBodyMemberMethodSig<
-	MethodSignatureSlot extends T.ClassBodyMemberMethodSig.Config['methodSignature']
->(
-	config: RefusingConfig<T.ClassBodyMemberMethodSig.Config, { methodSignature: MethodSignatureSlot }>
+export function buildClassBodyMemberMethodSig<V extends Admit<T.MethodSignature>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound;
 export function buildClassBodyMemberMethodSig(
-	config: T.ClassBodyMemberMethodSig.Config
+	value: Admit<T.MethodSignature>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound {
-	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [config]);
-	const _method_signature = config.methodSignature;
-	const _terminator = kindIdStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator);
+	const _method_signature = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_body_member_method_sig', {
@@ -10479,9 +10499,9 @@ export function buildClassBodyMemberMethodSig(
 		$_layout: undefined,
 		$with: {
 			methodSignature: (value: Admit<T.MethodSignature>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, methodSignature: value })),
-			terminator: (value: Admit<NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, terminator: value }))
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, options)),
+			terminator: (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling }))
 		},
 		methodSignature: () => hydrateStoredSlot(node, '_method_signature'),
 		terminator: () => _terminator,
@@ -10763,7 +10783,7 @@ export function buildImportSpecifierName<NameSlot extends T.ImportSpecifierName.
 ): T.ImportSpecifierName.Bound;
 export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierName, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		config.name,
 		'ImportSpecifierName.name',
@@ -10771,19 +10791,19 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeOnly: _type_only, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeKeyword: _type_keyword, name: _name });
 	const node = {
 		$type: TSKindId.ImportSpecifierName as const,
-		_type_only,
+		_type_keyword,
 		_name,
 		$_layout: undefined,
 		$with: {
-			typeOnly: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, typeOnly: value })),
+			typeKeyword: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, typeKeyword: value })),
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value }))
 		},
-		typeOnly: () => _type_only,
+		typeKeyword: () => _type_keyword,
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10805,7 +10825,7 @@ export function buildImportSpecifierAs<
 >(config: RefusingConfig<T.ImportSpecifierAs.Config, { name: NameSlot; alias: AliasSlot }>): T.ImportSpecifierAs.Bound;
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierAs, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name),
@@ -10825,22 +10845,22 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'import_specifier_as', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'import_specifier_as', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const node = {
 		$type: TSKindId.ImportSpecifierAs as const,
-		_type_only,
+		_type_keyword,
 		_name,
 		_alias,
 		$_layout: undefined,
 		$with: {
-			typeOnly: (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, typeOnly: value })),
+			typeKeyword: (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, typeKeyword: value })),
 			name: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value })),
 			alias: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value }))
 		},
-		typeOnly: () => _type_only,
+		typeKeyword: () => _type_keyword,
 		name: () => hydrateStoredSlot(node, '_name'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
@@ -11989,7 +12009,7 @@ export function buildForHeaderLetConstKind(
 		_reservedWords_buildIdentifier
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator);
@@ -12030,7 +12050,7 @@ export function buildForHeaderLetConstKind(
 		},
 		kind: () => _kind,
 		left: () => hydrateStoredSlot(node, '_left'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
@@ -12051,9 +12071,13 @@ export function buildForHeaderUsingKind<
 	LeftSlot extends T.ForHeaderUsingKind.Config['left'],
 	RightSlot extends T.ForHeaderUsingKind.Config['right']
 >(
-	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>
+	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound;
-export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.ForHeaderUsingKind.Bound {
+export function buildForHeaderUsingKind(
+	config: T.ForHeaderUsingKind.Config,
+	options?: T.ForHeaderUsingKind.Options
+): T.ForHeaderUsingKind.Bound {
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
 	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
 	const _left = rejectReservedText(
@@ -12062,7 +12086,10 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = strictBooleanStorage(config.terminator);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
@@ -12089,19 +12116,19 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 		$_layout: undefined,
 		$with: {
 			kind: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value })),
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value }, options)),
 			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value })),
-			terminator: (value?: Admit<NonNullable<T.ForHeaderUsingKind.Config>['terminator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, terminator: value })),
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value }, options)),
 			operator: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value })),
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value }, options)),
 			right: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind(config, { ...options, terminator: spelling }))
 		},
 		kind: () => _kind,
 		left: () => hydrateStoredSlot(node, '_left'),
-		terminator: () => _terminator,
+		terminator: () => blankArmRead(_terminator),
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),

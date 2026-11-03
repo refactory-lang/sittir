@@ -23,7 +23,7 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		name: { word: 2, width: 4, inline: 4, forms: 8, built: 2 },
-		type_: { word: 6, width: 1, forms: 2, built: 3 }
+		fragment: { word: 6, width: 1, forms: 2, built: 3 }
 	},
 	TokenRepetitionPatternNode: {
 		words: 7,
@@ -87,7 +87,7 @@ export const records = {
 	OrderedFieldDeclarationListNode: {
 		words: 5,
 		builtWords: 3,
-		attributes: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+		elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	ExternCrateDeclarationNode: {
 		words: 22,
@@ -794,11 +794,7 @@ export const records = {
 	},
 	RangeExpressionPostfixNode: { words: 6, builtWords: 3, start: { word: 2, width: 4, forms: 3, built: 2 } },
 	RangeExpressionPrefixNode: { words: 6, builtWords: 3, end: { word: 2, width: 4, forms: 3, built: 2 } },
-	RangeExpressionBareNode: {
-		words: 3,
-		builtWords: 3,
-		range_expression_bare: { word: 2, width: 1, forms: 2, built: 2 }
-	},
+	RangeExpressionBareNode: { words: 2, builtWords: 2 },
 	ExpressionStatementWithSemiNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	ForeignModItemSemiNode: {
 		words: 11,
@@ -895,13 +891,13 @@ export const records = {
 	RangePatternPrefixNode: {
 		words: 7,
 		builtWords: 4,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		right: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	RangePatternWithLeftWithRightNode: {
 		words: 7,
 		builtWords: 4,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		right: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	RangePatternWithLeftNode: {
@@ -1024,7 +1020,6 @@ export const records = {
 		builtWords: 3,
 		elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
-	StringCloseNode: { words: 2, builtWords: 2 },
 	ErrorSentinelNode: { words: 2, builtWords: 2 },
 	TypeIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	FieldIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },

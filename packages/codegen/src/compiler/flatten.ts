@@ -23,6 +23,8 @@ import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
+import { supertypeArmsOf } from '../dsl/symbol-table.ts';
+import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
@@ -80,22 +82,26 @@ function construct(node: Input): Output {
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case STRING:
-			return { ...node, ...b.string(node.value), ...(node.nonterminal === true ? { nonterminal: true } : {}) };
+			return rebuiltLeaf(node, b.string(node.value));
 		case INDENT:
-			return { ...node, ...b.indent() };
+			return rebuiltLeaf(node, b.indent());
 		case DEDENT:
-			return { ...node, ...b.dedent() };
+			return rebuiltLeaf(node, b.dedent());
 		case NEWLINE:
-			return { ...node, ...b.newline() };
+			return rebuiltLeaf(node, b.newline());
 		case SYMBOL:
-			return { ...node, ...b.symbol(node.name) };
+			return rebuiltLeaf(node, b.symbol(node.name));
 		case PATTERN:
-			return { ...node, ...b.pattern(node.value) };
+			return rebuiltLeaf(node, b.pattern(node.value));
 		case SUPERTYPE:
-			return { ...node, ...b.supertype(node.name, node.subtypes) };
+			return rebuiltLeaf(node, b.supertype(node.name, node.subtypes));
 		default:
 			return node;
 	}
+}
+
+function rebuiltLeaf<N extends Input, B extends Output>(node: N, built: B): N & B {
+	return { ...node, ...built, ...(node.nonterminal === undefined ? {} : { nonterminal: node.nonterminal }) };
 }
 
 function rebuild(node: Input): Output {
@@ -139,8 +145,10 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 		return rule;
 	};
 	const isSingle = (rule: RenderRule): boolean => rule.multiplicity === undefined || rule.multiplicity === 'single';
+	const layoutMembers = supertypeArmsOf([LAYOUT_SUPERTYPE], rules);
+	const isLayoutBody = (rule: RenderRule): boolean => rule.type === SYMBOL && layoutMembers.has(rule.name);
 	const out: Record<string, RenderRule> = {};
-	for (const [name, rule] of Object.entries(rules)) out[name] = stamp(ruleWalker.map(rule, stamp));
+	for (const [name, rule] of Object.entries(rules)) out[name] = isLayoutBody(rule) ? rule : stamp(ruleWalker.map(rule, stamp));
 	return out;
 }
 

@@ -38,7 +38,7 @@ describe('full form stamp', () => {
 
 	it('records a spelling choice as alternatives of its slot', async () => {
 		expect(fullFormOf(await nodeMapOf('python'), 'integer_hex')).toEqual({
-			open: { texts: ['0x', '0X'], slot: 'prefix' },
+			open: { texts: ['0x', '0X'], slot: 'radix_prefix' },
 			close: { texts: [''] }
 		});
 	}, COMPILE_TIMEOUT);

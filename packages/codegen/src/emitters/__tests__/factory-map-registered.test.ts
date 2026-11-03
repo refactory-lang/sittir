@@ -30,8 +30,8 @@ describe('buildFactoryMap — FactorySlotMeta.registered', () => {
 	);
 	const { factorySlots } = buildFactoryMap(nodeMap, collectKindEntries(nodeMap, generatedIdTables));
 
-	it('a compound whose every slot is registered exports none of them as registered', () => {
-		expect(factorySlots.statement!.terminator!.registered).toBeUndefined();
+	it('a compound whose every slot is registered and holds fixed text exports them as registered', () => {
+		expect(factorySlots.statement!.terminator!.registered).toBe(true);
 	});
 
 	it('a registered slot beside a config slot exports as registered', () => {

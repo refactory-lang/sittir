@@ -1,4 +1,4 @@
-import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -9,6 +9,7 @@ import {
 	type FullFormAffix,
 	isWordOrBuilderTextLeaf,
 	isBuilderTextLeaf,
+	suppliesNoContent,
 	isBuilderlessPunctuationLeaf,
 	isHiddenPresenceMarker,
 	storageKindIdByNameOf
@@ -338,15 +339,21 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 	return storage !== undefined && isTextStorage(storage) ? storage.text : undefined;
 }
 
+function optionalChoiceTexts(field: AssembledNonterminal, nodeMap: NodeMap): ReadonlySet<string> | undefined {
+	const texts = new Set<string>();
+	for (const v of field.values) {
+		const storage = valueStorageOf(v, nodeMap);
+		const leaves = storage === undefined ? [] : textStoragesOf(storage);
+		if (leaves.length === 0) return undefined;
+		for (const leaf of leaves) texts.add(leaf.text);
+	}
+	return texts;
+}
+
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
 	if (field.values.length === 0 || field.registeredOption === 'choice') return null;
 
-	if (field.values.length === 1) {
-		const v = field.values[0]!;
-		if (v.multiplicity === 'optional' && resolveEntryLiteral(v, nodeMap) !== undefined) {
-			return 'boolean';
-		}
-	}
+	if (field.values.every((v) => v.multiplicity === 'optional') && optionalChoiceTexts(field, nodeMap)?.size === 1) return 'boolean';
 
 	const literals: string[] = [];
 	for (const v of field.values) {
@@ -361,13 +368,17 @@ export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMa
 	return null;
 }
 
-export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+export function keywordPresenceStorage(field: AssembledNonterminal, nodeMap: NodeMap): TextValueStorage | undefined {
 	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
 	for (const v of field.values) {
-		const lit = resolveEntryLiteral(v, nodeMap);
-		if (lit !== undefined) return lit;
+		const storage = valueStorageOf(v, nodeMap);
+		const leaf = storage === undefined ? undefined : textStoragesOf(storage)[0];
+		if (leaf !== undefined) return leaf;
 	}
 	return undefined;
+}
+export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	return keywordPresenceStorage(field, nodeMap)?.text;
 }
 
 export function keywordPresenceValues(field: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
@@ -660,7 +671,7 @@ export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: No
 	return field.storageInfo;
 }
 
-export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'nullary' | 'direct' | 'elements' | 'forwarded';
 export type FactoryShape = ClassifiedFactoryShape | 'placed';
 export type ChildFactorySurface = 'direct' | 'spread';
 
@@ -1020,8 +1031,16 @@ export function registeredSlots(node: {
 	return node.slots.filter((slot) => !config.has(slot));
 }
 
+export function blankArmImports(nodeMap: NodeMap): readonly string[] {
+	return [...nodeMap.nodes.values()].some((node) => node.slots.some(hasBlankArm)) ? ['blankArmRead', 'blankArmStored'] : [];
+}
+
 export function blankFromInput(blank: boolean, expr: string): string {
-	return blank ? `(${expr} === null ? ${BLANK_KIND_ID} : ${expr})` : expr;
+	return blank ? `blankArmStored(${expr})` : expr;
+}
+
+export function blankForRead(blank: boolean, expr: string): string {
+	return blank ? `blankArmRead(${expr})` : expr;
 }
 
 export interface LeadingOptions {
@@ -1042,7 +1061,7 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): ClassifiedFactoryShape | null {
-	if (isBuilderTextLeaf(node)) return 'constant';
+	if (suppliesNoContent(node)) return node instanceof AbstractAssembledCompound ? 'nullary' : 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';

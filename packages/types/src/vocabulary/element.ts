@@ -45,6 +45,12 @@ export namespace Element {
 				// claimed by p
 				readonly $kind: 'element.comparator.comparison.not_equal';
 			}
+			export namespace NotEqual {
+				export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison.NotEqual<G>> {
+					// claimed by p
+					readonly $kind: 'element.comparator.comparison.not_equal.legacy';
+				}
+			}
 		}
 		export interface Identity<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
 			readonly $kind: 'element.comparator.identity';

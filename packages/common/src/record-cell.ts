@@ -1,5 +1,6 @@
 import type { ByteSpan } from '@sittir/types';
-import { BLANK_KIND_ID, ERROR_KIND_ID } from './error-kind.ts';
+import { BLANK_KIND_ID } from './blank-arm.ts';
+import { ERROR_KIND_ID } from './error-kind.ts';
 import type { RecordWords } from './read.ts';
 
 /** The record codec's constants as an addon built with the `arena` feature exports them. */

@@ -4443,7 +4443,7 @@ An optional slot whose arms are all tokens (each names a kind) also offers a `bl
 
 The name of the arm a registered optional choice slot takes when it holds no token, as a declaration spells it (`preference('blank')`). It is `blank`, not `none`, because a grammar may have a kind named `none` (python's `None`).
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::BLANK_KIND_ID`
+### `packages/common/src/blank-arm.ts::BLANK_KIND_ID`
 
 The id the blank arm stores and crosses as: 0, which no parser kind holds. The builder, the wrap, the options table and the native slot enum all use it, and the render core's `KindId::BLANK` is the same number.
 
@@ -6098,3 +6098,71 @@ Stamps each nonterminal a spliced envelope applies to with its envelope, across 
 ### `packages/codegen/src/compiler/model/spliced-envelopes.ts::splicedEnvelopeOf`
 
 The spliced envelope of a nonterminal slot, or undefined when the slot has none.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::optionDefaultSubtype`
+
+The subtype a supertype's option defaults to, when it names one.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat::call`
+
+The mount call the seat makes, when it has one.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat::nested`
+
+The nested arms of the seat, from the seat's direct hosts.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::mountCallOf`
+
+The portable mount call a sub-factory makes.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::regexLiteral`
+
+Renders a regular expression as a source literal.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextValue`
+
+Whether a node or terminal value is fixed text.
+
+### `packages/codegen/src/compiler/model/node-map.ts::suppliesNoContent`
+
+Whether a built node has no content to supply: a compound with no slots, or a builder text leaf. Such a kind's factory takes no argument.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
+
+Whether a render rule has a seam at the first or last edge of its arms.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
+
+The value class a slot's low-level accessor belongs to: `boolean` for a boolean slot, `flags` for a bitflag slot, `list` for a multiple slot, `choice` for a kind enum or text enum, and `single` otherwise.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorClassClashes`
+
+The accessor names that hold more than one value class across the user-facing nodes, each with its classes and the kinds that hold each class. A single slot and a list under one name are the one sanctioned pair, so `isNodePair` leaves that name out.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorClassDiagnostics`
+
+One `accessor-class-clash` warning per clashing accessor name, with the classes and the kinds that hold them, for the grammar's emit diagnostics. It is a warning, not an error, so an upstream grammar still emits.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorValueClass`
+
+The value classes an accessor can hold: `boolean`, `flags`, `choice`, `single` and `list`.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash`
+
+An accessor name that holds more than one value class, with each class and the kinds that hold it.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash::name`
+
+The accessor name that holds more than one value class.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::AccessorClassClash::classes`
+
+The value classes the name holds, each with the kinds that hold it.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::listItemsOf`
+
+The item kinds a list kind holds, read through its lead: a kind led to another list reads that list's items, and a cycle stops at the kinds already seen. A list's items come from its multiple slots' parse kinds; any other compound has none, and the result is undefined.
+
+### `packages/codegen/src/compiler/model/accessor-classes.ts::holdsAContainer`
+
+True when a slot has value kinds and each one either reads as a list or is an item of one of the value kinds' lists. Used to tell a slot that stores a container from one that stores items directly.

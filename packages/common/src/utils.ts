@@ -18,6 +18,7 @@ import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
+export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';

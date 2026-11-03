@@ -7,5 +7,3 @@ import type { ErrorKindId } from '@sittir/types';
  */
 export const ERROR_KIND_ID: ErrorKindId = 65535;
 export const ERROR_KIND_NAME = 'ERROR';
-
-export const BLANK_KIND_ID = 0;

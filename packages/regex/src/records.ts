@@ -13,13 +13,13 @@ export const records = {
 	LookaheadAssertionNode: {
 		words: 8,
 		builtWords: 4,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		pattern: { word: 3, width: 5, inline: 5, forms: 8, built: 3 }
 	},
 	LookbehindAssertionNode: {
 		words: 8,
 		builtWords: 4,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		pattern: { word: 3, width: 5, inline: 5, forms: 8, built: 3 }
 	},
 	PatternCharacterNode: { words: 2, builtWords: 2 },
@@ -48,7 +48,7 @@ export const records = {
 	NamedCapturingGroupNode: {
 		words: 11,
 		builtWords: 5,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		group_name: { word: 3, width: 3, forms: 1, built: 3 },
 		pattern: { word: 6, width: 5, inline: 5, forms: 8, built: 4 }
 	},

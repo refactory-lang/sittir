@@ -17,5 +17,11 @@ export namespace Expression {
 			// claimed by r
 			readonly $kind: 'expression.range.inclusive';
 		}
+		export namespace Inclusive {
+			export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Range.Inclusive<G>> {
+				// claimed by r
+				readonly $kind: 'expression.range.inclusive.legacy';
+			}
+		}
 	}
 }

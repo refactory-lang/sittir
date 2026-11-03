@@ -1,6 +1,6 @@
 import { FIELD, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { canonicalizeRuleLiterals, stampStaticRenderAs } from '../link.ts';
+import { canonicalizeRuleLiterals, renderAsStampsOf, stampStaticRenderAs } from '../link.ts';
 import type { Rule } from '../../types/rule.ts';
 
 /**
@@ -14,12 +14,12 @@ const entries = [
 	{ kind: 'star', id: 9, anon: true, symbolName: '*', literalText: '*' }
 ];
 const misses = () => ({ symbols: new Set<string>(), literals: new Set<string>(), aliasTargets: new Set<string>() });
-const renderAs: Record<string, Rule<'link'>> = { _marker: { type: TOKEN, immediate: true, content: { type: STRING, value: '*' } } as Rule<'link'> };
+const renderAs: Record<string, Rule<'evaluate'>> = { _marker: { type: TOKEN, immediate: true, content: { type: STRING, value: '*' } } as Rule<'evaluate'> };
 
 describe('a renderAs literal standing in for an external token', () => {
 	it("carries the external's parser symbol, not its text's", () => {
 		const rules: Record<string, Rule<'link'>> = { doc: { type: SEQ, members: [{ type: SYMBOL, name: '_marker' }, { type: STRING, value: '*' }] } as Rule<'link'> };
-		const stamped = stampStaticRenderAs(rules, renderAs, entries);
+		const stamped = stampStaticRenderAs(rules, renderAsStampsOf(renderAs), entries);
 		const out = canonicalizeRuleLiterals(stamped['doc']!, entries, false, misses());
 		expect(out).toMatchObject({
 			type: SEQ,

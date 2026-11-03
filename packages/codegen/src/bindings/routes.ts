@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, literalClaimOf, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, literalClaimOf, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 
@@ -78,9 +78,11 @@ export type MemberRoute = (
 ) & { readonly flag?: true; readonly spelled?: true };
 
 export interface ContainerUnwrap {
+	readonly slot: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
 	readonly list: boolean;
+	readonly members?: readonly { readonly name: string; readonly slot: ModelSlot }[];
 }
 
 export interface StoppedRead {
@@ -193,9 +195,11 @@ export function isLayout(input: GrammarInput, owner: string, slot: ModelSlot): b
 const TRANSPARENT_MODEL_TYPES: ReadonlySet<string> = new Set(['envelope', 'alias', 'polymorph']);
 
 function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | undefined {
-	const declared =
-		input.bindings.containers.find((c) => c.kind === node.kind) ?? input.bindings.containers.find((c) => formsOf(input.model, c.kind).includes(node.kind));
-	if (declared === undefined && node.modelType === 'list') return { kinds: node.elementKinds, terminals: [], list: true };
+	const declared = declaredContainersOf(input, node)[0];
+	if (declared === undefined && node.modelType === 'list') {
+		const items = node.slots.find((slot) => slot.multiple);
+		return items === undefined ? undefined : { slot: items.name, kinds: node.elementKinds, terminals: [], list: true };
+	}
 	const content = node.slots.filter((slot) => !isLayout(input, node.kind, slot));
 	const element = declared
 		? slotFor(input.model, node.slots, declared.element)
@@ -203,8 +207,26 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 			? content[0]
 			: undefined;
 	return element !== undefined && holdsNodes(element)
-		? { kinds: element.kinds, terminals: element.terminals, list: element.multiple }
+		? { slot: element.name, kinds: element.kinds, terminals: element.terminals, list: element.multiple }
 		: undefined;
+}
+
+function declaredContainersOf(input: GrammarInput, node: ModelNode): readonly ContainerFact[] {
+	const { containers } = input.bindings;
+	return [...containers.filter((c) => c.kind === node.kind), ...containers.filter((c) => c.kind !== node.kind && formsOf(input.model, c.kind).includes(node.kind))];
+}
+
+function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['members']> {
+	const members = new Map<string, { readonly name: string; readonly slot: ModelSlot }>();
+	for (const container of declaredContainersOf(input, node)) {
+		const resolved = containerMembers(input, container, vocabOf);
+		if (resolved.targets.length === 0) continue;
+		for (const { name, slot, flag } of resolved.members) {
+			const own = slot === undefined || flag ? undefined : node.slots.find((candidate) => candidate.name === slot.name);
+			if (own !== undefined && !members.has(name)) members.set(name, { name, slot: own });
+		}
+	}
+	return [...members.values()];
 }
 
 const textOfKind = (model: SlotModel, kind: string): string | undefined => {
@@ -706,7 +728,7 @@ function concreteKindsOf(model: SlotModel, kind: string, seen: Set<string>): str
 	return subtypes.length === 0 ? [kind] : subtypes.flatMap((subtype) => concreteKindsOf(model, subtype, seen));
 }
 
-function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
+export function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
 	const seen = new Set<string>();
 	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();
 }
@@ -855,6 +877,35 @@ export function envelopeTargets(model: SlotModel, container: ContainerFact, voca
 	];
 }
 
+export interface ContainerMember {
+	readonly capture: ContainerCapture;
+	readonly name: string;
+	readonly slot: ModelSlot | undefined;
+	readonly flag: boolean;
+}
+
+export function containerCaptureSlot(model: SlotModel, slots: readonly ModelSlot[], capture: ContainerCapture): ModelSlot | undefined {
+	const { token } = capture;
+	return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(model, slots, capture);
+}
+
+export function containerMembers(
+	input: GrammarInput,
+	container: ContainerFact,
+	vocabOf: ReadonlyMap<string, string>
+): { readonly targets: readonly string[]; readonly members: readonly ContainerMember[] } {
+	const slots = modelNode(input.model, container.kind)?.slots ?? [];
+	const targets = envelopeTargets(input.model, container, vocabOf);
+	const members = container.captures.map((capture) => {
+		const name = camel(capture.name);
+		const flagged = targets.filter((target) => input.bindings.flagsByPath?.get(target)?.has(name) === true);
+		if (flagged.length > 0 && flagged.length < targets.length)
+			throw new Error(`bindings: ${container.kind}'s capture @${capture.name} is a flag at ${flagged.join(', ')} and data at ${targets.filter((target) => !flagged.includes(target)).join(', ')}; one name names one thing`);
+		return { capture, name, slot: containerCaptureSlot(input.model, slots, capture), flag: capture.token !== null || flagged.length > 0 };
+	});
+	return { targets, members };
+}
+
 export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {
 	if (member.route !== 'rename' && !(isDeep(member) && member.claims !== undefined)) return member.owner === kind;
 	const forms = formsOf(model, member.owner);
@@ -937,7 +988,9 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const containers = new Map<string, ContainerUnwrap>();
 	for (const node of input.model.values()) {
 		const unwrap = containerOf(input, node);
-		if (unwrap !== undefined) containers.set(node.kind, unwrap);
+		if (unwrap === undefined) continue;
+		const members = containerDataMembers(input, node, vocabOf);
+		containers.set(node.kind, members.length === 0 ? unwrap : { ...unwrap, members });
 	}
 
 	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped };

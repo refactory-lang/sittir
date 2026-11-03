@@ -614,6 +614,10 @@ A rule's patches as keys that read in path mode. A set whose keys are all plain 
 
 Whether the owner's model node holds a child kind in a slot that holds other kinds too: a union slot, which collect-slots routes by kind. The model is the grammar evaluated without the bindings, so the answer does not depend on the fields the bindings add.
 
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput::wordMatcher`
+
+The grammar's word matcher, passed in with the other inputs. It is `undefined` when the grammar declares no `word`.
+
 ### `packages/codegen/src/bindings/module.ts::bindingsModulePath`
 
 Where `bindings-inventory --write` writes a grammar's generated layer: `grammars.ts::BINDINGS_MODULE` in the grammar's package, beside its `grammar.sittir.ts`.
@@ -646,7 +650,7 @@ The generated layer's `edits` object: each kind's patch sets (`patchSet`) and th
 
 The kind renames as an object literal, each kind to its vocabulary name; `{}` when there are none.
 
-### `packages/codegen/src/bindings/module.ts::q`
+### `packages/codegen/src/util/string-literal.ts::stringLiteral`
 
 A string as a quoted TypeScript literal, for the generated layer.
 
@@ -1945,3 +1949,79 @@ Whether the node model entry is a unit.
 ### `packages/codegen/src/bindings/input.ts::NodeModelNode::shownAs`
 
 The names the node is shown under, when they differ from its kind.
+
+### `packages/codegen/src/bindings/facts.ts::ClaimFact::value`
+
+The claim's boolean value, when the claim states one.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::mounts`
+
+The mounts a slot carries, by name.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount`
+
+A mount a slot carries: the mount name, its call, and any nested calls.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::mount`
+
+The mount name.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::call`
+
+The portable call the mount makes.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::nested`
+
+The nested calls of the mount, by name.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelValue::seat`
+
+The seat of a node-model value: the call shape its builder takes.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::slot`
+
+The slot a container unwraps through.
+
+### `packages/codegen/src/bindings/routes.ts::containerCaptureSlot`
+
+The slot a container capture reads. When the capture has a token, it is the slot whose terminals include that token; otherwise it is the slot `slotFor` picks for the capture.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember`
+
+One capture of a container: the capture, its camel-cased name, the slot it reads when it reads one, and whether it is a flag.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::capture`
+
+The container capture the member was made from.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::flag`
+
+Whether the member is a flag: the capture has a token, or its name is a flag at every target that carries it.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::name`
+
+The camel-cased name the capture is given.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerMember::slot`
+
+The slot the capture reads, or undefined when no slot does.
+
+### `packages/codegen/src/bindings/routes.ts::containerMembers`
+
+The members of a container's captures, with the envelope targets they reach. A capture whose name is a flag at some targets and data at others is refused, since one name must name one thing.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::members`
+
+The container members the unwrap reads, one per capture, each with its name and slot.
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
+
+The flag paths of a vocabulary: each path with its segment and flag.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::flattens`
+
+The slot's flattened member names, when it flattens.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::tuples`
+
+The slot's tuple member names, when it has tuples.

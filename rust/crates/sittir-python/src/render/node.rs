@@ -25182,14 +25182,14 @@ fn prepare_comprehension_clauses<N: ComprehensionClausesPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerHexFields, prepare = IntegerHexPrepare, view = IntegerHexNodeRecord, prepare_fn = prepare_integer_hex)]
+#[node(kind = kind::INTEGER_HEX, interior = "^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerHexFields, prepare = IntegerHexPrepare, view = IntegerHexNodeRecord, prepare_fn = prepare_integer_hex)]
 pub struct IntegerHexNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_prefix")]
-    #[slot(capture = "prefix", word = 2, width = 2, forms = 4, built = 2)]
-    pub prefix: String,
+    #[wire(key = "_radix_prefix")]
+    #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
+    pub radix_prefix: String,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 4, width = 2, forms = 4, built = 3)]
     pub content: String,
@@ -25256,14 +25256,14 @@ fn prepare_integer_hex<N: IntegerHexPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerOctalFields, prepare = IntegerOctalPrepare, view = IntegerOctalNodeRecord, prepare_fn = prepare_integer_octal)]
+#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerOctalFields, prepare = IntegerOctalPrepare, view = IntegerOctalNodeRecord, prepare_fn = prepare_integer_octal)]
 pub struct IntegerOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_prefix")]
-    #[slot(capture = "prefix", word = 2, width = 2, forms = 4, built = 2)]
-    pub prefix: String,
+    #[wire(key = "_radix_prefix")]
+    #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
+    pub radix_prefix: String,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 4, width = 2, forms = 4, built = 3)]
     pub content: String,
@@ -25330,14 +25330,14 @@ fn prepare_integer_octal<N: IntegerOctalPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerBinaryFields, prepare = IntegerBinaryPrepare, view = IntegerBinaryNodeRecord, prepare_fn = prepare_integer_binary)]
+#[node(kind = kind::INTEGER_BINARY, interior = "^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 6, built_words = 4, fields = IntegerBinaryFields, prepare = IntegerBinaryPrepare, view = IntegerBinaryNodeRecord, prepare_fn = prepare_integer_binary)]
 pub struct IntegerBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_prefix")]
-    #[slot(capture = "prefix", word = 2, width = 2, forms = 4, built = 2)]
-    pub prefix: String,
+    #[wire(key = "_radix_prefix")]
+    #[slot(capture = "radix_prefix", word = 2, width = 2, forms = 4, built = 2)]
+    pub radix_prefix: String,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 4, width = 2, forms = 4, built = 3)]
     pub content: String,
@@ -25617,7 +25617,7 @@ fn prepare_integer_decimal_plain<N: IntegerDecimalPlainPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatPointFields, prepare = FloatPointPrepare, view = FloatPointNodeRecord, prepare_fn = prepare_float_point)]
+#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatPointFields, prepare = FloatPointPrepare, view = FloatPointNodeRecord, prepare_fn = prepare_float_point)]
 pub struct FloatPointNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25631,9 +25631,9 @@ pub struct FloatPointNode {
     #[wire(key = "_marker")]
     #[slot(capture = "marker", word = 6, width = 2, forms = 4, built = 4)]
     pub marker: Option<String>,
-    #[wire(key = "_sign")]
-    #[slot(capture = "sign", word = 8, width = 2, forms = 4, built = 5)]
-    pub sign: Option<String>,
+    #[wire(key = "_exponent_sign")]
+    #[slot(capture = "exponent_sign", word = 8, width = 2, forms = 4, built = 5)]
+    pub exponent_sign: Option<String>,
     #[wire(key = "_exponent")]
     #[slot(capture = "exponent", word = 10, width = 2, forms = 4, built = 6)]
     pub exponent: Option<String>,
@@ -25703,7 +25703,7 @@ fn prepare_float_point<N: FloatPointPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatLeadingPointFields, prepare = FloatLeadingPointPrepare, view = FloatLeadingPointNodeRecord, prepare_fn = prepare_float_leading_point)]
+#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 14, built_words = 8, fields = FloatLeadingPointFields, prepare = FloatLeadingPointPrepare, view = FloatLeadingPointNodeRecord, prepare_fn = prepare_float_leading_point)]
 pub struct FloatLeadingPointNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25717,9 +25717,9 @@ pub struct FloatLeadingPointNode {
     #[wire(key = "_marker")]
     #[slot(capture = "marker", word = 6, width = 2, forms = 4, built = 4)]
     pub marker: Option<String>,
-    #[wire(key = "_sign")]
-    #[slot(capture = "sign", word = 8, width = 2, forms = 4, built = 5)]
-    pub sign: Option<String>,
+    #[wire(key = "_exponent_sign")]
+    #[slot(capture = "exponent_sign", word = 8, width = 2, forms = 4, built = 5)]
+    pub exponent_sign: Option<String>,
     #[wire(key = "_exponent")]
     #[slot(capture = "exponent", word = 10, width = 2, forms = 4, built = 6)]
     pub exponent: Option<String>,
@@ -25789,7 +25789,7 @@ fn prepare_float_leading_point<N: FloatLeadingPointPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 12, built_words = 7, fields = FloatScientificFields, prepare = FloatScientificPrepare, view = FloatScientificNodeRecord, prepare_fn = prepare_float_scientific)]
+#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 12, built_words = 7, fields = FloatScientificFields, prepare = FloatScientificPrepare, view = FloatScientificNodeRecord, prepare_fn = prepare_float_scientific)]
 pub struct FloatScientificNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25800,9 +25800,9 @@ pub struct FloatScientificNode {
     #[wire(key = "_marker")]
     #[slot(capture = "marker", word = 4, width = 2, forms = 4, built = 3)]
     pub marker: String,
-    #[wire(key = "_sign")]
-    #[slot(capture = "sign", word = 6, width = 2, forms = 4, built = 4)]
-    pub sign: Option<String>,
+    #[wire(key = "_exponent_sign")]
+    #[slot(capture = "exponent_sign", word = 6, width = 2, forms = 4, built = 4)]
+    pub exponent_sign: Option<String>,
     #[wire(key = "_exponent")]
     #[slot(capture = "exponent", word = 8, width = 2, forms = 4, built = 5)]
     pub exponent: String,
@@ -27401,7 +27401,7 @@ fn prepare_match_block_block<N: MatchBlockBlockPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE], words = 3, built_words = 3, fields = MatchBlockEmptyFields, prepare = MatchBlockEmptyPrepare, view = MatchBlockEmptyNodeRecord, prepare_fn = prepare_match_block_empty)]
+#[node(kind = kind::MATCH_BLOCK_EMPTY, words = 3, built_words = 3, fields = MatchBlockEmptyFields, prepare = MatchBlockEmptyPrepare, view = MatchBlockEmptyNodeRecord, prepare_fn = prepare_match_block_empty)]
 pub struct MatchBlockEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27619,7 +27619,7 @@ fn prepare_suite_block<N: SuiteBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE], words = 3, built_words = 3, fields = SuiteEmptyFields, prepare = SuiteEmptyPrepare, view = SuiteEmptyNodeRecord, prepare_fn = prepare_suite_empty)]
+#[node(kind = kind::SUITE_EMPTY, words = 3, built_words = 3, fields = SuiteEmptyFields, prepare = SuiteEmptyPrepare, view = SuiteEmptyNodeRecord, prepare_fn = prepare_suite_empty)]
 pub struct SuiteEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35063,8 +35063,8 @@ fn render_comprehension_clauses<N: ComprehensionClausesFields + ?Sized>(node: &N
 
 fn render_integer_hex<N: IntegerHexFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
-    let prefix = node.prefix();
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    let radix_prefix = node.radix_prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_radix_prefix", ::sittir_core::types::ItemIndex(0), w, |w| radix_prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
@@ -35072,8 +35072,8 @@ fn render_integer_hex<N: IntegerHexFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 
 fn render_integer_octal<N: IntegerOctalFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
-    let prefix = node.prefix();
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    let radix_prefix = node.radix_prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_radix_prefix", ::sittir_core::types::ItemIndex(0), w, |w| radix_prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
@@ -35081,8 +35081,8 @@ fn render_integer_octal<N: IntegerOctalFields + ?Sized>(node: &N, w: &mut dyn ::
 
 fn render_integer_binary<N: IntegerBinaryFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
-    let prefix = node.prefix();
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    let radix_prefix = node.radix_prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_radix_prefix", ::sittir_core::types::ItemIndex(0), w, |w| radix_prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
@@ -35102,11 +35102,11 @@ fn render_integer_decimal_plain<N: IntegerDecimalPlainFields + ?Sized>(t: &N, w:
 
 fn render_float_point<N: FloatPointFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exponent = View::new(node.exponent(), "{}");
+    let exponent_sign = View::new(node.exponent_sign(), "{}");
     let fraction = View::new(node.fraction(), "{}");
     let imaginary = View::new(node.imaginary(), "{}");
     let integer = node.integer();
     let marker = View::new(node.marker(), "{}");
-    let sign = View::new(node.sign(), "{}");
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     w.text(".")?;
@@ -35119,9 +35119,9 @@ fn render_float_point<N: FloatPointFields + ?Sized>(node: &N, w: &mut dyn ::sitt
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
             ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
         }
-        if sign.is_present() {
+        if exponent_sign.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_sign", ::sittir_core::types::ItemIndex(0), w, |w| sign.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent_sign", ::sittir_core::types::ItemIndex(0), w, |w| exponent_sign.render(w))?;
         }
         if exponent.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
@@ -35137,11 +35137,11 @@ fn render_float_point<N: FloatPointFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 
 fn render_float_leading_point<N: FloatLeadingPointFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exponent = View::new(node.exponent(), "{}");
+    let exponent_sign = View::new(node.exponent_sign(), "{}");
     let fraction = node.fraction();
     let imaginary = View::new(node.imaginary(), "{}");
     let integer = View::new(node.integer(), "{}");
     let marker = View::new(node.marker(), "{}");
-    let sign = View::new(node.sign(), "{}");
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     if integer.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
@@ -35154,9 +35154,9 @@ fn render_float_leading_point<N: FloatLeadingPointFields + ?Sized>(node: &N, w: 
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
             ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
         }
-        if sign.is_present() {
+        if exponent_sign.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_sign", ::sittir_core::types::ItemIndex(0), w, |w| sign.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent_sign", ::sittir_core::types::ItemIndex(0), w, |w| exponent_sign.render(w))?;
         }
         if exponent.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
@@ -35172,16 +35172,16 @@ fn render_float_leading_point<N: FloatLeadingPointFields + ?Sized>(node: &N, w: 
 
 fn render_float_scientific<N: FloatScientificFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exponent = node.exponent();
+    let exponent_sign = View::new(node.exponent_sign(), "{}");
     let imaginary = View::new(node.imaginary(), "{}");
     let integer = node.integer();
     let marker = node.marker();
-    let sign = View::new(node.sign(), "{}");
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
-    if sign.is_present() {
+    if exponent_sign.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_sign", ::sittir_core::types::ItemIndex(0), w, |w| sign.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent_sign", ::sittir_core::types::ItemIndex(0), w, |w| exponent_sign.render(w))?;
     }
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
@@ -35428,7 +35428,8 @@ fn render_match_block_block<N: MatchBlockBlockFields + ?Sized>(node: &N, w: &mut
 }
 
 fn render_match_block_empty<N: MatchBlockEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
+    let newline = node.newline();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_newline", ::sittir_core::types::ItemIndex(0), w, |w| newline.render(w))?;
     Ok(())
 }
 
@@ -35453,7 +35454,8 @@ fn render_suite_block<N: SuiteBlockFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 }
 
 fn render_suite_empty<N: SuiteEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
+    let newline = node.newline();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_newline", ::sittir_core::types::ItemIndex(0), w, |w| newline.render(w))?;
     Ok(())
 }
 

@@ -14,7 +14,7 @@ export namespace Element {
 			// claimed by r
 			readonly $kind: 'element.macro.token_binding';
 			readonly name: V.Identifier.Metavariable<G>;
-			readonly type: V.Element.Macro.Fragment<G>;
+			readonly fragment: V.Element.Macro.Fragment<G>;
 		}
 		export interface TokenRepetition<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
@@ -42,9 +42,49 @@ export namespace Element {
 				// claimed by r
 				readonly $kind: 'element.macro.token_tree.delimited';
 			}
+			export namespace Delimited {
+				export interface Paren<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.delimited.paren';
+				}
+				export interface Bracket<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.delimited.bracket';
+				}
+				export interface Brace<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Delimited<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.delimited.brace';
+				}
+			}
 			export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
 				// claimed by r
 				readonly $kind: 'element.macro.token_tree.pattern';
+			}
+			export namespace Pattern {
+				export interface Paren<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.pattern.paren';
+				}
+				export interface Bracket<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.pattern.bracket';
+				}
+				export interface Brace<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree.Pattern<G>> {
+					// claimed by r
+					readonly $kind: 'element.macro.token_tree.pattern.brace';
+				}
+			}
+			export interface Paren<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
+				// claimed by r
+				readonly $kind: 'element.macro.token_tree.paren';
+			}
+			export interface Bracket<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
+				// claimed by r
+				readonly $kind: 'element.macro.token_tree.bracket';
+			}
+			export interface Brace<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
+				// claimed by r
+				readonly $kind: 'element.macro.token_tree.brace';
 			}
 		}
 	}

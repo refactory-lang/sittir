@@ -10,11 +10,13 @@
 (generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
-(class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (abstract_class_declaration) @declaration.class
 (abstract_class_declaration "abstract" @abstract)
-(abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
+(abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
 (enum_declaration) @declaration.enum
@@ -191,8 +193,8 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
-(import_statement import_clause: "type" @typeOnly)
-(import_statement import_clause: "typeof") @statement.import.typeof
+(import_statement type_keyword: "type" @typeOnly)
+(import_statement type_keyword: "typeof") @statement.import.typeof
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
@@ -234,16 +236,16 @@
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
-(import_specifier_name import_kind: "type" @typeOnly)
-(import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
-(import_specifier_as import_kind: "type" @typeOnly)
-(import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
+(import_specifier_name type_keyword: "type" @typeOnly)
+(import_specifier_name type_keyword: "typeof") @clause.import.specifier.typeof
+(import_specifier_as type_keyword: "type" @typeOnly)
+(import_specifier_as type_keyword: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
 (import_alias) @statement.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
-(export_specifier export_kind: "type" @typeOnly)
-(export_specifier export_kind: "typeof") @clause.export.specifier.typeof
+(export_specifier type_keyword: "type" @typeOnly)
+(export_specifier type_keyword: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
 (constraint) @clause.constraint
@@ -335,6 +337,7 @@
 (arrow_function) @expression.arrow
 (arrow_function (arrow_function_parameter parameter: (_) @parameters))
 (arrow_function (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?)))
+(arrow_function (call_signature type_parameters: (_) @typeParameters))
 (function_expression) @expression.function
 (generator_function) @expression.function
 (generator_function "*" @generator)
@@ -357,7 +360,8 @@
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class
-(class (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
+(class (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class (class_heritage (implements_clause type: (_) @implements)))
 (decorator_member_expression) @attribute.content.member
 (decorator_call_expression) @attribute.content.call
@@ -392,6 +396,7 @@
 (tuple_type) @type.tuple
 (function_type) @type.function
 (constructor_type) @type.function.constructor
+(constructor_type "abstract" @abstract)
 (object_type) @type.object
 (literal_type) @type.literal
 (lookup_type) @type.lookup
@@ -428,8 +433,8 @@
 (number_float_point) @literal.number.float
 (number_float_leading_point) @literal.number.float.leading_point
 (number_float_scientific) @literal.number.float.scientific
-(true) @literal.boolean.true
-(false) @literal.boolean.false
+((true) @literal.boolean.true (#set! value true))
+((false) @literal.boolean.false (#set! value false))
 (null) @literal.null
 (undefined) @literal.null.undefined
 (regex_pattern) @literal.regex.pattern
@@ -442,9 +447,9 @@
 (private_property_identifier) @identifier
 (shorthand_property_identifier) @identifier
 (shorthand_property_identifier_pattern) @identifier
-(nested_identifier) @identifier.qualified
+(nested_identifier) @identifier.nested
 (nested_identifier object: (_) @qualifier property: (_) @name)
-(nested_type_identifier) @identifier.qualified
+(nested_type_identifier) @identifier.nested
 (nested_type_identifier module: (_) @qualifier)
 (statement_identifier) @identifier.label
 (this) @identifier.this

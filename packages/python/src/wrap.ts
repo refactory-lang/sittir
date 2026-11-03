@@ -58,7 +58,9 @@ import {
 	handleToString,
 	handleEngine,
 	handleDispose,
-	handleQuery
+	handleQuery,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -5003,7 +5005,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma;
+			return blankArmRead(this._trailing_comma);
 		},
 		$with: {
 			async: (v: NonNullable<T.ForInClause['_async']>) =>
@@ -5026,7 +5028,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 					wrapForInClause(
 						{
 							...$edited(data),
-							_trailing_comma: admitSlot(handle, 'for_in_clause', 'trailingComma', v === null ? 0 : v)
+							_trailing_comma: admitSlot(handle, 'for_in_clause', 'trailingComma', blankArmStored(v))
 						},
 						tree
 					)
@@ -7009,16 +7011,16 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 	const node = {
 		...data,
 		$type: TSKindId.IntegerHex as const,
-		prefix() {
-			return hydrateSlot<'0x' | '0X'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.IntegerHex['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _prefix: admitSlot(handle, 'integer_hex', 'prefix', v) }, tree)
+					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
 				),
 			content: (v: NonNullable<T.IntegerHex['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -7047,16 +7049,19 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 	const node = {
 		...data,
 		$type: TSKindId.IntegerOctal as const,
-		prefix() {
-			return hydrateSlot<'0o' | '0O'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.IntegerOctal['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal({ ...$edited(data), _prefix: admitSlot(handle, 'integer_octal', 'prefix', v) }, tree)
+					wrapIntegerOctal(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
+						tree
+					)
 				),
 			content: (v: NonNullable<T.IntegerOctal['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -7085,16 +7090,19 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 	const node = {
 		...data,
 		$type: TSKindId.IntegerBinary as const,
-		prefix() {
-			return hydrateSlot<'0b' | '0B'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.IntegerBinary['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary({ ...$edited(data), _prefix: admitSlot(handle, 'integer_binary', 'prefix', v) }, tree)
+					wrapIntegerBinary(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+						tree
+					)
 				),
 			content: (v: NonNullable<T.IntegerBinary['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -7132,8 +7140,8 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -7154,9 +7162,12 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 				rebuilt(node, handle, () =>
 					wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v) }, tree)
 				),
-			sign: (v: NonNullable<T.FloatPoint['_sign']>) =>
+			exponentSign: (v: NonNullable<T.FloatPoint['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _sign: admitSlot(handle, 'float_point', 'sign', v) }, tree)
+					wrapFloatPoint(
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_point', 'exponentSign', v) },
+						tree
+					)
 				),
 			exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -7198,8 +7209,8 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -7229,9 +7240,12 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 						tree
 					)
 				),
-			sign: (v: NonNullable<T.FloatLeadingPoint['_sign']>) =>
+			exponentSign: (v: NonNullable<T.FloatLeadingPoint['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint({ ...$edited(data), _sign: admitSlot(handle, 'float_leading_point', 'sign', v) }, tree)
+					wrapFloatLeadingPoint(
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_leading_point', 'exponentSign', v) },
+						tree
+					)
 				),
 			exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -7276,8 +7290,8 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 		marker() {
 			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string>(this, '_exponent', tree);
@@ -7294,9 +7308,12 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 				rebuilt(node, handle, () =>
 					wrapFloatScientific({ ...$edited(data), _marker: admitSlot(handle, 'float_scientific', 'marker', v) }, tree)
 				),
-			sign: (v: NonNullable<T.FloatScientific['_sign']>) =>
+			exponentSign: (v: NonNullable<T.FloatScientific['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatScientific({ ...$edited(data), _sign: admitSlot(handle, 'float_scientific', 'sign', v) }, tree)
+					wrapFloatScientific(
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_scientific', 'exponentSign', v) },
+						tree
+					)
 				),
 			exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -12753,7 +12770,7 @@ function viewForInClause$rights(this: RecordHandle) {
 	return viewSlots<T.Expression | T.LambdaWithinForInClause>(this, 6, 1, 4, 3, 0, 4);
 }
 function viewForInClause$trailingComma(this: RecordHandle) {
-	return childSlot(this, 7, 1, 18, 0, 5);
+	return blankArmRead(childSlot(this, 7, 1, 18, 0, 5));
 }
 function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.Parsed {
 	const node = {
@@ -14363,7 +14380,7 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
 
-function viewIntegerHex$prefix(this: RecordHandle) {
+function viewIntegerHex$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerHex$content(this: RecordHandle) {
@@ -14377,7 +14394,7 @@ function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Pa
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewIntegerHex$prefix,
+		radixPrefix: viewIntegerHex$radixPrefix,
 		content: viewIntegerHex$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -14389,12 +14406,12 @@ function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.IntegerHex.Parsed;
 }
 
-function viewIntegerOctal$prefix(this: RecordHandle) {
+function viewIntegerOctal$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerOctal$content(this: RecordHandle) {
@@ -14408,7 +14425,7 @@ function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOcta
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewIntegerOctal$prefix,
+		radixPrefix: viewIntegerOctal$radixPrefix,
 		content: viewIntegerOctal$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -14420,12 +14437,12 @@ function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOcta
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.IntegerOctal.Parsed;
 }
 
-function viewIntegerBinary$prefix(this: RecordHandle) {
+function viewIntegerBinary$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerBinary$content(this: RecordHandle) {
@@ -14439,7 +14456,7 @@ function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBin
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewIntegerBinary$prefix,
+		radixPrefix: viewIntegerBinary$radixPrefix,
 		content: viewIntegerBinary$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -14451,7 +14468,7 @@ function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBin
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.IntegerBinary.Parsed;
 }
@@ -14465,7 +14482,7 @@ function viewFloatPoint$fraction(this: RecordHandle) {
 function viewFloatPoint$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
 }
-function viewFloatPoint$sign(this: RecordHandle) {
+function viewFloatPoint$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
 }
 function viewFloatPoint$exponent(this: RecordHandle) {
@@ -14485,7 +14502,7 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		integer: viewFloatPoint$integer,
 		fraction: viewFloatPoint$fraction,
 		marker: viewFloatPoint$marker,
-		sign: viewFloatPoint$sign,
+		exponentSign: viewFloatPoint$exponentSign,
 		exponent: viewFloatPoint$exponent,
 		imaginary: viewFloatPoint$imaginary,
 		$with: undefined as unknown as object,
@@ -14503,7 +14520,7 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		integer: $with$integer,
 		fraction: $with$fraction,
 		marker: $with$marker,
-		sign: $with$sign,
+		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
 		imaginary: $with$imaginary
 	};
@@ -14520,7 +14537,7 @@ function viewFloatLeadingPoint$fraction(this: RecordHandle) {
 function viewFloatLeadingPoint$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
 }
-function viewFloatLeadingPoint$sign(this: RecordHandle) {
+function viewFloatLeadingPoint$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
 }
 function viewFloatLeadingPoint$exponent(this: RecordHandle) {
@@ -14540,7 +14557,7 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		integer: viewFloatLeadingPoint$integer,
 		fraction: viewFloatLeadingPoint$fraction,
 		marker: viewFloatLeadingPoint$marker,
-		sign: viewFloatLeadingPoint$sign,
+		exponentSign: viewFloatLeadingPoint$exponentSign,
 		exponent: viewFloatLeadingPoint$exponent,
 		imaginary: viewFloatLeadingPoint$imaginary,
 		$with: undefined as unknown as object,
@@ -14558,7 +14575,7 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		integer: $with$integer,
 		fraction: $with$fraction,
 		marker: $with$marker,
-		sign: $with$sign,
+		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
 		imaginary: $with$imaginary
 	};
@@ -14572,7 +14589,7 @@ function viewFloatScientific$integer(this: RecordHandle) {
 function viewFloatScientific$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E'>(this, 4, 2, 4, 0, 3);
 }
-function viewFloatScientific$sign(this: RecordHandle) {
+function viewFloatScientific$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewFloatScientific$exponent(this: RecordHandle) {
@@ -14591,7 +14608,7 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 		$_layout: data.$_layout,
 		integer: viewFloatScientific$integer,
 		marker: viewFloatScientific$marker,
-		sign: viewFloatScientific$sign,
+		exponentSign: viewFloatScientific$exponentSign,
 		exponent: viewFloatScientific$exponent,
 		imaginary: viewFloatScientific$imaginary,
 		$with: undefined as unknown as object,
@@ -14608,7 +14625,7 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 		node,
 		integer: $with$integer,
 		marker: $with$marker,
-		sign: $with$sign,
+		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
 		imaginary: $with$imaginary
 	};
@@ -15917,6 +15934,9 @@ function $with$exception(this: { readonly node: RecordPosition }, ...args: unkno
 function $with$exponent(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'exponent', args);
 }
+function $with$exponentSign(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'exponentSign', args);
+}
 function $with$expression(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'expression', args);
 }
@@ -16021,6 +16041,9 @@ function $with$property(this: { readonly node: RecordPosition }, ...args: unknow
 }
 function $with$qualifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'qualifier', args);
+}
+function $with$radixPrefix(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'radixPrefix', args);
 }
 function $with$real(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'real', args);

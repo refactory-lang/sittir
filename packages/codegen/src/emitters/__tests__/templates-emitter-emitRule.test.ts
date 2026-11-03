@@ -680,6 +680,20 @@ describe('emitRule — token seams', () => {
 		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=> x');
 	});
 
+	it('leaves a boundary to the seams a choice slot writes in its arms, over a stamped static join', () => {
+		const slotted = (members: readonly unknown[]) => {
+			const choice = { type: CHOICE, id: 'kind', fieldName: 'kind', nonterminal: true, members };
+			const object = { type: SYMBOL, name: 'object', id: 'object', fieldName: 'object', nonterminal: true, staticSeamBefore: 'glued' };
+			const rule = { type: SEQ, members: [choice, object] } as unknown as SeqRule;
+			const slots = ['kind', 'object'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name })] as const);
+			const nodeMap = { slotByRuleId: new Map(slots), nodeByRuleId: new Map(), nodes: new Map() };
+			return shown(rule, makeCtx({ nodeMap: nodeMap as unknown as EmitCtx['nodeMap'] }));
+		};
+		const seamed = (text: string) => ({ type: SEQ, nonterminal: true, members: [{ type: STRING, value: text }, seamChoice(`${text}_after`)] });
+		expect(slotted([seamed('with'), seamed('assert')])).toBe('⟨kind⟩⟨object⟩');
+		expect(slotted([{ type: STRING, value: 'with' }, { type: STRING, value: 'assert' }])).toBe('⟨kind⟩⟨adjacent⟩⟨object⟩');
+	});
+
 	it('never picks a seam choice as the conditional key of an optional seq', () => {
 		const rule = {
 			type: SEQ,
@@ -687,5 +701,15 @@ describe('emitRule — token seams', () => {
 			members: [{ type: STRING, value: '->' }, seamChoice('arrow_after'), { type: SYMBOL, name: 'ret', fieldName: 'ret', nonterminal: true }]
 		} as unknown as SeqRule;
 		expect(shown(rule, makeCtx())).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
+	});
+
+	it('never picks a list flank as the conditional key of an optional seq', () => {
+		const flank = (side: string) => {
+			const choice = seamChoice(`bounds_${side}`) as unknown as { members: { annotations: object }[] };
+			return { ...choice, members: choice.members.map((m) => ({ ...m, annotations: { ...m.annotations, spacing: { at: 'flank', side } } })) };
+		};
+		const list = { type: SEQ, nonterminal: true, members: [flank('start'), { type: SYMBOL, name: 'bound', fieldName: 'bounds', nonterminal: true, multiplicity: 'array' }, flank('end')] };
+		const rule = { type: SEQ, multiplicity: 'optional', members: [{ type: STRING, value: ':' }, list] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toMatch(/^⟨if bounds⟩/);
 	});
 });

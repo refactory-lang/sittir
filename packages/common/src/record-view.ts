@@ -1,5 +1,6 @@
 import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
+import { blankArmStored } from './blank-arm.ts';
 import { builtRefOf } from './built-ref.ts';
 import { undoIfFillFails } from './list-fills.ts';
 import { treeOf } from './tree-token.ts';
@@ -294,15 +295,16 @@ export interface RefusedSlot {
 
 export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refused?: (slot: RefusedSlot) => void): [storageKey: string, value: unknown][] {
 	const members = node as Record<string, unknown>;
-	const values = rows.flatMap(([accessor, , , storageKey]): [string, unknown][] => {
+	const values = rows.flatMap(([accessor, , , storageKey, , blank]): [string, unknown][] => {
+		const stored = (value: unknown): unknown => (blank === true ? blankArmStored(value) : value);
 		const read = members[accessor];
 		if (typeof read !== 'function' || read.length !== 0) {
 			if (Object.hasOwn(node, storageKey)) throw new Error(`a node of kind ${String(members.$type)} stores ${storageKey}, but has no reader ${accessor}()`);
 			return [];
 		}
-		if (refused === undefined) return [[storageKey, (read as () => unknown).call(node)]];
+		if (refused === undefined) return [[storageKey, stored((read as () => unknown).call(node))]];
 		try {
-			return [[storageKey, (read as () => unknown).call(node)]];
+			return [[storageKey, stored((read as () => unknown).call(node))]];
 		} catch (error) {
 			refused({ storageKey, accessor, error: error as Error });
 			return [];

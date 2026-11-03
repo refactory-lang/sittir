@@ -6,7 +6,6 @@ export * from './declaration.ts';
 export * from './element.ts';
 export * from './expression.ts';
 export * from './file.ts';
-export * from './flags.ts';
 export * from './identifier.ts';
 export * from './literal.ts';
 export * from './modifier.ts';

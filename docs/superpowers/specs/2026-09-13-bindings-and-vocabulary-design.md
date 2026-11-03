@@ -305,6 +305,7 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 | slice-expressions | `a[i:j]` | ✓ |  |  |  | ✓ |  |  |
 | assertions | an assertion statement, `assert`, `static_assert` | ✓ |  |  |  |  | ✓ |  |
 | scope-declarations | a name bound in an enclosing scope, `global`, `nonlocal` | ✓ |  |  |  |  |  |  |
+| static-storage | a variable with one instance for the program's whole run, `static` |  |  | ✓ |  |  | ✓ |  |
 | dynamic-scope | an object's properties put in scope, `with` |  | ✓ |  |  |  |  |  |
 | debugger-statements | `debugger` |  | ✓ |  |  |  |  |  |
 | print-statements | python 2's `print` statement | ✓ |  |  |  |  |  |  |

@@ -1771,7 +1771,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -2439,11 +2439,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "type_only",
+					"test": "type_keyword",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_only"
+							"name": "type_keyword"
 						}
 					]
 				}
@@ -4321,11 +4321,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "type_only",
+					"test": "type_keyword",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_only"
+							"name": "type_keyword"
 						}
 					]
 				}
@@ -4365,11 +4365,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "type_only",
+					"test": "type_keyword",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_only"
+							"name": "type_keyword"
 						}
 					]
 				}
@@ -4415,11 +4415,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "type_only",
+					"test": "type_keyword",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_only"
+							"name": "type_keyword"
 						}
 					]
 				}
@@ -5121,7 +5121,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "optional_chain"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -6263,7 +6263,7 @@
 	"number_binary": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -6312,14 +6312,14 @@
 							"kind": "if",
 							"arms": [
 								{
-									"test": "sign",
+									"test": "exponent_sign",
 									"body": [
 										{
 											"kind": "adjacent"
 										},
 										{
 											"kind": "slot",
-											"name": "sign"
+											"name": "exponent_sign"
 										}
 									]
 								}
@@ -6403,14 +6403,14 @@
 							"kind": "if",
 							"arms": [
 								{
-									"test": "sign",
+									"test": "exponent_sign",
 									"body": [
 										{
 											"kind": "adjacent"
 										},
 										{
 											"kind": "slot",
-											"name": "sign"
+											"name": "exponent_sign"
 										}
 									]
 								}
@@ -6454,14 +6454,14 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "sign",
+					"test": "exponent_sign",
 					"body": [
 						{
 							"kind": "adjacent"
 						},
 						{
 							"kind": "slot",
-							"name": "sign"
+							"name": "exponent_sign"
 						}
 					]
 				}
@@ -6478,7 +6478,7 @@
 	"number_hex": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -6491,7 +6491,7 @@
 	"number_octal": [
 		{
 			"kind": "slot",
-			"name": "prefix"
+			"name": "radix_prefix"
 		},
 		{
 			"kind": "adjacent"
@@ -9099,7 +9099,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
