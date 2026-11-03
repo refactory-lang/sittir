@@ -29,7 +29,7 @@ env:
 jobs:
   measure:
     name: Feature, master, the candidates and the merge base on one runner (Linux x64)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v6
