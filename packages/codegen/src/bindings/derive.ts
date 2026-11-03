@@ -418,13 +418,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;
 			const dropped = container.dropped.map((selector) => slotFor(input.model, slots, selector));
 			const unexplained = (container.reason ?? '').trim() === '';
-			for (const [i, slot] of dropped.entries()) {
-				if (slot === undefined)
-					uncaptured.push(
-						`${at} marks a @dropped node that names no slot (${container.dropped[i]?.kind ?? 'a wildcard'})`
-					);
-				else if (unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
-			}
+			for (const slot of dropped) if (slot !== undefined && unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
 			const kept = new Set(
 				input.bindings.containers
 					.filter((other) => formsOf(input.model, other.kind).includes(container.kind))

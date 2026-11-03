@@ -4,6 +4,7 @@ import { isPreference } from '../primitives/preference.ts';
 import { formatPreferencePath, parsePreferencePath } from '../primitives/preference-path.ts';
 import { fieldNames, fieldThrough, isRecord, subtypeNames, supertypesOf, transparentReach, type GrammarRecord } from '../rule-patterns.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
+import { groupLiftNames } from '../rule-metadata.ts';
 import { REPARSE_HOST_PRIORITY } from '../wire/reparse-hosts.ts';
 
 export interface LeadWithin {
@@ -210,7 +211,17 @@ function segmentDestinations(
 	const stop = grammar === undefined ? new Set<string>() : supertypesOf(grammar);
 	const reach = new Map<string, ReadonlySet<string>>();
 	const hostsOf = (owner: string): ReadonlySet<string> => {
-		const hosts = reach.get(owner) ?? transparentReach(rules, owner, stop);
+		const cached = reach.get(owner);
+		if (cached !== undefined) return cached;
+		const hosts = new Set<string>();
+		for (const queue = [owner]; queue.length > 0; ) {
+			const from = queue.pop()!;
+			if (hosts.has(from)) continue;
+			for (const host of transparentReach(rules, from, stop)) {
+				hosts.add(host);
+				queue.push(...groupLiftNames({ [host]: rules[host] }));
+			}
+		}
 		reach.set(owner, hosts);
 		return hosts;
 	};

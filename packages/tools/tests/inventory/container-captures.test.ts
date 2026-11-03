@@ -129,7 +129,7 @@ describe('container captures', () => {
 		expect(marked.members.get('declaration.b')?.get('async')?.kinds).toEqual(new Set(['boolean']));
 	});
 
-	it('refuse a drop with no reason, or a drop that names no slot', async () => {
+	it('report a drop with no reason, and stop codegen at a drop that names no slot', async () => {
 		const pattern = '(marked (mark)* @dropped "async" @async body: (_) @element)';
 		expect(derive([await grammar([...CLAIMS, pattern].join('\n'))]).uncaptured).toEqual([
 			`g:4 ${pattern} drops marks without a #set! reason`
@@ -140,9 +140,8 @@ describe('container captures', () => {
 		]);
 		const stray =
 			'((marked (mark)* @dropped (leaf_a) @dropped "async" @async body: (_) @element) (#set! reason "marks carry nothing portable"))';
-		expect(derive([await grammar([...CLAIMS, stray].join('\n'))]).uncaptured).toEqual([
-			`g:4 ${stray} marks a @dropped node that names no slot (leaf_a)`
-		]);
+		const strayInput = await grammar([...CLAIMS, stray].join('\n'));
+		expect(() => derive([strayInput])).toThrow(/marked's container selects a leaf_a child, which no form of marked holds/);
 	});
 
 	it('leave a claimed wrapper to its own members', async () => {

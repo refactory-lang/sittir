@@ -48,7 +48,7 @@ const MODEL: SlotModel = new Map(
 		node('entries', [slot('parameter', ['parameter'], { multiple: true })], { modelType: 'list' }),
 		node('entries_receiver', [slot('receiver', ['receiver_parameter']), slot('entries_receiver_group', ['entries_receiver_group'])]),
 		node('entries_receiver_group', [slot('elements', ['entries'])]),
-		node('parameter', [slot('name', ['identifier', 'self']), slot('type', ['type_identifier', 'identifier'])]),
+		node('parameter', [slot('name', ['identifier', 'self']), slot('type', ['type_identifier', 'identifier']), slot('default', ['identifier'])]),
 		node('receiver_parameter', [slot('name', ['self']), slot('type', ['type_identifier', 'identifier'])]),
 		node('identifier'),
 		node('self'),
@@ -119,6 +119,16 @@ describe('lead fact projection', () => {
 		expect(projected.members).toEqual([
 			expect.objectContaining({ owner: 'parameter', claims: [0], name: 'type' }),
 			expect.objectContaining({ owner: 'receiver_parameter', claims: [1], name: 'type' })
+		]);
+	});
+
+	it("copies a cloned claim's member onto the receiver form only where the form holds its slot", async () => {
+		const facts = await readBindings('(parameter default: (_) @default type: (_) @type) @declaration.parameter');
+		const projected = projectLeadFacts(facts, [effect]);
+		expect(projected.members.map((member) => [member.owner, 'name' in member ? member.name : null])).toEqual([
+			['parameter', 'default'],
+			['parameter', 'type'],
+			['receiver_parameter', 'type']
 		]);
 	});
 

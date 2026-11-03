@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { LayerRecords } from '../layer-record.ts';
 import { preference } from '../primitives/preference.ts';
-import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
+import { appendProvenance, boundFieldNameOf, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 
 interface FixtureCopy {
@@ -215,6 +215,17 @@ describe('effectsForOwners', () => {
 			{ kind: 'segment', owner: 'b', from: 'g:', to: 'h:' },
 			{ kind: 'segment', owner: 'b', from: 'f:', to: 'e:' }
 		]);
+	});
+
+	it("gives a lifted group's field effect to the group's own rule and to the rule that lifts it, and binds a selector on the group by it", () => {
+		const lifted = { ...sym('subscripts'), metadata: { symbolSource: 'group-lift' } };
+		const grammar = { rules: { subscript: seq(field('object', sym('x')), lifted), subscripts: seq(field('elements', sym('x'))), x: sym('y') }, supertypes: [] };
+		const effects = [{ kind: 'segment', owner: 'subscripts', from: 'subscript:', to: 'elements:' }] as const;
+		expect(effectsForOwners(grammar, effects)).toEqual([
+			{ kind: 'segment', owner: 'subscript', from: 'subscript:', to: 'elements:' },
+			{ kind: 'segment', owner: 'subscripts', from: 'subscript:', to: 'elements:' }
+		]);
+		expect(boundFieldNameOf(effects, grammar)('subscripts', 'subscript')).toBe('elements');
 	});
 
 	it('stops at a supertype', () => {

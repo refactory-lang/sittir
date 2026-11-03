@@ -385,6 +385,29 @@ describe('canonicalPaths', () => {
 const member = (name: string): MemberFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
 
 describe('canonicalFacts', () => {
+	it("drops a capture its pattern's predicates name where no path its claim reads declares it, and keeps one a path declares", async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+			"export interface Constant<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constant'; readonly name: string; }",
+			"export interface Constructor<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constructor'; readonly body: string; }"
+		);
+		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
+		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, slots: [slot('name'), slot('body')], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
+		const named = (name: string, claims: readonly number[], tested?: true): MemberFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
+		const facts: BindingFacts = {
+			claims: [{ ...claim('declaration.constant'), kind: 'assignment' }, { ...claim('declaration.constructor'), kind: 'assignment' }],
+			members: [named('name', [0], true), named('name', [1], true), named('body', [1])],
+			containers: [],
+			templates: [],
+			unclaimed: []
+		};
+		const canonical = canonicalFacts(facts, vocabulary, new Map([['assignment', assignment]]));
+		expect(canonical.members.map((member) => [member.route === 'dropped' ? null : member.name, member.claims])).toEqual([
+			['name', [0]],
+			['body', [1]]
+		]);
+	});
+
 	it("hands on canonical claim paths, template paths and flag captures, so resolveFlags reads canonical names", async () => {
 		const vocabulary = await synonymVocabulary();
 		const facts: BindingFacts = {

@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
-import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { type BindingFacts, type ClaimFact, isNamedMember, type MemberFact, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind, refinedContainers } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
@@ -340,6 +340,9 @@ const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): Cla
 		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
 	});
 
+const declares = (vocabulary: Vocabulary, paths: readonly string[], name: string): boolean =>
+	paths.some((path) => vocabulary.members(path).has(camel(name)) || flagsSpelledBy(vocabulary, path, name).length > 0);
+
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
 	const member = paths.find((path) => vocabulary.members(path).has(camel(name)));
 	const spelled = paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name).map((flag) => [path, flag] as const));
@@ -370,24 +373,27 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
-		members: facts.members.map((member) => {
-			if (!isNamedMember(member)) return member;
-			const name = canonicalCapture(vocabulary, pathsOf(member), member.name, member.owner);
+		members: facts.members.flatMap((member): MemberFact[] => {
+			if (!isNamedMember(member)) return [member];
+			const paths = pathsOf(member);
+			if (member.tested === true && !declares(vocabulary, attached(member), member.name)) return [];
+			const name = canonicalCapture(vocabulary, paths, member.name, member.owner);
 			const named = name === member.name ? member : { ...member, name };
 			if (named.route !== 'kind') {
 				renamed.set(`${member.owner} ${member.name}`, name);
-				return named;
+				return [named];
 			}
 			const referenced = renamed.get(`${named.owner} ${named.member}`) ?? named.member;
-			return referenced === named.member ? named : { ...named, member: referenced };
+			return [referenced === named.member ? named : { ...named, member: referenced }];
 		}),
 		containers: facts.containers.map((container) => {
 			const paths = envelopeTargets(model, container, vocabs);
 			return {
 				...container,
-				captures: container.captures.map((capture) => {
+				captures: container.captures.flatMap((capture) => {
+					if (capture.tested === true && !declares(vocabulary, paths, capture.name)) return [];
 					const name = canonicalCapture(vocabulary, paths, capture.name, container.kind);
-					return name === capture.name ? capture : { ...capture, name };
+					return [name === capture.name ? capture : { ...capture, name }];
 				})
 			};
 		})

@@ -76,7 +76,7 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean };
+export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
 
 type MemberRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string } & SlotSelector)
@@ -113,6 +113,7 @@ export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
 	readonly token: string | null;
 	readonly multiple: boolean;
+	readonly tested?: true;
 }
 
 export interface PatternOrigin {

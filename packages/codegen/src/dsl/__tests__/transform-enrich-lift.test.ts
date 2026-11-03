@@ -8,6 +8,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { transform } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
 import { alias } from '../primitives/alias.ts';
+import { field } from '../primitives/field.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
@@ -49,6 +50,16 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		expect(ctx.liftNames.get('comment_arm2')?.name).toBe('comment_block');
 		expect(ctx.deposits.get('comment_line')).toMatchObject({ type: 'TOKEN' });
 		expect(patched.members.map((m: any) => m.name)).toEqual(['comment_line', 'comment_block']);
+	});
+
+	it("records a field edit inside a lifted group under the group, the rule that holds the field", () => {
+		const body = { type: 'SEQ', members: [{ type: 'FIELD', name: 'subscript', content: { type: 'SYMBOL', name: 'X' } }] } as any;
+		const { ctx } = withWireContext('subscript', () => {
+			const original = { type: 'SEQ', members: [{ type: 'STRING', value: '[' }, { type: 'SYMBOL', name: 'subscripts', metadata: { symbolSource: 'group-lift' } }] } as any;
+			return transform(original, { '1/0': field('elements') } as any) as any;
+		}, { grammar: { rules: { subscripts: body } } });
+		expect(ctx.bindingEffects).toContainEqual({ kind: 'segment', owner: 'subscripts', from: 'subscript:', to: 'elements:' });
+		expect(ctx.bindingEffects).not.toContainEqual(expect.objectContaining({ kind: 'segment', owner: 'subscript' }));
 	});
 
 	it('alias() re-homes a bare symbol reference to an authored rule without minting a synthetic deposit', () => {

@@ -15,7 +15,6 @@
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 (constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
-((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default

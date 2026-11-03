@@ -42,6 +42,7 @@ import {
 	wireSymbols,
 	wireRegisterSyntheticRule,
 	wireGetCurrentRuleKind,
+	wireGetFieldOwner,
 	wireGetCurrentDollar,
 	wireIsExtraRule,
 	wireIsPrecedenceRankedRule,
@@ -978,7 +979,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 }
 
 function recordFieldEffect(name: string, member: RuntimeRule): void {
-	const owner = wireGetCurrentRuleKind();
+	const owner = wireGetFieldOwner();
 	if (owner === null) return;
 	const field = isFieldLike(member) ? member : findEnrichShapedFieldThroughTransparentWrappers(member)?.found;
 	const wrapped = member as { type?: unknown; name?: unknown; value?: unknown; content?: unknown };

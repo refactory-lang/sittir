@@ -1833,6 +1833,16 @@ describe('a list\'s trailing separator', () => {
 	});
 });
 
+describe('a selector no form of its owner holds', () => {
+	it('stops codegen at a member capture, naming the owner, the capture and the field', async () => {
+		await expect(grammar('(binary missing: (_) @value) @expression.binary').then(resolveRoutes)).rejects.toThrow(/binary's @value captures the field missing, which no form of binary holds/);
+	});
+
+	it('stops codegen at a container selector', async () => {
+		await expect(grammar('((wrapper missing: (_) @element) (#set! reason "reads as its element"))').then(resolveRoutes)).rejects.toThrow(/wrapper's container selects the field missing, which no form of wrapper holds/);
+	});
+});
+
 describe('a claimed list that unwraps to its element', () => {
 	const CONTAINER = '((call_items (_) @element) (#set! reason "one item without a separator reads as itself"))';
 

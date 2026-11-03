@@ -122,6 +122,8 @@ export function slotByField(slots: readonly ModelSlot[], field: string): ModelSl
 
 const shownKinds = (model: SlotModel, kind: string): readonly string[] => [kind, ...[...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind)];
 
+const heldForms = (model: SlotModel, kind: string): readonly string[] => shownKinds(model, kind).flatMap((shown) => formsOf(model, shown));
+
 function shownAsKind(model: SlotModel, from: string, kind: string): boolean {
 	const node = modelNode(model, from);
 	return from === kind || node?.shownAs.includes(kind) === true || (node?.splitFrom != null && shownAsKind(model, node.splitFrom, kind));
@@ -151,6 +153,21 @@ const separatedBy = (model: SlotModel, kind: string, claim: ClaimFact): boolean 
 	const separator = modelNode(model, kind)?.list?.separator;
 	return separator !== undefined && claim.tokens.includes(separator);
 };
+
+type SlotCapture = Extract<MemberFact, { readonly route: 'rename' | 'dropped' }>;
+
+const droppedToken = (member: SlotCapture): string | undefined => (member.route === 'dropped' && member.field === null ? (member.token ?? undefined) : undefined);
+
+function capturedSlot(model: SlotModel, member: SlotCapture, form: string): ModelSlot | undefined {
+	const slots = shownSlots(model, form);
+	const token = droppedToken(member);
+	return token === undefined ? slotFor(model, slots, member) : slotHoldingText(model, slots, token);
+}
+
+export const holdsCapture = (model: SlotModel, member: SlotCapture): boolean => heldForms(model, member.owner).some((form) => capturedSlot(model, member, form) !== undefined);
+
+const selectorText = (selector: SlotSelector): string =>
+	selector.field !== null ? `the field ${selector.field}` : selector.kind !== null ? `a ${selector.kind} child` : 'a child by position';
 
 export function slotFor(model: SlotModel, slots: readonly ModelSlot[], n: SlotSelector): ModelSlot | undefined {
 	if (n.field !== null) return slotByField(slots, n.field);
@@ -796,8 +813,7 @@ function membersOf(
 				spelledFlags.push(spelled);
 				return [];
 			}
-			const selector = m.field !== null ? `the field ${m.field}` : m.kind !== null ? `a ${m.kind} child` : 'a child by position';
-			throw new Error(`bindings: ${m.owner}'s flag @${m.name} captures ${selector}, which no form of ${m.owner} holds`);
+			throw new Error(`bindings: ${m.owner}'s flag @${m.name} captures ${selectorText(m)}, which no form of ${m.owner} holds`);
 		}
 		return slot === undefined ? [] : [[m, slot] as const];
 	}));
@@ -1157,15 +1173,22 @@ export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const reads = readsByKind(input.model, input.bindings.claims);
 
+	for (const container of input.bindings.containers)
+		for (const selector of [container.element, ...container.captures, ...container.dropped])
+			if (!heldForms(input.model, container.kind).some((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], selector) !== undefined))
+				throw new Error(`bindings: ${container.kind}'s container selects ${selectorText(selector)}, which no form of ${container.kind} holds`);
+
 	const slotNames = new Map<string, Map<string, string | null>>();
 	for (const member of input.bindings.members) {
 		if ((member.route !== 'rename' && member.route !== 'dropped') || (member.route === 'rename' && member.flag === true)) continue;
 		for (const form of formsOf(input.model, member.owner)) {
-			const slots = shownSlots(input.model, form);
-			const token = member.route === 'dropped' && member.field === null ? member.token : undefined;
-			const slot = token === undefined ? slotFor(input.model, slots, member) : slotHoldingText(input.model, slots, token);
-			if (slot !== undefined)
-				(slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
+			const slot = capturedSlot(input.model, member, form);
+			if (slot !== undefined) (slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
+		}
+		if (!holdsCapture(input.model, member)) {
+			const token = droppedToken(member);
+			const capture = member.route === 'rename' ? `@${member.name}` : '@dropped';
+			throw new Error(`bindings: ${member.owner}'s ${capture} captures ${token === undefined ? selectorText(member) : `the token "${token}"`}, which no form of ${member.owner} holds`);
 		}
 	}
 	const slotNamesOf = (kind: string): SlotNames => slotNames.get(kind) ?? new Map<string, string | null>();

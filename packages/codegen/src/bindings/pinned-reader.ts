@@ -591,6 +591,7 @@ function containerFact(
 	kind: string,
 	element: Visit,
 	nodes: readonly Visit[],
+	tested: ReadonlySet<string>,
 	reason: string | null,
 	pattern: PatternOrigin
 ): ContainerFact {
@@ -601,7 +602,7 @@ function containerFact(
 		captures: nodes.flatMap((v) =>
 			captures(v)
 				.filter((name) => name !== 'element' && name !== DROPPED && !name.startsWith('_'))
-				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v) }))
+				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v), ...(tested.has(name) ? { tested: true as const } : {}) }))
 		),
 		dropped: nodes.filter((v) => captures(v).includes(DROPPED)).map(selector),
 		reason,
@@ -644,6 +645,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		}
 		return;
 	}
+	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
+	const tested = new Set(claimPredicates.flatMap((p) => [...(p.capture === null ? [] : [p.capture]), ...p.arguments.flatMap((a) => ('capture' in a ? [a.capture] : []))]));
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
 	const roots = nodes.filter((v) => atTop(v, top) && !(v === top && isGroup(v)) && holdsNode(v));
@@ -655,7 +658,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		element !== undefined &&
 		!captures(owner).some((name) => vocabCapture(owner, name) && !isTokenClass(name))
 	) {
-		facts.containers.push(containerFact(ownerKind, element, nodes, reasonOf(predicates), origin));
+		facts.containers.push(containerFact(ownerKind, element, nodes, tested, reasonOf(predicates), origin));
 		return;
 	}
 	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => vocabCapture(v, name) && !isTokenClass(name)));
@@ -663,7 +666,6 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const template = templateOf(predicate);
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
-	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
 	const claimed = new Map<Visit, number[]>();
 	for (const v of nodes) {
 		for (const name of captures(v)) {
@@ -681,7 +683,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
 			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
-			if (member !== null) members.push(member);
+			if (member !== null) members.push(tested.has(name) ? { ...member, tested: true } : member);
 		}
 		facts.members.push(...slotNamed(members));
 	}
