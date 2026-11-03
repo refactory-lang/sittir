@@ -1,6 +1,6 @@
 import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { builtWithLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
+import { builtWithLines, receivedMembers, triviaSides, type SetterEntry, type TriviaPositions, type TriviaSide } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import { firstBuiltCell, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
@@ -133,6 +133,8 @@ export function leafAdoptLines(maker: string, textExpr: string, result: string):
 	return [`  return builtArenaOf(handle).leaf(${maker}, ${textExpr}) as unknown as ${result};`];
 }
 
+const LEAF_TRIVIA: Readonly<Record<TriviaSide, string>> = { leading: 'leafLeading', trailing: 'leafTrailing', inner: 'leafInner' };
+
 function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions | undefined): string[] {
 	return [
 		`function ${name}(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {`,
@@ -151,7 +153,7 @@ function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions 
 		'    [LEAF_SITES]: null,',
 		'    [Symbol.dispose]: handleDispose',
 		'  };',
-		...(trivia === undefined ? [] : [`  node.$trivia = { node, leading: leafLeading, trailing: leafTrailing${trivia.inner ? ', inner: leafInner' : ''} };`]),
+		...(trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(trivia).map((side) => `${side}: ${LEAF_TRIVIA[side]}`))]),
 		'  return node;',
 		'}'
 	];

@@ -9,6 +9,7 @@ import {
 	elementsWith,
 	rebuilt,
 	refuseJSON,
+	RECEIVER,
 	describeValue,
 	restItems,
 	kindIdStorage,
@@ -172,7 +173,7 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -201,7 +202,7 @@ function leafImmediateIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -1155,7 +1156,7 @@ function leafStringContentText(tree: TreeHandle, entry: BuiltText, site: LeafSit
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 

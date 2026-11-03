@@ -532,7 +532,7 @@ impl<T: Render + TriviaSeam> NodeLayout<T> {
         let trivia = layout.and_then(|layout| layout.trivia.as_ref());
         let edges = layout.and_then(|layout| layout.edges).unwrap_or_default();
         let origin = layout.and_then(|layout| layout.at.as_ref().or(layout.sides.as_ref()));
-        render_framed(trivia, edges, kind, origin, role, w, body)
+        crate::stack::grown(|| render_framed(trivia, edges, kind, origin, role, w, body))
     }
 }
 

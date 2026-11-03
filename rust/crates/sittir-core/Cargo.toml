@@ -23,6 +23,7 @@ arena = []
 
 [dependencies]
 regex = "1"
+stacker = { workspace = true }
 sittir-node-macros = { path = "../sittir-node-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { makeMinimalNodeMap, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { nodeMemberLines } from '../node-members.ts';
+import { nodeMemberParts } from '../node-members.ts';
 
 const functionBody = (source: string, name: string): string => {
 	const start = source.indexOf(`function ${name}(`);
@@ -9,7 +9,7 @@ const functionBody = (source: string, name: string): string => {
 	return source.slice(start, source.indexOf('\n}\n', start));
 };
 
-describe('a node writes its members in its literal', () => {
+describe('a node writes its member objects as literals, the receiver last', () => {
 	const source = emitFactories({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries))});
 
 	it('a text leaf builds its engine handle and members inline', () => {
@@ -17,7 +17,9 @@ describe('a node writes its members in its literal', () => {
 		expect(body).toContain('const handle = currentHandle();');
 		expect(body).toContain('const node = {');
 		expect(body).toContain('$render: () => renderText(handle, node),');
-		expect(body).toContain("leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),");
+		expect(body).toContain('$trivia: undefined as unknown as object,');
+		expect(body).toContain("leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items)");
+		expect(body).toMatch(/node\.\$trivia = \{[^;]*\[RECEIVER\]: node\s*\};/);
 		expect(body).toContain('$engine: handle && (() => handle.current)');
 		expect(body).toContain('$_layout: undefined,');
 		expect(body).not.toMatch(/withMethods|withAccessors|defineProperty/);
@@ -25,7 +27,8 @@ describe('a node writes its members in its literal', () => {
 
 	it('a field-carrying kind writes readers and rebuilding setters inline', () => {
 		const body = functionBody(source, 'buildCallExpression');
-		expect(body).toContain('$with: {');
+		expect(body).toContain('$with: undefined as unknown as object,');
+		expect(body).toMatch(/node\.\$with = \{[^;]*\[RECEIVER\]: node\s*\};/);
 		expect(body).toMatch(/callee: \(value[^)]*\) =>\s+rebuilt\(node, handle, \(\) => buildCallExpression\(\{ \.\.\.config, callee: value \}/);
 		expect(body).toContain('callee: () => hydrateStoredSlot(node, "_callee"),');
 		expect(body).toContain('$_layout: undefined,');
@@ -33,16 +36,20 @@ describe('a node writes its members in its literal', () => {
 	});
 });
 
-describe('nodeMemberLines', () => {
+describe('nodeMemberParts', () => {
 	it('adds the inner side only where the kind has one, and never a named gap', () => {
-		const text = (inner: boolean) => nodeMemberLines({ accessors: [], trivia: { inner } }).join('\n');
+		const text = (inner: boolean): string => {
+			const parts = nodeMemberParts({ accessors: [], trivia: { inner } });
+			return [...parts.members, ...parts.after].join('\n');
+		};
 		expect(text(false)).not.toContain('inner:');
-		expect(text(true)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items),');
+		expect(text(true)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items), [RECEIVER]: node');
 		expect(text(true)).not.toContain('innerAt');
 	});
 
 	it('writes no $trivia for a kind that holds no trivia', () => {
-		const text = nodeMemberLines({ accessors: [], trivia: undefined }).join('\n');
+		const parts = nodeMemberParts({ accessors: [], trivia: undefined });
+		const text = [...parts.members, ...parts.after].join('\n');
 		expect(text).not.toContain('$trivia');
 		expect(text).not.toContain('triviaSide');
 		expect(text).toContain('$render: () => renderText(handle, node),');

@@ -46,8 +46,18 @@ function accessorRead(accessor: StoredAccessor): string {
 	return `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
 }
 
-export function withEntry(entry: SetterEntry): string {
-	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
+export type TriviaSide = 'leading' | 'trailing' | 'inner';
+
+export function triviaSides(trivia: TriviaPositions): readonly TriviaSide[] {
+	return trivia.inner ? ['leading', 'trailing', 'inner'] : ['leading', 'trailing'];
+}
+
+export function receivedMembers(member: '$with' | '$trivia', entries: readonly string[]): string {
+	return `  node.${member} = { ${[...entries, '[RECEIVER]: node'].join(', ')} };`;
+}
+
+function withEntry(entry: SetterEntry): string {
+	return `${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body})`;
 }
 
 export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
@@ -68,24 +78,18 @@ export function builtWithLines(name: string, kind: string, inputs: readonly stri
 	];
 }
 
-function withBlockLines(setters: readonly SetterEntry[] | undefined, entry: (setter: SetterEntry) => string): string[] {
-	return setters === undefined ? [] : ['    $with: {', ...setters.map(entry), '    },'];
+function triviaMember(side: TriviaSide): string {
+	return side === 'inner' ? 'inner: (...items: unknown[]) => triviaInner(node, handle, items)' : `${side}: (...items: unknown[]) => triviaSide(node, handle, '${side}', items)`;
 }
 
-function triviaBlockLines(trivia: TriviaPositions | undefined): string[] {
-	if (trivia === undefined) return [];
-	return ['    $trivia: {', triviaMember('leading'), triviaMember('trailing'), ...(trivia.inner ? [triviaMember('inner')] : []), '    },'];
+export interface NodeMemberParts {
+	readonly members: readonly string[];
+	readonly after: readonly string[];
 }
 
-function triviaMember(side: 'leading' | 'trailing' | 'inner'): string {
-	return side === 'inner'
-		? '      inner: (...items: unknown[]) => triviaInner(node, handle, items),'
-		: `      ${side}: (...items: unknown[]) => triviaSide(node, handle, '${side}', items),`;
-}
-
-export function nodeMemberLines(spec: NodeMemberSpec): string[] {
+export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 	const lines: string[] = spec.parsed ? [] : ['    $_layout: undefined,'];
-	lines.push(...withBlockLines(spec.setters, withEntry));
+	if (spec.setters !== undefined) lines.push('    $with: undefined as unknown as object,');
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
@@ -93,7 +97,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
 		'    toJSON: refuseJSON,',
-		...triviaBlockLines(spec.trivia),
+		...(spec.trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
 		...(spec.parsed
 			? [
 					'    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
@@ -107,7 +111,11 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
 		'    [Symbol.dispose]: releaseNothing'
 	);
-	return lines;
+	const after = [
+		...(spec.setters === undefined ? [] : [receivedMembers('$with', spec.setters.map(withEntry))]),
+		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map(triviaMember))])
+	];
+	return { members: lines, after };
 }
 
 const readGroupName = (slot: string): string => `readGroup_${slot}`;

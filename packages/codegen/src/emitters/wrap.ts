@@ -6,7 +6,7 @@ import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNont
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { groupSeatParts, LIST_SURFACE_LINES, LIST_SYMBOL_LINES, ROOT_ERRORS_LINE, triviaPositionsOf, listReadLines, listReadPostlude, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry, type TriviaPositions } from './node-members.ts';
+import { groupSeatParts, LIST_SURFACE_LINES, LIST_SYMBOL_LINES, ROOT_ERRORS_LINE, triviaPositionsOf, listReadLines, listReadPostlude, listSelfViewParts, nodeMemberParts, ownerViewParts, receivedMembers, seatedSetters, triviaSides, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -259,6 +259,7 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), { elements: dataAccessExpr('data', canonical.storageKey) }, canonical.propertyName, 'wrap', `wrap${node.typeName}`);
+	const members = nodeMemberParts({ setters: settersOf(node, nodeMap, kindEntries, plan), accessors: [], extra: view.members, tail: view.tail, trivia: triviaPositionsOf(node.kind, nodeMap), parsed: true, root: node.grammarRoot });
 	return [
 		...view.hoisted,
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
@@ -268,8 +269,9 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 		'    ...data,',
 		...typeStampLines(node, kindEntries),
 		...objectAccessorLines(node, kindEntries, nodeMap),
-		...nodeMemberLines({ setters: settersOf(node, nodeMap, kindEntries, plan), accessors: [], extra: view.members, tail: view.tail, trivia: triviaPositionsOf(node.kind, nodeMap), parsed: true, root: node.grammarRoot }),
+		...members.members,
 		'  };',
+		...members.after,
 		...view.postlude,
 		`  return ${castToParsed('node', parsedType)};`,
 		'}'
@@ -286,6 +288,15 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
 		(stored) => `${dataAccessExpr('data', stored)} === undefined`
 	);
+	const members = nodeMemberParts({
+		setters: settersOf(node, nodeMap, kindEntries, plan),
+		accessors: [],
+		extra: [...(view?.members ?? []), ...groups.members],
+		tail: view?.tail,
+		trivia: triviaPositionsOf(node.kind, nodeMap),
+		parsed: true,
+		root: node.grammarRoot
+	});
 	return [
 		...(view?.hoisted ?? []),
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
@@ -296,16 +307,9 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 		'    ...data,',
 		...typeStampLines(node, kindEntries),
 		...objectAccessorLines(node, kindEntries, nodeMap),
-		...nodeMemberLines({
-			setters: settersOf(node, nodeMap, kindEntries, plan),
-			accessors: [],
-			extra: [...(view?.members ?? []), ...groups.members],
-			tail: view?.tail,
-			trivia: triviaPositionsOf(node.kind, nodeMap),
-			parsed: true,
-			root: node.grammarRoot
-		}),
+		...members.members,
 		'  };',
+		...members.after,
 		...(view?.postlude ?? []),
 		`  return ${castToParsed('node', parsedType)};`,
 		'}'
@@ -461,8 +465,8 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 		...list.tail,
 		'    [Symbol.dispose]: handleDispose',
 		'  };',
-		`  node.$with = { ${['node', ...setters.map((name) => `${name}: $with$${name}`)].join(', ')} };`,
-		...(trivia === undefined ? [] : [`  node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing${trivia.inner ? ', inner: $trivia$inner' : ''} };`]),
+		receivedMembers('$with', setters.map((name) => `${name}: $with$${name}`)),
+		...(trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(trivia).map((side) => `${side}: $trivia$${side}`))]),
 		...presence,
 		...list.after,
 		`  return ${castToParsed('node', parsedType)};`,
@@ -472,8 +476,8 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 
 function handleSharedLines(shared: HandleShared): string[] {
 	const trivia = (side: string): string[] => [
-		`function $trivia$${side}(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {`,
-		`  return handleTrivia(this.node, _wrap, '${side}', items);`,
+		`function $trivia$${side}(this: Received<RecordPosition>, ...items: unknown[]): unknown {`,
+		`  return handleTrivia(this[RECEIVER], _wrap, '${side}', items);`,
 		'}'
 	];
 	return [
@@ -487,8 +491,8 @@ function handleSharedLines(shared: HandleShared): string[] {
 		...trivia('trailing'),
 		...(shared.inner ? trivia('inner') : []),
 		...[...shared.setters].sort().flatMap((name) => [
-			`function $with$${name}(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {`,
-			`  return rowWith(this.node, _wrap, ${JSON.stringify(name)}, args);`,
+			`function $with$${name}(this: Received<RecordPosition>, ...args: unknown[]): unknown {`,
+			`  return rowWith(this[RECEIVER], _wrap, ${JSON.stringify(name)}, args);`,
 			'}'
 		])
 	];
@@ -685,8 +689,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
-			`import { ${['restItems', 'admitSplicedEnvelope', 'admitSlot', 'markEdited as $edited', 'carryReadTree', 'treeHandleOf', 'hydrateWith', 'hydrateSlotWith', 'hydrateSlotsWith', 'contentRole', 'inTreeEngine', 'currentHandle', 'listSlotWith', 'elementsWith', 'seatWith', 'groupField', 'LIST_METHODS', 'listIterator', 'listItems', 'holdReadItems', 'listSeparatorOf', 'listSeparator', 'storedElements', 'ownerView', 'ownerRead', 'ownerElements', 'isCoordinate', 'readNode', 'listOption', 'checkDelimited', 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'TREE', 'treeTokenOf', 'queryOf', 'snapshotOf', 'triviaSide', 'triviaInner', 'textOf', 'isRecordPosition', 'positionWords', 'recordSlot', 'recordPresent', 'recordFlag', 'childSlot', 'childItems', 'recordLength', 'recordDelimiter', 'rowData', 'rowOf', 'rowWith', 'handleTrivia', 'handleRender', 'handleToString', 'handleEngine', 'handleDispose', 'handleQuery', ...blankArmImports(this.#nodeMap)].join(', ')} } from '@sittir/common/utils';`,
-			"import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';",
+			`import { ${['restItems', 'admitSplicedEnvelope', 'admitSlot', 'markEdited as $edited', 'RECEIVER', 'carryReadTree', 'treeHandleOf', 'hydrateWith', 'hydrateSlotWith', 'hydrateSlotsWith', 'contentRole', 'inTreeEngine', 'currentHandle', 'listSlotWith', 'elementsWith', 'seatWith', 'groupField', 'LIST_METHODS', 'listIterator', 'listItems', 'holdReadItems', 'listSeparatorOf', 'listSeparator', 'storedElements', 'ownerView', 'ownerRead', 'ownerElements', 'isCoordinate', 'readNode', 'listOption', 'checkDelimited', 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'TREE', 'treeTokenOf', 'queryOf', 'snapshotOf', 'triviaSide', 'triviaInner', 'textOf', 'isRecordPosition', 'positionWords', 'recordSlot', 'recordPresent', 'recordFlag', 'childSlot', 'childItems', 'recordLength', 'recordDelimiter', 'rowData', 'rowOf', 'rowWith', 'handleTrivia', 'handleRender', 'handleToString', 'handleEngine', 'handleDispose', 'handleQuery', ...blankArmImports(this.#nodeMap)].join(', ')} } from '@sittir/common/utils';`,
+			"import type { Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
 			"import { TSKindId } from './kinds.js';",
@@ -724,13 +728,15 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		if (this.#views.length > 0) lines.push(...handleSharedLines(this.#shared), '');
 		for (const [leaf, trivia] of Object.entries(LEAF_WRAPS) as [keyof typeof LEAF_WRAPS, TriviaPositions | undefined][]) {
 			if (!this.#leafWraps.has(leaf)) continue;
+			const leafMembers = nodeMemberParts({ accessors: [], parsed: true, trivia, text: 'textOf(data)' });
 			lines.push(
 				`function ${leaf}(data: _UntypedNode, _tree: TreeHandle): object {`,
 				'  const handle = currentHandle();',
 				'  const node = {',
 				'    ...data,',
-				...nodeMemberLines({ accessors: [], parsed: true, trivia, text: 'textOf(data)' }).map((line) => line.slice(2)),
+				...leafMembers.members.map((line) => line.slice(2)),
 				'  };',
+				...leafMembers.after,
 				'  return node;',
 				'}',
 				''

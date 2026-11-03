@@ -25,6 +25,7 @@ import {
 	elementsWith,
 	rebuilt,
 	refuseJSON,
+	RECEIVER,
 	describeValue,
 	restItems,
 	blankArmStored,
@@ -9631,7 +9632,7 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11671,7 +11672,7 @@ function leafTokenRepetitionPatternText(tree: TreeHandle, entry: BuiltText, site
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11700,7 +11701,7 @@ function leafStringOpen(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -12198,7 +12199,7 @@ function leafCharLiteralEmpty(tree: TreeHandle, entry: BuiltText, site: LeafSite
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17231,7 +17232,7 @@ function leafFloatLiteral(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17260,7 +17261,7 @@ function leafStringContent(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17289,7 +17290,7 @@ function leafRawStringLiteralContent(tree: TreeHandle, entry: BuiltText, site: L
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17323,7 +17324,7 @@ function leafRawStringLiteralStart(tree: TreeHandle, entry: BuiltText, site: Lea
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17353,7 +17354,7 @@ function leafRawStringLiteralEnd(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -17913,7 +17914,7 @@ function leafErrorSentinel(tree: TreeHandle, entry: BuiltText, site: LeafSite | 
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
