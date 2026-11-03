@@ -404,6 +404,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['arguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -615,6 +616,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1257,6 +1259,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1300,6 +1303,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1395,6 +1399,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
@@ -3271,6 +3276,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {
 						const: {
@@ -16157,6 +16163,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						static: {
@@ -16322,6 +16329,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -16497,6 +16505,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -16672,6 +16681,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -17812,6 +17822,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						override: {
@@ -17948,6 +17959,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -18094,6 +18106,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -18240,6 +18253,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -19184,6 +19198,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [],
 					flags: {
 						static: {
@@ -19333,6 +19348,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -19492,6 +19508,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -19651,6 +19668,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['parameters'],
 					presets: [
 						{
 							steps: [
@@ -21256,6 +21274,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [
 						{
 							steps: [
@@ -21422,6 +21441,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [
 						{
 							steps: [
@@ -21467,6 +21487,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['declarators'],
 					presets: [],
 					flags: {},
 					when: [
@@ -25370,7 +25391,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
-									optional: true,
 									mounted: {
 										call: 'keyed',
 										key: 'binaryExpressionIn',
@@ -25414,7 +25434,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
-									optional: true,
 									mounted: {
 										call: 'keyed',
 										key: 'binaryExpressionIn',
@@ -26303,6 +26322,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['arguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -27311,6 +27331,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					owners: [
 						[0, 1, 2, 3, 4, 5],
 						[0, 1, 2, 3, 6]
@@ -28172,6 +28193,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -28323,6 +28345,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -28960,6 +28983,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['expressions'],
 					presets: [],
 					flags: {},
 					when: [
@@ -34700,6 +34724,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -35558,6 +35583,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -35584,8 +35610,7 @@ export const build: PortableBuildTable = {
 									builder: 'arguments'
 								},
 								{
-									key: 'elements',
-									optional: true
+									key: 'elements'
 								}
 							],
 							multiple: false,
@@ -35677,8 +35702,7 @@ export const build: PortableBuildTable = {
 									builder: 'arguments'
 								},
 								{
-									key: 'elements',
-									optional: true
+									key: 'elements'
 								}
 							],
 							multiple: false,

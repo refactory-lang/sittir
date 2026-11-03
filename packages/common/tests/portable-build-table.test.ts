@@ -139,7 +139,6 @@ describe('the portable build table', () => {
 		expect(left!.steps[0]).toEqual({
 			key: 'binaryExpressionIn',
 			builder: 'binaryExpression.in',
-			optional: true,
 			mounted: { call: 'keyed', key: 'binaryExpressionIn', seats: 'config' }
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');

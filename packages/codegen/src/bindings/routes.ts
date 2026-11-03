@@ -307,8 +307,8 @@ function absentSlotsOf(model: SlotModel, kind: string, claim: ClaimFact): string
 	return claim.absent.flatMap((field) => slotByField(slots, field)?.name ?? []);
 }
 
-const testsOnlyAbsence = (entry: ReadEntry): boolean =>
-	entry.absent.length > 0 &&
+const negatesOneSlot = (entry: ReadEntry): boolean =>
+	entry.absent.length === 1 &&
 	entry.pins.length === 0 &&
 	entry.children.length === 0 &&
 	entry.claim.predicates.length === 0 &&
@@ -318,7 +318,7 @@ const testsOnlyAbsence = (entry: ReadEntry): boolean =>
 function presentSlotsOf(entry: ReadEntry, entries: readonly ReadEntry[]): string[] {
 	const placement = entry.claim.within.join('/');
 	const refinements = entries.filter(
-		(other) => other !== entry && other.vocab.startsWith(`${entry.vocab}.`) && other.claim.toplevel === entry.claim.toplevel && other.claim.within.join('/') === placement && testsOnlyAbsence(other)
+		(other) => other !== entry && other.vocab.startsWith(`${entry.vocab}.`) && other.claim.toplevel === entry.claim.toplevel && other.claim.within.join('/') === placement && negatesOneSlot(other)
 	);
 	return [...new Set(refinements.flatMap((other) => other.absent))].filter((slot) => !entry.absent.includes(slot));
 }
@@ -588,7 +588,6 @@ export interface Guaranteed {
 	readonly present: (path: readonly SlotStep[]) => readonly string[] | undefined;
 	readonly pinned: (path: readonly SlotStep[]) => string | undefined;
 	readonly absent: (path: readonly SlotStep[]) => boolean;
-	readonly implied: (path: readonly SlotStep[]) => boolean;
 }
 
 const pathKey = (path: readonly SlotStep[]): string => path.map((step) => `${step.owner} ${step.slot} ${step.anchor ?? ''}`).join(' > ');
@@ -620,13 +619,16 @@ export function guaranteedBy(
 		for (const next of heldInto(model, holder, selector)?.next ?? []) walk(child, next.kind, at, i + 1);
 	};
 	for (const child of entry.children) if (child.subject.up === 0) walk(child, entry.kind, [], 0);
-	const pinned = new Map((entry.pins ?? []).map((pin) => [pathKey([{ owner: entry.kind, slot: pin.slot }]), pin.text]));
-	const absent = new Set((entry.absent ?? []).map((slot) => pathKey([{ owner: entry.kind, slot }])));
-	const implied = new Set((entry.present ?? []).map((slot) => pathKey([{ owner: entry.kind, slot }])));
+	const heldSlot = (slot: string): readonly (readonly [string, ModelSlot])[] => {
+		const held = heldSteps(model, entry.kind, { field: slot, kind: null, after: null, anchor: null });
+		return held === undefined ? [] : [[pathKey(heldPath(held, null)), held.at(-1)!.slot]];
+	};
+	const pinned = new Map((entry.pins ?? []).flatMap((pin) => heldSlot(pin.slot).map(([key]) => [key, pin.text] as const)));
+	const absent = new Set((entry.absent ?? []).flatMap((slot) => heldSlot(slot).map(([key]) => key)));
+	for (const [key, slot] of (entry.present ?? []).flatMap(heldSlot)) if (!one.has(key)) one.set(key, new Set(slot.kinds));
 	return {
 		pinned: (path) => pinned.get(pathKey(path)),
 		absent: (path) => absent.has(pathKey(path)),
-		implied: (path) => implied.has(pathKey(path)),
 		holds: (path = []) => path.every((step, i) => step.anchor !== 'only' || one.has(pathKey(path.slice(0, i + 1)))),
 		many: (path) => many.has(pathKey(path)),
 		present: (path) => {

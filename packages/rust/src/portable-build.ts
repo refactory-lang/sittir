@@ -252,8 +252,7 @@ export const build: PortableBuildTable = {
 							name: 'attributes',
 							steps: [
 								{
-									key: 'attributeItems',
-									optional: true
+									key: 'attributeItems'
 								}
 							],
 							multiple: true,
@@ -298,6 +297,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['attributes'],
 					presets: [],
 					flags: {},
 					when: [
@@ -547,6 +547,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -679,6 +680,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeParameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1668,6 +1670,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['lifetimes'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1875,6 +1878,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1934,8 +1938,7 @@ export const build: PortableBuildTable = {
 							name: 'content',
 							steps: [
 								{
-									key: 'content',
-									optional: true
+									key: 'content'
 								}
 							],
 							multiple: false,
@@ -1996,8 +1999,7 @@ export const build: PortableBuildTable = {
 							name: 'content',
 							steps: [
 								{
-									key: 'content',
-									optional: true
+									key: 'content'
 								}
 							],
 							multiple: false,
@@ -3123,8 +3125,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -3137,7 +3138,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -3406,6 +3406,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -3601,6 +3602,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -3827,6 +3829,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -4040,6 +4043,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -4266,6 +4270,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -4496,8 +4501,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -4510,7 +4514,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -4549,6 +4552,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -5584,8 +5588,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -5598,7 +5601,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -5716,8 +5718,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -5815,6 +5816,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -5869,8 +5871,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -5984,6 +5985,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6068,8 +6070,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -6183,6 +6184,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6254,8 +6256,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -6369,6 +6370,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6453,8 +6455,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -6568,6 +6569,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6652,8 +6654,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -6771,8 +6772,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -6785,7 +6785,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -6824,6 +6823,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6912,8 +6912,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -6974,6 +6973,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7028,8 +7028,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -7143,6 +7142,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7227,8 +7227,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -7342,6 +7341,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7413,8 +7413,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -7528,6 +7527,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7612,8 +7612,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -7727,6 +7726,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7811,8 +7811,7 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body',
-									optional: true
+									key: 'body'
 								}
 							],
 							multiple: false,
@@ -7930,8 +7929,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -7944,7 +7942,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -7983,6 +7980,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -8405,6 +8403,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -8509,8 +8508,7 @@ export const build: PortableBuildTable = {
 							name: 'traitClause',
 							steps: [
 								{
-									key: 'traitClause',
-									optional: true
+									key: 'traitClause'
 								}
 							],
 							multiple: false,
@@ -8626,7 +8624,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'traitClause',
 									builder: 'implItemBody.positiveClause',
-									optional: true,
 									mounted: {
 										call: 'keyed',
 										key: 'traitClause',
@@ -8653,6 +8650,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 2, 3, 4, 5]
@@ -9834,8 +9832,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -9848,7 +9845,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -10005,8 +10001,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -10019,7 +10014,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -12766,8 +12760,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -12780,7 +12773,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -15372,8 +15364,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -15386,7 +15377,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -15854,6 +15844,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -16080,6 +16071,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -16337,6 +16329,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -16581,6 +16574,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -16838,6 +16832,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -17099,8 +17094,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -17113,7 +17107,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -17152,6 +17145,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -20325,8 +20319,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -20339,7 +20332,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -22896,8 +22888,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -22910,7 +22901,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -24127,8 +24117,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -24141,7 +24130,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -24288,8 +24276,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -24302,7 +24289,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -25200,6 +25186,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -25357,6 +25344,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -25556,6 +25544,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -25782,6 +25771,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -25995,6 +25985,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -26221,6 +26212,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -26451,8 +26443,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -26465,7 +26456,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -26504,6 +26494,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -26697,6 +26688,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -26855,6 +26847,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -27044,6 +27037,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -27220,6 +27214,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -27409,6 +27404,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -27602,8 +27598,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -27616,7 +27611,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -27655,6 +27649,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -28459,8 +28454,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -28473,7 +28467,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -29974,8 +29967,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -29988,7 +29980,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -30597,6 +30588,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -30792,6 +30784,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -31018,6 +31011,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -31231,6 +31225,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -31457,6 +31452,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -31687,8 +31683,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -31701,7 +31696,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -31740,6 +31734,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -32901,8 +32896,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -32915,7 +32909,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -40074,6 +40067,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['arguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -40536,6 +40530,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -40615,6 +40610,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['elements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -40687,6 +40683,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -44095,7 +44092,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -44294,6 +44290,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -46339,8 +46336,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -46353,7 +46349,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -46772,8 +46767,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
-									builder: 'visibilityModifier',
-									optional: true
+									builder: 'visibilityModifier'
 								},
 								{
 									key: 'content',
@@ -46786,7 +46780,6 @@ export const build: PortableBuildTable = {
 								{
 									key: 'visibilityModifierPubScope',
 									builder: 'visibilityModifier.pub.scope',
-									optional: true,
 									mounted: {
 										call: 'child',
 										key: 'visibilityModifierPubScope'
@@ -48127,6 +48120,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -48199,6 +48193,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -49041,6 +49036,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [

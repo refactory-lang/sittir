@@ -491,7 +491,7 @@ describe('guaranteedBy', () => {
 		expect(sure.present([{ owner: 'twin', slot: 'b' }, { owner: 'twin_mid', slot: 'detail' }])).toBeUndefined();
 	});
 
-	it('guarantees a slot absent on a refinement that negates its field, and present on the entry it refines when that is all it tests', async () => {
+	it('guarantees a slot absent on a refinement that negates its field, and present, with every kind it holds, on the entry it refines when that is all it tests', async () => {
 		const input = await grammar('(function_definition) @declaration.function\n(function_definition !modifiers) @declaration.function.plain');
 		const entries = resolveRoutes(input).readEntries.get('function_definition') ?? [];
 		const plain = entries.find((entry) => entry.vocab === 'declaration.function.plain')!;
@@ -501,7 +501,7 @@ describe('guaranteedBy', () => {
 		expect(guaranteedBy(input.model, plain).absent(modifiers)).toBe(true);
 		expect(plain.members.map((member) => member.name)).not.toContain('modifiers');
 		expect(base.present).toEqual(['modifiers']);
-		expect(guaranteedBy(input.model, base).implied(modifiers)).toBe(true);
+		expect(guaranteedBy(input.model, base).present(modifiers)).toEqual(['modifiers']);
 		expect(base.members.map((member) => member.name)).toContain('modifiers');
 	});
 
@@ -509,6 +509,31 @@ describe('guaranteedBy', () => {
 		const input = await grammar('(function_definition) @declaration.function\n((function_definition !modifiers name: (_) @n) @declaration.function.plain (#eq? @n "f"))');
 		const base = (resolveRoutes(input).readEntries.get('function_definition') ?? []).find((entry) => entry.vocab === 'declaration.function')!;
 		expect(base.present).toEqual([]);
+	});
+
+	it('implies neither slot present on the refined entry when the negating refinement negates two slots, since the base holds whenever one is present', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('pair_opt', node('pair_opt', [slot('a', ['identifier'], { required: false }), slot('b', ['identifier'], { required: false })]));
+		const input = { ...(await grammar('(pair_opt) @expression.pair\n(pair_opt !a !b) @expression.pair.bare')), model };
+		const entries = resolveRoutes(input).readEntries.get('pair_opt') ?? [];
+		const base = entries.find((entry) => entry.vocab === 'expression.pair')!;
+		expect(base.present).toEqual([]);
+		expect(guaranteedBy(input.model, base).present([{ owner: 'pair_opt', slot: 'a' }])).toBeUndefined();
+	});
+
+	it("keys a negated slot of an alias envelope by its path through the envelope's content, on the refinement and on the entry it refines", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('call_storage', node('call_storage', [slot('callee', ['identifier']), slot('args', ['identifier'], { required: false })]));
+		model.set('call_alias', node('call_alias', [slot('content', ['call_storage'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(call_alias) @expression.call\n(call_alias !args) @expression.call.bare')), model };
+		const entries = resolveRoutes(input).readEntries.get('call_alias') ?? [];
+		const bare = entries.find((entry) => entry.vocab === 'expression.call.bare')!;
+		const base = entries.find((entry) => entry.vocab === 'expression.call')!;
+		const args = [{ owner: 'call_alias', slot: 'content' }, { owner: 'call_storage', slot: 'args' }];
+		expect(guaranteedBy(input.model, bare).absent(args)).toBe(true);
+		expect(bare.members.map((member) => member.name)).not.toContain('args');
+		expect(guaranteedBy(input.model, base).present(args)).toEqual(['identifier']);
+		expect(base.members.map((member) => member.name)).toContain('args');
 	});
 });
 

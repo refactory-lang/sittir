@@ -187,7 +187,8 @@ export interface PortableDecimalParts {
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
  * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
- * member it states, by the member's kinds and whether it is a list. A `literal` arm's kind is a token whose meaning is a value: it reads as its
+ * member it states, by the member's kinds and whether it is a list. `empty` names the list members a structure that leaves them out builds
+ * as `[]`: each route of such a member reaches its slot through steps the arm always holds. A `literal` arm's kind is a token whose meaning is a value: it reads as its
  * path, with the `$value` its claim declares, never as its text.
  */
 export interface PortableBuildArm {
@@ -201,6 +202,7 @@ export interface PortableBuildArm {
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
+	readonly empty?: readonly string[];
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;

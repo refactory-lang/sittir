@@ -408,7 +408,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			steps.push({
 				key: slot.propertyName,
 				...(builder === undefined ? {} : { builder }),
-				...(guaranteed?.implied(path.slice(0, i + 1)) === true ? {} : optional(step.owner, slot)),
+				...(guaranteed?.present(path.slice(0, i + 1)) === undefined ? optional(step.owner, slot) : {}),
 				...(mount === undefined ? {} : { mounted: mount.mounted }),
 				...(builder === undefined && next !== undefined && flattens(step.owner, step.slot, next.owner) ? { flatten: true as const } : {}),
 				...(builder === undefined && next !== undefined && seatedAs('tuples', step.owner, step.slot, next.owner) ? { seated: shapeOf(next.owner) } : {}),
@@ -836,6 +836,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(numeric === undefined ? {} : { numeric }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						members: armMembers,
+						...emptiedOf(armMembers),
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
@@ -846,6 +847,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		});
 	};
 
+	const emptiedOf = (members: readonly PortableMemberStep[]): { readonly empty?: readonly string[] } => {
+		const names = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
+		const empty = names.filter((name) => members.filter((member) => member.name === name).every((member) => member.steps.every((step) => step.optional !== true)));
+		return empty.length === 0 ? {} : { empty };
+	};
 	const byPath = new Map<string, Arm[]>();
 	for (const [kind, entries] of routes.readEntries) {
 		const node = modelNode(model, kind);
