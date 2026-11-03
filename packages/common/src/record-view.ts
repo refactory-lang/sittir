@@ -17,7 +17,7 @@ import {
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
+import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey, type ReadOutput } from './node-data.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {
@@ -115,8 +115,8 @@ export function recordStub(tree: TreeHandle, at: number): RecordPosition {
 	return positionAt(tree, at, kind, rowCoordinate(tree, records, words[start + 1]!, kind));
 }
 
-export function readStub(tree: TreeHandle, [at, kind, row, end, start, spanEnd, rowKind]: readonly number[]): RecordPosition {
-	return positionAt(tree, at!, kind!, rowAt(tree, row!, end!, { start: start!, end: spanEnd! }, rowKind!));
+export function readStub(tree: TreeHandle, [at, kind, row, end, start, spanEnd, rowKind]: readonly number[]): RecordPosition & ReadOutput {
+	return asReadOutput(positionAt(tree, at!, kind!, rowAt(tree, row!, end!, { start: start!, end: spanEnd! }, rowKind!)));
 }
 
 function positionAt(tree: TreeHandle, at: number, kind: number, coordinate: NodeCoordinate): RecordPosition {
@@ -180,10 +180,10 @@ export function rowTrivia(node: RecordPosition, wrap: (data: object, tree: TreeH
 }
 
 /** A parsed leaf as read data: its kind, its coordinate (`coordinateAt`) and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
-export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
+export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): ReadOutput {
 	const text = tree.text;
 	if (text === undefined) throw new Error('a record view needs a tree that answers its text');
-	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
+	return asReadOutput({ $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } });
 }
 
 function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: number): unknown {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
-import { holdReadTree } from '../src/node-data.ts';
+import { asReadOutput, holdReadTree } from '../src/node-data.ts';
 import { mintTreeToken } from '../src/tree-token.ts';
 import { factoryNode } from './support/factory-node.ts';
 import { liveHandle } from './support/fake-engine.ts';
@@ -55,7 +55,7 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(isNode({ $type: 1, $source: 2, _name: 'x' })).toBe(false);
 		expect(isNode({ $type: 1 })).toBe(false);
 		const read = { $type: 1, $text: 'x' };
-		holdReadTree(read, mintTreeToken(1));
+		holdReadTree(asReadOutput(read), mintTreeToken(1));
 		expect(isParsedNode(read)).toBe(true);
 		expect(isParsedNode({ ...read })).toBe(false);
 		expect(isParsedNode({ $type: 1, $source: Source.Ts })).toBe(false);
@@ -80,7 +80,7 @@ describe('@sittir/common/utils runtime surface', () => {
 describe('isErrorNode', () => {
 	it('accepts a read ERROR node and nothing else', () => {
 		const error = { $type: ERROR_KIND_ID, $text: '1 $', $_layout: { at: { $treeHandle: 2, $span: { start: 4, end: 7 }, $type: ERROR_KIND_ID } } };
-		holdReadTree(error, mintTreeToken(1));
+		holdReadTree(asReadOutput(error), mintTreeToken(1));
 		expect(isErrorNode(error)).toBe(true);
 		expect(isErrorNode({ ...error, $source: Source.Factory })).toBe(false);
 		expect(isErrorNode({ $type: 1, $source: Source.Ts, $text: 'x' })).toBe(false);

@@ -102,12 +102,26 @@ export function holdTree(value: unknown, token: TreeToken): void {
 	forEachParsedObject(value, (node) => holdTreeOn(node, token));
 }
 
+declare const readOutput: unique symbol;
+
+export type ReadOutput = object & { readonly [readOutput]: true };
+
+export function asReadOutput<T extends object>(value: T): T & ReadOutput {
+	return value as T & ReadOutput;
+}
+
 /** `holdTree` for what a read returned: each object also records that a read produced it (`isRead`). */
-export function holdReadTree(value: unknown, token: TreeToken): void {
-	forEachParsedObject(value, (node) => {
-		holdTreeOn(node, token);
-		readObjects.add(node);
-	});
+export function holdReadTree(value: ReadOutput, token: TreeToken): void {
+	forEachReadObject(value, (node) => holdRead(node, token));
+}
+
+export function holdReadCoordinate(coordinate: NodeCoordinate, token: TreeToken): void {
+	if (typeof coordinate.$type === 'number') holdRead(coordinate, token);
+}
+
+function holdRead(node: object, token: TreeToken): void {
+	holdTreeOn(node, token);
+	readObjects.add(node);
 }
 
 const readObjects = new WeakSet<object>();
@@ -138,29 +152,53 @@ export function enterPath(path: Set<object>, value: object): void {
 	path.add(value);
 }
 
+export class Leave {
+	constructor(readonly value: object) {}
+}
+
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
 	const work: unknown[] = [value];
-	const seen = new Set<object>();
+	const path = new Set<object>();
 	while (work.length > 0) {
 		const next = work.pop();
-		if (typeof next === 'object' && next !== null) {
-			if (seen.has(next)) continue;
-			seen.add(next);
+		if (next instanceof Leave) {
+			path.delete(next.value);
+			continue;
 		}
 		if (Array.isArray(next)) {
-			for (let at = next.length - 1; at >= 0; at -= 1) work.push(next[at]);
+			enterPath(path, next);
+			work.push(new Leave(next));
+			for (const entry of next) work.push(entry);
+			continue;
+		}
+		if (!isRecord(next)) continue;
+		enterPath(path, next);
+		work.push(new Leave(next));
+		if (typeof next.$type === 'number') visit(next);
+		pushHeld(work, next);
+	}
+}
+
+function forEachReadObject(value: ReadOutput, visit: (node: Record<string, unknown>) => void): void {
+	const work: unknown[] = [value];
+	while (work.length > 0) {
+		const next = work.pop();
+		if (Array.isArray(next)) {
+			for (const entry of next) work.push(entry);
 			continue;
 		}
 		if (!isRecord(next)) continue;
 		if (typeof next.$type === 'number') visit(next);
-		const held: unknown[] = [];
-		for (const key in next) {
-			if (isStorageKey(key)) held.push(next[key]);
-		}
-		const trivia = triviaOf(next);
-		if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => held.push(entries));
-		for (let at = held.length - 1; at >= 0; at -= 1) work.push(held[at]);
+		pushHeld(work, next);
 	}
+}
+
+function pushHeld(work: unknown[], node: Record<string, unknown>): void {
+	for (const key in node) {
+		if (isStorageKey(key)) work.push(node[key]);
+	}
+	const trivia = triviaOf(node);
+	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => work.push(entries));
 }
 
 /** The handle a read node or a coordinate names itself by: its tree and its descendant index. */
