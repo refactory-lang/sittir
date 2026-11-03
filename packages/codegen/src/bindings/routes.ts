@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, literalClaimOf, refineClaims, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, literalClaimOf, refineClaims, type RefinedClaim, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { Delimiter } from '@sittir/common/utils';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
@@ -114,6 +114,7 @@ export interface GrammarRoutes {
 	readonly containers: ReadonlyMap<string, ContainerUnwrap>;
 	readonly stopped: readonly StoppedRead[];
 	readonly unplaced: readonly ClaimFact[];
+	readonly claims: readonly RefinedClaim[];
 }
 
 export function slotByField(slots: readonly ModelSlot[], field: string): ModelSlot | undefined {
@@ -1189,13 +1190,12 @@ export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: 
 	return holds(kind) || !forms.some(holds);
 }
 
-function liftMounted(input: GrammarInput, readEntries: Map<string, ReadEntry[]>, order: (kind: string, entries: ReadEntry[]) => void): void {
-	const { model } = input;
-	const refined = refineClaims(input.bindings.claims, (kind) => formsOf(model, kind), (kind) => mountHoldersOf(model, kind).map(({ holder }) => holder));
+function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEntries: Map<string, ReadEntry[]>, order: (kind: string, entries: ReadEntry[]) => void): void {
 	const lifts = [...readEntries].flatMap(([kind, entries]) => entries.flatMap((entry) => (refined[entry.index]?.mountedIn == null ? [] : [{ kind, entry, holder: refined[entry.index]!.mountedIn! }])));
 	for (const { kind, entry, holder } of lifts) {
-		const mount = mountHoldersOf(model, kind).find((at) => at.holder === holder);
+		const [mount, other] = mountHoldersOf(model, kind).filter((at) => at.holder === holder);
 		if (mount === undefined) throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which mounts no form ${kind} reads as`);
+		if (other !== undefined) throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which mounts it in both ${mount.slot} and ${other.slot}`);
 		const tests = entry.pins.length + entry.absent.length + entry.children.length;
 		if (tests > 0 || entry.separated === true || entry.template !== undefined)
 			throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, so its claim tests nothing of ${kind} itself`);
@@ -1295,7 +1295,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 			kind,
 			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, route)) }))
 		);
-	liftMounted(input, readEntries, order);
+	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
+	liftMounted(input.model, claims, readEntries, order);
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, routed] of readEntries) {
@@ -1333,7 +1334,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));
 	const unplaced = input.bindings.claims.filter((claim) => !placed.has(claim));
 
-	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped, unplaced };
+	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped, unplaced, claims };
 }
 
 export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): string[] {

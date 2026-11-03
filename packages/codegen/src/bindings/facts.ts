@@ -297,9 +297,14 @@ export function refineClaims(
 		const kind = claim.kind;
 		if (kind === null || kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
-		const holders = mountHoldersOf(kind);
-		const holderOf = (p: ClaimFact): string | undefined =>
-			p.kind === null || p.kind === WILDCARD ? undefined : formsOf(p.kind).includes(kind) ? kind : holders.find((holder) => formsOf(p.kind!).includes(holder));
+		const holders = [...new Set(mountHoldersOf(kind))];
+		const holderOf = (p: ClaimFact): string | undefined => {
+			if (p.kind === null || p.kind === WILDCARD) return undefined;
+			if (formsOf(p.kind).includes(kind)) return kind;
+			const [holder, other] = holders.filter((at) => formsOf(p.kind!).includes(at));
+			if (other !== undefined) throw new Error(`bindings: ${kind} is mounted by ${holder} and ${other}, both forms of ${p.kind}, so ${claim.vocab} reaches ${p.vocab} through two holders`);
+			return holder;
+		};
 		const deepestBy = new Map<string, ClaimFact>();
 		for (const p of claims) {
 			const holder = holderOf(p);

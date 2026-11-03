@@ -1833,6 +1833,34 @@ describe('a list\'s trailing separator', () => {
 	});
 });
 
+describe('a claim on a kind its holder mounts', () => {
+	const mounted = (slots: readonly string[]): Promise<GrammarInput> =>
+		grammar(['(yielder) @expression.yield', '(delegate) @expression.yield.delegate', '(delegate operand: (_) @operand)'].join('\n')).then((input) => ({
+			...input,
+			model: new Map([
+				...input.model,
+				['yielder', node('yielder', slots.map((name) => slot(name, ['delegate', 'identifier'], { required: false, mounts: { delegate: { mount: 'delegate', call: 'child' } } })))],
+				['delegate', node('delegate', [slot('operand', ['identifier'])])]
+			])
+		}));
+
+	it("reads at its holder, by the holder's test of the slot that holds it, its members routed through that slot", async () => {
+		const routes = resolveRoutes(await mounted(['content']));
+		expect(routes.readEntries.has('delegate')).toBe(false);
+		const [delegate] = routes.readEntries.get('yielder') ?? [];
+		expect(delegate).toMatchObject({ vocab: 'expression.yield.delegate', kind: 'yielder', children: [{ kinds: ['delegate'] }] });
+		expect(delegate?.members.map((route) => [route.name, route.path])).toEqual([['operand', [{ owner: 'yielder', slot: 'content' }, { owner: 'delegate', slot: 'operand' }]]]);
+		expect(routes.claims.map((claim) => [claim.vocab, claim.refines, claim.mountedIn])).toEqual([
+			['expression.yield', null, null],
+			['expression.yield.delegate', 'expression.yield', 'yielder']
+		]);
+	});
+
+	it('refuses where the holder mounts it in two slots, naming both', async () => {
+		await expect(mounted(['first', 'second']).then(resolveRoutes)).rejects.toThrow('bindings: expression.yield.delegate reads delegate at its holder yielder, which mounts it in both first and second');
+	});
+});
+
 describe('a selector no form of its owner holds', () => {
 	it('stops codegen at a member capture, naming the owner, the capture and the field', async () => {
 		await expect(grammar('(binary missing: (_) @value) @expression.binary').then(resolveRoutes)).rejects.toThrow(/binary's @value captures the field missing, which no form of binary holds/);

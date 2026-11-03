@@ -21,8 +21,8 @@ import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
 import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
-import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf, refineClaims } from './facts.ts';
-import { type GrammarRoutes, type MemberRoute, formsOf, memberTargets, mountHoldersOf, readsByKind } from './routes.ts';
+import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf } from './facts.ts';
+import { type GrammarRoutes, type MemberRoute, formsOf, memberTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
@@ -69,7 +69,7 @@ export interface GrammarBindingsInput {
 	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
-	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
+	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf' | 'claims'>;
 	readonly model: SlotModel;
 }
 
@@ -329,7 +329,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const left = (cause: string, row: string): void => {
 		residue.push({ cause, row });
 	};
-	const claims = refineClaims(facts.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
+	const claims = routes.claims;
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
 	const naming = new Map<string, RefinedClaim>();
 	for (const c of claims)

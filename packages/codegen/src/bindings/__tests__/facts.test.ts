@@ -264,6 +264,14 @@ describe('refineClaims', () => {
 		expect(refineClaims([claim('literal.number', 'pattern'), claim('literal.number', 'key'), claim('literal.number.negative', 'negative')], SAME, holders)[2]?.refines).toBe('literal.number');
 	});
 
+	it("refuses a mounted claim that reaches its parent through two holders, both forms of the parent's kind", () => {
+		const forms = (kind: string): readonly string[] => (kind === 'pattern' ? ['pattern', 'pattern_a', 'pattern_b'] : [kind]);
+		const holders = (kind: string): readonly string[] => (kind === 'negative' ? ['pattern_a', 'pattern_b'] : []);
+		expect(() => refineClaims([claim('literal', 'pattern'), claim('literal.negative', 'negative')], forms, holders)).toThrow(
+			'bindings: negative is mounted by pattern_a and pattern_b, both forms of pattern, so literal.negative reaches literal through two holders'
+		);
+	});
+
 	it("keeps an unrefined claim's own predicate, field literal or token as its refinement kind", () => {
 		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME, UNMOUNTED);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);

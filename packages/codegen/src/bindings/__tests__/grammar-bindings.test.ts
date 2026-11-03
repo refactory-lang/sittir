@@ -6,6 +6,8 @@ import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../__tests_
 import { evaluate } from '../../dsl/evaluate.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { GrammarBindingsInput } from '../grammar-bindings.ts';
+import { refineClaims } from '../facts.ts';
+import { formsOf, mountHoldersOf } from '../routes.ts';
 import { compileWordMatcher } from '../../util/word-matcher.ts';
 import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 import { lead, type Split } from '../../dsl/bind.ts';
@@ -94,11 +96,14 @@ let baseModule: string;
 let base: RawGrammar;
 
 // The fixture's layer is its own evaluated rules; a case that needs a different layer passes `layerRules` itself.
-const bind = (input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher'> & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher'>>) =>
+const bind = (
+	input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'routes'> & { readonly routes: Omit<GrammarBindingsInput['routes'], 'claims'> } & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher'>>
+) =>
 	deriveGrammarBindings({
 		layerRules: input.base.rules,
 		wordMatcher: compileWordMatcher(input.base.word, input.base.rules),
-		...input
+		...input,
+		routes: { ...input.routes, claims: refineClaims(input.facts.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder)) }
 	} as GrammarBindingsInput);
 
 beforeAll(async () => {
