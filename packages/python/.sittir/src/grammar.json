@@ -7656,13 +7656,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "arguments",
               "content": {
-                "type": "SYMBOL",
-                "name": "_print_chevron_arguments"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_print_chevron_arguments"
+                },
+                "named": true,
+                "value": "print_chevron_arguments"
               },
-              "named": true,
-              "value": "print_chevron_arguments"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -7679,13 +7686,20 @@
           "value": "print"
         },
         {
-          "type": "ALIAS",
+          "type": "FIELD",
+          "name": "arguments",
           "content": {
-            "type": "SYMBOL",
-            "name": "_print_arguments"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_print_arguments"
+            },
+            "named": true,
+            "value": "print_arguments"
           },
-          "named": true,
-          "value": "print_arguments"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },

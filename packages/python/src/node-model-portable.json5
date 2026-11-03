@@ -1605,29 +1605,6 @@
       }
     },
     "chevron": {
-      "vocab": "clause.print.chevron",
-      "read": [
-        {
-          "vocab": "clause.print.chevron",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "chevron",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -6055,6 +6032,17 @@
       }
     },
     "print_statement": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "print_statement_chevron",
+          "print_statement_plain"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "print_statement_chevron": {
       "vocab": "statement.print",
       "read": [
         {
@@ -6067,60 +6055,52 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "arguments",
           "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "print_statement",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
-      "container": {
-        "slot": "content",
-        "kinds": [
-          "print_statement_chevron",
-          "print_statement_plain"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
-    "print_statement_chevron": {
-      "vocab": "statement.print.chevron",
-      "read": [
-        {
-          "vocab": "statement.print.chevron",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "chevron",
-          "route": "slot",
-          "slot": "chevron",
+          "slot": "arguments",
           "path": [
             {
               "owner": "print_statement_chevron",
-              "slot": "chevron"
+              "slot": "arguments"
             }
           ]
         },
         {
-          "name": "printChevronArguments",
-          "route": "slot",
-          "slot": "print_chevron_arguments",
+          "name": "destination",
+          "route": "nested",
+          "via": [
+            {
+              "field": "chevron",
+              "kind": "chevron",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "chevron",
+          "slot": "expression",
+          "multiple": false,
           "path": [
             {
               "owner": "print_statement_chevron",
-              "slot": "print_chevron_arguments"
+              "slot": "chevron"
+            },
+            {
+              "owner": "chevron",
+              "slot": "expression"
             }
           ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "path": [
+            {
+              "owner": "print_statement_chevron",
+              "slot": "arguments"
+            }
+          ],
+          "flag": true
         }
       ]
     },
@@ -6137,19 +6117,31 @@
       ],
       "members": [
         {
-          "name": "printArguments",
+          "name": "arguments",
           "route": "slot",
-          "slot": "print_arguments",
+          "slot": "arguments",
           "path": [
             {
               "owner": "print_statement_plain",
-              "slot": "print_arguments"
+              "slot": "arguments"
             }
           ]
+        },
+        {
+          "name": "trailingComma",
+          "route": "delimiter",
+          "delimiter": 2,
+          "path": [
+            {
+              "owner": "print_statement_plain",
+              "slot": "arguments"
+            }
+          ],
+          "flag": true
         }
       ],
       "container": {
-        "slot": "print_arguments",
+        "slot": "arguments",
         "kinds": [
           "print_arguments"
         ],
@@ -8035,15 +8027,15 @@
       },
       {
         "depth": 2,
-        "paths": 77,
+        "paths": 76,
         "kinds": 79,
         "refinements": 5
       },
       {
         "depth": 3,
-        "paths": 65,
-        "kinds": 60,
-        "refinements": 42
+        "paths": 63,
+        "kinds": 58,
+        "refinements": 41
       },
       {
         "depth": 4,

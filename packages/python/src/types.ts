@@ -4921,43 +4921,43 @@ export interface PrintChevronArguments {
 export interface PrintStatementChevron {
 	readonly $type: TSKindId.PrintStatementChevron;
 	readonly _chevron: Chevron;
-	readonly _print_chevron_arguments?: PrintChevronArguments;
+	readonly _arguments?: PrintChevronArguments;
 	readonly __slotNames__?: {
 		readonly _chevron: 'chevron';
-		readonly _print_chevron_arguments: 'printChevronArguments';
+		readonly _arguments: 'arguments';
 	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
-		readonly print_chevron_arguments?: readonly Expression[];
+		readonly arguments?: readonly Expression[];
 	};
 	readonly __slotHints__?: {
 		readonly chevron: SlotHint<T.Chevron>;
-		readonly printChevronArguments: SlotHint<T.PrintChevronArguments, true>;
+		readonly arguments: SlotHint<T.PrintChevronArguments, true>;
 		readonly $listSlots: {
-			readonly printChevronArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly chevron: () => Chevron;
-	readonly printChevronArguments: () => PrintChevronArguments | undefined;
+	readonly arguments: () => PrintChevronArguments | undefined;
 }
 
 export interface PrintStatementPlain {
 	readonly $type: TSKindId.PrintStatementPlain;
-	readonly _print_arguments: PrintArguments;
+	readonly _arguments: PrintArguments;
 	readonly __slotNames__?: {
-		readonly _print_arguments: 'printArguments';
+		readonly _arguments: 'arguments';
 	};
 	readonly __looseHints__?: {
-		readonly print_arguments: readonly Expression[];
+		readonly arguments: readonly Expression[];
 	};
 	readonly __slotHints__?: {
-		readonly printArguments: SlotHint<T.PrintArguments>;
+		readonly arguments: SlotHint<T.PrintArguments>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly printArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly printArguments: () => PrintArguments;
+	readonly arguments: () => PrintArguments;
 }
 
 export interface ParenthesizedImportList {
@@ -10112,7 +10112,7 @@ export interface PrintStatementPlainNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	PrintStatementPlain.Bound,
-	'print_arguments',
+	'arguments',
 	TSKindId.PrintStatementPlain,
 	PrintStatementPlain.Parsed,
 	never

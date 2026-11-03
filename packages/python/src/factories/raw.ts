@@ -5893,38 +5893,34 @@ function _buildPrintChevronArguments(
 
 export function buildPrintStatementChevron<
 	ChevronSlot extends T.PrintStatementChevron.Config['chevron'],
-	PrintChevronArgumentsSlot extends T.PrintStatementChevron.Config['printChevronArguments']
+	ArgumentsSlot extends T.PrintStatementChevron.Config['arguments']
 >(
-	config: RefusingConfig<
-		T.PrintStatementChevron.Config,
-		{ chevron: ChevronSlot; printChevronArguments: PrintChevronArgumentsSlot }
-	>
+	config: RefusingConfig<T.PrintStatementChevron.Config, { chevron: ChevronSlot; arguments: ArgumentsSlot }>
 ): T.PrintStatementChevron.Bound;
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
 	currentHandle()?.admit(TSKindId.PrintStatementChevron, [config]);
 	const _chevron = config.chevron;
-	const _print_chevron_arguments = config.printChevronArguments;
+	const _arguments = config.arguments;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementChevron as const,
 		$named: true as const,
 		_chevron,
-		_print_chevron_arguments,
+		_arguments,
 		$with: {
 			chevron: (value: Admit<T.Chevron>) =>
 				rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value })),
-			printChevronArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: buildPrintChevronArguments },
-						(value?: Admit<T.PrintChevronArguments>) =>
-							buildPrintStatementChevron({ ...config, printChevronArguments: value })
+						(value?: Admit<T.PrintChevronArguments>) => buildPrintStatementChevron({ ...config, arguments: value })
 					)
 				)
 		},
 		chevron: () => hydrateStoredSlot(node, '_chevron'),
-		printChevronArguments: () => hydrateStoredSlot(node, '_print_chevron_arguments'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5965,16 +5961,16 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 			);
 }
 function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintStatementPlain.Bound {
-	const _print_arguments = hydrateStored(value);
-	const listView = ownerView(_print_arguments, '_item');
-	if (listView.stored === undefined) refuseReadStub('_print_arguments');
+	const _arguments = hydrateStored(value);
+	const listView = ownerView(_arguments, '_item');
+	if (listView.stored === undefined) refuseReadStub('_arguments');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementPlain as const,
 		$named: true as const,
-		_print_arguments,
+		_arguments,
 		$with: {
-			printArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5983,10 +5979,10 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 					)
 				)
 		},
-		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.arguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

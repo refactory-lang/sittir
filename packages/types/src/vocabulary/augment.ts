@@ -244,11 +244,6 @@ declare module './clause.ts' {
 			type Any<G extends GrammarContext<G>> = V.Clause.Macro<G> | V.Clause.Macro.Rule<G>;
 		}
 		interface MappedType<G extends GrammarContext<G>> extends typeAnnotations.Clause.MappedType<G> {}
-		interface Print<G extends GrammarContext<G>> extends printStatements.Clause.Print<G> {}
-		namespace Print {
-			interface Chevron<G extends GrammarContext<G>> extends printStatements.Clause.Print.Chevron<G> {}
-			type Any<G extends GrammarContext<G>> = V.Clause.Print<G> | V.Clause.Print.Chevron<G>;
-		}
 		interface Resource<G extends GrammarContext<G>> extends resourceManagement.Clause.Resource<G> {}
 		namespace Resource {
 			interface Item<G extends GrammarContext<G>> extends resourceManagement.Clause.Resource.Item<G> {}
@@ -303,8 +298,6 @@ declare module './clause.ts' {
 			| V.Clause.Macro<G>
 			| V.Clause.Macro.Rule<G>
 			| V.Clause.MappedType<G>
-			| V.Clause.Print<G>
-			| V.Clause.Print.Chevron<G>
 			| V.Clause.Resource<G>
 			| V.Clause.Resource.Item<G>
 			| V.Clause.Where<G>
@@ -2949,10 +2942,6 @@ declare module './statement.ts' {
 		interface Match<G extends GrammarContext<G>> extends matchExpressions.Statement.Match<G> {}
 		interface Nonlocal<G extends GrammarContext<G>> extends scopeDeclarations.Statement.Nonlocal<G> {}
 		interface Print<G extends GrammarContext<G>> extends printStatements.Statement.Print<G> {}
-		namespace Print {
-			interface Chevron<G extends GrammarContext<G>> extends printStatements.Statement.Print.Chevron<G> {}
-			type Any<G extends GrammarContext<G>> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
-		}
 		interface Resource<G extends GrammarContext<G>> extends resourceManagement.Statement.Resource<G> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Resource<G>['async']>;
 		}
@@ -3002,7 +2991,6 @@ declare module './statement.ts' {
 			| V.Statement.Match<G>
 			| V.Statement.Nonlocal<G>
 			| V.Statement.Print<G>
-			| V.Statement.Print.Chevron<G>
 			| V.Statement.Resource<G>
 			| V.Statement.Return<G>
 			| V.Statement.Scope<G>

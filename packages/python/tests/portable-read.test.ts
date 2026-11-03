@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
+import { Delimiter } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
 type Read = { readonly $path: string; readonly [member: string]: unknown };
@@ -141,5 +142,30 @@ describe('the portable read', () => {
 	it.each(['except* A:', 'except* A as e:', 'except* (A, B):'])('builds an exception group handler %j back in its spelling', (handler) => {
 		const source = `try:\n    pass\n${handler}\n    pass\n`;
 		expect(roundTrip(source)).toBe(source);
+	});
+
+	it.each(['print a', 'print a,', 'print a, b,', 'print >> f', 'print >> f, a,'])('reads %j as one print statement and builds it back', (source) => {
+		const statement = firstOf(source) as Read;
+		expect(statement.$path).toBe('statement.print');
+		expect(roundTrip(source)).toBe(`${source}\n`);
+		expect(read(`${source}\n`).statements).toEqual([statement]);
+	});
+
+	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {
+		expect(firstOf('print a, b,')).toEqual({ $path: 'statement.print', arguments: ['a', 'b'], $flags: ['trailingComma'] });
+		expect(firstOf('print >> f')).toEqual({ $path: 'statement.print', destination: 'f', arguments: [] });
+		expect(firstOf('print >> f, a,')).toEqual({ $path: 'statement.print', destination: 'f', arguments: ['a'], $flags: ['trailingComma'] });
+	});
+
+	it('refuses a print statement\'s trailing comma after no arguments', () => {
+		expect(() => runtime.build({ $path: 'statement.print', arguments: [], $flags: ['trailingComma'] } as never)).toThrow(/trailingComma is the trailing separator of the list at arguments, which holds nothing/);
+	});
+
+	it('renders a print statement\'s trailing comma by its flag, whatever the render options say', () => {
+		const render = (flags: readonly string[], options?: object): string =>
+			String(runtime.engine.render(runtime.build({ $path: 'statement.print', arguments: ['a'], $flags: flags } as never) as never, options as never));
+		expect(render([])).toBe('print a');
+		expect(render(['trailingComma'])).toBe('print a,');
+		expect(render(['trailingComma'], { printArguments: { item: { delimiter: Delimiter.None } } })).toBe('print a,');
 	});
 });

@@ -13,7 +13,6 @@ export interface PortableIds {
 	clause:
 		| TSKindId.AliasedImport
 		| TSKindId.CaseClause
-		| TSKindId.Chevron
 		| TSKindId.ComprehensionClauses
 		| TSKindId.ElifClause
 		| TSKindId.ElseClause
@@ -42,8 +41,6 @@ export interface PortableIds {
 	'clause.import.relative': TSKindId.ImportPrefix | TSKindId.RelativeImport;
 	'clause.import.relative.prefix': TSKindId.ImportPrefix;
 	'clause.import.wildcard': TSKindId.WildcardImport;
-	'clause.print': TSKindId.Chevron;
-	'clause.print.chevron': TSKindId.Chevron;
 	'clause.resource': TSKindId.WithClause | TSKindId.WithClauseBare | TSKindId.WithClauseParen | TSKindId.WithItem;
 	'clause.resource.item': TSKindId.WithItem;
 	comment: TSKindId.Comment;
@@ -385,7 +382,6 @@ export interface PortableIds {
 		| TSKindId.MatchStatement
 		| TSKindId.NonlocalStatement
 		| TSKindId.PassStatement
-		| TSKindId.PrintStatement
 		| TSKindId.PrintStatementChevron
 		| TSKindId.PrintStatementPlain
 		| TSKindId.RaiseStatement
@@ -411,8 +407,7 @@ export interface PortableIds {
 	'statement.loop.while': TSKindId.WhileStatement;
 	'statement.match': TSKindId.MatchStatement;
 	'statement.nonlocal': TSKindId.NonlocalStatement;
-	'statement.print': TSKindId.PrintStatement | TSKindId.PrintStatementChevron | TSKindId.PrintStatementPlain;
-	'statement.print.chevron': TSKindId.PrintStatementChevron;
+	'statement.print': TSKindId.PrintStatementChevron | TSKindId.PrintStatementPlain;
 	'statement.resource': TSKindId.WithStatement;
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.throw': TSKindId.RaiseStatement;
@@ -445,8 +440,6 @@ export interface PortableTexts {
 	'clause.import.relative': never;
 	'clause.import.relative.prefix': never;
 	'clause.import.wildcard': '*';
-	'clause.print': never;
-	'clause.print.chevron': never;
 	'clause.resource': never;
 	'clause.resource.item': never;
 	comment: never;
@@ -636,7 +629,6 @@ export interface PortableTexts {
 	'statement.match': never;
 	'statement.nonlocal': never;
 	'statement.print': never;
-	'statement.print.chevron': never;
 	'statement.resource': never;
 	'statement.return': never;
 	'statement.throw': never;
@@ -663,7 +655,6 @@ export interface PortableKindsAt {
 		readonly else_if: PortableKindsAt['clause.else_if'];
 		readonly finally: PortableKindsAt['clause.finally'];
 		readonly import: PortableKindsAt['clause.import'];
-		readonly print: PortableKindsAt['clause.print'];
 		readonly resource: PortableKindsAt['clause.resource'];
 	};
 	'clause.case': { readonly $path: 'clause.case'; readonly match: PortableKindsAt['clause.case.match'] };
@@ -692,8 +683,6 @@ export interface PortableKindsAt {
 	};
 	'clause.import.relative.prefix': { readonly $path: 'clause.import.relative.prefix' };
 	'clause.import.wildcard': { readonly $path: 'clause.import.wildcard' };
-	'clause.print': { readonly $path: 'clause.print'; readonly chevron: PortableKindsAt['clause.print.chevron'] };
-	'clause.print.chevron': { readonly $path: 'clause.print.chevron' };
 	'clause.resource': { readonly $path: 'clause.resource'; readonly item: PortableKindsAt['clause.resource.item'] };
 	'clause.resource.item': { readonly $path: 'clause.resource.item' };
 	comment: { readonly $path: 'comment'; readonly line: PortableKindsAt['comment.line'] };
@@ -1150,11 +1139,7 @@ export interface PortableKindsAt {
 	'statement.loop.while': { readonly $path: 'statement.loop.while' };
 	'statement.match': { readonly $path: 'statement.match' };
 	'statement.nonlocal': { readonly $path: 'statement.nonlocal' };
-	'statement.print': {
-		readonly $path: 'statement.print';
-		readonly chevron: PortableKindsAt['statement.print.chevron'];
-	};
-	'statement.print.chevron': { readonly $path: 'statement.print.chevron' };
+	'statement.print': { readonly $path: 'statement.print' };
 	'statement.resource': { readonly $path: 'statement.resource' };
 	'statement.return': { readonly $path: 'statement.return' };
 	'statement.throw': { readonly $path: 'statement.throw' };
@@ -1200,7 +1185,6 @@ export interface PortableIsAt {
 		readonly else_if: PortableIsAt['clause.else_if'];
 		readonly finally: PortableIsAt['clause.finally'];
 		readonly import: PortableIsAt['clause.import'];
-		readonly print: PortableIsAt['clause.print'];
 		readonly resource: PortableIsAt['clause.resource'];
 	};
 	'clause.case': PortableGuard<PortableIds['clause.case'], PythonNode, TSKindId, PortableTexts['clause.case']> & {
@@ -1272,15 +1256,6 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['clause.import.wildcard']
-	> & {};
-	'clause.print': PortableGuard<PortableIds['clause.print'], PythonNode, TSKindId, PortableTexts['clause.print']> & {
-		readonly chevron: PortableIsAt['clause.print.chevron'];
-	};
-	'clause.print.chevron': PortableGuard<
-		PortableIds['clause.print.chevron'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['clause.print.chevron']
 	> & {};
 	'clause.resource': PortableGuard<
 		PortableIds['clause.resource'],
@@ -2527,12 +2502,6 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['statement.print']
-	> & { readonly chevron: PortableIsAt['statement.print.chevron'] };
-	'statement.print.chevron': PortableGuard<
-		PortableIds['statement.print.chevron'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['statement.print.chevron']
 	> & {};
 	'statement.resource': PortableGuard<
 		PortableIds['statement.resource'],
@@ -2625,7 +2594,6 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.AliasedImport,
 				TSKindId.CaseClause,
-				TSKindId.Chevron,
 				TSKindId.ComprehensionClauses,
 				TSKindId.ElifClause,
 				TSKindId.ElseClause,
@@ -2663,8 +2631,6 @@ const table: PortableTable = {
 		'clause.import.relative': { ids: [TSKindId.ImportPrefix, TSKindId.RelativeImport], exact: true },
 		'clause.import.relative.prefix': { ids: [TSKindId.ImportPrefix], exact: true },
 		'clause.import.wildcard': { ids: [TSKindId.WildcardImport], exact: true },
-		'clause.print': { ids: [TSKindId.Chevron], exact: true },
-		'clause.print.chevron': { ids: [TSKindId.Chevron], exact: true },
 		'clause.resource': {
 			ids: [TSKindId.WithClause, TSKindId.WithClauseBare, TSKindId.WithClauseParen, TSKindId.WithItem],
 			exact: true
@@ -3085,7 +3051,6 @@ const table: PortableTable = {
 				TSKindId.MatchStatement,
 				TSKindId.NonlocalStatement,
 				TSKindId.PassStatement,
-				TSKindId.PrintStatement,
 				TSKindId.PrintStatementChevron,
 				TSKindId.PrintStatementPlain,
 				TSKindId.RaiseStatement,
@@ -3117,11 +3082,7 @@ const table: PortableTable = {
 		'statement.loop.while': { ids: [TSKindId.WhileStatement], exact: true },
 		'statement.match': { ids: [TSKindId.MatchStatement], exact: true },
 		'statement.nonlocal': { ids: [TSKindId.NonlocalStatement], exact: true },
-		'statement.print': {
-			ids: [TSKindId.PrintStatement, TSKindId.PrintStatementChevron, TSKindId.PrintStatementPlain],
-			exact: true
-		},
-		'statement.print.chevron': { ids: [TSKindId.PrintStatementChevron], exact: true },
+		'statement.print': { ids: [TSKindId.PrintStatementChevron, TSKindId.PrintStatementPlain], exact: true },
 		'statement.resource': { ids: [TSKindId.WithStatement], exact: true },
 		'statement.return': { ids: [TSKindId.ReturnStatement], exact: true },
 		'statement.throw': { ids: [TSKindId.RaiseStatement], exact: true },
@@ -3339,7 +3300,6 @@ const table: PortableTable = {
 		[TSKindId.CaseListPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.CasePatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.Chevron]: [{ path: 'clause.print.chevron', within: [], test: [] }],
 		[TSKindId.ClassDefinition]: [{ path: 'declaration.class', within: [], test: [] }],
 		[TSKindId.ClassPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
@@ -3623,8 +3583,7 @@ const table: PortableTable = {
 		[TSKindId.ParenthesizedListSplat]: [{ path: 'element.spread.parenthesized', within: [], test: [] }],
 		[TSKindId.PassStatement]: [{ path: 'statement.empty', within: [], test: [] }],
 		[TSKindId.PatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
-		[TSKindId.PrintStatement]: [{ path: 'statement.print', within: [], test: [] }],
-		[TSKindId.PrintStatementChevron]: [{ path: 'statement.print.chevron', within: [], test: [] }],
+		[TSKindId.PrintStatementChevron]: [{ path: 'statement.print', within: [], test: [] }],
 		[TSKindId.PrintStatementPlain]: [{ path: 'statement.print', within: [], test: [] }],
 		[TSKindId.RaiseStatement]: [{ path: 'statement.throw', within: [], test: [] }],
 		[TSKindId.RelativeImport]: [{ path: 'clause.import.relative', within: [], test: [] }],
@@ -3970,6 +3929,12 @@ export const queryFlags: QueryFlags = Object.freeze({
 			]
 		}
 	},
+	[TSKindId.PrintStatementChevron]: {
+		trailingComma: { op: 'child', slots: { '278': 1 }, of: { op: 'delimiter', delimiter: 2 } }
+	},
+	[TSKindId.PrintStatementPlain]: {
+		trailingComma: { op: 'child', slots: { '279': 0 }, of: { op: 'delimiter', delimiter: 2 } }
+	},
 	[TSKindId.Subjects]: {
 		trailingComma: {
 			op: 'and',
@@ -3995,6 +3960,7 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
+	139: { content: { trailingComma: { types: [], kinds: [278, 279] } } },
 	142: { content: { trailingComma: { types: [], kinds: [292] } } },
 	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
@@ -4052,6 +4018,12 @@ declare module './types.js' {
 	interface PatternList {
 		readonly __flags__?: 'trailingComma';
 	}
+	interface PrintStatementChevron {
+		readonly __flags__?: 'trailingComma';
+	}
+	interface PrintStatementPlain {
+		readonly __flags__?: 'trailingComma';
+	}
 	interface Subjects {
 		readonly __flags__?: 'trailingComma';
 	}
@@ -4063,6 +4035,9 @@ declare module './types.js' {
 	}
 	interface Module {
 		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface PrintStatement {
+		readonly __slotFlags__?: { readonly content: 'trailingComma' };
 	}
 	interface ExpressionStatement {
 		readonly __slotFlags__?: { readonly content: 'trailingComma' };

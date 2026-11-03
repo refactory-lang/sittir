@@ -4469,19 +4469,19 @@ export function wrapPrintStatementChevron(
 		chevron() {
 			return hydrateSlot<T.Chevron>(this, '_chevron', tree);
 		},
-		printChevronArguments() {
-			return hydrateSlot<T.PrintChevronArguments | undefined>(this, '_print_chevron_arguments', tree);
+		arguments() {
+			return hydrateSlot<T.PrintChevronArguments | undefined>(this, '_arguments', tree);
 		},
 		$with: {
 			chevron: (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>
 				rebuilt(node, handle, () => wrapPrintStatementChevron({ ...$edited(data), _chevron: v }, tree)),
-			printChevronArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: RAW.buildPrintChevronArguments },
-						(v: NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>) =>
-							wrapPrintStatementChevron({ ...$edited(data), _print_chevron_arguments: v }, tree)
+						(v: NonNullable<T.PrintStatementChevron['_arguments']>) =>
+							wrapPrintStatementChevron({ ...$edited(data), _arguments: v }, tree)
 					)
 				)
 		},
@@ -4501,27 +4501,27 @@ export function wrapPrintStatementChevron(
 
 export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeHandle): T.PrintStatementPlain.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._print_arguments, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._arguments, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
-		printArguments() {
-			return hydrateSlot<T.PrintArguments>(this, '_print_arguments', tree);
+		arguments() {
+			return hydrateSlot<T.PrintArguments>(this, '_arguments', tree);
 		},
 		$with: {
-			printArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
-						(v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
-							wrapPrintStatementPlain({ ...$edited(data), _print_arguments: v }, tree)
+						(v: NonNullable<T.PrintStatementPlain['_arguments']>) =>
+							wrapPrintStatementPlain({ ...$edited(data), _arguments: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.arguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

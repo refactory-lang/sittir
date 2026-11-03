@@ -45,6 +45,7 @@ interface Placed {
 	readonly mount?: PortableContainer;
 	readonly key?: string;
 	readonly host?: { readonly structure: PortableStructure; readonly seats: readonly PortableSeat[] };
+	readonly delimited?: true;
 }
 
 interface Reached {
@@ -123,8 +124,10 @@ const extending = (seats: readonly PortableSeat[], base: PortableSeat): readonly
 	return seats.filter((seat) => within(seat).length >= prefix.length && prefix.every((container, i) => sameContainer(container, within(seat)[i]!)));
 };
 
-const sameSteps = (a: PortableMemberStep, b: PortableMemberStep): boolean =>
-	a.steps.length === b.steps.length && a.steps.every((step, i) => step.key === b.steps[i]!.key && step.builder === b.steps[i]!.builder);
+const sameRoute = (a: readonly PortableSlotStep[], b: readonly PortableSlotStep[]): boolean =>
+	a.length === b.length && a.every((step, i) => step.key === b[i]!.key && step.builder === b[i]!.builder);
+
+const sameSteps = (a: PortableMemberStep, b: PortableMemberStep): boolean => sameRoute(a.steps, b.steps);
 
 const furthest = <T extends { readonly reached: number }>(routes: readonly T[]): T | undefined =>
 	routes.reduce<T | undefined>((best, route) => (best === undefined || route.reached > best.reached ? route : best), undefined);
@@ -166,11 +169,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 	const shapeOf = (frame: Frame): PortableCallShape | undefined => (frame.builder === undefined ? (frame.form?.seats ?? frame.seated) : table.builders[frame.builder]);
 	const inputFrom = (frame: Frame, config: Readonly<Record<string, unknown>>): unknown => (shapeOf(frame) === 'config' ? config : sole(config));
 	const inputOf = (frame: Frame): unknown => (frame.input !== undefined ? frame.input : inputFrom(frame, configOf(frame)));
+	const delimited = (builder: string, delimiter: number, input: unknown): unknown => {
+		if (table.builders[builder] !== 'elements') throw new Error(`portable build: ${builder} builds no list, so it takes no delimiter`);
+		return builderAt(builder)({ delimiter }, ...argsOf('elements', input));
+	};
 	const builtFrom = (frame: Frame, builder: string): unknown => {
-		if (frame.delimiter !== undefined) {
-			if (table.builders[builder] !== 'elements') throw new Error(`portable build: ${builder} builds no list, so it takes no delimiter`);
-			return builderAt(builder)({ delimiter: frame.delimiter }, ...argsOf('elements', inputOf(frame)));
-		}
+		if (frame.delimiter !== undefined) return delimited(builder, frame.delimiter, inputOf(frame));
 		const keys = table.options?.[builder] ?? [];
 		if (frame.input !== undefined || keys.length === 0) return call(builder, inputOf(frame));
 		const config = configOf(frame);
@@ -184,8 +188,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const args = argsOf(frame.form.seats, inputOf(frame));
 		return frame.form.call === 'keyed' ? args[0] : args;
 	};
-	const wrap = (value: unknown, containers: readonly PortableContainer[], fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>): unknown =>
-		containers.reduceRight<unknown>((inner, container) => {
+	const wrap = (value: unknown, containers: readonly PortableContainer[], fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>, delimiter?: number): unknown =>
+		containers.reduceRight<unknown>((inner, container, i) => {
+			if (delimiter !== undefined && i === containers.length - 1) return delimited(container.builder!, delimiter, inner);
 			const filled = fill?.(container) ?? {};
 			if (container.builder === undefined) return Object.keys(filled).length === 0 ? inner : { [container.key]: inner, ...filled };
 			if (!takesConfig(container.builder)) {
@@ -200,10 +205,20 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const left = containers[stop]!;
 		return wrap(left.builder === undefined ? undefined : call(left.builder, undefined), containers.slice(0, stop));
 	};
-	const seated = (value: unknown, all: readonly PortableContainer[], empty: boolean, fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>): Placed => {
+	const seated = (
+		value: unknown,
+		all: readonly PortableContainer[],
+		empty: boolean,
+		fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>,
+		delimiter?: number
+	): Placed => {
 		const [head, ...after] = all;
 		const { key, containers } = flattened(head?.mounted === undefined ? all : after);
-		const placed = { value: empty ? (containers.length === 0 && head?.mounted !== undefined ? undefined : wrapEmpty(containers)) : wrap(value, containers, fill) };
+		const listed = delimiter !== undefined && !empty && containers.at(-1)?.builder !== undefined;
+		const placed = {
+			value: empty ? (containers.length === 0 && head?.mounted !== undefined ? undefined : wrapEmpty(containers)) : wrap(value, containers, fill, listed ? delimiter : undefined),
+			...(listed ? { delimited: true as const } : {})
+		};
 		const keyed = key === undefined ? placed : { ...placed, key };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
@@ -479,40 +494,44 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.key !== undefined) throw new Error(`portable build: ${path}'s ${member.name} holds many values, each flattened into its holder's ${placed.key}`);
 			return placed.value;
 		};
-		const valueOf = (value: unknown, member: PortableMemberStep, path: string): Placed => {
+		const valueOf = (value: unknown, member: PortableMemberStep, path: string, delimiter?: number): Placed => {
 			for (const item of listOf(value)) {
 				const text = typeof item === 'number' ? tokenText(item, member.seats) : undefined;
 				if (text !== undefined) throw new Error(`portable build: ${path}'s ${member.name} takes the token "${text}" as its text, not as kind id ${item}`);
 			}
 			if (member.multiple) return { value: listOf(value).map((item) => unmounted(element(item, member, member.seats, 0), member, path)) };
-			if (!Array.isArray(value)) return member.seats.some((seat) => holdsOne(member, seat)) && !seatsIn(member.seats.filter((seat) => !holdsOne(member, seat)), value) ? valueOf([value], member, path) : element(value, member, member.seats, 0);
+			if (!Array.isArray(value)) return member.seats.some((seat) => holdsOne(member, seat)) && !seatsIn(member.seats.filter((seat) => !holdsOne(member, seat)), value) ? valueOf([value], member, path, delimiter) : element(value, member, member.seats, 0);
 			const lists = member.seats.filter((seat) => seat.many === true);
 			const list = lists.find((seat) => value.every((item) => seatsIn(extending(member.seats, seat), item))) ?? lists[0]!;
 			const depth = within(list).length;
 			const items = value.map((item) => unmounted(element(item, member, extending(member.seats, list), depth), member, path));
-			return seated(items, within(list), items.length === 0);
+			return seated(items, within(list), items.length === 0, undefined, delimiter);
 		};
-		const placeMember = (frame: Frame, member: PortableMemberStep, given: unknown, path: string): void => {
+		const placeMember = (frame: Frame, member: PortableMemberStep, given: unknown, path: string, delimiter?: number): boolean => {
 			const one = Array.isArray(given) && !takesMany(member);
 			const value: unknown = one ? given[0] : given;
 			if (one && value === undefined) {
 				const optional = member.steps.findIndex((step) => step.optional === true);
 				if (optional >= 0) descend(frame, member.steps.slice(0, optional), true);
-				return;
+				return false;
 			}
 			const stop = Array.isArray(value) && value.length === 0 ? member.steps.findIndex((step) => step.optional === true) : -1;
 			if (stop >= 0) {
 				descend(frame, member.steps.slice(0, stop), true);
-				return;
+				return false;
 			}
 			const owner = ownerOf(frame, member.steps.slice(0, -1), path);
 			const key = member.steps.at(-1)!.key;
 			const held = owner.config[key];
-			if (typeof value === 'string' && held instanceof Frame && held.builder !== undefined) return set(owner, key, value, path);
-			const placed = valueOf(value, member, path);
+			if (typeof value === 'string' && held instanceof Frame && held.builder !== undefined) {
+				set(owner, key, value, path);
+				return false;
+			}
+			const placed = valueOf(value, member, path, delimiter);
 			if (placed.host !== undefined) build(placed.host.structure, placed.host.seats, owner);
 			else if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, placed.key ?? key, placed.value, path);
+			return placed.delimited === true;
 		};
 		const spelledParts = (spelling: string, parts: PortableDecimalParts, arm: PortableBuildArm): ReadonlyMap<string, string> | undefined => {
 			const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(spelling) ?? [];
@@ -671,6 +690,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const present = (other: string): boolean => structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other);
 			const unmet = (route: PortableMemberStep): readonly (readonly string[])[] => (route.requires ?? []).filter((group) => !group.some(present));
 			const owner = ownerFor(arm, values, unmet, structure.$path);
+			const delimitedFlags = new Set<string>();
 			for (const [name, all] of [...routed].sort(([, a], [, b]) => a.length - b.length)) {
 				const value = values.get(name);
 				const routes = all.filter((route) => (owner === undefined || owner.has(route)) && unmet(route).length === 0);
@@ -684,9 +704,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const route =
 					furthest(open.filter(({ candidate }) => admits(candidate, value)))?.candidate ??
 					refuseValue(structure.$path, name, value, open.map(({ candidate }) => candidate));
-				placeMember(frame, route, value, structure.$path);
+				const lists = listed.filter(([, steps]) => sameRoute(steps.list!, route.steps));
+				const delimiter = lists.length === 0 ? undefined : lists.reduce((bits, [, steps]) => bits | steps.delimiter!, 0);
+				if (placeMember(frame, route, value, structure.$path, delimiter)) for (const [flag] of lists) delimitedFlags.add(flag);
 			}
 			for (const [flag, { list: steps, delimiter }] of listed) {
+				if (delimitedFlags.has(flag)) continue;
 				const list = frameAt(frame, steps!);
 				if (list === undefined || !holdsAny(list))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is the trailing separator of the list at ${routeText(steps!)}, which holds nothing`);

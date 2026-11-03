@@ -277,20 +277,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly alias: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
 		};
-		readonly 'clause.print': {
-			readonly expression:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-		};
-		readonly 'clause.print.chevron': {
-			readonly expression:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-		};
 		readonly 'clause.resource.item': {
 			readonly name: G['expression'] | G['identifier'] | G['pattern'];
 			readonly value:
@@ -1592,19 +1578,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.print': {
-			readonly printArguments:
+			readonly arguments:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern'];
-		};
-		readonly 'statement.print.chevron': {
-			readonly printChevronArguments:
+			readonly destination:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern']
-				| string;
+				| G['pattern'];
 		};
 		readonly 'statement.resource': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];

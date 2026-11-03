@@ -19765,9 +19765,9 @@ pub struct PrintStatementChevronNode {
     #[wire(key = "_chevron")]
     #[slot(field = field::CHEVRON, word = 2, width = 5)]
     pub chevron: ::sittir_core::SlotValue<ChevronNode>,
-    #[wire(key = "_print_chevron_arguments")]
-    #[slot(word = 7, width = 5)]
-    pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintChevronArgumentsNode>>,
+    #[wire(key = "_arguments")]
+    #[slot(field = field::ARGUMENTS, word = 7, width = 5)]
+    pub arguments: Option<::sittir_core::SlotValue<PrintChevronArgumentsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementChevronNode {
@@ -19793,7 +19793,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.chevron.prepare(ctx)?;
-        self.print_chevron_arguments.prepare(ctx)?;
+        self.arguments.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19818,9 +19818,9 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
 pub struct PrintStatementPlainNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_print_arguments")]
-    #[slot(word = 2, width = 5)]
-    pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsNode>,
+    #[wire(key = "_arguments")]
+    #[slot(field = field::ARGUMENTS, word = 2, width = 5)]
+    pub arguments: ::sittir_core::SlotValue<PrintArgumentsNode>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementPlainNode {
@@ -19845,7 +19845,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementPlainNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.print_arguments.prepare(ctx)?;
+        self.arguments.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28922,23 +28922,23 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsNode, w: &mut dyn 
 }
 
 fn render_print_statement_chevron(node: &PrintStatementChevronNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let arguments = View::new(&node.arguments, "{}");
     let chevron = &node.chevron;
-    let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
     w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_chevron", ::sittir_core::types::ItemIndex(0), w, |w| chevron.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_print_chevron_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_chevron_arguments.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_print_statement_plain(node: &PrintStatementPlainNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let print_arguments = &node.print_arguments;
+    let arguments = &node.arguments;
     w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_print_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_arguments.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }

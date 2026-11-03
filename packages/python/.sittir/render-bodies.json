@@ -3723,11 +3723,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "print_chevron_arguments",
+					"test": "arguments",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "print_chevron_arguments"
+							"name": "arguments"
 						}
 					]
 				}
@@ -3753,7 +3753,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "print_arguments"
+			"name": "arguments"
 		},
 		{
 			"kind": "seam",

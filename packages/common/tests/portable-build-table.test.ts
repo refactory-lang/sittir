@@ -373,25 +373,24 @@ describe('the portable build of a registered option', () => {
 });
 
 describe("the portable build of a flag that is a member's list's trailing separator", () => {
-	const table: PortableBuildTable = {
+	const tableOf = (member: PortableBuildTable['paths'][string]['arms'][number]['members'][number], list: readonly { readonly key: string; readonly builder?: string }[]): PortableBuildTable => ({
 		builders: { holder: 'config', items: 'elements' },
 		paths: {
 			'statement.held': {
 				root: true,
-				arms: [
-					{
-						kind: 1,
-						builder: 'holder',
-						members: [{ name: 'arguments', steps: [{ key: 'arguments', builder: 'items' }, { key: 'item' }], multiple: true, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true }] }],
-						presets: [],
-						flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list: [{ key: 'arguments', builder: 'items' }] } },
-						when: []
-					}
-				]
+				arms: [{ kind: 1, builder: 'holder', members: [member], presets: [], flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list } }, when: [] }]
 			}
 		}
-	};
-	const build = (structure: Readonly<Record<string, unknown>>): readonly (readonly [string, readonly unknown[]])[] => {
+	});
+	const framed = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments', builder: 'items' }, { key: 'item' }], multiple: true, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true }] },
+		[{ key: 'arguments', builder: 'items' }]
+	);
+	const contained = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true, within: [{ builder: 'items', key: 'item' }] }] },
+		[{ key: 'arguments' }]
+	);
+	const build = (structure: Readonly<Record<string, unknown>>, table: PortableBuildTable = framed): readonly (readonly [string, readonly unknown[]])[] => {
 		const calls: [string, unknown[]][] = [];
 		const builder = portableBuilder({
 			language: 'test',
@@ -417,6 +416,15 @@ describe("the portable build of a flag that is a member's list's trailing separa
 
 	it('refuses the flag where the list it is the separator of holds nothing', () => {
 		expect(() => build({ arguments: [], $flags: ['trailingComma'] })).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
+	});
+
+	it("sets the delimiter on the list a member's seat builds as its container", () => {
+		expect(build({ arguments: ['a', 'b'], $flags: ['trailingComma'] }, contained)).toEqual([
+			['items', [{ delimiter: Delimiter.Trailing }, 'a', 'b']],
+			['holder', [{ arguments: { $type: 2 } }]]
+		]);
+		expect(build({ arguments: ['a'] }, contained)[0]).toEqual(['items', ['a']]);
+		expect(() => build({ arguments: [], $flags: ['trailingComma'] }, contained)).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
 	});
 });
 

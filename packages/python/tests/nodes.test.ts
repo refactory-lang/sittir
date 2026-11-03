@@ -342,7 +342,7 @@ describe('print_statement', () => {
 					$named: true,
 					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any,
-				_print_chevron_arguments: stampBuilt({
+				_arguments: stampBuilt({
 					$type: TSKindId.PrintChevronArguments,
 					$text: 'test',
 					$named: true,
@@ -365,7 +365,7 @@ describe('print_statement', () => {
 					$named: true,
 					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any,
-				_print_chevron_arguments: stampBuilt({
+				_arguments: stampBuilt({
 					$type: TSKindId.PrintChevronArguments,
 					$text: 'test',
 					$named: true,

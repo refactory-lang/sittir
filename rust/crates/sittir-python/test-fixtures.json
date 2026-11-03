@@ -9788,7 +9788,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -9825,7 +9825,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nasync = 4\nawait = 5\nprint async, await\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))) (newline)))",
     "wrappedText": "\nasync = 4\nawait = 5\nprint async, await\n",
     "wrappedOffset": 0
   },
@@ -9932,7 +9932,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -9966,7 +9966,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print async, await\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))) (newline))",
     "wrappedText": "print async, await\n\n",
     "wrappedOffset": 0
   },
@@ -10065,7 +10065,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -10098,7 +10098,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print async, await",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier)))))",
     "wrappedText": "print async, await\n",
     "wrappedOffset": 0
   },
@@ -10248,7 +10248,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -10278,7 +10278,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print async, await",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))",
     "wrappedText": "print async, await",
     "wrappedOffset": 0
   },
@@ -10288,7 +10288,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -10317,7 +10317,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print async, await",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier) item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier)))",
     "wrappedText": "print async, await",
     "wrappedOffset": 0
   },
@@ -83477,7 +83477,7 @@
                               "$type": 139,
                               "_content": {
                                 "$type": 279,
-                                "_print_arguments": {
+                                "_arguments": {
                                   "$type": 276,
                                   "_item": [
                                     {
@@ -83884,7 +83884,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
-    "expectedReparseTree": "(module statements: (match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent))))",
+    "expectedReparseTree": "(module statements: (match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent))))",
     "wrappedText": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
     "wrappedOffset": 0
   },
@@ -83979,7 +83979,7 @@
                           "$type": 139,
                           "_content": {
                             "$type": 279,
-                            "_print_arguments": {
+                            "_arguments": {
                               "$type": 276,
                               "_item": [
                                 {
@@ -84383,7 +84383,7 @@
     "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
-    "expectedReparseTree": "(match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent)))",
+    "expectedReparseTree": "(match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent)))",
     "wrappedText": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
     "wrappedOffset": 0
   },
@@ -84991,7 +84991,7 @@
                         "$type": 139,
                         "_content": {
                           "$type": 279,
-                          "_print_arguments": {
+                          "_arguments": {
                             "$type": 276,
                             "_item": [
                               {
@@ -85394,7 +85394,7 @@
     "pattern": "match_block_block",
     "edits": [],
     "expectedSourceOut": "case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
-    "expectedReparseTree": "(match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent))",
+    "expectedReparseTree": "(match_block_block (indent) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list)))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier)))))) (newline)) (dedent)))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (identifier))))))) (newline)) (dedent)))) (comment) (dedent))",
     "wrappedText": "match 0:\n    case [\"quit\"]:\n            print(\"Goodbye!\")\n            quit_game()\n        case [\"look\"]:\n            current_room.describe()\n        case [\"get\", obj]:\n            character.get(obj, current_room)\n        case [\"go\", direction]:\n            current_room = current_room.neighbor(direction)\n        # The rest of your commands go here\n    ",
     "wrappedOffset": 13
   },
@@ -85461,7 +85461,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -85545,7 +85545,7 @@
     "pattern": "case_clause",
     "edits": [],
     "expectedSourceOut": "case [\"quit\"]:\n    print(\"Goodbye!\")\n    quit_game()\n",
-    "expectedReparseTree": "(case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))))",
+    "expectedReparseTree": "(case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))))",
     "wrappedText": "match 0:\n    \n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    ",
     "wrappedOffset": 18
   },
@@ -87753,7 +87753,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -87836,7 +87836,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")\n    quit_game()\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  print(\"Goodbye!\")\n      quit_game()\n  ",
     "wrappedOffset": 8
   },
@@ -88064,7 +88064,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -88146,7 +88146,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")\nquit_game()\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print(\"Goodbye!\")\n  quit_game()\n  ",
     "wrappedOffset": 11
   },
@@ -88362,7 +88362,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -88420,7 +88420,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline))",
     "wrappedText": "print(\"Goodbye!\")\n\n",
     "wrappedOffset": 0
   },
@@ -88663,7 +88663,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -88720,7 +88720,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))",
     "wrappedText": "print(\"Goodbye!\")\n",
     "wrappedOffset": 0
   },
@@ -88948,7 +88948,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -89002,7 +89002,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
     "wrappedText": "print(\"Goodbye!\")",
     "wrappedOffset": 0
   },
@@ -89012,7 +89012,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -89065,7 +89065,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print(\"Goodbye!\")",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
     "wrappedText": "print(\"Goodbye!\")",
     "wrappedOffset": 0
   },
@@ -91929,7 +91929,7 @@
                               "$type": 139,
                               "_content": {
                                 "$type": 279,
-                                "_print_arguments": {
+                                "_arguments": {
                                   "$type": 276,
                                   "_item": [
                                     {
@@ -92009,7 +92009,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(module statements: (match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(module statements: (match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "wrappedOffset": 0
   },
@@ -92287,7 +92287,7 @@
                           "$type": 139,
                           "_content": {
                             "$type": 279,
-                            "_print_arguments": {
+                            "_arguments": {
                               "$type": 276,
                               "_item": [
                                 {
@@ -92364,7 +92364,7 @@
     "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent)))",
+    "expectedReparseTree": "(match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent)))",
     "wrappedText": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "wrappedOffset": 0
   },
@@ -92759,7 +92759,7 @@
                         "$type": 139,
                         "_content": {
                           "$type": 279,
-                          "_print_arguments": {
+                          "_arguments": {
                             "$type": 276,
                             "_item": [
                               {
@@ -92835,7 +92835,7 @@
     "pattern": "match_block_block",
     "edits": [],
     "expectedSourceOut": "# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent))",
+    "expectedReparseTree": "(match_block_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (suite_inline elements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (suite_inline elements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent))",
     "wrappedText": "match 0:\n    # ^ conditional\n        case [\"quit\"]: ... # Code omitted for brevity\n        case [\"go\", direction]: pass\n        case [\"drop\", *objects]: pass\n        case _:\n            print(f\"Sorry, I couldn't understand {command!r}\")\n    ",
     "wrappedOffset": 13
   },
@@ -93139,7 +93139,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -93213,7 +93213,7 @@
     "pattern": "case_clause",
     "edits": [],
     "expectedSourceOut": "case _:\n    print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))))",
     "wrappedText": "match 0:\n    \n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n    ",
     "wrappedOffset": 18
   },
@@ -94935,7 +94935,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -95004,7 +95004,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end)))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end)))))))",
     "wrappedText": "print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "wrappedOffset": 0
   },
@@ -95110,7 +95110,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -95183,7 +95183,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  print(f\"Sorry, I couldn't understand {command!r}\")\n  ",
     "wrappedOffset": 8
   },
@@ -95203,7 +95203,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -95275,7 +95275,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print(f\"Sorry, I couldn't understand {command!r}\")\n  ",
     "wrappedOffset": 11
   },
@@ -95292,7 +95292,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -95362,7 +95362,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print(f\"Sorry, I couldn't understand {command!r}\")\n  ",
     "wrappedOffset": 11
   },
@@ -95374,7 +95374,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -95440,7 +95440,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))",
     "wrappedText": "print(f\"Sorry, I couldn't understand {command!r}\")",
     "wrappedOffset": 0
   },
@@ -95450,7 +95450,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -95515,7 +95515,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print(f\"Sorry, I couldn't understand {command!r}\")",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end)))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end)))))",
     "wrappedText": "print(f\"Sorry, I couldn't understand {command!r}\")",
     "wrappedOffset": 0
   },
@@ -173038,7 +173038,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -173063,7 +173063,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -173092,7 +173092,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -173137,7 +173137,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -173170,7 +173170,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -173203,7 +173203,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nprint a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (not_operator argument: (true)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (not_operator argument: (true)))))) (newline)))",
     "wrappedText": "\nprint a\nprint b, c\nprint 0 or 1, 1 or 0,\nprint 0 or 1\nprint not True\n",
     "wrappedOffset": 0
   },
@@ -173220,7 +173220,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -173250,7 +173250,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print a\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline))",
     "wrappedText": "print a\n\n",
     "wrappedOffset": 0
   },
@@ -173267,7 +173267,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -173301,7 +173301,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print b, c\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))) (newline))",
     "wrappedText": "print b, c\n\n",
     "wrappedOffset": 0
   },
@@ -173318,7 +173318,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -173368,7 +173368,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print 0 or 1, 1 or 0,\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline))",
     "wrappedText": "print 0 or 1, 1 or 0,\n\n",
     "wrappedOffset": 0
   },
@@ -173385,7 +173385,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -173423,7 +173423,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print 0 or 1\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))) (newline))",
     "wrappedText": "print 0 or 1\n\n",
     "wrappedOffset": 0
   },
@@ -173440,7 +173440,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -173470,7 +173470,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print not True\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (not_operator argument: (true)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (not_operator argument: (true)))))) (newline))",
     "wrappedText": "print not True\n\n",
     "wrappedOffset": 0
   },
@@ -173485,7 +173485,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -173514,7 +173514,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print a\n",
     "wrappedOffset": 0
   },
@@ -173529,7 +173529,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -173562,7 +173562,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print b, c",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier)))))",
     "wrappedText": "print b, c\n",
     "wrappedOffset": 0
   },
@@ -173577,7 +173577,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -173626,7 +173626,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print 0 or 1, 1 or 0,",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))))",
     "wrappedText": "print 0 or 1, 1 or 0,\n",
     "wrappedOffset": 0
   },
@@ -173641,7 +173641,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -173678,7 +173678,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print 0 or 1",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))))",
     "wrappedText": "print 0 or 1\n",
     "wrappedOffset": 0
   },
@@ -173693,7 +173693,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -173722,7 +173722,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print not True",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (not_operator argument: (true))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (not_operator argument: (true))))))",
     "wrappedText": "print not True\n",
     "wrappedOffset": 0
   },
@@ -173734,7 +173734,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -173760,7 +173760,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print a",
     "wrappedOffset": 0
   },
@@ -173772,7 +173772,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -173802,7 +173802,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print b, c",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier) item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier))))",
     "wrappedText": "print b, c",
     "wrappedOffset": 0
   },
@@ -173814,7 +173814,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -173860,7 +173860,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print 0 or 1, 1 or 0,",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))",
     "wrappedText": "print 0 or 1, 1 or 0,",
     "wrappedOffset": 0
   },
@@ -173872,7 +173872,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -173906,7 +173906,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print 0 or 1",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)))))",
     "wrappedText": "print 0 or 1",
     "wrappedOffset": 0
   },
@@ -173918,7 +173918,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -173944,7 +173944,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print not True",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (not_operator argument: (true)))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (not_operator argument: (true)))))",
     "wrappedText": "print not True",
     "wrappedOffset": 0
   },
@@ -173954,7 +173954,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -173979,7 +173979,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print a",
     "wrappedOffset": 0
   },
@@ -173989,7 +173989,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -174018,7 +174018,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print b, c",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier) item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier) item: (identifier)))",
     "wrappedText": "print b, c",
     "wrappedOffset": 0
   },
@@ -174028,7 +174028,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -174073,7 +174073,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print 0 or 1, 1 or 0,",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain)) item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))",
     "wrappedText": "print 0 or 1, 1 or 0,",
     "wrappedOffset": 0
   },
@@ -174083,7 +174083,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -174116,7 +174116,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print 0 or 1",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (boolean_operator left: (integer_decimal_plain) right: (integer_decimal_plain))))",
     "wrappedText": "print 0 or 1",
     "wrappedOffset": 0
   },
@@ -174126,7 +174126,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -174151,7 +174151,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print not True",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (not_operator argument: (true))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (not_operator argument: (true))))",
     "wrappedText": "print not True",
     "wrappedOffset": 0
   },
@@ -174520,7 +174520,7 @@
                       "$text": "a"
                     }
                   },
-                  "_print_chevron_arguments": {
+                  "_arguments": {
                     "$type": 277,
                     "_item": [
                       {
@@ -174593,7 +174593,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nprint >> a\nprint >> a, \"b\", \"c\"\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) arguments: (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)))",
     "wrappedText": "\nprint >> a\nprint >> a, \"b\", \"c\"\n",
     "wrappedOffset": 0
   },
@@ -174661,7 +174661,7 @@
                   "$text": "a"
                 }
               },
-              "_print_chevron_arguments": {
+              "_arguments": {
                 "$type": 277,
                 "_item": [
                   {
@@ -174731,7 +174731,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print >> a, \"b\", \"c\"\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) arguments: (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
     "wrappedText": "print >> a, \"b\", \"c\"\n\n",
     "wrappedOffset": 0
   },
@@ -174794,7 +174794,7 @@
                 "$text": "a"
               }
             },
-            "_print_chevron_arguments": {
+            "_arguments": {
               "$type": 277,
               "_item": [
                 {
@@ -174863,7 +174863,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print >> a, \"b\", \"c\"",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) arguments: (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
     "wrappedText": "print >> a, \"b\", \"c\"\n",
     "wrappedOffset": 0
   },
@@ -174917,7 +174917,7 @@
             "$text": "a"
           }
         },
-        "_print_chevron_arguments": {
+        "_arguments": {
           "$type": 277,
           "_item": [
             {
@@ -174983,7 +174983,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print >> a, \"b\", \"c\"",
-    "expectedReparseTree": "(print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
+    "expectedReparseTree": "(print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) arguments: (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
     "wrappedText": "print >> a, \"b\", \"c\"",
     "wrappedOffset": 0
   },
@@ -175032,7 +175032,7 @@
           "$text": "a"
         }
       },
-      "_print_chevron_arguments": {
+      "_arguments": {
         "$type": 277,
         "_item": [
           {
@@ -175097,7 +175097,7 @@
     "pattern": "print_statement_chevron",
     "edits": [],
     "expectedSourceOut": "print >> a, \"b\", \"c\"",
-    "expectedReparseTree": "(print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "expectedReparseTree": "(print_statement_chevron chevron: (chevron expression: (identifier)) arguments: (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
     "wrappedText": "print >> a, \"b\", \"c\"",
     "wrappedOffset": 0
   },
@@ -182933,7 +182933,7 @@
                         "$type": 139,
                         "_content": {
                           "$type": 279,
-                          "_print_arguments": {
+                          "_arguments": {
                             "$type": 276,
                             "_item": [
                               {
@@ -182984,7 +182984,7 @@
                                 "$type": 139,
                                 "_content": {
                                   "$type": 279,
-                                  "_print_arguments": {
+                                  "_arguments": {
                                     "$type": 276,
                                     "_item": [
                                       {
@@ -183023,7 +183023,7 @@
                           "$type": 139,
                           "_content": {
                             "$type": 279,
-                            "_print_arguments": {
+                            "_arguments": {
                               "$type": 276,
                               "_item": [
                                 {
@@ -183157,7 +183157,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
-    "expectedReparseTree": "(module statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))) alternative: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))))) statements: (for_statement left: (bare_tuple_pattern elements: (identifier)) right: (list elements: (collection_elements item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(module statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))) alternative: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))))) statements: (for_statement left: (bare_tuple_pattern elements: (identifier)) right: (list elements: (collection_elements item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
     "wrappedText": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
     "wrappedOffset": 0
   },
@@ -183200,7 +183200,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -183251,7 +183251,7 @@
                             "$type": 139,
                             "_content": {
                               "$type": 279,
-                              "_print_arguments": {
+                              "_arguments": {
                                 "$type": 276,
                                 "_item": [
                                   {
@@ -183290,7 +183290,7 @@
                       "$type": 139,
                       "_content": {
                         "$type": 279,
-                        "_print_arguments": {
+                        "_arguments": {
                           "$type": 276,
                           "_item": [
                             {
@@ -183328,7 +183328,7 @@
     "pattern": "for_statement",
     "edits": [],
     "expectedSourceOut": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n",
-    "expectedReparseTree": "(for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))) alternative: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))) alternative: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))))",
     "wrappedText": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n",
     "wrappedOffset": 0
   },
@@ -183371,7 +183371,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -183408,7 +183408,7 @@
     "pattern": "for_statement",
     "edits": [],
     "expectedSourceOut": "for character, j in line:\n  print character\n",
-    "expectedReparseTree": "(for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))))",
     "wrappedText": "for character, j in line:\n  print character\n",
     "wrappedOffset": 0
   },
@@ -183654,7 +183654,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -183705,7 +183705,7 @@
                           "$type": 139,
                           "_content": {
                             "$type": 279,
-                            "_print_arguments": {
+                            "_arguments": {
                               "$type": 276,
                               "_item": [
                                 {
@@ -183745,7 +183745,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print line\n  for character, j in line:\n    print character\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent)))",
     "wrappedText": "if a:\n  print line\n    for character, j in line:\n      print character\n  ",
     "wrappedOffset": 8
   },
@@ -183767,7 +183767,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -183803,7 +183803,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print character\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  print character\n  ",
     "wrappedOffset": 8
   },
@@ -183825,7 +183825,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -183861,7 +183861,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print x\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  print x\n  ",
     "wrappedOffset": 8
   },
@@ -183930,7 +183930,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -183981,7 +183981,7 @@
                         "$type": 139,
                         "_content": {
                           "$type": 279,
-                          "_print_arguments": {
+                          "_arguments": {
                             "$type": 276,
                             "_item": [
                               {
@@ -184020,7 +184020,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print line\nfor character, j in line:\n  print character\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))",
     "wrappedText": "if a:\n  \n  print line\n  for character, j in line:\n    print character\n  ",
     "wrappedOffset": 11
   },
@@ -184040,7 +184040,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -184075,7 +184075,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print character\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print character\n  ",
     "wrappedOffset": 11
   },
@@ -184095,7 +184095,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -184130,7 +184130,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print x\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print x\n  ",
     "wrappedOffset": 11
   },
@@ -184193,7 +184193,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -184226,7 +184226,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print line\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline))",
     "wrappedText": "print line\n\n",
     "wrappedOffset": 0
   },
@@ -184243,7 +184243,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -184276,7 +184276,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print character\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print character\n  ",
     "wrappedOffset": 11
   },
@@ -184293,7 +184293,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -184326,7 +184326,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print x\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  print x\n  ",
     "wrappedOffset": 11
   },
@@ -184382,7 +184382,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -184414,7 +184414,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print line",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print line\n",
     "wrappedOffset": 0
   },
@@ -184429,7 +184429,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -184461,7 +184461,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print character",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print character\n",
     "wrappedOffset": 0
   },
@@ -184476,7 +184476,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -184508,7 +184508,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print x",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print x\n",
     "wrappedOffset": 0
   },
@@ -184558,7 +184558,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -184587,7 +184587,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print line",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print line",
     "wrappedOffset": 0
   },
@@ -184599,7 +184599,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -184628,7 +184628,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print character",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print character",
     "wrappedOffset": 0
   },
@@ -184640,7 +184640,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -184669,7 +184669,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print x",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print x",
     "wrappedOffset": 0
   },
@@ -184679,7 +184679,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -184707,7 +184707,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print line",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print line",
     "wrappedOffset": 0
   },
@@ -184717,7 +184717,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -184745,7 +184745,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print character",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print character",
     "wrappedOffset": 0
   },
@@ -184755,7 +184755,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -184783,7 +184783,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print x",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print x",
     "wrappedOffset": 0
   },
@@ -184912,7 +184912,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -184949,7 +184949,7 @@
     "pattern": "else_clause",
     "edits": [],
     "expectedSourceOut": "else:\n  print x\n",
-    "expectedReparseTree": "(else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))))",
     "wrappedText": "if a:\n  b\nelse:\n  print x\n",
     "wrappedOffset": 10
   },
@@ -203306,7 +203306,7 @@
                         "$type": 139,
                         "_content": {
                           "$type": 279,
-                          "_print_arguments": {
+                          "_arguments": {
                             "$type": 276,
                             "_item": [
                               {
@@ -203371,7 +203371,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():\n",
-    "expectedReparseTree": "(module (comment) (comment) (comment) (comment) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier))) body: (suite_empty (newline))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent)))))",
+    "expectedReparseTree": "(module (comment) (comment) (comment) (comment) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier))) body: (suite_empty (newline))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent)))))",
     "wrappedText": "\n# These are not actually valid python; blocks\n# must contain at least one statement. But we\n# allow them because error recovery for empty\n# blocks doesn't work very well otherwise.\ndef a(b, c):\n\nif d:\n  print e\n  while f():\n",
     "wrappedOffset": 0
   },
@@ -203534,7 +203534,7 @@
                     "$type": 139,
                     "_content": {
                       "$type": 279,
-                      "_print_arguments": {
+                      "_arguments": {
                         "$type": 276,
                         "_item": [
                           {
@@ -203589,7 +203589,7 @@
     "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if d:\n  print e\n  while f():\n",
-    "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent))))",
+    "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent))))",
     "wrappedText": "if d:\n  print e\n  while f():\n",
     "wrappedOffset": 0
   },
@@ -203611,7 +203611,7 @@
                   "$type": 139,
                   "_content": {
                     "$type": 279,
-                    "_print_arguments": {
+                    "_arguments": {
                       "$type": 276,
                       "_item": [
                         {
@@ -203664,7 +203664,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "print e\n  while f():\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent)))",
     "wrappedText": "if a:\n  print e\n    while f():\n  ",
     "wrappedOffset": 8
   },
@@ -203684,7 +203684,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -203736,7 +203736,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "print e\nwhile f():\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (while_statement condition: (call function: (identifier) arguments: (argument_list)) body: (suite_empty (newline))) (dedent))",
     "wrappedText": "if a:\n  \n  print e\n  while f():\n  ",
     "wrappedOffset": 11
   },
@@ -203753,7 +203753,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -203786,7 +203786,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print e\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline))",
     "wrappedText": "print e\n\n",
     "wrappedOffset": 0
   },
@@ -203801,7 +203801,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -203833,7 +203833,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print e",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print e\n",
     "wrappedOffset": 0
   },
@@ -203845,7 +203845,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -203874,7 +203874,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print e",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print e",
     "wrappedOffset": 0
   },
@@ -203884,7 +203884,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -203912,7 +203912,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print e",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print e",
     "wrappedOffset": 0
   },
@@ -211529,7 +211529,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -211554,7 +211554,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -211599,7 +211599,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -211632,7 +211632,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nprint a\n# hi\nprint b # bye\nprint c\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)) (comment) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (comment) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (comment) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (comment) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)))",
     "wrappedText": "\nprint a\n# hi\nprint b # bye\nprint c\n",
     "wrappedOffset": 0
   },
@@ -211649,7 +211649,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -211679,7 +211679,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print a\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline))",
     "wrappedText": "print a\n\n",
     "wrappedOffset": 0
   },
@@ -211696,7 +211696,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -211736,7 +211736,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print b # bye\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (comment) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (comment) (newline))",
     "wrappedText": "print b # bye\n\n",
     "wrappedOffset": 0
   },
@@ -211753,7 +211753,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -211783,7 +211783,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print c\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline))",
     "wrappedText": "print c\n\n",
     "wrappedOffset": 0
   },
@@ -211798,7 +211798,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -211827,7 +211827,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print a\n",
     "wrappedOffset": 0
   },
@@ -211842,7 +211842,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -211881,7 +211881,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print b # bye\n",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print b # bye\n\n",
     "wrappedOffset": 0
   },
@@ -211896,7 +211896,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -211925,7 +211925,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print c",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier)))))",
     "wrappedText": "print c\n",
     "wrappedOffset": 0
   },
@@ -211937,7 +211937,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -211963,7 +211963,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print a",
     "wrappedOffset": 0
   },
@@ -211975,7 +211975,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -212001,7 +212001,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print b",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print b",
     "wrappedOffset": 0
   },
@@ -212013,7 +212013,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -212039,7 +212039,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print c",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))",
     "wrappedText": "print c",
     "wrappedOffset": 0
   },
@@ -212049,7 +212049,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -212074,7 +212074,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print a",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print a",
     "wrappedOffset": 0
   },
@@ -212084,7 +212084,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -212109,7 +212109,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print b",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print b",
     "wrappedOffset": 0
   },
@@ -212119,7 +212119,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -212144,7 +212144,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print c",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (identifier)))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (identifier)))",
     "wrappedText": "print c",
     "wrappedOffset": 0
   },
@@ -214987,7 +214987,7 @@
                 "$type": 139,
                 "_content": {
                   "$type": 279,
-                  "_print_arguments": {
+                  "_arguments": {
                     "$type": 276,
                     "_item": [
                       {
@@ -215055,7 +215055,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)) (comment))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)) (comment))",
     "wrappedText": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "wrappedOffset": 0
   },
@@ -215072,7 +215072,7 @@
             "$type": 139,
             "_content": {
               "$type": 279,
-              "_print_arguments": {
+              "_arguments": {
                 "$type": 276,
                 "_item": [
                   {
@@ -215124,7 +215124,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print \"a\"\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
     "wrappedText": "print \"a\"\n\n",
     "wrappedOffset": 0
   },
@@ -215139,7 +215139,7 @@
           "$type": 139,
           "_content": {
             "$type": 279,
-            "_print_arguments": {
+            "_arguments": {
               "$type": 276,
               "_item": [
                 {
@@ -215190,7 +215190,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print \"a\"",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
     "wrappedText": "print \"a\"\n",
     "wrappedOffset": 0
   },
@@ -215202,7 +215202,7 @@
       "$type": 139,
       "_content": {
         "$type": 279,
-        "_print_arguments": {
+        "_arguments": {
           "$type": 276,
           "_item": [
             {
@@ -215250,7 +215250,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print \"a\"",
-    "expectedReparseTree": "(print_statement (print_statement_plain (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
+    "expectedReparseTree": "(print_statement (print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
     "wrappedText": "print \"a\"",
     "wrappedOffset": 0
   },
@@ -215260,7 +215260,7 @@
     "pattern": "print_statement_plain",
     "input": {
       "$type": 279,
-      "_print_arguments": {
+      "_arguments": {
         "$type": 276,
         "_item": [
           {
@@ -215307,7 +215307,7 @@
     "pattern": "print_statement_plain",
     "edits": [],
     "expectedSourceOut": "print \"a\"",
-    "expectedReparseTree": "(print_statement_plain (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "expectedReparseTree": "(print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
     "wrappedText": "print \"a\"",
     "wrappedOffset": 0
   },

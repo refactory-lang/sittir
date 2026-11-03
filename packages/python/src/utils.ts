@@ -424,9 +424,9 @@ export const querySlots: QuerySlots = Object.freeze({
 	277: [['items', 0, undefined, '_item']],
 	278: [
 		['chevron', 0, undefined, '_chevron'],
-		['printChevronArguments', 1, undefined, '_print_chevron_arguments']
+		['arguments', 1, undefined, '_arguments']
 	],
-	279: [['printArguments', 0, undefined, '_print_arguments']],
+	279: [['arguments', 0, undefined, '_arguments']],
 	281: [['importList', 0, undefined, '_import_list']],
 	282: [['contents', 0, undefined, '_content']],
 	284: [['value', 0, undefined, '_value']],
@@ -1996,24 +1996,19 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_chevron', 'chevron']],
 		single: [
 			['_chevron', 'PrintStatementChevron.chevron'],
-			['_print_chevron_arguments', 'PrintStatementChevron.printChevronArguments']
+			['_arguments', 'PrintStatementChevron.arguments']
 		],
 		nodeOnly: [
 			['_chevron', 'PrintStatementChevron.chevron', 'a built Chevron', [140]],
-			[
-				'_print_chevron_arguments',
-				'PrintStatementChevron.printChevronArguments',
-				'a built PrintChevronArguments',
-				[277]
-			]
+			['_arguments', 'PrintStatementChevron.arguments', 'a built PrintChevronArguments', [277]]
 		],
-		config: ['chevron', 'printChevronArguments']
+		config: ['chevron', 'arguments']
 	},
 	279: {
 		kind: 'print_statement_plain',
-		required: [['_print_arguments', 'printArguments']],
-		single: [['_print_arguments', 'PrintStatementPlain.printArguments']],
-		nodeOnly: [['_print_arguments', 'PrintStatementPlain.printArguments', 'a built PrintArguments', [276]]]
+		required: [['_arguments', 'arguments']],
+		single: [['_arguments', 'PrintStatementPlain.arguments']],
+		nodeOnly: [['_arguments', 'PrintStatementPlain.arguments', 'a built PrintArguments', [276]]]
 	},
 	281: {
 		kind: 'parenthesized_import_list',

@@ -56,9 +56,13 @@
 (expression_statement_tuple item: (_) @elements)
 (expression_statement_tuple "," @trailingComma .)
 (future_import_statement) @statement.import.future
-(print_statement) @statement.print
 (print_statement_plain) @statement.print
-(print_statement_chevron) @statement.print.chevron
+(print_statement_plain (print_arguments) @arguments)
+(print_statement_plain (print_arguments "," @trailingComma .))
+(print_statement_chevron) @statement.print
+(print_statement_chevron chevron: (chevron expression: (_) @destination))
+(print_statement_chevron (print_chevron_arguments) @arguments)
+(print_statement_chevron (print_chevron_arguments "," @trailingComma .))
 (exec_statement) @statement.exec
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
@@ -80,7 +84,6 @@
 (with_item value: (as_pattern alias: (_) @name))
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
-(chevron) @clause.print.chevron
 (relative_import) @clause.import.relative
 (import_prefix) @clause.import.relative.prefix
 (aliased_import) @clause.import.alias

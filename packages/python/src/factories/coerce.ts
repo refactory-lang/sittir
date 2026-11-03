@@ -6135,9 +6135,9 @@ export function resolvePrintStatementChevron_chevron(
 	return _resolveOneBranch<T.Chevron>(value, 'chevron');
 }
 
-export function resolvePrintStatementChevron_printChevronArguments(
-	value: T.PrintStatementChevron.LooseConfig['printChevronArguments']
-): Admit<T.PrintStatementChevron['_print_chevron_arguments']> {
+export function resolvePrintStatementChevron_arguments(
+	value: T.PrintStatementChevron.LooseConfig['arguments']
+): Admit<T.PrintStatementChevron['_arguments']> {
 	return _resolveOneBranch<T.PrintChevronArguments>(value, 'print_chevron_arguments', undefined, true);
 }
 
@@ -6150,13 +6150,13 @@ export const coerceToPrintStatementChevron: ConfigSeat<
 	currentHandle()?.admit(TSKindId.PrintStatementChevron, [input]);
 	return F.buildPrintStatementChevron({
 		chevron: resolvePrintStatementChevron_chevron(input.chevron),
-		printChevronArguments: resolvePrintStatementChevron_printChevronArguments(input.printChevronArguments)
+		arguments: resolvePrintStatementChevron_arguments(input.arguments)
 	});
 };
 
-export function resolvePrintStatementPlain_printArguments(
-	value: T.PrintStatementPlain.LooseConfig['printArguments']
-): Admit<T.PrintStatementPlain['_print_arguments']> {
+export function resolvePrintStatementPlain_arguments(
+	value: T.PrintStatementPlain.LooseConfig['arguments']
+): Admit<T.PrintStatementPlain['_arguments']> {
 	return _resolveOneBranch<T.PrintArguments>(value, 'print_arguments');
 }
 
@@ -6174,7 +6174,7 @@ export const coerceToPrintStatementPlain: Seat<
 		return input as unknown as ReturnType<typeof F.buildPrintStatementPlain>;
 	return F.buildPrintStatementPlain(
 		_resolveOneBranch<T.PrintArguments>(
-			configFieldOr(input, 'printArguments', () => input),
+			configFieldOr(input, 'arguments', () => input),
 			'print_arguments'
 		)
 	);

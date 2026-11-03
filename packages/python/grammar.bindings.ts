@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "3f28dad89343182de8ce05a53146213c8adb7f9adc87ea115b9321d5771ce15f";
+export const hash = "6e654c7e700328f5567b8838821eea7a15bc031faccc98c31c8b52a52184eaaa";
 
 export const renames = {
 	module: "file",
@@ -22,7 +22,6 @@ export const renames = {
 	import_from_statement: "from_import_statement",
 	with_statement: "resource_statement",
 	pass_statement: "empty_statement",
-	print_statement_chevron: "chevron_print_statement",
 	elif_clause: "else_if_clause",
 	except_clause: "catch_clause",
 	case_clause: "match_case_clause",
@@ -30,7 +29,6 @@ export const renames = {
 	with_item: "item_resource_clause",
 	for_in_clause: "for_comprehension_clause",
 	if_clause: "if_comprehension_clause",
-	chevron: "chevron_print_clause",
 	relative_import: "relative_import_clause",
 	import_prefix: "prefix_relative_import_clause",
 	aliased_import: "alias_import_clause",
@@ -131,6 +129,8 @@ export default grammar(
 			pattern: { "-3": alias("rest_pattern") },
 			pattern_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			primary_expression: { "-1": alias("rest_pattern") },
+			print_statement_chevron: { "2/0": field("arguments") },
+			print_statement_plain: { "1": field("arguments") },
 			relative_import: { "1/0/0": alias("qualified_identifier") },
 			set: { "1": field("elements") },
 			splat_pattern: { "-2": alias("rest_pattern"), "-1": alias("map_rest_pattern") },

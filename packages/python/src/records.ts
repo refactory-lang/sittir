@@ -236,12 +236,8 @@ export const records = {
 	CaseListPatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	PrintArgumentsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	PrintChevronArgumentsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	PrintStatementChevronNode: {
-		words: 12,
-		chevron: { word: 2, width: 5 },
-		print_chevron_arguments: { word: 7, width: 5 }
-	},
-	PrintStatementPlainNode: { words: 7, print_arguments: { word: 2, width: 5 } },
+	PrintStatementChevronNode: { words: 12, chevron: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
+	PrintStatementPlainNode: { words: 7, arguments: { word: 2, width: 5 } },
 	ParenthesizedImportListNode: { words: 7, import_list: { word: 2, width: 5 } },
 	ComprehensionClausesNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
 	IntegerHexNode: { words: 10, radix_prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
