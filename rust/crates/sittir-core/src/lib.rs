@@ -14,6 +14,7 @@ pub mod boundary;
 pub mod classify;
 pub mod engine;
 pub mod error_read;
+pub mod heap;
 pub mod layout;
 pub mod layout_kinds;
 pub mod line_endings;

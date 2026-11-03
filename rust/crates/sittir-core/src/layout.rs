@@ -9,6 +9,7 @@
 //! payload one pointer, and reads it through `Layout`, so an absent layout
 //! reads as an empty one.
 
+use crate::heap::HeapBytes;
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
@@ -75,6 +76,23 @@ pub struct NodeLayout<T> {
     pub unit_rows: Vec<UnitRow>,
 }
 
+impl<T: HeapBytes> HeapBytes for NodeLayout<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { trivia, edges, at, span, flanks, sides, changed: crate::slot::ChangedEdges { leading: _, trailing: _ }, units, slots, separator, captures, unit_rows } = self;
+        trivia.heap_bytes()
+            + edges.heap_bytes()
+            + at.heap_bytes()
+            + span.heap_bytes()
+            + flanks.heap_bytes()
+            + sides.heap_bytes()
+            + units.heap_bytes()
+            + slots.heap_bytes()
+            + separator.heap_bytes()
+            + captures.heap_bytes()
+            + unit_rows.heap_bytes()
+    }
+}
+
 /// The row of one unit child a read took inline, by the slot that holds it
 /// (its wire key) and its item in that slot.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -82,6 +100,13 @@ pub struct UnitRow {
     pub slot: &'static str,
     pub item: crate::types::ItemIndex,
     pub row: crate::types::NodeIndex,
+}
+
+impl HeapBytes for UnitRow {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, item: _, row: _ } = self;
+        slot.heap_bytes()
+    }
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -101,6 +126,13 @@ pub struct SlotLayout {
     /// another than the slot's (`prepare::SlotTarget::separators`). The
     /// prepare walk fills it; it never crosses.
     pub tokens: Vec<Option<KindId>>,
+}
+
+impl HeapBytes for SlotLayout {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, before, after, separator, tokens } = self;
+        slot.heap_bytes() + before.heap_bytes() + after.heap_bytes() + separator.heap_bytes() + tokens.heap_bytes()
+    }
 }
 
 impl SlotLayout {
@@ -202,6 +234,13 @@ pub struct UnitSides<T> {
     pub slot: String,
     pub item: crate::types::ItemIndex,
     pub trivia: NodeTrivia<T>,
+}
+
+impl<T: HeapBytes> HeapBytes for UnitSides<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { slot, item: _, trivia } = self;
+        slot.heap_bytes() + trivia.heap_bytes()
+    }
 }
 
 /// The sides `units` holds for the unit at item `item` of the slot `slot`.
@@ -784,6 +823,12 @@ mod tests {
     /// grammar's comment template.
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
+
+    impl crate::heap::HeapBytes for MockTrivia {
+        fn heap_bytes(&self) -> usize {
+            self.0.capacity()
+        }
+    }
 
     crate::refuse_napi_codec!(MockTrivia);
 

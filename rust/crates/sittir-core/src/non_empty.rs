@@ -2,6 +2,7 @@
 //! whose emptiness is refused where the list is made rather than where it is
 //! read.
 
+use crate::heap::HeapBytes;
 use std::ops::{Deref, DerefMut};
 
 /// A list that holds at least one item: a `repeat1` slot's storage.
@@ -15,6 +16,13 @@ pub struct EmptyList;
 impl std::fmt::Display for EmptyList {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str("a repeat1 list holds no item")
+    }
+}
+
+impl<T: HeapBytes> HeapBytes for NonEmptyVec<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self(items) = self;
+        items.heap_bytes()
     }
 }
 

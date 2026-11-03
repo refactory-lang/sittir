@@ -8,6 +8,7 @@
 //!
 //! The derive writes each node type's `WriteCell` through these helpers.
 
+use crate::heap::HeapBytes;
 use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, Row, SideRecord, SideSlot, Sides};
 use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
@@ -49,7 +50,7 @@ pub struct RecordSink<'a, T> {
     leaves: Vec<(String, ItemIndex, NodeTrivia<T>)>,
 }
 
-impl<'a, T: Clone> RecordSink<'a, T> {
+impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     /// A built write's sink into `chunks`, its trivia kept in `store`.
     pub fn built(chunks: &'a mut BuiltChunks, store: &'a TriviaStore<T>, link: &'a mut Link<'a>) -> Self {
         Self { writer: BuiltWriter::new(chunks), store, link, nested: false, leaf: None, leaves: Vec::new() }
@@ -115,7 +116,7 @@ impl<T, C: WriteCell<T> + ?Sized> WriteCell<T> for Box<C> {
     }
 }
 
-impl<T: Clone, C: WriteCell<T>, const ADJACENT: bool> WriteCell<T> for SlotValue<C, ADJACENT> {
+impl<T: Clone + HeapBytes, C: WriteCell<T>, const ADJACENT: bool> WriteCell<T> for SlotValue<C, ADJACENT> {
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<CellWord, ArenaError> {
         match self {
             SlotValue::Coord(coord) => coordinate_cell(sink, coord),
@@ -126,7 +127,7 @@ impl<T: Clone, C: WriteCell<T>, const ADJACENT: bool> WriteCell<T> for SlotValue
 
 /// Bare text is a captured string's cell, an entry of the blank kind. An
 /// `ERROR` node keeps its kind, as a built leaf.
-impl<T: Clone> WriteCell<T> for VerbatimNode {
+impl<T: Clone + HeapBytes> WriteCell<T> for VerbatimNode {
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<CellWord, ArenaError> {
         CellWord::of(sink.writer.entry(self.kind, &self.text)?, ChangedEdges::default())
     }
@@ -140,7 +141,7 @@ impl<T: Clone> WriteCell<T> for VerbatimNode {
 ///
 /// `ArenaError::Unwritable` for a coordinate with no stamped kind or naming
 /// a parsed leaf, which only a builder links; else what the link refuses.
-pub fn coordinate_cell<T: Clone>(sink: &mut RecordSink<'_, T>, coord: &NodeCoordinate) -> Result<CellWord, ArenaError> {
+pub fn coordinate_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, coord: &NodeCoordinate) -> Result<CellWord, ArenaError> {
     let kind = coord.kind.ok_or(ArenaError::Unwritable("a coordinate with no stamped kind"))?;
     let changed = coord.changed();
     match (sink.link)(coord)? {
@@ -171,7 +172,7 @@ fn bare_leaf<T>(layout: &NodeLayout<T>) -> bool {
 ///
 /// `ArenaError::Unwritable` for a leaf read from a tree, or one with a layout
 /// fact its cell and its site cannot hold; else what the arena refuses.
-pub fn leaf_cell<T: Clone>(sink: &mut RecordSink<'_, T>, kind: KindId, text: &str, layout: Option<&NodeLayout<T>>) -> Result<CellWord, ArenaError> {
+pub fn leaf_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, kind: KindId, text: &str, layout: Option<&NodeLayout<T>>) -> Result<CellWord, ArenaError> {
     let (changed, trivia) = match layout {
         None => (ChangedEdges::default(), None),
         Some(layout) if layout.at.is_some() => return Err(ArenaError::Unwritable("a node read from a tree in a built record")),
@@ -200,7 +201,7 @@ pub fn leaf_cell<T: Clone>(sink: &mut RecordSink<'_, T>, kind: KindId, text: &st
 /// `ArenaError::Unwritable` for a node read from a tree;
 /// `ArenaError::UnknownSlot` for a layout entry naming a slot with no
 /// stamped word; else what `cells` or the arena refuses.
-pub fn write_record<T: Clone>(
+pub fn write_record<T: Clone + HeapBytes>(
     sink: &mut RecordSink<'_, T>,
     kind: KindId,
     words: u32,
@@ -247,7 +248,7 @@ pub fn write_record<T: Clone>(
 /// # Errors
 ///
 /// What the value's `write_cell` refuses.
-pub fn write_slot<T: Clone, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value: &C, slot: &str) -> Result<CellWord, ArenaError> {
+pub fn write_slot<T: Clone + HeapBytes, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value: &C, slot: &str) -> Result<CellWord, ArenaError> {
     let cell = value.write_cell(sink)?;
     keep_leaf_site(sink, slot, ItemIndex(0));
     Ok(cell)
@@ -259,7 +260,7 @@ pub fn write_slot<T: Clone, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value
 /// # Errors
 ///
 /// What an item's `write_cell` or the arena refuses.
-pub fn write_list<'i, T: Clone, C: WriteCell<T> + 'i>(sink: &mut RecordSink<'_, T>, items: impl IntoIterator<Item = &'i C>, slot: &str) -> Result<CellWord, ArenaError> {
+pub fn write_list<'i, T: Clone + HeapBytes, C: WriteCell<T> + 'i>(sink: &mut RecordSink<'_, T>, items: impl IntoIterator<Item = &'i C>, slot: &str) -> Result<CellWord, ArenaError> {
     let cells = items
         .into_iter()
         .enumerate()
@@ -274,7 +275,7 @@ pub fn write_list<'i, T: Clone, C: WriteCell<T> + 'i>(sink: &mut RecordSink<'_, 
 
 /// Keeps the trivia of the built leaf just written, the value at `item` of
 /// the slot `slot`, for its holder to keep at this site.
-fn keep_leaf_site<T: Clone>(sink: &mut RecordSink<'_, T>, slot: &str, item: ItemIndex) {
+fn keep_leaf_site<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, slot: &str, item: ItemIndex) {
     if let Some(trivia) = sink.leaf.take() {
         sink.leaves.push((slot.to_owned(), item, trivia));
     }
@@ -285,7 +286,7 @@ fn keep_leaf_site<T: Clone>(sink: &mut RecordSink<'_, T>, slot: &str, item: Item
 /// # Errors
 ///
 /// What the arena refuses.
-pub fn captured_cell<T: Clone>(sink: &mut RecordSink<'_, T>, text: &str) -> Result<CellWord, ArenaError> {
+pub fn captured_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, text: &str) -> Result<CellWord, ArenaError> {
     CellWord::of(sink.writer.entry(KindId::BLANK, text)?, ChangedEdges::default())
 }
 

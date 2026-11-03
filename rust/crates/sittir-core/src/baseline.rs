@@ -29,6 +29,7 @@
 //! framed or sliced inside it by its index, with the breaks written around
 //! each (`Baseline::frame`).
 
+use crate::heap::HeapBytes;
 use std::collections::HashMap;
 
 use crate::types::NodeIndex;
@@ -121,6 +122,43 @@ pub struct Baseline {
     opens: HashMap<u32, (Option<Tally>, Tally)>,
     closes: HashMap<u32, (Tally, Tally)>,
     frames: HashMap<NodeIndex, FrameItems>,
+}
+
+impl HeapBytes for Tally {
+    fn heap_bytes(&self) -> usize {
+        let Self { breaks: _, spaces: _, tabs: _ } = self;
+        0
+    }
+}
+
+impl HeapBytes for Written {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Text(text) => text.heap_bytes(),
+            Self::Node(index) => index.heap_bytes(),
+        }
+    }
+}
+
+impl HeapBytes for Item {
+    fn heap_bytes(&self) -> usize {
+        let Self { what, before, after } = self;
+        what.heap_bytes() + before.heap_bytes() + after.heap_bytes()
+    }
+}
+
+impl HeapBytes for FrameItems {
+    fn heap_bytes(&self) -> usize {
+        let Self { open, close, items } = self;
+        open.heap_bytes() + close.heap_bytes() + items.heap_bytes()
+    }
+}
+
+impl HeapBytes for Baseline {
+    fn heap_bytes(&self) -> usize {
+        let Self { opens, closes, frames } = self;
+        opens.heap_bytes() + closes.heap_bytes() + frames.heap_bytes()
+    }
 }
 
 impl Baseline {

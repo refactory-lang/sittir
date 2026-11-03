@@ -3,6 +3,7 @@
 //! is render-invisible and picking one would be a guess, or an `ERROR` node,
 //! which renders as its text and keeps its kind.
 
+use crate::heap::HeapBytes;
 use crate::render::{Render, RenderResult, RenderSink};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -10,6 +11,13 @@ pub struct VerbatimNode {
     pub text: String,
     /// `KindId::ERROR` for an `ERROR` node, `KindId::BLANK` for bare text.
     pub kind: crate::types::KindId,
+}
+
+impl HeapBytes for VerbatimNode {
+    fn heap_bytes(&self) -> usize {
+        let Self { text, kind: _ } = self;
+        text.heap_bytes()
+    }
 }
 
 impl Render for VerbatimNode {

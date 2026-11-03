@@ -24,6 +24,16 @@ export interface BaselineRun {
   tabs?: number
 }
 
+/**
+ * What the live trees hold natively and what their reports have told V8
+ * (`tree_memory`), in bytes.
+ */
+export interface TreeMemory {
+  trees: number
+  counted: number
+  reported: number
+}
+
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   /**
@@ -580,6 +590,14 @@ export declare function text(treeId: number, span: { start: number; end: number 
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId = number
+
+/**
+ * What the live trees hold natively and what their reports have
+ * told V8, once every tree that grew is reported: `{ trees, counted,
+ * reported }`. A diagnostic: the two agree, and both are 0 once
+ * every tree is disposed.
+ */
+export declare function treeMemory(): { trees: number; counted: number; reported: number }
 
 /**
  * The entries of `side` (`leading`, `trailing` or `inner`) of the
