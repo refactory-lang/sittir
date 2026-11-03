@@ -74,16 +74,16 @@ fn parse(source: &str) -> tree_sitter::Tree {
     parser.parse(source, None).unwrap()
 }
 
-/// Reads `probe` on a thread of `stack` bytes and drops the read there:
-/// how many segments the read moved to.
-fn read_on_thread(probe: Probe, stack: usize) -> usize {
+/// Reads `probe` on a thread of `stack` bytes and ends the read there with
+/// `end`: how many segments the read moved to.
+fn read_on_thread(probe: Probe, stack: usize, end: fn(RenderRoot)) -> usize {
     let source = probe.source();
     std::thread::Builder::new()
         .stack_size(stack)
         .spawn(move || {
             let tree = parse(&source);
             let mut ctx = ReadCtx::new(&source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
-            RenderRoot::read_root(&mut tree.walk(), &mut ctx, Depth::All).unwrap();
+            end(RenderRoot::read_root(&mut tree.walk(), &mut ctx, Depth::All).unwrap());
             sittir_core::stack::segments_grown()
         })
         .unwrap()
@@ -93,7 +93,7 @@ fn read_on_thread(probe: Probe, stack: usize) -> usize {
 
 #[test]
 fn a_nesting_of_250_levels_reads_on_two_mib() {
-    assert_eq!(read_on_thread(Probe::Nested(250), TWO_MIB), 0);
+    assert_eq!(read_on_thread(Probe::Nested(250), TWO_MIB, drop), 0);
 }
 
 /// A Worker thread's stack: the read outgrows it and moves to segments; the
@@ -102,7 +102,18 @@ const FOUR_MIB: usize = 4 * 1024 * 1024;
 
 #[test]
 fn a_nesting_of_10000_levels_reads_past_and_drops_on_four_mib() {
-    assert!(read_on_thread(Probe::Nested(10_000), FOUR_MIB) > 0);
+    assert!(read_on_thread(Probe::Nested(10_000), FOUR_MIB, drop) > 0);
+}
+
+/// Takes a read apart a level at a time (`codec::release`), as a render
+/// ends with its decoded input.
+fn release(root: RenderRoot) {
+    sittir_core::codec::release::<sittir_rust::render::node::TriviaNode, _>(root);
+}
+
+#[test]
+fn a_nesting_of_100000_levels_reads_and_is_released_on_four_mib() {
+    assert!(read_on_thread(Probe::Nested(100_000), FOUR_MIB, release) > 0);
 }
 
 /// A child of the depth test: reads `STACK_PROBE` on a thread of `STACK_KIB`
@@ -112,7 +123,7 @@ fn a_nesting_of_10000_levels_reads_past_and_drops_on_four_mib() {
 fn stack_probe_child() {
     let Ok(probe) = std::env::var("STACK_PROBE") else { return };
     let kib: usize = std::env::var("STACK_KIB").unwrap().parse().unwrap();
-    assert_eq!(read_on_thread(Probe::from_env(&probe), kib * 1024), 0, "the read moved to a segment");
+    assert_eq!(read_on_thread(Probe::from_env(&probe), kib * 1024, drop), 0, "the read moved to a segment");
 }
 
 /// Whether the typed read reads `probe` in place on a stack of `kib` KiB:

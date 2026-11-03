@@ -1,0 +1,57 @@
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+
+const fixture = fileURLToPath(new URL('../../common/tests/fixtures/deep-tree.mts', import.meta.url));
+const LEVELS = [2_000, 4_000, 10_000];
+const STACK_REFUSAL = { ok: false, refusal: 'RangeError: Maximum call stack size exceeded' };
+
+interface Exit {
+	status: number | null;
+	signal: NodeJS.Signals | null;
+	outcome: unknown;
+}
+
+function runCase(...args: string[]): Promise<Exit> {
+	return new Promise((resolve, reject) => {
+		const child = spawn(process.execPath, ['--import', 'tsx', fixture, ...args], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			env: { ...process.env, SITTIR_BACKEND: 'native' },
+			stdio: ['ignore', 'pipe', 'inherit']
+		});
+		let out = '';
+		child.stdout.setEncoding('utf8').on('data', (chunk: string) => (out += chunk));
+		child.once('error', reject);
+		child.once('close', (status, signal) => {
+			const last = out.trim().split('\n').at(-1);
+			resolve({ status, signal, outcome: last ? JSON.parse(last) : undefined });
+		});
+	});
+}
+
+const cells = (['object', 'arena'] as const).flatMap((storage) =>
+	(['render', 'read'] as const).flatMap((side) =>
+		(['main', 'worker'] as const).flatMap((thread) => LEVELS.map((levels) => ({ storage, side, thread, levels })))
+	)
+);
+
+describe('a tree nested thousands of levels deep', () => {
+	it.concurrent.each(cells)(
+		'$side on $storage storage, $levels levels on the $thread thread, ends without ending the process',
+		async ({ storage, side, thread, levels }) => {
+			const { status, signal, outcome } = await runCase(storage, side, String(levels), thread);
+			expect({ status, signal }).toEqual({ status: 0, signal: null });
+			if (storage === 'arena') expect(outcome).toEqual({ ok: true });
+			else expect([{ ok: true }, STACK_REFUSAL]).toContainEqual(outcome);
+		},
+		120_000
+	);
+
+	it('decodes and releases a wire value 100000 levels deep on a Worker', async () => {
+		expect(await runCase('object', 'decode', '100000', 'worker')).toEqual({
+			status: 0,
+			signal: null,
+			outcome: { ok: true }
+		});
+	}, 120_000);
+});

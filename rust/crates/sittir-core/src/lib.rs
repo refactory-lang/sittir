@@ -12,6 +12,7 @@
 pub mod baseline;
 pub mod boundary;
 pub mod classify;
+pub mod codec;
 pub mod engine;
 pub mod error_read;
 pub mod layout;
@@ -47,18 +48,6 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a node declaration into its typed reader.
 pub use sittir_node_macros::Node;
-
-/// States a grammar's trivia type once, for every node of the grammar:
-/// each listed type's `HasTrivia::Trivia`, the trivia a coordinate of it
-/// carries outside its span.
-#[macro_export]
-macro_rules! grammar_trivia {
-    ($trivia:ty; $($node:ty),* $(,)?) => {
-        $(impl $crate::trivia::HasTrivia for $node {
-            type Trivia = $trivia;
-        })*
-    };
-}
 
 #[cfg(feature = "napi-bindings")]
 #[doc(hidden)]

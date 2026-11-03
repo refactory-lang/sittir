@@ -587,7 +587,7 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for Box<NodeLayout<T>>
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue for Box<NodeLayout<T>>
 {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
@@ -596,7 +596,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for Box<NodeLayout<T>> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for Box<NodeLayout<T>> {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { NodeLayout::to_napi_value(env, *val) }
@@ -604,7 +604,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
     for NodeLayout<T>
 {
     unsafe fn from_napi_value(
@@ -648,7 +648,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for UnitSides<T> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue for UnitSides<T> {
     /// `{ slot, item, leading?, trailing?, inner? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
@@ -664,7 +664,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for UnitSides<T> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for UnitSides<T> {
     /// `{ slot, item, leading?, trailing?, inner? }`, each side only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
@@ -748,7 +748,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NodeLayout<T> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for NodeLayout<T> {
     /// `{ trivia?, at?, span?, flanks?, units?, slots?, separator? }`, each only when present: what a read writes.
     /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
@@ -786,6 +786,7 @@ mod tests {
     struct MockTrivia(String);
 
     crate::refuse_napi_codec!(MockTrivia);
+    crate::grammar_nodes!(MockTrivia; MockTrivia);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
         fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {

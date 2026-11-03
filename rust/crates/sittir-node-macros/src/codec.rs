@@ -1,10 +1,14 @@
-//! The wire codec a node declaration expands to, in today's napi object
-//! form: `FromNapiValue` and `ToNapiValue` for the type and for `Box` of it.
-//! Every item sits inside `::sittir_core::napi_codec!`, which keeps it only
-//! when `sittir-core` is built with napi bindings, and names napi as
-//! `::sittir_core::__napi`.
+//! The wire codec a node declaration expands to: its place in the codec's
+//! loop (`sittir_core::codec::Codec`), in today's napi object form, and how
+//! it is taken apart (`codec::Dismantle`, `codec::Parts`). A struct with a
+//! child slot decodes and encodes in a frame of its own, field by field in
+//! declaration order; every other node is decoded and encoded whole where it
+//! is held, by its napi codec. `FromNapiValue` and `ToNapiValue` of a node a
+//! frame can hold are entries into the loop. The napi items sit inside
+//! `::sittir_core::napi_codec!`, which keeps them only when `sittir-core` is
+//! built with napi bindings, and name napi as `::sittir_core::__napi`.
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Literal, TokenStream};
 use quote::quote;
 use syn::{Ident, LitStr, Path, Type};
 
@@ -13,6 +17,16 @@ pub struct WireField<'a> {
     pub ident: &'a Ident,
     pub ty: &'a Type,
     pub key: &'a LitStr,
+    /// A slot: the field holds the node's children.
+    pub slot: bool,
+}
+
+impl WireField<'_> {
+    /// Whether the field holds nodes the loop reads and writes: a slot that
+    /// is neither a presence flag nor captured text.
+    fn holds_nodes(&self) -> bool {
+        self.slot && !is_flag(self.ty) && !crate::expand::is_text(self.ty)
+    }
 }
 
 /// A choice variant as the wire sees it.
@@ -42,6 +56,11 @@ fn napi() -> TokenStream {
     quote!(::sittir_core::__napi)
 }
 
+/// The grammar a node belongs to: the codec's frames are its trivia type's.
+fn grammar(ident: &Ident) -> TokenStream {
+    quote!(<#ident as ::sittir_core::trivia::HasTrivia>::Trivia)
+}
+
 fn c_key(key: &LitStr) -> syn::Result<syn::LitCStr> {
     let value = ::std::ffi::CString::new(key.value()).map_err(|_| syn::Error::new_spanned(key, "a wire key holds no NUL byte"))?;
     Ok(syn::LitCStr::new(&value, key.span()))
@@ -51,16 +70,20 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
-/// A list whose items may each be absent: `Vec<Option<_>>` or
-/// `NonEmptyVec<Option<_>>`, encoded through `boundary::holes`.
-fn holds_absent_items(ty: &Type) -> bool {
-    let Type::Path(path) = ty else { return false };
-    let Some(list) = path.path.segments.last() else { return false };
+/// The item type of a list whose items may each be absent: `X` of
+/// `Vec<Option<X>>` or `NonEmptyVec<Option<X>>`, encoded through
+/// `boundary::holes` or, in a frame, `codec::Holes`.
+fn absent_item(ty: &Type) -> Option<&Type> {
+    let Type::Path(path) = ty else { return None };
+    let list = path.path.segments.last()?;
     if list.ident != "Vec" && list.ident != "NonEmptyVec" {
-        return false;
+        return None;
     }
-    let syn::PathArguments::AngleBracketed(args) = &list.arguments else { return false };
-    matches!(args.args.first(), Some(syn::GenericArgument::Type(item)) if is_option(item))
+    let syn::PathArguments::AngleBracketed(args) = &list.arguments else { return None };
+    match args.args.first() {
+        Some(syn::GenericArgument::Type(item)) => crate::expand::inner_of(item, "Option"),
+        _ => None,
+    }
 }
 
 pub(crate) fn is_kind_key(key: &LitStr) -> bool {
@@ -91,33 +114,91 @@ fn boxed(ident: &Ident) -> TokenStream {
     }
 }
 
+/// `FromNapiValue` and `ToNapiValue` of a node a frame can hold: entries
+/// into the loop.
+fn loop_entries(ident: &Ident) -> TokenStream {
+    let (napi, w) = (napi(), grammar(ident));
+    let boxed = boxed(ident);
+    quote! {
+        impl #napi::bindgen_prelude::FromNapiValue for #ident {
+            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+                unsafe { ::sittir_core::codec::decode::<#w, Self>(env, napi_val) }
+            }
+        }
+        impl #napi::bindgen_prelude::ToNapiValue for #ident {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                unsafe { ::sittir_core::codec::encode::<#w, Self>(env, val) }
+            }
+        }
+        #boxed
+    }
+}
+
+/// A node no frame is needed for: decoded and encoded whole by its napi
+/// codec, dropped in place, with no steps of its own.
+fn nodeless(ident: &Ident) -> TokenStream {
+    let w = grammar(ident);
+    quote! {
+        ::sittir_core::nodeless_codec!(#ident);
+        ::sittir_core::napi_codec! {
+            ::sittir_core::nodeless_steps!(#ident; #w);
+        }
+    }
+}
+
+/// The read of field `field` from `obj`, by its key.
+fn field_read(owner: &str, field: &WireField<'_>) -> syn::Result<TokenStream> {
+    let key = c_key(field.key)?;
+    if is_kind_key(field.key) {
+        return Ok(quote!({
+            let __shown: ::sittir_core::types::KindId = unsafe { ::sittir_core::boundary::optional(env, obj, #key, #owner)? }.unwrap_or(__KIND);
+            if __shown != __KIND && !__DISPLAYS.contains(&__shown) {
+                return ::core::result::Result::Err(::sittir_core::__napi::Error::from_reason(::std::format!(
+                    "{}: $type {} is neither its kind nor one it is shown as", #owner, __shown.0
+                )));
+            }
+            __shown
+        }));
+    }
+    let read = if is_option(field.ty) {
+        quote!(optional)
+    } else if is_flag(field.ty) {
+        quote!(flag)
+    } else {
+        quote!(required)
+    };
+    Ok(quote!(unsafe { ::sittir_core::boundary::#read(env, obj, #key, #owner)? }))
+}
+
 /// The initializers that read `fields` from `obj`, each by its key.
 fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenStream>> {
     fields
         .iter()
         .map(|field| {
-            let (ident, key) = (field.ident, c_key(field.key)?);
-            if is_kind_key(field.key) {
-                return Ok(quote!(#ident: {
-                    let __shown: ::sittir_core::types::KindId = unsafe { ::sittir_core::boundary::optional(env, obj, #key, #owner)? }.unwrap_or(__KIND);
-                    if __shown != __KIND && !__DISPLAYS.contains(&__shown) {
-                        return ::core::result::Result::Err(::sittir_core::__napi::Error::from_reason(::std::format!(
-                            "{}: $type {} is neither its kind nor one it is shown as", #owner, __shown.0
-                        )));
-                    }
-                    __shown
-                },));
-            }
-            let read = if is_option(field.ty) {
-                quote!(optional)
-            } else if is_flag(field.ty) {
-                quote!(flag)
-            } else {
-                quote!(required)
-            };
-            Ok(quote!(#ident: unsafe { ::sittir_core::boundary::#read(env, obj, #key, #owner)? },))
+            let (ident, read) = (field.ident, field_read(owner, field)?);
+            Ok(quote!(#ident: #read,))
         })
         .collect()
+}
+
+/// The entry `field` writes, its value `value`: present only when an
+/// optional field is.
+fn field_entry(field: &WireField<'_>, value: &TokenStream) -> syn::Result<TokenStream> {
+    let (napi, key) = (napi(), c_key(field.key)?);
+    Ok(if is_option(field.ty) {
+        quote!(::sittir_core::boundary::present(env, #key, #value)?)
+    } else if absent_item(field.ty).is_some() {
+        quote!(::core::option::Option::Some((#key, ::sittir_core::boundary::holes(env, ::std::vec::Vec::from(#value))?)))
+    } else {
+        quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #value)?)))
+    })
+}
+
+/// `$type`'s entry, first, when no field holds it.
+fn kind_entry(fields: &[WireField<'_>]) -> Option<TokenStream> {
+    let napi = napi();
+    (!fields.iter().any(|field| is_kind_key(field.key)))
+        .then(|| quote!(::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?))))
 }
 
 /// `{ $type, …fields }` in declaration order, defined in one call: an optional
@@ -125,19 +206,15 @@ fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenS
 fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let napi = napi();
     let names = fields.iter().map(|field| field.ident);
-    let mut entries = Vec::new();
-    for field in fields {
-        let (name, key) = (field.ident, c_key(field.key)?);
-        entries.push(if is_option(field.ty) {
-            quote!(::sittir_core::boundary::present(env, #key, #name)?,)
-        } else if holds_absent_items(field.ty) {
-            quote!(::core::option::Option::Some((#key, ::sittir_core::boundary::holes(env, ::std::vec::Vec::from(#name))?)),)
-        } else {
-            quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
-        });
-    }
-    let kind = (!fields.iter().any(|field| is_kind_key(field.key)))
-        .then(|| quote!(::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)),));
+    let entries = fields
+        .iter()
+        .map(|field| {
+            let name = field.ident;
+            let entry = field_entry(field, &quote!(#name))?;
+            Ok(quote!(#entry,))
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
+    let kind = kind_entry(fields).map(|entry| quote!(#entry,));
     Ok(quote! {
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
@@ -153,13 +230,18 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     })
 }
 
-/// A struct: decoded from an object field by field, encoded as one.
+/// A struct: decoded from an object field by field, encoded as one. One
+/// with a child slot does both in a frame of its own; one without, whole.
 pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+    if fields.iter().any(WireField::holds_nodes) {
+        return framed(ident, fields);
+    }
     let napi = napi();
     let reads = field_reads(&ident.to_string(), &fields.iter().collect::<Vec<_>>())?;
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
-    Ok(gated(&quote! {
+    let nodeless = nodeless(ident);
+    let codec = gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
@@ -168,7 +250,245 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
         }
         #encode
         #boxed
-    }))
+    });
+    Ok(quote!(#codec #nodeless))
+}
+
+fn usize_lit(n: usize) -> Literal {
+    Literal::usize_unsuffixed(n)
+}
+
+/// A struct with a child slot: its frames, which read and write it field by
+/// field in declaration order, a child slot by the loop. A child's refusal is
+/// decorated with the field that holds it, as napi's object derive does.
+fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+    let (napi, w) = (napi(), grammar(ident));
+    let owner = ident.to_string();
+    let codec = quote!(::sittir_core::codec);
+    let begun = quote!(::sittir_core::codec::Begun);
+    let names: Vec<&Ident> = fields.iter().map(|field| field.ident).collect();
+    let tys: Vec<&Type> = fields.iter().map(|field| field.ty).collect();
+    let kind = kind_entry(fields);
+    let offset = usize::from(kind.is_some());
+    let entry_count = usize_lit(fields.len() + offset);
+    let kind_first = kind.map(|entry| quote!(entries[0] = #entry;));
+    let (mut decode_waits, mut encode_waits) = (Vec::new(), Vec::new());
+    let (mut reads, mut resumes, mut refusals) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut writes, mut rewrites, mut parts) = (Vec::new(), Vec::new(), Vec::new());
+    for (index, field) in fields.iter().enumerate() {
+        let (name, ty) = (field.ident, field.ty);
+        let (at, slot) = (usize_lit(index), usize_lit(index + offset));
+        let key = c_key(field.key)?;
+        if !field.holds_nodes() {
+            let read = field_read(&owner, field)?;
+            reads.push(quote!(#at => frame.#name = ::core::option::Option::Some(#read),));
+            let entry = field_entry(field, &quote!(value))?;
+            writes.push(quote!(#at => {
+                let value = frame.#name.take().expect("a frame writes each field once");
+                frame.entries[#slot] = #entry;
+            }));
+            continue;
+        }
+        parts.push(quote!(#codec::Dismantle::<#w>::dismantle(self.#name, out);));
+        let optional = is_option(ty);
+        let inner = if optional { crate::expand::inner_of(ty, "Option").unwrap_or(ty) } else { ty };
+        decode_waits.push(quote!(#name(<#inner as #codec::Codec<#w>>::DecodeWait)));
+        refusals.push(quote!(__DecodeWait::#name(_) => ::sittir_core::boundary::field_refusal(err, #owner, #key),));
+        let store = if optional { quote!(::core::option::Option::Some(::core::option::Option::Some(value))) } else { quote!(::core::option::Option::Some(value)) };
+        let read_on = quote! {
+            match __begun.map_err(|err| ::sittir_core::boundary::field_refusal(err, #owner, #key))? {
+                #begun::Whole(value) => frame.#name = #store,
+                #begun::Waits(wait) => {
+                    frame.wait = __DecodeWait::#name(wait);
+                    return ::core::result::Result::Ok(#begun::Waits(()));
+                }
+            }
+        };
+        let read = if optional {
+            quote!(#at => match unsafe { ::sittir_core::boundary::optional_raw(env, obj, #key)? } {
+                ::core::option::Option::None => frame.#name = ::core::option::Option::Some(::core::option::Option::None),
+                ::core::option::Option::Some(raw) => {
+                    let __begun = unsafe { <#inner as #codec::Codec<#w>>::decode(env, raw, above) };
+                    #read_on
+                }
+            },)
+        } else {
+            quote!(#at => {
+                let raw = unsafe { ::sittir_core::boundary::required_raw(env, obj, #key)? };
+                let __begun = unsafe { <#inner as #codec::Codec<#w>>::decode(env, raw, above) };
+                #read_on
+            })
+        };
+        reads.push(read);
+        resumes.push(quote!(__DecodeWait::#name(wait) => {
+            let __begun = unsafe { <#inner as #codec::Codec<#w>>::decoded(env, wait, child, above) };
+            #read_on
+            frame.at = #at + 1;
+        }));
+        let (written, value) = match absent_item(ty) {
+            Some(item) if !optional => (quote!(#codec::Holes<#item>), quote!(#codec::Holes(::std::vec::Vec::from(value)))),
+            _ => (quote!(#inner), quote!(value)),
+        };
+        encode_waits.push(quote!(#name(<#written as #codec::Codec<#w>>::EncodeWait)));
+        let write_on = quote! {
+            match __begun? {
+                #begun::Whole(value) => frame.entries[#slot] = ::core::option::Option::Some((#key, value)),
+                #begun::Waits(wait) => {
+                    frame.wait = __EncodeWait::#name(wait);
+                    return ::core::result::Result::Ok(#begun::Waits(()));
+                }
+            }
+        };
+        writes.push(if optional {
+            quote!(#at => if let ::core::option::Option::Some(value) = frame.#name.take().expect("a frame writes each field once") {
+                let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
+                #write_on
+            },)
+        } else {
+            quote!(#at => {
+                let value = frame.#name.take().expect("a frame writes each field once");
+                let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
+                #write_on
+            })
+        });
+        rewrites.push(quote!(__EncodeWait::#name(wait) => {
+            let __begun = unsafe { <#written as #codec::Codec<#w>>::encoded(env, wait, child, above) };
+            #write_on
+            frame.at = #at + 1;
+        }));
+    }
+    let whole = quote!(<#w as #codec::Nodes>::Whole);
+    let decode_frame = quote!(<#w as #codec::Frames>::DecodeFrame);
+    let encode_frame = quote!(<#w as #codec::Frames>::EncodeFrame);
+    let take_apart = quote! {
+        impl #codec::Dismantle<#w> for #ident {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                out.push(<Self as #codec::Listed<#w>>::whole(self));
+            }
+        }
+        impl #codec::Parts<#w> for #ident {
+            fn parts(self, out: &mut ::std::vec::Vec<#whole>) {
+                #(#parts)*
+            }
+        }
+    };
+    let steps = gated(&quote! {
+        #[doc(hidden)]
+        pub struct __Decoding {
+            obj: #napi::sys::napi_value,
+            at: usize,
+            wait: __DecodeWait,
+            #(#names: ::core::option::Option<#tys>,)*
+        }
+        #[doc(hidden)]
+        #[allow(non_camel_case_types, reason = "a wait is named for the field it is read into")]
+        pub enum __DecodeWait {
+            None,
+            #(#decode_waits,)*
+        }
+        #[doc(hidden)]
+        pub struct __Encoding {
+            at: usize,
+            wait: __EncodeWait,
+            entries: [::core::option::Option<(&'static ::std::ffi::CStr, #napi::sys::napi_value)>; #entry_count],
+            #(#names: ::core::option::Option<#tys>,)*
+        }
+        #[doc(hidden)]
+        #[allow(non_camel_case_types, reason = "a wait is named for the field it is written from")]
+        pub enum __EncodeWait {
+            None,
+            #(#encode_waits,)*
+        }
+        impl #codec::Steps<#w> for #ident {
+            type Decoding = __Decoding;
+            type Encoding = __Encoding;
+            unsafe fn decode_step(
+                frame: &mut __Decoding,
+                env: #napi::sys::napi_env,
+                child: ::core::option::Option<#whole>,
+                above: &mut ::core::option::Option<#decode_frame>,
+            ) -> #napi::Result<#begun<#whole, ()>> {
+                if let ::core::option::Option::Some(child) = child {
+                    match ::core::mem::replace(&mut frame.wait, __DecodeWait::None) {
+                        #(#resumes)*
+                        __DecodeWait::None => ::core::unreachable!("a frame is handed a child only while it waits on one"),
+                    }
+                }
+                let obj = frame.obj;
+                loop {
+                    match frame.at {
+                        #(#reads)*
+                        _ => {
+                            return ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::whole(Self {
+                                #(#names: frame.#names.take().expect("a frame done holds each field"),)*
+                            })));
+                        }
+                    }
+                    frame.at += 1;
+                }
+            }
+            fn decode_refusal(frame: &__Decoding, err: #napi::Error) -> #napi::Error {
+                match frame.wait {
+                    #(#refusals)*
+                    __DecodeWait::None => err,
+                }
+            }
+            unsafe fn encode_step(
+                frame: &mut __Encoding,
+                env: #napi::sys::napi_env,
+                child: ::core::option::Option<#napi::sys::napi_value>,
+                above: &mut ::core::option::Option<#encode_frame>,
+            ) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
+                if let ::core::option::Option::Some(child) = child {
+                    match ::core::mem::replace(&mut frame.wait, __EncodeWait::None) {
+                        #(#rewrites)*
+                        __EncodeWait::None => ::core::unreachable!("a frame is handed a child only while it waits on one"),
+                    }
+                }
+                loop {
+                    match frame.at {
+                        #(#writes)*
+                        _ => return unsafe { ::sittir_core::boundary::object_with_present(env, &frame.entries) }.map(#begun::Whole),
+                    }
+                    frame.at += 1;
+                }
+            }
+        }
+        impl #codec::Codec<#w> for #ident {
+            type DecodeWait = ();
+            type EncodeWait = ();
+            unsafe fn decode(env: #napi::sys::napi_env, value: #napi::sys::napi_value, above: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, ()>> {
+                let obj = unsafe { ::sittir_core::boundary::object(env, value)? };
+                *above = ::core::option::Option::Some(<Self as #codec::Framed<#w>>::decoding(__Decoding {
+                    obj,
+                    at: 0,
+                    wait: __DecodeWait::None,
+                    #(#names: ::core::option::Option::None,)*
+                }));
+                ::core::result::Result::Ok(#begun::Waits(()))
+            }
+            unsafe fn decoded(_: #napi::sys::napi_env, (): (), child: #whole, _: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, ()>> {
+                ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::of(child)))
+            }
+            unsafe fn encode(self, env: #napi::sys::napi_env, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
+                let Self { #(#names),* } = self;
+                let mut entries = [::core::option::Option::None; #entry_count];
+                #kind_first
+                *above = ::core::option::Option::Some(<Self as #codec::Framed<#w>>::encoding(__Encoding {
+                    at: 0,
+                    wait: __EncodeWait::None,
+                    entries,
+                    #(#names: ::core::option::Option::Some(#names),)*
+                }));
+                ::core::result::Result::Ok(#begun::Waits(()))
+            }
+            unsafe fn encoded(_: #napi::sys::napi_env, (): (), child: #napi::sys::napi_value, _: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
+                ::core::result::Result::Ok(#begun::Whole(child))
+            }
+        }
+    });
+    let entries = gated(&loop_entries(ident));
+    Ok(quote!(#take_apart #steps #entries))
 }
 
 /// The module a kind constant lives in: the declared `kind` path less its
@@ -228,7 +548,8 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
     };
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
-    Ok(gated(&quote! {
+    let nodeless = nodeless(ident);
+    let codec = gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
@@ -255,26 +576,34 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         }
         #encode
         #boxed
-    }))
+    });
+    Ok(quote!(#codec #nodeless))
 }
 
 /// A choice: an id resolves through the reader's `__variant`, then the
-/// `decodes` ids, then the blank arm; any other id is refused.
+/// `decodes` ids, then the blank arm; any other id is refused. A payload is
+/// read and written by its own codec, in the frame that holds the choice.
 pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenStream> {
-    let napi = napi();
+    let (napi, w) = (napi(), grammar(ident));
+    let codec = quote!(::sittir_core::codec);
+    let begun = quote!(::sittir_core::codec::Begun);
     let owner = ident.to_string();
     let decoded = |name: &Ident, ty: &Type| {
-        quote!(#ident::#name(unsafe { <#ty as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? }))
+        quote!(match unsafe { <#ty as #codec::Codec<#w>>::decode(env, napi_val, above)? } {
+            #begun::Whole(value) => #begun::Whole(#ident::#name(value)),
+            #begun::Waits(wait) => #begun::Waits(__DecodeWait::#name(wait)),
+        })
     };
     let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
     let (mut indices, mut claimed) = (Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
+    let (mut decode_waits, mut encode_waits, mut resumes, mut rewrites, mut dismantles) = (Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new());
     for variant in variants {
         let name = variant.name;
         let value = match variant.payload {
             Some(ty) => decoded(name, ty),
-            None if variant.edged => quote!(#ident::#name(::core::default::Default::default())),
-            None => quote!(#ident::#name),
+            None if variant.edged => quote!(#begun::Whole(#ident::#name(::core::default::Default::default()))),
+            None => quote!(#begun::Whole(#ident::#name)),
         };
         if let Some(i) = variant.index {
             by_index.push(quote!(::core::option::Option::Some(#i) => return ::core::result::Result::Ok(#value),));
@@ -286,7 +615,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             claimed.extend(ids.iter());
         }
         if variant.blank {
-            blank = quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(#ident::#name); });
+            blank = quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(#begun::Whole(#ident::#name)); });
         }
         if variant.verbatim || variant.error {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
@@ -307,11 +636,41 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 }
             };
         }
+        if let Some(ty) = variant.payload {
+            decode_waits.push(quote!(#name(<#ty as #codec::Codec<#w>>::DecodeWait)));
+            encode_waits.push(quote!(#name(<#ty as #codec::Codec<#w>>::EncodeWait)));
+            resumes.push(quote!(__DecodeWait::#name(wait) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::decoded(env, wait, child, above)? } {
+                #begun::Whole(value) => #begun::Whole(#ident::#name(value)),
+                #begun::Waits(wait) => #begun::Waits(__DecodeWait::#name(wait)),
+            }),));
+            rewrites.push(quote!(__EncodeWait::#name(wait) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::encoded(env, wait, child, above)? } {
+                #begun::Whole(value) => #begun::Whole(value),
+                #begun::Waits(wait) => #begun::Waits(__EncodeWait::#name(wait)),
+            }),));
+            dismantles.push(quote!(Self::#name(payload) => #codec::Dismantle::<#w>::dismantle(payload, out),));
+        } else if variant.edged {
+            dismantles.push(quote!(Self::#name(_) => {}));
+        } else {
+            dismantles.push(quote!(Self::#name => {}));
+        }
+        let unit = |id: TokenStream| quote!(unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #id) }.map(#begun::Whole));
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
-            (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
-            (None, true, _) => quote!(Self::#name => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) },),
-            (None, false, Some(first)) if variant.edged => quote!(Self::#name(_) => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #first) },),
-            (None, false, Some(first)) => quote!(Self::#name => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #first) },),
+            (Some(ty), _, _) => quote!(Self::#name(payload) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::encode(payload, env, above)? } {
+                #begun::Whole(value) => #begun::Whole(value),
+                #begun::Waits(wait) => #begun::Waits(__EncodeWait::#name(wait)),
+            }),),
+            (None, true, _) => {
+                let id = unit(quote!(::sittir_core::types::KindId::BLANK));
+                quote!(Self::#name => #id,)
+            }
+            (None, false, Some(first)) if variant.edged => {
+                let id = unit(quote!(#first));
+                quote!(Self::#name(_) => #id,)
+            }
+            (None, false, Some(first)) => {
+                let id = unit(quote!(#first));
+                quote!(Self::#name => #id,)
+            }
             (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
         });
     }
@@ -321,7 +680,6 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         format!("{owner}: expected u16 kind_id, string, or object with $type")
     };
     let missing = format!("$type property missing in {owner}");
-    let boxed = boxed(ident);
     let mut decodes = Vec::new();
     if !indices.is_empty() {
         decodes.push(quote!(::core::matches!(__variant(id, id), ::core::option::Option::Some(#(#indices)|*))));
@@ -333,14 +691,45 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         decodes.push(quote!(id == ::sittir_core::types::KindId::BLANK));
     }
     let decodes = if decodes.is_empty() { quote!(false) } else { quote!(#(#decodes)||*) };
-    Ok(gated(&quote! {
+    let whole = quote!(<#w as #codec::Nodes>::Whole);
+    let decode_frame = quote!(<#w as #codec::Frames>::DecodeFrame);
+    let encode_frame = quote!(<#w as #codec::Frames>::EncodeFrame);
+    let take_apart = quote! {
+        impl #codec::Dismantle<#w> for #ident {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                match self {
+                    #(#dismantles)*
+                }
+            }
+        }
+        impl #codec::Parts<#w> for #ident {
+            fn parts(self, out: &mut ::std::vec::Vec<#whole>) {
+                #codec::Dismantle::<#w>::dismantle(self, out);
+            }
+        }
+    };
+    let entries = loop_entries(ident);
+    let items = gated(&quote! {
         impl ::sittir_core::boundary::DecodesKind for #ident {
             const OWNER: &'static str = #owner;
             fn decodes(id: __Kind) -> bool {
                 #decodes
             }
         }
-        unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: __Kind) -> #napi::Result<#ident> {
+        #[doc(hidden)]
+        pub enum __DecodeWait {
+            #(#decode_waits,)*
+        }
+        #[doc(hidden)]
+        pub enum __EncodeWait {
+            #(#encode_waits,)*
+        }
+        unsafe fn __decode_id(
+            env: #napi::sys::napi_env,
+            napi_val: #napi::sys::napi_value,
+            id: __Kind,
+            above: &mut ::core::option::Option<#decode_frame>,
+        ) -> #napi::Result<#begun<#ident, __DecodeWait>> {
             match __variant(id, id) {
                 #(#by_index)*
                 _ => {}
@@ -349,34 +738,48 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             #blank
             ::core::result::Result::Err(#napi::Error::from_reason(::sittir_core::boundary::unknown_kind(id, #owner)))
         }
-        impl #napi::bindgen_prelude::FromNapiValue for #ident {
-            unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
+        ::sittir_core::nodeless_steps!(#ident; #w);
+        impl #codec::Codec<#w> for #ident {
+            type DecodeWait = __DecodeWait;
+            type EncodeWait = __EncodeWait;
+            unsafe fn decode(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, above: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, __DecodeWait>> {
                 match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
                     #napi::ValueType::Number => {
                         let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
-                        unsafe { __decode_id(env, napi_val, id) }
+                        unsafe { __decode_id(env, napi_val, id, above) }
                     }
                     #napi::ValueType::Object => {
                         let id: __Kind = unsafe { ::sittir_core::boundary::property(env, napi_val, c"$type")? }
                             .ok_or_else(|| #napi::Error::from_reason(#missing))?;
                         #text_arm
                         #error_arm
-                        unsafe { __decode_id(env, napi_val, id) }
+                        unsafe { __decode_id(env, napi_val, id, above) }
                     }
                     #string_arm
                     _ => ::core::result::Result::Err(#napi::Error::from_reason(#expected)),
                 }
             }
-        }
-        impl #napi::bindgen_prelude::ToNapiValue for #ident {
-            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
-                match val {
+            #[allow(unused_variables, reason = "a choice of units waits on nothing")]
+            unsafe fn decoded(env: #napi::sys::napi_env, wait: __DecodeWait, child: #whole, above: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, __DecodeWait>> {
+                match wait {
+                    #(#resumes)*
+                }
+            }
+            unsafe fn encode(self, env: #napi::sys::napi_env, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, __EncodeWait>> {
+                match self {
                     #(#encodes)*
                 }
             }
+            #[allow(unused_variables, reason = "a choice of units waits on nothing")]
+            unsafe fn encoded(env: #napi::sys::napi_env, wait: __EncodeWait, child: #napi::sys::napi_value, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, __EncodeWait>> {
+                match wait {
+                    #(#rewrites)*
+                }
+            }
         }
-        #boxed
-    }))
+        #entries
+    });
+    Ok(quote!(#take_apart #items))
 }
 
 /// An enum kind: a member decodes from an id it claims and writes its first.
@@ -384,7 +787,8 @@ pub fn members(ident: &Ident) -> TokenStream {
     let napi = napi();
     let owner = ident.to_string();
     let boxed = boxed(ident);
-    gated(&quote! {
+    let nodeless = nodeless(ident);
+    let codec = gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
@@ -397,7 +801,8 @@ pub fn members(ident: &Ident) -> TokenStream {
             }
         }
         #boxed
-    })
+    });
+    quote!(#codec #nodeless)
 }
 
 #[cfg(test)]
@@ -429,13 +834,18 @@ mod tests {
             }
         });
         assert!(has(&out, "::sittir_core::napi_codec! {"));
-        assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };"));
-        assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationNode")? },"#));
-        assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationNode")? },"#));
-        assert!(has(&out, r#"::sittir_core::boundary::object_with_present(env, &[ ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)), ::sittir_core::boundary::present(env, c"$_layout", layout)?,"#));
-        let order = ["c\"$type\"", "c\"$_layout\"", "c\"_pattern\"", "c\"_value\""].map(|key| out.rfind(key).expect("every key is written"));
-        assert!(order.windows(2).all(|pair| pair[0] < pair[1]), "keys are written in declaration order: {order:?}");
-        assert!(!has(&out, "::sittir_core::boundary::set(env, obj,"));
+        assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, value)? };"));
+        assert!(has(&out, r#"0 => frame.layout = ::core::option::Option::Some(unsafe { ::sittir_core::boundary::optional(env, obj, c"$_layout", "LetDeclarationNode")? }),"#));
+        assert!(has(&out, r#"1 => { let raw = unsafe { ::sittir_core::boundary::required_raw(env, obj, c"_pattern")? };"#));
+        assert!(has(&out, r#"2 => match unsafe { ::sittir_core::boundary::optional_raw(env, obj, c"_value")? }"#));
+        assert!(has(&out, r#"__DecodeWait::pattern(_) => ::sittir_core::boundary::field_refusal(err, "LetDeclarationNode", c"_pattern"),"#));
+        assert!(has(&out, r#"__DecodeWait::value(_) => ::sittir_core::boundary::field_refusal(err, "LetDeclarationNode", c"_value"),"#));
+        assert!(has(&out, r#"entries[0] = ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?));"#));
+        assert!(has(&out, r#"frame.entries[1] = ::sittir_core::boundary::present(env, c"$_layout", value)?;"#));
+        assert!(has(&out, r#"frame.entries[2] = ::core::option::Option::Some((c"_pattern", value))"#));
+        assert!(has(&out, r#"frame.entries[3] = ::core::option::Option::Some((c"_value", value))"#));
+        assert!(has(&out, "::sittir_core::codec::decode::<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia, Self>(env, napi_val)"));
+        assert!(has(&out, "out.push(<Self as ::sittir_core::codec::Listed<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::whole(self));"));
         assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationNode>"));
     }
 
@@ -511,7 +921,8 @@ mod tests {
         });
         assert!(has(&out, "match __variant(id, id) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyNodeSlot::Blank); }"));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(::sittir_core::codec::Begun::Whole(PropertyNodeSlot::Blank)); }"));
+        assert!(has(&out, "::sittir_core::codec::Begun::Waits(wait) => ::sittir_core::codec::Begun::Waits(__DecodeWait::PropertyIdentifier(wait)),"));
         assert!(has(&out, r#"::sittir_core::boundary::unknown_kind(id, "PropertyNodeSlot")"#));
         assert!(has(&out, "::core::matches!(__variant(id, id), ::core::option::Option::Some(0u16 | 1u16)) || [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id) || id == ::sittir_core::types::KindId::BLANK"));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
@@ -528,8 +939,8 @@ mod tests {
                 Blank,
             }
         });
-        assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, kind::_AUTOMATIC_SEMICOLON) },"));
-        assert!(has(&out, "Self::Blank => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) },"));
+        assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, kind::_AUTOMATIC_SEMICOLON) }.map(::sittir_core::codec::Begun::Whole),"));
+        assert!(has(&out, "Self::Blank => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) }.map(::sittir_core::codec::Begun::Whole),"));
     }
 
     #[test]
@@ -543,7 +954,8 @@ mod tests {
                 Verbatim(VerbatimNode),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(AnyNode::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(match unsafe { <VerbatimNode as ::sittir_core::codec::Codec<<AnyNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::decode(env, napi_val, above)? }"));
+        assert!(has(&out, "::sittir_core::codec::Begun::Whole(value) => ::sittir_core::codec::Begun::Whole(AnyNode::Verbatim(value)),"));
         assert!(!has(&out, "ValueType::String =>"));
     }
 
@@ -561,8 +973,8 @@ mod tests {
                 Text(::sittir_core::trivia::TriviaText),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(TriviaNode::Verbatim("));
-        assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaNode::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(match unsafe { <VerbatimNode as ::sittir_core::codec::Codec<<TriviaNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::decode(env, napi_val, above)? }"));
+        assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(match unsafe { <VerbatimNode as ::sittir_core::codec::Codec<<TriviaNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::decode(env, napi_val, above)? }"));
         assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&id) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
         assert!(!has(&out, "::core::option::Option::Some(2u16)"));
         assert!(!out.contains("ReadNode"));
@@ -582,6 +994,25 @@ mod tests {
         assert!(has(&out, r#"__member(id, id).ok_or_else(|| ::sittir_core::__napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", "PrimitiveTypeEnum")))"#));
         assert!(has(&out, "PrimitiveTypeEnum::U8 => kind::U8_KEYWORD,"));
         assert!(has(&out, "to_napi_value(env, __id(&val))"));
+    }
+
+    #[test]
+    fn a_struct_with_no_child_slot_is_decoded_whole_and_has_no_frame() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$")]
+            pub struct CommentNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[wire(key = "_content")]
+                #[slot(capture = "content")]
+                pub content: String,
+            }
+        });
+        assert!(has(&out, r#"content: unsafe { ::sittir_core::boundary::required(env, obj, c"_content", "CommentNode")? },"#));
+        assert!(has(&out, "::sittir_core::nodeless_codec!(CommentNode);"));
+        assert!(has(&out, "::sittir_core::nodeless_steps!(CommentNode; <CommentNode as ::sittir_core::trivia::HasTrivia>::Trivia);"));
+        assert!(!has(&out, "pub struct __Decoding"));
     }
 
     #[test]

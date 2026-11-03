@@ -8,8 +8,13 @@ use sittir_core::spacing::WordMatcher;
 use sittir_core::types::{ItemIndex, KindId};
 use sittir_core::view::{KindOf, KindTest, ListView, Slot, View};
 use sittir_core::{Node, SlotValue};
-use sittir_rust::render::node::{NodeLayout, TriviaNode};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
+
+mod no_trivia;
+
+use no_trivia::NoTrivia;
+
+type NodeLayout = sittir_core::layout::NodeLayout<NoTrivia>;
 
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(kind = kind::IDENTIFIER, text, fields = IdentFields)]
@@ -22,7 +27,7 @@ struct Ident {
     text: String,
 }
 
-sittir_core::grammar_trivia!(TriviaNode; Ident, Function);
+sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Function);
 
 impl KindOf for Ident {
     fn kind_in(&self, kinds: &[KindId]) -> bool {

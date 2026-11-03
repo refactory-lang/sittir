@@ -52,9 +52,46 @@ pub unsafe fn required<V: ::napi::bindgen_prelude::FromNapiValue>(
     owner: &'static str,
 ) -> ::napi::Result<V> {
     // SAFETY: this fn requires `obj` to be live in `env`.
-    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    let raw = unsafe { required_raw(env, obj, key)? };
     // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
-    unsafe { ::napi::bindgen_prelude::from_raw_required_field(env, raw, owner, key_name(key)) }
+    unsafe { V::from_napi_value(env, raw) }.map_err(|err| field_refusal(err, owner, key))
+}
+
+/// A required field's value, undecoded: `undefined` is napi's missing-field
+/// error, which no owner decorates.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn required_raw(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
+    unsafe { optional_raw(env, obj, key)? }.ok_or_else(|| ::napi::missing_field_error(key_name(key)))
+}
+
+/// An optional field's value, undecoded: `None` when it is `undefined`.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn optional_raw(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+) -> ::napi::Result<Option<::napi::sys::napi_value>> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
+    unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr()) }
+}
+
+/// `err`, the refusal of the value of `owner`'s field `key`, decorated as
+/// napi's object derive decorates it: `<reason> on <owner>.<key>`.
+#[cfg(feature = "napi-bindings")]
+#[must_use]
+pub fn field_refusal(err: ::napi::Error, owner: &str, key: &'static ::std::ffi::CStr) -> ::napi::Error {
+    if owner.is_empty() { err } else { ::napi::decorate_field_error(err, owner, key_name(key)) }
 }
 
 /// A required whole-number field: read as a double, as `required` reads
@@ -115,9 +152,10 @@ pub unsafe fn optional<V: ::napi::bindgen_prelude::FromNapiValue>(
     owner: &'static str,
 ) -> ::napi::Result<Option<V>> {
     // SAFETY: this fn requires `obj` to be live in `env`.
-    let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
-    // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
-    unsafe { ::napi::bindgen_prelude::from_raw_optional_field(env, raw, owner, key_name(key)) }
+    unsafe { optional_raw(env, obj, key)? }
+        // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
+        .map(|raw| unsafe { V::from_napi_value(env, raw) }.map_err(|err| field_refusal(err, owner, key)))
+        .transpose()
 }
 
 /// A presence flag: `undefined` is `false`, and every other value goes to

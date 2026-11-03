@@ -541,7 +541,7 @@ pub(crate) fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
     })
 }
 
-fn is_text(ty: &Type) -> bool {
+pub(crate) fn is_text(ty: &Type) -> bool {
     last_segment(ty).as_deref() == Some("String") || inner_of(ty, "Option").and_then(last_segment).as_deref() == Some("String")
 }
 
@@ -623,7 +623,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let wire = fields
         .iter()
         .map(|field| match &field.key {
-            Some(key) => Ok(codec::WireField { ident: field.ident, ty: field.ty, key }),
+            Some(key) => Ok(codec::WireField { ident: field.ident, ty: field.ty, key, slot: matches!(field.role, Role::Slot(_)) }),
             None => Err(syn::Error::new_spanned(field.ident, "a node field crosses the wire under a key: `#[wire(key = \"…\")]`")),
         })
         .collect::<syn::Result<Vec<_>>>()?;

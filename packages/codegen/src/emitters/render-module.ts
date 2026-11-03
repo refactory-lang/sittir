@@ -1554,15 +1554,15 @@ function renderNodeSupport(
 		].join('\n')
 	);
 	return {
-		text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'),
+		text: [rendered, '', grammarNodesStatement(read.nodes)].join('\n'),
 		records: read.records,
 		choicePayloads: read.choicePayloads,
 		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read)
 	};
 }
 
-function grammarTriviaStatement(nodes: ReadonlySet<string>): string {
-	return `::sittir_core::grammar_trivia!(TriviaNode; ${[...nodes].join(', ')});`;
+function grammarNodesStatement(nodes: ReadonlySet<string>): string {
+	return `::sittir_core::grammar_nodes!(${TRIVIA_NODE}; ${[...nodes].join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -2651,9 +2651,12 @@ function renderNodeEntry(): string[] {
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
 		'    recording: Option<&mut ::sittir_core::baseline::Baseline>,',
 		') -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {',
-		'    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;',
-		'    let rendered = render_node_dispatch(&node, ctx, recording)?;',
-		'    Ok((NodeSource::Factory, rendered))',
+		'    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {',
+		'        Ok(()) => render_node_dispatch(&node, ctx, recording),',
+		'        Err(error) => Err(error.into()),',
+		'    };',
+		`    ::sittir_core::codec::release::<${TRIVIA_NODE}, _>(node);`,
+		'    Ok((NodeSource::Factory, rendered?))',
 		'}'
 	];
 }

@@ -10,37 +10,11 @@ use sittir_core::{SlotValue, Node};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
 use sittir_typescript::render::kind_ids as ts;
 
-/// The trivia type of every node these tests declare: a layout run, the one
-/// trivia the reads here build as a node, carries nothing and renders nothing.
-#[derive(Debug, Clone, PartialEq)]
-struct NoTrivia;
+mod no_trivia;
 
-impl sittir_core::render::Render for NoTrivia {
-    fn render(&self, _: &mut dyn sittir_core::render::RenderSink) -> sittir_core::render::RenderResult {
-        Ok(())
-    }
-}
+use no_trivia::NoTrivia;
 
-impl sittir_core::trivia::TriviaSeam for NoTrivia {}
-
-impl sittir_core::prepare::Prepare for NoTrivia {
-    fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-impl sittir_core::trivia::FromTriviaText for NoTrivia {
-    fn from_text(_: sittir_core::trivia::TriviaText) -> Self {
-        NoTrivia
-    }
-
-    fn from_layout(_: sittir_core::trivia::TriviaText) -> Option<Self> {
-        Some(NoTrivia)
-    }
-}
-
-sittir_core::refuse_napi_codec!(NoTrivia);
-sittir_core::grammar_trivia!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
+sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
 
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 

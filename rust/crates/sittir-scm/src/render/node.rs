@@ -5962,9 +5962,12 @@ pub fn render_node_parts(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
     recording: Option<&mut ::sittir_core::baseline::Baseline>,
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
-    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;
-    let rendered = render_node_dispatch(&node, ctx, recording)?;
-    Ok((NodeSource::Factory, rendered))
+    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
+        Ok(()) => render_node_dispatch(&node, ctx, recording),
+        Err(error) => Err(error.into()),
+    };
+    ::sittir_core::codec::release::<TriviaNode, _>(node);
+    Ok((NodeSource::Factory, rendered?))
 }
 
 const _: () = assert!(::core::mem::size_of::<AnonymousNodeNode>() <= 256, "AnonymousNodeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -5997,4 +6000,4 @@ const _: () = assert!(::core::mem::size_of::<StringContentNode>() <= 256, "Strin
 const _: () = assert!(::core::mem::size_of::<StringContentTextNode>() <= 256, "StringContentTextNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StringNode>() <= 256, "StringNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, DefinitionNode, NamedNodeNode, ListElementNode, NamedNodeGroupNode, StringContentContentNodeSlot, ParametersElementsNodeSlot, MissingNodeNameNodeSlot, AnonymousNodeNameNodeSlot, PredicatePrefixNodeSlot, GroupExpressionArmLeftNodeSlot, NamedNodeExpressionArmLeftNodeSlot, NamedNodePlainNameNodeSlot, NamedNodeSupertypedNameNodeSlot, ProgramNode, EscapeSequenceNode, QuantifierEnum, IdentifierNode, ImmediateIdentifierNode, CaptureNode, StringNode, ImmediateStringNode, StringContentNode, ParametersNode, CommentNode, ListNode, GroupingNode, MissingNodeNode, AnonymousNodeNode, FieldDefinitionNode, NegatedFieldNode, PredicateNode, PredicateTypeEnum, ListElementQuantifierNode, GroupExpressionArmNode, NamedNodeExpressionArmNode, GroupingGroupNode, StringContentTextNode, AnchorNode, NamedNodePlainNode, NamedNodeSupertypedNode, NamedNodeGroupChildrenNode, NamedNodeGroupAnchoredLastNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, StarNode, PlusNode, QmarkNode, AtNode, DquoteNode, LbrackNode, RbrackNode, LparenNode, RparenNode, MissingKeywordNode, UnderscoreNode, ColonNode, BangNode, PoundNode, DotNode, SlashNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, DefinitionNode, NamedNodeNode, ListElementNode, NamedNodeGroupNode, StringContentContentNodeSlot, ParametersElementsNodeSlot, MissingNodeNameNodeSlot, AnonymousNodeNameNodeSlot, PredicatePrefixNodeSlot, GroupExpressionArmLeftNodeSlot, NamedNodeExpressionArmLeftNodeSlot, NamedNodePlainNameNodeSlot, NamedNodeSupertypedNameNodeSlot, ProgramNode, EscapeSequenceNode, QuantifierEnum, IdentifierNode, ImmediateIdentifierNode, CaptureNode, StringNode, ImmediateStringNode, StringContentNode, ParametersNode, CommentNode, ListNode, GroupingNode, MissingNodeNode, AnonymousNodeNode, FieldDefinitionNode, NegatedFieldNode, PredicateNode, PredicateTypeEnum, ListElementQuantifierNode, GroupExpressionArmNode, NamedNodeExpressionArmNode, GroupingGroupNode, StringContentTextNode, AnchorNode, NamedNodePlainNode, NamedNodeSupertypedNode, NamedNodeGroupChildrenNode, NamedNodeGroupAnchoredLastNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, StarNode, PlusNode, QmarkNode, AtNode, DquoteNode, LbrackNode, RbrackNode, LparenNode, RparenNode, MissingKeywordNode, UnderscoreNode, ColonNode, BangNode, PoundNode, DotNode, SlashNode, TriviaNode);
