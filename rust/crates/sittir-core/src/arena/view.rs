@@ -391,14 +391,14 @@ impl<T: Render + TriviaSeam + Clone> RecordLayout<'_, T> {
     /// when its tree has no row the record names.
     pub fn render(self, kind: Option<KindId>, role: TriviaRole, w: &mut dyn RenderSink, body: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
         let origin = self.origin().map_err(RenderError::Record)?;
-        match self.trivia() {
+        crate::stack::grown(|| match self.trivia() {
             Some(trivia) if self.changed.leading || self.changed.trailing => {
                 let mut trimmed = trivia.clone();
                 trimmed.trim_changed(self.changed);
                 render_framed(Some(&trimmed), self.edges, kind, origin.as_ref(), role, w, body)
             }
             trivia => render_framed(trivia, self.edges, kind, origin.as_ref(), role, w, body),
-        }
+        })
     }
 }
 
