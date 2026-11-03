@@ -642,8 +642,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 	}
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
-	const owners = nodes.filter((v) => atTop(v, top) && !isGroup(v));
-	const owner = owners.length === 1 ? owners[0] : undefined;
+	const roots = nodes.filter((v) => atTop(v, top) && !(v === top && isGroup(v)));
+	const owner = roots.length === 1 && !isGroup(roots[0]!) ? roots[0] : undefined;
 	const ownerKind = owner === undefined ? null : kindOf(owner);
 	if (
 		owner !== undefined &&

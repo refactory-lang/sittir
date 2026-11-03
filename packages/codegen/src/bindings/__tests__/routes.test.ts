@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 import { guaranteedBy } from '../routes.ts';
+import { isNamedMember } from '../facts.ts';
 import { EMPTY_VOCABULARY } from '../../__tests__/helpers/vocabulary.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
@@ -739,6 +740,11 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const grouped = (await grammar('((outer (middle (binary) @inner)) (#set! reason "grouped with a directive"))')).bindings.members;
 		expect(bare).toEqual([expect.objectContaining({ route: 'nested', owner: 'outer', name: 'inner', parent: 'middle' })]);
 		expect(grouped).toEqual(bare);
+	});
+
+	it('homes no member on a sibling root when another root of the pattern is a nested grouping', async () => {
+		const members = (await grammar('((outer (middle (binary) @inner)) ((middle (binary) @second)))')).bindings.members;
+		expect(members.find((m) => isNamedMember(m) && m.name === 'second')).not.toMatchObject({ owner: 'outer' });
 	});
 
 	it('reads a nested capture of a bare path as a claim only where #set! claim names it, and as a member otherwise', async () => {
