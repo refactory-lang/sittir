@@ -43,7 +43,7 @@ const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, La
  * engine stamped and for a node of a grammar without bindings.
  *
  * It answers false for a bare kind id or a token's text, since neither names a language. A keyword leaf (rust's `u8`, typescript's
- * `this`, python's `True`) reads as its text, so it is tested through a language's own guards instead ({@link portableGuardsOf}, the
+ * `this`, python's `pass`) reads as its text, so it is tested through a language's own guards instead ({@link portableGuardsOf}, the
  * descriptor's `is.portable`).
  *
  * Until placement-dependent readings are restated as kinds of their own, a node reads by its first entry that does not depend
@@ -58,7 +58,7 @@ export const portable = portableTrees(vocabularyPaths, guardOf);
  *
  * A node of the language reads as the shared guard reads it; a node of another language, or one no engine of this language
  * stamped, answers false. A kind id reads through the language's rows, by its kind and its fixed text, so a keyword leaf
- * (rust's `u8`, typescript's `this`, python's `True`) classifies. A text holds where it is the fixed text of a kind that reads
+ * (rust's `u8`, typescript's `this`, python's `pass`) classifies. A text holds where it is the fixed text of a kind that reads
  * as the path, so `is.type.primitive.unchecked('any')` holds for typescript. The same view is returned for the same language object.
  *
  * The language's generated types admit only its own nodes and kind ids, but a value typed as a plain `number` still compiles.
