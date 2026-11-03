@@ -17,6 +17,7 @@ export const TEXTS = 'texts';
 export const CONTEXT = 'GrammarContext';
 export const REFINED_BY = 'RefinedBy';
 export const SYNONYMS = 'Synonyms';
+const NEVER = 'never';
 
 export interface Member {
 	readonly name: string;
@@ -84,6 +85,7 @@ export interface VocabularyMember {
 	readonly arity?: MemberArity;
 	readonly flag: boolean;
 	readonly features?: readonly string[];
+	readonly excluded?: true;
 }
 
 export interface VocabularyKind {
@@ -236,7 +238,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const stubs = source.features.flatMap((feature) => feature.stubs);
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
-	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag }]))]));
+	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
 			const members = own.get(stub.qname);
@@ -254,9 +256,13 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	}
 	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
+		const seen = new Set<string>();
 		for (const at of lineageOf(path, (line) => kinds.get(line)))
-			for (const [name, member] of kinds.get(at)?.own ?? [])
-				if (!all.has(name) && (composed === undefined || member.features === undefined || member.features.some((feature) => composed.has(feature)))) all.set(name, member);
+			for (const [name, member] of kinds.get(at)?.own ?? []) {
+				if (seen.has(name) || (composed !== undefined && member.features !== undefined && !member.features.some((feature) => composed.has(feature)))) continue;
+				seen.add(name);
+				if (member.excluded !== true) all.set(name, member);
+			}
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));

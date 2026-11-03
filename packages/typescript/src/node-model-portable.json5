@@ -10039,6 +10039,27 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.call.construct.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "present",
+                  "slots": {
+                    "256": 2
+                  }
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -15460,9 +15481,9 @@
       },
       {
         "depth": 4,
-        "paths": 68,
-        "kinds": 24,
-        "refinements": 40
+        "paths": 69,
+        "kinds": 25,
+        "refinements": 41
       },
       {
         "depth": 5,

@@ -2132,6 +2132,10 @@ declare module './expression.ts' {
 					parametricPolymorphism.Expression.Call.Construct<G>['typeArguments']
 				>;
 			}
+			namespace Construct {
+				interface Bare<G extends GrammarContext<G>> extends classes.Expression.Call.Construct.Bare<G> {}
+				type Any<G extends GrammarContext<G>> = V.Expression.Call.Construct<G> | V.Expression.Call.Construct.Bare<G>;
+			}
 			type Import<G extends GrammarContext<G>> = modules.Expression.Call.Import<G>;
 			interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Expression.Call.Macro<G> {}
 			interface Member<G extends GrammarContext<G>> {
@@ -2145,6 +2149,7 @@ declare module './expression.ts' {
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Call<G>
 				| V.Expression.Call.Construct<G>
+				| V.Expression.Call.Construct.Bare<G>
 				| V.Expression.Call.Import<G>
 				| V.Expression.Call.Macro<G>
 				| V.Expression.Call.Member<G>
@@ -2388,6 +2393,7 @@ declare module './expression.ts' {
 			| V.Expression.Block.Unsafe<G>
 			| V.Expression.Call<G>
 			| V.Expression.Call.Construct<G>
+			| V.Expression.Call.Construct.Bare<G>
 			| V.Expression.Call.Import<G>
 			| V.Expression.Call.Macro<G>
 			| V.Expression.Call.Member<G>

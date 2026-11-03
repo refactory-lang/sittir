@@ -490,6 +490,26 @@ describe('guaranteedBy', () => {
 		expect(sure.present([{ owner: 'twin', slot: 'a' }, { owner: 'twin_mid', slot: 'detail' }])).toEqual(['identifier']);
 		expect(sure.present([{ owner: 'twin', slot: 'b' }, { owner: 'twin_mid', slot: 'detail' }])).toBeUndefined();
 	});
+
+	it('guarantees a slot absent on a refinement that negates its field, and present on the entry it refines when that is all it tests', async () => {
+		const input = await grammar('(function_definition) @declaration.function\n(function_definition !modifiers) @declaration.function.plain');
+		const entries = resolveRoutes(input).readEntries.get('function_definition') ?? [];
+		const plain = entries.find((entry) => entry.vocab === 'declaration.function.plain')!;
+		const base = entries.find((entry) => entry.vocab === 'declaration.function')!;
+		const modifiers = [{ owner: 'function_definition', slot: 'modifiers' }];
+		expect(plain.absent).toEqual(['modifiers']);
+		expect(guaranteedBy(input.model, plain).absent(modifiers)).toBe(true);
+		expect(plain.members.map((member) => member.name)).not.toContain('modifiers');
+		expect(base.present).toEqual(['modifiers']);
+		expect(guaranteedBy(input.model, base).implied(modifiers)).toBe(true);
+		expect(base.members.map((member) => member.name)).toContain('modifiers');
+	});
+
+	it('implies nothing present on the refined entry when the negating refinement tests more than the absence', async () => {
+		const input = await grammar('(function_definition) @declaration.function\n((function_definition !modifiers name: (_) @n) @declaration.function.plain (#eq? @n "f"))');
+		const base = (resolveRoutes(input).readEntries.get('function_definition') ?? []).find((entry) => entry.vocab === 'declaration.function')!;
+		expect(base.present).toEqual([]);
+	});
 });
 
 describe("keptKinds over a flag capture", () => {

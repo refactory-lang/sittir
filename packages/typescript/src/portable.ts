@@ -422,6 +422,7 @@ export interface PortableIds {
 		| TSKindId.Import
 		| TSKindId.NewExpression;
 	'expression.call.construct': TSKindId.NewExpression;
+	'expression.call.construct.bare': TSKindId.NewExpression;
 	'expression.call.import': TSKindId.Import;
 	'expression.call.member': TSKindId.CallExpressionCall;
 	'expression.call.template': TSKindId.CallExpressionTemplateCall;
@@ -920,6 +921,7 @@ export interface PortableTexts {
 	'expression.binary.shift.right_unsigned': never;
 	'expression.call': 'import';
 	'expression.call.construct': never;
+	'expression.call.construct.bare': never;
 	'expression.call.import': 'import';
 	'expression.call.member': never;
 	'expression.call.template': never;
@@ -1566,7 +1568,11 @@ export interface PortableKindsAt {
 		readonly member: PortableKindsAt['expression.call.member'];
 		readonly template: PortableKindsAt['expression.call.template'];
 	};
-	'expression.call.construct': { readonly $path: 'expression.call.construct' };
+	'expression.call.construct': {
+		readonly $path: 'expression.call.construct';
+		readonly bare: PortableKindsAt['expression.call.construct.bare'];
+	};
+	'expression.call.construct.bare': { readonly $path: 'expression.call.construct.bare' };
 	'expression.call.import': { readonly $path: 'expression.call.import' };
 	'expression.call.member': { readonly $path: 'expression.call.member' };
 	'expression.call.template': { readonly $path: 'expression.call.template' };
@@ -3119,6 +3125,12 @@ export interface PortableIsAt {
 		TypescriptNode,
 		TSKindId,
 		PortableTexts['expression.call.construct']
+	> & { readonly bare: PortableIsAt['expression.call.construct.bare'] };
+	'expression.call.construct.bare': PortableGuard<
+		PortableIds['expression.call.construct.bare'],
+		TypescriptNode,
+		TSKindId,
+		PortableTexts['expression.call.construct.bare']
 	> & {};
 	'expression.call.import': PortableGuard<
 		PortableIds['expression.call.import'],
@@ -4616,6 +4628,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'expression.call.construct': { ids: [TSKindId.NewExpression], exact: true },
+		'expression.call.construct.bare': { ids: [TSKindId.NewExpression], exact: false },
 		'expression.call.import': { ids: [TSKindId.Import], exact: true },
 		'expression.call.member': { ids: [TSKindId.CallExpressionCall], exact: false },
 		'expression.call.template': { ids: [TSKindId.CallExpressionTemplateCall], exact: true },
@@ -5685,7 +5698,14 @@ const table: PortableTable = {
 			{ path: 'type.primitive.never', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
-		[TSKindId.NewExpression]: [{ path: 'expression.call.construct', within: [], test: [] }],
+		[TSKindId.NewExpression]: [
+			{ path: 'expression.call.construct', within: [], test: [] },
+			{
+				path: 'expression.call.construct.bare',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'not', of: { op: 'present', slots: { '256': 2 } } } }]
+			}
+		],
 		[TSKindId.NonNullExpression]: [{ path: 'expression.cast.non_null', within: [], test: [] }],
 		[TSKindId.Null]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.Number]: [{ path: 'literal.number', within: [], test: [] }],

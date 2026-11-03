@@ -44,6 +44,8 @@ export interface ReadEntry {
 	readonly claim: ClaimFact;
 	readonly index: number;
 	readonly pins: readonly Pin[];
+	readonly absent: readonly string[];
+	readonly present: readonly string[];
 	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
 	readonly members: readonly MemberRoute[];
@@ -298,6 +300,27 @@ function pinsOf(model: SlotModel, kind: string, claim: ClaimFact, renames: SlotN
 		const slot = slotByField(slots, field);
 		return { member: memberNameOf(renames, slot?.name ?? field, slot?.propertyName ?? field), slot: slot?.name ?? field, text };
 	});
+}
+
+function absentSlotsOf(model: SlotModel, kind: string, claim: ClaimFact): string[] {
+	const slots = shownSlots(model, kind);
+	return claim.absent.flatMap((field) => slotByField(slots, field)?.name ?? []);
+}
+
+const testsOnlyAbsence = (entry: ReadEntry): boolean =>
+	entry.absent.length > 0 &&
+	entry.pins.length === 0 &&
+	entry.children.length === 0 &&
+	entry.claim.predicates.length === 0 &&
+	entry.claim.tokens.length === 0 &&
+	Object.keys(entry.claim.fieldLiterals).length === 0;
+
+function presentSlotsOf(entry: ReadEntry, entries: readonly ReadEntry[]): string[] {
+	const placement = entry.claim.within.join('/');
+	const refinements = entries.filter(
+		(other) => other !== entry && other.vocab.startsWith(`${entry.vocab}.`) && other.claim.toplevel === entry.claim.toplevel && other.claim.within.join('/') === placement && testsOnlyAbsence(other)
+	);
+	return [...new Set(refinements.flatMap((other) => other.absent))].filter((slot) => !entry.absent.includes(slot));
 }
 
 interface Reached {
@@ -564,11 +587,22 @@ export interface Guaranteed {
 	readonly many: (path: readonly SlotStep[]) => boolean;
 	readonly present: (path: readonly SlotStep[]) => readonly string[] | undefined;
 	readonly pinned: (path: readonly SlotStep[]) => string | undefined;
+	readonly absent: (path: readonly SlotStep[]) => boolean;
+	readonly implied: (path: readonly SlotStep[]) => boolean;
 }
 
 const pathKey = (path: readonly SlotStep[]): string => path.map((step) => `${step.owner} ${step.slot} ${step.anchor ?? ''}`).join(' > ');
 
-export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[]; readonly pins?: readonly Pin[] }): Guaranteed {
+export function guaranteedBy(
+	model: SlotModel,
+	entry: {
+		readonly kind: string;
+		readonly children: readonly ChildTest[];
+		readonly pins?: readonly Pin[];
+		readonly absent?: readonly string[];
+		readonly present?: readonly string[];
+	}
+): Guaranteed {
 	const one = new Map<string, Set<string>>();
 	const many = new Set<string>();
 	const walk = (child: ChildTest, holder: string, path: readonly SlotStep[], i: number): void => {
@@ -587,8 +621,12 @@ export function guaranteedBy(model: SlotModel, entry: { readonly kind: string; r
 	};
 	for (const child of entry.children) if (child.subject.up === 0) walk(child, entry.kind, [], 0);
 	const pinned = new Map((entry.pins ?? []).map((pin) => [pathKey([{ owner: entry.kind, slot: pin.slot }]), pin.text]));
+	const absent = new Set((entry.absent ?? []).map((slot) => pathKey([{ owner: entry.kind, slot }])));
+	const implied = new Set((entry.present ?? []).map((slot) => pathKey([{ owner: entry.kind, slot }])));
 	return {
 		pinned: (path) => pinned.get(pathKey(path)),
+		absent: (path) => absent.has(pathKey(path)),
+		implied: (path) => implied.has(pathKey(path)),
 		holds: (path = []) => path.every((step, i) => step.anchor !== 'only' || one.has(pathKey(path.slice(0, i + 1)))),
 		many: (path) => many.has(pathKey(path)),
 		present: (path) => {
@@ -725,7 +763,7 @@ function membersOf(
 	};
 	const routes: MemberRoute[] = [];
 	for (const slot of isLeafAlias(input, node) ? [] : slots) {
-		if (([...flagSlots.values()].includes(slot) && !names.has(slot.name)) || names.get(slot.name) === null) continue;
+		if (([...flagSlots.values()].includes(slot) && !names.has(slot.name)) || names.get(slot.name) === null || guaranteed.absent(pathTo(slot))) continue;
 		if (isLayout(input, holder, slot)) {
 			unrouted(slot, 'is layout');
 			continue;
@@ -1097,6 +1135,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 						claim,
 						index,
 						pins: pinsOf(input.model, kind, claim, slotNamesOf(kind)),
+						absent: absentSlotsOf(input.model, kind, claim),
+						present: [],
 						children: claimChildTests(input.model, kind, claim),
 						template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
 						members: [],
@@ -1123,6 +1163,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		for (const entry of entries.filter(stops)) stopped.push({ kind, vocab: entry.vocab, index: entry.index });
 		readEntries.set(kind, entries.filter((entry) => !stops(entry)));
 	}
+
+	for (const [kind, entries] of readEntries) readEntries.set(kind, entries.map((entry) => ({ ...entry, present: presentSlotsOf(entry, entries) })));
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, entries] of readEntries) {

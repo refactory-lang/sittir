@@ -606,6 +606,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const values = new Map<string, unknown>(
 				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
+			for (const { name, list } of arm.members)
+				if (list === true && !values.has(name) && !holes.has(name) && !owned.has(name) && routesOf(arm, name).every((route) => route.steps.every((step) => step.optional !== true)))
+					values.set(name, []);
 			const spelled = templated(arm, structure);
 			if (spelled !== undefined) values.set(arm.template!.member, spelled);
 			const scalar = scalarOf(structure);

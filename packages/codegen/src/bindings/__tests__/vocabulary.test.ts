@@ -37,6 +37,22 @@ describe('readVocabulary', () => {
 		}
 	});
 
+	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
+		const vocabulary = await vocabularyIn(
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly name: string;',
+			'\treadonly parameters?: string[];',
+			'}',
+			'export interface Bare<G> extends SubKindOf<V.Declaration<G>> {',
+			"\treadonly $kind: 'declaration.bare';",
+			'\treadonly parameters?: never;',
+			'}'
+		);
+		expect([...vocabulary.members('declaration').keys()]).toEqual(['name', 'parameters']);
+		expect([...vocabulary.members('declaration.bare').keys()]).toEqual(['name']);
+	});
+
 	it('reads an interface or namespace however it is exported or declared', async () => {
 		const vocabulary = await vocabularyIn(
 			"export declare interface Declared<G> { readonly $kind: 'declared'; }",

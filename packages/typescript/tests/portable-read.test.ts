@@ -33,6 +33,12 @@ describe('the portable read', () => {
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
 	});
 
+	it('reads a construct call without parentheses as the bare refinement with no arguments, and one with empty parentheses as the call with none, and builds each back', () => {
+		expect(firstOf('new X;')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct.bare', function: 'X', typeArguments: [] } });
+		expect(firstOf('new X();')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct', function: 'X', arguments: [], typeArguments: [] } });
+		for (const source of ['new X;', 'new X();', 'new X(a);', 'new X<T>;', 'new X<T>();', 'new new X()();']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('builds a string in the quote form whose spelling admits its text, and in the default form when both do', () => {
 		expect(roundTrip(`let s = 'say "hi"';`)).toBe(`let s = 'say "hi"';\n`);
 		expect(roundTrip("let s = 'a';")).toBe('let s = "a";\n');

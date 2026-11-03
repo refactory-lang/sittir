@@ -397,7 +397,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const pattern = node === undefined ? undefined : leafReDeclaration(plain[0]!, node)?.regex;
 		return { leaf, texts, ...(pattern === undefined ? {} : { pattern }) };
 	};
-	const stepsOf = (path: readonly SlotStep[]): PortableSlotStep[] | undefined => {
+	const stepsOf = (path: readonly SlotStep[], guaranteed?: Guaranteed): PortableSlotStep[] | undefined => {
 		const steps: PortableSlotStep[] = [];
 		for (const [i, step] of path.entries()) {
 			const slot = slotOf(step.owner, step.slot);
@@ -408,7 +408,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			steps.push({
 				key: slot.propertyName,
 				...(builder === undefined ? {} : { builder }),
-				...optional(step.owner, slot),
+				...(guaranteed?.implied(path.slice(0, i + 1)) === true ? {} : optional(step.owner, slot)),
 				...(mount === undefined ? {} : { mounted: mount.mounted }),
 				...(builder === undefined && next !== undefined && flattens(step.owner, step.slot, next.owner) ? { flatten: true as const } : {}),
 				...(builder === undefined && next !== undefined && seatedAs('tuples', step.owner, step.slot, next.owner) ? { seated: shapeOf(next.owner) } : {}),
@@ -459,9 +459,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const ids = sortedIds(kinds.flatMap((kind) => typeOf(kind) ?? []));
 		return all.flatMap((kind) => typeOf(kind) ?? []).every((id) => ids.includes(id)) ? undefined : ids;
 	};
-	const memberOf = (route: MemberRoute): { readonly member: PortableMemberStep; readonly seats: readonly Seat[] } | undefined => {
+	const memberOf = (route: MemberRoute, guaranteed?: Guaranteed): { readonly member: PortableMemberStep; readonly seats: readonly Seat[] } | undefined => {
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
-		const steps = stepsOf(route.path);
+		const steps = stepsOf(route.path, guaranteed);
 		const slot = lastSlot(route.path);
 		const seats = seatsOfRoute(route.path);
 		if (steps === undefined || slot === undefined || seats === undefined) return undefined;
@@ -639,12 +639,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const id = typeOf(kind);
 		if (node === undefined || id === undefined) throw new Error(`portable build: ${kind} reads as ${entry.vocab} but has no kind id`);
 		const refined = refinedFormsOf(kind, entry);
+		const guaranteed = guaranteedBy(model, entry);
 		const pinnedOut = new Set<readonly SlotStep[]>();
 		const routedAll = entry.members.flatMap((route) => {
 			const path = route.path;
 			if (path === undefined) return [];
 			if (refined.some((pin) => entersPinned(path, pin))) return (pinnedOut.add(path), []);
-			const built = memberOf(route);
+			const built = memberOf(route, guaranteed);
 			if (built === undefined) return [];
 			const seats = built.seats.flatMap((seat) => pinnedSeat(path, seat, refined) ?? []);
 			if (seats.length === 0 && built.seats.length > 0) return (pinnedOut.add(path), []);
@@ -667,7 +668,6 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const placed = placedFlag(route);
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];
 		});
-		const guaranteed = guaranteedBy(model, entry);
 		const tested = new Set<string>();
 		const claimed = [
 			...entry.pins.flatMap((pin) => {
