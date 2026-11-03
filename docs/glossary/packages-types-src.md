@@ -44,6 +44,14 @@ The `layout.newline` key a render's options carry: one of the grammar's `LineEnd
 
 The `layout` group of a render's options: `IndentOption` and `NewlineOption` intersected, so one `layout` key holds every whole-render layout setting the grammar admits.
 
+### `packages/types/src/options.ts::IndentOption::layout`
+
+The `layout` group key that carries the indent setting. Absent when the grammar admits no indent character.
+
+### `packages/types/src/options.ts::NewlineOption::layout`
+
+The `layout` group key that carries the newline setting. Absent when the grammar admits no `_newline` member.
+
 ### `packages/types/src/engine-api.ts::TriviaFacts`
 
 The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
@@ -981,6 +989,18 @@ A config-only signature whose argument may be left out.
 ### `packages/types/src/node-surface.ts::EmptyForm`
 
 A builder's empty form: a zero-argument call returning the empty type, intersected with the builder.
+
+### `packages/types/src/node-surface.ts::RefuseUndeclared::refused`
+
+Type-level only. The refusal list `{ readonly refused: … }` that `RefuseUndeclared` yields when an argument holds an untyped node or an undeclared key. No argument carries it at run time; the type names each refusal message.
+
+### `packages/types/src/node-surface.ts::NarrowTo::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `NarrowTo` narrows a wide node type to one kind by intersecting it with `$type: D`; the alias emits no code.
+
+### `packages/types/src/node-surface.ts::Admit::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `Admit` requires that existing numeric tag on a value and attaches the node marker; the alias emits no code.
 
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 

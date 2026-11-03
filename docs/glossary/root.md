@@ -651,7 +651,7 @@ The regen's wasm step: sittir's `parser.wasm` from the sources `generate` just w
  */
 ```
 
-### `packages/codegen/src/oxfmt-config.ts::OXFMT_CONFIG.ignorePatterns`
+### `packages/codegen/src/oxfmt-config.ts::OXFMT_CONFIG::ignorePatterns`
 
 #### body
 
