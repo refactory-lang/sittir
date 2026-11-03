@@ -66,7 +66,7 @@ import {
 	DELIMITER_IMPORT,
 	isRequired,
 	isMultiple,
-	isNonEmpty,
+	slotListTypeOf,
 	slotKindNames,
 	slotLiteralValues,
 	referencedKinds,
@@ -1003,6 +1003,8 @@ function emitInterface(
 	kindEntries: readonly KindEnumEntry[]
 ): void {
 	const slots = node.slots;
+	const storageElementOf = (s: AssembledNonterminal): string =>
+		withHoles(s, storageFieldTypeExpr(s, nodeMap, fieldTypeExpr(s, nodeMap, lookupUnion), kindEntries));
 	lines.push(`export interface ${node.typeName} {`);
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
 
@@ -1014,8 +1016,7 @@ function emitInterface(
 				isRequired(f) || storageInfo.kind === 'boolean' || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				const elemType = withHoles(f, storageType);
-				emitFieldArrayDeclaration(lines, f.storageKey, opt, elemType, isNonEmpty(f));
+				lines.push(`  readonly ${f.storageKey}${opt}: ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else {
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
@@ -1035,9 +1036,7 @@ function emitInterface(
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				const elemType = withHoles(f, storageType);
-				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
-				lines.push(`  readonly ${propName}: () => ${arrType};`);
+				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {
 				lines.push(`  readonly ${propName}: () => ${slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries).input} | undefined;`);
 			} else {
@@ -1089,20 +1088,6 @@ function emitSlotHints(
 		lines.push('    };');
 	}
 	lines.push('  };');
-}
-
-function emitFieldArrayDeclaration(
-	lines: string[],
-	name: string,
-	opt: string,
-	typeExpr: string,
-	nonEmpty: boolean | undefined
-): void {
-	if (nonEmpty) {
-		lines.push(`  readonly ${name}${opt}: NonEmptyArray<${typeExpr}>;`);
-	} else {
-		lines.push(`  readonly ${name}${opt}: readonly (${typeExpr})[];`);
-	}
 }
 
 function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string[] {
@@ -1309,7 +1294,7 @@ function emitFieldInputHints(
 			const opt = isRequired(field) ? '' : '?';
 			const storageInfo = resolveFieldStorageInfo(field, nodeMap);
 			if (isMultiple(field) && !storageInfo.collapsesMultiplicity) {
-				const arrType = isNonEmpty(field) ? `NonEmptyArray<${hintType}>` : `readonly (${hintType})[]`;
+				const arrType = slotListTypeOf(field, (s) => fieldInputHintTypeExpr(s, kind, nodeMap, kindEntries)!, 'readonly');
 				return `    readonly ${quoteKey(field.name)}${opt}: ${arrType};`;
 			}
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;

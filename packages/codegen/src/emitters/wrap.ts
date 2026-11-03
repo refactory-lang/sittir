@@ -11,7 +11,7 @@ import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
 	isMultiple,
-	isNonEmpty,
+	slotListTypeOf,
 	isRequired,
 	resolveFieldStorageInfo,
 	classifyWrapEmission,
@@ -290,8 +290,7 @@ function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: re
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
 		if (isMultiple(f) && restSlots.has(method)) {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]${admitted}`;
-			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
-			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
+			const restType = slotListTypeOf(f, () => setterValueType, 'mutable');
 			return {
 				name: method,
 				params: `...v: ${restType}`,

@@ -57,7 +57,10 @@ import {
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
+	arrayTypeOf,
 	DELIMITER_IMPORT,
+	parenthesizeUnion,
+	slotListTypeOf,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -1021,14 +1024,17 @@ export function restSetterType(
 	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	if (!isMultiple(f)) return undefined;
-	const elemType = withHoles(
+	return slotListTypeOf(
 		f,
-		resolveFieldStorageInfo(f, nodeMap).kind === 'verbatim'
-			? constructionFieldElementType(f, nodeMap, kindEntries)
-			: `NonNullable<NonNullable<${configType}>['${f.propertyName}']>[number]`
+		(s) =>
+			withHoles(
+				s,
+				resolveFieldStorageInfo(s, nodeMap).kind === 'verbatim'
+					? constructionFieldElementType(s, nodeMap, kindEntries)
+					: `NonNullable<NonNullable<${configType}>['${s.propertyName}']>[number]`
+			),
+		'mutable'
 	);
-	if (isNonEmpty(f)) return `NonEmptyArray<${elemType}>`;
-	return `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`;
 }
 
 export function slotSetter(
@@ -1057,7 +1063,7 @@ function fieldCarryingBuiltTypeSurface(
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [
-			{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, withHoles(spreadFacts.slot, surface.elementType!)), optional: false, rest: true },
+			{ name: spreadFacts.slot.propertyName, input: arrayTypeOf(spreadFacts.nonEmpty, withHoles(spreadFacts.slot, surface.elementType!), 'mutable'), optional: false, rest: true },
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	} else if (singleField) {
@@ -1429,9 +1435,9 @@ function resolveConfigFactorySurface(
 					label: 'children',
 					optional: false,
 					rest: true,
-					strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
-					looseType: elementsTypeOf(nonEmpty, looseElement),
-					rowLooseType: elementsTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`),
+					strictType: arrayTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType, 'mutable'),
+					looseType: arrayTypeOf(nonEmpty, looseElement, 'mutable'),
+					rowLooseType: arrayTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`, 'mutable'),
 					...(nonEmpty ? {} : { admitsNodes: true as const })
 				}
 			);
@@ -1843,7 +1849,7 @@ function emitFieldCarryingFactory(
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		setters = [
-			{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
+			{ name: setter, params: `...vs: ${arrayTypeOf(spreadFacts.nonEmpty, admitNodes(elementType), 'mutable')}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
 			...spellingWith((patch) => `${fn}(${patch}, ...children)`)
 		];
 	} else if (singleField) {
@@ -2208,25 +2214,6 @@ function resolveRefineFormConfigOptional(
 function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): string {
 	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
 	return `T.${node.typeName}.Config`;
-}
-
-function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
-	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
-}
-
-function hasTopLevelUnion(type: string): boolean {
-	let depth = 0;
-	for (let i = 0; i < type.length; i++) {
-		const ch = type[i]!;
-		if (ch === '<' || ch === '(' || ch === '{' || ch === '[') depth++;
-		else if (ch === '>' || ch === ')' || ch === '}' || ch === ']') depth--;
-		else if (depth === 0 && type.startsWith(' | ', i)) return true;
-	}
-	return false;
-}
-
-function parenthesizeUnion(elemType: string): string {
-	return hasTopLevelUnion(elemType) ? `(${elemType})` : elemType;
 }
 
 export function listOptionKeys(surface: {
@@ -2629,7 +2616,7 @@ export function separatedListSurface(
 	}
 	const strictElemType = admitNodes(elemType);
 	const elemTypeForArray = strictElemType;
-	const elementsType = elementsTypeOf(node.nonEmpty, strictElemType);
+	const elementsType = arrayTypeOf(node.nonEmpty, strictElemType, 'mutable');
 	return {
 		elemType,
 		storageElemType: baseElemType,
@@ -2637,10 +2624,10 @@ export function separatedListSurface(
 		strictElemType,
 		looseElemTypeForArray: parenthesizeUnion(looseElemType),
 		elementsType,
-		rawElementsType: elementsTypeOf(node.nonEmpty, elemType),
+		rawElementsType: arrayTypeOf(node.nonEmpty, elemType, 'mutable'),
 		...listOptionParts(node, nodeMap, kindEntries),
 		wrapper,
-		storageElementsType: node.nonEmpty ? `NonEmptyArray<${baseElemType}>` : `${parenthesizeUnion(baseElemType)}[]`
+		storageElementsType: arrayTypeOf(node.nonEmpty, baseElemType, 'mutable')
 	};
 }
 

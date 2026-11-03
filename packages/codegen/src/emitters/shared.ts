@@ -730,6 +730,30 @@ export function listOptionsParam(optionsType: string): string {
 	return `ListOptions<${optionsType}>`;
 }
 
+export function hasTopLevelUnion(type: string): boolean {
+	let depth = 0;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i]!;
+		if (ch === '<' || ch === '(' || ch === '{' || ch === '[') depth++;
+		else if (ch === '>' || ch === ')' || ch === '}' || ch === ']') depth--;
+		else if (depth === 0 && type.startsWith(' | ', i)) return true;
+	}
+	return false;
+}
+
+export function parenthesizeUnion(elemType: string): string {
+	return hasTopLevelUnion(elemType) ? `(${elemType})` : elemType;
+}
+
+export function arrayTypeOf(nonEmpty: boolean, element: string, form: 'readonly' | 'mutable'): string {
+	if (nonEmpty) return `NonEmptyArray<${element}>`;
+	return form === 'readonly' ? `readonly (${element})[]` : `${parenthesizeUnion(element)}[]`;
+}
+
+export function slotListTypeOf(slot: AssembledNonterminal, element: (slot: AssembledNonterminal) => string, form: 'readonly' | 'mutable'): string {
+	return arrayTypeOf(isNonEmpty(slot), element(slot), form);
+}
+
 export function listRestParamType(
 	nonEmpty: boolean,
 	element: string,
