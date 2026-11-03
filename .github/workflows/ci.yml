@@ -221,6 +221,12 @@ jobs:
         run: |
           cp -R /tmp/node-storage-bindings/. ./
           find packages -path "*/native/*.node" -print
+      # Validation compiles every grammar, which reads its generated layer's
+      # hash through the pinned build.
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
       - name: Validation rows, object storage
         run: |
           npx tsx packages/cli/src/cli.ts validate counts
