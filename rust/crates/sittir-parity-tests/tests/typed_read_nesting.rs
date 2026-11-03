@@ -23,8 +23,8 @@ struct Ceilings {
 const CEILINGS: &[Ceilings] = &[
     Ceilings { os: "macos", arch: "aarch64", release: true, levels: [7, 7, 39, 183] },
     Ceilings { os: "macos", arch: "aarch64", release: false, levels: [39, 71, 167, 711] },
-    Ceilings { os: "linux", arch: "x86_64", release: true, levels: [47, 63, 95, 263] },
-    Ceilings { os: "linux", arch: "x86_64", release: false, levels: [167, 199, 311, 911] },
+    Ceilings { os: "linux", arch: "x86_64", release: true, levels: [23, 31, 55, 199] },
+    Ceilings { os: "linux", arch: "x86_64", release: false, levels: [55, 79, 175, 679] },
 ];
 
 /// The deepest entry of the rust corpus by parse-tree depth, saved as a probe
