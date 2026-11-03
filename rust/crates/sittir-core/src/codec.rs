@@ -513,18 +513,16 @@ mod wire {
     /// `env` must be live.
     pub unsafe fn encode<W: Frames, T: Codec<W>>(env: napi_env, value: T) -> Result<napi_value> {
         crate::stack::assert_central("the wire encode");
-        let mut above = None;
-        let mut stack = Vec::new();
+        let mut slots = vec![None];
         // SAFETY: this fn requires a live `env`.
-        let mut begun = unsafe { value.encode(env, &mut above)? };
+        let mut begun = unsafe { value.encode(env, &mut slots[0])? };
         loop {
             let wait = match begun {
                 Begun::Whole(value) => return Ok(value),
                 Begun::Waits(wait) => wait,
             };
-            stack.push(written(&mut above));
             // SAFETY: `env` is live, and every value the frame holds was created in it.
-            let child = match unsafe { run_encode::<W>(env, &mut stack) } {
+            let child = match unsafe { run_encode::<W>(env, &mut slots) } {
                 Ok(child) => child,
                 Err(err) => {
                     release::<W, _>(wait);
@@ -532,28 +530,33 @@ mod wire {
                 }
             };
             // SAFETY: as above.
-            begun = unsafe { T::encoded(env, wait, child, &mut above)? };
+            begun = unsafe { T::encoded(env, wait, child, &mut slots[0])? };
         }
     }
 
-    unsafe fn run_encode<W: Frames>(env: napi_env, stack: &mut Vec<W::EncodeFrame>) -> Result<napi_value> {
+    unsafe fn run_encode<W: Frames>(env: napi_env, slots: &mut Vec<Option<W::EncodeFrame>>) -> Result<napi_value> {
         let mut child = None;
-        let mut above = None;
+        let mut top = 0;
         loop {
             crate::stack::assert_central("a wire encode step");
-            let top = stack.last_mut().expect("the loop runs while a frame is left");
+            if top + 1 == slots.len() {
+                slots.push(None);
+            }
+            let (below, above) = slots.split_at_mut(top + 1);
+            let frame = below[top].as_mut().expect("the loop steps a frame");
             // SAFETY: this fn's caller passes a live `env`, and every value each frame holds was created in it.
-            match unsafe { top.step(env, child.take(), &mut above) } {
-                Ok(Begun::Waits(())) => stack.push(written(&mut above)),
+            match unsafe { frame.step(env, child.take(), &mut above[0]) } {
+                Ok(Begun::Waits(())) => top += 1,
                 Ok(Begun::Whole(value)) => {
-                    stack.pop();
-                    if stack.is_empty() {
+                    below[top] = None;
+                    if top == 0 {
                         return Ok(value);
                     }
+                    top -= 1;
                     child = Some(value);
                 }
                 Err(err) => {
-                    release::<W, _>((::std::mem::take(stack), above));
+                    release::<W, _>(::std::mem::take(slots));
                     return Err(err);
                 }
             }
