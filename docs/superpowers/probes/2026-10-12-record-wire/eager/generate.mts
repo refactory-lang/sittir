@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { compileGrammar } from '../../../../../packages/codegen/src/compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../../../../packages/codegen/src/compiler/generated-metadata.ts';
 import { isMultiple, isRequired, isPatternLeaf } from '../../../../../packages/codegen/src/compiler/model/node-map.ts';
-import { BLANK_KIND_ID } from '../../../../../packages/codegen/src/compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID } from '../../../../../packages/common/src/blank-arm.ts';
 import { grammarPackage } from '../../../../../packages/codegen/src/grammars.ts';
 import {
   nodeRecordLayout,

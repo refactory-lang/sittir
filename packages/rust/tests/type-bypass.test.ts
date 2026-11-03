@@ -12,6 +12,11 @@ describe('a value the strict types refuse, given anyway: the default mode trusts
 		expect(() => returning(verifying, 'x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
 	});
 
+	it('a list at a slot that holds one value is refused in runtime mode', () => {
+		const list = [verifying.build.identifier('a'), verifying.build.identifier('b')];
+		expect(() => returning(verifying, list)).toThrow(/ReturnExpression\.expression: holds one value, not a list/);
+	});
+
 	it('by default the native decode reads the text as verbatim', () => {
 		expect(returning(trusting, 'x').$render()).toBe('return x');
 	});

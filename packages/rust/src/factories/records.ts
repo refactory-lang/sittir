@@ -27,6 +27,7 @@ import {
 	refuseJSON,
 	describeValue,
 	restItems,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceKindEnumStorage,
@@ -323,15 +324,15 @@ export function buildTokenBindingPattern<NameSlot extends T.TokenBindingPattern.
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Bound {
 	currentHandle()?.admit(TSKindId.TokenBindingPattern, [config]);
 	const _name = config.name;
-	const _type = kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type);
+	const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, type: _type });
+	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, fragment: _fragment });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _type });
+	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _fragment });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TokenBindingPattern as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 6, _type);
+		storeCell(arena, record, 3, 6, _fragment);
 		const node = arena.view(record);
 		return node as unknown as T.TokenBindingPattern.Bound;
 	});
@@ -343,15 +344,15 @@ function buildTokenBindingPattern$patch(
 ): T.TokenBindingPattern.Bound {
 	currentHandle()?.admit(TSKindId.TokenBindingPattern, [config]);
 	const _name = config.name;
-	const _type = kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type);
+	const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, type: _type });
+	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, fragment: _fragment });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _type });
+	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _fragment });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TokenBindingPattern as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'fragment', _fragment));
 		const node = arena.view(record);
 		return node as unknown as T.TokenBindingPattern.Bound;
 	});
@@ -365,9 +366,9 @@ function withTokenBindingPattern(node: object, setter: string, args: readonly un
 			return applySetter(args, (value: Admit<T.Metavariable>) =>
 				rebuilt(node, handle, () => buildTokenBindingPattern$patch(node, { ...config, name: value }))
 			);
-		case 'type':
-			return applySetter(args, (value: Admit<NonNullable<T.TokenBindingPattern.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTokenBindingPattern$patch(node, { ...config, type: value }))
+		case 'fragment':
+			return applySetter(args, (value: Admit<NonNullable<T.TokenBindingPattern.Config>['fragment']>) =>
+				rebuilt(node, handle, () => buildTokenBindingPattern$patch(node, { ...config, fragment: value }))
 			);
 	}
 	throw new Error(`token_binding_pattern has no $with.${setter}`);
@@ -1999,16 +2000,16 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 function _buildOrderedFieldDeclarationList(
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): T.OrderedFieldDeclarationList.Bound {
-	const _attributes = hydrateStored(value);
-	const listView = ownerView(_attributes, '_item');
-	if (listView.length === undefined) refuseReadStub('_attributes');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { attributes: _attributes });
+	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.OrderedFieldDeclarationList as const, { _attributes });
+	handle?.verifyStored?.(TSKindId.OrderedFieldDeclarationList as const, { _elements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.OrderedFieldDeclarationList as const);
-		storeCell(arena, record, 2, 2, _attributes);
+		storeCell(arena, record, 2, 2, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.OrderedFieldDeclarationList.Bound;
 	});
@@ -2018,16 +2019,16 @@ function _buildOrderedFieldDeclarationList$patch(
 	source: object,
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): T.OrderedFieldDeclarationList.Bound {
-	const _attributes = hydrateStored(value);
-	const listView = ownerView(_attributes, '_item');
-	if (listView.length === undefined) refuseReadStub('_attributes');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { attributes: _attributes });
+	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.OrderedFieldDeclarationList as const, { _attributes });
+	handle?.verifyStored?.(TSKindId.OrderedFieldDeclarationList as const, { _elements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.OrderedFieldDeclarationList as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'attributes', _attributes));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'elements', _elements));
 		const node = arena.view(record);
 		return node as unknown as T.OrderedFieldDeclarationList.Bound;
 	});
@@ -2035,7 +2036,7 @@ function _buildOrderedFieldDeclarationList$patch(
 function withOrderedFieldDeclarationList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'attributes':
+		case 'elements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -7632,7 +7633,7 @@ export function buildLastMatchArm(
 	const _match = config.match;
 	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const handle = currentHandle();
@@ -7666,7 +7667,7 @@ function buildLastMatchArm$patch(
 	const _match = config.match;
 	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const handle = currentHandle();
@@ -8094,7 +8095,7 @@ export function buildClosureParameters(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -8120,7 +8121,7 @@ function buildClosureParameters$patch(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -14527,38 +14528,23 @@ function withRangeExpressionPrefix(node: object, setter: string, args: readonly 
 	throw new Error(`range_expression_prefix has no $with.${setter}`);
 }
 
-export function buildRangeExpressionBare<V extends Admit<TSKindId.DotDot>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): T.RangeExpressionBare.Bound;
-export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.RangeExpressionBare.Bound {
-	const _range_expression_bare = kindIdStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		orDefault(value, () => TSKindId.DotDot as const)
-	);
+export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_bare', { rangeExpressionBare: _range_expression_bare });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, { _range_expression_bare });
+	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, {});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangeExpressionBare as const);
-		storeCell(arena, record, 2, 2, _range_expression_bare);
 		const node = arena.view(record);
 		return node as unknown as T.RangeExpressionBare.Bound;
 	});
 }
 
-function buildRangeExpressionBare$patch(source: object, value?: Admit<TSKindId.DotDot>): T.RangeExpressionBare.Bound {
-	const _range_expression_bare = kindIdStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		orDefault(value, () => TSKindId.DotDot as const)
-	);
+function buildRangeExpressionBare$patch(source: object): T.RangeExpressionBare.Bound {
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_bare', { rangeExpressionBare: _range_expression_bare });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, { _range_expression_bare });
+	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, {});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangeExpressionBare as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'rangeExpressionBare', _range_expression_bare));
 		const node = arena.view(record);
 		return node as unknown as T.RangeExpressionBare.Bound;
 	});
@@ -14566,10 +14552,6 @@ function buildRangeExpressionBare$patch(source: object, value?: Admit<TSKindId.D
 function withRangeExpressionBare(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'rangeExpressionBare':
-			return applySetter(args, (value: Admit<NonNullable<TSKindId.DotDot>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBare$patch(node, value))
-			);
 	}
 	throw new Error(`range_expression_bare has no $with.${setter}`);
 }
@@ -16067,7 +16049,7 @@ export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.C
 ): T.RangePatternPrefix.Bound;
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 		'RangePatternPrefix.right',
@@ -16075,12 +16057,12 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { content: _content, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _content, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangePatternPrefix as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _right);
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternPrefix.Bound;
@@ -16092,7 +16074,7 @@ function buildRangePatternPrefix$patch(
 	config: T.RangePatternPrefix.Config
 ): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 		'RangePatternPrefix.right',
@@ -16100,12 +16082,12 @@ function buildRangePatternPrefix$patch(
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { content: _content, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _content, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternPrefix.Bound;
@@ -16116,9 +16098,9 @@ function withRangePatternPrefix(node: object, setter: string, args: readonly unk
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.RangePatternPrefix.Config;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix$patch(node, { ...config, operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
@@ -16135,7 +16117,7 @@ export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 		'RangePatternWithLeftWithRight.right',
@@ -16144,12 +16126,12 @@ export function buildRangePatternWithLeftWithRight(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { content: _content, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _content, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangePatternWithLeftWithRight as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _right);
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
@@ -16161,7 +16143,7 @@ function buildRangePatternWithLeftWithRight$patch(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 		'RangePatternWithLeftWithRight.right',
@@ -16170,12 +16152,12 @@ function buildRangePatternWithLeftWithRight$patch(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { content: _content, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _content, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
@@ -16186,9 +16168,9 @@ function withRangePatternWithLeftWithRight(node: object, setter: string, args: r
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.RangePatternWithLeftWithRight.Config;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$patch(node, { ...config, operator: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
@@ -17921,33 +17903,6 @@ function withParametersElementsReceiverGroup(node: object, setter: string, args:
 	throw new Error(`parameters_elements_receiver_group has no $with.${setter}`);
 }
 
-export function buildStringClose(text: string): T.StringClose.Bound {
-	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafStringClose, text) as unknown as T.StringClose.Bound;
-}
-
-function leafStringClose(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.StringClose as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
-	return node;
-}
-
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (typeof text !== 'string') throw new Error(`_error_sentinel: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
@@ -18777,7 +18732,6 @@ export type FluentKindMap = {
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
 	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
-	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
 	self_module: T.SelfModule;
 	type_identifier: T.TypeIdentifier.Bound;
@@ -19056,7 +19010,6 @@ export const _factoryMap = {
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
-	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,
@@ -19071,8 +19024,8 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		124: withShebang,
-		128: withMetavariable,
+		123: withShebang,
+		127: withMetavariable,
 		141: withIntegerLiteralDecimal,
 		142: withIntegerLiteralHex,
 		143: withIntegerLiteralBinary,
@@ -19308,8 +19261,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		481: withTypeIdentifier
 	}),
 	words: Object.freeze({
-		124: 3,
-		128: 3,
+		123: 3,
+		127: 3,
 		141: 4,
 		142: 4,
 		143: 4,
@@ -19493,7 +19446,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		390: 5,
 		391: 3,
 		392: 3,
-		393: 3,
+		393: 2,
 		394: 3,
 		395: 4,
 		396: 5,
@@ -19545,8 +19498,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		481: 3
 	}),
 	cells: Object.freeze({
-		124: 2,
-		128: 2,
+		123: 2,
+		127: 2,
 		141: 2,
 		142: 2,
 		143: 2,
@@ -19788,7 +19741,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		146: leafCharLiteralEmpty,
 		155: leafLineCommentRegular,
 		157: leafStringContent,
-		158: leafStringClose,
 		159: leafRawStringLiteralStart,
 		160: leafRawStringLiteralContent,
 		161: leafRawStringLiteralEnd,

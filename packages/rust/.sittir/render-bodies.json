@@ -5179,11 +5179,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "attributes",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "attributes"
+							"name": "elements"
 						}
 					]
 				}
@@ -5608,7 +5608,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -5644,7 +5644,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "operator"
 		},
 		{
 			"kind": "slot",
@@ -6543,7 +6543,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "static_keyword_before"
+			"field": "static_before"
 		},
 		{
 			"kind": "text",
@@ -6551,7 +6551,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "static_keyword_after"
+			"field": "static_after"
 		},
 		{
 			"kind": "if",
@@ -6678,10 +6678,6 @@
 		{
 			"kind": "slot",
 			"name": "elements"
-		},
-		{
-			"kind": "seam",
-			"field": "string_close_before"
 		},
 		{
 			"kind": "text",
@@ -7009,11 +7005,11 @@
 		},
 		{
 			"kind": "seam",
-			"field": "type_before"
+			"field": "fragment_before"
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "fragment"
 		},
 		{
 			"kind": "seam",

@@ -33,6 +33,11 @@
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
 		},
+		"./blank-arm": {
+			"types": "./src/blank-arm.ts",
+			"import": "./src/blank-arm.ts",
+			"default": "./src/blank-arm.ts"
+		},
 		"./error-kind": {
 			"types": "./src/error-kind.ts",
 			"import": "./src/error-kind.ts",
@@ -55,10 +60,10 @@
 		}
 	},
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
+		"build": "tsrs -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsc -p tsconfig.build.json --watch",
-		"type-check": "tsc --noEmit",
+		"dev": "tsrs -p tsconfig.build.json --watch",
+		"type-check": "tsrs --noEmit",
 		"test": "vitest run"
 	},
 	"dependencies": {

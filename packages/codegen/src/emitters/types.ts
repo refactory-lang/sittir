@@ -106,8 +106,10 @@ import {
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
 	listOptionStorageMembers,
+	slotSetter,
 	type BuiltTypeSurface
 } from './factories.ts';
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -479,6 +481,7 @@ const VOCABULARY_IMPORTS = [
 	'KindEnum',
 	'NodeOfNamespaces',
 	'OmitEach',
+	'OmitRegistered',
 	'NoneOf',
 	'WithoutGroup',
 	'RenameKeys',
@@ -1035,6 +1038,8 @@ function emitInterface(
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  readonly ${propName}: () => ${arrType};`);
+			} else if (hasBlankArm(f)) {
+				lines.push(`  readonly ${propName}: () => ${slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries).input} | undefined;`);
 			} else {
 				lines.push(`  readonly ${propName}: () => ${storageType}${opt ? ' | undefined' : ''};`);
 			}

@@ -230,17 +230,17 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.LookaheadAssertion as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		pattern() {
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.LookaheadAssertion['_content']>) =>
+			operator: (v: NonNullable<T.LookaheadAssertion['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapLookaheadAssertion(
-						{ ...$edited(data), _content: admitSlot(handle, 'lookahead_assertion', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'lookahead_assertion', 'operator', v) },
 						tree
 					)
 				),
@@ -274,17 +274,17 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.LookbehindAssertion as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		pattern() {
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.LookbehindAssertion['_content']>) =>
+			operator: (v: NonNullable<T.LookbehindAssertion['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapLookbehindAssertion(
-						{ ...$edited(data), _content: admitSlot(handle, 'lookbehind_assertion', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'lookbehind_assertion', 'operator', v) },
 						tree
 					)
 				),
@@ -503,8 +503,8 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.NamedCapturingGroup as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		groupName() {
 			return hydrateSlot<T.GroupName>(this, '_group_name', tree);
@@ -513,10 +513,10 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.NamedCapturingGroup['_content']>) =>
+			operator: (v: NonNullable<T.NamedCapturingGroup['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapNamedCapturingGroup(
-						{ ...$edited(data), _content: admitSlot(handle, 'named_capturing_group', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'named_capturing_group', 'operator', v) },
 						tree
 					)
 				),
@@ -1441,7 +1441,7 @@ function viewLookaroundAssertion(data: RecordPosition, tree: TreeHandle): T.Look
 	return node as unknown as T.LookaroundAssertion.Parsed;
 }
 
-function viewLookaheadAssertion$content(this: RecordHandle) {
+function viewLookaheadAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewLookaheadAssertion$pattern(this: RecordHandle) {
@@ -1455,7 +1455,7 @@ function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.Looka
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewLookaheadAssertion$content,
+		operator: viewLookaheadAssertion$operator,
 		pattern: viewLookaheadAssertion$pattern,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -1467,12 +1467,12 @@ function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.Looka
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, pattern: $with$pattern };
+	node.$with = { node, operator: $with$operator, pattern: $with$pattern };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.LookaheadAssertion.Parsed;
 }
 
-function viewLookbehindAssertion$content(this: RecordHandle) {
+function viewLookbehindAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewLookbehindAssertion$pattern(this: RecordHandle) {
@@ -1486,7 +1486,7 @@ function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.Look
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewLookbehindAssertion$content,
+		operator: viewLookbehindAssertion$operator,
 		pattern: viewLookbehindAssertion$pattern,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -1498,7 +1498,7 @@ function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.Look
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, pattern: $with$pattern };
+	node.$with = { node, operator: $with$operator, pattern: $with$pattern };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.LookbehindAssertion.Parsed;
 }
@@ -1642,7 +1642,7 @@ function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.
 	return node as unknown as T.AnonymousCapturingGroup.Parsed;
 }
 
-function viewNamedCapturingGroup$content(this: RecordHandle) {
+function viewNamedCapturingGroup$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewNamedCapturingGroup$groupName(this: RecordHandle) {
@@ -1659,7 +1659,7 @@ function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.Name
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewNamedCapturingGroup$content,
+		operator: viewNamedCapturingGroup$operator,
 		groupName: viewNamedCapturingGroup$groupName,
 		pattern: viewNamedCapturingGroup$pattern,
 		$with: undefined as unknown as object,
@@ -1672,7 +1672,7 @@ function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.Name
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, groupName: $with$groupName, pattern: $with$pattern };
+	node.$with = { node, operator: $with$operator, groupName: $with$groupName, pattern: $with$pattern };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NamedCapturingGroup.Parsed;
 }
@@ -2291,6 +2291,9 @@ function $with$leading(this: { readonly node: RecordPosition }, ...args: unknown
 }
 function $with$negation(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'negation', args);
+}
+function $with$operator(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'operator', args);
 }
 function $with$pattern(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'pattern', args);

@@ -133,6 +133,7 @@
 (const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.constant.public.restricted
 (let_declaration pattern: (_) @name) @declaration.variable
 (static_item) @declaration.variable
+(static_item "static" @static)
 (static_item ref: _ @byReference)
 (static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.variable.private
 (static_item (visibility_modifier (visibility_modifier_pub))) @declaration.variable.public
@@ -153,6 +154,9 @@
 (attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.field.public.restricted
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
 (macro_definition name: (_) (_)? @rules) @declaration.macro
+(macro_definition_paren) @declaration.macro.paren
+(macro_definition_bracket) @declaration.macro.bracket
+(macro_definition_brace) @declaration.macro.brace
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.self
@@ -205,10 +209,10 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm value: _ @body) @clause.case.match
+(match_arm value: _ @body) @clause.arm.match
 (match_arm_with_comma match: (match_pattern pattern: _ @pattern condition: _? @guard))
 (match_arm_block_ending match: (match_pattern pattern: _ @pattern condition: _? @guard))
-(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case.match
+(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.arm.match
 ((match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))
@@ -236,8 +240,17 @@
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
 (token_tree) @element.macro.token_tree
+(token_tree_paren) @element.macro.token_tree.paren
+(token_tree_bracket) @element.macro.token_tree.bracket
+(token_tree_brace) @element.macro.token_tree.brace
 (delim_token_tree (_)* @tokens) @element.macro.token_tree.delimited
+(delim_token_tree_paren) @element.macro.token_tree.delimited.paren
+(delim_token_tree_bracket) @element.macro.token_tree.delimited.bracket
+(delim_token_tree_brace) @element.macro.token_tree.delimited.brace
 (token_tree_pattern (_)* @tokens) @element.macro.token_tree.pattern
+(token_tree_pattern_paren) @element.macro.token_tree.pattern.paren
+(token_tree_pattern_bracket) @element.macro.token_tree.pattern.bracket
+(token_tree_pattern_brace) @element.macro.token_tree.pattern.brace
 (token_binding_pattern) @element.macro.token_binding
 (token_repetition) @element.macro.token_repetition
 (token_repetition_pattern) @element.macro.token_repetition.pattern
@@ -296,7 +309,7 @@
 (yield_expression) @expression.yield
 (range_expression) @expression.range
 (range_expression_binary operator: "..=") @expression.range.inclusive
-(range_expression_binary operator: "...") @expression.range.inclusive
+(range_expression_binary operator: "...") @expression.range.inclusive.legacy
 (range_expression_binary operator: "..") @expression.range.exclusive
 (range_expression_postfix) @expression.range.exclusive
 (range_expression_prefix) @expression.range.exclusive
@@ -315,7 +328,7 @@
 (try_block) @expression.block.try
 (gen_block) @expression.block.gen
 (generic_function) @expression.instantiation
-(scoped_identifier) @identifier.qualified
+(scoped_identifier) @identifier.scoped
 (scoped_identifier path: (_) @qualifier)
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
@@ -330,7 +343,7 @@
 (range_pattern_prefix "..=") @pattern.range.inclusive
 (range_pattern_prefix "..") @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_with_right "..=")) @pattern.range.inclusive
-(range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive
+(range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive.legacy
 (range_pattern_with_left (range_pattern_with_left_with_right "..")) @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_bare)) @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))
@@ -382,14 +395,16 @@
 (bounded_type) @type.bounded
 (qualified_type) @type.qualified
 (bracketed_type) @type.bracketed
-(scoped_type_identifier) @identifier.qualified
+(scoped_type_identifier) @identifier.scoped
 (scoped_type_identifier path: (_) @qualifier)
-(scoped_type_identifier_in_expression_position) @identifier.qualified
+(scoped_type_identifier_in_expression_position) @identifier.scoped
 (scoped_type_identifier_in_expression_position path: (_) @qualifier)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string
-((string_literal) @literal.string.bytes (#match? @literal.string.bytes "^b\""))
+((string_literal string_open: (_) @_open) @literal.string (#eq? @_open "\""))
+((string_literal string_open: (_) @_open) @literal.string.bytes (#eq? @_open "b\""))
+((string_literal string_open: (_) @_open) @literal.string.c (#eq? @_open "c\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
@@ -401,8 +416,8 @@
 (float_literal) @literal.number.float
 (negative_literal) @literal.number.negative
 (boolean_literal) @literal.boolean
-((boolean_literal) @literal.boolean.true (#eq? @literal.boolean.true "true"))
-((boolean_literal) @literal.boolean.false (#eq? @literal.boolean.false "false"))
+((boolean_literal) @literal.boolean.true (#eq? @literal.boolean.true "true") (#set! value true))
+((boolean_literal) @literal.boolean.false (#eq? @literal.boolean.false "false") (#set! value false))
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier

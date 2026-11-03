@@ -35,53 +35,53 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_binary: {
-		regex: '^(?<prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$',
+		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$',
 		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	number_float_leading_point: {
-		regex: '^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
+		regex: '^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
 		slots: [
 			{ name: 'fraction', propertyName: 'fraction' },
 			{ name: 'marker', propertyName: 'marker' },
-			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent_sign', propertyName: 'exponentSign' },
 			{ name: 'exponent', propertyName: 'exponent' }
 		]
 	},
 	number_float_point: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'fraction', propertyName: 'fraction' },
 			{ name: 'marker', propertyName: 'marker' },
-			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent_sign', propertyName: 'exponentSign' },
 			{ name: 'exponent', propertyName: 'exponent' }
 		]
 	},
 	number_float_scientific: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'marker', propertyName: 'marker' },
-			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent_sign', propertyName: 'exponentSign' },
 			{ name: 'exponent', propertyName: 'exponent' }
 		]
 	},
 	number_hex: {
-		regex: '^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
+		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	number_octal: {
-		regex: '^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$',
+		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$',
 		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},

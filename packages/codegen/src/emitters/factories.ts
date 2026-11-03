@@ -9,7 +9,8 @@ import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
-import { BLANK_KIND_ID, hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
+import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -53,7 +54,7 @@ import {
 	textStoragesOf,
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
-import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
 	DELIMITER_IMPORT,
 	isRequired,
@@ -97,6 +98,8 @@ import {
 	looseElementType,
 	pruneUnusedImports,
 	blankFromInput,
+	blankArmImports,
+	blankForRead,
 	leadingOptionsOf,
 	unreservedWordFactory,
 	slotAliases,
@@ -192,12 +195,12 @@ function slotGuardKey(kind: string, slot: string): string {
 	return `${kind}\0${slot}`;
 }
 
-export function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
+export function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; regex: RegExp; literal: string } | undefined {
 	if (node.surfaceHidden && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
-	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
-	if (literal === undefined) return undefined;
-	return { constName: `_leafRe_${node.rawFactoryName!}`, literal };
+	const regex = anchoredLeafRegex(kind, node.textPattern);
+	if (regex === undefined) return undefined;
+	return { constName: `_leafRe_${node.rawFactoryName!}`, regex, literal: regexLiteral(regex) };
 }
 
 function hasDelimited(nodeMap: NodeMap): boolean {
@@ -1121,11 +1124,12 @@ function fieldCarryingBuiltTypeSurface(
 		surface.leadingOptions === undefined
 			? paramsToTuple(params)
 			: `${paramsToTuple(params)} | ${paramsToTuple(withLeadingOptions(surface.leadingOptions.type, params))}`;
-	const arrayArgs = spreadFacts?.multiple
-		? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
-		: '';
+	const arrayArgs =
+		surface.spreadFacts !== null && surface.spreadFacts.multiple
+			? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
+			: '';
 	return {
-		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
+		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
@@ -1149,11 +1153,10 @@ function ownTextArgs(leaf: OwnTextLeaf, contentType: string): string {
 
 function rowParamOf(
 	node: FieldCarryingNode,
-	surface: FactorySurface,
+	param: FactoryParam,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): RowParam {
-	const { param } = surface;
 	const strictType = param.rowStrictType ?? param.strictType;
 	return {
 		label: param.label,
@@ -1273,10 +1276,9 @@ interface FactoryParam {
 }
 
 
-interface FactorySurface {
+interface FactorySurfaceFields {
 	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
 	readonly singleField: AssembledNonterminal | undefined;
-	readonly param: FactoryParam;
 	readonly params: string;
 	readonly looseParams: string;
 	readonly rowParams: string;
@@ -1292,6 +1294,20 @@ interface FactorySurface {
 	readonly spellingType?: string;
 	readonly leadingOptions?: LeadingOptions;
 }
+
+interface ParamFactorySurface extends FactorySurfaceFields {
+	readonly nullary?: undefined;
+	readonly param: FactoryParam;
+}
+
+interface NullaryFactorySurface extends FactorySurfaceFields {
+	readonly nullary: true;
+	readonly param?: undefined;
+	readonly spreadFacts: null;
+	readonly leadingOptions?: undefined;
+}
+
+type FactorySurface = ParamFactorySurface | NullaryFactorySurface;
 
 export function declarationParams(params: string): string {
 	return params.replace(/(\w+)\??: (.+?) = [^,]+/, '$1?: $2');
@@ -1398,9 +1414,9 @@ function registeredSlotSource(
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
 }
 
-export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
+export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }, omitter: 'OmitEach' | 'OmitRegistered' = 'OmitEach'): string {
 	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.propertyName));
-	return keys.length === 0 ? type : `OmitEach<${type}, ${keys.join(' | ')}>`;
+	return keys.length === 0 ? type : `${omitter}<${type}, ${keys.join(' | ')}>`;
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
@@ -1415,6 +1431,7 @@ function resolveFactorySurface(
 	kindEntries: readonly KindEnumEntry[]
 ): FactorySurface {
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
+	if (surface.nullary === true) return surface;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spellingType === undefined) return surface;
 	const leadingOptions = leadingOptionsOf(node, nodeMap);
@@ -1530,9 +1547,12 @@ function resolveConfigFactorySurface(
 			opt: optional ? '?' : ''
 		};
 	}
+	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
+	if (classifyFactoryShape(node, nodeMap) === 'nullary') {
+		return { nullary: true, spreadFacts: null, singleField, params: '', looseParams: '', rowParams: '', rowLooseParams: `input?: T.${node.typeName}.Loose`, arity: 0, args: '', configType, directParamOptional: false, opt: '' };
+	}
 	const slots = node.slots;
 	const opt = node.argumentOptional(nodeMap) ? '?' : '';
-	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
 	const widen = (type: string): string => widenSlotInputs(type, node, nodeMap);
@@ -1544,7 +1564,7 @@ function resolveConfigFactorySurface(
 		rest: false,
 		strictType,
 		looseType: `T.${node.typeName}.Loose`,
-		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node)),
+		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node, 'OmitRegistered'))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node, 'OmitRegistered')),
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	const generic = refusingSlots(
@@ -1750,11 +1770,13 @@ export function compoundStructureRow(
 		node.typeName,
 		nodeMap
 	);
+	const scalar = new Set([...checks.booleans, ...checks.kindIds, ...checks.texts].map(([key]) => key));
+	const single = stored.filter((f) => !isMultiple(f) && !scalar.has(f.storageKey)).map((f) => [f.storageKey, bareTextLabel(f, node.typeName)] as const);
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
 	const options = [...registered].map((f) => f.propertyName);
-	return structureRow(node.kind, { required, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists, options });
+	return structureRow(node.kind, { required, single, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists, options });
 }
 
 function slotStorageChecks(
@@ -1944,8 +1966,8 @@ function fieldCarryingFactoryText(
 					`    value = unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`,
 					'  }'
 				];
-	if (leadingOptions !== undefined) {
-		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));
+	if (surface.leadingOptions !== undefined) {
+		lines.push(...leadingOptionsSplit(surface.leadingOptions, 'children', strictParamType(surface.param)));
 	}
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	const owner = plan.viewPlan?.owner;
@@ -2642,7 +2664,7 @@ function storedAccessor(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap
 ): StoredAccessor {
-	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read };
+	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
 	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
 }
 
@@ -2983,7 +3005,7 @@ interface MapEntry {
 	factory: string;
 	typeName: string;
 	fluent: boolean;
-	shape: 'config' | 'children' | 'text' | 'constant' | 'direct' | 'forwarded';
+	shape: 'config' | 'children' | 'text' | 'constant' | 'nullary' | 'direct' | 'forwarded';
 }
 
 export class FactoryEmitter implements CodegenEmitter<string> {
@@ -3016,7 +3038,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

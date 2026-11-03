@@ -215,6 +215,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildSubscriptExpression']>,
 		ReturnType<typeof F.buildLhsExpression>
 	>;
+	readonly lhsExpression$undefined: (
+		options?: OptionsArg<Table['buildLhsExpression']>
+	) => ReturnType<Table['buildLhsExpression']>;
+	readonly lhsExpression$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildLhsExpression>>;
 	readonly lhsExpression$nonNullExpression: Seat<
 		ArgsOf<Table['buildNonNullExpression']>,
 		ReturnType<typeof F.buildLhsExpression>
@@ -222,6 +226,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly lhsExpression: Table['buildLhsExpression'] & {
 		readonly memberExpression: Routes<Table>['lhsExpression$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['lhsExpression$subscriptExpression'];
+		readonly undefined: Routes<Table>['lhsExpression$undefined'];
+		readonly identifier: Routes<Table>['lhsExpression$identifier'];
 		readonly nonNullExpression: Routes<Table>['lhsExpression$nonNullExpression'];
 	};
 	readonly restPattern$memberExpression: Seat<
@@ -232,6 +238,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildSubscriptExpression']>,
 		ReturnType<typeof F.buildRestPattern>
 	>;
+	readonly restPattern$undefined: (
+		options?: OptionsArg<Table['buildRestPattern']>
+	) => ReturnType<Table['buildRestPattern']>;
+	readonly restPattern$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildRestPattern>>;
 	readonly restPattern$nonNullExpression: Seat<
 		ArgsOf<Table['buildNonNullExpression']>,
 		ReturnType<typeof F.buildRestPattern>
@@ -239,6 +249,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly restPattern: Table['buildRestPattern'] & {
 		readonly memberExpression: Routes<Table>['restPattern$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['restPattern$subscriptExpression'];
+		readonly undefined: Routes<Table>['restPattern$undefined'];
+		readonly identifier: Routes<Table>['restPattern$identifier'];
 		readonly nonNullExpression: Routes<Table>['restPattern$nonNullExpression'];
 	};
 	readonly ambientDeclaration$function: Seat<
@@ -331,27 +343,27 @@ export interface Routes<Table extends AnyTable> {
 		readonly module: Table['buildAmbientDeclarationModule'];
 	};
 	readonly typeQueryMemberExpression$dot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression$qmarkDot: <
-		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>
+		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'content'>>,
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildTypeQueryMemberExpression']>
 	) => ReturnType<Table['buildTypeQueryMemberExpression']>;
 	readonly typeQueryMemberExpression: Table['buildTypeQueryMemberExpression'] & {
 		readonly dot: Routes<Table>['typeQueryMemberExpression$dot'];
 		readonly qmarkDot: Routes<Table>['typeQueryMemberExpression$qmarkDot'];
 	};
-	readonly constraint$extends: <const V extends OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>,
+	readonly constraint$extends: <const V extends ArgsOf<Table['buildConstraint']>[0]>(
+		arg: V & RefuseUndeclared<V, ArgsOf<Table['buildConstraint']>[0]>,
 		options?: OptionsArg<Table['buildConstraint']>
 	) => ReturnType<Table['buildConstraint']>;
-	readonly constraint$colon: <const V extends OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>,
+	readonly constraint$colon: <const V extends ArgsOf<Table['buildConstraint']>[0]>(
+		arg: V & RefuseUndeclared<V, ArgsOf<Table['buildConstraint']>[0]>,
 		options?: OptionsArg<Table['buildConstraint']>
 	) => ReturnType<Table['buildConstraint']>;
 	readonly constraint: Table['buildConstraint'] & {
@@ -399,42 +411,18 @@ export interface Routes<Table extends AnyTable> {
 		readonly getter: Routes<Table>['classBodyMemberMethod$getter'];
 		readonly setter: Routes<Table>['classBodyMemberMethod$setter'];
 	};
-	readonly classBodyMemberMethodSig$plain: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignaturePlain']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignaturePlain']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
-	readonly classBodyMemberMethodSig$getter: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignatureGetter']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignatureGetter']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
-	readonly classBodyMemberMethodSig$setter: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignatureSetter']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignatureSetter']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
+	readonly classBodyMemberMethodSig$plain: Seat<
+		ArgsOf<Table['buildMethodSignaturePlain']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
+	readonly classBodyMemberMethodSig$getter: Seat<
+		ArgsOf<Table['buildMethodSignatureGetter']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
+	readonly classBodyMemberMethodSig$setter: Seat<
+		ArgsOf<Table['buildMethodSignatureSetter']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
 	readonly classBodyMemberMethodSig: Table['buildClassBodyMemberMethodSig'] & {
 		readonly plain: Routes<Table>['classBodyMemberMethodSig$plain'];
 		readonly getter: Routes<Table>['classBodyMemberMethodSig$getter'];
@@ -2754,12 +2742,22 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.lhsExpression$memberExpression(F.buildLhsExpression, $at('buildMemberExpression'));
 	const lhsExpression$subscriptExpression: Routes<Table>['lhsExpression$subscriptExpression'] =
 		K.lhsExpression$subscriptExpression(F.buildLhsExpression, $at('buildSubscriptExpression'));
+	const lhsExpression$undefined: Routes<Table>['lhsExpression$undefined'] = K.lhsExpression$undefined(
+		$at('buildLhsExpression'),
+		TSKindId.Undefined
+	);
+	const lhsExpression$identifier: Routes<Table>['lhsExpression$identifier'] = K.lhsExpression$identifier(
+		F.buildLhsExpression,
+		$at('buildIdentifier')
+	);
 	const lhsExpression$nonNullExpression: Routes<Table>['lhsExpression$nonNullExpression'] =
 		K.lhsExpression$nonNullExpression(F.buildLhsExpression, $at('buildNonNullExpression'));
 	const lhsExpression: Routes<Table>['lhsExpression'] = Object.freeze(
 		Object.assign(delegate($at('buildLhsExpression')), {
 			memberExpression: lhsExpression$memberExpression,
 			subscriptExpression: lhsExpression$subscriptExpression,
+			undefined: lhsExpression$undefined,
+			identifier: lhsExpression$identifier,
 			nonNullExpression: lhsExpression$nonNullExpression
 		} as const)
 	);
@@ -2769,6 +2767,14 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const restPattern$subscriptExpression: Routes<Table>['restPattern$subscriptExpression'] =
 		K.restPattern$subscriptExpression(F.buildRestPattern, $at('buildSubscriptExpression'));
+	const restPattern$undefined: Routes<Table>['restPattern$undefined'] = K.restPattern$undefined(
+		$at('buildRestPattern'),
+		TSKindId.Undefined
+	);
+	const restPattern$identifier: Routes<Table>['restPattern$identifier'] = K.restPattern$identifier(
+		F.buildRestPattern,
+		$at('buildIdentifier')
+	);
 	const restPattern$nonNullExpression: Routes<Table>['restPattern$nonNullExpression'] = K.restPattern$nonNullExpression(
 		F.buildRestPattern,
 		$at('buildNonNullExpression')
@@ -2777,6 +2783,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		Object.assign(delegate($at('buildRestPattern')), {
 			memberExpression: restPattern$memberExpression,
 			subscriptExpression: restPattern$subscriptExpression,
+			undefined: restPattern$undefined,
+			identifier: restPattern$identifier,
 			nonNullExpression: restPattern$nonNullExpression
 		} as const)
 	);
@@ -2904,11 +2912,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const classBodyMemberMethodSig$plain: Routes<Table>['classBodyMemberMethodSig$plain'] =
-		K.classBodyMemberMethodSig$plain($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignaturePlain'));
+		K.classBodyMemberMethodSig$plain(F.buildClassBodyMemberMethodSig, $at('buildMethodSignaturePlain'));
 	const classBodyMemberMethodSig$getter: Routes<Table>['classBodyMemberMethodSig$getter'] =
-		K.classBodyMemberMethodSig$getter($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignatureGetter'));
+		K.classBodyMemberMethodSig$getter(F.buildClassBodyMemberMethodSig, $at('buildMethodSignatureGetter'));
 	const classBodyMemberMethodSig$setter: Routes<Table>['classBodyMemberMethodSig$setter'] =
-		K.classBodyMemberMethodSig$setter($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignatureSetter'));
+		K.classBodyMemberMethodSig$setter(F.buildClassBodyMemberMethodSig, $at('buildMethodSignatureSetter'));
 	const classBodyMemberMethodSig: Routes<Table>['classBodyMemberMethodSig'] = Object.freeze(
 		Object.assign(delegate($at('buildClassBodyMemberMethodSig')), {
 			plain: classBodyMemberMethodSig$plain,

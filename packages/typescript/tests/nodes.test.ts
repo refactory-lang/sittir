@@ -642,15 +642,14 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('debugger_statement', () => {
 		it('factory produces correct type', () => {
-			const node = ir.debuggerStatement(TSKindId.AutomaticSemicolon as never);
+			const node = ir.debuggerStatement({}, { terminator: TSKindId.AutomaticSemicolon });
 			expect(node.$type).toBe(TSKindId.DebuggerStatement);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.debuggerStatement(TSKindId.AutomaticSemicolon as never);
+			const node = ir.debuggerStatement({}, { terminator: TSKindId.AutomaticSemicolon });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-			expect(rendered).toContain('\n');
 		});
 	});
 
@@ -1258,7 +1257,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.memberExpression({
 				object: TSKindId.Import as never,
-				optionalChain: '.',
+				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.MemberExpression);
@@ -1267,7 +1266,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.memberExpression({
 				object: TSKindId.Import as never,
-				optionalChain: '.',
+				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			const rendered = node.$render!();
@@ -1683,7 +1682,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('memberExpression builds the parent', () => {
 			const node = ir.restPattern.memberExpression({
 				object: TSKindId.Import as never,
-				optionalChain: '.',
+				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.RestPattern);
@@ -1695,6 +1694,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				object: TSKindId.Undefined as never,
 				index: TSKindId.Undefined as never
 			});
+			expect(node.$type).toBe(TSKindId.RestPattern);
+			expect((node as any).lhsExpression()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('undefined builds the parent', () => {
+			const node = ir.restPattern.undefined();
+			expect(node.$type).toBe(TSKindId.RestPattern);
+			const seated = (node as any).lhsExpression();
+			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Undefined);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('identifier builds the parent', () => {
+			const node = ir.restPattern.identifier('test');
 			expect(node.$type).toBe(TSKindId.RestPattern);
 			expect((node as any).lhsExpression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -2738,7 +2750,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.typeQueryMemberExpression({
 				object: { $type: TSKindId.Identifier, text: 'test' } as never,
-				content: '.',
+				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
@@ -2747,7 +2759,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.typeQueryMemberExpression({
 				object: { $type: TSKindId.Identifier, text: 'test' } as never,
-				content: '.',
+				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			const rendered = node.$render!();
@@ -2762,7 +2774,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Dot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -2772,7 +2784,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.QmarkDot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -2917,7 +2929,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('hex builds the parent', () => {
-			const node = ir.literalType.hex('a', { prefix: '0x' });
+			const node = ir.literalType.hex('a', { radixPrefix: '0x' });
 			expect(node.$type).toBe(TSKindId.LiteralType);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -2947,13 +2959,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('binary builds the parent', () => {
-			const node = ir.literalType.binary('1', { prefix: '0b' });
+			const node = ir.literalType.binary('1', { radixPrefix: '0b' });
 			expect(node.$type).toBe(TSKindId.LiteralType);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('octal builds the parent', () => {
-			const node = ir.literalType.octal('1', { prefix: '0o' });
+			const node = ir.literalType.octal('1', { radixPrefix: '0o' });
 			expect(node.$type).toBe(TSKindId.LiteralType);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -3140,29 +3152,30 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('constraint', () => {
 		it('factory produces correct type', () => {
-			const node = ir.constraint({ content: 'extends', bounds: TSKindId.ThisType as never });
+			const node = ir.constraint(TSKindId.ThisType as never, { operator: TSKindId.ExtendsKeyword });
 			expect(node.$type).toBe(TSKindId.Constraint);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.constraint({ content: 'extends', bounds: TSKindId.ThisType as never });
+			const node = ir.constraint(TSKindId.ThisType as never, { operator: TSKindId.ExtendsKeyword });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('this');
 		});
 	});
 
 	describe('constraint sub-factories', () => {
 		it('extends builds the parent', () => {
-			const node = ir.constraint.extends({ bounds: TSKindId.ThisType as never });
+			const node = ir.constraint.extends(TSKindId.ThisType as never);
 			expect(node.$type).toBe(TSKindId.Constraint);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.ExtendsKeyword);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('colon builds the parent', () => {
-			const node = ir.constraint.colon({ bounds: TSKindId.ThisType as never });
+			const node = ir.constraint.colon(TSKindId.ThisType as never);
 			expect(node.$type).toBe(TSKindId.Constraint);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Colon);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -3530,12 +3543,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('number_hex', () => {
 		it('factory produces correct type', () => {
-			const node = ir.numberHex('a', { prefix: '0x' });
+			const node = ir.numberHex('a', { radixPrefix: '0x' });
 			expect(node.$type).toBe(TSKindId.NumberHex);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.numberHex('a', { prefix: '0x' });
+			const node = ir.numberHex('a', { radixPrefix: '0x' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3582,12 +3595,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('number_binary', () => {
 		it('factory produces correct type', () => {
-			const node = ir.numberBinary('1', { prefix: '0b' });
+			const node = ir.numberBinary('1', { radixPrefix: '0b' });
 			expect(node.$type).toBe(TSKindId.NumberBinary);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.numberBinary('1', { prefix: '0b' });
+			const node = ir.numberBinary('1', { radixPrefix: '0b' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3595,12 +3608,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('number_octal', () => {
 		it('factory produces correct type', () => {
-			const node = ir.numberOctal('1', { prefix: '0o' });
+			const node = ir.numberOctal('1', { radixPrefix: '0o' });
 			expect(node.$type).toBe(TSKindId.NumberOctal);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.numberOctal('1', { prefix: '0o' });
+			const node = ir.numberOctal('1', { radixPrefix: '0o' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3731,63 +3744,97 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('class_body_member_method_sig', () => {
 		it('factory produces correct type', () => {
-			const node = ir.classBodyMemberMethodSig({
-				methodSignature: {
+			const node = ir.classBodyMemberMethodSig(
+				{
 					$type: TSKindId.MethodSignaturePlain,
+					accessibilityModifier: TSKindId.PublicKeyword,
+					static: true,
+					override: true,
+					readonly: true,
+					async: true,
+					generator: true,
 					name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-					parameters: { $type: TSKindId.FormalParameters } as never
+					optional: true,
+					typeParameters: {
+						$type: TSKindId.TypeParameters,
+						elements: ir.typeParametersElements({
+							$type: TSKindId.TypeParameter,
+							name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+						} as never) as never
+					} as never,
+					parameters: { $type: TSKindId.FormalParameters } as never,
+					returnType: { $type: TSKindId.TypeAnnotation, type: TSKindId.ThisType as never } as never
 				} as never,
-				terminator: '\n'
-			});
+				{ terminator: TSKindId.FunctionSignatureAutomaticSemicolon }
+			);
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.classBodyMemberMethodSig({
-				methodSignature: {
+			const node = ir.classBodyMemberMethodSig(
+				{
 					$type: TSKindId.MethodSignaturePlain,
+					accessibilityModifier: TSKindId.PublicKeyword,
+					static: true,
+					override: true,
+					readonly: true,
+					async: true,
+					generator: true,
 					name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-					parameters: { $type: TSKindId.FormalParameters } as never
+					optional: true,
+					typeParameters: {
+						$type: TSKindId.TypeParameters,
+						elements: ir.typeParametersElements({
+							$type: TSKindId.TypeParameter,
+							name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+						} as never) as never
+					} as never,
+					parameters: { $type: TSKindId.FormalParameters } as never,
+					returnType: { $type: TSKindId.TypeAnnotation, type: TSKindId.ThisType as never } as never
 				} as never,
-				terminator: '\n'
-			});
+				{ terminator: TSKindId.FunctionSignatureAutomaticSemicolon }
+			);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('1');
+			expect(rendered).toContain('test');
+			expect(rendered).toContain('this');
 		});
 	});
 
 	describe('class_body_member_method_sig sub-factories', () => {
 		it('plain builds the parent', () => {
-			const node = ir.classBodyMemberMethodSig.plain({
-				terminator: '\n',
-				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.FormalParameters } as never
-			});
+			const node = ir.classBodyMemberMethodSig
+				.plain({
+					name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
+					parameters: { $type: TSKindId.FormalParameters } as never
+				})
+				.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 			expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignaturePlain);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('getter builds the parent', () => {
-			const node = ir.classBodyMemberMethodSig.getter({
-				terminator: '\n',
-				name: { $type: TSKindId.NumberDecimal, text: '1' } as never
-			});
+			const node = ir.classBodyMemberMethodSig
+				.getter({ name: { $type: TSKindId.NumberDecimal, text: '1' } as never })
+				.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 			expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureGetter);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('setter builds the parent', () => {
-			const node = ir.classBodyMemberMethodSig.setter({
-				terminator: '\n',
-				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: {
-					$type: TSKindId.FormalParametersSetAccessorSignature,
-					elements: {
-						$type: TSKindId.FormalParametersElementsSetAccessorSignature,
-						item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+			const node = ir.classBodyMemberMethodSig
+				.setter({
+					name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
+					parameters: {
+						$type: TSKindId.FormalParametersSetAccessorSignature,
+						elements: {
+							$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+							item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+						} as never
 					} as never
-				} as never
-			});
+				})
+				.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 			expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureSetter);
 			expect(node.$render!().length).toBeGreaterThan(0);

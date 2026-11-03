@@ -28,12 +28,29 @@ export type {
 	View
 } from './query.ts';
 export type {
+	PortableBuildArm,
+	PortableBuildPath,
+	PortableBuildTable,
+	PortableDecimalParts,
+	PortableValueBuild,
+	PortableContainer,
+	PortableCallShape,
 	PortableCondition,
+	PortableFlagStep,
 	PortableGuard,
 	PortableKind,
+	PortableMemberStep,
+	PortableKeyedMount,
+	PortableMount,
+	PortableMountCall,
 	PortablePath,
+	PortablePickTest,
+	PortablePreset,
 	PortableReadEntry,
 	PortableRows,
+	PortableSeat,
+	PortableSlotStep,
+	PortableStructure,
 	PortableStep,
 	PortableSurface,
 	PortableTable
@@ -258,6 +275,11 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type OmitRegistered<T, K extends PropertyKey> = T extends unknown
+	? [Exclude<keyof T, K>] extends [never]
+		? { readonly [key: string]: never }
+		: Omit<T, K>
+	: never;
 /** A config that names none of `T`'s keys. */
 export type NoneOf<T> = { [K in keyof T]?: never };
 /**

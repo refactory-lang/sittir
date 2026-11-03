@@ -50,7 +50,7 @@ describe('a reserved word is checked at the slot it is placed in', () => {
 
 	it('places it after a dot, where the property wordset admits it', () => {
 		const member = (property: string) =>
-			tsStrict.build.memberExpression({ object: word('x'), optionalChain: ts.kinds.Dot, property: word(property) });
+			tsStrict.build.memberExpression({ object: word('x'), operator: ts.kinds.Dot, property: word(property) });
 		expect(member('for').$render()).toBe('x.for');
 		expect(member('class').$render()).toBe('x.class');
 	});

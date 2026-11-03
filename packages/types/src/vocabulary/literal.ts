@@ -62,7 +62,7 @@ export namespace Literal {
 			// pt only
 			readonly marker?: G['slots']['literal.number.float']['marker'];
 			// pt only
-			readonly sign?: G['slots']['literal.number.float']['sign'];
+			readonly exponentSign?: G['slots']['literal.number.float']['exponentSign'];
 			// t only
 		}
 		export namespace Float {
@@ -74,7 +74,7 @@ export namespace Literal {
 				readonly integer?: G['slots']['literal.number.float.leading_point']['integer'];
 				// p only
 				readonly marker: G['slots']['literal.number.float.leading_point']['marker'];
-				readonly sign?: G['slots']['literal.number.float.leading_point']['sign'];
+				readonly exponentSign?: G['slots']['literal.number.float.leading_point']['exponentSign'];
 				// t only
 			}
 			export interface Scientific<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Float<G>> {
@@ -83,7 +83,7 @@ export namespace Literal {
 				readonly exponent: G['slots']['literal.number.float.scientific']['exponent'];
 				readonly integer: G['slots']['literal.number.float.scientific']['integer'];
 				readonly marker: G['slots']['literal.number.float.scientific']['marker'];
-				readonly sign?: G['slots']['literal.number.float.scientific']['sign'];
+				readonly exponentSign?: G['slots']['literal.number.float.scientific']['exponentSign'];
 				// t only
 			}
 		}
@@ -100,7 +100,7 @@ export namespace Literal {
 				// claimed by prt
 				readonly $kind: 'literal.number.integer.binary';
 				readonly content: G['slots']['literal.number.integer.binary']['content'];
-				readonly prefix?: G['slots']['literal.number.integer.binary']['prefix'];
+				readonly radixPrefix?: G['slots']['literal.number.integer.binary']['radixPrefix'];
 				// pt only
 				readonly suffix?: G['slots']['literal.number.integer.binary']['suffix'];
 				// r only
@@ -109,7 +109,7 @@ export namespace Literal {
 				// claimed by prt
 				readonly $kind: 'literal.number.integer.hex';
 				readonly content: G['slots']['literal.number.integer.hex']['content'];
-				readonly prefix?: G['slots']['literal.number.integer.hex']['prefix'];
+				readonly radixPrefix?: G['slots']['literal.number.integer.hex']['radixPrefix'];
 				// pt only
 				readonly suffix?: G['slots']['literal.number.integer.hex']['suffix'];
 				// r only
@@ -118,7 +118,7 @@ export namespace Literal {
 				// claimed by prt
 				readonly $kind: 'literal.number.integer.octal';
 				readonly content: G['slots']['literal.number.integer.octal']['content'];
-				readonly prefix?: G['slots']['literal.number.integer.octal']['prefix'];
+				readonly radixPrefix?: G['slots']['literal.number.integer.octal']['radixPrefix'];
 				// pt only
 				readonly suffix?: G['slots']['literal.number.integer.octal']['suffix'];
 				// r only

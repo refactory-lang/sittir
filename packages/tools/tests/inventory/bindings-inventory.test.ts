@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/timeouts.ts';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, posix, relative, sep } from 'node:path';
+import { dirname, join, posix, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { bindingIssues } from '../../src/inventory/bindings.ts';
@@ -13,7 +13,7 @@ import {
 	vocabularyDisagreements,
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
+import { type Derivation, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
 import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
 
@@ -256,7 +256,7 @@ describe('the authored vocabulary', () => {
 	}, 120_000);
 
 	it('is authored: no file but the generated ones says it is generated', () => {
-		const generated = new Set([...GENERATED_FILES, relative(VOCABULARY_DIR, FLAGS_PATH).split(sep).join(posix.sep)]);
+		const generated = new Set(GENERATED_FILES);
 		for (const entry of readdirSync(VOCABULARY_DIR, { recursive: true, encoding: 'utf8' })) {
 			const file = entry.split(sep).join(posix.sep);
 			if (!file.endsWith('.ts') || generated.has(file)) continue;

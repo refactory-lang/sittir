@@ -223,11 +223,8 @@ export function useValidationConstruction(construction: NodeConstruction): void 
 	nodeStorageOf({ nodeStorage: validationNodeStorage.nodeStorage, nodeConstruction: construction });
 }
 
-async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const storage = validationNodeStorage;
-	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...storage });
-	const profile = engine.diagnostics.buildProfile;
-	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
+function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile?: string | undefined } }>(grammar: string, engine: E): E {
+	if (engine.diagnostics.buildProfile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
 			`Native engine for '${grammar}' is a DEBUG build — debug binaries are refused for ` +
 				`validation (known segfault class). Rebuild release (\`gen\` without --native-debug), ` +
@@ -235,6 +232,14 @@ async function createNativeEngine(grammar: string): Promise<NativeEngine> {
 		);
 	}
 	return engine;
+}
+
+async function createNativeEngine(grammar: string): Promise<NativeEngine> {
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...validationNodeStorage }));
+}
+
+export async function createStrictNativeEngine(grammar: string): Promise<Engine<LanguageAPI, 'strict'>> {
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', ...validationNodeStorage }));
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {

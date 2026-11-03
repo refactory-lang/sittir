@@ -15,6 +15,7 @@ import type * as asyncBlocks from './features/async-await/async-blocks/index.ts'
 import type * as attributes from './features/attributes/index.ts';
 import type * as boundedQuantification from './features/parametric-polymorphism/bounded-quantification/index.ts';
 import type * as byteStrings from './features/byte-strings/index.ts';
+import type * as cStrings from './features/c-strings/index.ts';
 import type * as characters from './features/characters/index.ts';
 import type * as classes from './features/methods/classes/index.ts';
 import type * as coerciveEquality from './features/coercive-equality/index.ts';
@@ -40,6 +41,7 @@ import type * as explicitOverrides from './features/methods/classes/explicit-ove
 import type * as explicitReceivers from './features/explicit-receivers/index.ts';
 import type * as foreignFunctionInterface from './features/foreign-function-interface/index.ts';
 import type * as generators from './features/coroutines/generators/index.ts';
+import type * as genericLambdas from './features/parametric-polymorphism/generic-lambdas/index.ts';
 import type * as higherRankPolymorphism from './features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';
 import type * as interfaceConformance from './features/interface-conformance/index.ts';
 import type * as interfaces from './features/interfaces/index.ts';
@@ -70,6 +72,7 @@ import type * as scopeDeclarations from './features/scope-declarations/index.ts'
 import type * as scopedVisibility from './features/visibility/scoped-visibility/index.ts';
 import type * as singleInheritance from './features/methods/classes/single-inheritance/index.ts';
 import type * as sliceExpressions from './features/slice-expressions/index.ts';
+import type * as staticStorage from './features/static-storage/index.ts';
 import type * as stringInterpolation from './features/string-interpolation/index.ts';
 import type * as structs from './features/structs/index.ts';
 import type * as structuralConformance from './features/type-annotations/structural-conformance/index.ts';
@@ -742,6 +745,16 @@ declare module './declaration.ts' {
 				| V.Declaration.Interface.Trait.Public.Restricted<G>;
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro<G> {}
+		namespace Macro {
+			interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Brace<G> {}
+			interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Bracket<G> {}
+			interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Paren<G> {}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Macro<G>
+				| V.Declaration.Macro.Brace<G>
+				| V.Declaration.Macro.Bracket<G>
+				| V.Declaration.Macro.Paren<G>;
+		}
 		interface Method<G extends GrammarContext<G>> extends methods.Declaration.Method<G> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method<G>['async']>;
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Method<G>['computed']>;
@@ -1385,6 +1398,7 @@ declare module './declaration.ts' {
 		interface Variable<G extends GrammarContext<G>> {
 			readonly byReference?: gate.In<G, features.References, references.Declaration.Variable<G>['byReference']>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Variable<G>['definite']>;
+			readonly static?: gate.In<G, features.StaticStorage, staticStorage.Declaration.Variable<G>['static']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G>['type']>;
 		}
 		namespace Variable {
@@ -1480,6 +1494,9 @@ declare module './declaration.ts' {
 			| V.Declaration.Interface.Trait.Public.Internal<G>
 			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
+			| V.Declaration.Macro.Brace<G>
+			| V.Declaration.Macro.Bracket<G>
+			| V.Declaration.Macro.Paren<G>
 			| V.Declaration.Method<G>
 			| V.Declaration.Method.Private<G>
 			| V.Declaration.Method.Protected<G>
@@ -1594,6 +1611,11 @@ declare module './element.ts' {
 	namespace Element {
 		namespace Comparator {
 			namespace Comparison {
+				namespace NotEqual {
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Comparator.Comparison.NotEqual<G>
+						| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Element.Comparator.Comparison<G>
 					| V.Element.Comparator.Comparison.Equal<G>
@@ -1601,7 +1623,8 @@ declare module './element.ts' {
 					| V.Element.Comparator.Comparison.GreaterEqual<G>
 					| V.Element.Comparator.Comparison.Less<G>
 					| V.Element.Comparator.Comparison.LessEqual<G>
-					| V.Element.Comparator.Comparison.NotEqual<G>;
+					| V.Element.Comparator.Comparison.NotEqual<G>
+					| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
 			}
 			namespace Identity {
 				type Any<G extends GrammarContext<G>> =
@@ -1624,6 +1647,7 @@ declare module './element.ts' {
 				| V.Element.Comparator.Comparison.Less<G>
 				| V.Element.Comparator.Comparison.LessEqual<G>
 				| V.Element.Comparator.Comparison.NotEqual<G>
+				| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
 				| V.Element.Comparator.Identity<G>
 				| V.Element.Comparator.Identity.Is<G>
 				| V.Element.Comparator.Identity.IsNot<G>
@@ -1647,14 +1671,55 @@ declare module './element.ts' {
 			}
 			interface TokenTree<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree<G> {}
 			namespace TokenTree {
+				interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Brace<G> {}
+				interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Bracket<G> {}
 				interface Delimited<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
 					.Delimited<G> {}
+				namespace Delimited {
+					interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Brace<G> {}
+					interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Bracket<G> {}
+					interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Paren<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Macro.TokenTree.Delimited<G>
+						| V.Element.Macro.TokenTree.Delimited.Brace<G>
+						| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+						| V.Element.Macro.TokenTree.Delimited.Paren<G>;
+				}
+				interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Paren<G> {}
 				interface Pattern<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
 					.Pattern<G> {}
+				namespace Pattern {
+					interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree.Pattern
+						.Brace<G> {}
+					interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Pattern.Bracket<G> {}
+					interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree.Pattern
+						.Paren<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Macro.TokenTree.Pattern<G>
+						| V.Element.Macro.TokenTree.Pattern.Brace<G>
+						| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+						| V.Element.Macro.TokenTree.Pattern.Paren<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Element.Macro.TokenTree<G>
+					| V.Element.Macro.TokenTree.Brace<G>
+					| V.Element.Macro.TokenTree.Bracket<G>
 					| V.Element.Macro.TokenTree.Delimited<G>
-					| V.Element.Macro.TokenTree.Pattern<G>;
+					| V.Element.Macro.TokenTree.Delimited.Brace<G>
+					| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+					| V.Element.Macro.TokenTree.Delimited.Paren<G>
+					| V.Element.Macro.TokenTree.Paren<G>
+					| V.Element.Macro.TokenTree.Pattern<G>
+					| V.Element.Macro.TokenTree.Pattern.Brace<G>
+					| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+					| V.Element.Macro.TokenTree.Pattern.Paren<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Element.Macro<G>
@@ -1663,8 +1728,17 @@ declare module './element.ts' {
 				| V.Element.Macro.TokenRepetition<G>
 				| V.Element.Macro.TokenRepetition.Pattern<G>
 				| V.Element.Macro.TokenTree<G>
+				| V.Element.Macro.TokenTree.Brace<G>
+				| V.Element.Macro.TokenTree.Bracket<G>
 				| V.Element.Macro.TokenTree.Delimited<G>
-				| V.Element.Macro.TokenTree.Pattern<G>;
+				| V.Element.Macro.TokenTree.Delimited.Brace<G>
+				| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+				| V.Element.Macro.TokenTree.Delimited.Paren<G>
+				| V.Element.Macro.TokenTree.Paren<G>
+				| V.Element.Macro.TokenTree.Pattern<G>
+				| V.Element.Macro.TokenTree.Pattern.Brace<G>
+				| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+				| V.Element.Macro.TokenTree.Pattern.Paren<G>;
 		}
 		interface Pair<G extends GrammarContext<G>> {
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Element.Pair<G>['computed']>;
@@ -1721,6 +1795,7 @@ declare module './element.ts' {
 			| V.Element.Comparator.Comparison.Less<G>
 			| V.Element.Comparator.Comparison.LessEqual<G>
 			| V.Element.Comparator.Comparison.NotEqual<G>
+			| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
 			| V.Element.Comparator.Identity<G>
 			| V.Element.Comparator.Identity.Is<G>
 			| V.Element.Comparator.Identity.IsNot<G>
@@ -1733,8 +1808,17 @@ declare module './element.ts' {
 			| V.Element.Macro.TokenRepetition<G>
 			| V.Element.Macro.TokenRepetition.Pattern<G>
 			| V.Element.Macro.TokenTree<G>
+			| V.Element.Macro.TokenTree.Brace<G>
+			| V.Element.Macro.TokenTree.Bracket<G>
 			| V.Element.Macro.TokenTree.Delimited<G>
+			| V.Element.Macro.TokenTree.Delimited.Brace<G>
+			| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+			| V.Element.Macro.TokenTree.Delimited.Paren<G>
+			| V.Element.Macro.TokenTree.Paren<G>
 			| V.Element.Macro.TokenTree.Pattern<G>
+			| V.Element.Macro.TokenTree.Pattern.Brace<G>
+			| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+			| V.Element.Macro.TokenTree.Pattern.Paren<G>
 			| V.Element.Pair<G>
 			| V.Element.Spread<G>
 			| V.Element.Spread.Map<G>
@@ -1829,6 +1913,11 @@ declare module './expression.ts' {
 					.LooseEqual<G> {}
 				interface LooseNotEqual<G extends GrammarContext<G>> extends coerciveEquality.Expression.Binary.Comparison
 					.LooseNotEqual<G> {}
+				namespace NotEqual {
+					type Any<G extends GrammarContext<G>> =
+						| V.Expression.Binary.Comparison.NotEqual<G>
+						| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Expression.Binary.Comparison<G>
 					| V.Expression.Binary.Comparison.Chain<G>
@@ -1839,7 +1928,8 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Comparison.LessEqual<G>
 					| V.Expression.Binary.Comparison.LooseEqual<G>
 					| V.Expression.Binary.Comparison.LooseNotEqual<G>
-					| V.Expression.Binary.Comparison.NotEqual<G>;
+					| V.Expression.Binary.Comparison.NotEqual<G>
+					| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
 			}
 			namespace Identity {
 				type Any<G extends GrammarContext<G>> =
@@ -1892,6 +1982,7 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Comparison.LooseEqual<G>
 				| V.Expression.Binary.Comparison.LooseNotEqual<G>
 				| V.Expression.Binary.Comparison.NotEqual<G>
+				| V.Expression.Binary.Comparison.NotEqual.Legacy<G>
 				| V.Expression.Binary.Identity<G>
 				| V.Expression.Binary.Identity.Is<G>
 				| V.Expression.Binary.Identity.IsNot<G>
@@ -2063,6 +2154,11 @@ declare module './expression.ts' {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Expression.Lambda<G>['async']>;
 			readonly move?: gate.In<G, features.References, references.Expression.Lambda<G>['move']>;
 			readonly static?: gate.In<G, features.Coroutines, coroutines.Expression.Lambda<G>['static']>;
+			readonly typeParameters?: gate.In<
+				G,
+				features.GenericLambdas,
+				genericLambdas.Expression.Lambda<G>['typeParameters']
+			>;
 		}
 		interface Member<G extends GrammarContext<G>> {
 			readonly optionalChain?: gate.In<
@@ -2077,10 +2173,17 @@ declare module './expression.ts' {
 		namespace Range {
 			interface Exclusive<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Exclusive<G> {}
 			interface Inclusive<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Inclusive<G> {}
+			namespace Inclusive {
+				interface Legacy<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Inclusive.Legacy<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Expression.Range.Inclusive<G>
+					| V.Expression.Range.Inclusive.Legacy<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Range<G>
 				| V.Expression.Range.Exclusive<G>
-				| V.Expression.Range.Inclusive<G>;
+				| V.Expression.Range.Inclusive<G>
+				| V.Expression.Range.Inclusive.Legacy<G>;
 		}
 		interface Reference<G extends GrammarContext<G>> extends references.Expression.Reference<G> {}
 		interface Slice<G extends GrammarContext<G>> extends sliceExpressions.Expression.Slice<G> {}
@@ -2162,6 +2265,7 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Comparison.LooseEqual<G>
 			| V.Expression.Binary.Comparison.LooseNotEqual<G>
 			| V.Expression.Binary.Comparison.NotEqual<G>
+			| V.Expression.Binary.Comparison.NotEqual.Legacy<G>
 			| V.Expression.Binary.Identity<G>
 			| V.Expression.Binary.Identity.Is<G>
 			| V.Expression.Binary.Identity.IsNot<G>
@@ -2225,6 +2329,7 @@ declare module './expression.ts' {
 			| V.Expression.Range<G>
 			| V.Expression.Range.Exclusive<G>
 			| V.Expression.Range.Inclusive<G>
+			| V.Expression.Range.Inclusive.Legacy<G>
 			| V.Expression.Reference<G>
 			| V.Expression.Sequence<G>
 			| V.Expression.Slice<G>
@@ -2377,6 +2482,7 @@ declare module './literal.ts' {
 					| V.Literal.String.Bytes.Raw<G>
 					| V.Literal.String.Bytes.Raw.Multiline<G>;
 			}
+			interface C<G extends GrammarContext<G>> extends cStrings.Literal.String.C<G> {}
 			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
 			namespace Interpolated {
 				interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
@@ -2406,6 +2512,7 @@ declare module './literal.ts' {
 				| V.Literal.String.Bytes.Multiline<G>
 				| V.Literal.String.Bytes.Raw<G>
 				| V.Literal.String.Bytes.Raw.Multiline<G>
+				| V.Literal.String.C<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Interpolated<G>
@@ -2448,6 +2555,7 @@ declare module './literal.ts' {
 			| V.Literal.String.Bytes.Multiline<G>
 			| V.Literal.String.Bytes.Raw<G>
 			| V.Literal.String.Bytes.Raw.Multiline<G>
+			| V.Literal.String.C<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.Interpolated<G>
@@ -2535,10 +2643,15 @@ declare module './pattern.ts' {
 		namespace Range {
 			interface Exclusive<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Exclusive<G> {}
 			interface Inclusive<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Inclusive<G> {}
+			namespace Inclusive {
+				interface Legacy<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Inclusive.Legacy<G> {}
+				type Any<G extends GrammarContext<G>> = V.Pattern.Range.Inclusive<G> | V.Pattern.Range.Inclusive.Legacy<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Range<G>
 				| V.Pattern.Range.Exclusive<G>
-				| V.Pattern.Range.Inclusive<G>;
+				| V.Pattern.Range.Inclusive<G>
+				| V.Pattern.Range.Inclusive.Legacy<G>;
 		}
 		interface Reference<G extends GrammarContext<G>> extends references.Pattern.Reference<G> {}
 		namespace Reference {
@@ -2583,6 +2696,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Range<G>
 			| V.Pattern.Range.Exclusive<G>
 			| V.Pattern.Range.Inclusive<G>
+			| V.Pattern.Range.Inclusive.Legacy<G>
 			| V.Pattern.Reference<G>
 			| V.Pattern.Reference.Value<G>
 			| V.Pattern.Rest<G>

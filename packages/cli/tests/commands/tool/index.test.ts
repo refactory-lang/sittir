@@ -33,6 +33,7 @@ const EXPECTED = [
 	'output-gate',
 	'override-census',
 	'phantom-kinds',
+	'portable-conformance',
 	'probe-kind',
 	'probe-parity',
 	'probe-stages',

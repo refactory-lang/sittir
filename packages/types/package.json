@@ -37,13 +37,14 @@
 		}
 	},
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json && tsdown",
+		"build": "tsrs -p tsconfig.build.json && tsdown",
 		"clean": "rm -rf build dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsc -p tsconfig.build.json --watch",
-		"type-check": "tsc --noEmit"
+		"dev": "tsrs -p tsconfig.build.json --watch",
+		"type-check": "tsrs --noEmit"
 	},
 	"devDependencies": {
 		"tsdown": "0.23.0",
+		"typescript": "7.1.0-beta",
 		"type-fest": "^5.6.0"
 	}
 }

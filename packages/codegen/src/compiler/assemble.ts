@@ -119,7 +119,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
-			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
+			wordMatcher: normalized.wordMatcher,
 			generatedIdTables: normalized.generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
 			leafTextPatterns: normalized.leafTextPatterns
@@ -152,6 +152,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 		if (ctx.topLevelAliasBodies.has(kind)) continue;
+		if (normalized.splicedNames.has(kind) && findOwnKindEntry(kindEntries, kind) === undefined) continue;
 		const simplifiedRule = normalized.rules[kind]!;
 		const seated = seatedOf(renderRule.annotations, findOwnKindEntry(kindEntries, kind));
 		const modelType = classifyNode(kind, simplifiedRule, {
@@ -671,7 +672,7 @@ function resolveHiddenRuleContent(
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
 		case STRING: {
-			const isWordShape = ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined);
+			const isWordShape = ctx.isWordShaped(rule.value);
 			if (isWordShape) return [];
 			const entry = findEntryForLiteralText(kindEntries, rule.value);
 			return [{ name: entry?.kind ?? rule.value, storageKindId: rule.resolvedKindId ?? entry?.id }];

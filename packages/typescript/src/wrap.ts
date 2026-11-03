@@ -59,7 +59,9 @@ import {
 	handleToString,
 	handleEngine,
 	handleDispose,
-	handleQuery
+	handleQuery,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -220,7 +222,7 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle): 
 const wrapExportClause$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeOnly', 'alias']
+	decorations: ['typeKeyword', 'alias']
 };
 function wrapExportClause$listRead(this: { readonly exportSpecifiers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.exportSpecifiers(), 'items'), wrapExportClause$wrapper);
@@ -309,8 +311,8 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.ExportSpecifier as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
@@ -319,10 +321,10 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | undefined>(this, '_alias', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ExportSpecifier['_type_only']>) =>
+			typeKeyword: (v: NonNullable<T.ExportSpecifier['_type_keyword']>) =>
 				rebuilt(node, handle, () =>
 					wrapExportSpecifier(
-						{ ...$edited(data), _type_only: admitSlot(handle, 'export_specifier', 'typeOnly', v) },
+						{ ...$edited(data), _type_keyword: admitSlot(handle, 'export_specifier', 'typeKeyword', v) },
 						tree
 					)
 				),
@@ -357,8 +359,8 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.ImportStatement as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		fromClause() {
 			return hydrateSlot<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>(this, '_from_clause', tree);
@@ -370,10 +372,10 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 			return this._terminator;
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportStatement['_type_only']>) =>
+			typeKeyword: (v: NonNullable<T.ImportStatement['_type_keyword']>) =>
 				rebuilt(node, handle, () =>
 					wrapImportStatement(
-						{ ...$edited(data), _type_only: admitSlot(handle, 'import_statement', 'typeOnly', v) },
+						{ ...$edited(data), _type_keyword: admitSlot(handle, 'import_statement', 'typeKeyword', v) },
 						tree
 					)
 				),
@@ -814,7 +816,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
@@ -830,7 +832,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			terminator: (v: NonNullable<T.StatementBlock['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
 					wrapStatementBlock(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'statement_block', 'terminator', v === null ? 0 : v) },
+						{ ...$edited(data), _terminator: admitSlot(handle, 'statement_block', 'terminator', blankArmStored(v)) },
 						tree
 					)
 				)
@@ -1122,7 +1124,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			return hydrateSlot<T.ParenthesizedExpression>(this, '_condition', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			body: (v: NonNullable<T.DoStatement['_body']>) =>
@@ -1136,7 +1138,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 			terminator: (v: NonNullable<T.DoStatement['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
 					wrapDoStatement(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'do_statement', 'terminator', v === null ? 0 : v) },
+						{ ...$edited(data), _terminator: admitSlot(handle, 'do_statement', 'terminator', blankArmStored(v)) },
 						tree
 					)
 				)
@@ -2114,7 +2116,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			return hydrateSlot<T.ClassBody>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
@@ -2157,7 +2159,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 			terminator: (v: NonNullable<T.ClassDeclaration['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
 					wrapClassDeclaration(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'class_declaration', 'terminator', v === null ? 0 : v) },
+						{ ...$edited(data), _terminator: admitSlot(handle, 'class_declaration', 'terminator', blankArmStored(v)) },
 						tree
 					)
 				)
@@ -2325,7 +2327,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			async: (v: NonNullable<T.FunctionDeclaration['_async']>) =>
@@ -2380,7 +2382,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 					wrapFunctionDeclaration(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'function_declaration', 'terminator', v === null ? 0 : v)
+							_terminator: admitSlot(handle, 'function_declaration', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
@@ -2518,7 +2520,7 @@ export function wrapGeneratorFunctionDeclaration(
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			async: (v: NonNullable<T.GeneratorFunctionDeclaration['_async']>) =>
@@ -2576,7 +2578,7 @@ export function wrapGeneratorFunctionDeclaration(
 					wrapGeneratorFunctionDeclaration(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'generator_function_declaration', 'terminator', v === null ? 0 : v)
+							_terminator: admitSlot(handle, 'generator_function_declaration', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
@@ -2739,8 +2741,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		object() {
 			return hydrateSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, '_object', tree);
 		},
-		optionalChain() {
-			return this._optional_chain;
+		operator() {
+			return this._operator;
 		},
 		property() {
 			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
@@ -2750,10 +2752,10 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 				rebuilt(node, handle, () =>
 					wrapMemberExpression({ ...$edited(data), _object: admitSlot(handle, 'member_expression', 'object', v) }, tree)
 				),
-			optionalChain: (v: NonNullable<T.MemberExpression['_optional_chain']>) =>
+			operator: (v: NonNullable<T.MemberExpression['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapMemberExpression(
-						{ ...$edited(data), _optional_chain: admitSlot(handle, 'member_expression', 'optionalChain', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'member_expression', 'operator', v) },
 						tree
 					)
 				),
@@ -3658,7 +3660,7 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ClassStaticBlock as const,
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
@@ -3667,10 +3669,7 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 			terminator: (v: NonNullable<T.ClassStaticBlock['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
 					wrapClassStaticBlock(
-						{
-							...$edited(data),
-							_terminator: admitSlot(handle, 'class_static_block', 'terminator', v === null ? 0 : v)
-						},
+						{ ...$edited(data), _terminator: admitSlot(handle, 'class_static_block', 'terminator', blankArmStored(v)) },
 						tree
 					)
 				),
@@ -6044,8 +6043,8 @@ export function wrapTypeQueryMemberExpression(
 				| T.TypeQueryCallExpression
 			>(this, '_object', tree);
 		},
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		property() {
 			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
@@ -6058,10 +6057,10 @@ export function wrapTypeQueryMemberExpression(
 						tree
 					)
 				),
-			content: (v: NonNullable<T.TypeQueryMemberExpression['_content']>) =>
+			operator: (v: NonNullable<T.TypeQueryMemberExpression['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapTypeQueryMemberExpression(
-						{ ...$edited(data), _content: admitSlot(handle, 'type_query_member_expression', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'type_query_member_expression', 'operator', v) },
 						tree
 					)
 				),
@@ -6993,16 +6992,16 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 	const node = {
 		...data,
 		$type: TSKindId.Constraint as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		bounds() {
 			return hydrateSlot<T.Type>(this, '_bounds', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.Constraint['_content']>) =>
+			operator: (v: NonNullable<T.Constraint['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapConstraint({ ...$edited(data), _content: admitSlot(handle, 'constraint', 'content', v) }, tree)
+					wrapConstraint({ ...$edited(data), _operator: admitSlot(handle, 'constraint', 'operator', v) }, tree)
 				),
 			bounds: (v: NonNullable<T.Constraint['_bounds']>) =>
 				rebuilt(node, handle, () =>
@@ -7371,7 +7370,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 const wrapExportSpecifiers$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeOnly', 'alias']
+	decorations: ['typeKeyword', 'alias']
 };
 function wrapExportSpecifiers$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), wrapExportSpecifiers$wrapper);
@@ -8110,7 +8109,7 @@ export function wrapAmbientDeclarationModule(
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			name: (v: NonNullable<T.AmbientDeclarationModule['_name']>) =>
@@ -8132,7 +8131,7 @@ export function wrapAmbientDeclarationModule(
 					wrapAmbientDeclarationModule(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'ambient_declaration_module', 'terminator', v === null ? 0 : v)
+							_terminator: admitSlot(handle, 'ambient_declaration_module', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
@@ -8446,16 +8445,16 @@ export function wrapNumberHex(data: T.NumberHex, tree: TreeHandle): T.NumberHex.
 	const node = {
 		...data,
 		$type: TSKindId.NumberHex as const,
-		prefix() {
-			return hydrateSlot<'0x' | '0X'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberHex['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.NumberHex['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberHex({ ...$edited(data), _prefix: admitSlot(handle, 'number_hex', 'prefix', v) }, tree)
+					wrapNumberHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'number_hex', 'radixPrefix', v) }, tree)
 				),
 			content: (v: NonNullable<T.NumberHex['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -8493,8 +8492,8 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -8521,9 +8520,12 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 						tree
 					)
 				),
-			sign: (v: NonNullable<T.NumberFloatPoint['_sign']>) =>
+			exponentSign: (v: NonNullable<T.NumberFloatPoint['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberFloatPoint({ ...$edited(data), _sign: admitSlot(handle, 'number_float_point', 'sign', v) }, tree)
+					wrapNumberFloatPoint(
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'number_float_point', 'exponentSign', v) },
+						tree
+					)
 				),
 			exponent: (v: NonNullable<T.NumberFloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -8564,8 +8566,8 @@ export function wrapNumberFloatLeadingPoint(
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -8585,10 +8587,10 @@ export function wrapNumberFloatLeadingPoint(
 						tree
 					)
 				),
-			sign: (v: NonNullable<T.NumberFloatLeadingPoint['_sign']>) =>
+			exponentSign: (v: NonNullable<T.NumberFloatLeadingPoint['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
 					wrapNumberFloatLeadingPoint(
-						{ ...$edited(data), _sign: admitSlot(handle, 'number_float_leading_point', 'sign', v) },
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'number_float_leading_point', 'exponentSign', v) },
 						tree
 					)
 				),
@@ -8631,8 +8633,8 @@ export function wrapNumberFloatScientific(
 		marker() {
 			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
 		},
-		sign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string>(this, '_exponent', tree);
@@ -8652,10 +8654,10 @@ export function wrapNumberFloatScientific(
 						tree
 					)
 				),
-			sign: (v: NonNullable<T.NumberFloatScientific['_sign']>) =>
+			exponentSign: (v: NonNullable<T.NumberFloatScientific['_exponent_sign']>) =>
 				rebuilt(node, handle, () =>
 					wrapNumberFloatScientific(
-						{ ...$edited(data), _sign: admitSlot(handle, 'number_float_scientific', 'sign', v) },
+						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'number_float_scientific', 'exponentSign', v) },
 						tree
 					)
 				),
@@ -8689,16 +8691,19 @@ export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle): T.Numb
 	const node = {
 		...data,
 		$type: TSKindId.NumberBinary as const,
-		prefix() {
-			return hydrateSlot<'0b' | '0B'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberBinary['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.NumberBinary['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberBinary({ ...$edited(data), _prefix: admitSlot(handle, 'number_binary', 'prefix', v) }, tree)
+					wrapNumberBinary(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'number_binary', 'radixPrefix', v) },
+						tree
+					)
 				),
 			content: (v: NonNullable<T.NumberBinary['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -8727,16 +8732,19 @@ export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle): T.Number
 	const node = {
 		...data,
 		$type: TSKindId.NumberOctal as const,
-		prefix() {
-			return hydrateSlot<'0o' | '0O'>(this, '_prefix', tree);
+		radixPrefix() {
+			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			prefix: (v: NonNullable<T.NumberOctal['_prefix']>) =>
+			radixPrefix: (v: NonNullable<T.NumberOctal['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberOctal({ ...$edited(data), _prefix: admitSlot(handle, 'number_octal', 'prefix', v) }, tree)
+					wrapNumberOctal(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'number_octal', 'radixPrefix', v) },
+						tree
+					)
 				),
 			content: (v: NonNullable<T.NumberOctal['_content']>) =>
 				rebuilt(node, handle, () =>
@@ -8955,7 +8963,7 @@ export function wrapClassBodyMemberMethod(
 			return hydrateSlot<T.MethodDefinitionClassBodyMemberMethod>(this, '_method_definition', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
@@ -8983,7 +8991,7 @@ export function wrapClassBodyMemberMethod(
 					wrapClassBodyMemberMethod(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'class_body_member_method', 'terminator', v === null ? 0 : v)
+							_terminator: admitSlot(handle, 'class_body_member_method', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
@@ -9348,17 +9356,17 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifierName as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportSpecifierName['_type_only']>) =>
+			typeKeyword: (v: NonNullable<T.ImportSpecifierName['_type_keyword']>) =>
 				rebuilt(node, handle, () =>
 					wrapImportSpecifierName(
-						{ ...$edited(data), _type_only: admitSlot(handle, 'import_specifier_name', 'typeOnly', v) },
+						{ ...$edited(data), _type_keyword: admitSlot(handle, 'import_specifier_name', 'typeKeyword', v) },
 						tree
 					)
 				),
@@ -9392,8 +9400,8 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifierAs as const,
-		typeOnly() {
-			return this._type_only;
+		typeKeyword() {
+			return this._type_keyword;
 		},
 		name() {
 			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
@@ -9402,10 +9410,10 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			return hydrateSlot<T.Identifier>(this, '_alias', tree);
 		},
 		$with: {
-			typeOnly: (v: NonNullable<T.ImportSpecifierAs['_type_only']>) =>
+			typeKeyword: (v: NonNullable<T.ImportSpecifierAs['_type_keyword']>) =>
 				rebuilt(node, handle, () =>
 					wrapImportSpecifierAs(
-						{ ...$edited(data), _type_only: admitSlot(handle, 'import_specifier_as', 'typeOnly', v) },
+						{ ...$edited(data), _type_keyword: admitSlot(handle, 'import_specifier_as', 'typeKeyword', v) },
 						tree
 					)
 				),
@@ -10570,7 +10578,7 @@ export function wrapForHeaderLetConstKind(
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		operator() {
 			return this._operator;
@@ -10598,7 +10606,7 @@ export function wrapForHeaderLetConstKind(
 					wrapForHeaderLetConstKind(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'for_header_let_const_kind', 'terminator', v === null ? 0 : v)
+							_terminator: admitSlot(handle, 'for_header_let_const_kind', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
@@ -10647,7 +10655,7 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
-			return this._terminator;
+			return blankArmRead(this._terminator);
 		},
 		operator() {
 			return this._operator;
@@ -10670,10 +10678,13 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 						tree
 					)
 				),
-			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']>) =>
+			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
 					wrapForHeaderUsingKind(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'for_header_using_kind', 'terminator', v) },
+						{
+							...$edited(data),
+							_terminator: admitSlot(handle, 'for_header_using_kind', 'terminator', blankArmStored(v))
+						},
 						tree
 					)
 				),
@@ -12738,7 +12749,7 @@ function viewExportClause$exportSpecifiers(this: RecordHandle) {
 const viewExportClause$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeOnly', 'alias']
+	decorations: ['typeKeyword', 'alias']
 };
 function viewExportClause$listRead(this: { readonly exportSpecifiers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.exportSpecifiers(), 'items'), viewExportClause$wrapper);
@@ -12803,7 +12814,7 @@ function viewExportClause(data: RecordPosition, tree: TreeHandle): T.ExportClaus
 	return node as unknown as T.ExportClause.Parsed;
 }
 
-function viewExportSpecifier$typeOnly(this: RecordHandle) {
+function viewExportSpecifier$typeKeyword(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewExportSpecifier$name(this: RecordHandle) {
@@ -12820,7 +12831,7 @@ function viewExportSpecifier(data: RecordPosition, tree: TreeHandle): T.ExportSp
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		typeOnly: viewExportSpecifier$typeOnly,
+		typeKeyword: viewExportSpecifier$typeKeyword,
 		name: viewExportSpecifier$name,
 		alias: viewExportSpecifier$alias,
 		$with: undefined as unknown as object,
@@ -12833,12 +12844,12 @@ function viewExportSpecifier(data: RecordPosition, tree: TreeHandle): T.ExportSp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, typeOnly: $with$typeOnly, name: $with$name, alias: $with$alias };
+	node.$with = { node, typeKeyword: $with$typeKeyword, name: $with$name, alias: $with$alias };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.ExportSpecifier.Parsed;
 }
 
-function viewImportStatement$typeOnly(this: RecordHandle) {
+function viewImportStatement$typeKeyword(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewImportStatement$fromClause(this: RecordHandle) {
@@ -12858,7 +12869,7 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		typeOnly: viewImportStatement$typeOnly,
+		typeKeyword: viewImportStatement$typeKeyword,
 		fromClause: viewImportStatement$fromClause,
 		importAttribute: viewImportStatement$importAttribute,
 		terminator: viewImportStatement$terminator,
@@ -12874,7 +12885,7 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 	};
 	node.$with = {
 		node,
-		typeOnly: $with$typeOnly,
+		typeKeyword: $with$typeKeyword,
 		fromClause: $with$fromClause,
 		importAttribute: $with$importAttribute,
 		terminator: $with$terminator
@@ -13175,7 +13186,7 @@ function viewStatementBlock$statements(this: RecordHandle) {
 	return viewSlots<T.Statement>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewStatementBlock$terminator(this: RecordHandle) {
-	return childSlot(this, 3, 1, 18, 0, 3);
+	return blankArmRead(childSlot(this, 3, 1, 18, 0, 3));
 }
 function viewStatementBlock(data: RecordPosition, tree: TreeHandle): T.StatementBlock.Parsed {
 	const node = {
@@ -13415,7 +13426,7 @@ function viewDoStatement$condition(this: RecordHandle) {
 	return viewSlot<T.ParenthesizedExpression>(this, 6, 3, 1, 0, 3);
 }
 function viewDoStatement$terminator(this: RecordHandle) {
-	return childSlot(this, 9, 1, 18, 0, 4);
+	return blankArmRead(childSlot(this, 9, 1, 18, 0, 4));
 }
 function viewDoStatement(data: RecordPosition, tree: TreeHandle): T.DoStatement.Parsed {
 	const node = {
@@ -14160,7 +14171,7 @@ function viewClassDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
 }
 function viewClassDeclaration$terminator(this: RecordHandle) {
-	return childSlot(this, 26, 1, 18, 0, 7);
+	return blankArmRead(childSlot(this, 26, 1, 18, 0, 7));
 }
 function viewClassDeclaration(data: RecordPosition, tree: TreeHandle): T.ClassDeclaration.Parsed {
 	const node = {
@@ -14300,7 +14311,7 @@ function viewFunctionDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 17, 4, 8, 4, 7);
 }
 function viewFunctionDeclaration$terminator(this: RecordHandle) {
-	return childSlot(this, 21, 1, 18, 0, 8);
+	return blankArmRead(childSlot(this, 21, 1, 18, 0, 8));
 }
 function viewFunctionDeclaration(data: RecordPosition, tree: TreeHandle): T.FunctionDeclaration.Parsed {
 	const node = {
@@ -14415,7 +14426,7 @@ function viewGeneratorFunctionDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 17, 4, 8, 4, 7);
 }
 function viewGeneratorFunctionDeclaration$terminator(this: RecordHandle) {
-	return childSlot(this, 21, 1, 18, 0, 8);
+	return blankArmRead(childSlot(this, 21, 1, 18, 0, 8));
 }
 function viewGeneratorFunctionDeclaration(
 	data: RecordPosition,
@@ -14559,7 +14570,7 @@ function viewAwaitExpression(data: RecordPosition, tree: TreeHandle): T.AwaitExp
 function viewMemberExpression$object(this: RecordHandle) {
 	return viewSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, 2, 4, 3, 0, 2);
 }
-function viewMemberExpression$optionalChain(this: RecordHandle) {
+function viewMemberExpression$operator(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewMemberExpression$property(this: RecordHandle) {
@@ -14574,7 +14585,7 @@ function viewMemberExpression(data: RecordPosition, tree: TreeHandle): T.MemberE
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		object: viewMemberExpression$object,
-		optionalChain: viewMemberExpression$optionalChain,
+		operator: viewMemberExpression$operator,
 		property: viewMemberExpression$property,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -14586,7 +14597,7 @@ function viewMemberExpression(data: RecordPosition, tree: TreeHandle): T.MemberE
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, object: $with$object, optionalChain: $with$optionalChain, property: $with$property };
+	node.$with = { node, object: $with$object, operator: $with$operator, property: $with$property };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.MemberExpression.Parsed;
 }
@@ -15217,7 +15228,7 @@ function viewFormalParameters(data: RecordPosition, tree: TreeHandle): T.FormalP
 }
 
 function viewClassStaticBlock$terminator(this: RecordHandle) {
-	return childSlot(this, 2, 1, 18, 0, 2);
+	return blankArmRead(childSlot(this, 2, 1, 18, 0, 2));
 }
 function viewClassStaticBlock$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 3, 4, 8, 4, 3);
@@ -16952,7 +16963,7 @@ function viewTypeQueryMemberExpression$object(this: RecordHandle) {
 		| T.TypeQueryCallExpression
 	>(this, 2, 4, 3, 0, 2);
 }
-function viewTypeQueryMemberExpression$content(this: RecordHandle) {
+function viewTypeQueryMemberExpression$operator(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewTypeQueryMemberExpression$property(this: RecordHandle) {
@@ -16967,7 +16978,7 @@ function viewTypeQueryMemberExpression(data: RecordPosition, tree: TreeHandle): 
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		object: viewTypeQueryMemberExpression$object,
-		content: viewTypeQueryMemberExpression$content,
+		operator: viewTypeQueryMemberExpression$operator,
 		property: viewTypeQueryMemberExpression$property,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -16979,7 +16990,7 @@ function viewTypeQueryMemberExpression(data: RecordPosition, tree: TreeHandle): 
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, object: $with$object, content: $with$content, property: $with$property };
+	node.$with = { node, object: $with$object, operator: $with$operator, property: $with$property };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.TypeQueryMemberExpression.Parsed;
 }
@@ -17681,7 +17692,7 @@ function viewDefaultType(data: RecordPosition, tree: TreeHandle): T.DefaultType.
 	return node as unknown as T.DefaultType.Parsed;
 }
 
-function viewConstraint$content(this: RecordHandle) {
+function viewConstraint$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewConstraint$bounds(this: RecordHandle) {
@@ -17695,7 +17706,7 @@ function viewConstraint(data: RecordPosition, tree: TreeHandle): T.Constraint.Pa
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewConstraint$content,
+		operator: viewConstraint$operator,
 		bounds: viewConstraint$bounds,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -17707,7 +17718,7 @@ function viewConstraint(data: RecordPosition, tree: TreeHandle): T.Constraint.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, bounds: $with$bounds };
+	node.$with = { node, operator: $with$operator, bounds: $with$bounds };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.Constraint.Parsed;
 }
@@ -17985,7 +17996,7 @@ function viewExportSpecifiers$items(this: RecordHandle) {
 const viewExportSpecifiers$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeOnly', 'alias']
+	decorations: ['typeKeyword', 'alias']
 };
 function viewExportSpecifiers$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), viewExportSpecifiers$wrapper);
@@ -18605,7 +18616,7 @@ function viewAmbientDeclarationModule$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 7, 4, 3, 0, 3);
 }
 function viewAmbientDeclarationModule$terminator(this: RecordHandle) {
-	return childSlot(this, 11, 1, 18, 0, 4);
+	return blankArmRead(childSlot(this, 11, 1, 18, 0, 4));
 }
 function viewAmbientDeclarationModule(data: RecordPosition, tree: TreeHandle): T.AmbientDeclarationModule.Parsed {
 	const node = {
@@ -18848,7 +18859,7 @@ function viewLiteralTypeNegativeNumber(data: RecordPosition, tree: TreeHandle): 
 	return node as unknown as T.LiteralTypeNegativeNumber.Parsed;
 }
 
-function viewNumberHex$prefix(this: RecordHandle) {
+function viewNumberHex$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
 }
 function viewNumberHex$content(this: RecordHandle) {
@@ -18862,7 +18873,7 @@ function viewNumberHex(data: RecordPosition, tree: TreeHandle): T.NumberHex.Pars
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewNumberHex$prefix,
+		radixPrefix: viewNumberHex$radixPrefix,
 		content: viewNumberHex$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -18874,7 +18885,7 @@ function viewNumberHex(data: RecordPosition, tree: TreeHandle): T.NumberHex.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NumberHex.Parsed;
 }
@@ -18888,7 +18899,7 @@ function viewNumberFloatPoint$fraction(this: RecordHandle) {
 function viewNumberFloatPoint$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
 }
-function viewNumberFloatPoint$sign(this: RecordHandle) {
+function viewNumberFloatPoint$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
 }
 function viewNumberFloatPoint$exponent(this: RecordHandle) {
@@ -18905,7 +18916,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		integer: viewNumberFloatPoint$integer,
 		fraction: viewNumberFloatPoint$fraction,
 		marker: viewNumberFloatPoint$marker,
-		sign: viewNumberFloatPoint$sign,
+		exponentSign: viewNumberFloatPoint$exponentSign,
 		exponent: viewNumberFloatPoint$exponent,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -18922,7 +18933,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		integer: $with$integer,
 		fraction: $with$fraction,
 		marker: $with$marker,
-		sign: $with$sign,
+		exponentSign: $with$exponentSign,
 		exponent: $with$exponent
 	};
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
@@ -18935,7 +18946,7 @@ function viewNumberFloatLeadingPoint$fraction(this: RecordHandle) {
 function viewNumberFloatLeadingPoint$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E' | undefined>(this, 4, 2, 4, 0, 3);
 }
-function viewNumberFloatLeadingPoint$sign(this: RecordHandle) {
+function viewNumberFloatLeadingPoint$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewNumberFloatLeadingPoint$exponent(this: RecordHandle) {
@@ -18951,7 +18962,7 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		$_layout: data.$_layout,
 		fraction: viewNumberFloatLeadingPoint$fraction,
 		marker: viewNumberFloatLeadingPoint$marker,
-		sign: viewNumberFloatLeadingPoint$sign,
+		exponentSign: viewNumberFloatLeadingPoint$exponentSign,
 		exponent: viewNumberFloatLeadingPoint$exponent,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -18963,7 +18974,13 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, fraction: $with$fraction, marker: $with$marker, sign: $with$sign, exponent: $with$exponent };
+	node.$with = {
+		node,
+		fraction: $with$fraction,
+		marker: $with$marker,
+		exponentSign: $with$exponentSign,
+		exponent: $with$exponent
+	};
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NumberFloatLeadingPoint.Parsed;
 }
@@ -18974,7 +18991,7 @@ function viewNumberFloatScientific$integer(this: RecordHandle) {
 function viewNumberFloatScientific$marker(this: RecordHandle) {
 	return viewSlot<'e' | 'E'>(this, 4, 2, 4, 0, 3);
 }
-function viewNumberFloatScientific$sign(this: RecordHandle) {
+function viewNumberFloatScientific$exponentSign(this: RecordHandle) {
 	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewNumberFloatScientific$exponent(this: RecordHandle) {
@@ -18990,7 +19007,7 @@ function viewNumberFloatScientific(data: RecordPosition, tree: TreeHandle): T.Nu
 		$_layout: data.$_layout,
 		integer: viewNumberFloatScientific$integer,
 		marker: viewNumberFloatScientific$marker,
-		sign: viewNumberFloatScientific$sign,
+		exponentSign: viewNumberFloatScientific$exponentSign,
 		exponent: viewNumberFloatScientific$exponent,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19002,12 +19019,18 @@ function viewNumberFloatScientific(data: RecordPosition, tree: TreeHandle): T.Nu
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, integer: $with$integer, marker: $with$marker, sign: $with$sign, exponent: $with$exponent };
+	node.$with = {
+		node,
+		integer: $with$integer,
+		marker: $with$marker,
+		exponentSign: $with$exponentSign,
+		exponent: $with$exponent
+	};
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NumberFloatScientific.Parsed;
 }
 
-function viewNumberBinary$prefix(this: RecordHandle) {
+function viewNumberBinary$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
 }
 function viewNumberBinary$content(this: RecordHandle) {
@@ -19021,7 +19044,7 @@ function viewNumberBinary(data: RecordPosition, tree: TreeHandle): T.NumberBinar
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewNumberBinary$prefix,
+		radixPrefix: viewNumberBinary$radixPrefix,
 		content: viewNumberBinary$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19033,12 +19056,12 @@ function viewNumberBinary(data: RecordPosition, tree: TreeHandle): T.NumberBinar
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NumberBinary.Parsed;
 }
 
-function viewNumberOctal$prefix(this: RecordHandle) {
+function viewNumberOctal$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
 function viewNumberOctal$content(this: RecordHandle) {
@@ -19052,7 +19075,7 @@ function viewNumberOctal(data: RecordPosition, tree: TreeHandle): T.NumberOctal.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		prefix: viewNumberOctal$prefix,
+		radixPrefix: viewNumberOctal$radixPrefix,
 		content: viewNumberOctal$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19064,7 +19087,7 @@ function viewNumberOctal(data: RecordPosition, tree: TreeHandle): T.NumberOctal.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, content: $with$content };
+	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.NumberOctal.Parsed;
 }
@@ -19215,7 +19238,7 @@ function viewClassBodyMemberMethod$methodDefinition(this: RecordHandle) {
 	return viewSlot<T.MethodDefinitionClassBodyMemberMethod>(this, 3, 37, 8, 37, 3);
 }
 function viewClassBodyMemberMethod$terminator(this: RecordHandle) {
-	return childSlot(this, 40, 1, 18, 0, 4);
+	return blankArmRead(childSlot(this, 40, 1, 18, 0, 4));
 }
 function viewClassBodyMemberMethod(data: RecordPosition, tree: TreeHandle): T.ClassBodyMemberMethod.Parsed {
 	const node = {
@@ -19487,7 +19510,7 @@ function viewYieldExpressionDelegate(data: RecordPosition, tree: TreeHandle): T.
 	return node as unknown as T.YieldExpressionDelegate.Parsed;
 }
 
-function viewImportSpecifierName$typeOnly(this: RecordHandle) {
+function viewImportSpecifierName$typeKeyword(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewImportSpecifierName$name(this: RecordHandle) {
@@ -19501,7 +19524,7 @@ function viewImportSpecifierName(data: RecordPosition, tree: TreeHandle): T.Impo
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		typeOnly: viewImportSpecifierName$typeOnly,
+		typeKeyword: viewImportSpecifierName$typeKeyword,
 		name: viewImportSpecifierName$name,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19513,12 +19536,12 @@ function viewImportSpecifierName(data: RecordPosition, tree: TreeHandle): T.Impo
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, typeOnly: $with$typeOnly, name: $with$name };
+	node.$with = { node, typeKeyword: $with$typeKeyword, name: $with$name };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.ImportSpecifierName.Parsed;
 }
 
-function viewImportSpecifierAs$typeOnly(this: RecordHandle) {
+function viewImportSpecifierAs$typeKeyword(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewImportSpecifierAs$name(this: RecordHandle) {
@@ -19535,7 +19558,7 @@ function viewImportSpecifierAs(data: RecordPosition, tree: TreeHandle): T.Import
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		typeOnly: viewImportSpecifierAs$typeOnly,
+		typeKeyword: viewImportSpecifierAs$typeKeyword,
 		name: viewImportSpecifierAs$name,
 		alias: viewImportSpecifierAs$alias,
 		$with: undefined as unknown as object,
@@ -19548,7 +19571,7 @@ function viewImportSpecifierAs(data: RecordPosition, tree: TreeHandle): T.Import
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, typeOnly: $with$typeOnly, name: $with$name, alias: $with$alias };
+	node.$with = { node, typeKeyword: $with$typeKeyword, name: $with$name, alias: $with$alias };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.ImportSpecifierAs.Parsed;
 }
@@ -20303,7 +20326,7 @@ function viewForHeaderLetConstKind$left(this: RecordHandle) {
 	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 3, 4, 9, 3, 3);
 }
 function viewForHeaderLetConstKind$terminator(this: RecordHandle) {
-	return childSlot(this, 7, 1, 18, 0, 4);
+	return blankArmRead(childSlot(this, 7, 1, 18, 0, 4));
 }
 function viewForHeaderLetConstKind$operator(this: RecordHandle) {
 	return childSlot(this, 8, 1, 2, 0, 5);
@@ -20347,13 +20370,13 @@ function viewForHeaderLetConstKind(data: RecordPosition, tree: TreeHandle): T.Fo
 }
 
 function viewForHeaderUsingKind$kind(this: RecordHandle) {
-	return childSlot(this, 3, 1, 2, 0, 3);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewForHeaderUsingKind$left(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 4, 4, 9, 3, 4);
+	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 3, 4, 9, 3, 3);
 }
 function viewForHeaderUsingKind$terminator(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
+	return blankArmRead(childSlot(this, 7, 1, 18, 0, 4));
 }
 function viewForHeaderUsingKind$operator(this: RecordHandle) {
 	return childSlot(this, 8, 1, 2, 0, 5);
@@ -21760,6 +21783,9 @@ function $with$elements(this: { readonly node: RecordPosition }, ...args: unknow
 function $with$exponent(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'exponent', args);
 }
+function $with$exponentSign(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'exponentSign', args);
+}
 function $with$exportClause(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'exportClause', args);
 }
@@ -21925,9 +21951,6 @@ function $with$parameters(this: { readonly node: RecordPosition }, ...args: unkn
 function $with$pattern(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'pattern', args);
 }
-function $with$prefix(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'prefix', args);
-}
 function $with$properties(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'properties', args);
 }
@@ -21936,6 +21959,9 @@ function $with$property(this: { readonly node: RecordPosition }, ...args: unknow
 }
 function $with$qualifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'qualifier', args);
+}
+function $with$radixPrefix(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'radixPrefix', args);
 }
 function $with$readonly(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'readonly', args);
@@ -21978,6 +22004,9 @@ function $with$type(this: { readonly node: RecordPosition }, ...args: unknown[])
 }
 function $with$typeArguments(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'typeArguments', args);
+}
+function $with$typeKeyword(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'typeKeyword', args);
 }
 function $with$typeOnly(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'typeOnly', args);

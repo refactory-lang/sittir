@@ -125,6 +125,8 @@ export default grammar(enrich(base), wire({
 		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		macro_invocation: { '"!"/before': preference('tight'), '"!"/after': preference('tight') },
 		inner_attribute_item: { '"!"/before': preference('tight') },
+		attributed_enum_variant: { 'attribute_item:/end': preference('newline') },
+		attributed_field_declaration: { 'attribute_item:/end': preference('newline') },
 		visibility_modifier_pub_scope: { before: preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },
 		variadic_parameter: { '"..."/before': preference('space') },
@@ -157,7 +159,7 @@ export default grammar(enrich(base), wire({
 		pointer_type_mut: { '"*"/after': preference('tight') },
 		delim_token_tree_paren: { before: preference('tight') },
 		token_tree_paren: { before: preference('tight') },
-		token_binding_pattern: { '":"/after': preference('tight'), 'type:/before': preference('tight') },
+		token_binding_pattern: { '":"/after': preference('tight'), 'fragment:/before': preference('tight') },
 
 		block: { before: preference('space'), 'statements:/end': preference('newline') },
 		match_block: { before: preference('space') },
@@ -404,8 +406,8 @@ export default grammar(enrich(base), wire({
 			1: field('value')
 		},
 
-		ordered_field_declaration_list: {
-			1: field('attributes')
+		token_binding_pattern: {
+			2: field('fragment')
 		},
 
 		or_pattern: [
@@ -550,13 +552,13 @@ export default grammar(enrich(base), wire({
 		// repeat($._delim_tokens))` and siblings) come from enrich's
 		// repeat-union field promotion (dsl/enrich.ts) — no override
 		// needed here; only the visible-variant splits remain.
-		token_tree_pattern: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
-		token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
-		delim_token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+		token_tree_pattern: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
+		token_tree: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
+		delim_token_tree: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
 
 		field_pattern: { '1/0': field('mutable'), '2/0': variant('shorthand'), '2/1': variant('named') },
 
-		macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
+		macro_definition: { '2/0': variant('paren', { default: true }), '2/1': variant('bracket'), '2/2': variant('brace') },
 
 		range_pattern: [
 			{
@@ -724,6 +726,7 @@ export default grammar(enrich(base), wire({
 	renderAs: (_$) => ({
 		float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,
 		string_content: token.immediate(/[^"\\]+/),
+		string_close: token.immediate('"'),
 		raw_string_literal_content: token.immediate(/[\s\S]*/),
 		_outer_block_doc_comment_marker: token.immediate('*'),
 		_inner_block_doc_comment_marker: token.immediate('!'),

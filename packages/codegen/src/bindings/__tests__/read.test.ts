@@ -497,3 +497,22 @@ describe('bindingPatterns', () => {
 		]);
 	});
 });
+
+describe('a directive the bindings do not read', () => {
+	it('refuses it by name', async () => {
+		await expect(readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))')).rejects.toThrow(/#set! default is not a bindings directive; the bindings read reason and value/);
+	});
+});
+
+describe('the value directive', () => {
+	it("stamps a claim at the pattern's top with the boolean it declares", async () => {
+		const facts = await readBindings('((true) @literal.boolean.true (#set! value true))\n((false) @literal.boolean.false (#set! value false))');
+		expect(facts.claims.map((c) => [c.vocab, c.value])).toEqual([
+			['literal.boolean.true', true],
+			['literal.boolean.false', false]
+		]);
+	});
+	it('refuses a value that is not true or false', async () => {
+		await expect(readBindings('((true) @literal.boolean.true (#set! value yes))')).rejects.toThrow(/#set! value takes true or false, not yes/);
+	});
+});

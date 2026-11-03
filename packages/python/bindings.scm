@@ -115,7 +115,7 @@
 (comparison_operator (comparison_operator_comparator) . (comparison_operator_comparator)) @expression.binary.comparison.chain
 (comparison_operator . (_) . (comparison_operator_comparator operators: "==") .) @expression.binary.comparison.equal
 (comparison_operator . (_) . (comparison_operator_comparator operators: "!=") .) @expression.binary.comparison.not_equal
-(comparison_operator . (_) . (comparison_operator_comparator operators: "<>") .) @expression.binary.comparison.not_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "<>") .) @expression.binary.comparison.not_equal.legacy
 (comparison_operator . (_) . (comparison_operator_comparator operators: "<") .) @expression.binary.comparison.less
 (comparison_operator . (_) . (comparison_operator_comparator operators: ">") .) @expression.binary.comparison.greater
 (comparison_operator . (_) . (comparison_operator_comparator operators: "<=") .) @expression.binary.comparison.less_equal
@@ -128,7 +128,7 @@
 (comparison_operator_comparator) @element.comparator
 (comparison_operator_comparator operators: "==") @element.comparator.comparison.equal
 (comparison_operator_comparator operators: "!=") @element.comparator.comparison.not_equal
-(comparison_operator_comparator operators: "<>") @element.comparator.comparison.not_equal
+(comparison_operator_comparator operators: "<>") @element.comparator.comparison.not_equal.legacy
 (comparison_operator_comparator operators: "<") @element.comparator.comparison.less
 (comparison_operator_comparator operators: ">") @element.comparator.comparison.greater
 (comparison_operator_comparator operators: "<=") @element.comparator.comparison.less_equal
@@ -191,10 +191,10 @@
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
 (union_pattern) @pattern.or
-(dict_pattern) @pattern.map
-(splat_pattern_list) @pattern.rest
+(dict_pattern) @pattern.dict
+(splat_pattern_list) @pattern.splat
 (splat_pattern_list name: (_) @pattern)
-(splat_pattern_dictionary) @pattern.rest.map
+(splat_pattern_dictionary) @pattern.splat.dictionary
 (splat_pattern_dictionary name: (_) @pattern)
 (class_pattern name: (_) @type arguments: (_)? @fields) @pattern.struct
 (keyword_pattern value: (_) @pattern) @pattern.struct.field
@@ -246,13 +246,13 @@
 (float_leading_point) @literal.number.float.leading_point
 (float_scientific) @literal.number.float.scientific
 (simple_pattern_negative) @literal.number.negative
-(true) @literal.boolean.true
-(false) @literal.boolean.false
+((true) @literal.boolean.true (#set! value true))
+((false) @literal.boolean.false (#set! value false))
 (none) @literal.none
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(dotted_name) @identifier.qualified
+(dotted_name) @identifier.dotted
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)

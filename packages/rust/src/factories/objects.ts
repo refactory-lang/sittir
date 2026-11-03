@@ -44,6 +44,8 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceKindEnumStorage,
@@ -265,22 +267,22 @@ export function buildTokenBindingPattern<NameSlot extends T.TokenBindingPattern.
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Bound {
 	currentHandle()?.admit(TSKindId.TokenBindingPattern, [config]);
 	const _name = config.name;
-	const _type = kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type);
+	const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, type: _type });
+	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, fragment: _fragment });
 	const node = {
 		$type: TSKindId.TokenBindingPattern as const,
 		_name,
-		_type,
+		_fragment,
 		$_layout: undefined,
 		$with: {
 			name: (value: Admit<T.Metavariable>) =>
 				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, name: value })),
-			type: (value: Admit<NonNullable<T.TokenBindingPattern.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, type: value }))
+			fragment: (value: Admit<NonNullable<T.TokenBindingPattern.Config>['fragment']>) =>
+				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, fragment: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => _type,
+		fragment: () => _fragment,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1515,17 +1517,17 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 function _buildOrderedFieldDeclarationList(
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): T.OrderedFieldDeclarationList.Bound {
-	const _attributes = hydrateStored(value);
-	const listView = ownerView(_attributes, '_item');
-	if (listView.length === undefined) refuseReadStub('_attributes');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { attributes: _attributes });
+	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { elements: _elements });
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationList as const,
-		_attributes,
+		_elements,
 		$_layout: undefined,
 		$with: {
-			attributes: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1539,7 +1541,7 @@ function _buildOrderedFieldDeclarationList(
 					)
 				)
 		},
-		attributes: () => hydrateStoredSlot(node, '_attributes'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5793,7 +5795,7 @@ export function buildLastMatchArm(
 	const _match = config.match;
 	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const readGroup_match = () => _match;
@@ -5863,7 +5865,7 @@ export function buildLastMatchArm(
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		trailingComma: () => _trailing_comma,
+		trailingComma: () => blankArmRead(_trailing_comma),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
@@ -6116,7 +6118,7 @@ export function buildClosureParameters(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -11287,25 +11289,12 @@ export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeE
 	return node as unknown as T.RangeExpressionPrefix.Bound;
 }
 
-export function buildRangeExpressionBare<V extends Admit<TSKindId.DotDot>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): T.RangeExpressionBare.Bound;
-export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.RangeExpressionBare.Bound {
-	const _range_expression_bare = kindIdStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		orDefault(value, () => TSKindId.DotDot as const)
-	);
+export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_bare', { rangeExpressionBare: _range_expression_bare });
 	const node = {
 		$type: TSKindId.RangeExpressionBare as const,
-		_range_expression_bare,
 		$_layout: undefined,
-		$with: {
-			rangeExpressionBare: (value: Admit<NonNullable<TSKindId.DotDot>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBare(value))
-		},
-		rangeExpressionBare: () => _range_expression_bare,
+		$with: {},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12354,7 +12343,7 @@ export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.C
 ): T.RangePatternPrefix.Bound;
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 		'RangePatternPrefix.right',
@@ -12362,19 +12351,19 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { content: _content, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
 	const node = {
 		$type: TSKindId.RangePatternPrefix as const,
-		_content,
+		_operator,
 		_right,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, operator: value })),
 			right: (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
 				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, right: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12397,7 +12386,7 @@ export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
 	const _right = rejectKeywordText(
 		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 		'RangePatternWithLeftWithRight.right',
@@ -12406,19 +12395,19 @@ export function buildRangePatternWithLeftWithRight(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { content: _content, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
 	const node = {
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
-		_content,
+		_operator,
 		_right,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, operator: value })),
 			right: (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, right: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13685,28 +13674,6 @@ function _buildParametersElementsReceiverGroup(
 	return node as unknown as T.ParametersElementsReceiverGroup.Bound;
 }
 
-export function buildStringClose(text: string): T.StringClose.Bound {
-	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.StringClose as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[Symbol.dispose]: releaseNothing
-	};
-	return node as unknown as T.StringClose.Bound;
-}
-
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (typeof text !== 'string') throw new Error(`_error_sentinel: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
@@ -14343,7 +14310,6 @@ export type FluentKindMap = {
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
 	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
-	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
 	self_module: T.SelfModule;
 	type_identifier: T.TypeIdentifier.Bound;
@@ -14622,7 +14588,6 @@ export const _factoryMap = {
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
-	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,

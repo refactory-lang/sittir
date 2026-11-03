@@ -55,7 +55,7 @@ import {
 	tableSides,
 	type ReadNodeLike,
 	loadScopedFactoryMap,
-	loadNativeEngine,
+	loadNativeRender,
 	loadStorageKindNameFromId,
 	FAILED_RUN
 } from './common.ts';
@@ -471,12 +471,7 @@ export async function validateFactoryStorage(
 				? seatReader(parentSurface)
 				: undefined;
 		};
-	const renderReparseContext = await loadRenderReparseContext(
-		grammar,
-		parser,
-		await loadNativeEngine(grammar),
-		options.profile
-	);
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar), options.profile);
 	const { listSeparators } = await loadNodeModel(grammar);
 	const render = emptyBuiltRenderRun();
 

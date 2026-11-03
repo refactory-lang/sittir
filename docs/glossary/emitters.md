@@ -4629,14 +4629,16 @@ The slots of a node that take their value from the options argument instead of t
 
 ```text
 /**
- * The factory surface, read from the model's class: a fixed-text leaf with a
- * builder is `constant` (its build entry is its kind id, not a call), other
- * leaves are `text`, a
+ * The factory surface, read from the model's class. A kind with no content
+ * to supply (`suppliesNoContent`) takes its shape from what it stores: a
+ * fixed-text leaf with a builder is `constant` (its build entry is its kind
+ * id, not a call), and a compound with no slots is `nullary` (a call that
+ * takes nothing and builds the node). Other leaves are `text`, a
  * list is `elements`, a compound with a sole repeated slot is `spread`,
  * with a sole singular slot `direct` (or `forwarded` when that slot names
- * one kind with its own factory), anything else — two-plus slots, zero
- * slots, a hidden non-user-facing kind — is `config`. A hoisted form is
- * `direct`/`forwarded`/`config` by the same sole-slot test.
+ * one kind with its own factory), anything else — two-plus slots, a hidden
+ * non-user-facing kind — is `config`. A hoisted form is
+ * `direct`/`forwarded`/`config`/`nullary` by the same test.
  */
 ```
 
@@ -9609,7 +9611,7 @@ The alias envelopes built from their content's text (the `alias` form of `builtF
  */
 ```
 
-### `packages/codegen/src/emitters/emit.ts::EmitAllResult.rootTreeTypeName`
+### `packages/codegen/src/emitters/emit.ts::EmitAllResult::rootTreeTypeName`
 
 ```text
 /** Name of the `wrap.ts` alias for the root kind's wrapped surface — the
@@ -9671,14 +9673,14 @@ The `trivia` member of the language hooks: the generated facts, the default comm
 
 The factory imports the language hooks need, one line per module: the coercer module's `buildByKind` (the hook the node reviver builds through), and the trivia hook's builders: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
 
-### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig::rootTypeName`
 
 ```text
 /** The grammar's root kind interface name (e.g. `SourceFile`) — types
 	 *  `createEngine`'s diagnostics so `parseAndRead(...).root` needs no cast. */
 ```
 
-### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTreeTypeName`
+### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig::rootTreeTypeName`
 
 ```text
 /** The `wrap.ts` alias for the root kind's wrapped surface (e.g.
@@ -9690,22 +9692,22 @@ The factory imports the language hooks need, one line per module: the coercer mo
 
 Emits `node-model.json5`: a structural dump of the assembled `NodeMap` (each kind's model type, slots with per-value multiplicities, supertype subtypes, polymorph forms), so tools read a grammar's shape without re-running codegen. It writes each fact once: no field a reader derives from another (`node-model-read.ts`) and no field nothing reads. Nodes are sorted by kind so diffs are stable.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.forwardsTo`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::forwardsTo`
 
 ```text
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.renamedFrom`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::renamedFrom`
 
 The node's `renamedFrom`, written only when the kind was renamed. Tools read the base-to-bound name mapping from it rather than evaluating the grammar again.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.splitFrom`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::splitFrom`
 
 The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase::variantOf`
 
 The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
 
@@ -9773,7 +9775,7 @@ The grammar's `arena.ts` descriptor entry point. It reuses the regular descripto
 
 The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge with a `const`, so the descriptor is a module: its values are `name`, `fileTypes` (the model's file types, an empty list for a grammar with none), `kinds` (the grammar's `TSKindId`; a bound grammar's adds `portable`, the shared portable kinds typed by its `PortableKinds`), `is` (the grammar's guards, built by its `guardsWith` with the language's kind test against the module itself, `languageGuards`; a bound grammar's adds `portable`, the language's view of the portable guards, typed by its `PortableIs` and built by `languageGuards`' `shared` builder (`portableGuardsOf`), which reads a node of the language or a bare kind id of it and checks the language itself), `load`, which imports `./api.js` on demand, and `createEngine`, which imports `@sittir/common` on the first call and delegates to the one `createEngine` there. Its types are the grammar's types, its options, `IsGuards`, the language API type and `Engine`, the engine type for a surface. At import it loads only the kind-id module, the guards, `@sittir/common/language` and, for a bound grammar, `@sittir/common/portable` (the grammar's `portable.ts` is imported for its types only), so naming the language loads no factories, no wrap, no 824 KB types module and no native binding; `rust.is` and `rust.kinds` work before any engine exists, and every engine's `is` and `kinds` are these objects. The module checks itself against `Language` (`satisfies`).
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral.immediate`
+### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral::immediate`
 
 ```text
 /** Grammar-immediacy stamp of an INLINE terminal value (`token.immediate`
@@ -9801,7 +9803,7 @@ The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge
 		   isSlotBearingCompound's doc comment (shared.ts). */
 ```
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeProjection.wireIds`
+### `packages/codegen/src/emitters/node-projection.ts::NodeProjection::wireIds`
 
 Every id a kind's values are stored under, by kind, gathered from every
 literal component before the literal list dedupes by kind and text. A
@@ -10100,23 +10102,23 @@ A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it ta
  */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.strictType`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::strictType`
 
 ```text
 /** The type the builder itself declares. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.looseType`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::looseType`
 
 ```text
 /** The type a coercing caller may pass for the same position. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.rowLooseOptional`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::rowLooseOptional`
 
 Whether the loose row's parameter may be left out, where that differs from the strict one. A wrapper around a kind that can be built from nothing takes no argument on the coercing side (`argumentOptional`), while its strict row names the built child.
 
-### `packages/codegen/src/emitters/factories.ts::FactoryParam.defaultValue`
+### `packages/codegen/src/emitters/factories.ts::FactoryParam::defaultValue`
 
 ```text
 /** Set where the emitted signature defaults the parameter; an
@@ -10782,7 +10784,7 @@ Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf`
 
 ### `packages/codegen/src/emitters/test.ts::rendersText`
 
-True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
+True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A layout member (`layoutSymbolsOf`) writes none: its text is whitespace, and at a node's edge the engine writes it as a gap. Any other kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
 
 ### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 
@@ -11117,7 +11119,7 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::ChildrenFromNode.childSlotFacts`
+### `packages/codegen/src/emitters/from.ts::ChildrenFromNode::childSlotFacts`
 
 ```text
 // The container's classified sole user slot (soleSlotFacts) —
@@ -11549,7 +11551,7 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, each
 // not a class instance (see resolveUnnamedSlotConfig; reworked in task B).
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::SlotModel.propertyName`
+### `packages/codegen/src/emitters/wrap.ts::SlotModel::propertyName`
 
 ```text
 /** The accessor/setter name. One contributing slot lends its own; several
@@ -11557,7 +11559,7 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, each
 	 *  the generic the model uses for a slot the grammar left unnamed. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig.rootKind`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::rootKind`
 
 ```text
 /** The grammar's `root` role kind. Names that kind's wrapped surface as an
@@ -11826,13 +11828,13 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // ----------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::EmittedField.name`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::name`
 
 ```text
 // raw grammar field name
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::EmittedField.multiple`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::multiple`
 
 ```text
 // true when the node-side field is Vec<Box<AnyNode>>
@@ -11934,7 +11936,7 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // ----------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::MetaData.separators`
+### `packages/codegen/src/emitters/render-module.ts::MetaData::separators`
 
 ```text
 // kind → separator (fallback for inferred slots)
@@ -12114,20 +12116,20 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.stampedIds`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::stampedIds`
 
 ```text
 /** Per-reference-site mint stamp (slot values only) — authoritative when present. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.parseAliases`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::parseAliases`
 
 ```text
 /** Name-derived alias map for this slot/field (`aliasTargetToSourceMapOf`), used to
 	 *  expand `kind`'s alias-site names when no mint stamp is available. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput.parseName`
+### `packages/codegen/src/emitters/render-module.ts::AcceptedNodeIdsInput::parseName`
 
 ```text
 /** This kind's own alias-occurrence parse name (e.g. supertype `subtypeParseNames`),
@@ -13658,7 +13660,7 @@ kind's prepare body (`prepareEdgesLine`), not here.
 The separator site of a separated-list kind whose separator is a choice of
 literal tokens: the spacing-table row with `role: 'separator'`, if any.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
+### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite::address`
 
 ```text
 // The key the site answers to under its kind, and the tail of the node
@@ -13766,19 +13768,19 @@ all is a codegen-time error, never a guessed name. The canonical address path (`
 — it keeps the literal's quoted text, since that is what makes two different
 segments that would spell the same nested key distinguishable.
 
-### `packages/codegen/src/emitters/options.ts::AddressBranchEntry.segments`
+### `packages/codegen/src/emitters/options.ts::AddressBranchEntry::segments`
 
 ```text
 /** This branch's own address as typed segments — the prefix `path` was joined from. */
 ```
 
-### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.segments`
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry::segments`
 
 ```text
 /** This leaf's own address as typed segments — the full list `path` was joined from. */
 ```
 
-### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.canonical`
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry::canonical`
 
 ```text
 /** The typed segment list(s) of every site this leaf sets: one for an
@@ -13966,7 +13968,7 @@ Puts a tight join (`adjacent`, printed as `seam(TIGHT)`) before every slot and l
 
 The one-seam-per-flank check: every internal gap and each edge of a template carries at most one seam, decided in codegen, and coalescing (strength, then rank) happens only where flanks of different templates meet. It lists each run of seam-class nodes in a body (descending into gates) that holds a join (`adjacent`) or a static word seam (`wordSeam`) beside another, and generation fails naming the kind and the run. Two declared sites at one gap, or a site beside a whitespace token, are legal and permanent: each is an option address of its own, and the writer's coalescing resolves them. With `SEAM_FLANK_CENSUS` set the run is logged instead of failing, for counting.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.optional`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::optional`
 
 Whether a slot may be absent at render time (its node field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
@@ -13990,14 +13992,14 @@ A sample that satisfies the slot pattern, so the generated construction tests pa
 
 The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
 
-### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.registered`
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::registered`
 
 ```text
 /** A registered (spelling/choice) slot has no home in the factory's
 	 * config object — it moves to the trailing options argument. */
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.optionDefault`
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::optionDefault`
 
 The grammar default of a registered slot, in the value domain the builder takes:
 the spelling text for a spelling slot, the arm's kind id for a choice slot
@@ -14958,6 +14960,10 @@ The factory for a word that is not reserved.
 
 The separator a factory slot takes.
 
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::blank`
+
+True when the slot has a blank arm, so the factory's writes store the blank marker for `null`.
+
 ### `packages/codegen/src/emitters/is.ts::EmitIsConfig`
 
 The options the is-guard emitter takes.
@@ -14977,6 +14983,10 @@ The table of relaxations the Rust kind ids apply.
 ### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::separator`
 
 The separator a written slot takes.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::blank`
+
+True when the slot has a blank arm. Writers store `null` as the blank marker and readers map the marker back to `null`.
 
 ### `packages/codegen/src/emitters/node-projection.ts::displayClaimedIds`
 
@@ -15278,6 +15288,14 @@ The type a spliced envelope slot takes, or undefined when it has no envelope.
 
 Widens a slot's input type to admit its spliced envelope, where the slot has one.
 
+### `packages/codegen/src/emitters/factories.ts::ParamFactorySurface`
+
+The factory surface of a construction that takes one parameter: it has a param and no nullary flag. Its counterpart is NullaryFactorySurface; FactorySurface is the union of the two.
+
+### `packages/codegen/src/emitters/factories.ts::NullaryFactorySurface`
+
+The factory surface of a construction that takes no parameter: nullary is true, and there is no param, no spread facts and no leading options. FactorySurface is ParamFactorySurface or this.
+
 ### `packages/codegen/src/emitters/interior.ts::numericSlotInputs`
 
 The numeric slots of a node, each with its input type.
@@ -15557,3 +15575,151 @@ The body text.
 ### `packages/codegen/src/emitters/shared.ts::seatDeclaration`
 
 Prints a seat's const declaration. It is the one place a seat const is written.
+
+### `packages/codegen/src/emitters/interior.ts::NumberShape::complete`
+
+Whether a number shape has every part it needs to read a number.
+
+### `packages/codegen/src/emitters/interior.ts::numberShapes`
+
+The number shapes of a node map, by kind.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
+
+The codes a pick diagnostic can carry.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic`
+
+A diagnostic from choosing a build arm for a path.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::code`
+
+The diagnostic code.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::path`
+
+The path the diagnostic is about.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::kinds`
+
+The kinds the diagnostic names.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::holder`
+
+The holder the diagnostic names, when it has one.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::slot`
+
+The slot the diagnostic names, when it has one.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::arms`
+
+The number of arms the diagnostic counts, when it counts them.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput`
+
+What the portable build reads: routes, the slot model, the node map, the kind entries, and the flag plans.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::routes`
+
+The grammar's routes.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::model`
+
+The slot model.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::nodeMap`
+
+The node map.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::kindEntries`
+
+The kind-enum entries.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::flagPlans`
+
+The query plans for each flag path, by holder kind.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput`
+
+The portable build table and the diagnostics raised while building it.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::table`
+
+The build table.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::diagnostics`
+
+The diagnostics raised while building the table.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::portableBuildTable`
+
+Builds the portable build table and its diagnostics from the build input.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
+
+Emits the portable build module source, with the diagnostics it raised.
+
+### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
+
+The emitted portable build source.
+
+### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::pickDiagnostics`
+
+The pick diagnostics the build raised.
+
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceStorage`
+
+The storage of a keyword-presence field, when it has one.
+
+### `packages/codegen/src/emitters/shared.ts::blankArmImports`
+
+The runtime helpers a generated module imports for blank arms: `blankArmRead` and `blankArmStored` when any node in the map has a slot with a blank arm, and none otherwise.
+
+### `packages/codegen/src/emitters/shared.ts::blankForRead`
+
+The read expression for a slot value: `blankArmRead(expr)` when the slot has a blank arm, and the expression unchanged otherwise.
+
+### `packages/codegen/src/emitters/shared.ts::optionalChoiceTexts`
+
+The keyword texts of an optional choice field: every value of the field must store text, and the result is the set of those texts. A field with a value that stores no text yields undefined.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
+
+One error from type-checker output: the file, position, code and message from its first line, and the indented lines that follow it.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::head`
+
+The error's first output line, verbatim.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::file`
+
+The file the error is reported in, when the line names one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::line`
+
+The 1-based line of the error, when the line reports one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::column`
+
+The 1-based column of the error, when the line reports one.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::code`
+
+The compiler's diagnostic code, such as `TS2339`.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::message`
+
+The error message after the code.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic::detail`
+
+The trimmed, indented lines that follow the error, in order.
+
+### `packages/codegen/src/typecheck.ts::parseTypeCheckDiagnostics`
+
+Parses type-checker output into one diagnostic per `error TS` line. Each indented line that follows is attached to the diagnostic before it. Other non-indented lines are dropped.
+
+### `packages/codegen/src/typecheck.ts::typeCheckOutput`
+
+Runs a type-checker command in a directory and returns its output. A non-zero exit that still prints `error TS` lines counts as a result; any other failure is rethrown. The output is requested without colour.

@@ -17,14 +17,17 @@ const findOfType = (value: unknown, type: number): unknown => {
 	return undefined;
 };
 
-describe('a hidden token rule whose parse holds its token', () => {
-	it('stores the token the parse holds, read and built alike, and renders it', async () => {
+describe('a form whose whole body is one fixed token', () => {
+	it('holds no slot, read and built alike, and renders the token on both paths', async () => {
 		const rs = await createEngine(rust, { verifyStructure: 'runtime' });
-		const parsed = structureOf(findOfType(rs.parse('fn f() { ..; }\n').$snapshot(), TSKindId.RangeExpressionBare));
-		expect(Object.values(parsed as object)).toEqual([TSKindId.RangeExpressionBare, TSKindId.DotDot]);
-		const built = rs.build.rangeExpressionBare(TSKindId.DotDot);
+		const source = 'fn f() { ..; }\n';
+		const tree = rs.parse(source);
+		const parsed = structureOf(findOfType(tree.$snapshot(), TSKindId.RangeExpressionBare));
+		expect(Object.values(parsed as object)).toEqual([TSKindId.RangeExpressionBare]);
+		const built = rs.build.rangeExpressionBare();
 		expect(structureOf(snapshotOf(built))).toEqual(parsed);
 		expect(rs.render(built).toString()).toBe('..');
+		expect(rs.render(tree).toString()).toBe(source);
 	});
 });
 

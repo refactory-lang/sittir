@@ -130,7 +130,7 @@ describe('emitPortableSurface', () => {
 			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'
 		);
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
-		expect(text).toContain('export const rows: PortableRows = Object.freeze({ table, querySlots });');
+		expect(text).toContain('export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });');
 		expect(text).not.toContain('portableSurface');
 	});
 

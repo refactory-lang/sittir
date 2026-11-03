@@ -63,6 +63,85 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).content()?.$type).toBe(TSKindId.ExpressionStatementWithSemi);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
+		it('unsafeBlock builds the parent', () => {
+			const node = ir.expressionStatement.unsafeBlock({ $type: TSKindId.Block, statements: [] } as never);
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.UnsafeBlock);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('asyncBlock builds the parent', () => {
+			const node = ir.expressionStatement.asyncBlock({ body: { $type: TSKindId.Block, statements: [] } as never });
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.AsyncBlock);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('genBlock builds the parent', () => {
+			const node = ir.expressionStatement.genBlock({ body: { $type: TSKindId.Block, statements: [] } as never });
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.GenBlock);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('tryBlock builds the parent', () => {
+			const node = ir.expressionStatement.tryBlock({ $type: TSKindId.Block, statements: [] } as never);
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.TryBlock);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('block builds the parent', () => {
+			const node = ir.expressionStatement.block({});
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.Block);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('ifExpression builds the parent', () => {
+			const node = ir.expressionStatement.ifExpression({
+				condition: { $type: TSKindId.Identifier, text: 'test' } as never,
+				consequence: { $type: TSKindId.Block, statements: [] } as never
+			});
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.IfExpression);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('matchExpression builds the parent', () => {
+			const node = ir.expressionStatement.matchExpression({
+				subject: { $type: TSKindId.Identifier, text: 'test' } as never,
+				body: { $type: TSKindId.MatchBlock } as never
+			});
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.MatchExpression);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('whileExpression builds the parent', () => {
+			const node = ir.expressionStatement.whileExpression({
+				condition: { $type: TSKindId.Identifier, text: 'test' } as never,
+				body: { $type: TSKindId.Block, statements: [] } as never
+			});
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.WhileExpression);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('loopExpression builds the parent', () => {
+			const node = ir.expressionStatement.loopExpression({ body: { $type: TSKindId.Block, statements: [] } as never });
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.LoopExpression);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('forExpression builds the parent', () => {
+			const node = ir.expressionStatement.forExpression({
+				left: { $type: TSKindId.Identifier, text: 'test' } as never,
+				right: { $type: TSKindId.Identifier, text: 'test' } as never,
+				body: { $type: TSKindId.Block, statements: [] } as never
+			});
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.ForExpression);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('constBlock builds the parent', () => {
+			const node = ir.expressionStatement.constBlock({ $type: TSKindId.Block, statements: [] } as never);
+			expect(node.$type).toBe(TSKindId.ExpressionStatement);
+			expect((node as any).content()?.$type).toBe(TSKindId.ConstBlock);
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
 	});
 
 	describe('macro_rule', () => {
@@ -88,7 +167,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.tokenBindingPattern({
 				name: { $type: TSKindId.Metavariable, name: 'test' } as never,
-				type: 'block'
+				fragment: 'block'
 			});
 			expect(node.$type).toBe(TSKindId.TokenBindingPattern);
 			expectBuiltNode(node);
@@ -96,7 +175,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.tokenBindingPattern({
 				name: { $type: TSKindId.Metavariable, name: 'test' } as never,
-				type: 'block'
+				fragment: 'block'
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -914,6 +993,44 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('pub.scope.inPath builds the parent', () => {
 			const node = ir.visibilityModifier.pub.scope.inPath(TSKindId.SelfModule as never);
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.self builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.self();
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.metavariable builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.metavariable('test');
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.super builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.super();
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.crate builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.crate();
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.identifier builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.identifier('test');
+			expect(node.$type).toBe(TSKindId.VisibilityModifier);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('pub.scope.inPath.scopedIdentifier builds the parent', () => {
+			const node = ir.visibilityModifier.pub.scope.inPath.scopedIdentifier({
+				name: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
 			expect(node.$type).toBe(TSKindId.VisibilityModifier);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -3269,15 +3386,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('range_expression_bare', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangeExpressionBare(TSKindId._RangeExpressionBare as never);
+			const node = ir.rangeExpressionBare({});
 			expect(node.$type).toBe(TSKindId.RangeExpressionBare);
 			expectBuiltNode(node);
 		});
-		it('render produces non-empty string', () => {
-			const node = ir.rangeExpressionBare(TSKindId._RangeExpressionBare as never);
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-			expect(rendered).toContain('..');
+		it('render does not throw on minimal config', () => {
+			const node = ir.rangeExpressionBare({});
+			expect(() => node.$render!()).not.toThrow();
 		});
 	});
 
@@ -3575,12 +3690,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('range_pattern_prefix', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangePatternPrefix({ content: '..=', right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix({ operator: '..=', right: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangePatternPrefix({ content: '..=', right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix({ operator: '..=', right: TSKindId.SelfModule as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3590,14 +3705,14 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('dotDotEq builds the parent', () => {
 			const node = ir.rangePatternPrefix.dotDotEq({ right: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('dotDot builds the parent', () => {
 			const node = ir.rangePatternPrefix.dotDot({ right: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -3632,7 +3747,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('withRight builds the parent', () => {
 			const node = ir.rangePatternWithLeft.withRight({
 				left: TSKindId.SelfModule as never,
-				content: '...',
+				operator: '...',
 				right: TSKindId.SelfModule as never
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);

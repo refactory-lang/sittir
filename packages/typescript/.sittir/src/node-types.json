@@ -3084,7 +3084,7 @@
           }
         ]
       },
-      "type_only": {
+      "type_keyword": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4718,7 +4718,7 @@
           }
         ]
       },
-      "type_only": {
+      "type_keyword": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4748,7 +4748,7 @@
           }
         ]
       },
-      "type_only": {
+      "type_keyword": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4826,7 +4826,7 @@
           }
         ]
       },
-      "type_only": {
+      "type_keyword": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5474,7 +5474,7 @@
           }
         ]
       },
-      "optional_chain": {
+      "operator": {
         "multiple": false,
         "required": true,
         "types": [

@@ -57,7 +57,9 @@ import {
 	handleToString,
 	handleEngine,
 	handleDispose,
-	handleQuery
+	handleQuery,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -246,8 +248,8 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 		name() {
 			return hydrateSlot<T.Metavariable>(this, '_name', tree);
 		},
-		type() {
-			return this._type;
+		fragment() {
+			return this._fragment;
 		},
 		$with: {
 			name: (v: NonNullable<T.TokenBindingPattern['_name']>) =>
@@ -257,10 +259,10 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 						tree
 					)
 				),
-			type: (v: NonNullable<T.TokenBindingPattern['_type']>) =>
+			fragment: (v: NonNullable<T.TokenBindingPattern['_fragment']>) =>
 				rebuilt(node, handle, () =>
 					wrapTokenBindingPattern(
-						{ ...$edited(data), _type: admitSlot(handle, 'token_binding_pattern', 'type', v) },
+						{ ...$edited(data), _fragment: admitSlot(handle, 'token_binding_pattern', 'fragment', v) },
 						tree
 					)
 				)
@@ -1160,25 +1162,25 @@ const wrapOrderedFieldDeclarationList$wrapper = {
 	content: 'type',
 	decorations: ['attributeItems', 'visibilityModifier']
 };
-function wrapOrderedFieldDeclarationList$listRead(this: { readonly attributes: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.attributes(), 'items'), wrapOrderedFieldDeclarationList$wrapper);
+function wrapOrderedFieldDeclarationList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), wrapOrderedFieldDeclarationList$wrapper);
 }
 export function wrapOrderedFieldDeclarationList(
 	data: T.OrderedFieldDeclarationList,
 	tree: TreeHandle
 ): T.OrderedFieldDeclarationList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._attributes, '_item', (list) =>
+	const listView = ownerView(data._elements, '_item', (list) =>
 		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
 	);
 	const node = {
 		...data,
 		$type: TSKindId.OrderedFieldDeclarationList as const,
-		attributes() {
-			return hydrateSlot<T.OrderedFieldDeclarationListElements | undefined>(this, '_attributes', tree);
+		elements() {
+			return hydrateSlot<T.OrderedFieldDeclarationListElements | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			attributes: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1188,9 +1190,9 @@ export function wrapOrderedFieldDeclarationList(
 							make: RAW.buildOrderedFieldDeclarationListElements,
 							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
-						(v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
+						(v: NonNullable<T.OrderedFieldDeclarationList['_elements']>) =>
 							wrapOrderedFieldDeclarationList(
-								{ ...$edited(data), _attributes: admitSlot(handle, 'ordered_field_declaration_list', 'attributes', v) },
+								{ ...$edited(data), _elements: admitSlot(handle, 'ordered_field_declaration_list', 'elements', v) },
 								tree
 							)
 					)
@@ -5369,7 +5371,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		trailingComma() {
-			return this._trailing_comma;
+			return blankArmRead(this._trailing_comma);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
@@ -5395,7 +5397,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 					wrapLastMatchArm(
 						{
 							...$edited(data),
-							_trailing_comma: admitSlot(handle, 'last_match_arm', 'trailingComma', v === null ? 0 : v)
+							_trailing_comma: admitSlot(handle, 'last_match_arm', 'trailingComma', blankArmStored(v))
 						},
 						tree
 					)
@@ -10225,26 +10227,12 @@ export function wrapRangeExpressionPrefix(
 	return node as unknown as T.RangeExpressionPrefix.Parsed;
 }
 
-export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeHandle): T.RangeExpressionBare.Parsed {
+export function wrapRangeExpressionBare(data: T.RangeExpressionBare, _tree: TreeHandle): T.RangeExpressionBare.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionBare as const,
-		rangeExpressionBare() {
-			return this._range_expression_bare;
-		},
-		$with: {
-			rangeExpressionBare: (v: NonNullable<T.RangeExpressionBare['_range_expression_bare']>) =>
-				rebuilt(node, handle, () =>
-					wrapRangeExpressionBare(
-						{
-							...$edited(data),
-							_range_expression_bare: admitSlot(handle, 'range_expression_bare', 'rangeExpressionBare', v)
-						},
-						tree
-					)
-				)
-		},
+		$with: {},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11385,8 +11373,8 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.RangePatternPrefix as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		right() {
 			return hydrateSlot<
@@ -11400,10 +11388,10 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 			>(this, '_right', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.RangePatternPrefix['_content']>) =>
+			operator: (v: NonNullable<T.RangePatternPrefix['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapRangePatternPrefix(
-						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_prefix', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_prefix', 'operator', v) },
 						tree
 					)
 				),
@@ -11440,8 +11428,8 @@ export function wrapRangePatternWithLeftWithRight(
 	const node = {
 		...data,
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
-		content() {
-			return this._content;
+		operator() {
+			return this._operator;
 		},
 		right() {
 			return hydrateSlot<
@@ -11455,10 +11443,10 @@ export function wrapRangePatternWithLeftWithRight(
 			>(this, '_right', tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.RangePatternWithLeftWithRight['_content']>) =>
+			operator: (v: NonNullable<T.RangePatternWithLeftWithRight['_operator']>) =>
 				rebuilt(node, handle, () =>
 					wrapRangePatternWithLeftWithRight(
-						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_with_left_with_right', 'content', v) },
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_with_left_with_right', 'operator', v) },
 						tree
 					)
 				),
@@ -13111,7 +13099,7 @@ function viewMacroRule(data: RecordPosition, tree: TreeHandle): T.MacroRule.Pars
 function viewTokenBindingPattern$name(this: RecordHandle) {
 	return viewSlot<T.Metavariable>(this, 2, 4, 8, 4, 2);
 }
-function viewTokenBindingPattern$type(this: RecordHandle) {
+function viewTokenBindingPattern$fragment(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewTokenBindingPattern(data: RecordPosition, tree: TreeHandle): T.TokenBindingPattern.Parsed {
@@ -13123,7 +13111,7 @@ function viewTokenBindingPattern(data: RecordPosition, tree: TreeHandle): T.Toke
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		name: viewTokenBindingPattern$name,
-		type: viewTokenBindingPattern$type,
+		fragment: viewTokenBindingPattern$fragment,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -13134,7 +13122,7 @@ function viewTokenBindingPattern(data: RecordPosition, tree: TreeHandle): T.Toke
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, type: $with$type };
+	node.$with = { node, name: $with$name, fragment: $with$fragment };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.TokenBindingPattern.Parsed;
 }
@@ -13771,7 +13759,7 @@ function viewFieldDeclaration(data: RecordPosition, tree: TreeHandle): T.FieldDe
 	return node as unknown as T.FieldDeclaration.Parsed;
 }
 
-function viewOrderedFieldDeclarationList$attributes(this: RecordHandle) {
+function viewOrderedFieldDeclarationList$elements(this: RecordHandle) {
 	return viewSlot<T.OrderedFieldDeclarationListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewOrderedFieldDeclarationList$wrapper = {
@@ -13779,8 +13767,8 @@ const viewOrderedFieldDeclarationList$wrapper = {
 	content: 'type',
 	decorations: ['attributeItems', 'visibilityModifier']
 };
-function viewOrderedFieldDeclarationList$listRead(this: { readonly attributes: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.attributes(), 'items'), viewOrderedFieldDeclarationList$wrapper);
+function viewOrderedFieldDeclarationList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), viewOrderedFieldDeclarationList$wrapper);
 }
 function viewOrderedFieldDeclarationList(data: RecordPosition, tree: TreeHandle): T.OrderedFieldDeclarationList.Parsed {
 	const node = {
@@ -13790,7 +13778,7 @@ function viewOrderedFieldDeclarationList(data: RecordPosition, tree: TreeHandle)
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		attributes: viewOrderedFieldDeclarationList$attributes,
+		elements: viewOrderedFieldDeclarationList$elements,
 		length: 0,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -13833,7 +13821,7 @@ function viewOrderedFieldDeclarationList(data: RecordPosition, tree: TreeHandle)
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, attributes: $with$attributes };
+	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
@@ -16804,7 +16792,7 @@ function viewLastMatchArm$body(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 4);
 }
 function viewLastMatchArm$trailingComma(this: RecordHandle) {
-	return childSlot(this, 10, 1, 18, 0, 5);
+	return blankArmRead(childSlot(this, 10, 1, 18, 0, 5));
 }
 function viewLastMatchArm$pattern(this: RecordHandle) {
 	return groupField(viewSlot<T.MatchPattern | undefined>(this, 3, 3, 1, 0, 3), 'pattern');
@@ -20523,9 +20511,6 @@ function viewRangeExpressionPrefix(data: RecordPosition, tree: TreeHandle): T.Ra
 	return node as unknown as T.RangeExpressionPrefix.Parsed;
 }
 
-function viewRangeExpressionBare$rangeExpressionBare(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
-}
 function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.RangeExpressionBare.Parsed {
 	const node = {
 		$type: TSKindId.RangeExpressionBare as const,
@@ -20534,8 +20519,6 @@ function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.Rang
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		rangeExpressionBare: viewRangeExpressionBare$rangeExpressionBare,
-		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -20545,7 +20528,6 @@ function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.Rang
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, rangeExpressionBare: $with$rangeExpressionBare };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.RangeExpressionBare.Parsed;
 }
@@ -21281,7 +21263,7 @@ function viewMacroDefinitionBrace(data: RecordPosition, tree: TreeHandle): T.Mac
 	return node as unknown as T.MacroDefinitionBrace.Parsed;
 }
 
-function viewRangePatternPrefix$content(this: RecordHandle) {
+function viewRangePatternPrefix$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewRangePatternPrefix$right(this: RecordHandle) {
@@ -21303,7 +21285,7 @@ function viewRangePatternPrefix(data: RecordPosition, tree: TreeHandle): T.Range
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewRangePatternPrefix$content,
+		operator: viewRangePatternPrefix$operator,
 		right: viewRangePatternPrefix$right,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -21315,12 +21297,12 @@ function viewRangePatternPrefix(data: RecordPosition, tree: TreeHandle): T.Range
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, right: $with$right };
+	node.$with = { node, operator: $with$operator, right: $with$right };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.RangePatternPrefix.Parsed;
 }
 
-function viewRangePatternWithLeftWithRight$content(this: RecordHandle) {
+function viewRangePatternWithLeftWithRight$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewRangePatternWithLeftWithRight$right(this: RecordHandle) {
@@ -21345,7 +21327,7 @@ function viewRangePatternWithLeftWithRight(
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewRangePatternWithLeftWithRight$content,
+		operator: viewRangePatternWithLeftWithRight$operator,
 		right: viewRangePatternWithLeftWithRight$right,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -21357,7 +21339,7 @@ function viewRangePatternWithLeftWithRight(
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content, right: $with$right };
+	node.$with = { node, operator: $with$operator, right: $with$right };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
 }
@@ -22388,6 +22370,9 @@ function $with$fields(this: { readonly node: RecordPosition }, ...args: unknown[
 function $with$forLifetimes(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'forLifetimes', args);
 }
+function $with$fragment(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
+	return rowWith(this.node, _wrap, 'fragment', args);
+}
 function $with$function(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'function', args);
 }
@@ -22471,9 +22456,6 @@ function $with$property(this: { readonly node: RecordPosition }, ...args: unknow
 }
 function $with$qualifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'qualifier', args);
-}
-function $with$rangeExpressionBare(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'rangeExpressionBare', args);
 }
 function $with$rawStringLiteralEnd(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'rawStringLiteralEnd', args);

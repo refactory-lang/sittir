@@ -27,6 +27,7 @@ import {
 	refuseJSON,
 	describeValue,
 	restItems,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
 	admitSplicedEnvelope,
@@ -80,24 +81,24 @@ import {
 	_slotRe_buildPrivatePropertyIdentifier_content,
 	_slotRe_buildCommentLine_content,
 	_slotRe_buildCommentBlock_content,
-	_slotRe_buildNumberHex_prefix,
+	_slotRe_buildNumberHex_radix_prefix,
 	_slotRe_buildNumberHex_content,
 	_slotRe_buildNumberFloatPoint_integer,
 	_slotRe_buildNumberFloatPoint_fraction,
 	_slotRe_buildNumberFloatPoint_marker,
-	_slotRe_buildNumberFloatPoint_sign,
+	_slotRe_buildNumberFloatPoint_exponent_sign,
 	_slotRe_buildNumberFloatPoint_exponent,
 	_slotRe_buildNumberFloatLeadingPoint_fraction,
 	_slotRe_buildNumberFloatLeadingPoint_marker,
-	_slotRe_buildNumberFloatLeadingPoint_sign,
+	_slotRe_buildNumberFloatLeadingPoint_exponent_sign,
 	_slotRe_buildNumberFloatLeadingPoint_exponent,
 	_slotRe_buildNumberFloatScientific_integer,
 	_slotRe_buildNumberFloatScientific_marker,
-	_slotRe_buildNumberFloatScientific_sign,
+	_slotRe_buildNumberFloatScientific_exponent_sign,
 	_slotRe_buildNumberFloatScientific_exponent,
-	_slotRe_buildNumberBinary_prefix,
+	_slotRe_buildNumberBinary_radix_prefix,
 	_slotRe_buildNumberBinary_content,
-	_slotRe_buildNumberOctal_prefix,
+	_slotRe_buildNumberOctal_radix_prefix,
 	_slotRe_buildNumberOctal_content,
 	_slotRe_buildNumberBigintHex_content,
 	_slotRe_buildNumberBigintBinary_content,
@@ -375,7 +376,7 @@ export function buildExportSpecifier<
 >(config: RefusingConfig<T.ExportSpecifier.Config, { name: NameSlot; alias: AliasSlot }>): T.ExportSpecifier.Bound;
 export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.ExportSpecifier.Bound {
 	currentHandle()?.admit(TSKindId.ExportSpecifier, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ExportSpecifier['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ExportSpecifier['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ExportSpecifier['_name']>>(config.name),
@@ -400,12 +401,12 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'export_specifier', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'export_specifier', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportSpecifier as const, { _type_only, _name, _alias });
+	handle?.verifyStored?.(TSKindId.ExportSpecifier as const, { _type_keyword, _name, _alias });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ExportSpecifier as const);
-		storeCell(arena, record, 2, 2, _type_only);
+		storeCell(arena, record, 2, 2, _type_keyword);
 		storeCell(arena, record, 3, 3, _name);
 		storeCell(arena, record, 4, 7, _alias);
 		const node = arena.view(record);
@@ -415,7 +416,7 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 
 function buildExportSpecifier$patch(source: object, config: T.ExportSpecifier.Config): T.ExportSpecifier.Bound {
 	currentHandle()?.admit(TSKindId.ExportSpecifier, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ExportSpecifier['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ExportSpecifier['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ExportSpecifier['_name']>>(config.name),
@@ -440,12 +441,12 @@ function buildExportSpecifier$patch(source: object, config: T.ExportSpecifier.Co
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'export_specifier', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'export_specifier', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportSpecifier as const, { _type_only, _name, _alias });
+	handle?.verifyStored?.(TSKindId.ExportSpecifier as const, { _type_keyword, _name, _alias });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ExportSpecifier as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeOnly', _type_only));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeKeyword', _type_keyword));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'alias', _alias));
 		const node = arena.view(record);
@@ -457,9 +458,9 @@ function withExportSpecifier(node: object, setter: string, args: readonly unknow
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ExportSpecifier.Config;
 	switch (setter) {
-		case 'typeOnly':
-			return applySetter(args, (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildExportSpecifier$patch(node, { ...config, typeOnly: value }))
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ExportSpecifier.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildExportSpecifier$patch(node, { ...config, typeKeyword: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
@@ -490,7 +491,7 @@ export function buildImportStatement(
 	options?: T.ImportStatement.Options
 ): T.ImportStatement.Bound {
 	currentHandle()?.admit(TSKindId.ImportStatement, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportStatement['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportStatement['_type_keyword']>>(config.typeKeyword);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportStatement['_terminator']>>(options?.terminator, [
@@ -500,21 +501,21 @@ export function buildImportStatement(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'import_statement', {
-			typeOnly: _type_only,
+			typeKeyword: _type_keyword,
 			fromClause: _from_clause,
 			importAttribute: _import_attribute,
 			terminator: _terminator
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImportStatement as const, {
-		_type_only,
+		_type_keyword,
 		_from_clause,
 		_import_attribute,
 		_terminator
 	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ImportStatement as const);
-		storeCell(arena, record, 2, 2, _type_only);
+		storeCell(arena, record, 2, 2, _type_keyword);
 		storeCell(arena, record, 3, 3, _from_clause);
 		storeCell(arena, record, 4, 22, _import_attribute);
 		storeCell(arena, record, 5, 28, _terminator);
@@ -529,7 +530,7 @@ function buildImportStatement$patch(
 	options?: T.ImportStatement.Options
 ): T.ImportStatement.Bound {
 	currentHandle()?.admit(TSKindId.ImportStatement, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportStatement['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportStatement['_type_keyword']>>(config.typeKeyword);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportStatement['_terminator']>>(options?.terminator, [
@@ -539,21 +540,21 @@ function buildImportStatement$patch(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'import_statement', {
-			typeOnly: _type_only,
+			typeKeyword: _type_keyword,
 			fromClause: _from_clause,
 			importAttribute: _import_attribute,
 			terminator: _terminator
 		});
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImportStatement as const, {
-		_type_only,
+		_type_keyword,
 		_from_clause,
 		_import_attribute,
 		_terminator
 	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ImportStatement as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeOnly', _type_only));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeKeyword', _type_keyword));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'fromClause', _from_clause));
 		patchCell(arena, record, 4, 22, carriedSlot(source, 'importAttribute', _import_attribute));
 		patchCell(arena, record, 5, 28, carriedSlot(source, 'terminator', _terminator));
@@ -567,9 +568,9 @@ function withImportStatement(node: object, setter: string, args: readonly unknow
 	const config = inputs.config as T.ImportStatement.Config;
 	const options = inputs.options as T.ImportStatement.Options;
 	switch (setter) {
-		case 'typeOnly':
-			return applySetter(args, (value?: Admit<NonNullable<T.ImportStatement.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportStatement$patch(node, { ...config, typeOnly: value }, options))
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportStatement.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportStatement$patch(node, { ...config, typeKeyword: value }, options))
 			);
 		case 'fromClause':
 			return applySetter(args, (value: Admit<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>) =>
@@ -1163,7 +1164,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 	currentHandle()?.admit(TSKindId.StatementBlock, args);
 	const _statements = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -1192,7 +1193,7 @@ function buildStatementBlock$patch(source: object, ...args: unknown[]): T.Statem
 	currentHandle()?.admit(TSKindId.StatementBlock, args);
 	const _statements = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -1646,7 +1647,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 	const _body = kindIdStorage<NonNullable<T.DoStatement['_body']>>(config.body);
 	const _condition = config.condition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -1673,7 +1674,7 @@ function buildDoStatement$patch(
 	const _body = kindIdStorage<NonNullable<T.DoStatement['_body']>>(config.body);
 	const _condition = config.condition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -2021,13 +2022,15 @@ function withContinueStatement(node: object, setter: string, args: readonly unkn
 	throw new Error(`continue_statement has no $with.${setter}`);
 }
 
-export function buildDebuggerStatement<V extends Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>>(
-	value: V & RefuseUndeclared<V>
-): T.DebuggerStatement.Bound;
 export function buildDebuggerStatement(
-	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
+	config: Partial<T.DebuggerStatement.Config> = {},
+	options?: T.DebuggerStatement.Options
 ): T.DebuggerStatement.Bound {
-	const _terminator = kindIdStorage<NonNullable<T.DebuggerStatement['_terminator']>>(value);
+	currentHandle()?.admit(TSKindId.DebuggerStatement, [config]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DebuggerStatement['_terminator']>>(options?.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'debugger_statement', { terminator: _terminator });
 	const arena = builtArenaOf(handle);
@@ -2042,9 +2045,14 @@ export function buildDebuggerStatement(
 
 function buildDebuggerStatement$patch(
 	source: object,
-	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
+	config: Partial<T.DebuggerStatement.Config> = {},
+	options?: T.DebuggerStatement.Options
 ): T.DebuggerStatement.Bound {
-	const _terminator = kindIdStorage<NonNullable<T.DebuggerStatement['_terminator']>>(value);
+	currentHandle()?.admit(TSKindId.DebuggerStatement, [config]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DebuggerStatement['_terminator']>>(options?.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'debugger_statement', { terminator: _terminator });
 	const arena = builtArenaOf(handle);
@@ -2058,10 +2066,13 @@ function buildDebuggerStatement$patch(
 }
 function withDebuggerStatement(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.DebuggerStatement.Config;
+	const options = inputs.options as T.DebuggerStatement.Options;
 	switch (setter) {
 		case 'terminator':
-			return applySetter(args, (value: Admit<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>) =>
-				rebuilt(node, handle, () => buildDebuggerStatement$patch(node, value))
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildDebuggerStatement$patch(node, config, { ...options, terminator: spelling }))
 			);
 	}
 	throw new Error(`debugger_statement has no $with.${setter}`);
@@ -3282,7 +3293,7 @@ export function buildClassDeclaration(
 	const _heritage = config.heritage;
 	const _body = orDefault(config.body, () => buildClassBody());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -3332,7 +3343,7 @@ function buildClassDeclaration$patch(
 	const _heritage = config.heritage;
 	const _body = orDefault(config.body, () => buildClassBody());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -3641,7 +3652,7 @@ export function buildFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -3697,7 +3708,7 @@ function buildFunctionDeclaration$patch(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -3965,7 +3976,7 @@ export function buildGeneratorFunctionDeclaration(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -4021,7 +4032,7 @@ function buildGeneratorFunctionDeclaration$patch(
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
@@ -4342,24 +4353,20 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _optional_chain = kindIdStorage<NonNullable<T.MemberExpression['_optional_chain']>>(config.optionalChain);
+	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', {
-			object: _object,
-			optionalChain: _optional_chain,
-			property: _property
-		});
+		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _optional_chain, _property });
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.MemberExpression as const);
 		storeCell(arena, record, 2, 2, _object);
-		storeCell(arena, record, 3, 6, _optional_chain);
+		storeCell(arena, record, 3, 6, _operator);
 		storeCell(arena, record, 4, 7, _property);
 		const node = arena.view(record);
 		return node as unknown as T.MemberExpression.Bound;
@@ -4374,24 +4381,20 @@ function buildMemberExpression$patch(source: object, config: T.MemberExpression.
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _optional_chain = kindIdStorage<NonNullable<T.MemberExpression['_optional_chain']>>(config.optionalChain);
+	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', {
-			object: _object,
-			optionalChain: _optional_chain,
-			property: _property
-		});
+		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _optional_chain, _property });
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.MemberExpression as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'object', _object));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'optionalChain', _optional_chain));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'property', _property));
 		const node = arena.view(record);
 		return node as unknown as T.MemberExpression.Bound;
@@ -4406,9 +4409,9 @@ function withMemberExpression(node: object, setter: string, args: readonly unkno
 			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression$patch(node, { ...config, object: value }))
 			);
-		case 'optionalChain':
-			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['optionalChain']>) =>
-				rebuilt(node, handle, () => buildMemberExpression$patch(node, { ...config, optionalChain: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildMemberExpression$patch(node, { ...config, operator: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -6068,7 +6071,7 @@ function _buildClassStaticBlock(
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _body = value;
@@ -6091,7 +6094,7 @@ function _buildClassStaticBlock$patch(
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _body = value;
@@ -10088,7 +10091,7 @@ export function buildTypeQueryMemberExpression(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _content = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpression['_property']>>(
 		rejectReservedText(
 			config.property,
@@ -10100,13 +10103,17 @@ export function buildTypeQueryMemberExpression(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'type_query_member_expression', { object: _object, content: _content, property: _property });
+		admitChildren(handle, 'type_query_member_expression', {
+			object: _object,
+			operator: _operator,
+			property: _property
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeQueryMemberExpression as const, { _object, _content, _property });
+	handle?.verifyStored?.(TSKindId.TypeQueryMemberExpression as const, { _object, _operator, _property });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TypeQueryMemberExpression as const);
 		storeCell(arena, record, 2, 2, _object);
-		storeCell(arena, record, 3, 6, _content);
+		storeCell(arena, record, 3, 6, _operator);
 		storeCell(arena, record, 4, 7, _property);
 		const node = arena.view(record);
 		return node as unknown as T.TypeQueryMemberExpression.Bound;
@@ -10129,7 +10136,7 @@ function buildTypeQueryMemberExpression$patch(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _content = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_operator']>>(config.operator);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpression['_property']>>(
 		rejectReservedText(
 			config.property,
@@ -10141,13 +10148,17 @@ function buildTypeQueryMemberExpression$patch(
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'type_query_member_expression', { object: _object, content: _content, property: _property });
+		admitChildren(handle, 'type_query_member_expression', {
+			object: _object,
+			operator: _operator,
+			property: _property
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeQueryMemberExpression as const, { _object, _content, _property });
+	handle?.verifyStored?.(TSKindId.TypeQueryMemberExpression as const, { _object, _operator, _property });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TypeQueryMemberExpression as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'object', _object));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'property', _property));
 		const node = arena.view(record);
 		return node as unknown as T.TypeQueryMemberExpression.Bound;
@@ -10162,9 +10173,9 @@ function withTypeQueryMemberExpression(node: object, setter: string, args: reado
 			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression$patch(node, { ...config, object: value }))
 			);
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['content']>) =>
-				rebuilt(node, handle, () => buildTypeQueryMemberExpression$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildTypeQueryMemberExpression$patch(node, { ...config, operator: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -11645,15 +11656,21 @@ function withDefaultType(node: object, setter: string, args: readonly unknown[])
 	throw new Error(`default_type has no $with.${setter}`);
 }
 
-export function buildConstraint<BoundsSlot extends T.Constraint.Config['bounds']>(
-	config: RefusingConfig<T.Constraint.Config, { bounds: BoundsSlot }>
+export function buildConstraint<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.Constraint.Options
 ): T.Constraint.Bound;
-export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound {
-	currentHandle()?.admit(TSKindId.Constraint, [config]);
-	const _content = kindIdStorage<NonNullable<T.Constraint['_content']>>(config.content);
+export function buildConstraint(
+	value: Admit<T.Type | T.TypeIdentifier.Types>,
+	options?: T.Constraint.Options
+): T.Constraint.Bound {
+	const _operator = coerceKindEnumStorage<NonNullable<T.Constraint['_operator']>>(options?.operator, [
+		['extends', TSKindId.ExtendsKeyword] as const,
+		[':', TSKindId.Colon] as const
+	]);
 	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(config.bounds),
+			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
 			'Constraint.bounds',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
@@ -11661,24 +11678,30 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { content: _content, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Constraint as const, { _content, _bounds });
+	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _bounds });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Constraint as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _bounds);
 		const node = arena.view(record);
 		return node as unknown as T.Constraint.Bound;
 	});
 }
 
-function buildConstraint$patch(source: object, config: T.Constraint.Config): T.Constraint.Bound {
-	currentHandle()?.admit(TSKindId.Constraint, [config]);
-	const _content = kindIdStorage<NonNullable<T.Constraint['_content']>>(config.content);
+function buildConstraint$patch(
+	source: object,
+	value: Admit<T.Type | T.TypeIdentifier.Types>,
+	options?: T.Constraint.Options
+): T.Constraint.Bound {
+	const _operator = coerceKindEnumStorage<NonNullable<T.Constraint['_operator']>>(options?.operator, [
+		['extends', TSKindId.ExtendsKeyword] as const,
+		[':', TSKindId.Colon] as const
+	]);
 	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(config.bounds),
+			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
 			'Constraint.bounds',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
@@ -11686,12 +11709,12 @@ function buildConstraint$patch(source: object, config: T.Constraint.Config): T.C
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { content: _content, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Constraint as const, { _content, _bounds });
+	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _bounds });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Constraint as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'bounds', _bounds));
 		const node = arena.view(record);
 		return node as unknown as T.Constraint.Bound;
@@ -11700,15 +11723,16 @@ function buildConstraint$patch(source: object, config: T.Constraint.Config): T.C
 function withConstraint(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
-	const config = inputs.config as T.Constraint.Config;
+	const value = inputs.config['bounds'] as Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	const options = inputs.options as T.Constraint.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.Constraint.Config>['content']>) =>
-				rebuilt(node, handle, () => buildConstraint$patch(node, { ...config, content: value }))
-			);
 		case 'bounds':
-			return applySetter(args, (value: Admit<NonNullable<T.Constraint.Config>['bounds']>) =>
-				rebuilt(node, handle, () => buildConstraint$patch(node, { ...config, bounds: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildConstraint$patch(node, value, options))
+			);
+		case 'operator':
+			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
+				rebuilt(node, handle, () => buildConstraint$patch(node, value, { ...options, operator: spelling }))
 			);
 	}
 	throw new Error(`constraint has no $with.${setter}`);
@@ -13244,7 +13268,7 @@ export function buildAmbientDeclarationModule(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -13287,7 +13311,7 @@ function buildAmbientDeclarationModule$patch(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -13842,23 +13866,23 @@ export function buildNumberHex(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberHex.Options
 ): T.NumberHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
-		throw new Error(`number_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_hex.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberHex_content.test(_content))
 		throw new Error(`number_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_hex', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_hex', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberHex as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberHex as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberHex as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.NumberHex.Bound;
@@ -13870,23 +13894,23 @@ function buildNumberHex$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberHex.Options
 ): T.NumberHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
-		throw new Error(`number_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_hex.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberHex_content.test(_content))
 		throw new Error(`number_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_hex', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_hex', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberHex as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberHex as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberHex as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.NumberHex.Bound;
@@ -13902,9 +13926,9 @@ function withNumberHex(node: object, setter: string, args: readonly unknown[]): 
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberHex$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildNumberHex$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildNumberHex$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`number_hex has no $with.${setter}`);
@@ -13917,7 +13941,7 @@ export function buildNumberFloatPoint<
 	>,
 	IntegerSlot extends T.NumberFloatPoint.Config['integer'],
 	FractionSlot extends T.NumberFloatPoint.Config['fraction'],
-	SignSlot extends T.NumberFloatPoint.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatPoint.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatPoint.Config['exponent']
 >(
 	config: C &
@@ -13934,7 +13958,7 @@ export function buildNumberFloatPoint<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ integer: IntegerSlot; fraction: FractionSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound;
@@ -13956,16 +13980,17 @@ export function buildNumberFloatPoint(
 		throw new Error(`number_float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
 		throw new Error(`number_float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatPoint_marker.test(_marker))
 		throw new Error(`number_float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatPoint_sign.test(_sign))
-		throw new Error(`number_float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`number_float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -13977,17 +14002,23 @@ export function buildNumberFloatPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatPoint as const, { _integer, _fraction, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatPoint as const, {
+		_integer,
+		_fraction,
+		_marker,
+		_exponent_sign,
+		_exponent
+	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberFloatPoint as const);
 		storeCell(arena, record, 2, 2, _integer);
 		storeCell(arena, record, 3, 4, _fraction);
 		storeCell(arena, record, 4, 6, _marker);
-		storeCell(arena, record, 5, 8, _sign);
+		storeCell(arena, record, 5, 8, _exponent_sign);
 		storeCell(arena, record, 6, 10, _exponent);
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatPoint.Bound;
@@ -14013,16 +14044,17 @@ function buildNumberFloatPoint$patch(
 		throw new Error(`number_float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
 		throw new Error(`number_float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatPoint_marker.test(_marker))
 		throw new Error(`number_float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatPoint_sign.test(_sign))
-		throw new Error(`number_float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`number_float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -14034,17 +14066,23 @@ function buildNumberFloatPoint$patch(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatPoint as const, { _integer, _fraction, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatPoint as const, {
+		_integer,
+		_fraction,
+		_marker,
+		_exponent_sign,
+		_exponent
+	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberFloatPoint as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'integer', _integer));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'fraction', _fraction));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 5, 8, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 6, 10, carriedSlot(source, 'exponent', _exponent));
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatPoint.Bound;
@@ -14064,9 +14102,9 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, fraction: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponentSign: value }, options))
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
@@ -14086,7 +14124,7 @@ export function buildNumberFloatLeadingPoint<
 		{ fraction: number | bigint; exponent: number | bigint }
 	>,
 	FractionSlot extends T.NumberFloatLeadingPoint.Config['fraction'],
-	SignSlot extends T.NumberFloatLeadingPoint.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatLeadingPoint.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatLeadingPoint.Config['exponent']
 >(
 	config: C &
@@ -14097,7 +14135,7 @@ export function buildNumberFloatLeadingPoint<
 		> &
 		RefusingConfig<
 			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
-			{ fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ fraction: FractionSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound;
@@ -14111,16 +14149,21 @@ export function buildNumberFloatLeadingPoint(
 		throw new Error(`number_float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`number_float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`
+		);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -14131,16 +14174,16 @@ export function buildNumberFloatLeadingPoint(
 		admitChildren(handle, 'number_float_leading_point', {
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatLeadingPoint as const, { _fraction, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatLeadingPoint as const, { _fraction, _marker, _exponent_sign, _exponent });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberFloatLeadingPoint as const);
 		storeCell(arena, record, 2, 2, _fraction);
 		storeCell(arena, record, 3, 4, _marker);
-		storeCell(arena, record, 4, 6, _sign);
+		storeCell(arena, record, 4, 6, _exponent_sign);
 		storeCell(arena, record, 5, 8, _exponent);
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatLeadingPoint.Bound;
@@ -14158,16 +14201,21 @@ function buildNumberFloatLeadingPoint$patch(
 		throw new Error(`number_float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`number_float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`number_float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`
+		);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`number_float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -14178,16 +14226,16 @@ function buildNumberFloatLeadingPoint$patch(
 		admitChildren(handle, 'number_float_leading_point', {
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatLeadingPoint as const, { _fraction, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatLeadingPoint as const, { _fraction, _marker, _exponent_sign, _exponent });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberFloatLeadingPoint as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'fraction', _fraction));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponent', _exponent));
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatLeadingPoint.Bound;
@@ -14203,9 +14251,11 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, fraction: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () =>
+					buildNumberFloatLeadingPoint$patch(node, { ...config, exponentSign: value }, options)
+				)
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
@@ -14222,7 +14272,7 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 export function buildNumberFloatScientific<
 	const C extends WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.NumberFloatScientific.Config['integer'],
-	SignSlot extends T.NumberFloatScientific.Config['sign'],
+	ExponentSignSlot extends T.NumberFloatScientific.Config['exponentSign'],
 	ExponentSlot extends T.NumberFloatScientific.Config['exponent']
 >(
 	config: C &
@@ -14233,7 +14283,7 @@ export function buildNumberFloatScientific<
 		> &
 		RefusingConfig<
 			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
-			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot }
+			{ integer: IntegerSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound;
@@ -14252,11 +14302,13 @@ export function buildNumberFloatScientific(
 		throw new Error(`number_float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
 		throw new Error(`number_float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatScientific_sign.test(_sign))
-		throw new Error(`number_float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`number_float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -14267,16 +14319,16 @@ export function buildNumberFloatScientific(
 		admitChildren(handle, 'number_float_scientific', {
 			integer: _integer,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatScientific as const, { _integer, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatScientific as const, { _integer, _marker, _exponent_sign, _exponent });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberFloatScientific as const);
 		storeCell(arena, record, 2, 2, _integer);
 		storeCell(arena, record, 3, 4, _marker);
-		storeCell(arena, record, 4, 6, _sign);
+		storeCell(arena, record, 4, 6, _exponent_sign);
 		storeCell(arena, record, 5, 8, _exponent);
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatScientific.Bound;
@@ -14299,11 +14351,13 @@ function buildNumberFloatScientific$patch(
 		throw new Error(`number_float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
 		throw new Error(`number_float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`number_float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildNumberFloatScientific_sign.test(_sign))
-		throw new Error(`number_float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`number_float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildNumberFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(
+			`number_float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`
+		);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`number_float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -14314,16 +14368,16 @@ function buildNumberFloatScientific$patch(
 		admitChildren(handle, 'number_float_scientific', {
 			integer: _integer,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberFloatScientific as const, { _integer, _marker, _sign, _exponent });
+	handle?.verifyStored?.(TSKindId.NumberFloatScientific as const, { _integer, _marker, _exponent_sign, _exponent });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberFloatScientific as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'integer', _integer));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponent', _exponent));
 		const node = arena.view(record);
 		return node as unknown as T.NumberFloatScientific.Bound;
@@ -14339,9 +14393,9 @@ function withNumberFloatScientific(node: object, setter: string, args: readonly 
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, integer: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () => buildNumberFloatScientific$patch(node, { ...config, exponentSign: value }, options))
 			);
 		case 'exponent':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
@@ -14396,23 +14450,23 @@ export function buildNumberBinary(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberBinary.Options
 ): T.NumberBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
-		throw new Error(`number_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_binary.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberBinary_content.test(_content))
 		throw new Error(`number_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_binary', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_binary', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberBinary as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberBinary as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberBinary as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.NumberBinary.Bound;
@@ -14424,23 +14478,23 @@ function buildNumberBinary$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberBinary.Options
 ): T.NumberBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
-		throw new Error(`number_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_binary.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberBinary_content.test(_content))
 		throw new Error(`number_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_binary', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_binary', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberBinary as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberBinary as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberBinary as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.NumberBinary.Bound;
@@ -14456,9 +14510,9 @@ function withNumberBinary(node: object, setter: string, args: readonly unknown[]
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildNumberBinary$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`number_binary has no $with.${setter}`);
@@ -14472,23 +14526,23 @@ export function buildNumberOctal(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberOctal.Options
 ): T.NumberOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
-		throw new Error(`number_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_octal.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberOctal_content.test(_content))
 		throw new Error(`number_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_octal', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_octal', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberOctal as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberOctal as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NumberOctal as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.NumberOctal.Bound;
@@ -14500,23 +14554,23 @@ function buildNumberOctal$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.NumberOctal.Options
 ): T.NumberOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`number_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
-		throw new Error(`number_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`number_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildNumberOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`number_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_octal.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildNumberOctal_content.test(_content))
 		throw new Error(`number_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'number_octal', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'number_octal', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NumberOctal as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.NumberOctal as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NumberOctal as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.NumberOctal.Bound;
@@ -14532,9 +14586,9 @@ function withNumberOctal(node: object, setter: string, args: readonly unknown[])
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildNumberOctal$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`number_octal has no $with.${setter}`);
@@ -14916,7 +14970,7 @@ export function buildClassBodyMemberMethod(
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -14947,7 +15001,7 @@ function buildClassBodyMemberMethod$patch(
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -14996,17 +15050,19 @@ function withClassBodyMemberMethod(node: object, setter: string, args: readonly 
 	throw new Error(`class_body_member_method has no $with.${setter}`);
 }
 
-export function buildClassBodyMemberMethodSig<
-	MethodSignatureSlot extends T.ClassBodyMemberMethodSig.Config['methodSignature']
->(
-	config: RefusingConfig<T.ClassBodyMemberMethodSig.Config, { methodSignature: MethodSignatureSlot }>
+export function buildClassBodyMemberMethodSig<V extends Admit<T.MethodSignature>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound;
 export function buildClassBodyMemberMethodSig(
-	config: T.ClassBodyMemberMethodSig.Config
+	value: Admit<T.MethodSignature>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound {
-	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [config]);
-	const _method_signature = config.methodSignature;
-	const _terminator = kindIdStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator);
+	const _method_signature = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_body_member_method_sig', {
@@ -15026,11 +15082,14 @@ export function buildClassBodyMemberMethodSig(
 
 function buildClassBodyMemberMethodSig$patch(
 	source: object,
-	config: T.ClassBodyMemberMethodSig.Config
+	value: Admit<T.MethodSignature>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound {
-	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [config]);
-	const _method_signature = config.methodSignature;
-	const _terminator = kindIdStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator);
+	const _method_signature = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_body_member_method_sig', {
@@ -15050,15 +15109,18 @@ function buildClassBodyMemberMethodSig$patch(
 function withClassBodyMemberMethodSig(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
-	const config = inputs.config as T.ClassBodyMemberMethodSig.Config;
+	const value = inputs.config['methodSignature'] as Admit<T.MethodSignature>;
+	const options = inputs.options as T.ClassBodyMemberMethodSig.Options;
 	switch (setter) {
 		case 'methodSignature':
 			return applySetter(args, (value: Admit<T.MethodSignature>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig$patch(node, { ...config, methodSignature: value }))
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig$patch(node, value, options))
 			);
 		case 'terminator':
-			return applySetter(args, (value: Admit<NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig$patch(node, { ...config, terminator: value }))
+			return applySetter(args, (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
+				rebuilt(node, handle, () =>
+					buildClassBodyMemberMethodSig$patch(node, value, { ...options, terminator: spelling })
+				)
 			);
 	}
 	throw new Error(`class_body_member_method_sig has no $with.${setter}`);
@@ -15493,7 +15555,7 @@ export function buildImportSpecifierName<NameSlot extends T.ImportSpecifierName.
 ): T.ImportSpecifierName.Bound;
 export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierName, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		config.name,
 		'ImportSpecifierName.name',
@@ -15501,12 +15563,12 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeOnly: _type_only, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeKeyword: _type_keyword, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImportSpecifierName as const, { _type_only, _name });
+	handle?.verifyStored?.(TSKindId.ImportSpecifierName as const, { _type_keyword, _name });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ImportSpecifierName as const);
-		storeCell(arena, record, 2, 2, _type_only);
+		storeCell(arena, record, 2, 2, _type_keyword);
 		storeCell(arena, record, 3, 3, _name);
 		const node = arena.view(record);
 		return node as unknown as T.ImportSpecifierName.Bound;
@@ -15518,7 +15580,7 @@ function buildImportSpecifierName$patch(
 	config: T.ImportSpecifierName.Config
 ): T.ImportSpecifierName.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierName, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierName['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		config.name,
 		'ImportSpecifierName.name',
@@ -15526,12 +15588,12 @@ function buildImportSpecifierName$patch(
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeOnly: _type_only, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'import_specifier_name', { typeKeyword: _type_keyword, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImportSpecifierName as const, { _type_only, _name });
+	handle?.verifyStored?.(TSKindId.ImportSpecifierName as const, { _type_keyword, _name });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ImportSpecifierName as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeOnly', _type_only));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeKeyword', _type_keyword));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
 		const node = arena.view(record);
 		return node as unknown as T.ImportSpecifierName.Bound;
@@ -15542,9 +15604,9 @@ function withImportSpecifierName(node: object, setter: string, args: readonly un
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ImportSpecifierName.Config;
 	switch (setter) {
-		case 'typeOnly':
-			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportSpecifierName$patch(node, { ...config, typeOnly: value }))
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierName$patch(node, { ...config, typeKeyword: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -15560,7 +15622,7 @@ export function buildImportSpecifierAs<
 >(config: RefusingConfig<T.ImportSpecifierAs.Config, { name: NameSlot; alias: AliasSlot }>): T.ImportSpecifierAs.Bound;
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierAs, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name),
@@ -15580,12 +15642,12 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'import_specifier_as', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'import_specifier_as', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImportSpecifierAs as const, { _type_only, _name, _alias });
+	handle?.verifyStored?.(TSKindId.ImportSpecifierAs as const, { _type_keyword, _name, _alias });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ImportSpecifierAs as const);
-		storeCell(arena, record, 2, 2, _type_only);
+		storeCell(arena, record, 2, 2, _type_keyword);
 		storeCell(arena, record, 3, 3, _name);
 		storeCell(arena, record, 4, 7, _alias);
 		const node = arena.view(record);
@@ -15595,7 +15657,7 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 
 function buildImportSpecifierAs$patch(source: object, config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecifierAs, [config]);
-	const _type_only = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_only']>>(config.typeOnly);
+	const _type_keyword = kindIdStorage<NonNullable<T.ImportSpecifierAs['_type_keyword']>>(config.typeKeyword);
 	const _name = rejectReservedText(
 		rejectKeywordText(
 			kindIdStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name),
@@ -15615,12 +15677,12 @@ function buildImportSpecifierAs$patch(source: object, config: T.ImportSpecifierA
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'import_specifier_as', { typeOnly: _type_only, name: _name, alias: _alias });
+		admitChildren(handle, 'import_specifier_as', { typeKeyword: _type_keyword, name: _name, alias: _alias });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImportSpecifierAs as const, { _type_only, _name, _alias });
+	handle?.verifyStored?.(TSKindId.ImportSpecifierAs as const, { _type_keyword, _name, _alias });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ImportSpecifierAs as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeOnly', _type_only));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'typeKeyword', _type_keyword));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'alias', _alias));
 		const node = arena.view(record);
@@ -15632,9 +15694,9 @@ function withImportSpecifierAs(node: object, setter: string, args: readonly unkn
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ImportSpecifierAs.Config;
 	switch (setter) {
-		case 'typeOnly':
-			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeOnly']>) =>
-				rebuilt(node, handle, () => buildImportSpecifierAs$patch(node, { ...config, typeOnly: value }))
+		case 'typeKeyword':
+			return applySetter(args, (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['typeKeyword']>) =>
+				rebuilt(node, handle, () => buildImportSpecifierAs$patch(node, { ...config, typeKeyword: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
@@ -17384,7 +17446,7 @@ export function buildForHeaderLetConstKind(
 		_reservedWords_buildIdentifier
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator);
@@ -17431,7 +17493,7 @@ function buildForHeaderLetConstKind$patch(
 		_reservedWords_buildIdentifier
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
-		options?.terminator === null ? 0 : options?.terminator,
+		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator);
@@ -17499,9 +17561,13 @@ export function buildForHeaderUsingKind<
 	LeftSlot extends T.ForHeaderUsingKind.Config['left'],
 	RightSlot extends T.ForHeaderUsingKind.Config['right']
 >(
-	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>
+	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound;
-export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.ForHeaderUsingKind.Bound {
+export function buildForHeaderUsingKind(
+	config: T.ForHeaderUsingKind.Config,
+	options?: T.ForHeaderUsingKind.Options
+): T.ForHeaderUsingKind.Bound {
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
 	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
 	const _left = rejectReservedText(
@@ -17510,7 +17576,10 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = strictBooleanStorage(config.terminator);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
@@ -17531,9 +17600,9 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ForHeaderUsingKind as const);
-		storeCell(arena, record, 3, 3, _kind);
-		storeCell(arena, record, 4, 4, _left);
-		if (_terminator) storeFlag(record.data, record.base + 2, 1);
+		storeCell(arena, record, 2, 2, _kind);
+		storeCell(arena, record, 3, 3, _left);
+		storeCell(arena, record, 4, 7, _terminator);
 		storeCell(arena, record, 5, 8, _operator);
 		storeCell(arena, record, 6, 9, _right);
 		const node = arena.view(record);
@@ -17543,7 +17612,8 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 
 function buildForHeaderUsingKind$patch(
 	source: object,
-	config: T.ForHeaderUsingKind.Config
+	config: T.ForHeaderUsingKind.Config,
+	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound {
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
 	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
@@ -17553,7 +17623,10 @@ function buildForHeaderUsingKind$patch(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = strictBooleanStorage(config.terminator);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
@@ -17574,9 +17647,9 @@ function buildForHeaderUsingKind$patch(
 	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ForHeaderUsingKind as const);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'kind', _kind));
-		patchCell(arena, record, 4, 4, carriedSlot(source, 'left', _left));
-		patchFlag(record, 2, 1, _terminator);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 4, 7, carriedSlot(source, 'terminator', _terminator));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 6, 9, carriedSlot(source, 'right', _right));
 		const node = arena.view(record);
@@ -17587,26 +17660,27 @@ function withForHeaderUsingKind(node: object, setter: string, args: readonly unk
 	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ForHeaderUsingKind.Config;
+	const options = inputs.options as T.ForHeaderUsingKind.Options;
 	switch (setter) {
 		case 'kind':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, kind: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, kind: value }, options))
 			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, left: value }))
-			);
-		case 'terminator':
-			return applySetter(args, (value?: Admit<NonNullable<T.ForHeaderUsingKind.Config>['terminator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, terminator: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, left: value }, options))
 			);
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, operator: value }, options))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, { ...config, right: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind$patch(node, config, { ...options, terminator: spelling }))
 			);
 	}
 	throw new Error(`for_header_using_kind has no $with.${setter}`);
@@ -21994,7 +22068,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		441: 2,
 		442: 2,
 		443: 2,
-		444: 3,
+		444: 2,
 		447: 2,
 		448: 2,
 		449: 3,

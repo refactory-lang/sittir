@@ -44,6 +44,14 @@ The `layout.newline` key a render's options carry: one of the grammar's `LineEnd
 
 The `layout` group of a render's options: `IndentOption` and `NewlineOption` intersected, so one `layout` key holds every whole-render layout setting the grammar admits.
 
+### `packages/types/src/options.ts::IndentOption::layout`
+
+The `layout` group key that carries the indent setting. Absent when the grammar admits no indent character.
+
+### `packages/types/src/options.ts::NewlineOption::layout`
+
+The `layout` group key that carries the newline setting. Absent when the grammar admits no `_newline` member.
+
 ### `packages/types/src/engine-api.ts::TriviaFacts`
 
 The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
@@ -338,7 +346,7 @@ A builder's own public overloads are generic, and a generic parameter gives no c
 
 The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
 
-### `packages/types/src/vocabulary/flags.ts::Flags`
+### `packages/common/src/portable/flags.ts::Flags`
 
 The flags' bits, one per flag name the vocabulary declares, in name order: `Flags.Static | Flags.Async` combines two flags and `&` tests one, as a native bitflag does. The bindings inventory writes the module from the `Flag` declarations (`bindings-inventory --write`) and `--check` holds it to them, so it is never edited. It is the vocabulary's one run-time value; an `enum` is not erasable syntax, which the vocabulary may use because nothing the grammar executes imports it.
 
@@ -870,9 +878,17 @@ The synonyms the `Declaration` vocabulary resolves: each canonical kind mapped t
 
 The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
+### `packages/types/src/vocabulary/element.ts::Legacy`
+
+The legacy form of the element not-equal comparison: a sub-kind of `NotEqual`, with the `$kind` `element.comparator.comparison.not_equal.legacy`, claimed by the `p` pattern.
+
 ### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms`
 
 The synonyms the `Expression` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/expression.ts::Legacy`
+
+The legacy form of the binary not-equal comparison: a sub-kind of `Binary.Comparison.NotEqual`, with the `$kind` `expression.binary.comparison.not_equal.legacy` and the operator `<>`.
 
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms`
 
@@ -918,7 +934,7 @@ The complex-number pattern kind.
 
 The map pattern kind.
 
-### `packages/types/src/vocabulary/flags.ts::Flags::Prefix`
+### `packages/common/src/portable/flags.ts::Flags::Prefix`
 
 The prefix flag bit (`1 << 19`).
 
@@ -973,3 +989,483 @@ A config-only signature whose argument may be left out.
 ### `packages/types/src/node-surface.ts::EmptyForm`
 
 A builder's empty form: a zero-argument call returning the empty type, intersected with the builder.
+
+### `packages/types/src/node-surface.ts::RefuseUndeclared::refused`
+
+Type-level only. The refusal list `{ readonly refused: … }` that `RefuseUndeclared` yields when an argument holds an untyped node or an undeclared key. No argument carries it at run time; the type names each refusal message.
+
+### `packages/types/src/node-surface.ts::NarrowTo::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `NarrowTo` narrows a wide node type to one kind by intersecting it with `$type: D`; the alias emits no code.
+
+### `packages/types/src/node-surface.ts::Admit::$type`
+
+The numeric kind id a node carries at runtime, the `$type` property. `Admit` requires that existing numeric tag on a value and attaches the node marker; the alias emits no code.
+
+### `packages/types/src/engine-api.ts::StructureRow::single`
+
+The single-slot entries of a structure row, as storage key and label pairs.
+
+### `packages/types/src/engine-api.ts::LanguageHooks::portableBuild`
+
+The loader for the portable build table, when the language has one.
+
+### `packages/types/src/portable.ts::PortableRows::flags`
+
+The flag query for a portable row.
+
+### `packages/types/src/portable.ts::PortableCallShape`
+
+The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
+
+### `packages/types/src/portable.ts::PortableMountCall`
+
+How a mount is called: none, holder, child, merge, keyed or keyedArgs.
+
+### `packages/types/src/portable.ts::PortableKeyedMount`
+
+A keyed mount: its call, its key, the shape of its seats, and an outer keyed mount it sits in.
+
+### `packages/types/src/portable.ts::PortableKeyedMount::call`
+
+The keyed call form.
+
+### `packages/types/src/portable.ts::PortableKeyedMount::key`
+
+The key the mount is stored under.
+
+### `packages/types/src/portable.ts::PortableKeyedMount::seats`
+
+The call shape of the mount's seats.
+
+### `packages/types/src/portable.ts::PortableKeyedMount::outer`
+
+The outer keyed mount, when this one sits in another.
+
+### `packages/types/src/portable.ts::PortableMount`
+
+A mount: a keyed call with its key and the outer keyed mount it sits in.
+
+### `packages/types/src/portable.ts::PortableMount::call`
+
+The keyed call form.
+
+### `packages/types/src/portable.ts::PortableMount::key`
+
+The key the mount is stored under.
+
+### `packages/types/src/portable.ts::PortableMount::outer`
+
+The outer keyed mount, when this one sits in another.
+
+### `packages/types/src/portable.ts::PortableSlotStep`
+
+One step into a slot: its key, its builder, whether it is optional, and any mount.
+
+### `packages/types/src/portable.ts::PortableSlotStep::key`
+
+The key of the step.
+
+### `packages/types/src/portable.ts::PortableSlotStep::builder`
+
+The builder the step uses.
+
+### `packages/types/src/portable.ts::PortableSlotStep::optional`
+
+Whether the step is optional.
+
+### `packages/types/src/portable.ts::PortableSlotStep::mounted`
+
+The mount the step carries.
+
+### `packages/types/src/portable.ts::PortableContainer`
+
+A container step: its builder, key, optionality and mount.
+
+### `packages/types/src/portable.ts::PortableContainer::builder`
+
+The container's builder.
+
+### `packages/types/src/portable.ts::PortableContainer::key`
+
+The key the container is stored under.
+
+### `packages/types/src/portable.ts::PortableContainer::optional`
+
+Whether the container is optional.
+
+### `packages/types/src/portable.ts::PortableContainer::mounted`
+
+The mount the container carries.
+
+### `packages/types/src/portable.ts::PortableSeat`
+
+A seat: the holder and key it sits at, the kinds it takes, its leaf text, and whether it is repeated.
+
+### `packages/types/src/portable.ts::PortableSeat::at`
+
+The holder number and key the seat sits at.
+
+### `packages/types/src/portable.ts::PortableSeat::kinds`
+
+The kind ids the seat takes.
+
+### `packages/types/src/portable.ts::PortableSeat::leaf`
+
+The leaf text the seat takes, when it is a leaf.
+
+### `packages/types/src/portable.ts::PortableSeat::within`
+
+The enclosing holders the seat sits within, by number, or null.
+
+### `packages/types/src/portable.ts::PortableSeat::many`
+
+Whether the seat takes many values.
+
+### `packages/types/src/portable.ts::PortableMemberStep`
+
+One member step: its name, its slot steps, whether it is repeated, its seats and what it requires.
+
+### `packages/types/src/portable.ts::PortableMemberStep::name`
+
+The member name.
+
+### `packages/types/src/portable.ts::PortableMemberStep::steps`
+
+The slot steps the member takes.
+
+### `packages/types/src/portable.ts::PortableMemberStep::multiple`
+
+Whether the member takes many values.
+
+### `packages/types/src/portable.ts::PortableMemberStep::seats`
+
+The call shape of the member's seats.
+
+### `packages/types/src/portable.ts::PortableMemberStep::requires`
+
+The member sets the member needs present, as lists of names.
+
+### `packages/types/src/portable.ts::PortablePreset`
+
+A preset: the steps it takes, and its kind, text or builder.
+
+### `packages/types/src/portable.ts::PortablePreset::steps`
+
+The slot steps the preset takes.
+
+### `packages/types/src/portable.ts::PortablePreset::kind`
+
+The kind id the preset builds, when it has one.
+
+### `packages/types/src/portable.ts::PortablePreset::text`
+
+The text the preset builds, when it has one.
+
+### `packages/types/src/portable.ts::PortablePreset::builder`
+
+The builder the preset uses.
+
+### `packages/types/src/portable.ts::PortableFlagStep`
+
+A flag step: the presets it sets, and the presets it unsets.
+
+### `packages/types/src/portable.ts::PortableFlagStep::presets`
+
+The presets the step sets.
+
+### `packages/types/src/portable.ts::PortableFlagStep::unset`
+
+The presets the step unsets, when it unsets any.
+
+### `packages/types/src/portable.ts::PortablePickTest`
+
+A test that picks a build arm: absent, required, flag, set, member, kinds, text, boolean, variant, value or default.
+
+### `packages/types/src/portable.ts::PortablePickTest::absent`
+
+The arm applies when the slot is absent.
+
+### `packages/types/src/portable.ts::PortablePickTest::required`
+
+The arm applies when the slot is required.
+
+### `packages/types/src/portable.ts::PortablePickTest::flag`
+
+The arm applies when the flag is set.
+
+### `packages/types/src/portable.ts::PortablePickTest::set`
+
+The arm applies when the slot is set.
+
+### `packages/types/src/portable.ts::PortablePickTest::member`
+
+The arm applies when the member is set.
+
+### `packages/types/src/portable.ts::PortablePickTest::kinds`
+
+The arm applies to the given kinds.
+
+### `packages/types/src/portable.ts::PortablePickTest::text`
+
+The arm applies to the given text.
+
+### `packages/types/src/portable.ts::PortablePickTest::boolean`
+
+The arm applies to a boolean value.
+
+### `packages/types/src/portable.ts::PortablePickTest::variant`
+
+The arm applies to a variant.
+
+### `packages/types/src/portable.ts::PortablePickTest::value`
+
+The arm applies to the given value.
+
+### `packages/types/src/portable.ts::PortablePickTest::default`
+
+The arm is the default when no other test applies.
+
+### `packages/types/src/portable.ts::PortableDecimalParts`
+
+The parts of a decimal number: integer, fraction, exponent, marker and the exponent's sign.
+
+### `packages/types/src/portable.ts::PortableDecimalParts::integer`
+
+The integer part.
+
+### `packages/types/src/portable.ts::PortableDecimalParts::fraction`
+
+The fraction part.
+
+### `packages/types/src/portable.ts::PortableDecimalParts::exponent`
+
+The exponent part.
+
+### `packages/types/src/portable.ts::PortableDecimalParts::marker`
+
+The marker part.
+
+### `packages/types/src/portable.ts::PortableDecimalParts::exponentSign`
+
+The exponent's sign.
+
+### `packages/types/src/portable.ts::PortableBuildArm`
+
+One build arm: the builder or kind it builds, the test that picks it, and the members and flags it sets.
+
+### `packages/types/src/portable.ts::PortableBuildArm::kind`
+
+The kind id the arm builds.
+
+### `packages/types/src/portable.ts::PortableBuildArm::builder`
+
+The builder the arm uses.
+
+### `packages/types/src/portable.ts::PortableBuildArm::mounted`
+
+The mount the arm carries.
+
+### `packages/types/src/portable.ts::PortableBuildArm::seated`
+
+The call shape of the arm's seat.
+
+### `packages/types/src/portable.ts::PortableBuildArm::scalar`
+
+The scalar type of a number arm.
+
+### `packages/types/src/portable.ts::PortableBuildArm::numeric`
+
+The numeric text or decimal parts of a number arm.
+
+### `packages/types/src/portable.ts::PortableBuildArm::when`
+
+The tests that pick the arm.
+
+### `packages/types/src/portable.ts::PortableBuildArm::holders`
+
+The holders the arm builds into, by number and key.
+
+### `packages/types/src/portable.ts::PortableBuildArm::members`
+
+The member steps the arm takes.
+
+### `packages/types/src/portable.ts::PortableBuildArm::presets`
+
+The presets the arm takes.
+
+### `packages/types/src/portable.ts::PortableBuildArm::flags`
+
+The flag query the arm reads.
+
+### `packages/types/src/portable.ts::PortableBuildArm::template`
+
+A template the arm fills: its member, its pattern and its holes.
+
+### `packages/types/src/portable.ts::PortableBuildPath`
+
+A path of build arms, with whether it is the root.
+
+### `packages/types/src/portable.ts::PortableBuildPath::root`
+
+Whether the path is the root.
+
+### `packages/types/src/portable.ts::PortableBuildPath::arms`
+
+The arms the path takes.
+
+### `packages/types/src/portable.ts::PortableStructure`
+
+A portable structure: the path, flag and value entries a builder reads.
+
+### `packages/types/src/portable.ts::PortableStructure::$path`
+
+The path entry of the structure.
+
+### `packages/types/src/portable.ts::PortableStructure::$flags`
+
+The flags entry of the structure.
+
+### `packages/types/src/portable.ts::PortableStructure::$value`
+
+The value entry of the structure.
+
+### `packages/types/src/portable.ts::PortableValueBuild`
+
+How a value is built: its integer, float, true and false texts.
+
+### `packages/types/src/portable.ts::PortableValueBuild::integer`
+
+The integer text.
+
+### `packages/types/src/portable.ts::PortableValueBuild::float`
+
+The float text.
+
+### `packages/types/src/portable.ts::PortableValueBuild::true`
+
+The text of `true`.
+
+### `packages/types/src/portable.ts::PortableValueBuild::false`
+
+The text of `false`.
+
+### `packages/types/src/portable.ts::PortableBuildTable`
+
+The portable build table: builders, paths and values.
+
+### `packages/types/src/portable.ts::PortableBuildTable::builders`
+
+The call shape of each builder.
+
+### `packages/types/src/portable.ts::PortableBuildTable::paths`
+
+The build path for each path.
+
+### `packages/types/src/portable.ts::PortableBuildTable::values`
+
+How each value is built, by name.
+
+### `packages/types/src/vocabulary/features/static-storage/declaration.ts::Declaration`
+
+The static-storage declaration feature.
+
+### `packages/types/src/vocabulary/features/static-storage/declaration.ts::Declaration::Variable`
+
+A variable declaration with static storage.
+
+### `packages/types/src/vocabulary/features/static-storage/index.ts::StaticStorage`
+
+The static-storage feature.
+
+### `packages/types/src/vocabulary/features/static-storage/index.ts::StaticStorage::static-storage`
+
+The static-storage keyword.
+
+### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::qualified`
+
+The alternative spellings of a qualified identifier.
+
+### `packages/types/src/index.ts::OmitRegistered`
+
+Omits the keys of a type that are registered, leaving the rest.
+
+### `packages/types/src/portable.ts::PortableSlotStep::flatten`
+
+Whether the step flattens its slot.
+
+### `packages/types/src/portable.ts::PortableSlotStep::seated`
+
+The call shape of the step's seat.
+
+### `packages/types/src/portable.ts::PortableSlotStep::many`
+
+Whether the step takes many values.
+
+### `packages/types/src/portable.ts::PortableContainer::flatten`
+
+Whether the container flattens its slot.
+
+### `packages/types/src/portable.ts::PortableContainer::through`
+
+The keys the container passes through.
+
+### `packages/types/src/portable.ts::PortableSeat::texts`
+
+The text kinds the seat takes.
+
+### `packages/types/src/portable.ts::PortableSeat::pattern`
+
+The pattern the seat matches, as its source and flags.
+
+### `packages/types/src/portable.ts::PortableMemberStep::reads`
+
+The kinds the member reads.
+
+### `packages/types/src/portable.ts::PortableBuildTable::options`
+
+The options each builder takes, by name.
+
+### `packages/types/src/portable.ts::PortableContainer::members`
+
+The container's member steps, each naming a member and the slot steps it takes.
+
+### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
+
+The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.
+
+### `packages/types/src/vocabulary/features/range-expressions/pattern.ts::Legacy`
+
+The legacy form of the inclusive range pattern: a sub-kind of `Pattern.Range.Inclusive`, with the `$kind` `pattern.range.inclusive.legacy`, claimed by the `r` pattern.
+
+### `packages/types/src/vocabulary/features/c-strings/index.ts::CStrings`
+
+The C-strings vocabulary feature, a namespace of the C-string kinds.
+
+### `packages/types/src/vocabulary/features/c-strings/literal.ts::Literal`
+
+The C-string literal namespace: the literal kinds the C-strings feature defines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/expression.ts::Expression`
+
+The generic-lambda expression namespace: the expression kinds the generic-lambdas feature defines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas`
+
+The generic-lambdas vocabulary feature, a namespace of the generic-lambda kinds.
+
+### `packages/types/src/vocabulary/features/c-strings/index.ts::CStrings::c-strings`
+
+The `c-strings` feature key of the C-strings vocabulary.
+
+### `packages/types/src/vocabulary/features/c-strings/literal.ts::Literal::String`
+
+The string member of the C-string literal namespace.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/expression.ts::Expression::Lambda`
+
+The lambda member of the generic-lambda expression namespace.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas::generic-lambdas`
+
+The `generic-lambdas` feature key of the generic-lambdas vocabulary.
