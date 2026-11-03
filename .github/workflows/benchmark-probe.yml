@@ -31,6 +31,9 @@ permissions:
 env:
   CARGO_NET_RETRY: '10'
   CARGO_HTTP_MULTIPLEXING: 'false'
+  # gate builds as release does and keeps its symbols, for perf
+  CARGO_PROFILE_GATE_LTO: fat
+  CARGO_PROFILE_GATE_CODEGEN_UNITS: '1'
 
 jobs:
   probe:
