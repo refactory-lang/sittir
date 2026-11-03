@@ -13,7 +13,7 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
+import { RECEIVER, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -91,16 +91,16 @@ export function leafText(this: LeafHandle): string {
 	return arena.entryText(this.$entry);
 }
 
-export function leafLeading(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaSide(this.node, handleOf(this.node), 'leading', items);
+export function leafLeading(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaSide(this[RECEIVER], handleOf(this[RECEIVER]), 'leading', items);
 }
 
-export function leafTrailing(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaSide(this.node, handleOf(this.node), 'trailing', items);
+export function leafTrailing(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaSide(this[RECEIVER], handleOf(this[RECEIVER]), 'trailing', items);
 }
 
-export function leafInner(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaInner(this.node, handleOf(this.node), items);
+export function leafInner(this: Received<LeafHandle>, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaInner(this[RECEIVER], handleOf(this[RECEIVER]), items);
 }
 
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
@@ -903,7 +903,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { handleDispose, isLeafHandle, isRecordPosition, releaseNothing, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
+export { handleDispose, isLeafHandle, isRecordPosition, RECEIVER, releaseNothing, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

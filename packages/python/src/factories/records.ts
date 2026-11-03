@@ -25,6 +25,7 @@ import {
 	seatWith,
 	rebuilt,
 	refuseJSON,
+	RECEIVER,
 	describeValue,
 	restItems,
 	blankArmStored,
@@ -330,7 +331,7 @@ function leafImportPrefix(tree: TreeHandle, entry: BuiltText, site: LeafSite | u
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -6812,7 +6813,7 @@ function leafTypeConversion(tree: TreeHandle, entry: BuiltText, site: LeafSite |
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -6844,7 +6845,7 @@ function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -7741,7 +7742,7 @@ function leafFormatSpecifierText(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -8713,13 +8714,13 @@ function withIntegerHex(node: object, setter: string, args: readonly unknown[]):
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.IntegerHex.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
 				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, options))
 			);
 	}
 	throw new Error(`integer_hex has no $with.${setter}`);
@@ -8789,13 +8790,13 @@ function withIntegerOctal(node: object, setter: string, args: readonly unknown[]
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.IntegerOctal.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
 				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, options))
 			);
 	}
 	throw new Error(`integer_octal has no $with.${setter}`);
@@ -8865,13 +8866,13 @@ function withIntegerBinary(node: object, setter: string, args: readonly unknown[
 	const value = inputs.config['content'] as Admit<string | number | bigint>;
 	const options = inputs.options as T.IntegerBinary.Options;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, options))
-			);
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0b' | '0B') =>
 				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, options))
 			);
 	}
 	throw new Error(`integer_binary has no $with.${setter}`);
@@ -8902,7 +8903,7 @@ function leafIntegerDecimalLong(tree: TreeHandle, entry: BuiltText, site: LeafSi
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -8932,7 +8933,7 @@ function leafIntegerDecimalImaginary(tree: TreeHandle, entry: BuiltText, site: L
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -8965,7 +8966,7 @@ function leafIntegerDecimalPlain(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -9160,6 +9161,10 @@ function withFloatPoint(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, fraction: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatPoint$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, exponentSign: value }, options))
@@ -9171,10 +9176,6 @@ function withFloatPoint(node: object, setter: string, args: readonly unknown[]):
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, imaginary: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildFloatPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`float_point has no $with.${setter}`);
@@ -9371,6 +9372,10 @@ function withFloatLeadingPoint(node: object, setter: string, args: readonly unkn
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, fraction: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, exponentSign: value }, options))
@@ -9382,10 +9387,6 @@ function withFloatLeadingPoint(node: object, setter: string, args: readonly unkn
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, imaginary: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`float_leading_point has no $with.${setter}`);
@@ -9535,6 +9536,10 @@ function withFloatScientific(node: object, setter: string, args: readonly unknow
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, integer: value }, options))
 			);
+		case 'marker':
+			return applySetter(args, (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatScientific$patch(node, config, { ...options, marker: spelling }))
+			);
 		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, exponentSign: value }, options))
@@ -9546,10 +9551,6 @@ function withFloatScientific(node: object, setter: string, args: readonly unknow
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, imaginary: value }, options))
-			);
-		case 'marker':
-			return applySetter(args, (spelling: 'e' | 'E') =>
-				rebuilt(node, handle, () => buildFloatScientific$patch(node, config, { ...options, marker: spelling }))
 			);
 	}
 	throw new Error(`float_scientific has no $with.${setter}`);
@@ -11141,7 +11142,7 @@ function leafStringStart(tree: TreeHandle, entry: BuiltText, site: LeafSite | un
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11170,7 +11171,7 @@ function leafStringFragment(tree: TreeHandle, entry: BuiltText, site: LeafSite |
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11199,7 +11200,7 @@ function leafEscapeInterpolation(tree: TreeHandle, entry: BuiltText, site: LeafS
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 
@@ -11228,7 +11229,7 @@ function leafStringEnd(tree: TreeHandle, entry: BuiltText, site: LeafSite | unde
 		[LEAF_SITES]: null,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
 }
 

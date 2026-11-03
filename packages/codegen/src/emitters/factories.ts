@@ -3,7 +3,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1997,7 +1997,7 @@ function fieldCarryingFactoryText(
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	lines.push(...(view?.prelude ?? []), ...(backend === 'records' ? [] : groups.prelude));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
-	const seated = seatedSetters(setters, plan);
+	const seated = seatedSetters(inSlotOrder(setters, node.slots), plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
 	const check = delimitedCheckCall(node, slotsToEmit, leafReConsts);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
@@ -2021,16 +2021,14 @@ function fieldCarryingFactoryText(
 		for (const f of slotsToEmit) {
 			lines.push(`    ${f.storageKey},`);
 		}
-		lines.push(
-			...nodeMemberLines({
-				setters: seated,
-				accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-				extra: [...(view?.members ?? []), ...groups.members],
-				tail: view?.tail,
-				trivia
-			})
-		);
-		lines.push('  };');
+		const members = nodeMemberParts({
+			setters: seated,
+			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
+			extra: [...(view?.members ?? []), ...groups.members],
+			tail: view?.tail,
+			trivia
+		});
+		lines.push(...members.members, '  };', ...members.after);
 		lines.push(...(view?.postlude ?? []));
 		if (check !== undefined) lines.push(`  ${check};`);
 		lines.push(`  return node as unknown as ${builtName};`);
@@ -2150,6 +2148,11 @@ export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEnt
 	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
 }
 
+function inSlotOrder(setters: readonly SetterEntry[], slots: readonly AssembledNonterminal[]): SetterEntry[] {
+	const at = new Map(slots.map((slot, index) => [slot.propertyName, index]));
+	return [...setters].sort((a, b) => (at.get(a.name) ?? slots.length) - (at.get(b.name) ?? slots.length));
+}
+
 function renameUnusedConfigParam(lines: string[]): string {
 	const idx = lines.findIndex((l) => /^(?:export )?function [\w$]+\((?:source: object, )?config\??:/.test(l));
 	if (idx === -1) return lines.join('\n');
@@ -2242,14 +2245,12 @@ function emitRefineFormFactory(
 		for (const f of allSlots) {
 			lines.push(`    ${f.storageKey},`);
 		}
-		lines.push(
-			...nodeMemberLines({
-				setters: formSetters,
-				accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-				trivia
-			})
-		);
-		lines.push('  };');
+		const members = nodeMemberParts({
+			setters: formSetters,
+			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
+			trivia
+		});
+		lines.push(...members.members, '  };', ...members.after);
 		lines.push(`  return node as unknown as ${formBuiltName};`);
 	}
 	lines.push('}');
@@ -2922,16 +2923,14 @@ function emitSeparatedListFactory(
 			lines.push(`    ${contentStorageKey},`);
 			if (hasSeparatorKindOption) lines.push('    _separator,');
 			if (hasDelimiterOption) lines.push('    _delimiter,');
-			lines.push(
-				...nodeMemberLines({
-					setters: seated,
-					accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
-					extra: view.members,
-					tail: view.tail,
-					trivia
-				})
-			);
-			lines.push('  };');
+			const members = nodeMemberParts({
+				setters: seated,
+				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
+				extra: view.members,
+				tail: view.tail,
+				trivia
+			});
+			lines.push(...members.members, '  };', ...members.after);
 			lines.push(...view.postlude);
 			lines.push(`  return node as unknown as ${listBuiltName};`);
 		}
@@ -2982,12 +2981,9 @@ function emitTextFactory(
 	body.push(`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`);
 	if (guard) body.push(`  ${guard}`);
 	body.push(...builderHandleLines(node.kind, []));
-	const members = [
-		`    $type: ${typeExpr},`,
-		...nodeMemberLines({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) })
-	];
+	const members = nodeMemberParts({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) });
 	if (backend === 'objects') {
-		body.push('  const node = {', ...members, '  };', `  return node as unknown as T.${node.typeName}.Bound;`, '}');
+		body.push('  const node = {', `    $type: ${typeExpr},`, ...members.members, '  };', ...members.after, `  return node as unknown as T.${node.typeName}.Bound;`, '}');
 		return body.join('\n');
 	}
 	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, nodeMap));
@@ -3038,7 +3034,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');
