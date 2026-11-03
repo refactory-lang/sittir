@@ -29,16 +29,23 @@ const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
 
 function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): string[] {
-	if (value === undefined || value === null) return into;
-	if (typeof value === 'object' && !isNode(value) && Symbol.iterator in value) {
-		for (const item of value as Iterable<unknown>) leafTexts(item, skip, into);
-		return into;
+	const work: unknown[] = [value];
+	const pushReversed = (items: readonly unknown[]): void => {
+		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]);
+	};
+	while (work.length > 0) {
+		const next = work.pop();
+		if (next === undefined || next === null) continue;
+		if (typeof next === 'object' && !isNode(next) && Symbol.iterator in next) {
+			pushReversed([...(next as Iterable<unknown>)]);
+			continue;
+		}
+		const node = next as Record<string, unknown>;
+		if (typeof node.$type === 'number' && skip.has(node.$type)) continue;
+		const text = nodeText(node);
+		if (text !== undefined) into.push(text);
+		else if (typeof next === 'object') pushReversed(storedSlotValues(next).map(([, child]) => child));
 	}
-	const node = value as Record<string, unknown>;
-	if (typeof node.$type === 'number' && skip.has(node.$type)) return into;
-	const text = nodeText(node);
-	if (text !== undefined) into.push(text);
-	else if (typeof value === 'object') for (const [, child] of storedSlotValues(value)) leafTexts(child, skip, into);
 	return into;
 }
 

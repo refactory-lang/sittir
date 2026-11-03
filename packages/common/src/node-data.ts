@@ -134,17 +134,23 @@ export function carryReadTree<T extends object>(from: object, to: T): T {
 }
 
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
-	if (Array.isArray(value)) {
-		for (const entry of value) forEachParsedObject(entry, visit);
-		return;
+	const work: unknown[] = [value];
+	while (work.length > 0) {
+		const next = work.pop();
+		if (Array.isArray(next)) {
+			for (let at = next.length - 1; at >= 0; at -= 1) work.push(next[at]);
+			continue;
+		}
+		if (!isRecord(next)) continue;
+		if (typeof next.$type === 'number') visit(next);
+		const held: unknown[] = [];
+		for (const key in next) {
+			if (isStorageKey(key)) held.push(next[key]);
+		}
+		const trivia = triviaOf(next);
+		if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => held.push(entries));
+		for (let at = held.length - 1; at >= 0; at -= 1) work.push(held[at]);
 	}
-	if (!isRecord(value)) return;
-	if (typeof value.$type === 'number') visit(value);
-	for (const key in value) {
-		if (isStorageKey(key)) forEachParsedObject(value[key], visit);
-	}
-	const trivia = triviaOf(value);
-	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => forEachParsedObject(entries, visit));
 }
 
 /** The handle a read node or a coordinate names itself by: its tree and its descendant index. */
@@ -673,10 +679,15 @@ function isPresent(value: unknown): boolean {
  * (`KindView.isWrapper`) that holds exactly one present node, that node.
  */
 function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
-	if (placeOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
-	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
-	const [only] = held;
-	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
+	let at = entry;
+	for (;;) {
+		if (placeOf(at) !== undefined || typeof at.$type !== 'number' || !view.isWrapper(at.$type)) return at;
+		const node = at;
+		const held = Object.keys(node).flatMap((key) => (isSlotKey(key) && isPresent(node[key]) ? [node[key]] : []));
+		const [only] = held;
+		if (held.length !== 1 || !isRecord(only)) return at;
+		at = only;
+	}
 }
 
 /** A row and a byte column, as tree-sitter counts them. */
@@ -730,13 +741,41 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
+interface NodeValueTask {
+	readonly value: unknown;
+	readonly changed: ChangedEdges;
+	readonly bearer: Record<string, unknown> | undefined;
+	readonly sided: boolean;
+	readonly holder: Record<string, unknown> | unknown[];
+	readonly key: string | number;
+}
+
 function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
+	const root: Record<string, unknown> = {};
+	const work: (NodeValueTask | (() => void))[] = [{ value, changed, bearer, sided, holder: root, key: 'value' }];
+	while (work.length > 0) {
+		const task = work.pop()!;
+		if (typeof task === 'function') task();
+		else (task.holder as Record<string | number, unknown>)[task.key] = nodeValueStep(task, view, fold, work);
+	}
+	return root.value;
+}
+
+function nodeValueStep(task: NodeValueTask, view: KindView, fold: boolean, work: (NodeValueTask | (() => void))[]): unknown {
+	const { value, changed, bearer, sided } = task;
 	if (Array.isArray(value)) {
 		const edges = listEdges(value, view);
-		return value.map((entry, index) => {
-			if (!isRecord(entry)) return toNodeValue(entry, view, NO_EDGES, fold);
-			return toNodeValue(entry, view, edges?.[index] ?? NO_EDGES, fold, evidenceOf(entry, view));
+		const out = value.map(() => undefined) as unknown[];
+		const items: NodeValueTask[] = [];
+		value.forEach((entry, index) => {
+			items.push(
+				isRecord(entry)
+					? { value: entry, changed: edges?.[index] ?? NO_EDGES, bearer: evidenceOf(entry, view), sided: true, holder: out, key: index }
+					: { value: entry, changed: NO_EDGES, bearer: undefined, sided: true, holder: out, key: index }
+			);
 		});
+		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]!);
+		return out;
 	}
 	if (!isRecord(value)) return value;
 	const bears = bearer === undefined || bearer === value;
@@ -748,6 +787,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		return out;
 	}
 	const out: Record<string, unknown> = {};
+	const children: NodeValueTask[] = [];
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;
 		if (key === '$text') {
@@ -756,8 +796,19 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		}
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
+		if (!isStorageKey(key)) {
+			out[key] = raw;
+			continue;
+		}
+		out[key] = undefined;
+		children.push({ value: raw, changed: bears ? NO_EDGES : changed, bearer: bears ? undefined : bearer, sided: fold || !isAliasContent(value, raw), holder: out, key });
 	}
+	work.push(() => finishNodeValue(value, out, edges, fold, sided));
+	for (let index = children.length - 1; index >= 0; index -= 1) work.push(children[index]!);
+	return out;
+}
+
+function finishNodeValue(value: Record<string, unknown>, out: Record<string, unknown>, edges: ChangedEdges, fold: boolean, sided: boolean): void {
 	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
 	for (const [key, held] of Object.entries(given ?? {})) {
 		if (!DECIDED_LAYOUT_KEYS.has(key)) ((out.$_layout ??= {}) as Record<string, unknown>)[key] = held;
@@ -780,7 +831,6 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const layout = out.$_layout as NodeDataLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
 	if (holdsSlots(out)) delete out.$text;
-	return out;
 }
 
 /**
