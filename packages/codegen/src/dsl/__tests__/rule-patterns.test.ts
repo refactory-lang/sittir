@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField } from '../rule-patterns.ts';
+import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField, transparentReach } from '../rule-patterns.ts';
+import { childFields } from '../bind.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const symbols = predictedSymbolSourceOf({
@@ -317,5 +318,41 @@ describe('throughEnrichedField', () => {
 	it('reads a non-field rule as itself', () => {
 		const rule = { type: 'SYMBOL', name: 'item' };
 		expect(throughEnrichedField(rule)).toBe(rule);
+	});
+});
+
+describe('transparentReach', () => {
+	const rules = {
+		print_statement_chevron: {
+			type: 'SEQ',
+			members: [
+				{ type: 'STRING', value: 'print' },
+				{ type: 'SYMBOL', name: '_chevron_part' },
+				{ type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'print_chevron_arguments', content: { type: 'SYMBOL', name: '_print_chevron_arguments' } }, { type: 'STRING', value: ',' }] }
+			]
+		},
+		_chevron_part: { type: 'SEQ', members: [{ type: 'STRING', value: '>>' }, { type: 'SYMBOL', name: 'expression' }] },
+		_print_chevron_arguments: { type: 'SEQ', members: [{ type: 'STRING', value: ',' }, { type: 'SYMBOL', name: 'expression' }, { type: 'STRING', value: ';' }] },
+		expression: { type: 'SYMBOL', name: 'identifier' }
+	};
+
+	it('reaches hidden rules a kind references directly, and not one a named alias makes a child of its own', () => {
+		expect([...transparentReach(rules, 'print_statement_chevron', new Set())]).toEqual(['print_statement_chevron', '_chevron_part']);
+	});
+
+	it("enters a supertype's arm a named alias shows as a variant, since a query on the supertype matches that node itself", () => {
+		const kinds = {
+			_kind: { type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'entry', content: { type: 'SYMBOL', name: '_entry' } }, { type: 'SYMBOL', name: 'other' }] },
+			_entry: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'item' }, { type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'item' }] },
+			holder: { type: 'SEQ', members: [{ type: 'STRING', value: '[' }, { type: 'ALIAS', named: true, value: 'entry', content: { type: 'SYMBOL', name: '_entry' } }, { type: 'STRING', value: ']' }] }
+		};
+		expect([...transparentReach(kinds, '_kind', new Set(['_kind']))]).toEqual(['_kind', '_entry']);
+		expect([...transparentReach(kinds, 'holder', new Set(['_kind']))]).toEqual(['holder']);
+	});
+
+	it("so a token is the owner's only where it is the owner's own child, as a query sees it", () => {
+		expect(childFields({ rules }, 'print_statement_chevron', { token: ';' })).toEqual({ fields: [], unfielded: false, mixed: false, arm: false });
+		expect(childFields({ rules }, '_print_chevron_arguments', { token: ';' }).unfielded).toBe(true);
+		expect(childFields({ rules }, 'print_statement_chevron', { token: '>>' }).unfielded).toBe(true);
 	});
 });
