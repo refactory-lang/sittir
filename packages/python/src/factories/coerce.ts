@@ -6138,17 +6138,7 @@ export function resolvePrintStatementChevron_chevron(
 export function resolvePrintStatementChevron_printChevronArguments(
 	value: T.PrintStatementChevron.LooseConfig['printChevronArguments']
 ): Admit<T.PrintStatementChevron['_print_chevron_arguments']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [TSKindId.Comma], () =>
-			_resolveOneBranch<T.PrintChevronArguments | TSKindId.Comma>(
-				value,
-				'print_chevron_arguments',
-				[TSKindId.Comma],
-				true
-			)
-		),
-		[[',', TSKindId.Comma] as const]
-	);
+	return _resolveOneBranch<T.PrintChevronArguments>(value, 'print_chevron_arguments', undefined, true);
 }
 
 export const coerceToPrintStatementChevron: ConfigSeat<

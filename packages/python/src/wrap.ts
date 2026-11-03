@@ -4470,7 +4470,7 @@ export function wrapPrintStatementChevron(
 			return hydrateSlot<T.Chevron>(this, '_chevron', tree);
 		},
 		printChevronArguments() {
-			return hydrateSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, '_print_chevron_arguments', tree);
+			return hydrateSlot<T.PrintChevronArguments | undefined>(this, '_print_chevron_arguments', tree);
 		},
 		$with: {
 			chevron: (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>

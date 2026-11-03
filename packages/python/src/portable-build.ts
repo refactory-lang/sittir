@@ -13602,10 +13602,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [278, 'printChevronArguments'],
-									kinds: [6],
-									tokens: {
-										',': 6
-									}
+									kinds: []
 								},
 								{
 									at: [277, 'items'],

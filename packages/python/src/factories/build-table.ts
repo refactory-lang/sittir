@@ -61,30 +61,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly importList: Routes<Table>['importFromStatement$importList'];
 		readonly parenthesizedImportList: Routes<Table>['importFromStatement$parenthesizedImportList'];
 	};
-	readonly printStatementChevron$printChevronArguments: <
-		const V extends OmitEach<ArgsOf<Table['buildPrintStatementChevron']>[0], 'printChevronArguments'> & {
-			printChevronArguments: ArgsOf<Table['buildPrintChevronArguments']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildPrintStatementChevron']>[0], 'printChevronArguments'> & {
-					printChevronArguments: ArgsOf<Table['buildPrintChevronArguments']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildPrintStatementChevron']>
-	) => ReturnType<Table['buildPrintStatementChevron']>;
-	readonly printStatementChevron$comma: <
-		const V extends OmitEach<ArgsOf<Table['buildPrintStatementChevron']>[0], 'printChevronArguments'>
-	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildPrintStatementChevron']>[0], 'printChevronArguments'>>,
-		options?: OptionsArg<Table['buildPrintStatementChevron']>
-	) => ReturnType<Table['buildPrintStatementChevron']>;
-	readonly printStatementChevron: Table['buildPrintStatementChevron'] & {
-		readonly printChevronArguments: Routes<Table>['printStatementChevron$printChevronArguments'];
-		readonly comma: Routes<Table>['printStatementChevron$comma'];
-	};
 	readonly printStatement$chevron: Seat<
 		ArgsOf<Table['buildPrintStatementChevron']>,
 		ReturnType<typeof F.buildPrintStatement>
@@ -93,19 +69,8 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildPrintStatementPlain']>,
 		ReturnType<typeof F.buildPrintStatement>
 	>;
-	readonly printStatement$chevron$printChevronArguments: Seat<
-		ArgsOf<Routes<Table>['printStatementChevron$printChevronArguments']>,
-		ReturnType<typeof F.buildPrintStatement>
-	>;
-	readonly printStatement$chevron$comma: Seat<
-		ArgsOf<Routes<Table>['printStatementChevron$comma']>,
-		ReturnType<typeof F.buildPrintStatement>
-	>;
 	readonly printStatement: Table['buildPrintStatement'] & {
-		readonly chevron: Routes<Table>['printStatement$chevron'] & {
-			readonly printChevronArguments: Routes<Table>['printStatement$chevron$printChevronArguments'];
-			readonly comma: Routes<Table>['printStatement$chevron$comma'];
-		};
+		readonly chevron: Routes<Table>['printStatement$chevron'];
 		readonly plain: Routes<Table>['printStatement$plain'];
 	};
 	readonly subscript: Table['subscript$seated'];
@@ -3115,7 +3080,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly caseListPattern: Table['buildCaseListPattern'];
 	readonly printArguments: Table['buildPrintArguments'];
 	readonly printChevronArguments: Table['buildPrintChevronArguments'];
-	readonly printStatementChevron: Routes<Table>['printStatementChevron'];
+	readonly printStatementChevron: Table['buildPrintStatementChevron'];
 	readonly printStatementPlain: Table['buildPrintStatementPlain'];
 	readonly comprehensionClauses: Table['buildComprehensionClauses'];
 	readonly integerHex: Table['buildIntegerHex'];
@@ -3235,18 +3200,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			parenthesizedImportList: importFromStatement$parenthesizedImportList
 		} as const)
 	);
-	const printStatementChevron$printChevronArguments: Routes<Table>['printStatementChevron$printChevronArguments'] =
-		K.printStatementChevron$printChevronArguments($at('buildPrintStatementChevron'), $at('buildPrintChevronArguments'));
-	const printStatementChevron$comma: Routes<Table>['printStatementChevron$comma'] = K.printStatementChevron$comma(
-		$at('buildPrintStatementChevron'),
-		TSKindId.Comma
-	);
-	const printStatementChevron: Routes<Table>['printStatementChevron'] = Object.freeze(
-		Object.assign(delegate($at('buildPrintStatementChevron')), {
-			printChevronArguments: printStatementChevron$printChevronArguments,
-			comma: printStatementChevron$comma
-		} as const)
-	);
 	const printStatement$chevron: Routes<Table>['printStatement$chevron'] = K.printStatement$chevron(
 		F.buildPrintStatement,
 		$at('buildPrintStatementChevron')
@@ -3255,20 +3208,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildPrintStatement,
 		$at('buildPrintStatementPlain')
 	);
-	const printStatement$chevron$printChevronArguments: Routes<Table>['printStatement$chevron$printChevronArguments'] =
-		K.printStatement$chevron$printChevronArguments(F.buildPrintStatement, printStatementChevron.printChevronArguments);
-	const printStatement$chevron$comma: Routes<Table>['printStatement$chevron$comma'] = K.printStatement$chevron$comma(
-		F.buildPrintStatement,
-		printStatementChevron.comma
-	);
 	const printStatement: Routes<Table>['printStatement'] = Object.freeze(
 		Object.assign(delegate($at('buildPrintStatement')), {
-			chevron: Object.freeze(
-				Object.assign(printStatement$chevron, {
-					printChevronArguments: printStatement$chevron$printChevronArguments,
-					comma: printStatement$chevron$comma
-				} as const)
-			),
+			chevron: printStatement$chevron,
 			plain: printStatement$plain
 		} as const)
 	);
@@ -5436,7 +5378,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		caseListPattern: $at('buildCaseListPattern'),
 		printArguments: $at('buildPrintArguments'),
 		printChevronArguments: $at('buildPrintChevronArguments'),
-		printStatementChevron: printStatementChevron,
+		printStatementChevron: $at('buildPrintStatementChevron'),
 		printStatementPlain: $at('buildPrintStatementPlain'),
 		comprehensionClauses: $at('buildComprehensionClauses'),
 		integerHex: $at('buildIntegerHex'),

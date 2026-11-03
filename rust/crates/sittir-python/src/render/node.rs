@@ -11336,74 +11336,6 @@ impl ::sittir_core::render::Render for DictionaryElementsItemNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    #[kind(kind::_PRINT_CHEVRON_ARGUMENTS)]
-    PrintChevronArguments(PrintChevronArgumentsNode),
-    #[kind(kind::COMMA)]
-    Comma,
-}
-
-impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.prepare(ctx),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => Ok(()),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.gap_edges(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.snapshot_edge(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.source_coordinate(),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(t) => t.source_separator(ctx),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => None,
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
-            Self::Comma => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgumentsNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::PrintChevronArguments(inner) => inner.render(w),
-            PrintStatementChevronPrintChevronArgumentsNodeSlot::Comma => {
-                w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
 pub enum ComprehensionClausesContentNodeSlot {
     #[kind(kind::FOR_IN_CLAUSE)]
     ForInClause(ForInClauseNode),
@@ -19826,7 +19758,7 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA], words = 12)]
+#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD], words = 12)]
 pub struct PrintStatementChevronNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19835,7 +19767,7 @@ pub struct PrintStatementChevronNode {
     pub chevron: ::sittir_core::SlotValue<ChevronNode>,
     #[wire(key = "_print_chevron_arguments")]
     #[slot(word = 7, width = 5)]
-    pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsNodeSlot>>,
+    pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintChevronArgumentsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementChevronNode {
@@ -31051,4 +30983,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);

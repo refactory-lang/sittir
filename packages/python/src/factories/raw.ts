@@ -5903,9 +5903,7 @@ export function buildPrintStatementChevron<
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
 	currentHandle()?.admit(TSKindId.PrintStatementChevron, [config]);
 	const _chevron = config.chevron;
-	const _print_chevron_arguments = kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
-		config.printChevronArguments
-	);
+	const _print_chevron_arguments = config.printChevronArguments;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementChevron as const,
@@ -5920,7 +5918,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 					listSlotWith(
 						args,
 						{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: buildPrintChevronArguments },
-						(value?: Admit<NonNullable<T.PrintStatementChevron.Config>['printChevronArguments']>) =>
+						(value?: Admit<T.PrintChevronArguments>) =>
 							buildPrintStatementChevron({ ...config, printChevronArguments: value })
 					)
 				)

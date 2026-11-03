@@ -197,12 +197,7 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
-		readonly chevron: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
-			printChevronArguments<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.PrintStatement };
-		};
+		chevron<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 		plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 	};
 	chevron<T extends { readonly $type: number } | number>(
@@ -620,14 +615,9 @@ export interface IsGuards {
 	printChevronArguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintChevronArguments };
-	readonly printStatementChevron: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
-		printChevronArguments<T extends { readonly $type: number }>(
-			v: T
-		): v is T & { readonly $type: TSKindId.PrintStatementChevron };
-	};
+	printStatementChevron<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
@@ -808,12 +798,7 @@ export interface IsGuards {
 			<T extends { readonly $type: number } | number>(
 				v: T
 			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
-			readonly chevron: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
-				printChevronArguments<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.PrintStatement };
-			};
+			chevron<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 			plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
 		};
 		assert<T extends { readonly $type: number } | number>(
@@ -1313,7 +1298,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ImportStatement_guard = _g(TSKindId.ImportStatement);
 	const _kind_WildcardImport_guard = _mg(TSKindId.WildcardImport);
 	const _kind_ImportFromStatement_guard = _g(TSKindId.ImportFromStatement);
-	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
 	const _kind_PrintStatementChevron_guard = _g(TSKindId.PrintStatementChevron);
 	const _kind_PrintStatement_guard = _g(TSKindId.PrintStatement);
 	const _kind_PrintStatementPlain_guard = _g(TSKindId.PrintStatementPlain);
@@ -1483,6 +1467,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CasePatternList_guard = _g(TSKindId.CasePatternList);
 	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
+	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
 	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
 	const _kind_ConstructorDeclaration_guard = _g(TSKindId.ConstructorDeclaration);
@@ -1514,17 +1499,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		parenthesizedImportList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ParenthesizedImportList_guard)
 	});
 	const _form_PrintStatement_guard = _vg(_g(TSKindId.PrintStatement), {
-		chevron: _at(
-			_kind_PrintStatement_guard,
-			'content',
-			_vg(_g(TSKindId.PrintStatementChevron), {
-				printChevronArguments: _at(
-					_kind_PrintStatementChevron_guard,
-					'printChevronArguments',
-					_kind_PrintChevronArguments_guard
-				)
-			})
-		),
+		chevron: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementChevron_guard),
 		plain: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementPlain_guard)
 	});
 	const _form_ExpressionStatement_guard = _vg(_g(TSKindId.ExpressionStatement), {
@@ -1595,13 +1570,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		unionType: _at(_kind_Type_guard, 'content', _kind_UnionType_guard),
 		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard),
 		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard)
-	});
-	const _form_PrintStatementChevron_guard = _vg(_g(TSKindId.PrintStatementChevron), {
-		printChevronArguments: _at(
-			_kind_PrintStatementChevron_guard,
-			'printChevronArguments',
-			_kind_PrintChevronArguments_guard
-		)
 	});
 	const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
 		futureImport: _form_FutureImportStatement_guard,
@@ -1866,7 +1834,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		caseListPattern: _kind_CaseListPattern_guard,
 		printArguments: _kind_PrintArguments_guard,
 		printChevronArguments: _kind_PrintChevronArguments_guard,
-		printStatementChevron: _form_PrintStatementChevron_guard,
+		printStatementChevron: _kind_PrintStatementChevron_guard,
 		printStatementPlain: _kind_PrintStatementPlain_guard,
 		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
 		comprehensionClauses: _kind_ComprehensionClauses_guard,

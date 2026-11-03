@@ -7656,29 +7656,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_print_chevron_arguments",
-                    "annotations": {
-                      "variant": "print_chevron_arguments",
-                      "variantOf": "print_statement_chevron"
-                    }
-                  },
-                  "named": true,
-                  "value": "print_chevron_arguments"
-                },
-                {
-                  "type": "STRING",
-                  "value": ",",
-                  "annotations": {
-                    "variantOf": "print_statement_chevron"
-                  }
-                }
-              ]
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_print_chevron_arguments"
+              },
+              "named": true,
+              "value": "print_chevron_arguments"
             },
             {
               "type": "BLANK"

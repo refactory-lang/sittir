@@ -406,33 +406,6 @@ describe('print_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementPlain);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('chevron.printChevronArguments builds the parent', () => {
-		const node = ir.printStatement.chevron.printChevronArguments({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			printChevronArguments: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('chevron.comma builds the parent', () => {
-		const node = ir.printStatement.chevron.comma({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 });
 
 describe('chevron', () => {
@@ -5745,37 +5718,6 @@ describe('print_statement_chevron', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('print_statement_chevron sub-factories', () => {
-	it('printChevronArguments builds the parent', () => {
-		const node = ir.printStatementChevron.printChevronArguments({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			printChevronArguments: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-		expect((node as any).printChevronArguments()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('comma builds the parent', () => {
-		const node = ir.printStatementChevron.comma({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-		const seated = (node as any).printChevronArguments();
-		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Comma);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

@@ -2000,7 +2000,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_chevron', 'PrintStatementChevron.chevron', 'a built Chevron', [140]],
-			['_print_chevron_arguments', 'PrintStatementChevron.printChevronArguments', 'a built PrintChevronArguments']
+			[
+				'_print_chevron_arguments',
+				'PrintStatementChevron.printChevronArguments',
+				'a built PrintChevronArguments',
+				[277]
+			]
 		],
 		config: ['chevron', 'printChevronArguments']
 	},

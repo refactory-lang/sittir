@@ -4921,13 +4921,10 @@ export interface PrintChevronArguments {
 export interface PrintStatementChevron {
 	readonly $type: TSKindId.PrintStatementChevron;
 	readonly _chevron: Chevron;
-	readonly _print_chevron_arguments?: PrintChevronArguments | TSKindId.Comma;
+	readonly _print_chevron_arguments?: PrintChevronArguments;
 	readonly __slotNames__?: {
 		readonly _chevron: 'chevron';
 		readonly _print_chevron_arguments: 'printChevronArguments';
-	};
-	readonly __inputHints__?: {
-		readonly print_chevron_arguments?: KindEnum<',', TSKindId.Comma> | PrintChevronArguments;
 	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
@@ -4935,16 +4932,13 @@ export interface PrintStatementChevron {
 	};
 	readonly __slotHints__?: {
 		readonly chevron: SlotHint<T.Chevron>;
-		readonly printChevronArguments: SlotHint<
-			NonNullable<T.PrintStatementChevron.Config>['printChevronArguments'],
-			true
-		>;
+		readonly printChevronArguments: SlotHint<T.PrintChevronArguments, true>;
 		readonly $listSlots: {
 			readonly printChevronArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly chevron: () => Chevron;
-	readonly printChevronArguments: () => PrintChevronArguments | TSKindId.Comma | undefined;
+	readonly printChevronArguments: () => PrintChevronArguments | undefined;
 }
 
 export interface PrintStatementPlain {
@@ -8037,7 +8031,6 @@ export namespace PrintStatementChevron {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
-			readonly comma?: { readonly before?: WhitespaceKindId };
 			readonly printKeyword?: { readonly after?: WhitespaceKindId };
 		};
 	}

@@ -50,36 +50,11 @@ export const importFromStatement$parenthesizedImportList =
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
 
-export const printStatementChevron$printChevronArguments =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'> & { printChevronArguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { printChevronArguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)(
-			{ ...rest, printChevronArguments: _c(child)(...seated) } as never,
-			options as never
-		);
-	};
-export const printStatementChevron$comma =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, printChevronArguments: value } as never, options as never);
-
 export const printStatement$chevron =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const printStatement$plain =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const printStatement$chevron$printChevronArguments =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const printStatement$chevron$comma =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
