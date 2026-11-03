@@ -57,7 +57,7 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
-import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
+import { armTopologies, degenerateArmFieldName, dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
 
 import {
 	isArmChoice,
@@ -2030,7 +2030,7 @@ function applyClauseHoist(
 		const inner = optionalContentOf(rule);
 		if (inner !== undefined) {
 			const recursed = applyClauseHoist(parentKind, inner, ctx, counter, ambientPrec, enclosingFieldName);
-			const promoted = mintStructuredChoiceArm(
+			const promoted = isLabelledSlotChoice(recursed) ? null : mintStructuredChoiceArm(
 				recursed,
 				parentKind,
 				ctx,
@@ -2253,6 +2253,13 @@ function promotePermutationArmKeywords(choiceRule: Rule, ctx: EnrichCtx): Rule {
 		return { ...arm, members: newSeq } as Rule;
 	});
 	return changed ? ({ ...choiceRule, members: newMembers } as Rule) : choiceRule;
+}
+
+function isLabelledSlotChoice(rule: Rule): boolean {
+	const core = dslArmStage.unwrap(rule as AnyRule);
+	if (core.type !== CHOICE) return false;
+	const members = core.members;
+	return !armTopologies(partitionChoiceArms<AnyRule>({ members }, dslArmStage)).has('structured') && members.some((m) => degenerateArmFieldName(m, dslArmStage) !== undefined);
 }
 
 function mintStructuredChoiceArm(
