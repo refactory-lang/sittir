@@ -29,6 +29,16 @@ describe('a form whose whole body is one fixed token', () => {
 		expect(rs.render(built).toString()).toBe('..');
 		expect(rs.render(tree).toString()).toBe(source);
 	});
+
+	it.each(['object', 'arena'] as const)('%s storage: has a $with with no setter, read and built alike', async (nodeStorage) => {
+		const rs = await createEngine(rust, { nodeStorage, verifyStructure: 'runtime' });
+		const [parsed] = rs.parse('fn f() { ..; }\n').$query().$descendants.ofType(TSKindId.RangeExpressionBare);
+		expect(parsed).toBeDefined();
+		for (const node of [parsed!, rs.build.rangeExpressionBare()]) {
+			expect(typeof node.$with).toBe('object');
+			expect(Object.entries(node.$with).filter(([, member]) => typeof member === 'function')).toEqual([]);
+		}
+	});
 });
 
 describe('a keyword alias display is a leaf of its own kind', () => {

@@ -2012,7 +2012,7 @@ function fieldCarryingFactoryText(
 			...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude
 		];
 		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
-		after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
+		if (parts.patchTail !== undefined) after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
 		after.push(...parts.after);
 	} else {
@@ -2913,7 +2913,7 @@ function emitSeparatedListFactory(
 				nodeMap,
 				viewTable(views)
 			);
-			after.push(...patchTwinLines(lines, impl, impl, parts.patchTail));
+			if (parts.patchTail !== undefined) after.push(...patchTwinLines(lines, impl, impl, parts.patchTail));
 			lines.push(...parts.tail);
 			after.push(...parts.after);
 		} else {

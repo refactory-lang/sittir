@@ -20519,6 +20519,7 @@ function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.Rang
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
+		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -20528,6 +20529,7 @@ function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.Rang
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
+	node.$with = { node };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
 	return node as unknown as T.RangeExpressionBare.Parsed;
 }

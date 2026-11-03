@@ -14539,20 +14539,7 @@ export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
 	});
 }
 
-function buildRangeExpressionBare$patch(source: object): T.RangeExpressionBare.Bound {
-	const handle = currentHandle();
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, {});
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangeExpressionBare as const);
-		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionBare.Bound;
-	});
-}
-function withRangeExpressionBare(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-	}
+function withRangeExpressionBare(_node: object, setter: string, _args: readonly unknown[]): unknown {
 	throw new Error(`range_expression_bare has no $with.${setter}`);
 }
 
