@@ -65,13 +65,15 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 	};
 	const planOf = (route: MemberRoute): QueryPlan => {
 		if (route.spelled === true) return ALWAYS;
+		const into = (steps: readonly SlotStep[], of: QueryPlan): QueryPlan =>
+			steps.reduceRight<QueryPlan>((inner, step) => ({ op: 'child', ...subjectAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of: inner }), of);
 		if (route.route === 'delimiter') {
 			const stamped: QueryPlan = { op: 'delimiter', delimiter: route.delimiter };
-			return route.items === undefined ? stamped : { op: 'and', of: [stamped, { op: 'count', min: 2, ...subjectAt(route.name, route.items) }] };
+			return into(route.path ?? [], route.items === undefined ? stamped : { op: 'and', of: [stamped, { op: 'count', min: 2, ...subjectAt(route.name, route.items) }] });
 		}
 		if (route.path === undefined) return refuse(route.name, 'its route reaches no slot');
 		const last = route.path.at(-1) ?? refuse(route.name, 'its route has no step');
-		return route.path.slice(0, -1).reduceRight<QueryPlan>((of, step) => ({ op: 'child', ...subjectAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), leafOf(route, last));
+		return into(route.path.slice(0, -1), leafOf(route, last));
 	};
 	const conditionPlan = (condition: PortableCondition): QueryPlan<QuerySubject> =>
 		condition.via.reduceRight<QueryPlan<QuerySubject>>((of, step) => ({ op: 'child', slots: step.slots, ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), condition.plan);

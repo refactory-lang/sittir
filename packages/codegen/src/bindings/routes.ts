@@ -81,7 +81,7 @@ export type MemberRoute = (
 			readonly multiple: boolean;
 			readonly path: readonly SlotStep[] | undefined;
 	  }
-	| { readonly route: 'delimiter'; readonly name: string; readonly delimiter: Delimiter; readonly items?: SlotStep; readonly path: undefined }
+	| { readonly route: 'delimiter'; readonly name: string; readonly delimiter: Delimiter; readonly items?: SlotStep; readonly path: readonly SlotStep[] | undefined }
 ) & { readonly flag?: true; readonly spelled?: true; readonly list?: boolean };
 
 export const readsList = (route: MemberRoute, slotHoldsList: boolean): boolean => route.list ?? slotHoldsList;
@@ -595,7 +595,7 @@ function deepRoutesOf(model: SlotModel, kind: string, member: DeepMember): reado
 }
 
 function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefined): MemberRoute {
-	if (member.route === 'presence' && member.anchor !== undefined) return delimiterRouteOf(member, chain?.at);
+	if (member.route === 'presence' && member.anchor !== undefined) return delimiterRouteOf(member, chain);
 	if (member.route === 'presence') {
 		const held = chain === undefined ? undefined : heldBy(model, chain.at.kind, (slots) => slots.find((s) => s.terminals.includes(member.token)));
 		const spelled = member.flag === true && member.via.length === 0 && chain !== undefined && held === undefined;
@@ -626,13 +626,21 @@ function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefi
 	};
 }
 
-function delimiterRouteOf(member: Extract<DeepMember, { readonly route: 'presence' }>, list: ModelNode | undefined): MemberRoute {
+function delimiterRouteOf(member: Extract<DeepMember, { readonly route: 'presence' }>, chain: Chain | undefined): MemberRoute {
 	const name = camel(member.name);
+	const list = chain?.at;
 	const separated = list?.list?.trailing === 'optional' && list.list.separator === member.token;
-	if (list === undefined || member.via.length > 0 || member.anchor !== 'last' || !separated)
+	if (list === undefined || chain === undefined || member.anchor !== 'last' || !separated)
 		throw new Error(`bindings: ${list?.kind ?? member.owner}'s ${name} anchors the token "${member.token}"; an anchored token names a list's own optional separator after its last item`);
-	if (member.flag !== true) throw new Error(`bindings: ${list.kind}'s ${name} reads its list's trailing separator, which is a flag`);
-	return { route: 'delimiter', name, delimiter: Delimiter.Trailing, path: undefined, flag: true };
+	const items = list.list?.singleElementNeedsTrailing === true ? listItems(list) : undefined;
+	return {
+		route: 'delimiter',
+		name,
+		delimiter: Delimiter.Trailing,
+		path: member.via.length === 0 ? undefined : chain.steps,
+		...(items === undefined ? {} : { items: stepOf(list.kind, items.name, null) }),
+		...flagOf(member)
+	};
 }
 
 export interface Guaranteed {
@@ -705,7 +713,7 @@ function membersOf(
 	if (node.modelType === 'list') {
 		const delimiters = input.bindings.members.filter((member) => isListDelimiter(input.model, member, kind));
 		const items = listItems(node);
-		const counted = items !== undefined && (node.list?.singleElementNeedsTrailing === true || entries.some((entry) => entry.separated === true));
+		const counted = items !== undefined && entries.some((entry) => entry.separated === true);
 		const routes = delimiters
 			.flatMap((member) => deepRoutesOf(input.model, kind, { ...member, owner: kind }))
 			.map((route) => (counted && route.route === 'delimiter' ? { ...route, items: stepOf(kind, items.name, null) } : route));
@@ -938,6 +946,11 @@ function spelledFlagRouteOf(member: Extract<MemberFact, { readonly route: 'renam
 }
 
 const flagOf = (member: MemberFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
+
+const flaggedDelimiter = (kind: string, route: MemberRoute): MemberRoute => {
+	if (route.route === 'delimiter' && route.flag !== true) throw new Error(`bindings: ${kind}'s ${route.name} reads a list's trailing separator, which is a flag`);
+	return route;
+};
 
 function refinedParent(kind: string, entries: readonly { readonly vocab: string }[]): string | undefined {
 	if (entries.length === 0) return undefined;
@@ -1293,7 +1306,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries)
 		readEntries.set(
 			kind,
-			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, route)) }))
+			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, slotNamesOf, guaranteedBy(input.model, entry), inheritedClaims(entry, entries), (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))) }))
 		);
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);

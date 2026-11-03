@@ -372,6 +372,54 @@ describe('the portable build of a registered option', () => {
 	});
 });
 
+describe("the portable build of a flag that is a member's list's trailing separator", () => {
+	const table: PortableBuildTable = {
+		builders: { holder: 'config', items: 'elements' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [
+					{
+						kind: 1,
+						builder: 'holder',
+						members: [{ name: 'arguments', steps: [{ key: 'arguments', builder: 'items' }, { key: 'item' }], multiple: true, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true }] }],
+						presets: [],
+						flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list: [{ key: 'arguments', builder: 'items' }] } },
+						when: []
+					}
+				]
+			}
+		}
+	};
+	const build = (structure: Readonly<Record<string, unknown>>): readonly (readonly [string, readonly unknown[]])[] => {
+		const calls: [string, unknown[]][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				holder: (...args: unknown[]) => (calls.push(['holder', args]), { $type: 1 }),
+				items: (...args: unknown[]) => (calls.push(['items', args]), { $type: 2 })
+			},
+			kindName: () => undefined,
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', ...structure } as never);
+		return calls;
+	};
+
+	it("sets the delimiter on the list the flag's steps reach, not on the arm's own builder", () => {
+		expect(build({ arguments: ['a', 'b'], $flags: ['trailingComma'] })).toEqual([
+			['items', [{ delimiter: Delimiter.Trailing }, 'a', 'b']],
+			['holder', [{ arguments: { $type: 2 } }]]
+		]);
+		expect(build({ arguments: ['a'] })[0]).toEqual(['items', ['a']]);
+	});
+
+	it('refuses the flag where the list it is the separator of holds nothing', () => {
+		expect(() => build({ arguments: [], $flags: ['trailingComma'] })).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
+	});
+});
+
 describe('the portable build of an arm whose routes run through two forms of one slot', () => {
 	const route = (name: string, form: 'formA' | 'formB', pattern?: RegExp) => ({
 		name,

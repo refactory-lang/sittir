@@ -5,6 +5,7 @@ import type {
 	PortableCallShape,
 	PortableContainer,
 	PortableDecimalParts,
+	PortableFlagStep,
 	PortableKeyedMount,
 	PortableMemberStep,
 	PortableMount,
@@ -389,6 +390,23 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			}
 			return { frame: at, reached };
 		};
+		const frameAt = (frame: Frame, steps: readonly PortableSlotStep[]): Frame | undefined => {
+			let at = frame;
+			for (const step of steps) {
+				if (step.flatten === true) continue;
+				if (step.mounted !== undefined) {
+					const entered = enter(at, step.builder!, step.mounted, false);
+					if (entered === undefined) return undefined;
+					at = entered.frame;
+					continue;
+				}
+				const next = at.config[step.key];
+				if (!(next instanceof Frame)) return undefined;
+				at = next;
+			}
+			return at;
+		};
+		const holdsAny = (frame: Frame): boolean => [frame.input, ...Object.values(frame.config)].some((value) => value !== undefined && listOf(value).length > 0);
 		const ownerOf = (frame: Frame, steps: readonly PortableSlotStep[], path: string): Frame => {
 			const owner = descend(frame, steps, true);
 			if (owner === undefined) throw new Error(`portable build: ${path} routes two values through ${routeText(steps)}`);
@@ -607,12 +625,14 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const frame = arm.mounted === undefined ? top : enter(top, arm.builder!, arm.mounted, true)?.frame;
 			if (frame === undefined) throw new Error(`portable build: ${structure.$path} builds through ${arm.builder}, which seats ${nameOf(arm.kind)} in a holder it has none of`);
 			for (const step of arm.presets) preset(frame, step, structure.$path);
+			const listed: (readonly [string, PortableFlagStep])[] = [];
 			for (const flag of structure.$flags ?? []) {
 				const steps = arm.flags[flag];
 				if (steps === undefined && !arm.when.some((test) => 'flag' in test && test.flag === flag && test.set))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
-				if (steps?.delimiter !== undefined) frame.delimiter = (frame.delimiter ?? 0) | steps.delimiter;
+				if (steps?.delimiter !== undefined && steps.list !== undefined) listed.push([flag, steps]);
+				else if (steps?.delimiter !== undefined) frame.delimiter = (frame.delimiter ?? 0) | steps.delimiter;
 			}
 			const sole = arm.sole === undefined ? undefined : structure[arm.sole.member];
 			if (arm.sole !== undefined && Array.isArray(sole) && sole.length === 1) frame.delimiter = (frame.delimiter ?? 0) | arm.sole.delimiter;
@@ -665,6 +685,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					furthest(open.filter(({ candidate }) => admits(candidate, value)))?.candidate ??
 					refuseValue(structure.$path, name, value, open.map(({ candidate }) => candidate));
 				placeMember(frame, route, value, structure.$path);
+			}
+			for (const [flag, { list: steps, delimiter }] of listed) {
+				const list = frameAt(frame, steps!);
+				if (list === undefined || !holdsAny(list))
+					throw new Error(`portable build: ${structure.$path}: ${flag} is the trailing separator of the list at ${routeText(steps!)}, which holds nothing`);
+				list.delimiter = (list.delimiter ?? 0) | delimiter!;
 			}
 			if (host !== undefined) return { value: undefined, seat, holder: 'host' };
 			if (top.builder === undefined) return { value: arm.seated === undefined ? arm.kind : arm.seated === 'config' ? configOf(top) : inputOf(top), seat };

@@ -56,6 +56,17 @@ describe('flagPlansOf', () => {
 		expect(plans([counted]).get('trailingComma')).toEqual({ op: 'and', of: [{ op: 'delimiter', delimiter: 2 }, { op: 'count', min: 2, ...SLOTS['list.items'] }] });
 	});
 
+	it("tests a child list's trailing separator by its delimiter stamp at the path to it, so the flag is unset where the list is absent", () => {
+		const trailing: MemberRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: [{ owner: 'fn', slot: 'mods' }] };
+		expect(plans([trailing]).get('trailingComma')).toEqual({ op: 'child', ...SLOTS['fn.mods'], of: { op: 'delimiter', delimiter: 2 } });
+		const counted: MemberRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
+		expect(plans([counted]).get('trailingComma')).toEqual({
+			op: 'child',
+			...SLOTS['fn.mods'],
+			of: { op: 'and', of: [{ op: 'delimiter', delimiter: 2 }, { op: 'count', min: 2, ...SLOTS['list.items'] }] }
+		});
+	});
+
 	it('holds always for a flag the kind\'s own form spells', () => {
 		const generator: MemberRoute = { route: 'presence', name: 'generator', via: [], token: '*', flag: true, spelled: true, path: undefined };
 		expect(plans([generator]).get('generator')).toEqual({ op: 'and', of: [] });

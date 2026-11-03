@@ -759,7 +759,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
 				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
 			}
-			for (const route of entry.members) if (route.route === 'delimiter') flagSteps[route.name] = { presets: [], delimiter: route.delimiter };
+			for (const route of entry.members) {
+				if (route.route !== 'delimiter') continue;
+				const list = route.path === undefined ? undefined : (stepsOf(route.path) ?? refuseList(route.name, entry.vocab));
+				flagSteps[route.name] = { ...(flagSteps[route.name] ?? { presets: [] }), delimiter: route.delimiter, ...(list === undefined ? {} : { list }) };
+			}
 			const sharingAt = (path: readonly SlotStep[], i: number): readonly { readonly name: string; readonly path: readonly SlotStep[] }[] =>
 				survivors.flatMap(({ name, site: { path: other } }) => (other.length < i || !path.slice(0, i).every((step, j) => sameStep(step, other[j]!)) ? [] : [{ name, path: other }]));
 			const holdsOnly = (step: SlotStep, kind: string): boolean => {
@@ -861,6 +865,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		return mounts.flatMap(({ builder, mounted, site }) => arms.map((arm): Arm => ({ ...arm, site, arm: { ...arm.arm, builder, mounted } })));
 	};
 
+	const refuseList = (flag: string, path: string): never => {
+		throw new Error(`portable build: ${path}'s ${flag} is the trailing separator of a list no step reaches`);
+	};
 	const soleOf = (entry: ReadEntry, members: readonly PortableMemberStep[]): { readonly sole?: PortableBuildArm['sole'] } => {
 		if (entry.separated !== true) return {};
 		const listed = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];

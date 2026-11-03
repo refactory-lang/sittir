@@ -1814,6 +1814,27 @@ describe('a list\'s trailing separator', () => {
 		await expect(membersOf('(call_items ";" @trailingComma .) @expression.call.arguments', 'call_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
 		await expect(membersOf('(fixed_items ";" @trailingComma .) @expression.block', 'fixed_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
 		await expect(membersOf('(function_definition "," @trailingComma .) @declaration.function', 'function_definition')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(grammar('(call_items "," @trailingComma .) @expression.call.arguments').then(resolveRoutes)).rejects.toThrow("bindings: call_items's trailingComma reads a list's trailing separator, which is a flag");
+	});
+
+	it("reads through a child list as that list's Trailing bit at the path to it, by two items where one item always spells it, and refuses as on the list itself", async () => {
+		const held = async (bindings: string) => {
+			const input = await grammar(bindings);
+			const model = new Map([...input.model, ['call_stmt', node('call_stmt', [slot('args', ['call_items', 'tuple_items', 'fixed_items'], { required: false })])]]);
+			return (resolveRoutes({ ...input, model, bindings: resolveFlags(input.bindings, FLAGGED, model) }).members.get('call_stmt') ?? []).find((m) => m.name === 'trailingComma');
+		};
+		const args = [{ owner: 'call_stmt', slot: 'args' }];
+		expect(await held('(call_stmt) @statement.call\n(call_stmt (call_items "," @trailingComma .))')).toEqual({ route: 'delimiter', name: 'trailingComma', delimiter: 2, path: args, flag: true });
+		expect(await held('(call_stmt) @statement.call\n(call_stmt (tuple_items "," @trailingComma .))')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			path: args,
+			items: { owner: 'tuple_items', slot: 'item' },
+			flag: true
+		});
+		await expect(held('(call_stmt) @statement.call\n(call_stmt (call_items ";" @trailingComma .))')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(held('(call_stmt) @statement.call\n(call_stmt (fixed_items ";" @trailingComma .))')).rejects.toThrow(/an anchored token names a list's own optional separator/);
 	});
 
 	it('refuses an anchored token the pattern does not capture', async () => {

@@ -36,7 +36,7 @@ function routeRecord(route: MemberRoute) {
 				path: route.path ?? null
 			};
 		case 'delimiter':
-			return { name: route.name, route: route.route, delimiter: route.delimiter, ...(route.items === undefined ? {} : { items: route.items }), path: null };
+			return { name: route.name, route: route.route, delimiter: route.delimiter, ...(route.items === undefined ? {} : { items: route.items }), path: route.path ?? null };
 	}
 }
 
