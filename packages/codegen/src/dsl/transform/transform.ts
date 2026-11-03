@@ -239,7 +239,7 @@ function requiresPathMode(patches: PatchSet): boolean {
 function applyPathPatches(original: RuntimeRule, patches: Record<number | string, PatchValue>): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
-	for (const [key, value] of otherEntries) {
+	for (const [key, value] of descendantsFirst(otherEntries)) {
 		if (isNarrowPlaceholder(value)) {
 			wireQueueNarrow(value, key);
 			continue;
@@ -325,6 +325,21 @@ function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly 
 		}
 		return parent;
 	});
+}
+
+function descendantsFirst<T>(entries: ReadonlyArray<readonly [string, T]>): Array<readonly [string, T]> {
+	const keyed = entries.map((entry) => ({ entry, segments: parsePath(entry[0]).map((segment) => JSON.stringify(segment)) }));
+	const encloses = (outer: (typeof keyed)[number], inner: (typeof keyed)[number]): boolean =>
+		outer.segments.length < inner.segments.length && outer.segments.every((segment, i) => segment === inner.segments[i]);
+	for (let i = 0; i < keyed.length; ) {
+		const last = keyed.findLastIndex((other, j) => j > i && encloses(keyed[i]!, other));
+		if (last < 0) {
+			i++;
+			continue;
+		}
+		keyed.splice(last, 0, ...keyed.splice(i, 1));
+	}
+	return keyed.map(({ entry }) => entry);
 }
 
 function partitionPatchesByVariant(patches: Record<number | string, PatchValue>): {
