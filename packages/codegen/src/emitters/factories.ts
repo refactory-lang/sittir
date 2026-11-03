@@ -246,7 +246,7 @@ function buildDelimitedConsts(
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof AbstractAssembledCompound) || node.delimited === undefined || node.rawFactoryName === undefined) continue;
 		const { open, close, excluded, nodeKinds } = node.delimited;
-		const constName = `_delimited_${node.rawFactoryName}`;
+		const constName = delimitedSpecName(node.rawFactoryName);
 		leafReConsts.set(delimitedKey(kind), constName);
 		const fields = [
 			`kind: ${JSON.stringify(kind)}`,
@@ -261,24 +261,39 @@ function buildDelimitedConsts(
 	}
 }
 
+export function delimitedSpecName(rawFactoryName: string): string {
+	return `_delimited_${rawFactoryName}`;
+}
+
+export function delimitedCheck(
+	node: AssembledNode,
+	slots: readonly AssembledNonterminal[],
+	spec: string,
+	subject: string,
+	valueOf: (slot: AssembledNonterminal) => string
+): string | undefined {
+	if (!(node instanceof AbstractAssembledCompound) || node.delimited === undefined) return undefined;
+	const { open, close } = node.delimited;
+	const slotOf = (end: { readonly slot?: string }): AssembledNonterminal | undefined => {
+		if (end.slot === undefined) return undefined;
+		const slot = slots.find((f) => f.name === end.slot);
+		if (slot === undefined) throw new Error(`${node.kind}: its delimiter slot '${end.slot}' is not a slot of the builder`);
+		return slot;
+	};
+	const [openSlot, closeSlot] = [slotOf(open), slotOf(close)];
+	const content = slots.filter((f) => f.storageKey !== openSlot?.storageKey && f.storageKey !== closeSlot?.storageKey).map(valueOf);
+	const [openValue, closeValue] = [openSlot === undefined ? undefined : valueOf(openSlot), closeSlot === undefined ? undefined : valueOf(closeSlot)];
+	const ends = closeValue === undefined ? (openValue === undefined ? '' : `, ${openValue}`) : `, ${openValue ?? 'undefined'}, ${closeValue}`;
+	return `checkDelimited(handle, ${subject}, ${spec}, [${content.join(', ')}]${ends})`;
+}
+
 function delimitedCheckCall(
 	node: AssembledNode,
 	slots: readonly AssembledNonterminal[],
 	leafReConsts: ReadonlyMap<string, string>
 ): string | undefined {
 	const constName = leafReConsts.get(delimitedKey(node.kind));
-	if (constName === undefined || !(node instanceof AbstractAssembledCompound) || node.delimited === undefined) return undefined;
-	const { open, close } = node.delimited;
-	const storageOf = (end: { readonly slot?: string }): string | undefined => {
-		if (end.slot === undefined) return undefined;
-		const slot = slots.find((f) => f.name === end.slot);
-		if (slot === undefined) throw new Error(`${node.kind}: its delimiter slot '${end.slot}' is not a slot of the builder`);
-		return slot.storageKey;
-	};
-	const [openKey, closeKey] = [storageOf(open), storageOf(close)];
-	const content = slots.map((f) => f.storageKey).filter((key) => key !== openKey && key !== closeKey);
-	const ends = closeKey === undefined ? (openKey === undefined ? '' : `, ${openKey}`) : `, ${openKey ?? 'undefined'}, ${closeKey}`;
-	return `checkDelimited(handle, node, ${constName}, [${content.join(', ')}]${ends})`;
+	return constName === undefined ? undefined : delimitedCheck(node, slots, constName, 'node', (f) => f.storageKey);
 }
 
 function buildLeafReConsts(

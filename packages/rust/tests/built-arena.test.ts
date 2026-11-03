@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell, wordOf } from '@sittir/common/engine';
 import { builtRecordOf, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
+import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.ts';
@@ -120,6 +121,31 @@ describe('a built arena', () => {
 		expect(arena.tree.unitSides(a)).toEqual([]);
 		expect(arena.tree.unitSides(b)).toEqual([{ slot: '_items', item: 0, leading: [4] }]);
 		expect(asked).toEqual([`trailing of ${a}`, `leading of ${b}`, `units of ${b}`]);
+	});
+
+	it('copies the sites of a record after the work waiting on it, so the copy holds the unit sides that work writes', () => {
+		const stored = new Map<number, readonly unknown[]>();
+		const arena = arenaOf({
+			...NO_SIDES,
+			unitSides: (at) => [...(stored.get(at) ?? [])],
+			writeUnitSides: (at, units) => void stored.set(at, units),
+			copySites: (from, to) => void stored.set(to, stored.get(from) ?? [])
+		});
+		const source = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
+		const units = [{ slot: '_items', item: 0, leading: [4] }];
+		arena.defer(source, () => arena.tree.writeUnitSides(source, units));
+		const copy = builtRecordOf(arena.view(arena.draft(7, 2, source)), arena)!;
+		expect(arena.tree.unitSides(copy)).toEqual(units);
+	});
+
+	it('runs the work waiting in its arena before it names one of its records as a side entry', () => {
+		const arena = arenaOf();
+		const node = arena.view(arena.draft(7, 2));
+		const at = builtRecordOf(node, arena)!;
+		const ran: number[] = [];
+		arena.defer(at, () => ran.push(at));
+		expect(sideEntryOf(node, arena, undefined)).toEqual({ $type: 7, $record: at });
+		expect(ran).toEqual([at]);
 	});
 
 	it('refuses a handle whose chunk was freed and its number given to a new chunk, and releases nothing through it', () => {

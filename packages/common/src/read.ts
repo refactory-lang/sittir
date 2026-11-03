@@ -38,8 +38,7 @@ export interface TreeHandle {
 	editedWithin?(index: number, ownSides: boolean): boolean;
 	/** Whether the node at descendant `index` is empty: no child of it has width. */
 	isEmpty?(index: number): boolean;
-	/** The siblings that hold sides beside the node at descendant `index` (`Siblings`). */
-	siblings?(index: number): Siblings;
+	siblings?(indexes: readonly number[]): readonly number[];
 	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
 	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
@@ -64,6 +63,8 @@ export interface RecordWords {
 export interface RecordReader extends RecordWords {
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
+	stub(index: number, depth?: number): readonly number[] | undefined;
+	exported(address: number): ChunkWords | undefined;
 	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through the cell, written `depth` levels down (one when absent), and the cell rewritten to name it. */
 	cell(holder: number, word: number, item: number, depth?: number): number;
 	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
@@ -76,17 +77,6 @@ export interface RecordReader extends RecordWords {
 	object(index: number, depth?: number): unknown;
 	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
 	coordinate(index: number): { readonly kind: number; readonly end: number };
-}
-
-/**
- * The siblings that hold sides beside a node in its source and in its own slot (the same field),
- * taken at the outermost node spanning exactly its bytes (a list item's wrapper holds the item's
- * neighbours): the item before it, `null` when it is its list's first, and the one after it, `null`
- * when it is the last. Each is its span and its grammar kind id.
- */
-export interface Siblings {
-	readonly previous: { readonly start: number; readonly end: number; readonly kind: number } | null;
-	readonly next: { readonly start: number; readonly end: number; readonly kind: number } | null;
 }
 
 const INDEX_RANGE = 2 ** 32;

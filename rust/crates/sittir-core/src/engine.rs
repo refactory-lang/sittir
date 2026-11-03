@@ -658,7 +658,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// item, as a render read seats them for a client that stores each unit
     /// as its bare kind (`EngineGrammar::read_units`, `ReadCtx::inline_units`).
     pub fn unit_sides(&self, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<G::Trivia>> {
-        self.grammar.read_units(&self.tree, &mut self.seating_ctx().inline_units(), index)
+        self.grammar.read_units(&self.tree, &mut self.seating_ctx().inline_units().units_only(), index)
     }
 
     /// The `ERROR` holding the node at `index`, read as the bytes its

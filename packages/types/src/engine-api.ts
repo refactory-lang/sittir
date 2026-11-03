@@ -404,6 +404,12 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
+	/**
+	 * Renders `node`, a node this engine built, parsed or edited, as source text.
+	 *
+	 * @throws When `node` was built by another engine, and when it is a built record that was released, as a commit
+	 * scope's close releases the records it did not keep.
+	 */
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
@@ -419,8 +425,41 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 * @throws When `node` was built by another engine.
 	 */
 	readonly release: (node: { readonly $type: API['kindId'] }) => void;
+	/**
+	 * Opens a commit scope, which `using` closes at the end of its block. Under record construction, each record this
+	 * engine builds or edits while the scope is the innermost one open, and each built leaf whose sides hold records,
+	 * is released when the scope closes, except the nodes its `keep` keeps. Scopes nest, and a close releases only its
+	 * own scope's nodes. Parsed trees are left alone. Under object construction a scope holds nothing, so its close
+	 * does nothing and its `keep` returns what it is given.
+	 *
+	 * @throws When the engine is disposed, and under record construction while a build is running, as inside a build
+	 * interceptor.
+	 */
+	readonly scope: () => CommitScope;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
+}
+
+/** What `engine.scope()` opens: its close releases what was built or edited while it was the innermost open scope. */
+export interface CommitScope extends Disposable {
+	/**
+	 * Keeps `node` past this scope's close and returns it. It moves to the enclosing scope, which releases it unless
+	 * that scope keeps it too; with no scope open around this one, the caller releases it (`[Symbol.dispose]`,
+	 * `engine.release`), or the engine's dispose does. A kept node holds a count of its own (a leaf, of the records its
+	 * sides hold) whether it is placed in a parent before or after the keep, so it outlives every parent it sits in. A
+	 * parsed node, a node of object construction and a leaf whose sides hold no records are returned as they are.
+	 *
+	 * @throws When the scope is closed or its engine disposed, when `node` was released, and when another engine built it.
+	 */
+	keep<N extends object>(node: N): N;
+	/**
+	 * Closes the scope, releasing what it holds. A close of a scope already closed, or after the engine is disposed,
+	 * does nothing.
+	 *
+	 * @throws When a scope opened inside this one is still open, which it leaves open with everything it holds, or
+	 * when a build is running.
+	 */
+	[Symbol.dispose](): void;
 }
 
 export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['options'] = API['options']>(

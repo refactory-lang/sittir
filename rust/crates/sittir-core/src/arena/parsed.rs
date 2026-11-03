@@ -105,6 +105,29 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
     }
 
+    /// What a view of the parsed record at `at` names it by, read without
+    /// its chunk: `[header, row, end, span start, span end, kind]`, the
+    /// record's header word, the row and byte span its side record stamps,
+    /// and that row's subtree end and kind as a read of the tree names them
+    /// (`row_coordinate`).
+    ///
+    /// # Errors
+    ///
+    /// What reading the record or its side record refuses, and a record whose
+    /// side record stamps no row.
+    pub fn record_stub(&self, at: Address) -> Result<[u32; 6], String> {
+        let (header, row) = {
+            let arena = self.tree_arena();
+            let words = at.record().and_then(|at| arena.arena().words(at, HEADER_WORDS)).map_err(|e| e.to_string())?;
+            let header = words[0];
+            let side = SideRecord::read(arena.arena(), Address(words[1])).map_err(|e| e.to_string())?;
+            (header, side.at.ok_or_else(|| format!("the parsed record at {} has no side record that stamps its row", at.0))?)
+        };
+        let coordinate = self.row_coordinate(row.index).ok_or_else(|| format!("the tree has no node {}", row.index.0))?;
+        let kind = coordinate.kind.ok_or_else(|| format!("node {} has no stamped kind", row.index.0))?;
+        Ok([header, row.index.0, coordinate.end.0, row.span.start, row.span.end, u32::from(kind.0)])
+    }
+
     fn with_reads<R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {
         let grammar = self.grammar();
         let mut arena = self.tree_arena();

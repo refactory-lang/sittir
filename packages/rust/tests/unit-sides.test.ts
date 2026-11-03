@@ -1,8 +1,12 @@
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { writeUnitSides } from '@sittir/common/utils';
 import { constructions } from './constructions.mts';
 
 const source = 'fn f() {\n    /* c */ ;\n    x();\n}\n';
 const kept = '{\n    /* c */ ;\n    x();\n}';
+const dropped = '{\n    ;\n    x();\n}';
 
 type Block = { statements(): Iterable<unknown>; readonly $with: { statements(...items: unknown[]): Block } };
 
@@ -18,4 +22,33 @@ describe.each(constructions)("a unit's sides through a rebuild (%s)", (_, rs) =>
 	it('keeps them in a rebuild of a rebuild', () => {
 		expect(rendered(rebuilt(rebuilt(parsed())))).toBe(kept);
 	});
+
+	it('takes a write over the sides a rebuild carries, before its first render', () => {
+		const block = rebuilt(parsed());
+		writeUnitSides(block, []);
+		expect(rendered(block)).toBe(dropped);
+	});
+
+	it('keeps them in a rebuild rendered after another rebuild was released unrendered', () => {
+		const block = rebuilt(parsed());
+		const other = rebuilt(parsed()) as Block & Disposable;
+		other[Symbol.dispose]();
+		expect(rendered(block)).toBe(kept);
+	});
+});
+
+describe("a rebuild's carried unit sides once its parsed source is gone", () => {
+	it("render at the rebuild's first render as object storage's do, the source tree held by the rebuild, and refuse alike once that tree is released", () => {
+		// A collection can only be forced under `--expose-gc`, so the case runs
+		// in a child process that reports both storages.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/carried-sides-release.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		const report = JSON.parse(out.trim().split('\n').at(-1) ?? '') as Record<'object' | 'record', unknown>;
+		const expected = { rendered: '{\n    /* c */ ;\n    y();\n}', held: 1, released: 'throws: tree N is not live (never parsed on this thread, or already released)' };
+		expect(report).toEqual({ object: expected, record: expected });
+	}, 60_000);
 });

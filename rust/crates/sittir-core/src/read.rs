@@ -163,6 +163,10 @@ pub struct ReadCtx<'s> {
     /// the list (`ReadCtx::inline_items`): a list kind reads its items at its
     /// own depth, so they arrive with it as read nodes.
     pub inline_items: bool,
+    /// Set on a read that keeps only the sides of a node's unit children
+    /// (`ReadCtx::units_only`): every other layout it reads is placement
+    /// only, with no side, slot or separator looked up.
+    pub units_only: bool,
     /// Whether the next node read is where a read starts (`ReadCtx::starts`).
     pub(crate) start: bool,
 }
@@ -176,6 +180,7 @@ impl std::fmt::Debug for ReadCtx<'_> {
             .field("changed", &self.changed)
             .field("inline_units", &self.inline_units)
             .field("inline_items", &self.inline_items)
+            .field("units_only", &self.units_only)
             .field("start", &self.start)
             .finish_non_exhaustive()
     }
@@ -285,7 +290,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, start: true }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -311,6 +316,14 @@ impl<'s> ReadCtx<'s> {
     #[must_use]
     pub fn inline_units(self) -> Self {
         Self { inline_units: true, ..self }
+    }
+
+    /// This context, seating the sides of unit children only
+    /// (`ReadCtx::unit_sides`): a read whose client keeps nothing of its
+    /// layouts but their `units` (`EngineGrammar::read_units`).
+    #[must_use]
+    pub fn units_only(self) -> Self {
+        Self { units_only: true, ..self }
     }
 
     /// This context, reading a list kind's items at the list's own depth, as
@@ -408,6 +421,12 @@ impl<'s> ReadCtx<'s> {
     /// start and its leading and trailing sides from the holder its hold
     /// replaced, which it restores.
     pub fn layout<T: crate::trivia::FromTriviaText + 'static>(&mut self, index: NodeIndex, at: Origin, held: bool) -> Box<NodeLayout<T>> {
+        if self.units_only {
+            if held {
+                self.release();
+            }
+            return Box::new(placed_at(at));
+        }
         let inner = self.side(index, TriviaSide::Inner);
         if held {
             self.release();
