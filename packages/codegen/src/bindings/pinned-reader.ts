@@ -193,6 +193,7 @@ function tokenText(v: Visit): string | null {
 }
 
 const isGroup = (v: Visit): boolean => v.node.$type === K.Grouping;
+const holdsNode = (v: Visit): boolean => !isGroup(v) || v.children.some(holdsNode);
 const atTop = (v: Visit, top: Visit): boolean => v === top || (isGroup(top) && v.parent === top);
 const UNCLAIMED = 'unclaimed';
 const DROPPED = 'dropped';
@@ -642,7 +643,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 	}
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
-	const roots = nodes.filter((v) => atTop(v, top) && !(v === top && isGroup(v)));
+	const roots = nodes.filter((v) => atTop(v, top) && !(v === top && isGroup(v)) && holdsNode(v));
 	const owner = roots.length === 1 && !isGroup(roots[0]!) ? roots[0] : undefined;
 	const ownerKind = owner === undefined ? null : kindOf(owner);
 	if (

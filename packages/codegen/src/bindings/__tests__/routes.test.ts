@@ -742,6 +742,13 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(grouped).toEqual(bare);
 	});
 
+	it('reads a member under its pattern when a predicate sits in a grouping of its own, as it reads the predicate ungrouped', async () => {
+		const ungrouped = (await grammar('((outer (middle (binary) @inner)) (#eq? @inner "x"))')).bindings.members;
+		expect(ungrouped).toEqual([expect.objectContaining({ route: 'nested', owner: 'outer', name: 'inner', parent: 'middle' })]);
+		for (const grouped of ['((outer (middle (binary) @inner)) ((#eq? @inner "x")))', '((outer (middle (binary) @inner)) (((#eq? @inner "x"))))'])
+			expect((await grammar(grouped)).bindings.members).toEqual(ungrouped);
+	});
+
 	it('homes no member on a sibling root when another root of the pattern is a nested grouping', async () => {
 		const members = (await grammar('((outer (middle (binary) @inner)) ((middle (binary) @second)))')).bindings.members;
 		expect(members.find((m) => isNamedMember(m) && m.name === 'second')).not.toMatchObject({ owner: 'outer' });
