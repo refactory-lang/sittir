@@ -691,6 +691,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const unmet = (route: PortableMemberStep): readonly (readonly string[])[] => (route.requires ?? []).filter((group) => !group.some(present));
 			const owner = ownerFor(arm, values, unmet, structure.$path);
 			const delimitedFlags = new Set<string>();
+			const filledFlags = new Set<string>();
 			for (const [name, all] of [...routed].sort(([, a], [, b]) => a.length - b.length)) {
 				const value = values.get(name);
 				const routes = all.filter((route) => (owner === undefined || owner.has(route)) && unmet(route).length === 0);
@@ -706,11 +707,13 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					refuseValue(structure.$path, name, value, open.map(({ candidate }) => candidate));
 				const lists = listed.filter(([, steps]) => sameRoute(steps.list!, route.steps));
 				const delimiter = lists.length === 0 ? undefined : lists.reduce((bits, [, steps]) => bits | steps.delimiter!, 0);
-				if (placeMember(frame, route, value, structure.$path, delimiter)) for (const [flag] of lists) delimitedFlags.add(flag);
+				const delimitedHere = placeMember(frame, route, value, structure.$path, delimiter);
+				if (!emptyList(value)) for (const [flag] of lists) (delimitedHere ? delimitedFlags : filledFlags).add(flag);
 			}
 			for (const [flag, { list: steps, delimiter }] of listed) {
 				if (delimitedFlags.has(flag)) continue;
 				const list = frameAt(frame, steps!);
+				if (list === undefined && filledFlags.has(flag)) throw new Error(`portable build: ${structure.$path}: ${flag} reaches ${routeText(steps!)}, which builds no list`);
 				if (list === undefined || !holdsAny(list))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is the trailing separator of the list at ${routeText(steps!)}, which holds nothing`);
 				list.delimiter = (list.delimiter ?? 0) | delimiter!;

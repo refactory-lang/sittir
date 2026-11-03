@@ -390,6 +390,10 @@ describe("the portable build of a flag that is a member's list's trailing separa
 		{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true, within: [{ builder: 'items', key: 'item' }] }] },
 		[{ key: 'arguments' }]
 	);
+	const keyed = tableOf(
+		{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, list: true, seats: [{ at: [2, 'item'], kinds: [], text: true, many: true, within: [{ key: 'item' }] }] },
+		[{ key: 'arguments' }]
+	);
 	const build = (structure: Readonly<Record<string, unknown>>, table: PortableBuildTable = framed): readonly (readonly [string, readonly unknown[]])[] => {
 		const calls: [string, unknown[]][] = [];
 		const builder = portableBuilder({
@@ -425,6 +429,10 @@ describe("the portable build of a flag that is a member's list's trailing separa
 		]);
 		expect(build({ arguments: ['a'] }, contained)[0]).toEqual(['items', ['a']]);
 		expect(() => build({ arguments: [], $flags: ['trailingComma'] }, contained)).toThrow('statement.held: trailingComma is the trailing separator of the list at arguments, which holds nothing');
+	});
+
+	it('refuses the flag where the list it reaches sits in a container its holder builds, by the path to it', () => {
+		expect(() => build({ arguments: ['a', 'b'], $flags: ['trailingComma'] }, keyed)).toThrow('statement.held: trailingComma reaches arguments, which builds no list');
 	});
 });
 
