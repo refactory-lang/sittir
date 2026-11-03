@@ -1,6 +1,6 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { Delimiter } from '@sittir/common/utils';
+import { Delimiter } from '@sittir/common/delimiter';
 import { aliasContentSlot, comparesOwnText, heldSteps, listItems, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { nodeSlotNumbers } from '../../render-module.ts';

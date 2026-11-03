@@ -17,7 +17,7 @@ import type {
 	PortableValueBuild,
 	QueryPlan
 } from '@sittir/types';
-import { Delimiter } from '@sittir/common/utils';
+import { Delimiter } from '@sittir/common/delimiter';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';

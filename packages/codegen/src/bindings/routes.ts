@@ -1,5 +1,5 @@
 import { WILDCARD, isFixedText, literalClaimOf, refineClaims, type RefinedClaim, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
-import { Delimiter } from '@sittir/common/utils';
+import { Delimiter } from '@sittir/common/delimiter';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import type { Vocabulary } from './vocabulary.ts';
