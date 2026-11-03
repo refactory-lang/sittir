@@ -142,6 +142,12 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 			const nonterminal = rule.members.some((m) => m.nonterminal === true);
 			return rule.nonterminal === nonterminal ? rule : { ...rule, nonterminal };
 		}
+		if (rule.type === CHOICE) {
+			const labels = (field: string): number => rule.members.filter((m) => m.fieldName === field).length;
+			const labelled = (m: RenderRule): boolean => m.type === SYMBOL && m.nonterminal === false && m.fieldName !== undefined && isSingle(m) && labels(m.fieldName) === 1;
+			if (!rule.members.some(labelled)) return rule;
+			return { ...rule, members: rule.members.map((m) => (labelled(m) ? { ...m, nonterminal: true } : m)) };
+		}
 		return rule;
 	};
 	const isSingle = (rule: RenderRule): boolean => rule.multiplicity === undefined || rule.multiplicity === 'single';

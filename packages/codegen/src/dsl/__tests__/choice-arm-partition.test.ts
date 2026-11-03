@@ -16,6 +16,12 @@ describe('partitionChoiceArms', () => {
 		expect(isTopologyMixed(p)).toBe(true);
 	});
 
+	it('classifies a field over one fixed token as degenerate named at the DSL stage, so a choice of labelled slots has no structure', () => {
+		const p = partitionChoiceArms(choice(field('arguments', sym('print_chevron_arguments')), field('trailing_comma', str(','))), dslArmStage);
+		expect(p.degenerateNamedArms).toHaveLength(2);
+		expect(p.structuredNamedArms).toHaveLength(0);
+	});
+
 	it('looks through precedence wrappers at the DSL stage', () => {
 		const prec = { type: 'PREC', value: 1, content: field('quantifier', sym('quantifier')) } as AnyRule;
 		const p = partitionChoiceArms(choice(prec, sym('capture')), dslArmStage);
