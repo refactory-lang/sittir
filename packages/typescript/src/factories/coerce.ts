@@ -2261,9 +2261,7 @@ const _K81: readonly string[] = [
 ];
 const _K82: readonly string[] = ['_lhs_expression'];
 
-export function resolveProgram_hashBangLine(
-	value: T.Program.LooseConfig['hashBangLine']
-): Admit<T.Program['_hash_bang_line']> {
+export function resolveProgram_shebang(value: T.Program.LooseConfig['shebang']): Admit<T.Program['_shebang']> {
 	return _resolveOneBranch<T.HashBangLine>(value, 'hash_bang_line', undefined, true);
 }
 
@@ -2282,7 +2280,7 @@ export const coerceToProgram: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildProgram>;
 	currentHandle()?.admit(TSKindId.Program, [input]);
 	return F.buildProgram({
-		hashBangLine: resolveProgram_hashBangLine(input?.hashBangLine),
+		shebang: resolveProgram_shebang(input?.shebang),
 		statements: resolveProgram_statements(input?.statements)
 	});
 });
@@ -5197,9 +5195,9 @@ export const coerceToSatisfiesExpression: ConfigSeat<
 	});
 };
 
-export function resolveInstantiationExpression_expression(
-	value: T.InstantiationExpression.LooseConfig['expression']
-): Admit<T.InstantiationExpression['_expression']> {
+export function resolveInstantiationExpression_function(
+	value: T.InstantiationExpression.LooseConfig['function']
+): Admit<T.InstantiationExpression['_function']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K6, _K14)),
 		[]
@@ -5220,7 +5218,7 @@ export const coerceToInstantiationExpression: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildInstantiationExpression>;
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [input]);
 	return F.buildInstantiationExpression({
-		expression: resolveInstantiationExpression_expression(input.expression),
+		function: resolveInstantiationExpression_function(input.function),
 		typeArguments: resolveInstantiationExpression_typeArguments(input.typeArguments)
 	});
 };

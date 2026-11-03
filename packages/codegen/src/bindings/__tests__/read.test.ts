@@ -500,7 +500,7 @@ describe('bindingPatterns', () => {
 
 describe('a directive the bindings do not read', () => {
 	it('refuses it by name', async () => {
-		await expect(readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))')).rejects.toThrow(/#set! default is not a bindings directive; the bindings read reason and value/);
+		await expect(readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))')).rejects.toThrow(/#set! default is not a bindings directive; the bindings read claim, reason and value/);
 	});
 });
 

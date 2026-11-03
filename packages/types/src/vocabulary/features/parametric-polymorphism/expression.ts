@@ -24,10 +24,7 @@ export namespace Expression {
 	export interface Instantiation<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by rt
 		readonly $kind: 'expression.instantiation';
-		readonly expression?: G['slots']['expression.instantiation']['expression'];
-		// t only
-		readonly function?: G['slots']['expression.instantiation']['function'];
-		// r only
+		readonly function: G['slots']['expression.instantiation']['function'];
 		readonly typeArguments: G['slots']['expression.instantiation']['typeArguments'][];
 	}
 }

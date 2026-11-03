@@ -4,11 +4,21 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Function<G extends GrammarContext<G>> {
 		readonly receiver?: V.Declaration.Parameter.Receiver<G>;
-		// t only
+		// rt only
+	}
+	export namespace Function {
+		export interface Signature<G extends GrammarContext<G>> {
+			readonly receiver?: V.Declaration.Parameter.Receiver<G>;
+		}
 	}
 	export interface Method<G extends GrammarContext<G>> {
 		readonly receiver?: V.Declaration.Parameter.Receiver<G>;
 		// rt only
+	}
+	export namespace Method {
+		export interface Signature<G extends GrammarContext<G>> {
+			readonly receiver?: V.Declaration.Parameter.Receiver<G>;
+		}
 	}
 	export namespace Parameter {
 		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Parameter<G>> {

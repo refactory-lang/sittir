@@ -68,15 +68,15 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 	const node = {
 		...data,
 		$type: TSKindId.Program as const,
-		hashBangLine() {
-			return hydrateSlot<T.HashBangLine | undefined>(this, '_hash_bang_line', tree);
+		shebang() {
+			return hydrateSlot<T.HashBangLine | undefined>(this, '_shebang', tree);
 		},
 		statements() {
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: {
-			hashBangLine: (v: NonNullable<T.Program['_hash_bang_line']>) =>
-				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _hash_bang_line: v }, tree)),
+			shebang: (v: NonNullable<T.Program['_shebang']>) =>
+				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _shebang: v }, tree)),
 			statements: (...v: NonNullable<T.Program['_statements']>[number][]) =>
 				rebuilt(node, handle, () => wrapProgram({ ...$edited(data), _statements: restItems('statements', v) }, tree))
 		},
@@ -3077,15 +3077,15 @@ export function wrapInstantiationExpression(
 	const node = {
 		...data,
 		$type: TSKindId.InstantiationExpression as const,
-		expression() {
-			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		function() {
+			return hydrateSlot<T.Expression>(this, '_function', tree);
 		},
 		typeArguments() {
 			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 		},
 		$with: {
-			expression: (v: NonNullable<T.InstantiationExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapInstantiationExpression({ ...$edited(data), _expression: v }, tree)),
+			function: (v: NonNullable<T.InstantiationExpression['_function']>) =>
+				rebuilt(node, handle, () => wrapInstantiationExpression({ ...$edited(data), _function: v }, tree)),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(

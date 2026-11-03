@@ -12,7 +12,7 @@ export namespace Declaration {
 	export interface Interface<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by t
 		readonly $kind: 'declaration.interface';
-		readonly body: G['slots']['declaration.interface']['body'] | G['slots']['declaration.interface']['body'][];
+		readonly body: G['slots']['declaration.interface']['body'][];
 		// rt only
 		readonly extends?: (G['slots']['clause.extends.type']['types'] | G['slots']['clause.bounds']['bounds'])[];
 		// rt only

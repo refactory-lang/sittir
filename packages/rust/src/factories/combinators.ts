@@ -514,6 +514,18 @@ export const parametersElements$items = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 
+export const arrayExpressionListElements$items = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+
 export const arrayExpressionList$elements = <
 	PF extends (config: never) => unknown,
 	CF extends (...args: never[]) => unknown

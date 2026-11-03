@@ -37,7 +37,7 @@ beforeAll(async () => {
 	({ nodeMap, generatedIdTables: rustIdTables } = await assembleGrammar('rust'));
 	({ nodeMap: typescriptNodeMap } = await assembleGrammar('typescript'));
 	({ nodeMap: pythonNodeMap } = await assembleGrammar('python'));
-});
+}, 120_000);
 
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
 	expect(fromForwardsToChildFactory(node, nodeMap)).toBe(true);

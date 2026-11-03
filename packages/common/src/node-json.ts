@@ -148,7 +148,7 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 			const at = `${path}.${accessor}`;
 			const slot = storageKeys.get(accessor)!;
 			const value = Array.isArray(member)
-				? member.map((item, index) => (item === null ? undefined : reviveItem(item, `${at}[${index}]`, hooks, slot, index, units)))
+				? member.map((item, index) => (item === null ? null : reviveItem(item, `${at}[${index}]`, hooks, slot, index, units)))
 				: reviveItem(member, at, hooks, slot, 0, units);
 			if (optionNames.has(accessor)) options[accessor] = value;
 			else slots[accessor] = value;

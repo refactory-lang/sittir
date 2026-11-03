@@ -15,11 +15,11 @@ describe('the $with setter of an elidable list slot', () => {
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it('takes a hole where the reader returns one', () => {
-		expect(types).toContain('readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;');
+		expect(types).toContain('readonly elements: SlotHint<((T.Expression | T.SpreadElement) | null)[], false, true>;');
 	});
 
-	it('leaves a list whose positions cannot be blank without undefined', () => {
+	it('leaves a list whose positions cannot be blank without a hole', () => {
 		expect(types).toContain('readonly statements: SlotHint<T.Statement[], false, true>;');
-		expect(types).not.toMatch(/readonly \w+: SlotHint<T\.Statement[^;]*undefined/);
+		expect(types).not.toMatch(/readonly \w+: SlotHint<T\.Statement[^;]*(?:undefined|null)/);
 	});
 });

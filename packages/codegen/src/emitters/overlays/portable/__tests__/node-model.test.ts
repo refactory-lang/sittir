@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, readBindings, resolveRoutes, slotModelOf } from '../../../../bindings/index.ts';
 import { emitPortableNodeModel } from '../node-model.ts';
+import { EMPTY_VOCABULARY } from '../../../../__tests__/helpers/vocabulary.ts';
 
 const input = async (scm: string): Promise<GrammarInput> => ({
 	grammar: 'g',
@@ -19,7 +20,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 		]
 	}),
 	textTokens: new Set(),
-	layoutSlots: []
+	layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 });
 
 describe('emitPortableNodeModel', () => {

@@ -36,10 +36,8 @@ export namespace Statement {
 		readonly $kind: 'statement.delete';
 		readonly expressions: G['slots']['statement.delete']['expressions'];
 	}
-	export interface Empty<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
-		// claimed by prt
-		readonly $kind: 'statement.empty';
-	}
+	// claimed by prt
+	export type Empty<G extends GrammarContext<G>> = G['texts']['statement.empty'];
 	export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.expression';

@@ -79,6 +79,24 @@
 			"field": "abstract_type_after"
 		}
 	],
+	"argument": [
+		{
+			"kind": "seam",
+			"field": "argument_before"
+		},
+		{
+			"kind": "slot",
+			"name": "attribute_item"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "argument_after"
+		}
+	],
 	"arguments": [
 		{
 			"kind": "seam",
@@ -175,6 +193,20 @@
 		{
 			"kind": "seam",
 			"field": "array_expression_list_after"
+		}
+	],
+	"array_expression_list_elements": [
+		{
+			"kind": "seam",
+			"field": "array_expression_list_elements_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "array_expression_list_elements_after"
 		}
 	],
 	"array_expression_semi": [

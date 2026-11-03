@@ -3,14 +3,15 @@ import { existsSync, readFileSync } from 'node:fs';
 import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
+import { groupLiftNames } from '../dsl/rule-metadata.ts';
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
-import { projectLeadFacts } from './lead-facts.ts';
+import { expandHeldMembers, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
-import { canonicalFacts, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
+import { canonicalFacts, compositionOf, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
 export interface NodeModelValue {
 	readonly kind?: string;
@@ -49,6 +50,7 @@ export interface NodeModelNode {
 	readonly variantOf?: string;
 	readonly splitFrom?: string;
 	readonly aliasStorage?: string;
+	readonly interiorPart?: string;
 	readonly shownAs?: readonly string[];
 }
 
@@ -102,6 +104,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			variantOf: n.variantOf ?? null,
 			splitFrom: n.splitFrom ?? null,
 			aliasStorage: n.aliasStorage ?? null,
+			interiorPart: n.interiorPart ?? null,
 			shownAs: n.shownAs ?? []
 		});
 	}
@@ -148,14 +151,14 @@ export async function grammarInput(
 			effects.filter((effect) => effect.kind === 'segment'),
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
 		),
-		boundNameAt(nameOf, aliases)
+		boundNameAt(nameOf, aliases, groupLiftNames(raw.rules ?? {}))
 	);
-	const known = vocabulary ?? (await readVocabulary(VOCABULARY_DIR));
+	const known = (vocabulary ?? (await readVocabulary(VOCABULARY_DIR))).composedAs(compositionOf(grammar));
 	return {
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(facts, leadEffectsOf(effects)),
+				projectLeadFacts(expandHeldMembers(facts, model), leadEffectsOf(effects), model),
 				known,
 				model
 			),
@@ -164,6 +167,7 @@ export async function grammarInput(
 		),
 		model,
 		textTokens: new Set(raw.textTokens ?? []),
-		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys()))
+		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys())),
+		vocabulary: known
 	};
 }

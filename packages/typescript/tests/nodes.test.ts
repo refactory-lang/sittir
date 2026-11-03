@@ -1000,7 +1000,7 @@ describe('yield_expression sub-factories', () => {
 	});
 	it('delegate.instantiation builds the parent', () => {
 		const node = ir.yieldExpression.delegate.instantiation({
-			expression: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
+			function: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
 			typeArguments: stampBuilt({
 				$type: TSKindId.TypeArguments,
 				$text: 'test',
@@ -2331,7 +2331,7 @@ describe('satisfies_expression', () => {
 describe('instantiation_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.instantiationExpression({
-			expression: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
+			function: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
 			typeArguments: stampBuilt({
 				$type: TSKindId.TypeArguments,
 				$text: 'test',
@@ -2349,7 +2349,7 @@ describe('instantiation_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.instantiationExpression({
-			expression: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
+			function: stampBuilt({ $type: TSKindId.Undefined, $text: 'undefined', $named: true }) as any,
 			typeArguments: stampBuilt({
 				$type: TSKindId.TypeArguments,
 				$text: 'test',

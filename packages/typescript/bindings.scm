@@ -4,6 +4,7 @@
 
 ; ── file ───────────────────────────────────────────────────────────────────────
 (program) @file
+(program hash_bang_line: (_) @shebang)
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
@@ -18,7 +19,7 @@
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
+(interface_declaration (extends_type_clause type: (_) @extends)? body: (interface_body opening: "{" (object_type_content (_) @body)? closing: "}")) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body_element_name name: (_) @name) @declaration.enum_member
@@ -338,6 +339,7 @@
 (arrow_function (arrow_function_parameter parameter: (_) @parameters))
 (arrow_function (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?)))
 (arrow_function (call_signature type_parameters: (_) @typeParameters))
+(arrow_function (call_signature return_type: (_) @returnType))
 (function_expression) @expression.function
 (generator_function) @expression.function
 (generator_function "*" @generator)
@@ -357,6 +359,7 @@
 (type_assertion) @expression.cast.assertion.angle_bracket
 (type_assertion (type_arguments (_) @type))
 (instantiation_expression) @expression.instantiation
+(instantiation_expression expression: (_) @function)
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class
@@ -378,6 +381,7 @@
 (assignment_pattern) @pattern.assignment
 
 ; ── type ───────────────────────────────────────────────────────────────────────
+(this_type) @type.receiver
 (predefined_type) @type.primitive
 ((predefined_type) @type.primitive.unchecked (#eq? @type.primitive.unchecked "any"))
 ((predefined_type) @type.primitive.floating.float64 (#eq? @type.primitive.floating.float64 "number"))
@@ -403,6 +407,15 @@
 (conditional_type) @type.conditional
 (infer_type) @type.infer
 (type_query) @type.query
+((type_query_call_expression_in_type_annotation function: (import) arguments: (arguments . (string) .)) @type.import)
+(type_query_call_expression_in_type_annotation arguments: (arguments . (_) @source .))
+((type_query_call_expression function: (import) arguments: (arguments . (string) .)) @type.import)
+(type_query_call_expression arguments: (arguments . (_) @source .))
+(type_query_member_expression ".") @identifier.qualified
+(type_query_member_expression object: (_) @qualifier property: (_) @name)
+(type_query_instantiation_expression function: [(identifier) (type_query_member_expression) (type_query_subscript_expression)]) @expression.instantiation
+(type_query_member_expression_in_type_annotation) @identifier.qualified
+(type_query_member_expression_in_type_annotation object: (_) @qualifier property: (_) @name)
 (type_predicate) @type.predicate
 (readonly_type) @type.readonly
 (optional_type) @type.optional
@@ -453,6 +466,7 @@
 (nested_type_identifier module: (_) @qualifier)
 (statement_identifier) @identifier.label
 (this) @identifier.this
+"default" @identifier
 (super) @identifier.super
 
 
@@ -485,4 +499,3 @@
 ["," ";" ":" "." "?." "=>"] @punctuation.delimiter
 
 ; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
-((hash_bang_line) @unclaimed (#set! reason "interpreter line, not a statement"))

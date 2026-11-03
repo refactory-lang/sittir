@@ -4,7 +4,7 @@ import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
 import { nodeText, spanOf } from '../node-data.ts';
-import { portablePathHasFacts } from './facts.ts';
+import { portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -21,9 +21,6 @@ export type PortableClassifier = <T extends Node>(value: T | number) => string |
 /** Whether a value is an object with a numeric kind id, the shape a classifier reads. */
 export const hasKind = (value: unknown): value is Node =>
 	typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
-
-const unplaced = (entry: PortableReadEntry): boolean =>
-	entry.within.length === 0 && entry.test.every((condition) => condition.up === 0);
 
 const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 	switch (plan.op) {
@@ -47,6 +44,9 @@ const decidesKindId = (entry: PortableReadEntry): boolean =>
 
 interface RowsReader {
 	readonly classify: PortableClassifier;
+	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
+	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
+	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
 	readonly builtReadsAs: (path: string, node: Node) => boolean;
 	readonly textOf: (value: unknown) => string | undefined;
@@ -90,6 +90,18 @@ export function classifierOf(rows: PortableRows): PortableClassifier {
  */
 export function flagHolds(rows: PortableRows, value: Node | number, flag: string): boolean {
 	return readerOf(rows).flagHolds(value, flag);
+}
+
+export function slotsOf(rows: PortableRows, node: Node): readonly (readonly [accessor: string, items: readonly unknown[]])[] {
+	return readerOf(rows).slotsOf(node);
+}
+
+export function readSlots(rows: PortableRows, node: Node, path: string, flags: readonly string[]): ReadonlySet<string> {
+	return readerOf(rows).readSlots(node, path, flags);
+}
+
+export function otherTested(rows: PortableRows, node: Node, path: string): ReadonlySet<string> {
+	return readerOf(rows).otherTested(node, path);
 }
 
 export function builtReadsAs(rows: PortableRows, path: string, node: Node): boolean {
@@ -159,9 +171,9 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		return holds(condition.plan, subjectsOf(reached));
 	};
 	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
-		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), entries.filter(keep)]));
-	const nodeEntries = entriesWhere(unplaced);
-	const kindIdEntries = entriesWhere((entry) => unplaced(entry) && decidesKindId(entry));
+		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), readableEntries(entries).filter(keep)]));
+	const nodeEntries = entriesWhere(() => true);
+	const kindIdEntries = entriesWhere(decidesKindId);
 	const classify: PortableClassifier = (value) => {
 		const holding = ((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? []).filter((entry) =>
 			entry.test.every((condition) => conditionHolds(condition, value))
@@ -172,10 +184,51 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const plan = flags[typeof value === 'number' ? value : value.$type]?.[flag];
 		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
 	};
+	const slotsOf = (node: Node): readonly (readonly [string, readonly unknown[]])[] =>
+		(querySlots[node.$type] ?? []).map(([accessor]) => [accessor, slotItems(node, accessor)] as const);
+	const numbersIn = (value: unknown, kind: number, into: Set<number>): void => {
+		if (Array.isArray(value)) for (const item of value) numbersIn(item, kind, into);
+		else if (typeof value === 'object' && value !== null)
+			for (const [key, held] of Object.entries(value)) {
+				if (key === 'slots' && typeof held === 'object' && held !== null) {
+					const number = (held as Readonly<Record<number, number>>)[kind];
+					if (number !== undefined) into.add(number);
+				} else numbersIn(held, kind, into);
+			}
+	};
+	const readSlots = (node: Node, path: string, flagNames: readonly string[]): ReadonlySet<string> => {
+		const kind = node.$type;
+		const numbers = new Set<number>();
+		for (const entry of table.entries[kind] ?? []) if (entry.path === path) numbersIn(entry.test, kind, numbers);
+		for (const flag of flagNames) numbersIn(flags[kind]?.[flag], kind, numbers);
+		return new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : [])));
+	};
+	const NONE: ReadonlySet<string> = new Set();
+	const tested = new Map<number, ReadonlyMap<string, ReadonlySet<string>>>();
+	const testedBy = (kind: number): ReadonlyMap<string, ReadonlySet<string>> => {
+		const known = tested.get(kind);
+		if (known !== undefined) return known;
+		const entries = table.entries[kind] ?? [];
+		const paths = [...new Set(entries.map((entry) => entry.path))];
+		const slotsAt = (path: string): Set<number> => {
+			const numbers = new Set<number>();
+			for (const entry of entries) if (entry.path === path) numbersIn(entry.test, kind, numbers);
+			return numbers;
+		};
+		const own = new Map(paths.map((path) => [path, slotsAt(path)] as const));
+		const others = new Map<string, ReadonlySet<string>>();
+		for (const path of paths) {
+			const numbers = new Set(paths.flatMap((other) => (other === path ? [] : [...own.get(other)!].filter((number) => !own.get(path)!.has(number)))));
+			if (numbers.size > 0) others.set(path, new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : []))));
+		}
+		tested.set(kind, others);
+		return others;
+	};
+	const otherTested = (node: Node, path: string): ReadonlySet<string> => testedBy(node.$type).get(path) ?? NONE;
 	const builtReadsAs = (path: string, node: Node): boolean => {
 		const entries = (table.entries[node.$type] ?? []).filter((entry) => portablePathHasFacts(path, entry.path));
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
 	};
-	return { classify, flagHolds, builtReadsAs, textOf };
+	return { classify, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
 }

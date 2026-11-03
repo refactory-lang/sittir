@@ -77,7 +77,7 @@ describe('generate — new pipeline end-to-end', () => {
 			expect(result.types.length).toBeGreaterThan(0);
 			expect(result.types).toContain('export type TokenKeywords = TSKindId.');
 			expect(result.types).toContain('export interface BinaryExpression {');
-			expect(result.types).toContain('readonly _operator: number;');
+			expect(result.types).toContain('readonly _operator: TSKindId.AmpAmp | TSKindId.PipePipe | TSKindId.Amp | TSKindId.Pipe | TSKindId.Caret | TSKindId.EqEq | TSKindId.BangEq | TSKindId.Lt | TSKindId.LtEq | TSKindId.Gt | TSKindId.GtEq | TSKindId.LtLt | TSKindId.GtGt | TSKindId.Plus | TSKindId.Dash | TSKindId.Star | TSKindId.Slash | TSKindId.Percent;');
 			expect(result.types).toContain(
 				'readonly operator: KindEnum<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%",'
 			);

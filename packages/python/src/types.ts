@@ -3376,7 +3376,7 @@ export interface ComplexPattern {
 	readonly $type: TSKindId.ComplexPattern;
 	readonly _sign: boolean;
 	readonly _real: Integer | Float;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Plus | TSKindId.Dash;
 	readonly _imaginary: Integer | Float;
 	readonly __slotNames__?: {
 		readonly _sign: 'sign';
@@ -3396,7 +3396,7 @@ export interface ComplexPattern {
 	};
 	readonly sign: () => boolean;
 	readonly real: () => Integer | Float;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Plus | TSKindId.Dash;
 	readonly imaginary: () => Integer | Float;
 }
 
@@ -3583,7 +3583,7 @@ export interface NotOperator {
 export interface BooleanOperator {
 	readonly $type: TSKindId.BooleanOperator;
 	readonly _left: Expression;
-	readonly _operator: number;
+	readonly _operator: TSKindId.AndKeyword | TSKindId.OrKeyword;
 	readonly _right: Expression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -3605,14 +3605,27 @@ export interface BooleanOperator {
 		readonly right: SlotHint<NonNullable<T.BooleanOperator.Config>['right']>;
 	};
 	readonly left: () => Expression;
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.AndKeyword | TSKindId.OrKeyword;
 	readonly right: () => Expression;
 }
 
 export interface BinaryOperator {
 	readonly $type: TSKindId.BinaryOperator;
 	readonly _left: PrimaryExpression;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.At
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.SlashSlash
+		| TSKindId.StarStar
+		| TSKindId.Pipe
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.LtLt
+		| TSKindId.GtGt;
 	readonly _right: PrimaryExpression;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -3649,13 +3662,26 @@ export interface BinaryOperator {
 		readonly right: SlotHint<NonNullable<T.BinaryOperator.Config>['right']>;
 	};
 	readonly left: () => PrimaryExpression;
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.At
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.SlashSlash
+		| TSKindId.StarStar
+		| TSKindId.Pipe
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.LtLt
+		| TSKindId.GtGt;
 	readonly right: () => PrimaryExpression;
 }
 
 export interface UnaryOperator {
 	readonly $type: TSKindId.UnaryOperator;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde;
 	readonly _argument: PrimaryExpression;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -3671,7 +3697,7 @@ export interface UnaryOperator {
 		readonly operator: SlotHint<NonNullable<T.UnaryOperator.Config>['operator']>;
 		readonly argument: SlotHint<NonNullable<T.UnaryOperator.Config>['argument']>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde;
 	readonly argument: () => PrimaryExpression;
 }
 
@@ -3759,7 +3785,20 @@ export interface LambdaWithinForInClause {
 export interface AugmentedAssignment {
 	readonly $type: TSKindId.AugmentedAssignment;
 	readonly _left: Pattern | PatternList;
-	readonly _operator: number;
+	readonly _operator:
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.AtEq
+		| TSKindId.SlashSlashEq
+		| TSKindId.PercentEq
+		| TSKindId.StarStarEq
+		| TSKindId.GtGtEq
+		| TSKindId.LtLtEq
+		| TSKindId.AmpEq
+		| TSKindId.CaretEq
+		| TSKindId.PipeEq;
 	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 	readonly __slotNames__?: {
 		readonly _left: 'left';
@@ -3798,7 +3837,20 @@ export interface AugmentedAssignment {
 		readonly right: SlotHint<NonNullable<T.AugmentedAssignment.Config>['right']>;
 	};
 	readonly left: () => Pattern | PatternList;
-	readonly operator: () => number;
+	readonly operator: () =>
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.AtEq
+		| TSKindId.SlashSlashEq
+		| TSKindId.PercentEq
+		| TSKindId.StarStarEq
+		| TSKindId.GtGtEq
+		| TSKindId.LtLtEq
+		| TSKindId.AmpEq
+		| TSKindId.CaretEq
+		| TSKindId.PipeEq;
 	readonly right: () => Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 }
 
@@ -3981,7 +4033,7 @@ export interface Type {
 
 export interface SplatType {
 	readonly $type: TSKindId.SplatType;
-	readonly _operator: number;
+	readonly _operator: TSKindId.Star | TSKindId.StarStar;
 	readonly _type: Identifier;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
@@ -3994,7 +4046,7 @@ export interface SplatType {
 		readonly operator: SlotHint<NonNullable<T.SplatType.Config>['operator']>;
 		readonly type: SlotHint<T.Identifier>;
 	};
-	readonly operator: () => number;
+	readonly operator: () => TSKindId.Star | TSKindId.StarStar;
 	readonly type: () => Identifier;
 }
 
@@ -4353,7 +4405,7 @@ export interface ForInClause {
 	readonly _async: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
-	readonly _trailing_comma?: number;
+	readonly _trailing_comma?: TSKindId.Comma | 0;
 	readonly __slotNames__?: {
 		readonly _async: 'async';
 		readonly _left: 'left';
@@ -5382,7 +5434,7 @@ export interface MatchBlockBlock {
 
 export interface MatchBlockEmpty {
 	readonly $type: TSKindId.MatchBlockEmpty;
-	readonly _newline: number;
+	readonly _newline: TSKindId.Newline;
 	readonly __slotNames__?: {
 		readonly _newline: 'newline';
 	};
@@ -5392,7 +5444,7 @@ export interface MatchBlockEmpty {
 	readonly __slotHints__?: {
 		readonly newline: SlotHint<NonNullable<TSKindId.Newline>>;
 	};
-	readonly newline: () => number;
+	readonly newline: () => TSKindId.Newline;
 }
 
 export interface SuiteInline {
@@ -5431,7 +5483,7 @@ export interface SuiteBlock {
 
 export interface SuiteEmpty {
 	readonly $type: TSKindId.SuiteEmpty;
-	readonly _newline: number;
+	readonly _newline: TSKindId.Newline;
 	readonly __slotNames__?: {
 		readonly _newline: 'newline';
 	};
@@ -5441,12 +5493,23 @@ export interface SuiteEmpty {
 	readonly __slotHints__?: {
 		readonly newline: SlotHint<NonNullable<TSKindId.Newline>>;
 	};
-	readonly newline: () => number;
+	readonly newline: () => TSKindId.Newline;
 }
 
 export interface ComparisonOperatorComparator {
 	readonly $type: TSKindId.ComparisonOperatorComparator;
-	readonly _operators: number;
+	readonly _operators:
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.LtGt
+		| TSKindId.InKeyword
+		| TSKindId.NotIn
+		| TSKindId.IsKeyword
+		| TSKindId.IsNot;
 	readonly _primary_expression: PrimaryExpression;
 	readonly __slotNames__?: {
 		readonly _operators: 'operators';
@@ -5475,7 +5538,18 @@ export interface ComparisonOperatorComparator {
 		readonly operators: SlotHint<NonNullable<T.ComparisonOperatorComparator.Config>['operators']>;
 		readonly primaryExpression: SlotHint<NonNullable<T.ComparisonOperatorComparator.Config>['primaryExpression']>;
 	};
-	readonly operators: () => number;
+	readonly operators: () =>
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.LtGt
+		| TSKindId.InKeyword
+		| TSKindId.NotIn
+		| TSKindId.IsKeyword
+		| TSKindId.IsNot;
 	readonly primaryExpression: () => PrimaryExpression;
 }
 

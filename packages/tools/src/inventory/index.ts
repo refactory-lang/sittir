@@ -99,7 +99,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		base,
 		wordMatcher: unbound.nodeMap.wordMatcher,
 			layerRules: layer.rules,
-		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
+		vocabMembers: vocabularyMembers(input.vocabulary),
 		routes: resolveRoutes(input),
 		model: input.model
 	});

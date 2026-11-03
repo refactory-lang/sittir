@@ -144,9 +144,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const nodeModel = printNodeModel(nodeModelData);
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
-		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, vocabulary);
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
 		const portableDiagnostics = (portable?.pickDiagnostics ?? []).map(
-			({ code, path, kinds, holder, slot, arms }): GrammarDiagnostic => ({
+			({ code, path, kinds, holder, slot, arms, members }): GrammarDiagnostic => ({
 				scope: 'grammar',
 				grammar: cfg.grammar,
 				code,
@@ -159,7 +159,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 						? `${path}: ${kinds[0]}'s required form slots make ${arms} sibling arms`
 						: code === 'portable-value-undecided'
 							? `${path}: a ${slot} value builds as any of ${kinds.join(', ')}, and the grammar declares no default arm among them`
-							: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
+							: code === 'portable-owner-undecided'
+								? `${path}: ${kinds[0]} takes ${(members ?? []).join(', ')} through two forms with the same members and kinds; nothing in the input tells them apart`
+								: code === 'portable-token-ambiguous'
+									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${(members ?? [])[0]}", so the text alone does not pick one`
+								: code === 'portable-claim-unplaced'
+									? `${path}: the claim on ${kinds[0]} names no kind the grammar's model has, so nothing reads as ${path} through it`
+								: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);
 

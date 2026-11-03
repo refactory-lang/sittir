@@ -26,6 +26,7 @@ import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectKindEntries } from './kind-discriminant.ts';
 import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
+import { interiorOf } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -86,6 +87,7 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	modelType: 'branch' | 'envelope' | 'polymorph' | 'alias';
 	slots: SerializedSlot[];
 	fullForm?: FullForm;
+	interiorPart?: string;
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -316,6 +318,8 @@ function serializeCompoundNode(
 		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires, factorySlots))
 	};
 	if (node.fullForm !== undefined) out.fullForm = node.fullForm;
+	const parts = interiorOf(node)?.slots ?? [];
+	if (parts.length === 1 && parts[0]!.flag !== true) out.interiorPart = parts[0]!.name;
 	return out;
 }
 
