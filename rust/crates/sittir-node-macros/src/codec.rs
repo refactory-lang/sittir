@@ -266,8 +266,6 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let owner = ident.to_string();
     let codec = quote!(::sittir_core::codec);
     let begun = quote!(::sittir_core::codec::Begun);
-    let names: Vec<&Ident> = fields.iter().map(|field| field.ident).collect();
-    let tys: Vec<&Type> = fields.iter().map(|field| field.ty).collect();
     let kind = kind_entry(fields);
     let offset = usize::from(kind.is_some());
     let entry_count = usize_lit(fields.len() + offset);
@@ -276,39 +274,75 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let (mut reads, mut resumes, mut refusals) = (Vec::new(), Vec::new(), Vec::new());
     let (mut writes, mut rewrites, mut parts) = (Vec::new(), Vec::new(), Vec::new());
     let (mut decode_releases, mut encode_releases) = (Vec::new(), Vec::new());
+    let (mut decode_drops, mut encode_drops) = (Vec::new(), Vec::new());
     for (index, field) in fields.iter().enumerate() {
         let (name, ty) = (field.ident, field.ty);
         let (at, slot) = (usize_lit(index), usize_lit(index + offset));
         let key = c_key(field.key)?;
+        // SAFETY: a decoding frame writes its node's fields once each, in declaration order, and
+        // `written` counts those written, so this one is still uninitialized.
+        let write = |value: TokenStream| quote!(unsafe { ::core::ptr::addr_of_mut!((*frame.node.as_mut_ptr()).#name).write(#value) });
+        // SAFETY: an encoding frame reads its node's fields once each, in declaration order, and
+        // sets `read` past this one before anything can fail, so its release never drops it again.
+        let take = quote!(unsafe { ::core::ptr::read(&frame.node.#name) });
+        // SAFETY: a field below `written` was written, and only this release moves it out.
+        let written_field = quote!(unsafe { ::core::ptr::read(::core::ptr::addr_of!((*self.node.as_ptr()).#name)) });
+        // SAFETY: a field at or past `read` was never read, so it is still the frame's to drop.
+        let unread_field = quote!(unsafe { ::core::ptr::read(&self.node.#name) });
         if !field.holds_nodes() {
             let read = field_read(&owner, field)?;
-            reads.push(quote!(#at => frame.#name = ::core::option::Option::Some(#read),));
+            let stored = write(quote!(value));
+            reads.push(quote!(#at => {
+                let value = #read;
+                #stored;
+                frame.written = #at + 1;
+            }));
             let entry = field_entry(field, &quote!(value))?;
             writes.push(quote!(#at => {
-                let value = frame.#name.take().expect("a frame writes each field once");
+                let value = #take;
+                frame.read = #at + 1;
                 frame.entries[#slot] = #entry;
+            }));
+            decode_drops.push(quote!(if #at < self.written {
+                ::core::mem::drop(#written_field);
+            }));
+            encode_drops.push(quote!(if self.read <= #at {
+                ::core::mem::drop(#unread_field);
             }));
             continue;
         }
         parts.push(quote!(#codec::Dismantle::<#w>::dismantle(self.#name, out);));
+        decode_drops.push(quote!(if #at < self.written {
+            #codec::Dismantle::<#w>::dismantle(#written_field, out);
+        }));
+        encode_drops.push(quote!(if self.read <= #at {
+            #codec::Dismantle::<#w>::dismantle(#unread_field, out);
+        }));
         let optional = is_option(ty);
         let inner = if optional { crate::expand::inner_of(ty, "Option").unwrap_or(ty) } else { ty };
         decode_waits.push(quote!(#name(<#inner as #codec::Codec<#w>>::DecodeWait)));
         decode_releases.push(quote!(__DecodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
         refusals.push(quote!(__DecodeWait::#name(_) => ::sittir_core::boundary::field_refusal(err, #owner, #key),));
-        let store = if optional { quote!(::core::option::Option::Some(::core::option::Option::Some(value))) } else { quote!(::core::option::Option::Some(value)) };
+        let stored = write(if optional { quote!(::core::option::Option::Some(value)) } else { quote!(value) });
         let read_on = quote! {
             match __begun.map_err(|err| ::sittir_core::boundary::field_refusal(err, #owner, #key))? {
-                #begun::Whole(value) => frame.#name = #store,
+                #begun::Whole(value) => {
+                    #stored;
+                    frame.written = #at + 1;
+                }
                 #begun::Waits(wait) => {
                     frame.wait = __DecodeWait::#name(wait);
                     return ::core::result::Result::Ok(#begun::Waits(()));
                 }
             }
         };
+        let absent = write(quote!(::core::option::Option::None));
         let read = if optional {
             quote!(#at => match unsafe { ::sittir_core::boundary::optional_raw(env, obj, #key)? } {
-                ::core::option::Option::None => frame.#name = ::core::option::Option::Some(::core::option::Option::None),
+                ::core::option::Option::None => {
+                    #absent;
+                    frame.written = #at + 1;
+                }
                 ::core::option::Option::Some(raw) => {
                     let __begun = unsafe { <#inner as #codec::Codec<#w>>::decode(env, raw, above) };
                     #read_on
@@ -343,13 +377,18 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             }
         };
         writes.push(if optional {
-            quote!(#at => if let ::core::option::Option::Some(value) = frame.#name.take().expect("a frame writes each field once") {
-                let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
-                #write_on
-            },)
+            quote!(#at => {
+                let value = #take;
+                frame.read = #at + 1;
+                if let ::core::option::Option::Some(value) = value {
+                    let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
+                    #write_on
+                }
+            })
         } else {
             quote!(#at => {
-                let value = frame.#name.take().expect("a frame writes each field once");
+                let value = #take;
+                frame.read = #at + 1;
                 let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
                 #write_on
             })
@@ -380,8 +419,9 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
         pub struct __Decoding {
             obj: #napi::sys::napi_value,
             at: usize,
+            written: usize,
             wait: __DecodeWait,
-            #(#names: ::core::option::Option<#tys>,)*
+            node: ::core::mem::MaybeUninit<#ident>,
         }
         #[doc(hidden)]
         #[allow(non_camel_case_types, reason = "a wait is named for the field it is read into")]
@@ -392,9 +432,10 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
         #[doc(hidden)]
         pub struct __Encoding {
             at: usize,
+            read: usize,
             wait: __EncodeWait,
             entries: [::core::option::Option<(&'static ::std::ffi::CStr, #napi::sys::napi_value)>; #entry_count],
-            #(#names: ::core::option::Option<#tys>,)*
+            node: ::core::mem::ManuallyDrop<#ident>,
         }
         #[doc(hidden)]
         #[allow(non_camel_case_types, reason = "a wait is named for the field it is written from")]
@@ -403,9 +444,9 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             #(#encode_waits,)*
         }
         impl #codec::Dismantle<#w> for __Decoding {
-            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
-                #codec::Dismantle::<#w>::dismantle(self.wait, out);
-                #(#parts)*
+            fn dismantle(mut self, out: &mut ::std::vec::Vec<#whole>) {
+                #codec::Dismantle::<#w>::dismantle(::core::mem::replace(&mut self.wait, __DecodeWait::None), out);
+                #(#decode_drops)*
             }
         }
         impl #codec::Dismantle<#w> for __DecodeWait {
@@ -417,9 +458,9 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             }
         }
         impl #codec::Dismantle<#w> for __Encoding {
-            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
-                #codec::Dismantle::<#w>::dismantle(self.wait, out);
-                #(#parts)*
+            fn dismantle(mut self, out: &mut ::std::vec::Vec<#whole>) {
+                #codec::Dismantle::<#w>::dismantle(::core::mem::replace(&mut self.wait, __EncodeWait::None), out);
+                #(#encode_drops)*
             }
         }
         impl #codec::Dismantle<#w> for __EncodeWait {
@@ -450,9 +491,10 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                     match frame.at {
                         #(#reads)*
                         _ => {
-                            return ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::whole(Self {
-                                #(#names: frame.#names.take().expect("a frame done holds each field"),)*
-                            })));
+                            frame.written = 0;
+                            // SAFETY: the loop is past the last field, so every field is written, and
+                            // `written` is zero, so a release of this frame drops none of them again.
+                            return ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::whole(unsafe { frame.node.assume_init_read() })));
                         }
                     }
                     frame.at += 1;
@@ -493,8 +535,9 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 *above = ::core::option::Option::Some(<Self as #codec::Framed<#w>>::decoding(__Decoding {
                     obj,
                     at: 0,
+                    written: 0,
                     wait: __DecodeWait::None,
-                    #(#names: ::core::option::Option::None,)*
+                    node: ::core::mem::MaybeUninit::uninit(),
                 }));
                 ::core::result::Result::Ok(#begun::Waits(()))
             }
@@ -502,14 +545,14 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::of(child)))
             }
             unsafe fn encode(self, env: #napi::sys::napi_env, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
-                let Self { #(#names),* } = self;
                 let mut entries = [::core::option::Option::None; #entry_count];
                 #kind_first
                 *above = ::core::option::Option::Some(<Self as #codec::Framed<#w>>::encoding(__Encoding {
                     at: 0,
+                    read: 0,
                     wait: __EncodeWait::None,
                     entries,
-                    #(#names: ::core::option::Option::Some(#names),)*
+                    node: ::core::mem::ManuallyDrop::new(self),
                 }));
                 ::core::result::Result::Ok(#begun::Waits(()))
             }
@@ -885,7 +928,14 @@ mod tests {
         });
         assert!(has(&out, "::sittir_core::napi_codec! {"));
         assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, value)? };"));
-        assert!(has(&out, r#"0 => frame.layout = ::core::option::Option::Some(unsafe { ::sittir_core::boundary::optional(env, obj, c"$_layout", "LetDeclarationNode")? }),"#));
+        assert!(has(
+            &out,
+            r#"0 => { let value = unsafe { ::sittir_core::boundary::optional(env, obj, c"$_layout", "LetDeclarationNode")? };
+                unsafe { ::core::ptr::addr_of_mut!((*frame.node.as_mut_ptr()).layout).write(value) }; frame.written = 0 + 1; }"#
+        ));
+        assert!(has(&out, "let value = unsafe { ::core::ptr::read(&frame.node.layout) }; frame.read = 0 + 1;"));
+        assert!(has(&out, "if 1 < self.written {"));
+        assert!(has(&out, "if self.read <= 1 {"));
         assert!(has(&out, r#"1 => { let raw = unsafe { ::sittir_core::boundary::required_raw(env, obj, c"_pattern")? };"#));
         assert!(has(&out, r#"2 => match unsafe { ::sittir_core::boundary::optional_raw(env, obj, c"_value")? }"#));
         assert!(has(&out, r#"__DecodeWait::pattern(_) => ::sittir_core::boundary::field_refusal(err, "LetDeclarationNode", c"_pattern"),"#));

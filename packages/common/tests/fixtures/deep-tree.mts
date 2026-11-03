@@ -5,7 +5,8 @@
 // render a wire value with no JS walk in front: one nested <levels> deep,
 // which the addon decodes and releases (decode), or a tuple whose first item
 // is nested <levels> deep and whose second is malformed, which the addon
-// refuses after decoding the first (refuse). On the main thread or a Worker.
+// refuses after decoding the first, then renders whole once both items are
+// restored, on the same thread (refuse). On the main thread or a Worker.
 // Prints one JSON line: `{ ok: true }`, or the JS error it refused with. A
 // child process, because a native stack overflow ends the process.
 import { createRequire } from 'node:module';
@@ -38,6 +39,8 @@ function expect(actual: string, expected: string): void {
 }
 
 const isWire = (value: unknown): value is Wire => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const refusalOf = (error: unknown): Outcome => ({ ok: false, refusal: String((error as Error).stack ?? error).split('\n')[0] ?? '' });
 
 function wireOf(rendered: () => unknown): [object, Wire] {
 	rendered();
@@ -74,15 +77,26 @@ async function run({ storage, side, levels }: Case): Promise<Outcome> {
 			const [engine, shell] = wireOf(() => rs.render(rs.build.parenthesizedExpression(rs.build.integerLiteral('1'))).toString());
 			expect(render(engine, nest(shell, levels)), parens);
 		} else {
-			const [engine, root] = wireOf(() => rs.render(rs.parse('fn f() { ((1), 2); }\n', { depth: Infinity }).$snapshot()).toString());
+			const source = 'fn f() { ((1), 2); }\n';
+			const [engine, root] = wireOf(() => rs.render(rs.parse(source, { depth: Infinity }).$snapshot()).toString());
 			const pair = itemPair(root) as [Wire, unknown];
-			pair[0] = nest(pair[0], levels, pair[0]);
+			const [first, second] = pair;
+			pair[0] = nest(first, levels, first);
 			pair[1] = { $type: 'not a kind' };
-			render(engine, root);
+			let refused: Outcome = { ok: true };
+			try {
+				render(engine, root);
+			} catch (error) {
+				refused = refusalOf(error);
+			}
+			pair[0] = first;
+			pair[1] = second;
+			expect(render(engine, root), source);
+			return refused;
 		}
 		return { ok: true };
 	} catch (error) {
-		return { ok: false, refusal: String((error as Error).stack ?? error).split('\n')[0] ?? '' };
+		return refusalOf(error);
 	} finally {
 		rs.dispose();
 	}
