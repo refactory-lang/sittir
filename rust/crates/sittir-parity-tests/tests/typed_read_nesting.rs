@@ -21,8 +21,8 @@ struct Ceilings {
 }
 
 const CEILINGS: &[Ceilings] = &[
-    Ceilings { os: "macos", arch: "aarch64", release: true, levels: [23, 39, 71, 263] },
-    Ceilings { os: "macos", arch: "aarch64", release: false, levels: [151, 183, 311, 999] },
+    Ceilings { os: "macos", arch: "aarch64", release: true, levels: [7, 7, 39, 183] },
+    Ceilings { os: "macos", arch: "aarch64", release: false, levels: [39, 71, 167, 711] },
     Ceilings { os: "linux", arch: "x86_64", release: true, levels: [47, 63, 95, 263] },
     Ceilings { os: "linux", arch: "x86_64", release: false, levels: [167, 199, 311, 911] },
 ];
