@@ -257,6 +257,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
 	readonly copyOf?: string;
+	readonly final?: true;
 }
 
 export type NodeOrTerminal = NodeRef;
@@ -497,7 +498,22 @@ export function mergeDelimiterMode(
 	return a === b ? a : 'optional';
 }
 
-function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
+const isListValue = (v: NodeOrTerminal): boolean => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray';
+
+function valueKind(v: NodeOrTerminal): string | undefined {
+	return isNodeRef(v) ? storageKindOfRef(v.node) : undefined;
+}
+
+function sequenceValues([rest, last]: readonly [AssembledNonterminal, AssembledNonterminal]): NodeOrTerminal[] {
+	const settled = rest.values.map(({ final: _final, ...v }) => v as NodeOrTerminal);
+	const finalSeat =
+		rest.values.every((v) => isListValue(v) && v.final !== true) &&
+		last.values.every((v) => v.multiplicity === 'single' && isNodeRef(v)) &&
+		last.values.some((v) => !rest.values.some((r) => valueKind(r) === valueKind(v)));
+	return dedupeValues([...settled, ...(finalSeat ? last.values.map((v) => ({ ...v, final: true as const })) : last.values)]);
+}
+
+export function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
 	const namedIndexByName = new Map<string, number>();
@@ -514,7 +530,7 @@ function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[]
 		}
 		const existing = out[idx]!;
 		out[idx] = existing.with({
-			values: dedupeValues([...existing.values, ...f.values]),
+			values: sequenceValues([existing, f]),
 			hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
 			hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
 			trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),

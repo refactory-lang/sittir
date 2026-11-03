@@ -183,9 +183,7 @@ type AdmitsMore<E> = E extends unknown ? ([AliasContent<E>] extends [never] ? fa
 /** @internal — {@link AdmitElementInput} through a slot's array wrapper. */
 type AdmitSlotInput<S> = S extends readonly unknown[]
 	? true extends AdmitsMore<S[number]>
-		? S extends NonEmptyArray<unknown>
-			? NonEmptyArray<AdmitElementInput<S[number]>>
-			: readonly AdmitElementInput<S[number]>[]
+		? { readonly [I in keyof S]: AdmitElementInput<S[I]> }
 		: S
 	: AdmitElementInput<S>;
 
@@ -577,11 +575,9 @@ type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : Bitf
 type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
 
 /** @internal — widen a KindEnum slot back to its string-friendly input surface. */
-type KindEnumSlotInput<T> = T extends NonEmptyArray<infer E>
-	? NonEmptyArray<KindEnumText<E> | Admit<E>>
-	: T extends readonly (infer E)[]
-		? readonly (KindEnumText<E> | Admit<E>)[]
-		: KindEnumText<T> | Admit<T>;
+type KindEnumSlotInput<T> = T extends readonly unknown[]
+	? { readonly [I in keyof T]: KindEnumText<T[I]> | Admit<T[I]> }
+	: KindEnumText<T> | Admit<T>;
 
 /** A tree node with no typed field access — returned by `.children()`. */
 export interface AnyTreeNodeOf {
@@ -906,9 +902,12 @@ type WidenArrayMembers<
 	? [readonly []] extends [T]
 		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 		:
-				| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
-				| Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
+				| { readonly [I in keyof T]: WidenValue<T[I], Scalars, Strings, Depth, NsMap, Visited> }
+				| Exclude<WidenValue<LastElement<T>, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 	: never;
+
+/** @internal — the element a one-element list holds: a list's last element type, its element type where it has no last of its own. */
+type LastElement<T> = T extends readonly [...unknown[], infer L] ? L : T extends readonly (infer E)[] ? E : never;
 
 /** @internal — the leaf members (a node type carrying `$text`), each widened
  *  to itself, its narrowed string and its scalar. */

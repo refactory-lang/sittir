@@ -494,6 +494,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.key !== undefined) throw new Error(`portable build: ${path}'s ${member.name} holds many values, each flattened into its holder's ${placed.key}`);
 			return placed.value;
 		};
+		const described = (item: unknown): string =>
+			isStructure(item) ? item.$path : typeof item === 'string' ? `"${item}"` : hasKind(item) ? nameOf(item.$type) : typeof item;
 		const valueOf = (value: unknown, member: PortableMemberStep, path: string, delimiter?: number): Placed => {
 			for (const item of listOf(value)) {
 				const text = typeof item === 'number' ? tokenText(item, member.seats) : undefined;
@@ -502,9 +504,15 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (member.multiple) return { value: listOf(value).map((item) => unmounted(element(item, member, member.seats, 0), member, path)) };
 			if (!Array.isArray(value)) return member.seats.some((seat) => holdsOne(member, seat)) && !seatsIn(member.seats.filter((seat) => !holdsOne(member, seat)), value) ? valueOf([value], member, path, delimiter) : element(value, member, member.seats, 0);
 			const lists = member.seats.filter((seat) => seat.many === true);
-			const list = lists.find((seat) => value.every((item) => seatsIn(extending(member.seats, seat), item))) ?? lists[0]!;
+			const placed = (seats: readonly PortableSeat[], i: number): readonly PortableSeat[] =>
+				seats.some((seat) => seat.final === true) ? seats.filter((seat) => (seat.final === true) === (i === value.length - 1)) : seats;
+			const list = lists.find((seat) => value.every((item, i) => seatsIn(placed(extending(member.seats, seat), i), item))) ?? lists[0]!;
 			const depth = within(list).length;
-			const items = value.map((item) => unmounted(element(item, member, extending(member.seats, list), depth), member, path));
+			const last = value.length - 1;
+			const finals = placed(extending(member.seats, list), last);
+			if (last >= 0 && finals.some((seat) => seat.final === true) && !seatsIn(finals, value[last]))
+				throw new Error(`portable build: ${path}'s ${member.name} ends with ${described(value[last])}, which builds in none of the forms its last element takes`);
+			const items = value.map((item, i) => unmounted(element(item, member, placed(extending(member.seats, list), i), depth), member, path));
 			return seated(items, within(list), items.length === 0, undefined, delimiter);
 		};
 		const placeMember = (frame: Frame, member: PortableMemberStep, given: unknown, path: string, delimiter?: number): boolean => {

@@ -41,7 +41,7 @@ import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interio
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
-import { registeredSlots } from '../../shared.ts';
+import { finalSeatOf, registeredSlots } from '../../shared.ts';
 
 export type PickDiagnosticCode =
 	| 'portable-pick-undecided'
@@ -281,6 +281,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		readonly within: readonly PortableContainer[];
 		readonly many: boolean;
 		readonly entered: readonly string[];
+		readonly final: boolean;
 	}
 	const seatsOf = (
 		holder: AssembledNode,
@@ -289,8 +290,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		slot: AssembledNonterminal,
 		within: readonly PortableContainer[],
 		entered: readonly string[],
-		many = isMultiple(slot)
+		many = isMultiple(slot),
+		final = false
 	): Seat[] => {
+		const split = final ? undefined : finalSeatOf(slot);
+		if (split !== undefined) return [...seatsOf(holder, key, owner, split.rest, within, entered, many), ...seatsOf(holder, key, owner, split.last, within, entered, many, true)];
 		const kinds = new Set<string>();
 		const refined = new Set<string>();
 		const nested: Seat[] = [];
@@ -327,7 +331,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
 						throw new Error(`portable build: ${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container`);
 					const next = outer === undefined ? [...within, container] : [...within.slice(0, -1), container];
-					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind], unwrap!.list));
+					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind], unwrap!.list, final));
 				} else if (node instanceof AssembledSupertype) {
 					if (node.kindId !== undefined) kinds.add(kind);
 					visit(node.subtypes);
@@ -335,7 +339,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			}
 		};
 		visit(slot.values);
-		return [{ holder, key, slot, kinds, refined, within, many, entered }, ...nested.filter((seat) => seat.kinds.size > 0 || seat.many)];
+		return [{ holder, key, slot, kinds, refined, within, many, entered, final }, ...nested.filter((seat) => seat.kinds.size > 0 || seat.many)];
 	};
 	const seatsOfRoute = (path: readonly SlotStep[]): Seat[] | undefined => {
 		const slot = lastSlot(path);
@@ -374,7 +378,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		...(tokens === undefined ? {} : { tokens }),
 		...(guard === undefined ? {} : { pattern: { source: guard.source, flags: guard.flags } }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),
-		...(seat.many ? { many: true as const } : {})
+		...(seat.many ? { many: true as const } : {}),
+		...(seat.final ? { final: true as const } : {})
 		};
 	};
 	const valueIds = (seats: readonly Seat[]): ReadonlySet<number> => {

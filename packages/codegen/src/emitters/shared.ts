@@ -750,8 +750,16 @@ export function arrayTypeOf(nonEmpty: boolean, element: string, form: 'readonly'
 	return form === 'readonly' ? `readonly (${element})[]` : `${parenthesizeUnion(element)}[]`;
 }
 
+export function finalSeatOf(slot: AssembledNonterminal): { readonly rest: AssembledNonterminal; readonly last: AssembledNonterminal } | undefined {
+	const last = slot.values.filter((v) => v.final === true);
+	if (last.length === 0) return undefined;
+	return { rest: slot.with({ values: slot.values.filter((v) => v.final !== true) }), last: slot.with({ values: last }) };
+}
+
 export function slotListTypeOf(slot: AssembledNonterminal, element: (slot: AssembledNonterminal) => string, form: 'readonly' | 'mutable'): string {
-	return arrayTypeOf(isNonEmpty(slot), element(slot), form);
+	const seat = finalSeatOf(slot);
+	if (seat === undefined) return arrayTypeOf(isNonEmpty(slot), element(slot), form);
+	return `${form === 'readonly' ? 'readonly ' : ''}[...${parenthesizeUnion(element(seat.rest))}[], ${element(seat.last)}]`;
 }
 
 export function listRestParamType(

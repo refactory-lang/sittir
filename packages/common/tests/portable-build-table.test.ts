@@ -478,3 +478,75 @@ describe('the portable build of an arm whose routes run through two forms of one
 		expect(() => build({ left: ['x'] })).toThrow("statement.held's left holds one value, not a list");
 	});
 });
+
+describe('the portable build of a list whose last element takes a form of its own', () => {
+	const pattern = (holder: number) => ({ name: 'pattern', steps: [{ key: 'pattern' }], multiple: false, seats: [{ at: [holder, 'pattern'] as const, kinds: [], text: true as const }] });
+	const arm = (kind: number, builder: string) => ({ kind, builder, holders: [[1, 'arms']] as const, members: [pattern(kind)], presets: [], flags: {}, when: [] });
+	const table: PortableBuildTable = {
+		builders: { holder: 'config', arm: 'config', last: 'config' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [
+					{
+						kind: 1,
+						builder: 'holder',
+						members: [
+							{
+								name: 'body',
+								steps: [{ key: 'arms' }],
+								multiple: false,
+								list: true,
+								seats: [
+									{ at: [1, 'arms'], kinds: [2], many: true },
+									{ at: [1, 'arms'], kinds: [3], many: true, final: true }
+								]
+							}
+						],
+						presets: [],
+						flags: {},
+						when: []
+					}
+				]
+			},
+			'clause.case': { root: false, arms: [arm(2, 'arm'), arm(3, 'last')] },
+			'clause.rest': { root: false, arms: [arm(2, 'arm')] }
+		}
+	};
+	const build = (body: readonly unknown[]): readonly (readonly [string, unknown])[] => {
+		const calls: [string, unknown][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				holder: (input: unknown) => (calls.push(['holder', input]), { $type: 1 }),
+				arm: (input: unknown) => (calls.push(['arm', input]), { $type: 2 }),
+				last: (input: unknown) => (calls.push(['last', input]), { $type: 3 })
+			},
+			kindName: (kind: number) => ({ 2: 'arm', 3: 'last_arm' })[kind],
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', body } as never);
+		return calls;
+	};
+	const clause = (path: string, text: string) => ({ $path: path, pattern: text });
+
+	it('builds the last element in the form its last seat takes, and every other in the repeated form', () => {
+		expect(build([clause('clause.case', 'a'), clause('clause.case', 'b'), clause('clause.case', 'c')])).toEqual([
+			['arm', { pattern: 'a' }],
+			['arm', { pattern: 'b' }],
+			['last', { pattern: 'c' }],
+			['holder', { arms: [{ $type: 2 }, { $type: 2 }, { $type: 3 }] }]
+		]);
+		expect(build([clause('clause.case', 'a')])).toEqual([
+			['last', { pattern: 'a' }],
+			['holder', { arms: [{ $type: 3 }] }]
+		]);
+	});
+
+	it('refuses a last element with no form its last seat takes, by its path', () => {
+		expect(() => build([clause('clause.case', 'a'), clause('clause.rest', 'b')])).toThrow(
+			"portable build: statement.held's body ends with clause.rest, which builds in none of the forms its last element takes"
+		);
+	});
+});

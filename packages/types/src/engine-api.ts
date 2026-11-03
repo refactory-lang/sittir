@@ -249,6 +249,8 @@ export interface StructureRow {
 	readonly single?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label]`: the list holds at least one item. */
 	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
+	/** `[storageKey, label, rest, last]`: the list ends with a node of one of `last`, and every item before it is a node of one of `rest` (membership). */
+	readonly final?: readonly (readonly [storageKey: string, label: string, rest: readonly number[], last: readonly number[]])[];
 	/** `[storageKey, label, expected, kinds]`: the slot holds a built node, a coordinate or a kind id, never bare text or any other value; when `kinds` is given, a built node of one of those kinds (membership, so a supertype admits its members). */
 	readonly nodeOnly?: readonly (readonly [storageKey: string, label: string, expected: string, kinds?: readonly number[]])[];
 	/** `[storageKey, label]`: the slot holds a boolean, or nothing. */

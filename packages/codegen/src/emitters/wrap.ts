@@ -11,6 +11,7 @@ import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
 	isMultiple,
+	finalSeatOf,
 	slotListTypeOf,
 	isRequired,
 	resolveFieldStorageInfo,
@@ -289,8 +290,10 @@ function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: re
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
 		if (isMultiple(f) && restSlots.has(method)) {
-			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]${admitted}`;
-			const restType = slotListTypeOf(f, () => setterValueType, 'mutable');
+			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
+			if (finalSeatOf(f) !== undefined && admitted !== '')
+				throw new Error(`wrap: ${node.kind}.${f.name} has a final seat and admits the envelope ${envelopeType}; a rest setter cannot type both`);
+			const restType = finalSeatOf(f) === undefined ? slotListTypeOf(f, () => `${storageList}[number]${admitted}`, 'mutable') : storageList;
 			return {
 				name: method,
 				params: `...v: ${restType}`,

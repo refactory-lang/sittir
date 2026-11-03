@@ -59,6 +59,7 @@ import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.
 import {
 	arrayTypeOf,
 	DELIMITER_IMPORT,
+	finalSeatOf,
 	parenthesizeUnion,
 	slotListTypeOf,
 	isRequired,
@@ -1063,7 +1064,7 @@ function fieldCarryingBuiltTypeSurface(
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [
-			{ name: spreadFacts.slot.propertyName, input: arrayTypeOf(spreadFacts.nonEmpty, withHoles(spreadFacts.slot, surface.elementType!), 'mutable'), optional: false, rest: true },
+			{ name: spreadFacts.slot.propertyName, input: slotListTypeOf(spreadFacts.slot, (s) => withHoles(s, spreadElementType(s, nodeMap, kindEntries)), 'mutable'), optional: false, rest: true },
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	} else if (singleField) {
@@ -1416,6 +1417,10 @@ function resolveFactorySurface(
 	};
 }
 
+function spreadElementType(slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
+	return constructionChildElementType({ children: [slot] }, nodeMap, kindEntries);
+}
+
 function resolveConfigFactorySurface(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
@@ -1425,19 +1430,21 @@ function resolveConfigFactorySurface(
 		isAuthoredCompound(node) && factoryTakesSpreadChildren(node, nodeMap) ? soleSlotFacts(node, nodeMap) : null;
 	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 	if (spreadFacts) {
-		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
+		const elementType = spreadElementType(spreadFacts.slot, nodeMap, kindEntries);
 		const looseChild = childElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const looseElement = [...new Set([looseChild, coercedChildElementType(spreadFacts.slot, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
+			const looseElementOf = (s: AssembledNonterminal): string =>
+				[...new Set([childElementType({ children: [s] }, nodeMap, kindEntries), coercedChildElementType(s, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
+			const strictOf = (s: AssembledNonterminal): string => spreadElementType(s, nodeMap, kindEntries);
 			const param = refusingWhole(
 				{
 					label: 'children',
 					optional: false,
 					rest: true,
-					strictType: arrayTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType, 'mutable'),
-					looseType: arrayTypeOf(nonEmpty, looseElement, 'mutable'),
-					rowLooseType: arrayTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`, 'mutable'),
+					strictType: slotListTypeOf(spreadFacts.slot, (s) => (nonEmpty ? admitNodes(strictOf(s)) : strictOf(s)), 'mutable'),
+					looseType: slotListTypeOf(spreadFacts.slot, looseElementOf, 'mutable'),
+					rowLooseType: slotListTypeOf(spreadFacts.slot, (s) => `T.${node.typeName}.Loose | ${looseElementOf(s)}`, 'mutable'),
 					...(nonEmpty ? {} : { admitsNodes: true as const })
 				}
 			);
@@ -1741,7 +1748,13 @@ export function compoundStructureRow(
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
-	return structureRow(node.kind, { required, single, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
+	const final = stored.flatMap((f) => {
+		const seat = finalSeatOf(f);
+		if (seat === undefined) return [];
+		const label = `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`;
+		return [[f.storageKey, label, slotNodeKindIds(seat.rest, nodeMap) ?? [], slotNodeKindIds(seat.last, nodeMap) ?? []] as const];
+	});
+	return structureRow(node.kind, { required, single, nonEmpty, final, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
 }
 
 function slotStorageChecks(
@@ -1844,12 +1857,11 @@ function emitFieldCarryingFactory(
 
 	if (spreadFacts) {
 		slotsToEmit = emittedSlots(slots, spreadFacts, registeredSet);
-		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		setters = [
-			{ name: setter, params: `...vs: ${arrayTypeOf(spreadFacts.nonEmpty, admitNodes(elementType), 'mutable')}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
+			{ name: setter, params: `...vs: ${slotListTypeOf(spreadFacts.slot, (s) => admitNodes(spreadElementType(s, nodeMap, kindEntries)), 'mutable')}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
 			...spellingWith((patch) => `${fn}(${patch}, ...children)`)
 		];
 	} else if (singleField) {
