@@ -5,6 +5,7 @@ import {
 	admitSplicedEnvelope,
 	admitSlot,
 	markEdited as $edited,
+	RECEIVER,
 	carryReadTree,
 	treeHandleOf,
 	hydrateWith,
@@ -62,7 +63,7 @@ import {
 	blankArmRead,
 	blankArmStored
 } from '@sittir/common/utils';
-import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
+import type { Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
@@ -118,23 +119,11 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		statements() {
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
-		$with: {
-			statements: (...v: NonNullable<T.Module['_statements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapModule(
-						{ ...$edited(data), _statements: admitSlot(handle, 'module', 'statements', restItems('statements', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -142,6 +131,22 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		statements: (...v: NonNullable<T.Module['_statements']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapModule(
+					{ ...$edited(data), _statements: admitSlot(handle, 'module', 'statements', restItems('statements', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Module.Parsed;
 }
@@ -160,24 +165,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		elements() {
 			return hydrateSlot<T.SimpleStatementsElements>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.SimpleStatementsElements as const,
-							optional: false,
-							make: RAW.buildSimpleStatementsElements
-						},
-						(v: NonNullable<T.SimpleStatements['_elements']>) =>
-							wrapSimpleStatements(
-								{ ...$edited(data), _elements: admitSlot(handle, '_simple_statements', 'elements', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -211,10 +199,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -223,6 +208,30 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{
+						kind: TSKindId.SimpleStatementsElements as const,
+						optional: false,
+						make: RAW.buildSimpleStatementsElements
+					},
+					(v: NonNullable<T.SimpleStatements['_elements']>) =>
+						wrapSimpleStatements(
+							{ ...$edited(data), _elements: admitSlot(handle, '_simple_statements', 'elements', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -245,17 +254,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		names() {
 			return hydrateSlot<T.Names>(this, '_names', tree);
 		},
-		$with: {
-			names: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
-						(v: NonNullable<T.ImportStatement['_names']>) =>
-							wrapImportStatement({ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -289,10 +288,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -301,6 +297,23 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		names: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
+					(v: NonNullable<T.ImportStatement['_names']>) =>
+						wrapImportStatement({ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -320,29 +333,33 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 		name() {
 			return hydrateSlot<T.DottedName | undefined>(this, '_name', tree);
 		},
-		$with: {
-			prefix: (v: NonNullable<T.RelativeImport['_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapRelativeImport({ ...$edited(data), _prefix: admitSlot(handle, 'relative_import', 'prefix', v) }, tree)
-				),
-			name: (v: NonNullable<T.RelativeImport['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapRelativeImport({ ...$edited(data), _name: admitSlot(handle, 'relative_import', 'name', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		prefix: (v: NonNullable<T.RelativeImport['_prefix']>) =>
+			rebuilt(node, handle, () =>
+				wrapRelativeImport({ ...$edited(data), _prefix: admitSlot(handle, 'relative_import', 'prefix', v) }, tree)
+			),
+		name: (v: NonNullable<T.RelativeImport['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapRelativeImport({ ...$edited(data), _name: admitSlot(handle, 'relative_import', 'name', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.RelativeImport.Parsed;
 }
@@ -358,28 +375,32 @@ export function wrapFutureImportStatement(
 		content() {
 			return hydrateSlot<T.ImportList | T.ParenthesizedImportList>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.FutureImportStatement['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapFutureImportStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'future_import_statement', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.FutureImportStatement['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapFutureImportStatement(
+					{ ...$edited(data), _content: admitSlot(handle, 'future_import_statement', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FutureImportStatement.Parsed;
 }
@@ -395,35 +416,39 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 		content() {
 			return hydrateSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, '_content', tree);
 		},
-		$with: {
-			moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapImportFromStatement(
-						{ ...$edited(data), _module_name: admitSlot(handle, 'import_from_statement', 'moduleName', v) },
-						tree
-					)
-				),
-			content: (v: NonNullable<T.ImportFromStatement['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapImportFromStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'import_from_statement', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapImportFromStatement(
+					{ ...$edited(data), _module_name: admitSlot(handle, 'import_from_statement', 'moduleName', v) },
+					tree
+				)
+			),
+		content: (v: NonNullable<T.ImportFromStatement['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapImportFromStatement(
+					{ ...$edited(data), _content: admitSlot(handle, 'import_from_statement', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ImportFromStatement.Parsed;
 }
@@ -441,17 +466,7 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 		names() {
 			return hydrateSlots<T.DottedName | T.AliasedImport>(this, '_name', tree);
 		},
-		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.ImportList['_name']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapImportList(
-						{ ...$edited(data), _name: admitSlot(handle, 'import_list', 'names', restItems('names', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapImportList({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -485,10 +500,7 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -497,6 +509,23 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		names: (...v: NonEmptyArray<NonNullable<T.ImportList['_name']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapImportList(
+					{ ...$edited(data), _name: admitSlot(handle, 'import_list', 'names', restItems('names', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapImportList({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapImportList$listRead);
 	return node as unknown as T.ImportList.Parsed;
@@ -513,29 +542,33 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 		alias() {
 			return hydrateSlot<T.Identifier>(this, '_alias', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.AliasedImport['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapAliasedImport({ ...$edited(data), _name: admitSlot(handle, 'aliased_import', 'name', v) }, tree)
-				),
-			alias: (v: NonNullable<T.AliasedImport['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapAliasedImport({ ...$edited(data), _alias: admitSlot(handle, 'aliased_import', 'alias', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.AliasedImport['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapAliasedImport({ ...$edited(data), _name: admitSlot(handle, 'aliased_import', 'name', v) }, tree)
+			),
+		alias: (v: NonNullable<T.AliasedImport['_alias']>) =>
+			rebuilt(node, handle, () =>
+				wrapAliasedImport({ ...$edited(data), _alias: admitSlot(handle, 'aliased_import', 'alias', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AliasedImport.Parsed;
 }
@@ -548,25 +581,29 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.
 		content() {
 			return hydrateSlot<T.PrintStatementChevron | T.PrintStatementPlain>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.PrintStatement['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapPrintStatement({ ...$edited(data), _content: admitSlot(handle, 'print_statement', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.PrintStatement['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapPrintStatement({ ...$edited(data), _content: admitSlot(handle, 'print_statement', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.PrintStatement.Parsed;
 }
@@ -579,25 +616,29 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.Chevron['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapChevron({ ...$edited(data), _expression: admitSlot(handle, 'chevron', 'expression', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.Chevron['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapChevron({ ...$edited(data), _expression: admitSlot(handle, 'chevron', 'expression', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Chevron.Parsed;
 }
@@ -610,31 +651,35 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): 
 		expressions() {
 			return hydrateSlots<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expressions: (...v: NonEmptyArray<NonNullable<T.AssertStatement['_expression']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapAssertStatement(
-						{
-							...$edited(data),
-							_expression: admitSlot(handle, 'assert_statement', 'expressions', restItems('expressions', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expressions: (...v: NonEmptyArray<NonNullable<T.AssertStatement['_expression']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapAssertStatement(
+					{
+						...$edited(data),
+						_expression: admitSlot(handle, 'assert_statement', 'expressions', restItems('expressions', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AssertStatement.Parsed;
 }
@@ -651,28 +696,32 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 				tree
 			);
 		},
-		$with: {
-			content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapExpressionStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'expression_statement', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapExpressionStatement(
+					{ ...$edited(data), _content: admitSlot(handle, 'expression_statement', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExpressionStatement.Parsed;
 }
@@ -688,29 +737,33 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 		right() {
 			return hydrateSlot<T.Expression>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.NamedExpression['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedExpression({ ...$edited(data), _left: admitSlot(handle, 'named_expression', 'left', v) }, tree)
-				),
-			right: (v: NonNullable<T.NamedExpression['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedExpression({ ...$edited(data), _right: admitSlot(handle, 'named_expression', 'right', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.NamedExpression['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapNamedExpression({ ...$edited(data), _left: admitSlot(handle, 'named_expression', 'left', v) }, tree)
+			),
+		right: (v: NonNullable<T.NamedExpression['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapNamedExpression({ ...$edited(data), _right: admitSlot(handle, 'named_expression', 'right', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.NamedExpression.Parsed;
 }
@@ -723,28 +776,32 @@ export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHan
 		identifier() {
 			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
 		},
-		$with: {
-			identifier: (v: NonNullable<T.NamedExpressionLhs['_identifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedExpressionLhs(
-						{ ...$edited(data), _identifier: admitSlot(handle, '_named_expression_lhs', 'identifier', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		identifier: (v: NonNullable<T.NamedExpressionLhs['_identifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapNamedExpressionLhs(
+					{ ...$edited(data), _identifier: admitSlot(handle, '_named_expression_lhs', 'identifier', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.NamedExpressionLhs.Parsed;
 }
@@ -757,28 +814,32 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 		expressions() {
 			return hydrateSlot<T.Expression | T.ExpressionList | undefined>(this, '_expressions', tree);
 		},
-		$with: {
-			expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) =>
-				rebuilt(node, handle, () =>
-					wrapReturnStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'return_statement', 'expressions', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) =>
+			rebuilt(node, handle, () =>
+				wrapReturnStatement(
+					{ ...$edited(data), _expressions: admitSlot(handle, 'return_statement', 'expressions', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ReturnStatement.Parsed;
 }
@@ -791,28 +852,32 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): 
 		expressions() {
 			return hydrateSlot<T.Expression | T.ExpressionList>(this, '_expressions', tree);
 		},
-		$with: {
-			expressions: (v: NonNullable<T.DeleteStatement['_expressions']>) =>
-				rebuilt(node, handle, () =>
-					wrapDeleteStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'delete_statement', 'expressions', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expressions: (v: NonNullable<T.DeleteStatement['_expressions']>) =>
+			rebuilt(node, handle, () =>
+				wrapDeleteStatement(
+					{ ...$edited(data), _expressions: admitSlot(handle, 'delete_statement', 'expressions', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DeleteStatement.Parsed;
 }
@@ -828,32 +893,36 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 		cause() {
 			return hydrateSlot<T.Expression | undefined>(this, '_cause', tree);
 		},
-		$with: {
-			expressions: (v: NonNullable<T.RaiseStatement['_expressions']>) =>
-				rebuilt(node, handle, () =>
-					wrapRaiseStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'raise_statement', 'expressions', v) },
-						tree
-					)
-				),
-			cause: (v: NonNullable<T.RaiseStatement['_cause']>) =>
-				rebuilt(node, handle, () =>
-					wrapRaiseStatement({ ...$edited(data), _cause: admitSlot(handle, 'raise_statement', 'cause', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expressions: (v: NonNullable<T.RaiseStatement['_expressions']>) =>
+			rebuilt(node, handle, () =>
+				wrapRaiseStatement(
+					{ ...$edited(data), _expressions: admitSlot(handle, 'raise_statement', 'expressions', v) },
+					tree
+				)
+			),
+		cause: (v: NonNullable<T.RaiseStatement['_cause']>) =>
+			rebuilt(node, handle, () =>
+				wrapRaiseStatement({ ...$edited(data), _cause: admitSlot(handle, 'raise_statement', 'cause', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.RaiseStatement.Parsed;
 }
@@ -872,39 +941,43 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 		alternatives() {
 			return hydrateSlots<T.ElifClause | T.ElseClause>(this, '_alternative', tree);
 		},
-		$with: {
-			condition: (v: NonNullable<T.IfStatement['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapIfStatement({ ...$edited(data), _condition: admitSlot(handle, 'if_statement', 'condition', v) }, tree)
-				),
-			consequence: (v: NonNullable<T.IfStatement['_consequence']>) =>
-				rebuilt(node, handle, () =>
-					wrapIfStatement({ ...$edited(data), _consequence: admitSlot(handle, 'if_statement', 'consequence', v) }, tree)
-				),
-			alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapIfStatement(
-						{
-							...$edited(data),
-							_alternative: admitSlot(handle, 'if_statement', 'alternatives', restItems('alternatives', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		condition: (v: NonNullable<T.IfStatement['_condition']>) =>
+			rebuilt(node, handle, () =>
+				wrapIfStatement({ ...$edited(data), _condition: admitSlot(handle, 'if_statement', 'condition', v) }, tree)
+			),
+		consequence: (v: NonNullable<T.IfStatement['_consequence']>) =>
+			rebuilt(node, handle, () =>
+				wrapIfStatement({ ...$edited(data), _consequence: admitSlot(handle, 'if_statement', 'consequence', v) }, tree)
+			),
+		alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapIfStatement(
+					{
+						...$edited(data),
+						_alternative: admitSlot(handle, 'if_statement', 'alternatives', restItems('alternatives', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.IfStatement.Parsed;
 }
@@ -920,29 +993,33 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 		consequence() {
 			return hydrateSlot<T.Suite>(this, '_consequence', tree);
 		},
-		$with: {
-			condition: (v: NonNullable<T.ElifClause['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapElifClause({ ...$edited(data), _condition: admitSlot(handle, 'elif_clause', 'condition', v) }, tree)
-				),
-			consequence: (v: NonNullable<T.ElifClause['_consequence']>) =>
-				rebuilt(node, handle, () =>
-					wrapElifClause({ ...$edited(data), _consequence: admitSlot(handle, 'elif_clause', 'consequence', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		condition: (v: NonNullable<T.ElifClause['_condition']>) =>
+			rebuilt(node, handle, () =>
+				wrapElifClause({ ...$edited(data), _condition: admitSlot(handle, 'elif_clause', 'condition', v) }, tree)
+			),
+		consequence: (v: NonNullable<T.ElifClause['_consequence']>) =>
+			rebuilt(node, handle, () =>
+				wrapElifClause({ ...$edited(data), _consequence: admitSlot(handle, 'elif_clause', 'consequence', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ElifClause.Parsed;
 }
@@ -955,25 +1032,29 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.ElseClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapElseClause({ ...$edited(data), _body: admitSlot(handle, 'else_clause', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.ElseClause['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapElseClause({ ...$edited(data), _body: admitSlot(handle, 'else_clause', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ElseClause.Parsed;
 }
@@ -989,37 +1070,41 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 		body() {
 			return hydrateSlot<T.MatchBlock>(this, '_body', tree);
 		},
-		$with: {
-			subjects: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Subjects as const, optional: false, make: RAW.buildSubjects },
-						(v: NonNullable<T.MatchStatement['_subjects']>) =>
-							wrapMatchStatement(
-								{ ...$edited(data), _subjects: admitSlot(handle, 'match_statement', 'subjects', v) },
-								tree
-							)
-					)
-				),
-			body: (v: NonNullable<T.MatchStatement['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapMatchStatement({ ...$edited(data), _body: admitSlot(handle, 'match_statement', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		subjects: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Subjects as const, optional: false, make: RAW.buildSubjects },
+					(v: NonNullable<T.MatchStatement['_subjects']>) =>
+						wrapMatchStatement(
+							{ ...$edited(data), _subjects: admitSlot(handle, 'match_statement', 'subjects', v) },
+							tree
+						)
+				)
+			),
+		body: (v: NonNullable<T.MatchStatement['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapMatchStatement({ ...$edited(data), _body: admitSlot(handle, 'match_statement', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.MatchStatement.Parsed;
 }
@@ -1038,33 +1123,37 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			pattern: (v: NonNullable<T.CaseClause['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _pattern: admitSlot(handle, 'case_clause', 'pattern', v) }, tree)
-				),
-			guard: (v: NonNullable<T.CaseClause['_guard']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
-				),
-			body: (v: NonNullable<T.CaseClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _body: admitSlot(handle, 'case_clause', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		pattern: (v: NonNullable<T.CaseClause['_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapCaseClause({ ...$edited(data), _pattern: admitSlot(handle, 'case_clause', 'pattern', v) }, tree)
+			),
+		guard: (v: NonNullable<T.CaseClause['_guard']>) =>
+			rebuilt(node, handle, () =>
+				wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
+			),
+		body: (v: NonNullable<T.CaseClause['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapCaseClause({ ...$edited(data), _body: admitSlot(handle, 'case_clause', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.CaseClause.Parsed;
 }
@@ -1089,44 +1178,45 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		alternative() {
 			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
 		},
-		$with: {
-			async: (v: NonNullable<T.ForStatement['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapForStatement({ ...$edited(data), _async: admitSlot(handle, 'for_statement', 'async', v) }, tree)
-				),
-			left: (v: NonNullable<T.ForStatement['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapForStatement({ ...$edited(data), _left: admitSlot(handle, 'for_statement', 'left', v) }, tree)
-				),
-			right: (v: NonNullable<T.ForStatement['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapForStatement({ ...$edited(data), _right: admitSlot(handle, 'for_statement', 'right', v) }, tree)
-				),
-			body: (v: NonNullable<T.ForStatement['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapForStatement({ ...$edited(data), _body: admitSlot(handle, 'for_statement', 'body', v) }, tree)
-				),
-			alternative: (v: NonNullable<T.ForStatement['_alternative']>) =>
-				rebuilt(node, handle, () =>
-					wrapForStatement(
-						{ ...$edited(data), _alternative: admitSlot(handle, 'for_statement', 'alternative', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.ForStatement['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapForStatement({ ...$edited(data), _async: admitSlot(handle, 'for_statement', 'async', v) }, tree)
+			),
+		left: (v: NonNullable<T.ForStatement['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapForStatement({ ...$edited(data), _left: admitSlot(handle, 'for_statement', 'left', v) }, tree)
+			),
+		right: (v: NonNullable<T.ForStatement['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapForStatement({ ...$edited(data), _right: admitSlot(handle, 'for_statement', 'right', v) }, tree)
+			),
+		body: (v: NonNullable<T.ForStatement['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapForStatement({ ...$edited(data), _body: admitSlot(handle, 'for_statement', 'body', v) }, tree)
+			),
+		alternative: (v: NonNullable<T.ForStatement['_alternative']>) =>
+			rebuilt(node, handle, () =>
+				wrapForStatement({ ...$edited(data), _alternative: admitSlot(handle, 'for_statement', 'alternative', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ForStatement.Parsed;
 }
@@ -1145,39 +1235,40 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		alternative() {
 			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
 		},
-		$with: {
-			condition: (v: NonNullable<T.WhileStatement['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapWhileStatement(
-						{ ...$edited(data), _condition: admitSlot(handle, 'while_statement', 'condition', v) },
-						tree
-					)
-				),
-			body: (v: NonNullable<T.WhileStatement['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapWhileStatement({ ...$edited(data), _body: admitSlot(handle, 'while_statement', 'body', v) }, tree)
-				),
-			alternative: (v: NonNullable<T.WhileStatement['_alternative']>) =>
-				rebuilt(node, handle, () =>
-					wrapWhileStatement(
-						{ ...$edited(data), _alternative: admitSlot(handle, 'while_statement', 'alternative', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		condition: (v: NonNullable<T.WhileStatement['_condition']>) =>
+			rebuilt(node, handle, () =>
+				wrapWhileStatement({ ...$edited(data), _condition: admitSlot(handle, 'while_statement', 'condition', v) }, tree)
+			),
+		body: (v: NonNullable<T.WhileStatement['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapWhileStatement({ ...$edited(data), _body: admitSlot(handle, 'while_statement', 'body', v) }, tree)
+			),
+		alternative: (v: NonNullable<T.WhileStatement['_alternative']>) =>
+			rebuilt(node, handle, () =>
+				wrapWhileStatement(
+					{ ...$edited(data), _alternative: admitSlot(handle, 'while_statement', 'alternative', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.WhileStatement.Parsed;
 }
@@ -1199,43 +1290,44 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 		finalizer() {
 			return hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.TryStatement['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapTryStatement({ ...$edited(data), _body: admitSlot(handle, 'try_statement', 'body', v) }, tree)
-				),
-			handlers: (...v: NonNullable<T.TryStatement['_handlers']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapTryStatement(
-						{ ...$edited(data), _handlers: admitSlot(handle, 'try_statement', 'handlers', restItems('handlers', v)) },
-						tree
-					)
-				),
-			alternative: (v: NonNullable<T.TryStatement['_alternative']>) =>
-				rebuilt(node, handle, () =>
-					wrapTryStatement(
-						{ ...$edited(data), _alternative: admitSlot(handle, 'try_statement', 'alternative', v) },
-						tree
-					)
-				),
-			finalizer: (v: NonNullable<T.TryStatement['_finalizer']>) =>
-				rebuilt(node, handle, () =>
-					wrapTryStatement({ ...$edited(data), _finalizer: admitSlot(handle, 'try_statement', 'finalizer', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.TryStatement['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapTryStatement({ ...$edited(data), _body: admitSlot(handle, 'try_statement', 'body', v) }, tree)
+			),
+		handlers: (...v: NonNullable<T.TryStatement['_handlers']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapTryStatement(
+					{ ...$edited(data), _handlers: admitSlot(handle, 'try_statement', 'handlers', restItems('handlers', v)) },
+					tree
+				)
+			),
+		alternative: (v: NonNullable<T.TryStatement['_alternative']>) =>
+			rebuilt(node, handle, () =>
+				wrapTryStatement({ ...$edited(data), _alternative: admitSlot(handle, 'try_statement', 'alternative', v) }, tree)
+			),
+		finalizer: (v: NonNullable<T.TryStatement['_finalizer']>) =>
+			rebuilt(node, handle, () =>
+				wrapTryStatement({ ...$edited(data), _finalizer: admitSlot(handle, 'try_statement', 'finalizer', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.TryStatement.Parsed;
 }
@@ -1254,33 +1346,37 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			group: (v: NonNullable<T.ExceptClause['_group']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _group: admitSlot(handle, 'except_clause', 'group', v) }, tree)
-				),
-			exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) }, tree)
-				),
-			body: (v: NonNullable<T.ExceptClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _body: admitSlot(handle, 'except_clause', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		group: (v: NonNullable<T.ExceptClause['_group']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClause({ ...$edited(data), _group: admitSlot(handle, 'except_clause', 'group', v) }, tree)
+			),
+		exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClause({ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) }, tree)
+			),
+		body: (v: NonNullable<T.ExceptClause['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClause({ ...$edited(data), _body: admitSlot(handle, 'except_clause', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExceptClause.Parsed;
 }
@@ -1293,25 +1389,29 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.FinallyClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapFinallyClause({ ...$edited(data), _body: admitSlot(handle, 'finally_clause', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.FinallyClause['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapFinallyClause({ ...$edited(data), _body: admitSlot(handle, 'finally_clause', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FinallyClause.Parsed;
 }
@@ -1330,36 +1430,40 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			async: (v: NonNullable<T.WithStatement['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithStatement({ ...$edited(data), _async: admitSlot(handle, 'with_statement', 'async', v) }, tree)
-				),
-			withClause: (v: NonNullable<T.WithStatement['_with_clause']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithStatement(
-						{ ...$edited(data), _with_clause: admitSlot(handle, 'with_statement', 'withClause', v) },
-						tree
-					)
-				),
-			body: (v: NonNullable<T.WithStatement['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithStatement({ ...$edited(data), _body: admitSlot(handle, 'with_statement', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.WithStatement['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapWithStatement({ ...$edited(data), _async: admitSlot(handle, 'with_statement', 'async', v) }, tree)
+			),
+		withClause: (v: NonNullable<T.WithStatement['_with_clause']>) =>
+			rebuilt(node, handle, () =>
+				wrapWithStatement(
+					{ ...$edited(data), _with_clause: admitSlot(handle, 'with_statement', 'withClause', v) },
+					tree
+				)
+			),
+		body: (v: NonNullable<T.WithStatement['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapWithStatement({ ...$edited(data), _body: admitSlot(handle, 'with_statement', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.WithStatement.Parsed;
 }
@@ -1372,25 +1476,29 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
-		$with: {
-			value: (v: NonNullable<T.WithItem['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithItem({ ...$edited(data), _value: admitSlot(handle, 'with_item', 'value', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		value: (v: NonNullable<T.WithItem['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapWithItem({ ...$edited(data), _value: admitSlot(handle, 'with_item', 'value', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.WithItem.Parsed;
 }
@@ -1418,67 +1526,68 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			async: (v: NonNullable<T.FunctionDefinition['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapFunctionDefinition(
-						{ ...$edited(data), _async: admitSlot(handle, 'function_definition', 'async', v) },
-						tree
-					)
-				),
-			name: (v: NonNullable<T.FunctionDefinition['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapFunctionDefinition({ ...$edited(data), _name: admitSlot(handle, 'function_definition', 'name', v) }, tree)
-				),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
-						(v: NonNullable<T.FunctionDefinition['_type_parameters']>) =>
-							wrapFunctionDefinition(
-								{ ...$edited(data), _type_parameters: admitSlot(handle, 'function_definition', 'typeParameters', v) },
-								tree
-							)
-					)
-				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-						(v: NonNullable<T.FunctionDefinition['_parameters']>) =>
-							wrapFunctionDefinition(
-								{ ...$edited(data), _parameters: admitSlot(handle, 'function_definition', 'parameters', v) },
-								tree
-							)
-					)
-				),
-			returnType: (v: NonNullable<T.FunctionDefinition['_return_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapFunctionDefinition(
-						{ ...$edited(data), _return_type: admitSlot(handle, 'function_definition', 'returnType', v) },
-						tree
-					)
-				),
-			body: (v: NonNullable<T.FunctionDefinition['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapFunctionDefinition({ ...$edited(data), _body: admitSlot(handle, 'function_definition', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.FunctionDefinition['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapFunctionDefinition({ ...$edited(data), _async: admitSlot(handle, 'function_definition', 'async', v) }, tree)
+			),
+		name: (v: NonNullable<T.FunctionDefinition['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapFunctionDefinition({ ...$edited(data), _name: admitSlot(handle, 'function_definition', 'name', v) }, tree)
+			),
+		typeParameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
+					(v: NonNullable<T.FunctionDefinition['_type_parameters']>) =>
+						wrapFunctionDefinition(
+							{ ...$edited(data), _type_parameters: admitSlot(handle, 'function_definition', 'typeParameters', v) },
+							tree
+						)
+				)
+			),
+		parameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+					(v: NonNullable<T.FunctionDefinition['_parameters']>) =>
+						wrapFunctionDefinition(
+							{ ...$edited(data), _parameters: admitSlot(handle, 'function_definition', 'parameters', v) },
+							tree
+						)
+				)
+			),
+		returnType: (v: NonNullable<T.FunctionDefinition['_return_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapFunctionDefinition(
+					{ ...$edited(data), _return_type: admitSlot(handle, 'function_definition', 'returnType', v) },
+					tree
+				)
+			),
+		body: (v: NonNullable<T.FunctionDefinition['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapFunctionDefinition({ ...$edited(data), _body: admitSlot(handle, 'function_definition', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FunctionDefinition.Parsed;
 }
@@ -1497,17 +1606,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		elements() {
 			return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
-						(v: NonNullable<T.Parameters['_elements']>) =>
-							wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -1541,11 +1640,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -1554,6 +1649,24 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
+					(v: NonNullable<T.Parameters['_elements']>) =>
+						wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -1576,23 +1689,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		parametersElements() {
 			return hydrateSlot<T.ParametersElements>(this, '_parameters_elements', tree);
 		},
-		$with: {
-			parametersElements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ParametersElements as const, optional: false, make: RAW.buildParametersElements },
-						(v: NonNullable<T.LambdaParameters['_parameters_elements']>) =>
-							wrapLambdaParameters(
-								{
-									...$edited(data),
-									_parameters_elements: admitSlot(handle, 'lambda_parameters', 'parametersElements', v)
-								},
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -1626,10 +1723,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -1638,6 +1732,29 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		parametersElements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ParametersElements as const, optional: false, make: RAW.buildParametersElements },
+					(v: NonNullable<T.LambdaParameters['_parameters_elements']>) =>
+						wrapLambdaParameters(
+							{
+								...$edited(data),
+								_parameters_elements: admitSlot(handle, 'lambda_parameters', 'parametersElements', v)
+							},
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -1654,25 +1771,29 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.ListSplat['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapListSplat({ ...$edited(data), _expression: admitSlot(handle, 'list_splat', 'expression', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.ListSplat['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapListSplat({ ...$edited(data), _expression: admitSlot(handle, 'list_splat', 'expression', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ListSplat.Parsed;
 }
@@ -1685,28 +1806,32 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.DictionarySplat['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapDictionarySplat(
-						{ ...$edited(data), _expression: admitSlot(handle, 'dictionary_splat', 'expression', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.DictionarySplat['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapDictionarySplat(
+					{ ...$edited(data), _expression: admitSlot(handle, 'dictionary_splat', 'expression', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DictionarySplat.Parsed;
 }
@@ -1719,28 +1844,32 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 		names() {
 			return hydrateSlots<T.Identifier>(this, '_names', tree);
 		},
-		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.GlobalStatement['_names']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapGlobalStatement(
-						{ ...$edited(data), _names: admitSlot(handle, 'global_statement', 'names', restItems('names', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		names: (...v: NonEmptyArray<NonNullable<T.GlobalStatement['_names']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapGlobalStatement(
+					{ ...$edited(data), _names: admitSlot(handle, 'global_statement', 'names', restItems('names', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.GlobalStatement.Parsed;
 }
@@ -1753,28 +1882,32 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 		names() {
 			return hydrateSlots<T.Identifier>(this, '_names', tree);
 		},
-		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.NonlocalStatement['_names']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapNonlocalStatement(
-						{ ...$edited(data), _names: admitSlot(handle, 'nonlocal_statement', 'names', restItems('names', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		names: (...v: NonEmptyArray<NonNullable<T.NonlocalStatement['_names']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapNonlocalStatement(
+					{ ...$edited(data), _names: admitSlot(handle, 'nonlocal_statement', 'names', restItems('names', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.NonlocalStatement.Parsed;
 }
@@ -1790,35 +1923,36 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 		inClauses() {
 			return hydrateSlots<T.Expression>(this, '_in_clause', tree);
 		},
-		$with: {
-			code: (v: NonNullable<T.ExecStatement['_code']>) =>
-				rebuilt(node, handle, () =>
-					wrapExecStatement({ ...$edited(data), _code: admitSlot(handle, 'exec_statement', 'code', v) }, tree)
-				),
-			inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapExecStatement(
-						{
-							...$edited(data),
-							_in_clause: admitSlot(handle, 'exec_statement', 'inClauses', restItems('inClauses', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		code: (v: NonNullable<T.ExecStatement['_code']>) =>
+			rebuilt(node, handle, () =>
+				wrapExecStatement({ ...$edited(data), _code: admitSlot(handle, 'exec_statement', 'code', v) }, tree)
+			),
+		inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapExecStatement(
+					{ ...$edited(data), _in_clause: admitSlot(handle, 'exec_statement', 'inClauses', restItems('inClauses', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExecStatement.Parsed;
 }
@@ -1834,35 +1968,36 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 		right() {
 			return hydrateSlot<T.Type>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.TypeAliasStatement['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypeAliasStatement(
-						{ ...$edited(data), _left: admitSlot(handle, 'type_alias_statement', 'left', v) },
-						tree
-					)
-				),
-			right: (v: NonNullable<T.TypeAliasStatement['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypeAliasStatement(
-						{ ...$edited(data), _right: admitSlot(handle, 'type_alias_statement', 'right', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.TypeAliasStatement['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypeAliasStatement({ ...$edited(data), _left: admitSlot(handle, 'type_alias_statement', 'left', v) }, tree)
+			),
+		right: (v: NonNullable<T.TypeAliasStatement['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypeAliasStatement(
+					{ ...$edited(data), _right: admitSlot(handle, 'type_alias_statement', 'right', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.TypeAliasStatement.Parsed;
 }
@@ -1884,50 +2019,54 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): 
 		body() {
 			return hydrateSlot<T.SuiteClassDefinition>(this, '_body', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.ClassDefinition['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapClassDefinition({ ...$edited(data), _name: admitSlot(handle, 'class_definition', 'name', v) }, tree)
-				),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
-						(v: NonNullable<T.ClassDefinition['_type_parameters']>) =>
-							wrapClassDefinition(
-								{ ...$edited(data), _type_parameters: admitSlot(handle, 'class_definition', 'typeParameters', v) },
-								tree
-							)
-					)
-				),
-			bases: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ArgumentList as const, optional: true, make: RAW.buildArgumentList },
-						(v: NonNullable<T.ClassDefinition['_bases']>) =>
-							wrapClassDefinition({ ...$edited(data), _bases: admitSlot(handle, 'class_definition', 'bases', v) }, tree)
-					)
-				),
-			body: (v: NonNullable<T.ClassDefinition['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapClassDefinition({ ...$edited(data), _body: admitSlot(handle, 'class_definition', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.ClassDefinition['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapClassDefinition({ ...$edited(data), _name: admitSlot(handle, 'class_definition', 'name', v) }, tree)
+			),
+		typeParameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
+					(v: NonNullable<T.ClassDefinition['_type_parameters']>) =>
+						wrapClassDefinition(
+							{ ...$edited(data), _type_parameters: admitSlot(handle, 'class_definition', 'typeParameters', v) },
+							tree
+						)
+				)
+			),
+		bases: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ArgumentList as const, optional: true, make: RAW.buildArgumentList },
+					(v: NonNullable<T.ClassDefinition['_bases']>) =>
+						wrapClassDefinition({ ...$edited(data), _bases: admitSlot(handle, 'class_definition', 'bases', v) }, tree)
+				)
+			),
+		body: (v: NonNullable<T.ClassDefinition['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapClassDefinition({ ...$edited(data), _body: admitSlot(handle, 'class_definition', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ClassDefinition.Parsed;
 }
@@ -1946,17 +2085,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		types() {
 			return hydrateSlot<T.Types>(this, '_types', tree);
 		},
-		$with: {
-			types: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
-						(v: NonNullable<T.TypeParameter['_types']>) =>
-							wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -1990,10 +2119,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -2002,6 +2128,23 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		types: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
+					(v: NonNullable<T.TypeParameter['_types']>) =>
+						wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -2021,28 +2164,32 @@ export function wrapParenthesizedListSplat(
 		content() {
 			return hydrateSlot<T.ParenthesizedListSplat | T.ListSplat>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapParenthesizedListSplat(
-						{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapParenthesizedListSplat(
+					{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
@@ -2061,20 +2208,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		arguments() {
 			return hydrateSlot<T.ArgumentListElements | undefined>(this, '_arguments', tree);
 		},
-		$with: {
-			arguments: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
-						(v: NonNullable<T.ArgumentList['_arguments']>) =>
-							wrapArgumentList(
-								{ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2108,11 +2242,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -2121,6 +2251,24 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		arguments: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
+					(v: NonNullable<T.ArgumentList['_arguments']>) =>
+						wrapArgumentList({ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -2140,38 +2288,42 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 		definition() {
 			return hydrateSlot<T.ClassDefinition | T.FunctionDefinition>(this, '_definition', tree);
 		},
-		$with: {
-			decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapDecoratedDefinition(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'decorated_definition', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				),
-			definition: (v: NonNullable<T.DecoratedDefinition['_definition']>) =>
-				rebuilt(node, handle, () =>
-					wrapDecoratedDefinition(
-						{ ...$edited(data), _definition: admitSlot(handle, 'decorated_definition', 'definition', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapDecoratedDefinition(
+					{
+						...$edited(data),
+						_decorator: admitSlot(handle, 'decorated_definition', 'decorators', restItems('decorators', v))
+					},
+					tree
+				)
+			),
+		definition: (v: NonNullable<T.DecoratedDefinition['_definition']>) =>
+			rebuilt(node, handle, () =>
+				wrapDecoratedDefinition(
+					{ ...$edited(data), _definition: admitSlot(handle, 'decorated_definition', 'definition', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DecoratedDefinition.Parsed;
 }
@@ -2184,25 +2336,29 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.Decorator['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.Decorator['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Decorator.Parsed;
 }
@@ -2215,28 +2371,32 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		statements() {
 			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
-		$with: {
-			statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapBlock(
-						{ ...$edited(data), _statements: admitSlot(handle, 'block', 'statements', restItems('statements', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapBlock(
+					{ ...$edited(data), _statements: admitSlot(handle, 'block', 'statements', restItems('statements', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Block.Parsed;
 }
@@ -2254,17 +2414,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		items() {
 			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.ExpressionList['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapExpressionList(
-						{ ...$edited(data), _item: admitSlot(handle, 'expression_list', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapExpressionList({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2298,10 +2448,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -2310,6 +2457,23 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.ExpressionList['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapExpressionList(
+					{ ...$edited(data), _item: admitSlot(handle, 'expression_list', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapExpressionList({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapExpressionList$listRead);
 	return node as unknown as T.ExpressionList.Parsed;
@@ -2326,29 +2490,33 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		$with: {
-			qualifier: (v: NonNullable<T.DottedName['_qualifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapDottedName({ ...$edited(data), _qualifier: admitSlot(handle, 'dotted_name', 'qualifier', v) }, tree)
-				),
-			name: (v: NonNullable<T.DottedName['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapDottedName({ ...$edited(data), _name: admitSlot(handle, 'dotted_name', 'name', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		qualifier: (v: NonNullable<T.DottedName['_qualifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapDottedName({ ...$edited(data), _qualifier: admitSlot(handle, 'dotted_name', 'qualifier', v) }, tree)
+			),
+		name: (v: NonNullable<T.DottedName['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapDottedName({ ...$edited(data), _name: admitSlot(handle, 'dotted_name', 'name', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DottedName.Parsed;
 }
@@ -2361,25 +2529,29 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePa
 		content() {
 			return hydrateSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.CasePattern['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapCasePattern({ ...$edited(data), _content: admitSlot(handle, 'case_pattern', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.CasePattern['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapCasePattern({ ...$edited(data), _content: admitSlot(handle, 'case_pattern', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.CasePattern.Parsed;
 }
@@ -2410,25 +2582,29 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 				| TSKindId.WildcardPattern
 			>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.SimplePattern['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapSimplePattern({ ...$edited(data), _content: admitSlot(handle, '_simple_pattern', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.SimplePattern['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapSimplePattern({ ...$edited(data), _content: admitSlot(handle, '_simple_pattern', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SimplePattern.Parsed;
 }
@@ -2444,35 +2620,39 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.Ca
 		identifier() {
 			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
 		},
-		$with: {
-			casePattern: (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseAsPattern(
-						{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
-						tree
-					)
-				),
-			identifier: (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseAsPattern(
-						{ ...$edited(data), _identifier: admitSlot(handle, 'case_as_pattern', 'identifier', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		casePattern: (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapCaseAsPattern(
+					{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
+					tree
+				)
+			),
+		identifier: (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapCaseAsPattern(
+					{ ...$edited(data), _identifier: admitSlot(handle, 'case_as_pattern', 'identifier', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.CaseAsPattern.Parsed;
 }
@@ -2524,51 +2704,55 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 				| TSKindId.WildcardPattern
 			>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.UnionPattern['_left']> | Admit<T.SimplePattern>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionPattern(
-						{
-							...$edited(data),
-							_left: admitSlot(
-								handle,
-								'union_pattern',
-								'left',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
-							)
-						},
-						tree
-					)
-				),
-			right: (v: NonNullable<T.UnionPattern['_right']> | Admit<T.SimplePattern>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionPattern(
-						{
-							...$edited(data),
-							_right: admitSlot(
-								handle,
-								'union_pattern',
-								'right',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.right')
-							)
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.UnionPattern['_left']> | Admit<T.SimplePattern>) =>
+			rebuilt(node, handle, () =>
+				wrapUnionPattern(
+					{
+						...$edited(data),
+						_left: admitSlot(
+							handle,
+							'union_pattern',
+							'left',
+							admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
+						)
+					},
+					tree
+				)
+			),
+		right: (v: NonNullable<T.UnionPattern['_right']> | Admit<T.SimplePattern>) =>
+			rebuilt(node, handle, () =>
+				wrapUnionPattern(
+					{
+						...$edited(data),
+						_right: admitSlot(
+							handle,
+							'union_pattern',
+							'right',
+							admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.right')
+						)
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.UnionPattern.Parsed;
 }
@@ -2587,17 +2771,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		elements() {
 			return hydrateSlot<T.DictPatternElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
-						(v: NonNullable<T.DictPattern['_elements']>) =>
-							wrapDictPattern({ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2631,11 +2805,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -2644,6 +2814,24 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
+					(v: NonNullable<T.DictPattern['_elements']>) =>
+						wrapDictPattern({ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -2681,40 +2869,44 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 		value() {
 			return hydrateSlot<T.CasePattern>(this, '_value', tree);
 		},
-		$with: {
-			key: (v: NonNullable<T.KeyValuePattern['_key']> | Admit<T.SimplePattern>) =>
-				rebuilt(node, handle, () =>
-					wrapKeyValuePattern(
-						{
-							...$edited(data),
-							_key: admitSlot(
-								handle,
-								'key_value_pattern',
-								'key',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeyValuePattern.key')
-							)
-						},
-						tree
-					)
-				),
-			value: (v: NonNullable<T.KeyValuePattern['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapKeyValuePattern({ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		key: (v: NonNullable<T.KeyValuePattern['_key']> | Admit<T.SimplePattern>) =>
+			rebuilt(node, handle, () =>
+				wrapKeyValuePattern(
+					{
+						...$edited(data),
+						_key: admitSlot(
+							handle,
+							'key_value_pattern',
+							'key',
+							admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeyValuePattern.key')
+						)
+					},
+					tree
+				)
+			),
+		value: (v: NonNullable<T.KeyValuePattern['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapKeyValuePattern({ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.KeyValuePattern.Parsed;
 }
@@ -2748,40 +2940,44 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				| TSKindId.WildcardPattern
 			>(this, '_pattern', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.KeywordPattern['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapKeywordPattern({ ...$edited(data), _name: admitSlot(handle, 'keyword_pattern', 'name', v) }, tree)
-				),
-			pattern: (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
-				rebuilt(node, handle, () =>
-					wrapKeywordPattern(
-						{
-							...$edited(data),
-							_pattern: admitSlot(
-								handle,
-								'keyword_pattern',
-								'pattern',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
-							)
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.KeywordPattern['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapKeywordPattern({ ...$edited(data), _name: admitSlot(handle, 'keyword_pattern', 'name', v) }, tree)
+			),
+		pattern: (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
+			rebuilt(node, handle, () =>
+				wrapKeywordPattern(
+					{
+						...$edited(data),
+						_pattern: admitSlot(
+							handle,
+							'keyword_pattern',
+							'pattern',
+							admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
+						)
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.KeywordPattern.Parsed;
 }
@@ -2797,34 +2993,38 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.Clas
 		fields() {
 			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_fields', tree);
 		},
-		$with: {
-			type: (v: NonNullable<T.ClassPattern['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapClassPattern({ ...$edited(data), _type: admitSlot(handle, 'class_pattern', 'type', v) }, tree)
-				),
-			fields: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.ClassPattern['_fields']>) =>
-							wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		type: (v: NonNullable<T.ClassPattern['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapClassPattern({ ...$edited(data), _type: admitSlot(handle, 'class_pattern', 'type', v) }, tree)
+			),
+		fields: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
+					(v: NonNullable<T.ClassPattern['_fields']>) =>
+						wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ClassPattern.Parsed;
 }
@@ -2846,40 +3046,41 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 		imaginary() {
 			return hydrateSlot<T.Integer | T.Float>(this, '_imaginary', tree);
 		},
-		$with: {
-			sign: (v: NonNullable<T.ComplexPattern['_sign']>) =>
-				rebuilt(node, handle, () =>
-					wrapComplexPattern({ ...$edited(data), _sign: admitSlot(handle, 'complex_pattern', 'sign', v) }, tree)
-				),
-			real: (v: NonNullable<T.ComplexPattern['_real']>) =>
-				rebuilt(node, handle, () =>
-					wrapComplexPattern({ ...$edited(data), _real: admitSlot(handle, 'complex_pattern', 'real', v) }, tree)
-				),
-			operator: (v: NonNullable<T.ComplexPattern['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapComplexPattern({ ...$edited(data), _operator: admitSlot(handle, 'complex_pattern', 'operator', v) }, tree)
-				),
-			imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) =>
-				rebuilt(node, handle, () =>
-					wrapComplexPattern(
-						{ ...$edited(data), _imaginary: admitSlot(handle, 'complex_pattern', 'imaginary', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		sign: (v: NonNullable<T.ComplexPattern['_sign']>) =>
+			rebuilt(node, handle, () =>
+				wrapComplexPattern({ ...$edited(data), _sign: admitSlot(handle, 'complex_pattern', 'sign', v) }, tree)
+			),
+		real: (v: NonNullable<T.ComplexPattern['_real']>) =>
+			rebuilt(node, handle, () =>
+				wrapComplexPattern({ ...$edited(data), _real: admitSlot(handle, 'complex_pattern', 'real', v) }, tree)
+			),
+		operator: (v: NonNullable<T.ComplexPattern['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapComplexPattern({ ...$edited(data), _operator: admitSlot(handle, 'complex_pattern', 'operator', v) }, tree)
+			),
+		imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) =>
+			rebuilt(node, handle, () =>
+				wrapComplexPattern({ ...$edited(data), _imaginary: admitSlot(handle, 'complex_pattern', 'imaginary', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ComplexPattern.Parsed;
 }
@@ -2897,17 +3098,7 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		items() {
 			return hydrateSlots<T.Parameter>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.ParametersElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapParametersElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'parameters_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapParametersElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2941,10 +3132,7 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -2953,6 +3141,23 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.ParametersElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapParametersElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'parameters_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapParametersElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapParametersElements$listRead);
 	return node as unknown as T.ParametersElements.Parsed;
@@ -2971,14 +3176,7 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		items() {
 			return hydrateSlots<T.Pattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.Patterns['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapPatterns({ ...$edited(data), _item: admitSlot(handle, 'patterns', 'items', restItems('items', v)) }, tree)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPatterns({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3012,10 +3210,7 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -3024,6 +3219,20 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.Patterns['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapPatterns({ ...$edited(data), _item: admitSlot(handle, 'patterns', 'items', restItems('items', v)) }, tree)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapPatterns({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapPatterns$listRead);
 	return node as unknown as T.Patterns.Parsed;
@@ -3043,17 +3252,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		elements() {
 			return hydrateSlot<T.TuplePatternElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
-						(v: NonNullable<T.TuplePattern['_elements']>) =>
-							wrapTuplePattern({ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3087,11 +3286,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -3100,6 +3295,24 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
+					(v: NonNullable<T.TuplePattern['_elements']>) =>
+						wrapTuplePattern({ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -3122,17 +3335,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		elements() {
 			return hydrateSlot<T.Patterns | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.ListPattern['_elements']>) =>
-							wrapListPattern({ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3166,11 +3369,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -3179,6 +3378,24 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
+					(v: NonNullable<T.ListPattern['_elements']>) =>
+						wrapListPattern({ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -3198,32 +3415,33 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 		default() {
 			return hydrateSlot<T.Expression>(this, '_default', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.DefaultParameter['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapDefaultParameter({ ...$edited(data), _name: admitSlot(handle, 'default_parameter', 'name', v) }, tree)
-				),
-			default: (v: NonNullable<T.DefaultParameter['_default']>) =>
-				rebuilt(node, handle, () =>
-					wrapDefaultParameter(
-						{ ...$edited(data), _default: admitSlot(handle, 'default_parameter', 'default', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.DefaultParameter['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapDefaultParameter({ ...$edited(data), _name: admitSlot(handle, 'default_parameter', 'name', v) }, tree)
+			),
+		default: (v: NonNullable<T.DefaultParameter['_default']>) =>
+			rebuilt(node, handle, () =>
+				wrapDefaultParameter({ ...$edited(data), _default: admitSlot(handle, 'default_parameter', 'default', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DefaultParameter.Parsed;
 }
@@ -3245,42 +3463,46 @@ export function wrapTypedDefaultParameter(
 		default() {
 			return hydrateSlot<T.Expression>(this, '_default', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.TypedDefaultParameter['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypedDefaultParameter(
-						{ ...$edited(data), _name: admitSlot(handle, 'typed_default_parameter', 'name', v) },
-						tree
-					)
-				),
-			type: (v: NonNullable<T.TypedDefaultParameter['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypedDefaultParameter(
-						{ ...$edited(data), _type: admitSlot(handle, 'typed_default_parameter', 'type', v) },
-						tree
-					)
-				),
-			default: (v: NonNullable<T.TypedDefaultParameter['_default']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypedDefaultParameter(
-						{ ...$edited(data), _default: admitSlot(handle, 'typed_default_parameter', 'default', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.TypedDefaultParameter['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypedDefaultParameter(
+					{ ...$edited(data), _name: admitSlot(handle, 'typed_default_parameter', 'name', v) },
+					tree
+				)
+			),
+		type: (v: NonNullable<T.TypedDefaultParameter['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypedDefaultParameter(
+					{ ...$edited(data), _type: admitSlot(handle, 'typed_default_parameter', 'type', v) },
+					tree
+				)
+			),
+		default: (v: NonNullable<T.TypedDefaultParameter['_default']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypedDefaultParameter(
+					{ ...$edited(data), _default: admitSlot(handle, 'typed_default_parameter', 'default', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.TypedDefaultParameter.Parsed;
 }
@@ -3293,28 +3515,32 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 		pattern() {
 			return hydrateSlot<T.Identifier | T.Subscript | T.Attribute>(this, '_pattern', tree);
 		},
-		$with: {
-			pattern: (v: NonNullable<T.ListSplatPattern['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapListSplatPattern(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'list_splat_pattern', 'pattern', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		pattern: (v: NonNullable<T.ListSplatPattern['_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapListSplatPattern(
+					{ ...$edited(data), _pattern: admitSlot(handle, 'list_splat_pattern', 'pattern', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ListSplatPattern.Parsed;
 }
@@ -3330,28 +3556,32 @@ export function wrapDictionarySplatPattern(
 		pattern() {
 			return hydrateSlot<T.Identifier | T.Subscript | T.Attribute>(this, '_pattern', tree);
 		},
-		$with: {
-			pattern: (v: NonNullable<T.DictionarySplatPattern['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapDictionarySplatPattern(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'dictionary_splat_pattern', 'pattern', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		pattern: (v: NonNullable<T.DictionarySplatPattern['_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapDictionarySplatPattern(
+					{ ...$edited(data), _pattern: admitSlot(handle, 'dictionary_splat_pattern', 'pattern', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DictionarySplatPattern.Parsed;
 }
@@ -3367,29 +3597,33 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 		alias() {
 			return hydrateSlot<T.AsPatternTarget>(this, '_alias', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.AsPattern['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapAsPattern({ ...$edited(data), _expression: admitSlot(handle, 'as_pattern', 'expression', v) }, tree)
-				),
-			alias: (v: NonNullable<T.AsPattern['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapAsPattern({ ...$edited(data), _alias: admitSlot(handle, 'as_pattern', 'alias', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.AsPattern['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapAsPattern({ ...$edited(data), _expression: admitSlot(handle, 'as_pattern', 'expression', v) }, tree)
+			),
+		alias: (v: NonNullable<T.AsPattern['_alias']>) =>
+			rebuilt(node, handle, () =>
+				wrapAsPattern({ ...$edited(data), _alias: admitSlot(handle, 'as_pattern', 'alias', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AsPattern.Parsed;
 }
@@ -3402,25 +3636,29 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOpe
 		argument() {
 			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
-		$with: {
-			argument: (v: NonNullable<T.NotOperator['_argument']>) =>
-				rebuilt(node, handle, () =>
-					wrapNotOperator({ ...$edited(data), _argument: admitSlot(handle, 'not_operator', 'argument', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		argument: (v: NonNullable<T.NotOperator['_argument']>) =>
+			rebuilt(node, handle, () =>
+				wrapNotOperator({ ...$edited(data), _argument: admitSlot(handle, 'not_operator', 'argument', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.NotOperator.Parsed;
 }
@@ -3439,36 +3677,37 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 		right() {
 			return hydrateSlot<T.Expression>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.BooleanOperator['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapBooleanOperator({ ...$edited(data), _left: admitSlot(handle, 'boolean_operator', 'left', v) }, tree)
-				),
-			operator: (v: NonNullable<T.BooleanOperator['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapBooleanOperator(
-						{ ...$edited(data), _operator: admitSlot(handle, 'boolean_operator', 'operator', v) },
-						tree
-					)
-				),
-			right: (v: NonNullable<T.BooleanOperator['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapBooleanOperator({ ...$edited(data), _right: admitSlot(handle, 'boolean_operator', 'right', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.BooleanOperator['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapBooleanOperator({ ...$edited(data), _left: admitSlot(handle, 'boolean_operator', 'left', v) }, tree)
+			),
+		operator: (v: NonNullable<T.BooleanOperator['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapBooleanOperator({ ...$edited(data), _operator: admitSlot(handle, 'boolean_operator', 'operator', v) }, tree)
+			),
+		right: (v: NonNullable<T.BooleanOperator['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapBooleanOperator({ ...$edited(data), _right: admitSlot(handle, 'boolean_operator', 'right', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.BooleanOperator.Parsed;
 }
@@ -3487,33 +3726,37 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 		right() {
 			return hydrateSlot<T.PrimaryExpression>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.BinaryOperator['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _left: admitSlot(handle, 'binary_operator', 'left', v) }, tree)
-				),
-			operator: (v: NonNullable<T.BinaryOperator['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'binary_operator', 'operator', v) }, tree)
-				),
-			right: (v: NonNullable<T.BinaryOperator['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _right: admitSlot(handle, 'binary_operator', 'right', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.BinaryOperator['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapBinaryOperator({ ...$edited(data), _left: admitSlot(handle, 'binary_operator', 'left', v) }, tree)
+			),
+		operator: (v: NonNullable<T.BinaryOperator['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapBinaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'binary_operator', 'operator', v) }, tree)
+			),
+		right: (v: NonNullable<T.BinaryOperator['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapBinaryOperator({ ...$edited(data), _right: admitSlot(handle, 'binary_operator', 'right', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.BinaryOperator.Parsed;
 }
@@ -3529,29 +3772,33 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 		argument() {
 			return hydrateSlot<T.PrimaryExpression>(this, '_argument', tree);
 		},
-		$with: {
-			operator: (v: NonNullable<T.UnaryOperator['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'unary_operator', 'operator', v) }, tree)
-				),
-			argument: (v: NonNullable<T.UnaryOperator['_argument']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnaryOperator({ ...$edited(data), _argument: admitSlot(handle, 'unary_operator', 'argument', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		operator: (v: NonNullable<T.UnaryOperator['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapUnaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'unary_operator', 'operator', v) }, tree)
+			),
+		argument: (v: NonNullable<T.UnaryOperator['_argument']>) =>
+			rebuilt(node, handle, () =>
+				wrapUnaryOperator({ ...$edited(data), _argument: admitSlot(handle, 'unary_operator', 'argument', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.UnaryOperator.Parsed;
 }
@@ -3567,44 +3814,48 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 		comparators() {
 			return hydrateSlots<T.ComparisonOperatorComparator>(this, '_comparators', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.ComparisonOperator['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapComparisonOperator({ ...$edited(data), _left: admitSlot(handle, 'comparison_operator', 'left', v) }, tree)
-				),
-			comparators: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					elementsWith(
-						args,
-						{
-							slot: 'comparators',
-							keys: ['operators', 'primaryExpression'],
-							make: RAW.buildComparisonOperatorComparator
-						},
-						(...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
-							wrapComparisonOperator(
-								{
-									...$edited(data),
-									_comparators: admitSlot(handle, 'comparison_operator', 'comparators', restItems('comparators', v))
-								},
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.ComparisonOperator['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapComparisonOperator({ ...$edited(data), _left: admitSlot(handle, 'comparison_operator', 'left', v) }, tree)
+			),
+		comparators: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				elementsWith(
+					args,
+					{
+						slot: 'comparators',
+						keys: ['operators', 'primaryExpression'],
+						make: RAW.buildComparisonOperatorComparator
+					},
+					(...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
+						wrapComparisonOperator(
+							{
+								...$edited(data),
+								_comparators: admitSlot(handle, 'comparison_operator', 'comparators', restItems('comparators', v))
+							},
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ComparisonOperator.Parsed;
 }
@@ -3620,34 +3871,38 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		$with: {
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
-						(v: NonNullable<T.Lambda['_parameters']>) =>
-							wrapLambda({ ...$edited(data), _parameters: admitSlot(handle, 'lambda', 'parameters', v) }, tree)
-					)
-				),
-			body: (v: NonNullable<T.Lambda['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapLambda({ ...$edited(data), _body: admitSlot(handle, 'lambda', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		parameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
+					(v: NonNullable<T.Lambda['_parameters']>) =>
+						wrapLambda({ ...$edited(data), _parameters: admitSlot(handle, 'lambda', 'parameters', v) }, tree)
+				)
+			),
+		body: (v: NonNullable<T.Lambda['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapLambda({ ...$edited(data), _body: admitSlot(handle, 'lambda', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Lambda.Parsed;
 }
@@ -3666,40 +3921,44 @@ export function wrapLambdaWithinForInClause(
 		body() {
 			return hydrateSlot<T.Expression | T.LambdaWithinForInClause>(this, '_body', tree);
 		},
-		$with: {
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
-						(v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
-							wrapLambdaWithinForInClause(
-								{ ...$edited(data), _parameters: admitSlot(handle, 'lambda_within_for_in_clause', 'parameters', v) },
-								tree
-							)
-					)
-				),
-			body: (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapLambdaWithinForInClause(
-						{ ...$edited(data), _body: admitSlot(handle, 'lambda_within_for_in_clause', 'body', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		parameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
+					(v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
+						wrapLambdaWithinForInClause(
+							{ ...$edited(data), _parameters: admitSlot(handle, 'lambda_within_for_in_clause', 'parameters', v) },
+							tree
+						)
+				)
+			),
+		body: (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapLambdaWithinForInClause(
+					{ ...$edited(data), _body: admitSlot(handle, 'lambda_within_for_in_clause', 'body', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.LambdaWithinForInClause.Parsed;
 }
@@ -3720,42 +3979,43 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 			>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.AugmentedAssignment['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapAugmentedAssignment(
-						{ ...$edited(data), _left: admitSlot(handle, 'augmented_assignment', 'left', v) },
-						tree
-					)
-				),
-			operator: (v: NonNullable<T.AugmentedAssignment['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapAugmentedAssignment(
-						{ ...$edited(data), _operator: admitSlot(handle, 'augmented_assignment', 'operator', v) },
-						tree
-					)
-				),
-			right: (v: NonNullable<T.AugmentedAssignment['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapAugmentedAssignment(
-						{ ...$edited(data), _right: admitSlot(handle, 'augmented_assignment', 'right', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.AugmentedAssignment['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapAugmentedAssignment({ ...$edited(data), _left: admitSlot(handle, 'augmented_assignment', 'left', v) }, tree)
+			),
+		operator: (v: NonNullable<T.AugmentedAssignment['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapAugmentedAssignment(
+					{ ...$edited(data), _operator: admitSlot(handle, 'augmented_assignment', 'operator', v) },
+					tree
+				)
+			),
+		right: (v: NonNullable<T.AugmentedAssignment['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapAugmentedAssignment(
+					{ ...$edited(data), _right: admitSlot(handle, 'augmented_assignment', 'right', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AugmentedAssignment.Parsed;
 }
@@ -3773,17 +4033,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		items() {
 			return hydrateSlots<T.Pattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.PatternList['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapPatternList(
-						{ ...$edited(data), _item: admitSlot(handle, 'pattern_list', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPatternList({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3817,10 +4067,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -3829,6 +4076,23 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.PatternList['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapPatternList(
+					{ ...$edited(data), _item: admitSlot(handle, 'pattern_list', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapPatternList({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapPatternList$listRead);
 	return node as unknown as T.PatternList.Parsed;
@@ -3842,25 +4106,29 @@ export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 		content() {
 			return hydrateSlot<T.YieldFromClause | T.Expression | T.ExpressionList | undefined>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.Yield['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapYield({ ...$edited(data), _content: admitSlot(handle, 'yield', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.Yield['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapYield({ ...$edited(data), _content: admitSlot(handle, 'yield', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Yield.Parsed;
 }
@@ -3876,29 +4144,33 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		property() {
 			return hydrateSlot<T.Identifier>(this, '_property', tree);
 		},
-		$with: {
-			object: (v: NonNullable<T.Attribute['_object']>) =>
-				rebuilt(node, handle, () =>
-					wrapAttribute({ ...$edited(data), _object: admitSlot(handle, 'attribute', 'object', v) }, tree)
-				),
-			property: (v: NonNullable<T.Attribute['_property']>) =>
-				rebuilt(node, handle, () =>
-					wrapAttribute({ ...$edited(data), _property: admitSlot(handle, 'attribute', 'property', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		object: (v: NonNullable<T.Attribute['_object']>) =>
+			rebuilt(node, handle, () =>
+				wrapAttribute({ ...$edited(data), _object: admitSlot(handle, 'attribute', 'object', v) }, tree)
+			),
+		property: (v: NonNullable<T.Attribute['_property']>) =>
+			rebuilt(node, handle, () =>
+				wrapAttribute({ ...$edited(data), _property: admitSlot(handle, 'attribute', 'property', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Attribute.Parsed;
 }
@@ -3914,34 +4186,38 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 		subscripts() {
 			return hydrateSlot<T.Subscripts>(this, '_subscripts', tree);
 		},
-		$with: {
-			object: (v: NonNullable<T.Subscript['_object']>) =>
-				rebuilt(node, handle, () =>
-					wrapSubscript({ ...$edited(data), _object: admitSlot(handle, 'subscript', 'object', v) }, tree)
-				),
-			subscripts: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Subscripts as const, optional: false, make: RAW.buildSubscripts },
-						(v: NonNullable<T.Subscript['_subscripts']>) =>
-							wrapSubscript({ ...$edited(data), _subscripts: admitSlot(handle, 'subscript', 'subscripts', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		object: (v: NonNullable<T.Subscript['_object']>) =>
+			rebuilt(node, handle, () =>
+				wrapSubscript({ ...$edited(data), _object: admitSlot(handle, 'subscript', 'object', v) }, tree)
+			),
+		subscripts: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Subscripts as const, optional: false, make: RAW.buildSubscripts },
+					(v: NonNullable<T.Subscript['_subscripts']>) =>
+						wrapSubscript({ ...$edited(data), _subscripts: admitSlot(handle, 'subscript', 'subscripts', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Subscript.Parsed;
 }
@@ -3961,45 +4237,45 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 		step() {
 			return hydrateSlot<T.SliceGroup | undefined>(this, '_step', tree);
 		},
-		$with: {
-			start: (v: NonNullable<T.Slice['_start']>) =>
-				rebuilt(node, handle, () =>
-					wrapSlice({ ...$edited(data), _start: admitSlot(handle, 'slice', 'start', v) }, tree)
-				),
-			stop: (v: NonNullable<T.Slice['_stop']>) =>
-				rebuilt(node, handle, () =>
-					wrapSlice({ ...$edited(data), _stop: admitSlot(handle, 'slice', 'stop', v) }, tree)
-				),
-			step: (v: NonNullable<T.Slice['_step']>) =>
-				rebuilt(node, handle, () =>
-					wrapSlice({ ...$edited(data), _step: admitSlot(handle, 'slice', 'step', v) }, tree)
-				),
-			expression: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{ slot: 'step', stored: '_step', make: RAW.buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
-						'expression',
-						args,
-						(v: NonNullable<T.Slice['_step']>) =>
-							wrapSlice({ ...$edited(data), _step: admitSlot(handle, 'slice', 'step', v) }, tree),
-						() => readGroup_step.call(node)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		expression: data._step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		start: (v: NonNullable<T.Slice['_start']>) =>
+			rebuilt(node, handle, () =>
+				wrapSlice({ ...$edited(data), _start: admitSlot(handle, 'slice', 'start', v) }, tree)
+			),
+		stop: (v: NonNullable<T.Slice['_stop']>) =>
+			rebuilt(node, handle, () => wrapSlice({ ...$edited(data), _stop: admitSlot(handle, 'slice', 'stop', v) }, tree)),
+		step: (v: NonNullable<T.Slice['_step']>) =>
+			rebuilt(node, handle, () => wrapSlice({ ...$edited(data), _step: admitSlot(handle, 'slice', 'step', v) }, tree)),
+		expression: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				seatWith(
+					{ slot: 'step', stored: '_step', make: RAW.buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
+					'expression',
+					args,
+					(v: NonNullable<T.Slice['_step']>) =>
+						wrapSlice({ ...$edited(data), _step: admitSlot(handle, 'slice', 'step', v) }, tree),
+					() => readGroup_step.call(node)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Slice.Parsed;
 }
@@ -4015,29 +4291,33 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 		arguments() {
 			return hydrateSlot<T.GeneratorExpression | T.ArgumentList>(this, '_arguments', tree);
 		},
-		$with: {
-			function: (v: NonNullable<T.Call['_function']>) =>
-				rebuilt(node, handle, () =>
-					wrapCall({ ...$edited(data), _function: admitSlot(handle, 'call', 'function', v) }, tree)
-				),
-			arguments: (v: NonNullable<T.Call['_arguments']>) =>
-				rebuilt(node, handle, () =>
-					wrapCall({ ...$edited(data), _arguments: admitSlot(handle, 'call', 'arguments', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		function: (v: NonNullable<T.Call['_function']>) =>
+			rebuilt(node, handle, () =>
+				wrapCall({ ...$edited(data), _function: admitSlot(handle, 'call', 'function', v) }, tree)
+			),
+		arguments: (v: NonNullable<T.Call['_arguments']>) =>
+			rebuilt(node, handle, () =>
+				wrapCall({ ...$edited(data), _arguments: admitSlot(handle, 'call', 'arguments', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Call.Parsed;
 }
@@ -4053,29 +4333,33 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.TypedParameter['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypedParameter({ ...$edited(data), _name: admitSlot(handle, 'typed_parameter', 'name', v) }, tree)
-				),
-			type: (v: NonNullable<T.TypedParameter['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.TypedParameter['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypedParameter({ ...$edited(data), _name: admitSlot(handle, 'typed_parameter', 'name', v) }, tree)
+			),
+		type: (v: NonNullable<T.TypedParameter['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.TypedParameter.Parsed;
 }
@@ -4092,25 +4376,29 @@ export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 				tree
 			);
 		},
-		$with: {
-			content: (v: NonNullable<T.Type['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapType({ ...$edited(data), _content: admitSlot(handle, 'type', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.Type['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapType({ ...$edited(data), _content: admitSlot(handle, 'type', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Type.Parsed;
 }
@@ -4126,29 +4414,33 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 		type() {
 			return hydrateSlot<T.Identifier>(this, '_type', tree);
 		},
-		$with: {
-			operator: (v: NonNullable<T.SplatType['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatType({ ...$edited(data), _operator: admitSlot(handle, 'splat_type', 'operator', v) }, tree)
-				),
-			type: (v: NonNullable<T.SplatType['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatType({ ...$edited(data), _type: admitSlot(handle, 'splat_type', 'type', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		operator: (v: NonNullable<T.SplatType['_operator']>) =>
+			rebuilt(node, handle, () =>
+				wrapSplatType({ ...$edited(data), _operator: admitSlot(handle, 'splat_type', 'operator', v) }, tree)
+			),
+		type: (v: NonNullable<T.SplatType['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapSplatType({ ...$edited(data), _type: admitSlot(handle, 'splat_type', 'type', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SplatType.Parsed;
 }
@@ -4164,37 +4456,41 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		typeParameter() {
 			return hydrateSlot<T.TypeParameter>(this, '_type_parameter', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.GenericType['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapGenericType({ ...$edited(data), _name: admitSlot(handle, 'generic_type', 'name', v) }, tree)
-				),
-			typeParameter: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameter as const, optional: false, make: RAW.buildTypeParameter },
-						(v: NonNullable<T.GenericType['_type_parameter']>) =>
-							wrapGenericType(
-								{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.GenericType['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapGenericType({ ...$edited(data), _name: admitSlot(handle, 'generic_type', 'name', v) }, tree)
+			),
+		typeParameter: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TypeParameter as const, optional: false, make: RAW.buildTypeParameter },
+					(v: NonNullable<T.GenericType['_type_parameter']>) =>
+						wrapGenericType(
+							{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.GenericType.Parsed;
 }
@@ -4210,29 +4506,33 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 		right() {
 			return hydrateSlot<T.Type>(this, '_right', tree);
 		},
-		$with: {
-			left: (v: NonNullable<T.UnionType['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
-				),
-			right: (v: NonNullable<T.UnionType['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: (v: NonNullable<T.UnionType['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
+			),
+		right: (v: NonNullable<T.UnionType['_right']>) =>
+			rebuilt(node, handle, () =>
+				wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.UnionType.Parsed;
 }
@@ -4248,35 +4548,39 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): 
 		constraint() {
 			return hydrateSlot<T.Type>(this, '_constraint', tree);
 		},
-		$with: {
-			baseType: (v: NonNullable<T.ConstrainedType['_base_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapConstrainedType(
-						{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
-						tree
-					)
-				),
-			constraint: (v: NonNullable<T.ConstrainedType['_constraint']>) =>
-				rebuilt(node, handle, () =>
-					wrapConstrainedType(
-						{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		baseType: (v: NonNullable<T.ConstrainedType['_base_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapConstrainedType(
+					{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
+					tree
+				)
+			),
+		constraint: (v: NonNullable<T.ConstrainedType['_constraint']>) =>
+			rebuilt(node, handle, () =>
+				wrapConstrainedType(
+					{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ConstrainedType.Parsed;
 }
@@ -4292,29 +4596,33 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		$with: {
-			qualifier: (v: NonNullable<T.MemberType['_qualifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
-				),
-			name: (v: NonNullable<T.MemberType['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapMemberType({ ...$edited(data), _name: admitSlot(handle, 'member_type', 'name', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		qualifier: (v: NonNullable<T.MemberType['_qualifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
+			),
+		name: (v: NonNullable<T.MemberType['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapMemberType({ ...$edited(data), _name: admitSlot(handle, 'member_type', 'name', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.MemberType.Parsed;
 }
@@ -4330,29 +4638,33 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.KeywordArgument['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapKeywordArgument({ ...$edited(data), _name: admitSlot(handle, 'keyword_argument', 'name', v) }, tree)
-				),
-			value: (v: NonNullable<T.KeywordArgument['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapKeywordArgument({ ...$edited(data), _value: admitSlot(handle, 'keyword_argument', 'value', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.KeywordArgument['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapKeywordArgument({ ...$edited(data), _name: admitSlot(handle, 'keyword_argument', 'name', v) }, tree)
+			),
+		value: (v: NonNullable<T.KeywordArgument['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapKeywordArgument({ ...$edited(data), _value: admitSlot(handle, 'keyword_argument', 'value', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.KeywordArgument.Parsed;
 }
@@ -4371,17 +4683,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		elements() {
 			return hydrateSlot<T.CollectionElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
-						(v: NonNullable<T.List['_elements']>) =>
-							wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4415,11 +4717,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -4428,6 +4726,24 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
+					(v: NonNullable<T.List['_elements']>) =>
+						wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -4450,17 +4766,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		elements() {
 			return hydrateSlot<T.CollectionElements>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
-						(v: NonNullable<T.Set['_elements']>) =>
-							wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4494,10 +4800,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -4506,6 +4809,23 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
+					(v: NonNullable<T.Set['_elements']>) =>
+						wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -4528,17 +4848,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		elements() {
 			return hydrateSlot<T.TupleElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
-						(v: NonNullable<T.Tuple['_elements']>) =>
-							wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4572,11 +4882,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -4585,6 +4891,24 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
+					(v: NonNullable<T.Tuple['_elements']>) =>
+						wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -4607,17 +4931,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		elements() {
 			return hydrateSlot<T.DictionaryElements | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
-						(v: NonNullable<T.Dictionary['_elements']>) =>
-							wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4651,11 +4965,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -4664,6 +4974,24 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
+					(v: NonNullable<T.Dictionary['_elements']>) =>
+						wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -4683,25 +5011,29 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
-		$with: {
-			key: (v: NonNullable<T.Pair['_key']>) =>
-				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _key: admitSlot(handle, 'pair', 'key', v) }, tree)),
-			value: (v: NonNullable<T.Pair['_value']>) =>
-				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _value: admitSlot(handle, 'pair', 'value', v) }, tree))
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		key: (v: NonNullable<T.Pair['_key']>) =>
+			rebuilt(node, handle, () => wrapPair({ ...$edited(data), _key: admitSlot(handle, 'pair', 'key', v) }, tree)),
+		value: (v: NonNullable<T.Pair['_value']>) =>
+			rebuilt(node, handle, () => wrapPair({ ...$edited(data), _value: admitSlot(handle, 'pair', 'value', v) }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Pair.Parsed;
 }
@@ -4717,32 +5049,36 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 		clauses() {
 			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.ListComprehension['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapListComprehension({ ...$edited(data), _body: admitSlot(handle, 'list_comprehension', 'body', v) }, tree)
-				),
-			clauses: (v: NonNullable<T.ListComprehension['_clauses']>) =>
-				rebuilt(node, handle, () =>
-					wrapListComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.ListComprehension['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapListComprehension({ ...$edited(data), _body: admitSlot(handle, 'list_comprehension', 'body', v) }, tree)
+			),
+		clauses: (v: NonNullable<T.ListComprehension['_clauses']>) =>
+			rebuilt(node, handle, () =>
+				wrapListComprehension(
+					{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ListComprehension.Parsed;
 }
@@ -4761,35 +5097,39 @@ export function wrapDictionaryComprehension(
 		clauses() {
 			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.DictionaryComprehension['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapDictionaryComprehension(
-						{ ...$edited(data), _body: admitSlot(handle, 'dictionary_comprehension', 'body', v) },
-						tree
-					)
-				),
-			clauses: (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
-				rebuilt(node, handle, () =>
-					wrapDictionaryComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.DictionaryComprehension['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapDictionaryComprehension(
+					{ ...$edited(data), _body: admitSlot(handle, 'dictionary_comprehension', 'body', v) },
+					tree
+				)
+			),
+		clauses: (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
+			rebuilt(node, handle, () =>
+				wrapDictionaryComprehension(
+					{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DictionaryComprehension.Parsed;
 }
@@ -4805,32 +5145,33 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 		clauses() {
 			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.SetComprehension['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapSetComprehension({ ...$edited(data), _body: admitSlot(handle, 'set_comprehension', 'body', v) }, tree)
-				),
-			clauses: (v: NonNullable<T.SetComprehension['_clauses']>) =>
-				rebuilt(node, handle, () =>
-					wrapSetComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.SetComprehension['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapSetComprehension({ ...$edited(data), _body: admitSlot(handle, 'set_comprehension', 'body', v) }, tree)
+			),
+		clauses: (v: NonNullable<T.SetComprehension['_clauses']>) =>
+			rebuilt(node, handle, () =>
+				wrapSetComprehension({ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SetComprehension.Parsed;
 }
@@ -4846,35 +5187,36 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 		clauses() {
 			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
-		$with: {
-			body: (v: NonNullable<T.GeneratorExpression['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapGeneratorExpression(
-						{ ...$edited(data), _body: admitSlot(handle, 'generator_expression', 'body', v) },
-						tree
-					)
-				),
-			clauses: (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
-				rebuilt(node, handle, () =>
-					wrapGeneratorExpression(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		body: (v: NonNullable<T.GeneratorExpression['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapGeneratorExpression({ ...$edited(data), _body: admitSlot(handle, 'generator_expression', 'body', v) }, tree)
+			),
+		clauses: (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+			rebuilt(node, handle, () =>
+				wrapGeneratorExpression(
+					{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.GeneratorExpression.Parsed;
 }
@@ -4890,28 +5232,32 @@ export function wrapParenthesizedExpression(
 		expression() {
 			return hydrateSlot<T.Expression | T.Yield>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapParenthesizedExpression(
-						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_expression', 'expression', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapParenthesizedExpression(
+					{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_expression', 'expression', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ParenthesizedExpression.Parsed;
 }
@@ -4929,17 +5275,7 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 		items() {
 			return hydrateSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.CollectionElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapCollectionElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'collection_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapCollectionElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4973,10 +5309,7 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -4985,6 +5318,23 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.CollectionElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapCollectionElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'collection_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapCollectionElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapCollectionElements$listRead);
 	return node as unknown as T.CollectionElements.Parsed;
@@ -5007,46 +5357,47 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		trailingComma() {
 			return blankArmRead(this._trailing_comma);
 		},
-		$with: {
-			async: (v: NonNullable<T.ForInClause['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapForInClause({ ...$edited(data), _async: admitSlot(handle, 'for_in_clause', 'async', v) }, tree)
-				),
-			left: (v: NonNullable<T.ForInClause['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapForInClause({ ...$edited(data), _left: admitSlot(handle, 'for_in_clause', 'left', v) }, tree)
-				),
-			rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapForInClause(
-						{ ...$edited(data), _right: admitSlot(handle, 'for_in_clause', 'rights', restItems('rights', v)) },
-						tree
-					)
-				),
-			trailingComma: (v: NonNullable<T.ForInClause['_trailing_comma']> | null) =>
-				rebuilt(node, handle, () =>
-					wrapForInClause(
-						{
-							...$edited(data),
-							_trailing_comma: admitSlot(handle, 'for_in_clause', 'trailingComma', blankArmStored(v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.ForInClause['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapForInClause({ ...$edited(data), _async: admitSlot(handle, 'for_in_clause', 'async', v) }, tree)
+			),
+		left: (v: NonNullable<T.ForInClause['_left']>) =>
+			rebuilt(node, handle, () =>
+				wrapForInClause({ ...$edited(data), _left: admitSlot(handle, 'for_in_clause', 'left', v) }, tree)
+			),
+		rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapForInClause(
+					{ ...$edited(data), _right: admitSlot(handle, 'for_in_clause', 'rights', restItems('rights', v)) },
+					tree
+				)
+			),
+		trailingComma: (v: NonNullable<T.ForInClause['_trailing_comma']> | null) =>
+			rebuilt(node, handle, () =>
+				wrapForInClause(
+					{ ...$edited(data), _trailing_comma: admitSlot(handle, 'for_in_clause', 'trailingComma', blankArmStored(v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ForInClause.Parsed;
 }
@@ -5059,25 +5410,29 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Par
 		condition() {
 			return hydrateSlot<T.Expression>(this, '_condition', tree);
 		},
-		$with: {
-			condition: (v: NonNullable<T.IfClause['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapIfClause({ ...$edited(data), _condition: admitSlot(handle, 'if_clause', 'condition', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		condition: (v: NonNullable<T.IfClause['_condition']>) =>
+			rebuilt(node, handle, () =>
+				wrapIfClause({ ...$edited(data), _condition: admitSlot(handle, 'if_clause', 'condition', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.IfClause.Parsed;
 }
@@ -5099,42 +5454,46 @@ export function wrapConditionalExpression(
 		alternative() {
 			return hydrateSlot<T.Expression>(this, '_alternative', tree);
 		},
-		$with: {
-			consequence: (v: NonNullable<T.ConditionalExpression['_consequence']>) =>
-				rebuilt(node, handle, () =>
-					wrapConditionalExpression(
-						{ ...$edited(data), _consequence: admitSlot(handle, 'conditional_expression', 'consequence', v) },
-						tree
-					)
-				),
-			condition: (v: NonNullable<T.ConditionalExpression['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapConditionalExpression(
-						{ ...$edited(data), _condition: admitSlot(handle, 'conditional_expression', 'condition', v) },
-						tree
-					)
-				),
-			alternative: (v: NonNullable<T.ConditionalExpression['_alternative']>) =>
-				rebuilt(node, handle, () =>
-					wrapConditionalExpression(
-						{ ...$edited(data), _alternative: admitSlot(handle, 'conditional_expression', 'alternative', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		consequence: (v: NonNullable<T.ConditionalExpression['_consequence']>) =>
+			rebuilt(node, handle, () =>
+				wrapConditionalExpression(
+					{ ...$edited(data), _consequence: admitSlot(handle, 'conditional_expression', 'consequence', v) },
+					tree
+				)
+			),
+		condition: (v: NonNullable<T.ConditionalExpression['_condition']>) =>
+			rebuilt(node, handle, () =>
+				wrapConditionalExpression(
+					{ ...$edited(data), _condition: admitSlot(handle, 'conditional_expression', 'condition', v) },
+					tree
+				)
+			),
+		alternative: (v: NonNullable<T.ConditionalExpression['_alternative']>) =>
+			rebuilt(node, handle, () =>
+				wrapConditionalExpression(
+					{ ...$edited(data), _alternative: admitSlot(handle, 'conditional_expression', 'alternative', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ConditionalExpression.Parsed;
 }
@@ -5147,28 +5506,32 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 		strings() {
 			return hydrateSlots<T.String>(this, '_string', tree);
 		},
-		$with: {
-			strings: (...v: NonEmptyArray<NonNullable<T.ConcatenatedString['_string']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapConcatenatedString(
-						{ ...$edited(data), _string: admitSlot(handle, 'concatenated_string', 'strings', restItems('strings', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		strings: (...v: NonEmptyArray<NonNullable<T.ConcatenatedString['_string']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapConcatenatedString(
+					{ ...$edited(data), _string: admitSlot(handle, 'concatenated_string', 'strings', restItems('strings', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ConcatenatedString.Parsed;
 }
@@ -5187,69 +5550,70 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		stringEnd() {
 			return hydrateSlot<T.StringEnd>(this, '_string_end', tree);
 		},
-		$with: {
-			stringStart: (v: NonNullable<T.String['_string_start']>) =>
-				rebuilt(node, handle, () => {
-					const edited = wrapString(
-						{ ...$edited(data), _string_start: admitSlot(handle, 'string', 'stringStart', v) },
-						tree
-					);
-					checkDelimited(
-						handle,
-						edited,
-						RAW._delimited_buildString,
-						[edited.contents()],
-						edited.stringStart(),
-						edited.stringEnd()
-					);
-					return edited;
-				}),
-			contents: (...v: NonNullable<T.String['_content']>[number][]) =>
-				rebuilt(node, handle, () => {
-					const edited = wrapString(
-						{ ...$edited(data), _content: admitSlot(handle, 'string', 'contents', restItems('contents', v)) },
-						tree
-					);
-					checkDelimited(
-						handle,
-						edited,
-						RAW._delimited_buildString,
-						[edited.contents()],
-						edited.stringStart(),
-						edited.stringEnd()
-					);
-					return edited;
-				}),
-			stringEnd: (v: NonNullable<T.String['_string_end']>) =>
-				rebuilt(node, handle, () => {
-					const edited = wrapString(
-						{ ...$edited(data), _string_end: admitSlot(handle, 'string', 'stringEnd', v) },
-						tree
-					);
-					checkDelimited(
-						handle,
-						edited,
-						RAW._delimited_buildString,
-						[edited.contents()],
-						edited.stringStart(),
-						edited.stringEnd()
-					);
-					return edited;
-				})
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		stringStart: (v: NonNullable<T.String['_string_start']>) =>
+			rebuilt(node, handle, () => {
+				const edited = wrapString(
+					{ ...$edited(data), _string_start: admitSlot(handle, 'string', 'stringStart', v) },
+					tree
+				);
+				checkDelimited(
+					handle,
+					edited,
+					RAW._delimited_buildString,
+					[edited.contents()],
+					edited.stringStart(),
+					edited.stringEnd()
+				);
+				return edited;
+			}),
+		contents: (...v: NonNullable<T.String['_content']>[number][]) =>
+			rebuilt(node, handle, () => {
+				const edited = wrapString(
+					{ ...$edited(data), _content: admitSlot(handle, 'string', 'contents', restItems('contents', v)) },
+					tree
+				);
+				checkDelimited(
+					handle,
+					edited,
+					RAW._delimited_buildString,
+					[edited.contents()],
+					edited.stringStart(),
+					edited.stringEnd()
+				);
+				return edited;
+			}),
+		stringEnd: (v: NonNullable<T.String['_string_end']>) =>
+			rebuilt(node, handle, () => {
+				const edited = wrapString({ ...$edited(data), _string_end: admitSlot(handle, 'string', 'stringEnd', v) }, tree);
+				checkDelimited(
+					handle,
+					edited,
+					RAW._delimited_buildString,
+					[edited.contents()],
+					edited.stringStart(),
+					edited.stringEnd()
+				);
+				return edited;
+			}),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.String.Parsed;
 }
@@ -5266,28 +5630,32 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 				tree
 			);
 		},
-		$with: {
-			elements: (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapStringContent(
-						{ ...$edited(data), _elements: admitSlot(handle, 'string_content', 'elements', restItems('elements', v)) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapStringContent(
+					{ ...$edited(data), _elements: admitSlot(handle, 'string_content', 'elements', restItems('elements', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.StringContent.Parsed;
 }
@@ -5309,46 +5677,47 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		formatSpecifier() {
 			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.Interpolation['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapInterpolation(
-						{ ...$edited(data), _expression: admitSlot(handle, 'interpolation', 'expression', v) },
-						tree
-					)
-				),
-			debug: (v: NonNullable<T.Interpolation['_debug']>) =>
-				rebuilt(node, handle, () =>
-					wrapInterpolation({ ...$edited(data), _debug: admitSlot(handle, 'interpolation', 'debug', v) }, tree)
-				),
-			typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
-				rebuilt(node, handle, () =>
-					wrapInterpolation(
-						{ ...$edited(data), _type_conversion: admitSlot(handle, 'interpolation', 'typeConversion', v) },
-						tree
-					)
-				),
-			formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapInterpolation(
-						{ ...$edited(data), _format_specifier: admitSlot(handle, 'interpolation', 'formatSpecifier', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.Interpolation['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapInterpolation({ ...$edited(data), _expression: admitSlot(handle, 'interpolation', 'expression', v) }, tree)
+			),
+		debug: (v: NonNullable<T.Interpolation['_debug']>) =>
+			rebuilt(node, handle, () =>
+				wrapInterpolation({ ...$edited(data), _debug: admitSlot(handle, 'interpolation', 'debug', v) }, tree)
+			),
+		typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
+			rebuilt(node, handle, () =>
+				wrapInterpolation(
+					{ ...$edited(data), _type_conversion: admitSlot(handle, 'interpolation', 'typeConversion', v) },
+					tree
+				)
+			),
+		formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapInterpolation(
+					{ ...$edited(data), _format_specifier: admitSlot(handle, 'interpolation', 'formatSpecifier', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Interpolation.Parsed;
 }
@@ -5361,31 +5730,32 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): 
 		elements() {
 			return hydrateSlots<T.FormatSpecifierText | T.FormatExpression>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...v: NonNullable<T.FormatSpecifier['_elements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapFormatSpecifier(
-						{
-							...$edited(data),
-							_elements: admitSlot(handle, 'format_specifier', 'elements', restItems('elements', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...v: NonNullable<T.FormatSpecifier['_elements']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapFormatSpecifier(
+					{ ...$edited(data), _elements: admitSlot(handle, 'format_specifier', 'elements', restItems('elements', v)) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FormatSpecifier.Parsed;
 }
@@ -5398,25 +5768,29 @@ export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 		expression() {
 			return hydrateSlot<T.PrimaryExpression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.Await['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapAwait({ ...$edited(data), _expression: admitSlot(handle, 'await', 'expression', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.Await['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapAwait({ ...$edited(data), _expression: admitSlot(handle, 'await', 'expression', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Await.Parsed;
 }
@@ -5429,12 +5803,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.Comment['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapComment({ ...$edited(data), _content: admitSlot(handle, 'comment', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5444,6 +5813,13 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.Comment['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapComment({ ...$edited(data), _content: admitSlot(handle, 'comment', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.Comment.Parsed;
 }
@@ -5464,20 +5840,7 @@ export function wrapSimpleStatementsElements(
 		items() {
 			return hydrateSlots<T.SimpleStatement>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.SimpleStatementsElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapSimpleStatementsElements(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'simple_statements_elements', 'items', restItems('items', v))
-						},
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSimpleStatementsElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5511,10 +5874,7 @@ export function wrapSimpleStatementsElements(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5523,6 +5883,23 @@ export function wrapSimpleStatementsElements(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.SimpleStatementsElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapSimpleStatementsElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'simple_statements_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapSimpleStatementsElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapSimpleStatementsElements$listRead);
 	return node as unknown as T.SimpleStatementsElements.Parsed;
@@ -5541,17 +5918,7 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 		subjects() {
 			return hydrateSlots<T.Expression>(this, '_subject', tree);
 		},
-		$with: {
-			subjects: (...v: NonEmptyArray<NonNullable<T.Subjects['_subject']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapSubjects(
-						{ ...$edited(data), _subject: admitSlot(handle, 'subjects', 'subjects', restItems('subjects', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSubjects({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5585,10 +5952,7 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5597,6 +5961,23 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		subjects: (...v: NonEmptyArray<NonNullable<T.Subjects['_subject']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapSubjects(
+					{ ...$edited(data), _subject: admitSlot(handle, 'subjects', 'subjects', restItems('subjects', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapSubjects({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapSubjects$listRead);
 	return node as unknown as T.Subjects.Parsed;
@@ -5615,17 +5996,7 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 		items() {
 			return hydrateSlots<T.WithItem>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapWithClauseWithItems(
-						{ ...$edited(data), _item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapWithClauseWithItems({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5659,10 +6030,7 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5671,6 +6039,23 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapWithClauseWithItems(
+					{ ...$edited(data), _item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapWithClauseWithItems({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapWithClauseWithItems$listRead);
 	return node as unknown as T.WithClauseWithItems.Parsed;
@@ -5689,14 +6074,7 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		items() {
 			return hydrateSlots<T.Type>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5730,10 +6108,7 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5742,6 +6117,20 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapTypes$listRead);
 	return node as unknown as T.Types.Parsed;
@@ -5765,17 +6154,7 @@ export function wrapArgumentListElements(
 				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 			>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.ArgumentListElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapArgumentListElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'argument_list_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapArgumentListElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5809,10 +6188,7 @@ export function wrapArgumentListElements(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5821,6 +6197,23 @@ export function wrapArgumentListElements(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.ArgumentListElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapArgumentListElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'argument_list_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapArgumentListElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapArgumentListElements$listRead);
 	return node as unknown as T.ArgumentListElements.Parsed;
@@ -5842,20 +6235,7 @@ export function wrapListPatternCasePatterns(
 		items() {
 			return hydrateSlots<T.CasePattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapListPatternCasePatterns(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v))
-						},
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapListPatternCasePatterns({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5889,10 +6269,7 @@ export function wrapListPatternCasePatterns(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5901,6 +6278,23 @@ export function wrapListPatternCasePatterns(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapListPatternCasePatterns(
+					{ ...$edited(data), _item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapListPatternCasePatterns({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapListPatternCasePatterns$listRead);
 	return node as unknown as T.ListPatternCasePatterns.Parsed;
@@ -5919,17 +6313,7 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 		items() {
 			return hydrateSlots<T.KeyValuePattern | T.SplatPattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.DictPatternElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapDictPatternElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'dict_pattern_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapDictPatternElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5963,10 +6347,7 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -5975,6 +6356,23 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.DictPatternElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapDictPatternElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'dict_pattern_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapDictPatternElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapDictPatternElements$listRead);
 	return node as unknown as T.DictPatternElements.Parsed;
@@ -5993,17 +6391,7 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 		subscripts() {
 			return hydrateSlots<T.Expression | T.Slice>(this, '_subscript', tree);
 		},
-		$with: {
-			subscripts: (...v: NonEmptyArray<NonNullable<T.Subscripts['_subscript']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapSubscripts(
-						{ ...$edited(data), _subscript: admitSlot(handle, 'subscripts', 'subscripts', restItems('subscripts', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSubscripts({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6037,10 +6425,7 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6049,6 +6434,23 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		subscripts: (...v: NonEmptyArray<NonNullable<T.Subscripts['_subscript']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapSubscripts(
+					{ ...$edited(data), _subscript: admitSlot(handle, 'subscripts', 'subscripts', restItems('subscripts', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapSubscripts({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapSubscripts$listRead);
 	return node as unknown as T.Subscripts.Parsed;
@@ -6067,17 +6469,7 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 		items() {
 			return hydrateSlots<T.Pair | T.DictionarySplat>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.DictionaryElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapDictionaryElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'dictionary_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapDictionaryElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6111,10 +6503,7 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6123,6 +6512,23 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.DictionaryElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapDictionaryElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'dictionary_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapDictionaryElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapDictionaryElements$listRead);
 	return node as unknown as T.DictionaryElements.Parsed;
@@ -6136,25 +6542,29 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 		expression() {
 			return hydrateSlot<T.Expression | undefined>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.SliceGroup['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapSliceGroup({ ...$edited(data), _expression: admitSlot(handle, 'slice_group', 'expression', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.SliceGroup['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapSliceGroup({ ...$edited(data), _expression: admitSlot(handle, 'slice_group', 'expression', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SliceGroup.Parsed;
 }
@@ -6175,17 +6585,7 @@ export function wrapTuplePatternElements(
 		items() {
 			return hydrateSlots<T.Pattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.TuplePatternElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapTuplePatternElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'tuple_pattern_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTuplePatternElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6219,10 +6619,7 @@ export function wrapTuplePatternElements(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6231,6 +6628,23 @@ export function wrapTuplePatternElements(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.TuplePatternElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapTuplePatternElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'tuple_pattern_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapTuplePatternElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapTuplePatternElements$listRead);
 	return node as unknown as T.TuplePatternElements.Parsed;
@@ -6249,17 +6663,7 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 		items() {
 			return hydrateSlots<T.CasePattern>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.CasePatternList['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapCasePatternList(
-						{ ...$edited(data), _item: admitSlot(handle, 'case_pattern_list', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapCasePatternList({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6293,10 +6697,7 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6305,6 +6706,23 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.CasePatternList['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapCasePatternList(
+					{ ...$edited(data), _item: admitSlot(handle, 'case_pattern_list', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapCasePatternList({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapCasePatternList$listRead);
 	return node as unknown as T.CasePatternList.Parsed;
@@ -6323,17 +6741,7 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 		items() {
 			return hydrateSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.TupleElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapTupleElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'tuple_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTupleElements({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6367,10 +6775,7 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6379,6 +6784,23 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.TupleElements['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapTupleElements(
+					{ ...$edited(data), _item: admitSlot(handle, 'tuple_elements', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapTupleElements({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapTupleElements$listRead);
 	return node as unknown as T.TupleElements.Parsed;
@@ -6398,35 +6820,39 @@ export function wrapExceptClauseExceptionAs(
 		alias() {
 			return hydrateSlot<T.Expression | undefined>(this, '_alias', tree);
 		},
-		$with: {
-			value: (v: NonNullable<T.ExceptClauseExceptionAs['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionAs(
-						{ ...$edited(data), _value: admitSlot(handle, 'except_clause_exception_as', 'value', v) },
-						tree
-					)
-				),
-			alias: (v: NonNullable<T.ExceptClauseExceptionAs['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionAs(
-						{ ...$edited(data), _alias: admitSlot(handle, 'except_clause_exception_as', 'alias', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		value: (v: NonNullable<T.ExceptClauseExceptionAs['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClauseExceptionAs(
+					{ ...$edited(data), _value: admitSlot(handle, 'except_clause_exception_as', 'value', v) },
+					tree
+				)
+			),
+		alias: (v: NonNullable<T.ExceptClauseExceptionAs['_alias']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClauseExceptionAs(
+					{ ...$edited(data), _alias: admitSlot(handle, 'except_clause_exception_as', 'alias', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExceptClauseExceptionAs.Parsed;
 }
@@ -6445,20 +6871,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		elements() {
 			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
-							wrapCaseTuplePattern(
-								{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6492,11 +6905,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6505,6 +6914,27 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
+					(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
+						wrapCaseTuplePattern(
+							{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -6527,20 +6957,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		elements() {
 			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseListPattern['_elements']>) =>
-							wrapCaseListPattern(
-								{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6574,11 +6991,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6587,6 +7000,27 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
+					(v: NonNullable<T.CaseListPattern['_elements']>) =>
+						wrapCaseListPattern(
+							{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -6608,17 +7042,7 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 		items() {
 			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.PrintArguments['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapPrintArguments(
-						{ ...$edited(data), _item: admitSlot(handle, 'print_arguments', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPrintArguments({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6652,10 +7076,7 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6664,6 +7085,23 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.PrintArguments['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapPrintArguments(
+					{ ...$edited(data), _item: admitSlot(handle, 'print_arguments', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapPrintArguments({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapPrintArguments$listRead);
 	return node as unknown as T.PrintArguments.Parsed;
@@ -6685,17 +7123,7 @@ export function wrapPrintChevronArguments(
 		items() {
 			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapPrintChevronArguments(
-						{ ...$edited(data), _item: admitSlot(handle, 'print_chevron_arguments', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPrintChevronArguments({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6729,10 +7157,7 @@ export function wrapPrintChevronArguments(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6741,6 +7166,23 @@ export function wrapPrintChevronArguments(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapPrintChevronArguments(
+					{ ...$edited(data), _item: admitSlot(handle, 'print_chevron_arguments', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapPrintChevronArguments({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapPrintChevronArguments$listRead);
 	return node as unknown as T.PrintChevronArguments.Parsed;
@@ -6760,43 +7202,47 @@ export function wrapPrintStatementChevron(
 		printChevronArguments() {
 			return hydrateSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, '_print_chevron_arguments', tree);
 		},
-		$with: {
-			chevron: (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>
-				rebuilt(node, handle, () =>
-					wrapPrintStatementChevron(
-						{ ...$edited(data), _chevron: admitSlot(handle, 'print_statement_chevron', 'chevron', v) },
-						tree
-					)
-				),
-			printChevronArguments: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: RAW.buildPrintChevronArguments },
-						(v: NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>) =>
-							wrapPrintStatementChevron(
-								{
-									...$edited(data),
-									_print_chevron_arguments: admitSlot(handle, 'print_statement_chevron', 'printChevronArguments', v)
-								},
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		chevron: (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>
+			rebuilt(node, handle, () =>
+				wrapPrintStatementChevron(
+					{ ...$edited(data), _chevron: admitSlot(handle, 'print_statement_chevron', 'chevron', v) },
+					tree
+				)
+			),
+		printChevronArguments: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: RAW.buildPrintChevronArguments },
+					(v: NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>) =>
+						wrapPrintStatementChevron(
+							{
+								...$edited(data),
+								_print_chevron_arguments: admitSlot(handle, 'print_statement_chevron', 'printChevronArguments', v)
+							},
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.PrintStatementChevron.Parsed;
 }
@@ -6815,20 +7261,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		printArguments() {
 			return hydrateSlot<T.PrintArguments>(this, '_print_arguments', tree);
 		},
-		$with: {
-			printArguments: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
-						(v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
-							wrapPrintStatementPlain(
-								{ ...$edited(data), _print_arguments: admitSlot(handle, 'print_statement_plain', 'printArguments', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6862,10 +7295,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6874,6 +7304,26 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		printArguments: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
+					(v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
+						wrapPrintStatementPlain(
+							{ ...$edited(data), _print_arguments: admitSlot(handle, 'print_statement_plain', 'printArguments', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -6899,20 +7349,7 @@ export function wrapParenthesizedImportList(
 		importList() {
 			return hydrateSlot<T.ImportList>(this, '_import_list', tree);
 		},
-		$with: {
-			importList: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
-						(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
-							wrapParenthesizedImportList(
-								{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6946,10 +7383,7 @@ export function wrapParenthesizedImportList(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -6958,6 +7392,26 @@ export function wrapParenthesizedImportList(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		importList: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
+					(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
+						wrapParenthesizedImportList(
+							{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -6977,31 +7431,35 @@ export function wrapComprehensionClauses(
 		contents() {
 			return hydrateSlots<T.ForInClause | T.IfClause>(this, '_content', tree);
 		},
-		$with: {
-			contents: (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapComprehensionClauses(
-						{
-							...$edited(data),
-							_content: admitSlot(handle, 'comprehension_clauses', 'contents', restItems('contents', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		contents: (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapComprehensionClauses(
+					{
+						...$edited(data),
+						_content: admitSlot(handle, 'comprehension_clauses', 'contents', restItems('contents', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
@@ -7017,29 +7475,33 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			radixPrefix: (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
-				),
-			content: (v: NonNullable<T.IntegerHex['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
+			),
+		content: (v: NonNullable<T.IntegerHex['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.IntegerHex.Parsed;
 }
@@ -7055,32 +7517,36 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			radixPrefix: (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerOctal(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
-						tree
-					)
-				),
-			content: (v: NonNullable<T.IntegerOctal['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerOctal(
+					{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
+					tree
+				)
+			),
+		content: (v: NonNullable<T.IntegerOctal['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.IntegerOctal.Parsed;
 }
@@ -7096,32 +7562,36 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			radixPrefix: (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerBinary(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
-						tree
-					)
-				),
-			content: (v: NonNullable<T.IntegerBinary['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerBinary(
+					{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+					tree
+				)
+			),
+		content: (v: NonNullable<T.IntegerBinary['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.IntegerBinary.Parsed;
 }
@@ -7149,48 +7619,49 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 		imaginary() {
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
 		},
-		$with: {
-			integer: (v: NonNullable<T.FloatPoint['_integer']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _integer: admitSlot(handle, 'float_point', 'integer', v) }, tree)
-				),
-			fraction: (v: NonNullable<T.FloatPoint['_fraction']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _fraction: admitSlot(handle, 'float_point', 'fraction', v) }, tree)
-				),
-			marker: (v: NonNullable<T.FloatPoint['_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v) }, tree)
-				),
-			exponentSign: (v: NonNullable<T.FloatPoint['_exponent_sign']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint(
-						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_point', 'exponentSign', v) },
-						tree
-					)
-				),
-			exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _exponent: admitSlot(handle, 'float_point', 'exponent', v) }, tree)
-				),
-			imaginary: (v: NonNullable<T.FloatPoint['_imaginary']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _imaginary: admitSlot(handle, 'float_point', 'imaginary', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		integer: (v: NonNullable<T.FloatPoint['_integer']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _integer: admitSlot(handle, 'float_point', 'integer', v) }, tree)
+			),
+		fraction: (v: NonNullable<T.FloatPoint['_fraction']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _fraction: admitSlot(handle, 'float_point', 'fraction', v) }, tree)
+			),
+		marker: (v: NonNullable<T.FloatPoint['_marker']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v) }, tree)
+			),
+		exponentSign: (v: NonNullable<T.FloatPoint['_exponent_sign']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_point', 'exponentSign', v) }, tree)
+			),
+		exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _exponent: admitSlot(handle, 'float_point', 'exponent', v) }, tree)
+			),
+		imaginary: (v: NonNullable<T.FloatPoint['_imaginary']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatPoint({ ...$edited(data), _imaginary: admitSlot(handle, 'float_point', 'imaginary', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FloatPoint.Parsed;
 }
@@ -7218,63 +7689,67 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 		imaginary() {
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
 		},
-		$with: {
-			integer: (v: NonNullable<T.FloatLeadingPoint['_integer']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _integer: admitSlot(handle, 'float_leading_point', 'integer', v) },
-						tree
-					)
-				),
-			fraction: (v: NonNullable<T.FloatLeadingPoint['_fraction']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _fraction: admitSlot(handle, 'float_leading_point', 'fraction', v) },
-						tree
-					)
-				),
-			marker: (v: NonNullable<T.FloatLeadingPoint['_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _marker: admitSlot(handle, 'float_leading_point', 'marker', v) },
-						tree
-					)
-				),
-			exponentSign: (v: NonNullable<T.FloatLeadingPoint['_exponent_sign']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_leading_point', 'exponentSign', v) },
-						tree
-					)
-				),
-			exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _exponent: admitSlot(handle, 'float_leading_point', 'exponent', v) },
-						tree
-					)
-				),
-			imaginary: (v: NonNullable<T.FloatLeadingPoint['_imaginary']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _imaginary: admitSlot(handle, 'float_leading_point', 'imaginary', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		integer: (v: NonNullable<T.FloatLeadingPoint['_integer']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _integer: admitSlot(handle, 'float_leading_point', 'integer', v) },
+					tree
+				)
+			),
+		fraction: (v: NonNullable<T.FloatLeadingPoint['_fraction']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _fraction: admitSlot(handle, 'float_leading_point', 'fraction', v) },
+					tree
+				)
+			),
+		marker: (v: NonNullable<T.FloatLeadingPoint['_marker']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _marker: admitSlot(handle, 'float_leading_point', 'marker', v) },
+					tree
+				)
+			),
+		exponentSign: (v: NonNullable<T.FloatLeadingPoint['_exponent_sign']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_leading_point', 'exponentSign', v) },
+					tree
+				)
+			),
+		exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _exponent: admitSlot(handle, 'float_leading_point', 'exponent', v) },
+					tree
+				)
+			),
+		imaginary: (v: NonNullable<T.FloatLeadingPoint['_imaginary']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatLeadingPoint(
+					{ ...$edited(data), _imaginary: admitSlot(handle, 'float_leading_point', 'imaginary', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FloatLeadingPoint.Parsed;
 }
@@ -7299,50 +7774,51 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 		imaginary() {
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
 		},
-		$with: {
-			integer: (v: NonNullable<T.FloatScientific['_integer']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatScientific({ ...$edited(data), _integer: admitSlot(handle, 'float_scientific', 'integer', v) }, tree)
-				),
-			marker: (v: NonNullable<T.FloatScientific['_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatScientific({ ...$edited(data), _marker: admitSlot(handle, 'float_scientific', 'marker', v) }, tree)
-				),
-			exponentSign: (v: NonNullable<T.FloatScientific['_exponent_sign']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatScientific(
-						{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_scientific', 'exponentSign', v) },
-						tree
-					)
-				),
-			exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatScientific(
-						{ ...$edited(data), _exponent: admitSlot(handle, 'float_scientific', 'exponent', v) },
-						tree
-					)
-				),
-			imaginary: (v: NonNullable<T.FloatScientific['_imaginary']>) =>
-				rebuilt(node, handle, () =>
-					wrapFloatScientific(
-						{ ...$edited(data), _imaginary: admitSlot(handle, 'float_scientific', 'imaginary', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		integer: (v: NonNullable<T.FloatScientific['_integer']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatScientific({ ...$edited(data), _integer: admitSlot(handle, 'float_scientific', 'integer', v) }, tree)
+			),
+		marker: (v: NonNullable<T.FloatScientific['_marker']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatScientific({ ...$edited(data), _marker: admitSlot(handle, 'float_scientific', 'marker', v) }, tree)
+			),
+		exponentSign: (v: NonNullable<T.FloatScientific['_exponent_sign']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatScientific(
+					{ ...$edited(data), _exponent_sign: admitSlot(handle, 'float_scientific', 'exponentSign', v) },
+					tree
+				)
+			),
+		exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatScientific({ ...$edited(data), _exponent: admitSlot(handle, 'float_scientific', 'exponent', v) }, tree)
+			),
+		imaginary: (v: NonNullable<T.FloatScientific['_imaginary']>) =>
+			rebuilt(node, handle, () =>
+				wrapFloatScientific(
+					{ ...$edited(data), _imaginary: admitSlot(handle, 'float_scientific', 'imaginary', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FloatScientific.Parsed;
 }
@@ -7358,28 +7834,32 @@ export function wrapEscapeSequenceUnicodeFixed(
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceUnicodeFixed(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_fixed', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceUnicodeFixed(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_fixed', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
@@ -7395,28 +7875,32 @@ export function wrapEscapeSequenceUnicodeWide(
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceUnicodeWide['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceUnicodeWide(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_wide', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceUnicodeWide['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceUnicodeWide(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_wide', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceUnicodeWide.Parsed;
 }
@@ -7429,28 +7913,32 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceHex(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_hex', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceHex(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_hex', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
@@ -7463,28 +7951,32 @@ export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeH
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceOctal['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceOctal(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_octal', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceOctal['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceOctal(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_octal', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceOctal.Parsed;
 }
@@ -7500,28 +7992,32 @@ export function wrapEscapeSequenceLineBreak(
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceLineBreak['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceLineBreak(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_line_break', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceLineBreak['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceLineBreak(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_line_break', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceLineBreak.Parsed;
 }
@@ -7537,28 +8033,32 @@ export function wrapEscapeSequenceSimple(
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceSimple(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_simple', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceSimple(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_simple', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
@@ -7571,28 +8071,32 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.EscapeSequenceNamed['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceNamed(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_named', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.EscapeSequenceNamed['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapEscapeSequenceNamed(
+					{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_named', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.EscapeSequenceNamed.Parsed;
 }
@@ -7608,28 +8112,32 @@ export function wrapSimplePatternNegative(
 		value() {
 			return hydrateSlot<T.Integer | T.Float>(this, '_value', tree);
 		},
-		$with: {
-			value: (v: NonNullable<T.SimplePatternNegative['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapSimplePatternNegative(
-						{ ...$edited(data), _value: admitSlot(handle, 'simple_pattern_negative', 'value', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		value: (v: NonNullable<T.SimplePatternNegative['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapSimplePatternNegative(
+					{ ...$edited(data), _value: admitSlot(handle, 'simple_pattern_negative', 'value', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SimplePatternNegative.Parsed;
 }
@@ -7645,31 +8153,35 @@ export function wrapExceptClauseExceptionList(
 		values() {
 			return hydrateSlots<T.Expression>(this, '_value', tree);
 		},
-		$with: {
-			values: (...v: NonEmptyArray<NonNullable<T.ExceptClauseExceptionList['_value']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionList(
-						{
-							...$edited(data),
-							_value: admitSlot(handle, 'except_clause_exception_list', 'values', restItems('values', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		values: (...v: NonEmptyArray<NonNullable<T.ExceptClauseExceptionList['_value']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClauseExceptionList(
+					{
+						...$edited(data),
+						_value: admitSlot(handle, 'except_clause_exception_list', 'values', restItems('values', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExceptClauseExceptionList.Parsed;
 }
@@ -7685,28 +8197,32 @@ export function wrapExceptClauseException(
 		content() {
 			return hydrateSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, '_content', tree);
 		},
-		$with: {
-			content: (v: NonNullable<T.ExceptClauseException['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClauseException(
-						{ ...$edited(data), _content: admitSlot(handle, 'except_clause_exception', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.ExceptClauseException['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapExceptClauseException(
+					{ ...$edited(data), _content: admitSlot(handle, 'except_clause_exception', 'content', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
@@ -7719,28 +8235,32 @@ export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle)
 		pattern() {
 			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
 		},
-		$with: {
-			pattern: (v: NonNullable<T.SplatPatternList['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatPatternList(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_list', 'pattern', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		pattern: (v: NonNullable<T.SplatPatternList['_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapSplatPatternList(
+					{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_list', 'pattern', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SplatPatternList.Parsed;
 }
@@ -7756,28 +8276,32 @@ export function wrapSplatPatternDictionary(
 		pattern() {
 			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
 		},
-		$with: {
-			pattern: (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatPatternDictionary(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_dictionary', 'pattern', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		pattern: (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
+			rebuilt(node, handle, () =>
+				wrapSplatPatternDictionary(
+					{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_dictionary', 'pattern', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SplatPatternDictionary.Parsed;
 }
@@ -7795,29 +8319,33 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 			>(this, '_value', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.AssignmentEq['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentEq({ ...$edited(data), _name: admitSlot(handle, 'assignment_eq', 'name', v) }, tree)
-				),
-			value: (v: NonNullable<T.AssignmentEq['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentEq({ ...$edited(data), _value: admitSlot(handle, 'assignment_eq', 'value', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.AssignmentEq['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentEq({ ...$edited(data), _name: admitSlot(handle, 'assignment_eq', 'name', v) }, tree)
+			),
+		value: (v: NonNullable<T.AssignmentEq['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentEq({ ...$edited(data), _value: admitSlot(handle, 'assignment_eq', 'value', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AssignmentEq.Parsed;
 }
@@ -7833,29 +8361,33 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.AssignmentType['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentType({ ...$edited(data), _name: admitSlot(handle, 'assignment_type', 'name', v) }, tree)
-				),
-			type: (v: NonNullable<T.AssignmentType['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.AssignmentType['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentType({ ...$edited(data), _name: admitSlot(handle, 'assignment_type', 'name', v) }, tree)
+			),
+		type: (v: NonNullable<T.AssignmentType['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AssignmentType.Parsed;
 }
@@ -7876,33 +8408,37 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 			>(this, '_value', tree);
 		},
-		$with: {
-			name: (v: NonNullable<T.AssignmentTyped['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _name: admitSlot(handle, 'assignment_typed', 'name', v) }, tree)
-				),
-			type: (v: NonNullable<T.AssignmentTyped['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
-				),
-			value: (v: NonNullable<T.AssignmentTyped['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _value: admitSlot(handle, 'assignment_typed', 'value', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: (v: NonNullable<T.AssignmentTyped['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentTyped({ ...$edited(data), _name: admitSlot(handle, 'assignment_typed', 'name', v) }, tree)
+			),
+		type: (v: NonNullable<T.AssignmentTyped['_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
+			),
+		value: (v: NonNullable<T.AssignmentTyped['_value']>) =>
+			rebuilt(node, handle, () =>
+				wrapAssignmentTyped({ ...$edited(data), _value: admitSlot(handle, 'assignment_typed', 'value', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AssignmentTyped.Parsed;
 }
@@ -7923,20 +8459,7 @@ export function wrapExpressionStatementTuple(
 		items() {
 			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapExpressionStatementTuple(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'expression_statement_tuple', 'items', restItems('items', v))
-						},
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapExpressionStatementTuple({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -7970,10 +8493,7 @@ export function wrapExpressionStatementTuple(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -7982,6 +8502,23 @@ export function wrapExpressionStatementTuple(
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_item']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapExpressionStatementTuple(
+					{ ...$edited(data), _item: admitSlot(handle, 'expression_statement_tuple', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapExpressionStatementTuple({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapExpressionStatementTuple$listRead);
 	return node as unknown as T.ExpressionStatementTuple.Parsed;
@@ -8000,17 +8537,7 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 		items() {
 			return hydrateSlots<T.WithItem>(this, '_items', tree);
 		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapWithClauseBare(
-						{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapWithClauseBare({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8044,10 +8571,7 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -8056,6 +8580,23 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapWithClauseBare(
+					{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
+					tree
+				)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapWithClauseBare({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapWithClauseBare$listRead);
 	return node as unknown as T.WithClauseBare.Parsed;
@@ -8075,20 +8616,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		items() {
 			return hydrateSlot<T.WithClauseWithItems>(this, '_items', tree);
 		},
-		$with: {
-			items: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_items']>) =>
-							wrapWithClauseParen(
-								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8122,10 +8650,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -8134,6 +8659,23 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
+					(v: NonNullable<T.WithClauseParen['_items']>) =>
+						wrapWithClauseParen({ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) }, tree)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -8150,32 +8692,36 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle): 
 		alternatives() {
 			return hydrateSlots<T.CaseClause>(this, '_alternative', tree);
 		},
-		$with: {
-			alternatives: (...v: NonNullable<T.MatchBlockBlock['_alternative']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapMatchBlockBlock(
-						{
-							...$edited(data),
-							_alternative: admitSlot(handle, 'match_block_block', 'alternatives', restItems('alternatives', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		alternatives: (...v: NonNullable<T.MatchBlockBlock['_alternative']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapMatchBlockBlock(
+					{
+						...$edited(data),
+						_alternative: admitSlot(handle, 'match_block_block', 'alternatives', restItems('alternatives', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		inner: (...items: unknown[]) => triviaInner(node, handle, items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.MatchBlockBlock.Parsed;
 }
@@ -8188,28 +8734,29 @@ export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): 
 		newline() {
 			return this._newline;
 		},
-		$with: {
-			newline: (v: NonNullable<T.MatchBlockEmpty['_newline']>) =>
-				rebuilt(node, handle, () =>
-					wrapMatchBlockEmpty(
-						{ ...$edited(data), _newline: admitSlot(handle, 'match_block_empty', 'newline', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		newline: (v: NonNullable<T.MatchBlockEmpty['_newline']>) =>
+			rebuilt(node, handle, () =>
+				wrapMatchBlockEmpty({ ...$edited(data), _newline: admitSlot(handle, 'match_block_empty', 'newline', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.MatchBlockEmpty.Parsed;
 }
@@ -8228,36 +8775,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		elements() {
 			return hydrateSlot<T.SimpleStatementsElements>(this, '_elements', tree);
 		},
-		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.SimpleStatementsElements as const,
-							optional: false,
-							make: RAW.buildSimpleStatementsElements
-						},
-						(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
-							wrapSuiteInline(
-								{
-									...$edited(data),
-									_elements: admitSlot(
-										handle,
-										'suite_inline',
-										'elements',
-										admitSplicedEnvelope(
-											v,
-											[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
-											'SuiteInline.elements'
-										)
-									)
-								},
-								tree
-							)
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8291,10 +8809,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -8303,6 +8818,42 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		elements: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{
+						kind: TSKindId.SimpleStatementsElements as const,
+						optional: false,
+						make: RAW.buildSimpleStatementsElements
+					},
+					(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
+						wrapSuiteInline(
+							{
+								...$edited(data),
+								_elements: admitSlot(
+									handle,
+									'suite_inline',
+									'elements',
+									admitSplicedEnvelope(
+										v,
+										[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
+										'SuiteInline.elements'
+									)
+								)
+							},
+							tree
+						)
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(
 		node,
@@ -8319,25 +8870,29 @@ export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlo
 		block() {
 			return hydrateSlot<T.Block>(this, '_block', tree);
 		},
-		$with: {
-			block: (v: NonNullable<T.SuiteBlock['_block']>) =>
-				rebuilt(node, handle, () =>
-					wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		block: (v: NonNullable<T.SuiteBlock['_block']>) =>
+			rebuilt(node, handle, () =>
+				wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SuiteBlock.Parsed;
 }
@@ -8350,25 +8905,29 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmp
 		newline() {
 			return this._newline;
 		},
-		$with: {
-			newline: (v: NonNullable<T.SuiteEmpty['_newline']>) =>
-				rebuilt(node, handle, () =>
-					wrapSuiteEmpty({ ...$edited(data), _newline: admitSlot(handle, 'suite_empty', 'newline', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		newline: (v: NonNullable<T.SuiteEmpty['_newline']>) =>
+			rebuilt(node, handle, () =>
+				wrapSuiteEmpty({ ...$edited(data), _newline: admitSlot(handle, 'suite_empty', 'newline', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SuiteEmpty.Parsed;
 }
@@ -8387,38 +8946,42 @@ export function wrapComparisonOperatorComparator(
 		primaryExpression() {
 			return hydrateSlot<T.PrimaryExpression>(this, '_primary_expression', tree);
 		},
-		$with: {
-			operators: (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) =>
-				rebuilt(node, handle, () =>
-					wrapComparisonOperatorComparator(
-						{ ...$edited(data), _operators: admitSlot(handle, 'comparison_operator_comparator', 'operators', v) },
-						tree
-					)
-				),
-			primaryExpression: (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapComparisonOperatorComparator(
-						{
-							...$edited(data),
-							_primary_expression: admitSlot(handle, 'comparison_operator_comparator', 'primaryExpression', v)
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		operators: (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) =>
+			rebuilt(node, handle, () =>
+				wrapComparisonOperatorComparator(
+					{ ...$edited(data), _operators: admitSlot(handle, 'comparison_operator_comparator', 'operators', v) },
+					tree
+				)
+			),
+		primaryExpression: (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapComparisonOperatorComparator(
+					{
+						...$edited(data),
+						_primary_expression: admitSlot(handle, 'comparison_operator_comparator', 'primaryExpression', v)
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ComparisonOperatorComparator.Parsed;
 }
@@ -8431,28 +8994,32 @@ export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): 
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.YieldFromClause['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapYieldFromClause(
-						{ ...$edited(data), _expression: admitSlot(handle, 'yield_from_clause', 'expression', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.YieldFromClause['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapYieldFromClause(
+					{ ...$edited(data), _expression: admitSlot(handle, 'yield_from_clause', 'expression', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.YieldFromClause.Parsed;
 }
@@ -8480,69 +9047,70 @@ export function wrapConstructorDeclaration(
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			async: (v: NonNullable<T.ConstructorDeclaration['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapConstructorDeclaration(
-						{ ...$edited(data), _async: admitSlot(handle, 'constructor_declaration', 'async', v) },
-						tree
-					)
-				),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
-						(v: NonNullable<T.ConstructorDeclaration['_type_parameters']>) =>
-							wrapConstructorDeclaration(
-								{
-									...$edited(data),
-									_type_parameters: admitSlot(handle, 'constructor_declaration', 'typeParameters', v)
-								},
-								tree
-							)
-					)
-				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-						(v: NonNullable<T.ConstructorDeclaration['_parameters']>) =>
-							wrapConstructorDeclaration(
-								{ ...$edited(data), _parameters: admitSlot(handle, 'constructor_declaration', 'parameters', v) },
-								tree
-							)
-					)
-				),
-			returnType: (v: NonNullable<T.ConstructorDeclaration['_return_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapConstructorDeclaration(
-						{ ...$edited(data), _return_type: admitSlot(handle, 'constructor_declaration', 'returnType', v) },
-						tree
-					)
-				),
-			body: (v: NonNullable<T.ConstructorDeclaration['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapConstructorDeclaration(
-						{ ...$edited(data), _body: admitSlot(handle, 'constructor_declaration', 'body', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.ConstructorDeclaration['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapConstructorDeclaration(
+					{ ...$edited(data), _async: admitSlot(handle, 'constructor_declaration', 'async', v) },
+					tree
+				)
+			),
+		typeParameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
+					(v: NonNullable<T.ConstructorDeclaration['_type_parameters']>) =>
+						wrapConstructorDeclaration(
+							{ ...$edited(data), _type_parameters: admitSlot(handle, 'constructor_declaration', 'typeParameters', v) },
+							tree
+						)
+				)
+			),
+		parameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+					(v: NonNullable<T.ConstructorDeclaration['_parameters']>) =>
+						wrapConstructorDeclaration(
+							{ ...$edited(data), _parameters: admitSlot(handle, 'constructor_declaration', 'parameters', v) },
+							tree
+						)
+				)
+			),
+		returnType: (v: NonNullable<T.ConstructorDeclaration['_return_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapConstructorDeclaration(
+					{ ...$edited(data), _return_type: admitSlot(handle, 'constructor_declaration', 'returnType', v) },
+					tree
+				)
+			),
+		body: (v: NonNullable<T.ConstructorDeclaration['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapConstructorDeclaration(
+					{ ...$edited(data), _body: admitSlot(handle, 'constructor_declaration', 'body', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.ConstructorDeclaration.Parsed;
 }
@@ -8558,31 +9126,35 @@ export function wrapBlockClassDeclaration(
 		statements() {
 			return hydrateSlots<T.StatementClassDefinition>(this, '_statements', tree);
 		},
-		$with: {
-			statements: (...v: NonNullable<T.BlockClassDeclaration['_statements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapBlockClassDeclaration(
-						{
-							...$edited(data),
-							_statements: admitSlot(handle, 'block_class_declaration', 'statements', restItems('statements', v))
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		statements: (...v: NonNullable<T.BlockClassDeclaration['_statements']>[number][]) =>
+			rebuilt(node, handle, () =>
+				wrapBlockClassDeclaration(
+					{
+						...$edited(data),
+						_statements: admitSlot(handle, 'block_class_declaration', 'statements', restItems('statements', v))
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.BlockClassDeclaration.Parsed;
 }
@@ -8598,31 +9170,35 @@ export function wrapSuiteBlockClassDeclaration(
 		blockClassDeclaration() {
 			return hydrateSlot<T.BlockClassDeclaration>(this, '_block_class_declaration', tree);
 		},
-		$with: {
-			blockClassDeclaration: (v: NonNullable<T.SuiteBlockClassDeclaration['_block_class_declaration']>) =>
-				rebuilt(node, handle, () =>
-					wrapSuiteBlockClassDeclaration(
-						{
-							...$edited(data),
-							_block_class_declaration: admitSlot(handle, 'suite_block_class_declaration', 'blockClassDeclaration', v)
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		blockClassDeclaration: (v: NonNullable<T.SuiteBlockClassDeclaration['_block_class_declaration']>) =>
+			rebuilt(node, handle, () =>
+				wrapSuiteBlockClassDeclaration(
+					{
+						...$edited(data),
+						_block_class_declaration: admitSlot(handle, 'suite_block_class_declaration', 'blockClassDeclaration', v)
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.SuiteBlockClassDeclaration.Parsed;
 }
@@ -8641,46 +9217,50 @@ export function wrapDecoratedDefinitionClassDeclaration(
 		definition() {
 			return hydrateSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, '_definition', tree);
 		},
-		$with: {
-			decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapDecoratedDefinitionClassDeclaration(
-						{
-							...$edited(data),
-							_decorator: admitSlot(
-								handle,
-								'decorated_definition_class_declaration',
-								'decorators',
-								restItems('decorators', v)
-							)
-						},
-						tree
-					)
-				),
-			definition: (v: NonNullable<T.DecoratedDefinitionClassDeclaration['_definition']>) =>
-				rebuilt(node, handle, () =>
-					wrapDecoratedDefinitionClassDeclaration(
-						{
-							...$edited(data),
-							_definition: admitSlot(handle, 'decorated_definition_class_declaration', 'definition', v)
-						},
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		decorators: (...v: NonEmptyArray<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapDecoratedDefinitionClassDeclaration(
+					{
+						...$edited(data),
+						_decorator: admitSlot(
+							handle,
+							'decorated_definition_class_declaration',
+							'decorators',
+							restItems('decorators', v)
+						)
+					},
+					tree
+				)
+			),
+		definition: (v: NonNullable<T.DecoratedDefinitionClassDeclaration['_definition']>) =>
+			rebuilt(node, handle, () =>
+				wrapDecoratedDefinitionClassDeclaration(
+					{
+						...$edited(data),
+						_definition: admitSlot(handle, 'decorated_definition_class_declaration', 'definition', v)
+					},
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.DecoratedDefinitionClassDeclaration.Parsed;
 }
@@ -8698,14 +9278,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		names() {
 			return hydrateSlots<T.DottedName | T.AliasedImport>(this, '_name', tree);
 		},
-		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.Names['_name']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapNames({ ...$edited(data), _name: admitSlot(handle, 'names', 'names', restItems('names', v)) }, tree)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapNames({ ...$edited(data), _delimiter: v }, tree))
-		},
+		$with: undefined as unknown as object,
 		length: listedLength,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8739,10 +9312,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
@@ -8751,6 +9321,20 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		names: (...v: NonEmptyArray<NonNullable<T.Names['_name']>[number]>) =>
+			rebuilt(node, handle, () =>
+				wrapNames({ ...$edited(data), _name: admitSlot(handle, 'names', 'names', restItems('names', v)) }, tree)
+			),
+		delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+			rebuilt(node, handle, () => wrapNames({ ...$edited(data), _delimiter: v }, tree)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	holdReadItems(node, wrapNames$listRead);
 	return node as unknown as T.Names.Parsed;
@@ -8769,28 +9353,29 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 				contentRole(this, () => this._content)
 			);
 		},
-		$with: {
-			content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapAsPatternTarget(
-						{ ...$edited(data), _content: admitSlot(handle, 'as_pattern_target', 'content', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
+			rebuilt(node, handle, () =>
+				wrapAsPatternTarget({ ...$edited(data), _content: admitSlot(handle, 'as_pattern_target', 'content', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.AsPatternTarget.Parsed;
 }
@@ -8812,46 +9397,50 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		formatSpecifier() {
 			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
 		},
-		$with: {
-			expression: (v: NonNullable<T.FormatExpression['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapFormatExpression(
-						{ ...$edited(data), _expression: admitSlot(handle, 'format_expression', 'expression', v) },
-						tree
-					)
-				),
-			debug: (v: NonNullable<T.FormatExpression['_debug']>) =>
-				rebuilt(node, handle, () =>
-					wrapFormatExpression({ ...$edited(data), _debug: admitSlot(handle, 'format_expression', 'debug', v) }, tree)
-				),
-			typeConversion: (v: NonNullable<T.FormatExpression['_type_conversion']>) =>
-				rebuilt(node, handle, () =>
-					wrapFormatExpression(
-						{ ...$edited(data), _type_conversion: admitSlot(handle, 'format_expression', 'typeConversion', v) },
-						tree
-					)
-				),
-			formatSpecifier: (v: NonNullable<T.FormatExpression['_format_specifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapFormatExpression(
-						{ ...$edited(data), _format_specifier: admitSlot(handle, 'format_expression', 'formatSpecifier', v) },
-						tree
-					)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: (v: NonNullable<T.FormatExpression['_expression']>) =>
+			rebuilt(node, handle, () =>
+				wrapFormatExpression(
+					{ ...$edited(data), _expression: admitSlot(handle, 'format_expression', 'expression', v) },
+					tree
+				)
+			),
+		debug: (v: NonNullable<T.FormatExpression['_debug']>) =>
+			rebuilt(node, handle, () =>
+				wrapFormatExpression({ ...$edited(data), _debug: admitSlot(handle, 'format_expression', 'debug', v) }, tree)
+			),
+		typeConversion: (v: NonNullable<T.FormatExpression['_type_conversion']>) =>
+			rebuilt(node, handle, () =>
+				wrapFormatExpression(
+					{ ...$edited(data), _type_conversion: admitSlot(handle, 'format_expression', 'typeConversion', v) },
+					tree
+				)
+			),
+		formatSpecifier: (v: NonNullable<T.FormatExpression['_format_specifier']>) =>
+			rebuilt(node, handle, () =>
+				wrapFormatExpression(
+					{ ...$edited(data), _format_specifier: admitSlot(handle, 'format_expression', 'formatSpecifier', v) },
+					tree
+				)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.FormatExpression.Parsed;
 }
@@ -8879,64 +9468,68 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
-		$with: {
-			async: (v: NonNullable<T.MethodDeclaration['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapMethodDeclaration({ ...$edited(data), _async: admitSlot(handle, 'method_declaration', 'async', v) }, tree)
-				),
-			name: (v: NonNullable<T.MethodDeclaration['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapMethodDeclaration({ ...$edited(data), _name: admitSlot(handle, 'method_declaration', 'name', v) }, tree)
-				),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
-						(v: NonNullable<T.MethodDeclaration['_type_parameters']>) =>
-							wrapMethodDeclaration(
-								{ ...$edited(data), _type_parameters: admitSlot(handle, 'method_declaration', 'typeParameters', v) },
-								tree
-							)
-					)
-				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-						(v: NonNullable<T.MethodDeclaration['_parameters']>) =>
-							wrapMethodDeclaration(
-								{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
-								tree
-							)
-					)
-				),
-			returnType: (v: NonNullable<T.MethodDeclaration['_return_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapMethodDeclaration(
-						{ ...$edited(data), _return_type: admitSlot(handle, 'method_declaration', 'returnType', v) },
-						tree
-					)
-				),
-			body: (v: NonNullable<T.MethodDeclaration['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapMethodDeclaration({ ...$edited(data), _body: admitSlot(handle, 'method_declaration', 'body', v) }, tree)
-				)
-		},
+		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: (v: NonNullable<T.MethodDeclaration['_async']>) =>
+			rebuilt(node, handle, () =>
+				wrapMethodDeclaration({ ...$edited(data), _async: admitSlot(handle, 'method_declaration', 'async', v) }, tree)
+			),
+		name: (v: NonNullable<T.MethodDeclaration['_name']>) =>
+			rebuilt(node, handle, () =>
+				wrapMethodDeclaration({ ...$edited(data), _name: admitSlot(handle, 'method_declaration', 'name', v) }, tree)
+			),
+		typeParameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.TypeParameter as const, optional: true, make: RAW.buildTypeParameter },
+					(v: NonNullable<T.MethodDeclaration['_type_parameters']>) =>
+						wrapMethodDeclaration(
+							{ ...$edited(data), _type_parameters: admitSlot(handle, 'method_declaration', 'typeParameters', v) },
+							tree
+						)
+				)
+			),
+		parameters: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				listSlotWith(
+					args,
+					{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+					(v: NonNullable<T.MethodDeclaration['_parameters']>) =>
+						wrapMethodDeclaration(
+							{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
+							tree
+						)
+				)
+			),
+		returnType: (v: NonNullable<T.MethodDeclaration['_return_type']>) =>
+			rebuilt(node, handle, () =>
+				wrapMethodDeclaration(
+					{ ...$edited(data), _return_type: admitSlot(handle, 'method_declaration', 'returnType', v) },
+					tree
+				)
+			),
+		body: (v: NonNullable<T.MethodDeclaration['_body']>) =>
+			rebuilt(node, handle, () =>
+				wrapMethodDeclaration({ ...$edited(data), _body: admitSlot(handle, 'method_declaration', 'body', v) }, tree)
+			),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node as unknown as T.MethodDeclaration.Parsed;
 }
@@ -8964,8 +9557,8 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, statements: $with$statements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	return node as unknown as T.Module.Parsed;
 }
 
@@ -9026,8 +9619,8 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -9092,8 +9685,8 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, names: $with$names };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { names: $with$names, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -9127,8 +9720,8 @@ function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeI
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, prefix: $with$prefix, name: $with$name };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { prefix: $with$prefix, name: $with$name, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.RelativeImport.Parsed;
 }
 
@@ -9154,8 +9747,8 @@ function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.Fu
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FutureImportStatement.Parsed;
 }
 
@@ -9185,8 +9778,8 @@ function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.Impo
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, moduleName: $with$moduleName, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { moduleName: $with$moduleName, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ImportFromStatement.Parsed;
 }
 
@@ -9247,8 +9840,8 @@ function viewImportList(data: RecordPosition, tree: TreeHandle): T.ImportList.Pa
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, names: $with$names, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { names: $with$names, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewImportList$listRead);
@@ -9281,8 +9874,8 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, alias: $with$alias };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, alias: $with$alias, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Parsed;
 }
 
@@ -9308,8 +9901,8 @@ function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStat
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.PrintStatement.Parsed;
 }
 
@@ -9335,8 +9928,8 @@ function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Chevron.Parsed;
 }
 
@@ -9362,8 +9955,8 @@ function viewAssertStatement(data: RecordPosition, tree: TreeHandle): T.AssertSt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expressions: $with$expressions };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expressions: $with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatement.Parsed;
 }
 
@@ -9396,8 +9989,8 @@ function viewExpressionStatement(data: RecordPosition, tree: TreeHandle): T.Expr
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExpressionStatement.Parsed;
 }
 
@@ -9427,8 +10020,8 @@ function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpression.Parsed;
 }
 
@@ -9454,8 +10047,8 @@ function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.Named
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, identifier: $with$identifier };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { identifier: $with$identifier, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpressionLhs.Parsed;
 }
 
@@ -9481,8 +10074,8 @@ function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnSt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expressions: $with$expressions };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expressions: $with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ReturnStatement.Parsed;
 }
 
@@ -9508,8 +10101,8 @@ function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteSt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expressions: $with$expressions };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expressions: $with$expressions, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DeleteStatement.Parsed;
 }
 
@@ -9539,8 +10132,8 @@ function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStat
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expressions: $with$expressions, cause: $with$cause };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expressions: $with$expressions, cause: $with$cause, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.RaiseStatement.Parsed;
 }
 
@@ -9574,8 +10167,13 @@ function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, condition: $with$condition, consequence: $with$consequence, alternatives: $with$alternatives };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		condition: $with$condition,
+		consequence: $with$consequence,
+		alternatives: $with$alternatives,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.IfStatement.Parsed;
 }
 
@@ -9605,8 +10203,8 @@ function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, condition: $with$condition, consequence: $with$consequence };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { condition: $with$condition, consequence: $with$consequence, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ElifClause.Parsed;
 }
 
@@ -9632,8 +10230,8 @@ function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ElseClause.Parsed;
 }
 
@@ -9663,8 +10261,8 @@ function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStat
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, subjects: $with$subjects, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { subjects: $with$subjects, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MatchStatement.Parsed;
 }
 
@@ -9698,8 +10296,8 @@ function viewCaseClause(data: RecordPosition, tree: TreeHandle): T.CaseClause.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, pattern: $with$pattern, guard: $with$guard, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { pattern: $with$pattern, guard: $with$guard, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.CaseClause.Parsed;
 }
 
@@ -9742,14 +10340,14 @@ function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatemen
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		async: $with$async,
 		left: $with$left,
 		right: $with$right,
 		body: $with$body,
-		alternative: $with$alternative
+		alternative: $with$alternative,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ForStatement.Parsed;
 }
 
@@ -9783,8 +10381,8 @@ function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStat
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, condition: $with$condition, body: $with$body, alternative: $with$alternative };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { condition: $with$condition, body: $with$body, alternative: $with$alternative, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.WhileStatement.Parsed;
 }
 
@@ -9823,13 +10421,13 @@ function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatemen
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		body: $with$body,
 		handlers: $with$handlers,
 		alternative: $with$alternative,
-		finalizer: $with$finalizer
+		finalizer: $with$finalizer,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TryStatement.Parsed;
 }
 
@@ -9863,8 +10461,8 @@ function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClaus
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, group: $with$group, exception: $with$exception, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { group: $with$group, exception: $with$exception, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClause.Parsed;
 }
 
@@ -9890,8 +10488,8 @@ function viewFinallyClause(data: RecordPosition, tree: TreeHandle): T.FinallyCla
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FinallyClause.Parsed;
 }
 
@@ -9925,8 +10523,8 @@ function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatem
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, async: $with$async, withClause: $with$withClause, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { async: $with$async, withClause: $with$withClause, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.WithStatement.Parsed;
 }
 
@@ -9952,8 +10550,8 @@ function viewWithItem(data: RecordPosition, tree: TreeHandle): T.WithItem.Parsed
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.WithItem.Parsed;
 }
 
@@ -10000,15 +10598,15 @@ function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.Funct
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		async: $with$async,
 		name: $with$name,
 		typeParameters: $with$typeParameters,
 		parameters: $with$parameters,
 		returnType: $with$returnType,
-		body: $with$body
+		body: $with$body,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FunctionDefinition.Parsed;
 }
 
@@ -10069,8 +10667,8 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -10135,8 +10733,8 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, parametersElements: $with$parametersElements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { parametersElements: $with$parametersElements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -10166,8 +10764,8 @@ function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplat.Parsed;
 }
 
@@ -10193,8 +10791,8 @@ function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.Dictiona
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplat.Parsed;
 }
 
@@ -10220,8 +10818,8 @@ function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalSt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, names: $with$names };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { names: $with$names, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.GlobalStatement.Parsed;
 }
 
@@ -10247,8 +10845,8 @@ function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.Nonloc
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, names: $with$names };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { names: $with$names, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.NonlocalStatement.Parsed;
 }
 
@@ -10278,8 +10876,8 @@ function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatem
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, code: $with$code, inClauses: $with$inClauses };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { code: $with$code, inClauses: $with$inClauses, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExecStatement.Parsed;
 }
 
@@ -10309,8 +10907,8 @@ function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeA
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TypeAliasStatement.Parsed;
 }
 
@@ -10348,8 +10946,14 @@ function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDef
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, typeParameters: $with$typeParameters, bases: $with$bases, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		name: $with$name,
+		typeParameters: $with$typeParameters,
+		bases: $with$bases,
+		body: $with$body,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ClassDefinition.Parsed;
 }
 
@@ -10410,8 +11014,8 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, types: $with$types };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { types: $with$types, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -10441,8 +11045,8 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
 
@@ -10503,8 +11107,8 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, arguments: $with$arguments };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { arguments: $with$arguments, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -10538,8 +11142,8 @@ function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.Deco
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, decorators: $with$decorators, definition: $with$definition };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { decorators: $with$decorators, definition: $with$definition, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratedDefinition.Parsed;
 }
 
@@ -10565,8 +11169,8 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }
 
@@ -10592,8 +11196,8 @@ function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, statements: $with$statements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Block.Parsed;
 }
 
@@ -10654,8 +11258,8 @@ function viewExpressionList(data: RecordPosition, tree: TreeHandle): T.Expressio
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewExpressionList$listRead);
@@ -10688,8 +11292,8 @@ function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, qualifier: $with$qualifier, name: $with$name };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { qualifier: $with$qualifier, name: $with$name, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DottedName.Parsed;
 }
 
@@ -10715,8 +11319,8 @@ function viewCasePattern(data: RecordPosition, tree: TreeHandle): T.CasePattern.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.CasePattern.Parsed;
 }
 
@@ -10760,8 +11364,8 @@ function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePatt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SimplePattern.Parsed;
 }
 
@@ -10791,8 +11395,8 @@ function viewCaseAsPattern(data: RecordPosition, tree: TreeHandle): T.CaseAsPatt
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, casePattern: $with$casePattern, identifier: $with$identifier };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { casePattern: $with$casePattern, identifier: $with$identifier, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.CaseAsPattern.Parsed;
 }
 
@@ -10858,8 +11462,8 @@ function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPatter
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.UnionPattern.Parsed;
 }
 
@@ -10920,8 +11524,8 @@ function viewDictPattern(data: RecordPosition, tree: TreeHandle): T.DictPattern.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -10973,8 +11577,8 @@ function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValue
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, key: $with$key, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { key: $with$key, value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.KeyValuePattern.Parsed;
 }
 
@@ -11022,8 +11626,8 @@ function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, pattern: $with$pattern };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, pattern: $with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordPattern.Parsed;
 }
 
@@ -11053,8 +11657,8 @@ function viewClassPattern(data: RecordPosition, tree: TreeHandle): T.ClassPatter
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, type: $with$type, fields: $with$fields };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { type: $with$type, fields: $with$fields, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ClassPattern.Parsed;
 }
 
@@ -11092,8 +11696,14 @@ function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, sign: $with$sign, real: $with$real, operator: $with$operator, imaginary: $with$imaginary };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		sign: $with$sign,
+		real: $with$real,
+		operator: $with$operator,
+		imaginary: $with$imaginary,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ComplexPattern.Parsed;
 }
 
@@ -11154,8 +11764,8 @@ function viewParametersElements(data: RecordPosition, tree: TreeHandle): T.Param
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewParametersElements$listRead);
@@ -11219,8 +11829,8 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPatterns$listRead);
@@ -11284,8 +11894,8 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -11350,8 +11960,8 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -11385,8 +11995,8 @@ function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Default
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, default: $with$default };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, default: $with$default, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DefaultParameter.Parsed;
 }
 
@@ -11420,8 +12030,8 @@ function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Ty
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, type: $with$type, default: $with$default };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, type: $with$type, default: $with$default, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TypedDefaultParameter.Parsed;
 }
 
@@ -11447,8 +12057,8 @@ function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSpl
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, pattern: $with$pattern };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { pattern: $with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplatPattern.Parsed;
 }
 
@@ -11474,8 +12084,8 @@ function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.D
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, pattern: $with$pattern };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { pattern: $with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplatPattern.Parsed;
 }
 
@@ -11505,8 +12115,8 @@ function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression, alias: $with$alias };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, alias: $with$alias, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AsPattern.Parsed;
 }
 
@@ -11532,8 +12142,8 @@ function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, argument: $with$argument };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { argument: $with$argument, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.NotOperator.Parsed;
 }
 
@@ -11567,8 +12177,8 @@ function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanO
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, operator: $with$operator, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, operator: $with$operator, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.BooleanOperator.Parsed;
 }
 
@@ -11602,8 +12212,8 @@ function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOpe
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, operator: $with$operator, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, operator: $with$operator, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.BinaryOperator.Parsed;
 }
 
@@ -11633,8 +12243,8 @@ function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOpera
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, operator: $with$operator, argument: $with$argument };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { operator: $with$operator, argument: $with$argument, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.UnaryOperator.Parsed;
 }
 
@@ -11664,8 +12274,8 @@ function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.Compa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, comparators: $with$comparators };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, comparators: $with$comparators, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ComparisonOperator.Parsed;
 }
 
@@ -11695,8 +12305,8 @@ function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, parameters: $with$parameters, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { parameters: $with$parameters, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Lambda.Parsed;
 }
 
@@ -11726,8 +12336,8 @@ function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, parameters: $with$parameters, body: $with$body };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { parameters: $with$parameters, body: $with$body, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.LambdaWithinForInClause.Parsed;
 }
 
@@ -11768,8 +12378,8 @@ function viewAugmentedAssignment(data: RecordPosition, tree: TreeHandle): T.Augm
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, operator: $with$operator, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, operator: $with$operator, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AugmentedAssignment.Parsed;
 }
 
@@ -11830,8 +12440,8 @@ function viewPatternList(data: RecordPosition, tree: TreeHandle): T.PatternList.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPatternList$listRead);
@@ -11860,8 +12470,8 @@ function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Yield.Parsed;
 }
 
@@ -11891,8 +12501,8 @@ function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, object: $with$object, property: $with$property };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { object: $with$object, property: $with$property, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Attribute.Parsed;
 }
 
@@ -11922,8 +12532,8 @@ function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, object: $with$object, subscripts: $with$subscripts };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { object: $with$object, subscripts: $with$subscripts, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Subscript.Parsed;
 }
 
@@ -11961,8 +12571,14 @@ function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, start: $with$start, stop: $with$stop, step: $with$step, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		start: $with$start,
+		stop: $with$stop,
+		step: $with$step,
+		expression: $with$expression,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.expression = recordPresent(node, 10, 6, 8, 6, 4) ? viewSlice$expression : undefined;
 	return node as unknown as T.Slice.Parsed;
 }
@@ -11993,8 +12609,8 @@ function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, function: $with$function, arguments: $with$arguments };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { function: $with$function, arguments: $with$arguments, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Call.Parsed;
 }
 
@@ -12024,8 +12640,8 @@ function viewTypedParameter(data: RecordPosition, tree: TreeHandle): T.TypedPara
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, type: $with$type };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, type: $with$type, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TypedParameter.Parsed;
 }
 
@@ -12058,8 +12674,8 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Type.Parsed;
 }
 
@@ -12089,8 +12705,8 @@ function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, operator: $with$operator, type: $with$type };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { operator: $with$operator, type: $with$type, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SplatType.Parsed;
 }
 
@@ -12120,8 +12736,8 @@ function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, typeParameter: $with$typeParameter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, typeParameter: $with$typeParameter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.GenericType.Parsed;
 }
 
@@ -12151,8 +12767,8 @@ function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, left: $with$left, right: $with$right };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { left: $with$left, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.UnionType.Parsed;
 }
 
@@ -12182,8 +12798,8 @@ function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.Constrai
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, baseType: $with$baseType, constraint: $with$constraint };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { baseType: $with$baseType, constraint: $with$constraint, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ConstrainedType.Parsed;
 }
 
@@ -12213,8 +12829,8 @@ function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, qualifier: $with$qualifier, name: $with$name };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { qualifier: $with$qualifier, name: $with$name, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MemberType.Parsed;
 }
 
@@ -12244,8 +12860,8 @@ function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordA
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordArgument.Parsed;
 }
 
@@ -12306,8 +12922,8 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -12372,8 +12988,8 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -12438,8 +13054,8 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -12504,8 +13120,8 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -12539,8 +13155,8 @@ function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, key: $with$key, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { key: $with$key, value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Pair.Parsed;
 }
 
@@ -12570,8 +13186,8 @@ function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListCo
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body, clauses: $with$clauses };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, clauses: $with$clauses, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ListComprehension.Parsed;
 }
 
@@ -12601,8 +13217,8 @@ function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body, clauses: $with$clauses };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, clauses: $with$clauses, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DictionaryComprehension.Parsed;
 }
 
@@ -12632,8 +13248,8 @@ function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body, clauses: $with$clauses };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, clauses: $with$clauses, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SetComprehension.Parsed;
 }
 
@@ -12663,8 +13279,8 @@ function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.Gene
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, body: $with$body, clauses: $with$clauses };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { body: $with$body, clauses: $with$clauses, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.GeneratorExpression.Parsed;
 }
 
@@ -12690,8 +13306,8 @@ function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpression.Parsed;
 }
 
@@ -12752,8 +13368,8 @@ function viewCollectionElements(data: RecordPosition, tree: TreeHandle): T.Colle
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewCollectionElements$listRead);
@@ -12794,8 +13410,14 @@ function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, async: $with$async, left: $with$left, rights: $with$rights, trailingComma: $with$trailingComma };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		async: $with$async,
+		left: $with$left,
+		rights: $with$rights,
+		trailingComma: $with$trailingComma,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ForInClause.Parsed;
 }
 
@@ -12821,8 +13443,8 @@ function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, condition: $with$condition };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { condition: $with$condition, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.IfClause.Parsed;
 }
 
@@ -12856,8 +13478,13 @@ function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.Co
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, consequence: $with$consequence, condition: $with$condition, alternative: $with$alternative };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		consequence: $with$consequence,
+		condition: $with$condition,
+		alternative: $with$alternative,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ConditionalExpression.Parsed;
 }
 
@@ -12883,8 +13510,8 @@ function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.Conca
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, strings: $with$strings };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { strings: $with$strings, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ConcatenatedString.Parsed;
 }
 
@@ -12918,8 +13545,13 @@ function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, stringStart: $with$stringStart, contents: $with$contents, stringEnd: $with$stringEnd };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = {
+		stringStart: $with$stringStart,
+		contents: $with$contents,
+		stringEnd: $with$stringEnd,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.String.Parsed;
 }
 
@@ -12953,8 +13585,8 @@ function viewStringContent(data: RecordPosition, tree: TreeHandle): T.StringCont
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.StringContent.Parsed;
 }
 
@@ -12993,13 +13625,13 @@ function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolat
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		expression: $with$expression,
 		debug: $with$debug,
 		typeConversion: $with$typeConversion,
-		formatSpecifier: $with$formatSpecifier
+		formatSpecifier: $with$formatSpecifier,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Interpolation.Parsed;
 }
 
@@ -13025,8 +13657,8 @@ function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FormatSpecifier.Parsed;
 }
 
@@ -13052,8 +13684,8 @@ function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Await.Parsed;
 }
 
@@ -13078,7 +13710,7 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
+	node.$with = { content: $with$content, [RECEIVER]: node };
 	return node as unknown as T.Comment.Parsed;
 }
 
@@ -13139,8 +13771,8 @@ function viewSimpleStatementsElements(data: RecordPosition, tree: TreeHandle): T
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSimpleStatementsElements$listRead);
@@ -13204,8 +13836,8 @@ function viewSubjects(data: RecordPosition, tree: TreeHandle): T.Subjects.Parsed
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, subjects: $with$subjects, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { subjects: $with$subjects, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSubjects$listRead);
@@ -13269,8 +13901,8 @@ function viewWithClauseWithItems(data: RecordPosition, tree: TreeHandle): T.With
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewWithClauseWithItems$listRead);
@@ -13334,8 +13966,8 @@ function viewTypes(data: RecordPosition, tree: TreeHandle): T.Types.Parsed {
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTypes$listRead);
@@ -13407,8 +14039,8 @@ function viewArgumentListElements(data: RecordPosition, tree: TreeHandle): T.Arg
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewArgumentListElements$listRead);
@@ -13472,8 +14104,8 @@ function viewListPatternCasePatterns(data: RecordPosition, tree: TreeHandle): T.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewListPatternCasePatterns$listRead);
@@ -13537,8 +14169,8 @@ function viewDictPatternElements(data: RecordPosition, tree: TreeHandle): T.Dict
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewDictPatternElements$listRead);
@@ -13602,8 +14234,8 @@ function viewSubscripts(data: RecordPosition, tree: TreeHandle): T.Subscripts.Pa
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, subscripts: $with$subscripts, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { subscripts: $with$subscripts, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSubscripts$listRead);
@@ -13667,8 +14299,8 @@ function viewDictionaryElements(data: RecordPosition, tree: TreeHandle): T.Dicti
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewDictionaryElements$listRead);
@@ -13697,8 +14329,8 @@ function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SliceGroup.Parsed;
 }
 
@@ -13759,8 +14391,8 @@ function viewTuplePatternElements(data: RecordPosition, tree: TreeHandle): T.Tup
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTuplePatternElements$listRead);
@@ -13824,8 +14456,8 @@ function viewCasePatternList(data: RecordPosition, tree: TreeHandle): T.CasePatt
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewCasePatternList$listRead);
@@ -13889,8 +14521,8 @@ function viewTupleElements(data: RecordPosition, tree: TreeHandle): T.TupleEleme
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTupleElements$listRead);
@@ -13923,8 +14555,8 @@ function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, value: $with$value, alias: $with$alias };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { value: $with$value, alias: $with$alias, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionAs.Parsed;
 }
 
@@ -13985,8 +14617,8 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -14051,8 +14683,8 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -14117,8 +14749,8 @@ function viewPrintArguments(data: RecordPosition, tree: TreeHandle): T.PrintArgu
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPrintArguments$listRead);
@@ -14182,8 +14814,8 @@ function viewPrintChevronArguments(data: RecordPosition, tree: TreeHandle): T.Pr
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPrintChevronArguments$listRead);
@@ -14216,8 +14848,8 @@ function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.Pr
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, chevron: $with$chevron, printChevronArguments: $with$printChevronArguments };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { chevron: $with$chevron, printChevronArguments: $with$printChevronArguments, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.PrintStatementChevron.Parsed;
 }
 
@@ -14278,8 +14910,8 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, printArguments: $with$printArguments };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { printArguments: $with$printArguments, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -14344,8 +14976,8 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, importList: $with$importList };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { importList: $with$importList, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -14375,8 +15007,8 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, contents: $with$contents };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { contents: $with$contents, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
 
@@ -14406,8 +15038,8 @@ function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerHex.Parsed;
 }
 
@@ -14437,8 +15069,8 @@ function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOcta
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerOctal.Parsed;
 }
 
@@ -14468,8 +15100,8 @@ function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBin
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, radixPrefix: $with$radixPrefix, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerBinary.Parsed;
 }
 
@@ -14516,15 +15148,15 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		integer: $with$integer,
 		fraction: $with$fraction,
 		marker: $with$marker,
 		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
-		imaginary: $with$imaginary
+		imaginary: $with$imaginary,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FloatPoint.Parsed;
 }
 
@@ -14571,15 +15203,15 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		integer: $with$integer,
 		fraction: $with$fraction,
 		marker: $with$marker,
 		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
-		imaginary: $with$imaginary
+		imaginary: $with$imaginary,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FloatLeadingPoint.Parsed;
 }
 
@@ -14622,14 +15254,14 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		integer: $with$integer,
 		marker: $with$marker,
 		exponentSign: $with$exponentSign,
 		exponent: $with$exponent,
-		imaginary: $with$imaginary
+		imaginary: $with$imaginary,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FloatScientific.Parsed;
 }
 
@@ -14655,8 +15287,8 @@ function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle):
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
 
@@ -14682,8 +15314,8 @@ function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): 
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeWide.Parsed;
 }
 
@@ -14709,8 +15341,8 @@ function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.Escape
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
 
@@ -14736,8 +15368,8 @@ function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.Esca
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceOctal.Parsed;
 }
 
@@ -14763,8 +15395,8 @@ function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceLineBreak.Parsed;
 }
 
@@ -14790,8 +15422,8 @@ function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.Esc
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
 
@@ -14817,8 +15449,8 @@ function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.Esca
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceNamed.Parsed;
 }
 
@@ -14844,8 +15476,8 @@ function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.Si
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SimplePatternNegative.Parsed;
 }
 
@@ -14871,8 +15503,8 @@ function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): 
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, values: $with$values };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { values: $with$values, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionList.Parsed;
 }
 
@@ -14898,8 +15530,8 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
 
@@ -14925,8 +15557,8 @@ function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, pattern: $with$pattern };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { pattern: $with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternList.Parsed;
 }
 
@@ -14952,8 +15584,8 @@ function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.S
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, pattern: $with$pattern };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { pattern: $with$pattern, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternDictionary.Parsed;
 }
 
@@ -14990,8 +15622,8 @@ function viewAssignmentEq(data: RecordPosition, tree: TreeHandle): T.AssignmentE
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentEq.Parsed;
 }
 
@@ -15021,8 +15653,8 @@ function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.Assignmen
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, type: $with$type };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, type: $with$type, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentType.Parsed;
 }
 
@@ -15063,8 +15695,8 @@ function viewAssignmentTyped(data: RecordPosition, tree: TreeHandle): T.Assignme
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, name: $with$name, type: $with$type, value: $with$value };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { name: $with$name, type: $with$type, value: $with$value, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentTyped.Parsed;
 }
 
@@ -15125,8 +15757,8 @@ function viewExpressionStatementTuple(data: RecordPosition, tree: TreeHandle): T
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewExpressionStatementTuple$listRead);
@@ -15190,8 +15822,8 @@ function viewWithClauseBare(data: RecordPosition, tree: TreeHandle): T.WithClaus
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewWithClauseBare$listRead);
@@ -15255,8 +15887,8 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, items: $with$items };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { items: $with$items, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -15286,8 +15918,8 @@ function viewMatchBlockBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlo
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, alternatives: $with$alternatives };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
+	node.$with = { alternatives: $with$alternatives, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockBlock.Parsed;
 }
 
@@ -15313,8 +15945,8 @@ function viewMatchBlockEmpty(data: RecordPosition, tree: TreeHandle): T.MatchBlo
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, newline: $with$newline };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { newline: $with$newline, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockEmpty.Parsed;
 }
 
@@ -15375,8 +16007,8 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, elements: $with$elements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
@@ -15406,8 +16038,8 @@ function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, block: $with$block };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { block: $with$block, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlock.Parsed;
 }
 
@@ -15433,8 +16065,8 @@ function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, newline: $with$newline };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { newline: $with$newline, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteEmpty.Parsed;
 }
 
@@ -15467,8 +16099,8 @@ function viewComparisonOperatorComparator(
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, operators: $with$operators, primaryExpression: $with$primaryExpression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { operators: $with$operators, primaryExpression: $with$primaryExpression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ComparisonOperatorComparator.Parsed;
 }
 
@@ -15494,8 +16126,8 @@ function viewYieldFromClause(data: RecordPosition, tree: TreeHandle): T.YieldFro
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, expression: $with$expression };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.YieldFromClause.Parsed;
 }
 
@@ -15538,14 +16170,14 @@ function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.C
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		async: $with$async,
 		typeParameters: $with$typeParameters,
 		parameters: $with$parameters,
 		returnType: $with$returnType,
-		body: $with$body
+		body: $with$body,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ConstructorDeclaration.Parsed;
 }
 
@@ -15571,8 +16203,8 @@ function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.Bl
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, statements: $with$statements };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.BlockClassDeclaration.Parsed;
 }
 
@@ -15598,8 +16230,8 @@ function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle):
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, blockClassDeclaration: $with$blockClassDeclaration };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { blockClassDeclaration: $with$blockClassDeclaration, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlockClassDeclaration.Parsed;
 }
 
@@ -15632,8 +16264,8 @@ function viewDecoratedDefinitionClassDeclaration(
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, decorators: $with$decorators, definition: $with$definition };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { decorators: $with$decorators, definition: $with$definition, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.DecoratedDefinitionClassDeclaration.Parsed;
 }
 
@@ -15694,8 +16326,8 @@ function viewNames(data: RecordPosition, tree: TreeHandle): T.Names.Parsed {
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, names: $with$names, delimiter: $with$delimiter };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { names: $with$names, delimiter: $with$delimiter, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewNames$listRead);
@@ -15724,8 +16356,8 @@ function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatter
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { node, content: $with$content };
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AsPatternTarget.Parsed;
 }
 
@@ -15764,13 +16396,13 @@ function viewFormatExpression(data: RecordPosition, tree: TreeHandle): T.FormatE
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		expression: $with$expression,
 		debug: $with$debug,
 		typeConversion: $with$typeConversion,
-		formatSpecifier: $with$formatSpecifier
+		formatSpecifier: $with$formatSpecifier,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FormatExpression.Parsed;
 }
 
@@ -15817,15 +16449,15 @@ function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.Method
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		node,
 		async: $with$async,
 		name: $with$name,
 		typeParameters: $with$typeParameters,
 		parameters: $with$parameters,
 		returnType: $with$returnType,
-		body: $with$body
+		body: $with$body,
+		[RECEIVER]: node
 	};
-	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MethodDeclaration.Parsed;
 }
 
@@ -15835,284 +16467,284 @@ function $handleQuery(this: RecordPosition): object {
 function $handleSnapshot(this: RecordPosition): unknown {
 	return snapshotOf(rowOf(this, _wrap));
 }
-function $trivia$leading(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return handleTrivia(this.node, _wrap, 'leading', items);
+function $trivia$leading(this: Received<RecordPosition>, ...items: unknown[]): unknown {
+	return handleTrivia(this[RECEIVER], _wrap, 'leading', items);
 }
-function $trivia$trailing(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return handleTrivia(this.node, _wrap, 'trailing', items);
+function $trivia$trailing(this: Received<RecordPosition>, ...items: unknown[]): unknown {
+	return handleTrivia(this[RECEIVER], _wrap, 'trailing', items);
 }
-function $trivia$inner(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return handleTrivia(this.node, _wrap, 'inner', items);
+function $trivia$inner(this: Received<RecordPosition>, ...items: unknown[]): unknown {
+	return handleTrivia(this[RECEIVER], _wrap, 'inner', items);
 }
-function $with$alias(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'alias', args);
+function $with$alias(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'alias', args);
 }
-function $with$alternative(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'alternative', args);
+function $with$alternative(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'alternative', args);
 }
-function $with$alternatives(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'alternatives', args);
+function $with$alternatives(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'alternatives', args);
 }
-function $with$argument(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'argument', args);
+function $with$argument(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'argument', args);
 }
-function $with$arguments(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'arguments', args);
+function $with$arguments(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'arguments', args);
 }
-function $with$async(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'async', args);
+function $with$async(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'async', args);
 }
-function $with$baseType(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'baseType', args);
+function $with$baseType(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'baseType', args);
 }
-function $with$bases(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'bases', args);
+function $with$bases(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'bases', args);
 }
-function $with$block(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'block', args);
+function $with$block(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'block', args);
 }
-function $with$blockClassDeclaration(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'blockClassDeclaration', args);
+function $with$blockClassDeclaration(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'blockClassDeclaration', args);
 }
-function $with$body(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'body', args);
+function $with$body(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'body', args);
 }
-function $with$casePattern(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'casePattern', args);
+function $with$casePattern(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'casePattern', args);
 }
-function $with$cause(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'cause', args);
+function $with$cause(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'cause', args);
 }
-function $with$chevron(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'chevron', args);
+function $with$chevron(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'chevron', args);
 }
-function $with$clauses(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'clauses', args);
+function $with$clauses(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'clauses', args);
 }
-function $with$code(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'code', args);
+function $with$code(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'code', args);
 }
-function $with$comparators(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'comparators', args);
+function $with$comparators(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'comparators', args);
 }
-function $with$condition(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'condition', args);
+function $with$condition(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'condition', args);
 }
-function $with$consequence(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'consequence', args);
+function $with$consequence(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'consequence', args);
 }
-function $with$constraint(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'constraint', args);
+function $with$constraint(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'constraint', args);
 }
-function $with$content(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'content', args);
+function $with$content(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'content', args);
 }
-function $with$contents(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'contents', args);
+function $with$contents(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'contents', args);
 }
-function $with$debug(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'debug', args);
+function $with$debug(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'debug', args);
 }
-function $with$decorators(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'decorators', args);
+function $with$decorators(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'decorators', args);
 }
-function $with$default(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'default', args);
+function $with$default(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'default', args);
 }
-function $with$definition(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'definition', args);
+function $with$definition(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'definition', args);
 }
-function $with$delimiter(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'delimiter', args);
+function $with$delimiter(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'delimiter', args);
 }
-function $with$elements(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'elements', args);
+function $with$elements(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'elements', args);
 }
-function $with$exception(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'exception', args);
+function $with$exception(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'exception', args);
 }
-function $with$exponent(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'exponent', args);
+function $with$exponent(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'exponent', args);
 }
-function $with$exponentSign(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'exponentSign', args);
+function $with$exponentSign(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'exponentSign', args);
 }
-function $with$expression(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'expression', args);
+function $with$expression(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'expression', args);
 }
-function $with$expressions(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'expressions', args);
+function $with$expressions(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'expressions', args);
 }
-function $with$fields(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'fields', args);
+function $with$fields(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'fields', args);
 }
-function $with$finalizer(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'finalizer', args);
+function $with$finalizer(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'finalizer', args);
 }
-function $with$formatSpecifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'formatSpecifier', args);
+function $with$formatSpecifier(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'formatSpecifier', args);
 }
-function $with$fraction(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'fraction', args);
+function $with$fraction(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'fraction', args);
 }
-function $with$function(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'function', args);
+function $with$function(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'function', args);
 }
-function $with$group(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'group', args);
+function $with$group(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'group', args);
 }
-function $with$guard(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'guard', args);
+function $with$guard(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'guard', args);
 }
-function $with$handlers(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'handlers', args);
+function $with$handlers(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'handlers', args);
 }
-function $with$identifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'identifier', args);
+function $with$identifier(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'identifier', args);
 }
-function $with$imaginary(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'imaginary', args);
+function $with$imaginary(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'imaginary', args);
 }
-function $with$importList(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'importList', args);
+function $with$importList(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'importList', args);
 }
-function $with$inClauses(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'inClauses', args);
+function $with$inClauses(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'inClauses', args);
 }
-function $with$integer(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'integer', args);
+function $with$integer(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'integer', args);
 }
-function $with$items(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'items', args);
+function $with$items(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'items', args);
 }
-function $with$key(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'key', args);
+function $with$key(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'key', args);
 }
-function $with$left(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'left', args);
+function $with$left(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'left', args);
 }
-function $with$marker(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'marker', args);
+function $with$marker(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'marker', args);
 }
-function $with$moduleName(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'moduleName', args);
+function $with$moduleName(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'moduleName', args);
 }
-function $with$name(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'name', args);
+function $with$name(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'name', args);
 }
-function $with$names(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'names', args);
+function $with$names(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'names', args);
 }
-function $with$newline(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'newline', args);
+function $with$newline(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'newline', args);
 }
-function $with$object(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'object', args);
+function $with$object(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'object', args);
 }
-function $with$operator(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'operator', args);
+function $with$operator(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'operator', args);
 }
-function $with$operators(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'operators', args);
+function $with$operators(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'operators', args);
 }
-function $with$parameters(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'parameters', args);
+function $with$parameters(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'parameters', args);
 }
-function $with$parametersElements(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'parametersElements', args);
+function $with$parametersElements(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'parametersElements', args);
 }
-function $with$pattern(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'pattern', args);
+function $with$pattern(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'pattern', args);
 }
-function $with$prefix(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'prefix', args);
+function $with$prefix(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'prefix', args);
 }
-function $with$primaryExpression(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'primaryExpression', args);
+function $with$primaryExpression(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'primaryExpression', args);
 }
-function $with$printArguments(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'printArguments', args);
+function $with$printArguments(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'printArguments', args);
 }
-function $with$printChevronArguments(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'printChevronArguments', args);
+function $with$printChevronArguments(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'printChevronArguments', args);
 }
-function $with$property(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'property', args);
+function $with$property(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'property', args);
 }
-function $with$qualifier(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'qualifier', args);
+function $with$qualifier(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'qualifier', args);
 }
-function $with$radixPrefix(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'radixPrefix', args);
+function $with$radixPrefix(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'radixPrefix', args);
 }
-function $with$real(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'real', args);
+function $with$real(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'real', args);
 }
-function $with$returnType(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'returnType', args);
+function $with$returnType(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'returnType', args);
 }
-function $with$right(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'right', args);
+function $with$right(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'right', args);
 }
-function $with$rights(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'rights', args);
+function $with$rights(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'rights', args);
 }
-function $with$sign(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'sign', args);
+function $with$sign(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'sign', args);
 }
-function $with$start(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'start', args);
+function $with$start(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'start', args);
 }
-function $with$statements(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'statements', args);
+function $with$statements(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'statements', args);
 }
-function $with$step(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'step', args);
+function $with$step(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'step', args);
 }
-function $with$stop(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'stop', args);
+function $with$stop(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'stop', args);
 }
-function $with$stringEnd(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'stringEnd', args);
+function $with$stringEnd(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'stringEnd', args);
 }
-function $with$stringStart(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'stringStart', args);
+function $with$stringStart(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'stringStart', args);
 }
-function $with$strings(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'strings', args);
+function $with$strings(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'strings', args);
 }
-function $with$subjects(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'subjects', args);
+function $with$subjects(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'subjects', args);
 }
-function $with$subscripts(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'subscripts', args);
+function $with$subscripts(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'subscripts', args);
 }
-function $with$trailingComma(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'trailingComma', args);
+function $with$trailingComma(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'trailingComma', args);
 }
-function $with$type(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'type', args);
+function $with$type(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'type', args);
 }
-function $with$typeConversion(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'typeConversion', args);
+function $with$typeConversion(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'typeConversion', args);
 }
-function $with$typeParameter(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'typeParameter', args);
+function $with$typeParameter(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'typeParameter', args);
 }
-function $with$typeParameters(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'typeParameters', args);
+function $with$typeParameters(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'typeParameters', args);
 }
-function $with$types(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'types', args);
+function $with$types(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'types', args);
 }
-function $with$value(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'value', args);
+function $with$value(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'value', args);
 }
-function $with$values(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'values', args);
+function $with$values(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'values', args);
 }
-function $with$withClause(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
-	return rowWith(this.node, _wrap, 'withClause', args);
+function $with$withClause(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(this[RECEIVER], _wrap, 'withClause', args);
 }
 
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
@@ -16123,16 +16755,18 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
+		$trivia: undefined as unknown as object,
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
 	};
 	return node;
 }
