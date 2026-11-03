@@ -42200,6 +42200,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [123, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:[\\r\\f\\t\\v ]*(?:[^[\\n].*)?)$',
 										flags: 'u'
@@ -43069,6 +43070,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [145, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: "^(?:(?:[^\\\\']))$",
 										flags: 'u'
@@ -43125,6 +43127,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [150, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:\\\\(?:x[0-9a-fA-F]{2}))$',
 										flags: 'u'
@@ -43163,6 +43166,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [147, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:\\\\(?:[^xu]))$',
 										flags: 'u'
@@ -43201,6 +43205,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [149, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:\\\\(?:u\\{[0-9a-fA-F]+\\}))$',
 										flags: 'u'
@@ -43239,6 +43244,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [148, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:\\\\(?:u[0-9a-fA-F]{4}))$',
 										flags: 'u'
@@ -43297,6 +43303,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [141, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[0-9][0-9_]*))$',
 										flags: 'u'
@@ -43318,6 +43325,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [141, 'suffix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
 										flags: 'u'
@@ -43359,6 +43367,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [143, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0b[01_]+))$',
 										flags: 'u'
@@ -43380,6 +43389,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [143, 'suffix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
 										flags: 'u'
@@ -43421,6 +43431,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [142, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0x[0-9a-fA-F_]+))$',
 										flags: 'u'
@@ -43442,6 +43453,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [142, 'suffix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
 										flags: 'u'
@@ -43483,6 +43495,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [144, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:0o[0-7_]+))$',
 										flags: 'u'
@@ -43504,6 +43517,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [144, 'suffix'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
 										flags: 'u'
@@ -43723,6 +43737,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [151, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:[^xu]))$',
 										flags: 'u'
@@ -43762,6 +43777,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [154, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:x[0-9a-fA-F]{2}))$',
 										flags: 'u'
@@ -43800,6 +43816,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [153, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:u\\{[0-9a-fA-F]+\\}))$',
 										flags: 'u'
@@ -43838,6 +43855,7 @@ export const build: PortableBuildTable = {
 								{
 									at: [152, 'content'],
 									kinds: [],
+									text: true,
 									pattern: {
 										source: '^(?:(?:u[0-9a-fA-F]{4}))$',
 										flags: 'u'

@@ -132,8 +132,8 @@ const takesList = (member: PortableMemberStep): boolean => member.multiple || me
 
 const shapesOf = (member: PortableMemberStep): ReadonlySet<string> =>
 	new Set([
-		...(takesList(member) ? member.seats.flatMap((seat) => (seat.kinds.length === 0 ? ['list text'] : seat.kinds.map((kind) => `list ${kind}`))) : []),
-		...(member.multiple ? [] : member.seats.filter((seat) => seat.many !== true).flatMap((seat) => (seat.kinds.length === 0 ? ['one text'] : seat.kinds.map((kind) => `one ${kind}`))))
+		...(takesList(member) ? member.seats.flatMap((seat) => [...(seat.text ? ['list text'] : []), ...seat.kinds.map((kind) => `list ${kind}`)]) : []),
+		...(member.multiple ? [] : member.seats.filter((seat) => seat.many !== true).flatMap((seat) => [...(seat.text ? ['one text'] : []), ...seat.kinds.map((kind) => `one ${kind}`)]))
 	]);
 
 function undecidedShape(members: readonly PortableMemberStep[], a: readonly number[], b: readonly number[]): readonly string[] | undefined {
@@ -362,12 +362,14 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const seatRecord = (seat: Seat): PortableSeat => {
 		const leaf = defaultLeaf(seat.slot, seat.kinds);
 		const tokens = tokensOf(seat);
-		const guard = leaf === undefined ? interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name)?.regex : leaf.pattern;
+		const interior = interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name);
+		const guard = leaf === undefined ? interior?.regex : leaf.pattern;
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
 		...(seat.refined.size === 0 ? {} : { refined: sortedIds([...seat.refined].flatMap((kind) => typeOf(kind) ?? [])) }),
 		...(leaf === undefined ? {} : { leaf: leaf.leaf, texts: leaf.texts }),
+		...(interior === undefined ? {} : { text: true as const }),
 		...(tokens === undefined ? {} : { tokens }),
 		...(guard === undefined ? {} : { pattern: { source: guard.source, flags: guard.flags } }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),

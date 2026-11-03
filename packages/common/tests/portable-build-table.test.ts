@@ -45,6 +45,20 @@ describe('the portable build table', () => {
 		}
 	});
 
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a seat takes text only where its holder spells it, never where its slot holds containers', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms)
+				for (const member of arm.members) {
+					for (const seat of member.seats) if (seat.text) expect([seat.kinds, seat.leaf], `${arm.builder} ${member.name}`).toEqual([[], undefined]);
+					if (member.seats.some((seat) => seat.within !== undefined)) expect(member.seats[0]!.text, `${arm.builder} ${member.name}`).toBeUndefined();
+				}
+		const seatOf = (path: string, name: string) => armsOf('python', path).flatMap((arm) => arm.members).find((member) => member.name === name)!.seats[0]!;
+		expect(seatOf('pattern.as', 'pattern')).toMatchObject({ kinds: [] });
+		expect(seatOf('pattern.as', 'pattern').text).toBeUndefined();
+		expect(seatOf('literal.number.float', 'marker').text).toBe(true);
+		expect(seatOf('literal.string.escape', 'content').text).toBe(true);
+	});
+
 	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
 		const brace = armOf('rust', 'declaration.struct', rust.kinds.StructItemBrace);
 		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
@@ -303,7 +317,7 @@ describe('the portable build table', () => {
 });
 
 describe('the portable build of a registered option', () => {
-	const textSeat = (key: string) => ({ name: key, steps: [{ key }], multiple: false, seats: [{ at: [1, key] as const, kinds: [] }] });
+	const textSeat = (key: string) => ({ name: key, steps: [{ key }], multiple: false, seats: [{ at: [1, key] as const, kinds: [], text: true as const }] });
 	const table = (options?: PortableBuildTable['options']): PortableBuildTable => ({
 		builders: { holder: 'direct' },
 		...(options === undefined ? {} : { options }),
@@ -336,7 +350,7 @@ describe('the portable build of an arm whose routes run through two forms of one
 		name,
 		steps: [{ key: 'content', builder: form }, { key: name }],
 		multiple: false,
-		seats: [{ at: [form === 'formA' ? 2 : 3, name] as const, kinds: [], ...(pattern === undefined ? {} : { pattern: { source: pattern.source, flags: pattern.flags } }) }]
+		seats: [{ at: [form === 'formA' ? 2 : 3, name] as const, kinds: [], text: true as const, ...(pattern === undefined ? {} : { pattern: { source: pattern.source, flags: pattern.flags } }) }]
 	});
 	const table: PortableBuildTable = {
 		builders: { outer: 'config', formA: 'config', formB: 'config' },

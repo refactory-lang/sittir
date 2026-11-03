@@ -54,6 +54,16 @@ describe('the portable read', () => {
 		expect(roundTrip('x = 1e-3')).toBe('x = 1e-3\n');
 	});
 
+	it('carries a literal inside a pattern whose slot holds only containers, and builds it back', () => {
+		const source = 'match x:\n    case 3j as b1:\n        pass\n';
+		expect(firstOf(source)).toMatchObject({ body: [{ pattern: { $path: 'pattern.as', pattern: { $type: python.kinds.IntegerDecimalImaginary }, name: 'b1' } }] });
+		expect(roundTrip(source)).toBe(source);
+	});
+
+	it('builds a single statement as the one item of an inline suite', () => {
+		for (const source of ['def f(): return 1\n', 'def f(): pass\n', 'class A: x = 1\n']) expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads a slice step whose group holds no expression as absent', () => {
 		expect(roundTrip('c[::]')).toBe('c[:]\n');
 	});

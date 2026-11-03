@@ -196,7 +196,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		return kind !== undefined && kind !== preset.kind;
 	};
 	const rebuilds = (kind: number, seats: readonly PortableSeat[] | undefined): boolean =>
-		seats === undefined || tokenText(kind, seats) !== undefined || seats.some((seat) => (seat.leaf === undefined ? seat.kinds.length === 0 : (seat.texts ?? []).includes(kind)));
+		seats === undefined || tokenText(kind, seats) !== undefined || seats.some((seat) => (seat.leaf === undefined ? seat.text === true : (seat.texts ?? []).includes(kind)));
 	const read = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		if (Array.isArray(value)) return value.map((item) => read(item, carried, seats));
 		if (!hasKind(value)) return readValue(value, carried, seats);
