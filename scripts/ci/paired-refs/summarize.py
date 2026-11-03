@@ -57,7 +57,7 @@ def phase(sample, ph):
     return sample[ph]
 
 
-CORPUS_PHASES = ['pipelineMs', 'matchedPipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
+CORPUS_PHASES = ['pipelineMs', 'matchedPipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs', 'wholeReadMs']
 samplesOf = lambda x, ph: x['samplesMatched'] if ph == 'matchedPipelineMs' else x['samples']
 CONSTRUCTION_PHASES = ['pipelineMs', 'buildMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
 
@@ -130,7 +130,7 @@ lines = [
     f'| grammar | phase | 10-29 f/m | {heads} | {msHeads} |',
     '|' + '---|' * (3 + len(PAIRS) + len(VERSIONS)),
 ]
-NAMES = {'editReleaseMs': 'edit+release', 'matchedPipelineMs': 'pipeline after GC'}
+NAMES = {'editReleaseMs': 'edit+release', 'matchedPipelineMs': 'pipeline after GC', 'wholeReadMs': 'whole-tree read'}
 earlierCell = lambda timings, ph: f"{timings[ph]['featureOverMaster']:.3f}" if ph in timings else '-'
 for row in corpus:
     for ph in CORPUS_PHASES:
