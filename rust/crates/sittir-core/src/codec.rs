@@ -96,6 +96,31 @@ impl<W: Nodes, T: Dismantle<W>, const ADJACENT: bool> Dismantle<W> for SlotValue
     }
 }
 
+impl<W: Nodes> Dismantle<W> for () {
+    fn dismantle(self, _: &mut Vec<W::Whole>) {}
+}
+
+impl<W: Nodes> Dismantle<W> for core::convert::Infallible {
+    fn dismantle(self, _: &mut Vec<W::Whole>) {
+        match self {}
+    }
+}
+
+impl<W: Nodes, A: Dismantle<W>, B: Dismantle<W>> Dismantle<W> for (A, B) {
+    fn dismantle(self, out: &mut Vec<W::Whole>) {
+        self.0.dismantle(out);
+        self.1.dismantle(out);
+    }
+}
+
+impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for std::vec::IntoIter<T> {
+    fn dismantle(self, out: &mut Vec<W::Whole>) {
+        for item in self {
+            item.dismantle(out);
+        }
+    }
+}
+
 /// A list whose items may each be absent, encoded as a JavaScript array
 /// whose absent items are `undefined` (`boundary::holes`); it decodes as the
 /// `Vec` it wraps.
@@ -272,6 +297,22 @@ macro_rules! grammar_nodes {
                 }
             }
 
+            impl $crate::codec::Dismantle<$trivia> for __DecodeFrame {
+                fn dismantle(self, out: &mut ::std::vec::Vec<__Whole>) {
+                    match self {
+                        $(Self::$node(frame) => $crate::codec::Dismantle::<$trivia>::dismantle(frame, out),)*
+                    }
+                }
+            }
+
+            impl $crate::codec::Dismantle<$trivia> for __EncodeFrame {
+                fn dismantle(self, out: &mut ::std::vec::Vec<__Whole>) {
+                    match self {
+                        $(Self::$node(frame) => $crate::codec::Dismantle::<$trivia>::dismantle(frame, out),)*
+                    }
+                }
+            }
+
             $(impl $crate::codec::Framed<$trivia> for $node {
                 fn decoding(frame: <Self as $crate::codec::Steps<$trivia>>::Decoding) -> __DecodeFrame {
                     __DecodeFrame::$node(frame)
@@ -289,7 +330,7 @@ pub use wire::*;
 
 #[cfg(feature = "napi-bindings")]
 mod wire {
-    use super::{Holes, Nodes};
+    use super::{release, Dismantle, Holes, Nodes};
     use crate::non_empty::NonEmptyVec;
     use crate::slot::SlotValue;
     use ::napi::sys::{napi_env, napi_value};
@@ -298,9 +339,9 @@ mod wire {
     /// A grammar's frames.
     pub trait Frames: Nodes {
         /// Any node struct of the grammar, partly decoded.
-        type DecodeFrame: DecodeStep<Self>;
+        type DecodeFrame: DecodeStep<Self> + Dismantle<Self>;
         /// Any node struct of the grammar, partly encoded.
-        type EncodeFrame: EncodeStep<Self>;
+        type EncodeFrame: EncodeStep<Self> + Dismantle<Self>;
     }
 
     /// A value done, or what it keeps while it waits on the frame it wrote
@@ -348,8 +389,8 @@ mod wire {
     /// stepped by the loop. A node with no child slot has none
     /// (`Infallible`).
     pub trait Steps<W: Frames> {
-        type Decoding;
-        type Encoding;
+        type Decoding: Dismantle<W>;
+        type Encoding: Dismantle<W>;
         /// # Safety
         /// As `DecodeStep::step`.
         unsafe fn decode_step(frame: &mut Self::Decoding, env: napi_env, child: Option<W::Whole>, above: &mut Option<W::DecodeFrame>) -> Result<Begun<W::Whole, ()>>;
@@ -373,11 +414,14 @@ mod wire {
     impl<T: crate::trivia::HasTrivia + Codec<T::Trivia>> WireNode for T {}
 
     /// A value the loop decodes and encodes.
-    pub trait Codec<W: Frames>: Sized {
+    /// A value refused or left unwritten partway is released a level at a
+    /// time with what it had read or had left to write, as the driver
+    /// releases its frames.
+    pub trait Codec<W: Frames>: Sized + Dismantle<W> {
         /// What a value partly decoded keeps while it waits.
-        type DecodeWait;
+        type DecodeWait: Dismantle<W>;
         /// What a value partly encoded keeps while it waits.
-        type EncodeWait;
+        type EncodeWait: Dismantle<W>;
         /// Decodes `value`, or starts to: `Waits` when it wrote the frame of
         /// a node it holds to `above`.
         ///
@@ -423,7 +467,13 @@ mod wire {
             };
             stack.push(written(&mut above));
             // SAFETY: `env` is live, and the frame was read from a value live in it.
-            let child = unsafe { run_decode::<W>(env, &mut stack)? };
+            let child = match unsafe { run_decode::<W>(env, &mut stack) } {
+                Ok(child) => child,
+                Err(err) => {
+                    release::<W, _>(wait);
+                    return Err(err);
+                }
+            };
             // SAFETY: as above.
             begun = unsafe { T::decoded(env, wait, child, &mut above)? };
         }
@@ -448,8 +498,10 @@ mod wire {
                     child = Some(whole);
                 }
                 Err(err) => {
-                    stack.pop();
-                    return Err(stack.drain(..).rev().fold(err, |err, frame| frame.refusal(err)));
+                    let below = stack.len() - 1;
+                    let err = stack[..below].iter().rev().fold(err, |err, frame| frame.refusal(err));
+                    release::<W, _>((::std::mem::take(stack), above));
+                    return Err(err);
                 }
             }
         }
@@ -472,7 +524,13 @@ mod wire {
             };
             stack.push(written(&mut above));
             // SAFETY: `env` is live, and every value the frame holds was created in it.
-            let child = unsafe { run_encode::<W>(env, &mut stack)? };
+            let child = match unsafe { run_encode::<W>(env, &mut stack) } {
+                Ok(child) => child,
+                Err(err) => {
+                    release::<W, _>(wait);
+                    return Err(err);
+                }
+            };
             // SAFETY: as above.
             begun = unsafe { T::encoded(env, wait, child, &mut above)? };
         }
@@ -485,14 +543,18 @@ mod wire {
             crate::stack::assert_central("a wire encode step");
             let top = stack.last_mut().expect("the loop runs while a frame is left");
             // SAFETY: this fn's caller passes a live `env`, and every value each frame holds was created in it.
-            match unsafe { top.step(env, child.take(), &mut above)? } {
-                Begun::Waits(()) => stack.push(written(&mut above)),
-                Begun::Whole(value) => {
+            match unsafe { top.step(env, child.take(), &mut above) } {
+                Ok(Begun::Waits(())) => stack.push(written(&mut above)),
+                Ok(Begun::Whole(value)) => {
                     stack.pop();
                     if stack.is_empty() {
                         return Ok(value);
                     }
                     child = Some(value);
+                }
+                Err(err) => {
+                    release::<W, _>((::std::mem::take(stack), above));
+                    return Err(err);
                 }
             }
         }
@@ -582,6 +644,31 @@ mod wire {
         wait: P,
     }
 
+    impl<W: Nodes, T: Dismantle<W>, P: Dismantle<W>> Dismantle<W> for ListDecoding<T, P> {
+        fn dismantle(self, out: &mut Vec<W::Whole>) {
+            self.items.dismantle(out);
+            self.wait.dismantle(out);
+        }
+    }
+
+    impl<W: Nodes, T: Dismantle<W>, P: Dismantle<W>> Dismantle<W> for ListEncoding<T, P> {
+        fn dismantle(self, out: &mut Vec<W::Whole>) {
+            self.rest.dismantle(out);
+            self.wait.dismantle(out);
+        }
+    }
+
+    /// `result`, releasing `held` when it is a refusal.
+    fn or_release<W: Nodes, T, H: Dismantle<W>>(result: Result<T>, held: H) -> Result<(T, H)> {
+        match result {
+            Ok(value) => Ok((value, held)),
+            Err(err) => {
+                release::<W, _>(held);
+                Err(err)
+            }
+        }
+    }
+
     /// The items of `array` from `items.len()` on, read as napi's `Vec` reads
     /// them.
     unsafe fn read_items<W: Frames, T: Codec<W>>(
@@ -591,21 +678,43 @@ mod wire {
         mut items: Vec<T>,
         above: &mut Option<W::DecodeFrame>,
     ) -> Result<Decoded<W, Vec<T>>> {
-        for index in u32::try_from(items.len()).map_err(|_| Error::from_reason("a list longer than an array holds"))?..len {
-            let mut item = ::std::ptr::null_mut();
-            ::napi::check_status!(
-                // SAFETY: this fn's caller passes `array` live in `env`.
-                unsafe { ::napi::sys::napi_get_element(env, array, index, &raw mut item) },
-                "Failed to get element with index `{}`",
-                index,
-            )?;
-            // SAFETY: `item` was just read from `array`, so it is live in `env`.
-            match unsafe { T::decode(env, item, above)? } {
+        let start;
+        (start, items) = or_release::<W, _, _>(u32::try_from(items.len()).map_err(|_| Error::from_reason("a list longer than an array holds")), items)?;
+        for index in start..len {
+            let begun;
+            // SAFETY: this fn's caller passes `array` live in `env`.
+            (begun, items) = or_release::<W, _, _>(unsafe { read_item::<W, T>(env, array, index, above) }, items)?;
+            match begun {
                 Begun::Whole(item) => items.push(item),
                 Begun::Waits(wait) => return Ok(Begun::Waits(ListDecoding { array, len, items, wait })),
             }
         }
         Ok(Begun::Whole(items))
+    }
+
+    /// The item of `array` at `index`, read as napi's `Vec` reads it.
+    unsafe fn read_item<W: Frames, T: Codec<W>>(env: napi_env, array: napi_value, index: u32, above: &mut Option<W::DecodeFrame>) -> Result<Decoded<W, T>> {
+        let mut item = ::std::ptr::null_mut();
+        ::napi::check_status!(
+            // SAFETY: this fn's caller passes `array` live in `env`.
+            unsafe { ::napi::sys::napi_get_element(env, array, index, &raw mut item) },
+            "Failed to get element with index `{}`",
+            index,
+        )?;
+        // SAFETY: `item` was just read from `array`, so it is live in `env`.
+        unsafe { T::decode(env, item, above) }
+    }
+
+    /// A new array of `len` items, or napi's refusal as `message`.
+    unsafe fn new_array(env: napi_env, len: usize, message: &str) -> Result<napi_value> {
+        let mut array = ::std::ptr::null_mut();
+        ::napi::check_status!(
+            // SAFETY: this fn's caller passes a live `env`.
+            unsafe { ::napi::sys::napi_create_array_with_length(env, len, &raw mut array) },
+            "{}",
+            message,
+        )?;
+        Ok(array)
     }
 
     /// The items of `rest` written to `array` from `index` on, as napi's
@@ -618,11 +727,13 @@ mod wire {
         above: &mut Option<W::EncodeFrame>,
     ) -> Result<Begun<napi_value, ListEncoding<T, T::EncodeWait>>> {
         while let Some(item) = rest.next() {
+            let begun;
             // SAFETY: this fn's caller passes a live `env`.
-            match unsafe { item.encode(env, above)? } {
+            (begun, rest) = or_release::<W, _, _>(unsafe { item.encode(env, above) }, rest)?;
+            match begun {
                 Begun::Whole(value) => {
                     // SAFETY: `array` and `value` were created in `env`.
-                    unsafe { set_item(env, array, index, value)? };
+                    ((), rest) = or_release::<W, _, _>(unsafe { set_item(env, array, index, value) }, rest)?;
                     index += 1;
                 }
                 Begun::Waits(wait) => return Ok(Begun::Waits(ListEncoding { array, rest, index, wait })),
@@ -651,9 +762,10 @@ mod wire {
             unsafe { read_items(env, value, len, Vec::with_capacity(len as usize), above) }
         }
         unsafe fn decoded(env: napi_env, wait: Self::DecodeWait, child: W::Whole, above: &mut Option<W::DecodeFrame>) -> Result<Begun<Self, Self::DecodeWait>> {
-            let ListDecoding { array, len, mut items, wait } = wait;
+            let ListDecoding { array, len, items, wait } = wait;
             // SAFETY: this fn's caller keeps `wait` live in `env`.
-            match unsafe { T::decoded(env, wait, child, above)? } {
+            let (begun, mut items) = or_release::<W, _, _>(unsafe { T::decoded(env, wait, child, above) }, items)?;
+            match begun {
                 Begun::Whole(item) => items.push(item),
                 Begun::Waits(wait) => return Ok(Begun::Waits(ListDecoding { array, len, items, wait })),
             }
@@ -661,22 +773,20 @@ mod wire {
             unsafe { read_items(env, array, len, items, above) }
         }
         unsafe fn encode(self, env: napi_env, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
-            let mut array = ::std::ptr::null_mut();
-            ::napi::check_status!(
-                // SAFETY: this fn requires a live `env`.
-                unsafe { ::napi::sys::napi_create_array_with_length(env, self.len(), &raw mut array) },
-                "Failed to create napi Array"
-            )?;
+            let len = self.len();
+            // SAFETY: this fn requires a live `env`.
+            let (array, items) = or_release::<W, _, _>(unsafe { new_array(env, len, "Failed to create napi Array") }, self)?;
             // SAFETY: `array` was just created in `env`.
-            unsafe { write_items(env, array, self.into_iter(), 0, above) }
+            unsafe { write_items(env, array, items.into_iter(), 0, above) }
         }
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             let ListEncoding { array, rest, index, wait } = wait;
             // SAFETY: this fn's caller keeps `wait` live in `env`.
-            match unsafe { T::encoded(env, wait, child, above)? } {
+            let (begun, rest) = or_release::<W, _, _>(unsafe { T::encoded(env, wait, child, above) }, rest)?;
+            match begun {
                 Begun::Whole(value) => {
                     // SAFETY: `array` and `value` were created in `env`.
-                    unsafe { set_item(env, array, index, value)? };
+                    let ((), rest) = or_release::<W, _, _>(unsafe { set_item(env, array, index, value) }, rest)?;
                     // SAFETY: as above.
                     unsafe { write_items(env, array, rest, index + 1, above) }
                 }
@@ -765,22 +875,20 @@ mod wire {
             Ok(unsafe { Vec::<Option<T>>::decoded(env, wait, child, above)? }.map(Holes))
         }
         unsafe fn encode(self, env: napi_env, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
-            let mut array = ::std::ptr::null_mut();
-            ::napi::check_status!(
-                // SAFETY: this fn requires a live `env`.
-                unsafe { ::napi::sys::napi_create_array_with_length(env, self.0.len(), &raw mut array) },
-                "failed to create a list"
-            )?;
+            let len = self.0.len();
+            // SAFETY: this fn requires a live `env`.
+            let (array, items) = or_release::<W, _, _>(unsafe { new_array(env, len, "failed to create a list") }, self.0)?;
             // SAFETY: `array` was just created in `env`.
-            unsafe { write_holes(env, array, self.0.into_iter(), 0, above) }
+            unsafe { write_holes(env, array, items.into_iter(), 0, above) }
         }
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             let HoleEncoding { array, rest, index, wait } = wait;
             // SAFETY: this fn's caller keeps `wait` live in `env`.
-            match unsafe { T::encoded(env, wait, child, above)? } {
+            let (begun, rest) = or_release::<W, _, _>(unsafe { T::encoded(env, wait, child, above) }, rest)?;
+            match begun {
                 Begun::Whole(value) => {
                     // SAFETY: `array` and `value` were created in `env`.
-                    unsafe { set_hole(env, array, index, value)? };
+                    let ((), rest) = or_release::<W, _, _>(unsafe { set_hole(env, array, index, value) }, rest)?;
                     // SAFETY: as above.
                     unsafe { write_holes(env, array, rest, index + 1, above) }
                 }
@@ -797,6 +905,13 @@ mod wire {
         wait: P,
     }
 
+    impl<W: Nodes, T: Dismantle<W>, P: Dismantle<W>> Dismantle<W> for HoleEncoding<T, P> {
+        fn dismantle(self, out: &mut Vec<W::Whole>) {
+            self.rest.dismantle(out);
+            self.wait.dismantle(out);
+        }
+    }
+
     /// The items of `rest` written to `array` from `index` on, as
     /// `boundary::holes` writes them.
     unsafe fn write_holes<W: Frames, T: Codec<W>>(
@@ -807,26 +922,33 @@ mod wire {
         above: &mut Option<W::EncodeFrame>,
     ) -> Result<Begun<napi_value, HoleEncoding<T, T::EncodeWait>>> {
         while let Some(item) = rest.next() {
-            let value = if let Some(item) = item {
-                // SAFETY: this fn's caller passes a live `env`.
-                match unsafe { item.encode(env, above)? } {
-                    Begun::Whole(value) => value,
-                    Begun::Waits(wait) => return Ok(Begun::Waits(HoleEncoding { array, rest, index, wait })),
-                }
-            } else {
-                let mut undefined = ::std::ptr::null_mut();
-                ::napi::check_status!(
-                    // SAFETY: this fn's caller passes a live `env`.
-                    unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
-                    "failed to get undefined"
-                )?;
-                undefined
+            let begun;
+            // SAFETY: this fn's caller passes a live `env`.
+            (begun, rest) = or_release::<W, _, _>(unsafe { hole(env, item, above) }, rest)?;
+            let value = match begun {
+                Begun::Whole(value) => value,
+                Begun::Waits(wait) => return Ok(Begun::Waits(HoleEncoding { array, rest, index, wait })),
             };
             // SAFETY: `array` and `value` were created in `env`.
-            unsafe { set_hole(env, array, index, value)? };
+            ((), rest) = or_release::<W, _, _>(unsafe { set_hole(env, array, index, value) }, rest)?;
             index += 1;
         }
         Ok(Begun::Whole(array))
+    }
+
+    /// `item` encoded, or `undefined` when it is absent.
+    unsafe fn hole<W: Frames, T: Codec<W>>(env: napi_env, item: Option<T>, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, T::EncodeWait>> {
+        let Some(item) = item else {
+            let mut undefined = ::std::ptr::null_mut();
+            ::napi::check_status!(
+                // SAFETY: this fn's caller passes a live `env`.
+                unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
+                "failed to get undefined"
+            )?;
+            return Ok(Begun::Whole(undefined));
+        };
+        // SAFETY: as above.
+        unsafe { item.encode(env, above) }
     }
 
     unsafe fn set_hole(env: napi_env, array: napi_value, index: u32, value: napi_value) -> Result<()> {

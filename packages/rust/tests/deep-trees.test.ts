@@ -54,4 +54,13 @@ describe('a tree nested thousands of levels deep', () => {
 			outcome: { ok: true }
 		});
 	}, 120_000);
+
+	it('refuses a malformed item after one 400000 levels deep on a Worker, and releases what it decoded', async () => {
+		const { status, signal, outcome } = await runCase('object', 'refuse', '400000', 'worker');
+		expect({ status, signal }).toEqual({ status: 0, signal: null });
+		expect(outcome).toEqual({
+			ok: false,
+			refusal: expect.stringMatching(/^Error: Failed to convert napi value String into rust type `f64` on ExpressionsNode\._item on TupleExpressionNode\._elements on /)
+		});
+	}, 120_000);
 });

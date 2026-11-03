@@ -275,6 +275,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let (mut decode_waits, mut encode_waits) = (Vec::new(), Vec::new());
     let (mut reads, mut resumes, mut refusals) = (Vec::new(), Vec::new(), Vec::new());
     let (mut writes, mut rewrites, mut parts) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut decode_releases, mut encode_releases) = (Vec::new(), Vec::new());
     for (index, field) in fields.iter().enumerate() {
         let (name, ty) = (field.ident, field.ty);
         let (at, slot) = (usize_lit(index), usize_lit(index + offset));
@@ -293,6 +294,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
         let optional = is_option(ty);
         let inner = if optional { crate::expand::inner_of(ty, "Option").unwrap_or(ty) } else { ty };
         decode_waits.push(quote!(#name(<#inner as #codec::Codec<#w>>::DecodeWait)));
+        decode_releases.push(quote!(__DecodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
         refusals.push(quote!(__DecodeWait::#name(_) => ::sittir_core::boundary::field_refusal(err, #owner, #key),));
         let store = if optional { quote!(::core::option::Option::Some(::core::option::Option::Some(value))) } else { quote!(::core::option::Option::Some(value)) };
         let read_on = quote! {
@@ -330,6 +332,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             _ => (quote!(#inner), quote!(value)),
         };
         encode_waits.push(quote!(#name(<#written as #codec::Codec<#w>>::EncodeWait)));
+        encode_releases.push(quote!(__EncodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
         let write_on = quote! {
             match __begun? {
                 #begun::Whole(value) => frame.entries[#slot] = ::core::option::Option::Some((#key, value)),
@@ -398,6 +401,34 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
         pub enum __EncodeWait {
             None,
             #(#encode_waits,)*
+        }
+        impl #codec::Dismantle<#w> for __Decoding {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                #codec::Dismantle::<#w>::dismantle(self.wait, out);
+                #(#parts)*
+            }
+        }
+        impl #codec::Dismantle<#w> for __DecodeWait {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                match self {
+                    #(#decode_releases)*
+                    __DecodeWait::None => {}
+                }
+            }
+        }
+        impl #codec::Dismantle<#w> for __Encoding {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                #codec::Dismantle::<#w>::dismantle(self.wait, out);
+                #(#parts)*
+            }
+        }
+        impl #codec::Dismantle<#w> for __EncodeWait {
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                match self {
+                    #(#encode_releases)*
+                    __EncodeWait::None => {}
+                }
+            }
         }
         impl #codec::Steps<#w> for #ident {
             type Decoding = __Decoding;
@@ -598,6 +629,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     let (mut indices, mut claimed) = (Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
     let (mut decode_waits, mut encode_waits, mut resumes, mut rewrites, mut dismantles) = (Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new());
+    let (mut decode_releases, mut encode_releases) = (Vec::new(), Vec::new());
     for variant in variants {
         let name = variant.name;
         let value = match variant.payload {
@@ -639,6 +671,8 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         if let Some(ty) = variant.payload {
             decode_waits.push(quote!(#name(<#ty as #codec::Codec<#w>>::DecodeWait)));
             encode_waits.push(quote!(#name(<#ty as #codec::Codec<#w>>::EncodeWait)));
+            decode_releases.push(quote!(__DecodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
+            encode_releases.push(quote!(__EncodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
             resumes.push(quote!(__DecodeWait::#name(wait) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::decoded(env, wait, child, above)? } {
                 #begun::Whole(value) => #begun::Whole(#ident::#name(value)),
                 #begun::Waits(wait) => #begun::Waits(__DecodeWait::#name(wait)),
@@ -723,6 +757,22 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         #[doc(hidden)]
         pub enum __EncodeWait {
             #(#encode_waits,)*
+        }
+        impl #codec::Dismantle<#w> for __DecodeWait {
+            #[allow(unused_variables, reason = "a choice with no node payload waits on nothing")]
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                match self {
+                    #(#decode_releases)*
+                }
+            }
+        }
+        impl #codec::Dismantle<#w> for __EncodeWait {
+            #[allow(unused_variables, reason = "a choice with no node payload waits on nothing")]
+            fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
+                match self {
+                    #(#encode_releases)*
+                }
+            }
         }
         unsafe fn __decode_id(
             env: #napi::sys::napi_env,
