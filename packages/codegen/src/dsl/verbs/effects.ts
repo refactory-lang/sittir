@@ -86,6 +86,10 @@ export interface LeadEffect extends Lead {
 
 export type BindingEffect = SegmentEffect | AliasEffect | LeadEffect;
 
+export function leadEffectsOf(effects: readonly BindingEffect[] | undefined): readonly LeadEffect[] {
+	return (effects ?? []).filter((effect): effect is LeadEffect => effect.kind === 'lead');
+}
+
 export interface EffectCtx {
 	readonly effects: readonly Effect[];
 	readonly rules: Readonly<Record<string, unknown>>;

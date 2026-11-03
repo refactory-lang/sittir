@@ -64,6 +64,7 @@ import {
 	type AccessorThrowRecord,
 	type ValidatorSkip,
 	loadNativeEngine,
+	loadNativeRender,
 	kindViewOf
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
@@ -860,12 +861,12 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 	return run;
 }
 
-/** Load what `renderReparse` needs for `grammar`, rendering through `nativeEngine`. */
+/** Load what `renderReparse` needs for `grammar`, rendering through `render`. */
 
 export async function loadRenderReparseContext(
 	grammar: string,
 	parser: RenderReparseContext['parser'],
-	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>,
+	render: RenderReparseContext['render'],
 	profile?: RoundtripProfile
 ): Promise<RenderReparseContext> {
 	await loadReparseHosts(grammar);
@@ -876,7 +877,7 @@ export async function loadRenderReparseContext(
 		grammar,
 		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
 		parser,
-		render: (node) => nativeEngine.render(node).toString(),
+		render,
 		triviaOf: (node) => sidesOf(node),
 		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar), model.subtypes),
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
@@ -900,7 +901,7 @@ export async function validateReadRenderParse(
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine, options.profile);
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar), options.profile);
 	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);

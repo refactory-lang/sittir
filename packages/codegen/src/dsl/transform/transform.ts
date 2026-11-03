@@ -92,8 +92,8 @@ import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken,
 import { nativeRuleFn } from '../enrich.ts';
 import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
-function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
-	return withAuthoredLabel(rule as RuntimeRule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }, wireAutomaticVariants());
+function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, isDefault: boolean): RuntimeRule {
+	return withAuthoredLabel(rule as RuntimeRule, { variant: variantName, variantOf: parentKind, ...(isDefault ? { default: true } : {}) }, wireAutomaticVariants());
 }
 
 function isDefaultArm(arm: unknown): boolean {
@@ -585,7 +585,7 @@ function buildHoistedVariants(
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
-		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), altMember), name });
+		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), p.v.default === true || isDefaultArm(altMember)), name });
 	}
 	for (const { altIdx, lift } of lifted) {
 		wireSetLiftBody(lift.liftName, hoist(lift.body));
@@ -865,7 +865,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
 		const name = polymorphVisibleName(parentKind, variantMintName(patch));
-		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, variantOwnerKind(parentKind, patch), patch.default === true ? { annotations: { default: true } } : undefined);
+		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, variantOwnerKind(parentKind, patch), patch.default === true);
 		const lift = enrichLiftArmOf(originalMember);
 		if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
 		if ((originalMember as { type?: string }).type === 'ALIAS') {

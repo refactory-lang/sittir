@@ -51,13 +51,18 @@ export function withEntry(entry: SetterEntry): string {
 }
 
 export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
+	const unread = setters.length === 0 ? '_' : '';
 	return [
-		`function ${name}(node: object, setter: string, args: readonly unknown[]): unknown {`,
-		'  const handle = handleOf(node as RecordHandle);',
-		...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
-		'  switch (setter) {',
-		...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}));`]),
-		'  }',
+		`function ${name}(${unread}node: object, setter: string, ${unread}args: readonly unknown[]): unknown {`,
+		...(setters.length === 0
+			? []
+			: [
+					'  const handle = handleOf(node as RecordHandle);',
+					...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
+					'  switch (setter) {',
+					...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}));`]),
+					'  }'
+				]),
 		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
 		'}'
 	];

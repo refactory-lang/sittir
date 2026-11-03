@@ -248,15 +248,15 @@ export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion
 ): T.LookaheadAssertion.Bound;
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
+	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _operator, _pattern });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LookaheadAssertion as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _pattern);
 		const node = arena.view(record);
 		return node as unknown as T.LookaheadAssertion.Bound;
@@ -268,15 +268,15 @@ function buildLookaheadAssertion$patch(
 	config: T.LookaheadAssertion.Config
 ): T.LookaheadAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
+	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _operator, _pattern });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LookaheadAssertion as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
 		const node = arena.view(record);
 		return node as unknown as T.LookaheadAssertion.Bound;
@@ -287,9 +287,9 @@ function withLookaheadAssertion(node: object, setter: string, args: readonly unk
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.LookaheadAssertion.Config;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, operator: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<T.Pattern>) =>
@@ -304,15 +304,15 @@ export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAsserti
 ): T.LookbehindAssertion.Bound;
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
+	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _operator, _pattern });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LookbehindAssertion as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _pattern);
 		const node = arena.view(record);
 		return node as unknown as T.LookbehindAssertion.Bound;
@@ -324,15 +324,15 @@ function buildLookbehindAssertion$patch(
 	config: T.LookbehindAssertion.Config
 ): T.LookbehindAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
+	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _operator, _pattern });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LookbehindAssertion as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
 		const node = arena.view(record);
 		return node as unknown as T.LookbehindAssertion.Bound;
@@ -343,9 +343,9 @@ function withLookbehindAssertion(node: object, setter: string, args: readonly un
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.LookbehindAssertion.Config;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, operator: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<T.Pattern>) =>
@@ -699,17 +699,17 @@ export function buildNamedCapturingGroup<
 ): T.NamedCapturingGroup.Bound;
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Bound {
 	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
-	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
 	const _group_name = config.groupName;
 	const _pattern = config.pattern;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'named_capturing_group', { content: _content, groupName: _group_name, pattern: _pattern });
+		admitChildren(handle, 'named_capturing_group', { operator: _operator, groupName: _group_name, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
+	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _operator, _group_name, _pattern });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.NamedCapturingGroup as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _operator);
 		storeCell(arena, record, 3, 3, _group_name);
 		storeCell(arena, record, 4, 6, _pattern);
 		const node = arena.view(record);
@@ -722,17 +722,17 @@ function buildNamedCapturingGroup$patch(
 	config: T.NamedCapturingGroup.Config
 ): T.NamedCapturingGroup.Bound {
 	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
-	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
 	const _group_name = config.groupName;
 	const _pattern = config.pattern;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'named_capturing_group', { content: _content, groupName: _group_name, pattern: _pattern });
+		admitChildren(handle, 'named_capturing_group', { operator: _operator, groupName: _group_name, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
+	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _operator, _group_name, _pattern });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.NamedCapturingGroup as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'groupName', _group_name));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'pattern', _pattern));
 		const node = arena.view(record);
@@ -744,9 +744,9 @@ function withNamedCapturingGroup(node: object, setter: string, args: readonly un
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedCapturingGroup.Config;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['content']>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, operator: value }))
 			);
 		case 'groupName':
 			return applySetter(args, (value: Admit<T.GroupName>) =>

@@ -277,7 +277,6 @@ export const buildReceiverParameterDeclaration = dispatched(() => backend().buil
 export const buildAttributedParameterReceiver = dispatched(() => backend().buildAttributedParameterReceiver);
 export const buildParametersElementsReceiver = dispatched(() => backend().buildParametersElementsReceiver);
 export const buildParametersElementsReceiverGroup = dispatched(() => backend().buildParametersElementsReceiverGroup);
-export const buildStringClose = dispatched(() => backend().buildStringClose);
 export const buildErrorSentinel = dispatched(() => backend().buildErrorSentinel);
 export const buildSelfModule = O.buildSelfModule;
 export const buildTypeIdentifier = dispatched(() => backend().buildTypeIdentifier);
@@ -555,7 +554,6 @@ export const _factoryMap = {
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
-	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,

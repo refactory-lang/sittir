@@ -61,7 +61,7 @@ export interface RecordConstruction {
 
 export interface RecordParts {
 	readonly tail: readonly string[];
-	readonly patchTail: readonly string[];
+	readonly patchTail: readonly string[] | undefined;
 	readonly after: readonly string[];
 }
 
@@ -113,7 +113,8 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		views.requireWith(spec.node);
 		return { tail, patchTail, after: [] };
 	}
-	return { tail, patchTail, after: views.with(spec.node, spec.inputs, spec.setters ?? []) };
+	const setters = spec.setters ?? [];
+	return { tail, patchTail: setters.length === 0 ? undefined : patchTail, after: views.with(spec.node, spec.inputs, setters) };
 }
 
 export function patchTwinLines(head: readonly string[], impl: string, twin: string, patchTail: readonly string[]): string[] {

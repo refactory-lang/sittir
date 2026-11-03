@@ -25,3 +25,5 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { portablePathHasFacts } from './portable/facts.ts';
+export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';
+export type { PortableCarry, PortableCarried } from './portable/read.ts';

@@ -187,6 +187,13 @@ export namespace Expression {
 				readonly $kind: 'expression.binary.comparison.not_equal';
 				readonly operator: '!=' | '!==' | '<>';
 			}
+			export namespace NotEqual {
+				export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison.NotEqual<G>> {
+					// claimed by p
+					readonly $kind: 'expression.binary.comparison.not_equal.legacy';
+					readonly operator: '<>';
+				}
+			}
 		}
 		// @ts-expect-error expression.binary.identity: its operator fill is unknown, outside expression.binary's string.
 		export interface Identity<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {

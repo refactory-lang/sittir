@@ -135,7 +135,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "type_only",
+              "name": "type_keyword",
               "content": {
                 "type": "CHOICE",
                 "members": [
@@ -366,7 +366,7 @@
         },
         {
           "type": "FIELD",
-          "name": "type_only",
+          "name": "type_keyword",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -5649,7 +5649,7 @@
           },
           {
             "type": "FIELD",
-            "name": "optional_chain",
+            "name": "operator",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -5659,7 +5659,7 @@
                 },
                 {
                   "type": "FIELD",
-                  "name": "optional_chain",
+                  "name": "operator",
                   "content": {
                     "type": "SYMBOL",
                     "name": "optional_chain"
@@ -14304,17 +14304,24 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "0x"
-              },
-              {
-                "type": "STRING",
-                "value": "0X"
-              }
-            ]
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0x"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0X"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "PATTERN",
@@ -14452,7 +14459,7 @@
                     "members": [
                       {
                         "type": "FIELD",
-                        "name": "sign",
+                        "name": "exponent_sign",
                         "content": {
                           "type": "CHOICE",
                           "members": [
@@ -14556,7 +14563,7 @@
                     "members": [
                       {
                         "type": "FIELD",
-                        "name": "sign",
+                        "name": "exponent_sign",
                         "content": {
                           "type": "CHOICE",
                           "members": [
@@ -14708,7 +14715,7 @@
                 "members": [
                   {
                     "type": "FIELD",
-                    "name": "sign",
+                    "name": "exponent_sign",
                     "content": {
                       "type": "CHOICE",
                       "members": [
@@ -14773,17 +14780,24 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "0b"
-              },
-              {
-                "type": "STRING",
-                "value": "0B"
-              }
-            ]
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0b"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0B"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "PATTERN",
@@ -14802,17 +14816,24 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "0o"
-              },
-              {
-                "type": "STRING",
-                "value": "0O"
-              }
-            ]
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0o"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0O"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "PATTERN",
@@ -15647,7 +15668,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "type_only",
+              "name": "type_keyword",
               "content": {
                 "type": "CHOICE",
                 "members": [
@@ -15694,7 +15715,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "type_only",
+              "name": "type_keyword",
               "content": {
                 "type": "CHOICE",
                 "members": [

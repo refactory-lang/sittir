@@ -1229,26 +1229,26 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: unknown;
+			readonly exponentSign: string;
 			readonly fraction: unknown;
 			readonly imaginary: unknown;
 			readonly integer: unknown;
 			readonly marker: string;
-			readonly sign: string;
 		};
 		readonly 'literal.number.float.leading_point': {
 			readonly exponent: unknown;
+			readonly exponentSign: string;
 			readonly fraction: unknown;
 			readonly imaginary: unknown;
 			readonly integer: unknown;
 			readonly marker: string;
-			readonly sign: string;
 		};
 		readonly 'literal.number.float.scientific': {
 			readonly exponent: unknown;
+			readonly exponentSign: string;
 			readonly imaginary: unknown;
 			readonly integer: unknown;
 			readonly marker: string;
-			readonly sign: string;
 		};
 		readonly 'literal.number.integer': {
 			readonly content: unknown;
@@ -1265,17 +1265,17 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'literal.number.integer.binary': {
 			readonly content: unknown;
-			readonly prefix: string;
+			readonly radixPrefix: string;
 			readonly suffix: string;
 		};
 		readonly 'literal.number.integer.hex': {
 			readonly content: unknown;
-			readonly prefix: string;
+			readonly radixPrefix: string;
 			readonly suffix: string;
 		};
 		readonly 'literal.number.integer.octal': {
 			readonly content: unknown;
-			readonly prefix: string;
+			readonly radixPrefix: string;
 			readonly suffix: string;
 		};
 		readonly 'literal.string': {

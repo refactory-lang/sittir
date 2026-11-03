@@ -150,7 +150,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.lookaroundAssertion({
 				$type: TSKindId.LookaheadAssertion,
-				content: TSKindId.Eq,
+				operator: TSKindId.Eq,
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -170,7 +170,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.lookaroundAssertion({
 				$type: TSKindId.LookaheadAssertion,
-				content: TSKindId.Eq,
+				operator: TSKindId.Eq,
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -193,7 +193,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('lookaround_assertion sub-factories', () => {
 		it('lookaheadAssertion builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookaheadAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -213,7 +213,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('lookbehindAssertion builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookbehindAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -312,7 +312,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('lookahead_assertion', () => {
 		it('factory produces correct type', () => {
 			const node = ir.lookaheadAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -331,7 +331,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.lookaheadAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -367,7 +367,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaheadAssertion);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -387,7 +387,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaheadAssertion);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -396,7 +396,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('lookbehind_assertion', () => {
 		it('factory produces correct type', () => {
 			const node = ir.lookbehindAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -415,7 +415,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.lookbehindAssertion({
-				content: '=',
+				operator: '=',
 				pattern: {
 					$type: TSKindId.Pattern,
 					content: {
@@ -451,7 +451,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookbehindAssertion);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -471,7 +471,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookbehindAssertion);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -588,7 +588,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('named_capturing_group', () => {
 		it('factory produces correct type', () => {
 			const node = ir.namedCapturingGroup({
-				content: '(?<',
+				operator: '(?<',
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
 					$type: TSKindId.Pattern,
@@ -608,7 +608,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.namedCapturingGroup({
-				content: '(?<',
+				operator: '(?<',
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
 					$type: TSKindId.Pattern,
@@ -646,7 +646,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkLt);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
@@ -667,7 +667,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
-			const seated = (node as any).content();
+			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkPLt);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});

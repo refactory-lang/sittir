@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, envelopeTargets, formsOf, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, containerCaptureSlot, containerMembers, formsOf, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -407,10 +407,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	for (const input of inputs) {
 		for (const container of input.bindings.containers) {
 			const slots = modelNode(input.model, container.kind)?.slots ?? [];
-			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => {
-				const { token } = capture;
-				return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(input.model, slots, capture);
-			};
+			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => containerCaptureSlot(input.model, slots, capture);
 			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;
 			const dropped = container.dropped.map((selector) => slotFor(input.model, slots, selector));
 			const unexplained = (container.reason ?? '').trim() === '';
@@ -434,31 +431,25 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
 					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
 			if (container.captures.length === 0) continue;
-			const targets = new Set(envelopeTargets(input.model, container, vocabOf(input.grammar)));
+			const resolved = containerMembers(input, container, vocabOf(input.grammar));
+			const targets = new Set(resolved.targets);
 			if (targets.size === 0) {
 				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);
 				continue;
 			}
-			for (const capture of container.captures) {
+			for (const { capture, name, slot, flag } of resolved.members) {
 				let kinds: string[];
 				let multiple = false;
-				const flagged = [...targets].filter((t) => input.bindings.flagsByPath?.get(t)?.has(camel(capture.name)) === true);
-				if (flagged.length > 0 && flagged.length < targets.size)
-					throw new Error(`bindings: ${container.kind}'s capture @${capture.name} is a flag at ${flagged.join(', ')} and data at ${[...targets].filter((t) => !flagged.includes(t)).join(', ')}; one name names one thing`);
-				if (capture.token !== null || flagged.length > 0) kinds = ['boolean'];
-				else {
-					const slot = slotOf(capture);
-					if (slot) {
-						const resolved = slotResolution(input, container.kind, slot);
-						kinds = [...resolved.tokens];
-						multiple = slot.multiple || resolved.list;
-					} else if (capture.kind !== null && vocabOf(input.grammar).has(capture.kind))
-						kinds = [vocabOf(input.grammar).get(capture.kind) ?? ''];
-					else continue;
-				}
+				if (flag) kinds = ['boolean'];
+				else if (slot) {
+					const resolution = slotResolution(input, container.kind, slot);
+					kinds = [...resolution.tokens];
+					multiple = slot.multiple || resolution.list;
+				} else if (capture.kind !== null && vocabOf(input.grammar).has(capture.kind)) kinds = [vocabOf(input.grammar).get(capture.kind) ?? ''];
+				else continue;
 				multiple ||= capture.multiple;
 				for (const t of targets) {
-					const f = memberOf(t, camel(capture.name));
+					const f = memberOf(t, name);
 					for (const k of kinds) f.kinds.add(k);
 					f.optional = true;
 					f.multiple ||= multiple;

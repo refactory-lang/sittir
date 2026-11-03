@@ -6,7 +6,7 @@ const ts = await typescript.createEngine();
 export function rebuildFormatLoose() {
 	return ts.build.program({
 		statements: [ts.build.importStatement.clauseFrom({
-			typeOnly: ts.kinds.TypeKeyword,
+			typeKeyword: ts.kinds.TypeKeyword,
 			importClause: ts.build.namedImports(ts.build.importSpecifierName({
 				name: "FormatRecord",
 			}), ts.build.importSpecifierName({
@@ -77,7 +77,7 @@ export function rebuildFormatLoose() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: "boundary",
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: "leading",
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -91,7 +91,7 @@ export function rebuildFormatLoose() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: "boundary",
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: "trailing",
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -128,7 +128,7 @@ export function rebuildFormatLoose() {
 						right: ts.build.binaryExpression({
 							left: ts.build.memberExpression({
 								object: "trivia",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "length",
 							}),
 							operator: ts.kinds.EqEqEq,
@@ -144,7 +144,7 @@ export function rebuildFormatLoose() {
 					value: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: ts.build.array(ts.build.spreadElement("trivia")),
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: "sort",
 						}),
 						arguments: ts.build.arrowFunction({
@@ -158,13 +158,13 @@ export function rebuildFormatLoose() {
 							body: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "b",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Dash,
 								right: ts.build.memberExpression({
 									object: "a",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "offset",
 								}),
 							}),
@@ -193,22 +193,22 @@ export function rebuildFormatLoose() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "Math",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "max",
 							}),
 							arguments: ["0", ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: "Math",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "min",
 								}),
 								arguments: [ts.build.memberExpression({
 									object: "item",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "offset",
 								}), ts.build.memberExpression({
 									object: "result",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "length",
 								})],
 							})],
@@ -221,7 +221,7 @@ export function rebuildFormatLoose() {
 							left: ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: "result",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "slice",
 								}),
 								arguments: ["0", "offset"],
@@ -229,7 +229,7 @@ export function rebuildFormatLoose() {
 							operator: ts.kinds.Plus,
 							right: ts.build.memberExpression({
 								object: "item",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "text",
 							}),
 						}),
@@ -237,7 +237,7 @@ export function rebuildFormatLoose() {
 						right: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "result",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "slice",
 							}),
 							arguments: "offset",
@@ -269,7 +269,7 @@ export function rebuildFormatLoose() {
 							function: "rebaseTriviaItems",
 							arguments: [ts.build.memberExpression({
 								object: "format",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "trivia",
 							}), "editStart", "delta"],
 						}),
@@ -282,7 +282,7 @@ export function rebuildFormatLoose() {
 							function: "rebaseKinds",
 							arguments: [ts.build.memberExpression({
 								object: "format",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "kinds",
 							}), "editStart", "delta"],
 						}),
@@ -341,7 +341,7 @@ export function rebuildFormatLoose() {
 			}), ts.build.returnStatement(ts.build.callExpressionCall({
 				function: ts.build.memberExpression({
 					object: "trivia",
-					optionalChain: ts.kinds.Dot,
+					operator: ts.kinds.Dot,
 					property: "map",
 				}),
 				arguments: ts.build.arrowFunction({
@@ -355,7 +355,7 @@ export function rebuildFormatLoose() {
 							expression: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "item",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Lt,
@@ -370,7 +370,7 @@ export function rebuildFormatLoose() {
 							value: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "item",
-									optionalChain: ts.kinds.Dot,
+									operator: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Plus,
@@ -382,7 +382,7 @@ export function rebuildFormatLoose() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "Math",
-								optionalChain: ts.kinds.Dot,
+								operator: ts.kinds.Dot,
 								property: "max",
 							}),
 							arguments: ["0", "newOffset"],
@@ -443,7 +443,7 @@ export function rebuildFormatLoose() {
 					right: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: "Object",
-							optionalChain: ts.kinds.Dot,
+							operator: ts.kinds.Dot,
 							property: "entries",
 						}),
 						arguments: "kinds",

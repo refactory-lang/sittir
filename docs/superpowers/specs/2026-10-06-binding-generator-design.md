@@ -99,7 +99,18 @@ The portable engine's `build` is typed per kind from the vocabulary. A structure
 - An enum claim builds as its token's kind id, through the enum's text table where the structure spells the value.
 - A leaf whose text varies builds from its text.
 - **An alias kind** builds through its own low-level builder (`build.methodDeclaration` beside `build.functionDeclaration`, `function_item`'s bound name), which takes the aliased rule's input and gives the node the alias's kind id, so a built method's `$type` is a parsed one's.
-- **A kind with no bare factory:** polymorphs (`struct_item`, `closure_expression`, `range_expression`) build through a named form, and claimed supertypes (`integer_literal`, `escape_sequence`) through a subtype. The build entry picks the form or subtype from a pick table the generator derives per path from the routes: which members are present, the kinds of their values, and the flags stated. A pick the table cannot decide is a codegen diagnostic, so it fails at compile time, never as a runtime guess. A form told apart only by a spelling (delimiters, quotes) is picked by the render options, the grammar's default when none are given. Kinds the slot that holds them tells apart (a qualified identifier in a type slot or an expression slot) have no root entry: the pick is keyed by the holder's kind and slot, a root build of such a path is refused by name, and a slot that still admits two of them is the same codegen diagnostic. The validator's dispatch (`buildFactoryNodeFromReference`) stays the validator's: its input is a parsed node, which names its form.
+- **A kind with no bare factory:** polymorphs (`struct_item`, `closure_expression`, `range_expression`) build through a named form, and claimed supertypes (`integer_literal`, `escape_sequence`) through a subtype. The build entry picks the form or subtype from a pick table the generator derives per path from the routes. A pick the table cannot decide is a codegen diagnostic, so it fails at compile time, never as a runtime guess. The pick takes the first arm whose tests pass, in an order the data derives:
+  1. a fixed literal's text, then a scalar's type (integer or float);
+  2. a variant family's default form: the render option bound to the supertype's variant site (typescript's `quotes.style`), else the grammar's default (`variant(…, { default: true })`). The other forms are reached by the caller's render option or by their own refinement path. A choice that is content rather than spelling is a refinement, not an option: a token tree's delimiter is `element.macro.token_tree.paren`, `.bracket` or `.brace`;
+  3. a flag the form implies (`exclusive` for rust's `reference_expression_mut`);
+  4. the members present: the structure states every member the arm requires and none it lacks. Arms that one input could satisfy stay together for the steps below, and whichever step orders an arm, it still refuses a structure stating a member it lacks;
+  5. the kinds of a member's values, read through the containers the member's slot holds (the kinds with no read entry that the reader unwraps, lists among them) to the values they seat. Where one arm's set lies inside another's, the narrower arm comes first (a block body builds rust's `match_arm_block_ending`). A member structure's kind is the arm it picks with the candidate as its holder. A member that holds only text leaves decides nothing;
+  6. a default declared in the bindings, which breaks a tie that remains after the derived steps. It sits on the claim that already places the arm at the path, so a default adds no claim and moves no read: `(#set! default)` on the form's own claim (rust's `struct_pattern` for a bare `S { .. }`), or `(#set! default <form>)` on the claim of the supertype whose forms reach the path through it (`((token_tree) @element.macro.token_tree (#set! default token_tree_paren))`). A default the pick does not need, a second default at one path, and a default that names no arm at its path are codegen diagnostics. A default lives in the grammar only when the grammar's own surface reads it (a render option's preference, a default the loose surface wants), and in the bindings when only the pick reads it;
+  7. the holder. An arm admitted in fewer holder slots than its siblings is a candidate only in its own slots. Kinds the slot that holds them tells apart (a qualified identifier in a type slot or an expression slot) have no root entry: the pick is keyed by the holder's kind and slot, a root build of such a path is refused by name, and a slot that still admits two of them is the same codegen diagnostic.
+
+  A form its holder seats builds through the holder's mount: the sub-factory that builds the holder with the form in its slot, so a built form is its holder, as a parsed one is. The build table states how each mount takes its input, from the classifier the combinator is emitted from, so the call has one source: nothing, the holder's own input, the form's input, the two merged, or the holder's input with the form's at the mounted key. A nested mount states its call at each holder it passes. A value in a container the slot holds is wrapped in it, and an empty list leaves out the first optional slot on its way.
+
+  A kind a holder's kind-flag route presets (typescript's private name, preset by `privateName`) is reached only through that flag and is never a pick candidate: it leaves any path where another arm builds. A member given as text takes its slot's default leaf: the one text leaf the slot admits, numeric leaves and variant forms left out. The validator's dispatch (`buildFactoryNodeFromReference`) stays the validator's: its input is a parsed node, which names its form.
 
 The input is runtime data (a structure can arrive as JSON), so the build side calls the strict builders through one checked boundary, `call(factory, input)`. The per-kind types check what is written in code; the round-trip lane checks the rest. On the low-level surface the same generic build is keyed by `$type`.
 
@@ -138,19 +149,25 @@ A predicate's operator is kept as written; one the derivation does not know is a
 
 ## 4. Conformance: what the locked vocabulary must admit
 
-The generated module is type-checked against the vocabulary, and the target is zero rejected members. Measured against today's vocabulary (rust, 374 members over 190 read entries), the rejections fall into these causes, each with the side that owns the fix:
+The generated module is type-checked against the vocabulary, and the target is zero errors. `sittir tool portable-conformance` writes each grammar's module, type-checks it, and counts every error in it under exactly one of these causes, each with the side that owns the fix:
 
-| cause | what has to change |
-| --- | --- |
-| an enum value read where the slot admits only its text (a primitive type token as `type.primitive` in an expression slot) | The dispatch reads a token as the enum's value only where the slot admits that enum; elsewhere it is its const string, which the language's context admits. |
-| a token read as text that the member type doesn't admit (`'_'`, `'gen'`, `'union'`) | The reader's type admits keyword tokens the grammar aliases to identifiers: either the low-level types narrow them, or the member admits them. |
-| a text leaf read as a plain string where the member admits only kinds | A leaf whose text varies is a node carrying `$value`, and a fixed literal is its const string; the members admit both. |
-| a content-derived claim the member type leaves out (`type.primitive.never`, `literal.boolean.true`) | A member that admits a kind admits every claim of that kind, predicate claims included. |
-| an unmapped marker where the read gives a mapped kind | The unmapped ratchet: it falls as claims complete, onto an existing kind or one a feature adds. |
-| a low-level reader typed `unknown` (`token_repetition.operator`) | Type those readers in the typed surface. |
-| a refinement where its parent is admitted (`$kind` is a single literal) | A level's `$kind` admits every path beneath it, so a refinement is assignable where its parent is. |
-| a member that can be absent where the interface requires it (an optional element inside a required container) | Requiredness carries through containers. |
-| a member the bindings route that the interface does not declare | A feature adds the member, or the binding drops it. |
+| cause | what it counts | what has to change |
+| --- | --- | --- |
+| kind | a vocabulary kind the member type doesn't admit: an enum value read where the slot admits only its text (a primitive type token as `type.primitive` in an expression slot), or a content-derived claim the member type leaves out (`type.primitive.never`, `literal.boolean.true`) | The dispatch reads a token as the enum's value only where the slot admits that enum, and elsewhere as its const string, which the language's context admits. A member that admits a kind admits every claim of that kind, predicate claims included. |
+| token text | a token read as its const string that the member type doesn't admit (`'_'`, `'gen'`, `'union'`) | The reader's type admits keyword tokens the grammar aliases to identifiers: either the low-level types narrow them, or the member admits them. |
+| text leaf | a text leaf read as a plain string where the member admits only kinds | A leaf whose text varies is a node carrying `$value`, and a fixed literal is its const string; the members admit both. |
+| unmapped | an unmapped marker on one side where the other is a mapped kind: the member type is a marker where the read gives a mapped kind, or the read gives a marker where the member wants a node | The unmapped ratchet: it falls as claims complete, onto an existing kind or one a feature adds. |
+| untyped reader | a low-level reader typed `unknown` or as a bare number (`token_repetition.operator`), or a node whose `$type` is every kind id, which reads as no kind in particular | Type those readers, and those nodes' `$type`, in the typed surface. |
+| refinement | a refinement where its parent is admitted (`$kind` is a single literal) | A level's `$kind` admits every path beneath it, so a refinement is assignable where its parent is. |
+| absent | a member that can be absent where the interface requires it (an optional element inside a required container) | Requiredness carries through containers. |
+| extra member | a member the bindings route that the interface does not declare | A feature adds the member, or the binding drops it. |
+| missing member | a member the interface requires that the read entry has no route for | The bindings route the member, or the vocabulary makes it optional. |
+| arity | a list routed into a member that holds one value, or one value routed into a list member | The bindings route the member through its element, or the vocabulary types the member's arity, per case. |
+| unreadable route | a route step the low-level typed surface has no reader for | The typed surface types that reader. |
+| context fill | an arm of the grammar's own context, a slot entry or a role's keyword text, that the namespace map's fill doesn't admit; one per entry | The namespace map widens the entry, or the bindings narrow the route. How a role admits keyword text is open (bindings spec §11). |
+| unemitted | a read entry or member the emitter skips, named with its reason: a kind with no typed surface, a route with no path, a path step through a kind its slot doesn't hold | The side the reason names: the typed surface, or the route resolution. |
+
+The grammar's context keeps the namespace map's fill for its slots and roles, and states its own fill beside it, each entry checked against the map's on its own, so one misfit is one error rather than a context every interface rejects. An error no cause matches, and an error outside the module, are counted too and held at zero: every error belongs to a row above.
 
 "Locked" therefore means more than authored: the locked interfaces admit what the readers return, and where the bindings reach a construct the vocabulary lacks, a feature extends the vocabulary to cover it.
 
@@ -162,7 +179,7 @@ The portable node is one object literal per read with a closure per member, so m
 
 The portable surface is checked by a round trip, crossing and role tests. The generator adds:
 
-1. The generated module type-checks against the locked vocabulary with zero rejected members; until then the probe's `conformance.py` reports the rows of §4.
+1. The generated module type-checks against the locked vocabulary with zero errors. Until then `sittir tool portable-conformance` counts them by the causes of §4, each grammar's total is a row in validation history, and a ratchet holds each total at its committed ceiling.
 2. Generated-output drift is checked with the package's other generated files.
 3. The portable node's overhead over the low-level read is measured with one command before and after any change to its shape.
 4. The route resolution is shared: a slot the inventory reports as a member is a member of the generated read entry, under the same name.

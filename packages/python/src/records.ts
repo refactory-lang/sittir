@@ -474,19 +474,19 @@ export const records = {
 	IntegerHexNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	IntegerOctalNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	IntegerBinaryNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	IntegerDecimalLongNode: { words: 2, builtWords: 2 },
@@ -498,7 +498,7 @@ export const records = {
 		integer: { word: 2, width: 2, forms: 4, built: 2 },
 		fraction: { word: 4, width: 2, forms: 4, built: 3 },
 		marker: { word: 6, width: 2, forms: 4, built: 4 },
-		sign: { word: 8, width: 2, forms: 4, built: 5 },
+		exponent_sign: { word: 8, width: 2, forms: 4, built: 5 },
 		exponent: { word: 10, width: 2, forms: 4, built: 6 },
 		imaginary: { word: 12, width: 2, forms: 4, built: 7 }
 	},
@@ -508,7 +508,7 @@ export const records = {
 		integer: { word: 2, width: 2, forms: 4, built: 2 },
 		fraction: { word: 4, width: 2, forms: 4, built: 3 },
 		marker: { word: 6, width: 2, forms: 4, built: 4 },
-		sign: { word: 8, width: 2, forms: 4, built: 5 },
+		exponent_sign: { word: 8, width: 2, forms: 4, built: 5 },
 		exponent: { word: 10, width: 2, forms: 4, built: 6 },
 		imaginary: { word: 12, width: 2, forms: 4, built: 7 }
 	},
@@ -517,7 +517,7 @@ export const records = {
 		builtWords: 7,
 		integer: { word: 2, width: 2, forms: 4, built: 2 },
 		marker: { word: 4, width: 2, forms: 4, built: 3 },
-		sign: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent_sign: { word: 6, width: 2, forms: 4, built: 4 },
 		exponent: { word: 8, width: 2, forms: 4, built: 5 },
 		imaginary: { word: 10, width: 2, forms: 4, built: 6 }
 	},

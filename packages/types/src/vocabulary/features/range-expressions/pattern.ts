@@ -17,5 +17,11 @@ export namespace Pattern {
 			// claimed by r
 			readonly $kind: 'pattern.range.inclusive';
 		}
+		export namespace Inclusive {
+			export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Range.Inclusive<G>> {
+				// claimed by r
+				readonly $kind: 'pattern.range.inclusive.legacy';
+			}
+		}
 	}
 }

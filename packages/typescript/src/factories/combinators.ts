@@ -172,6 +172,14 @@ export const lhsExpression$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const lhsExpression$undefined =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+export const lhsExpression$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const lhsExpression$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -182,6 +190,14 @@ export const restPattern$memberExpression =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const restPattern$subscriptExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const restPattern$undefined =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+export const restPattern$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -261,21 +277,21 @@ export const ambientDeclaration$using$semi =
 
 export const typeQueryMemberExpression$dot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
 export const typeQueryMemberExpression$qmarkDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
 
 export const constraint$extends =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
+	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { operator: value }) as never);
 export const constraint$colon =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
+	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { operator: value }) as never);
 
 export const classBodyMemberMethod$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -342,59 +358,17 @@ export const classBodyMemberMethod$setter =
 	};
 
 export const classBodyMemberMethodSig$plain =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (
-				key === 'accessibilityModifier' ||
-				key === 'static' ||
-				key === 'override' ||
-				key === 'readonly' ||
-				key === 'async' ||
-				key === 'generator' ||
-				key === 'name' ||
-				key === 'optional' ||
-				key === 'typeParameters' ||
-				key === 'parameters' ||
-				key === 'returnType'
-			)
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
-	};
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const classBodyMemberMethodSig$getter =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'accessibilityModifier' || key === 'static' || key === 'override' || key === 'name' || key === 'type')
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
-	};
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const classBodyMemberMethodSig$setter =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (
-				key === 'accessibilityModifier' ||
-				key === 'static' ||
-				key === 'override' ||
-				key === 'name' ||
-				key === 'parameters'
-			)
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
-	};
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
 export const importSpecifierAs$default =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>

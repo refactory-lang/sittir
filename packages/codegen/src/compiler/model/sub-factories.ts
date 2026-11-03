@@ -1,3 +1,4 @@
+import type { PortableMountCall } from '@sittir/types';
 import type { NodeMap } from '../types.ts';
 import { EmitHaltedError, type GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
@@ -430,6 +431,8 @@ export interface Seat {
 	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple' | 'forwarded';
 	readonly mount?: string;
 	readonly seated?: true;
+	readonly call?: PortableMountCall;
+	readonly nested?: Readonly<Record<string, PortableMountCall>>;
 }
 
 export interface SeatSource {
@@ -460,9 +463,17 @@ export function seatOf(
 				: text !== undefined && e.arm.storage.text === text)
 	);
 	if (arm !== undefined) {
-		return seatsConfigChild(arm, nodeMap)
-			? { kind: child.kind, shape: 'arm', mount: arm.name, seated: true }
-			: { kind: child.kind, shape: 'arm', mount: arm.name };
+		const nested = source.subs.flatMap((e) =>
+			e.slot === slot && e.arm.via === 'node' && e.arm.child === child && e.arm.path.length > 0 ? [[e.arm.path.join('$'), mountCallOf(e, nodeMap)] as const] : []
+		);
+		return {
+			kind: child.kind,
+			shape: 'arm',
+			mount: arm.name,
+			...(seatsConfigChild(arm, nodeMap) ? { seated: true as const } : {}),
+			call: mountCallOf(arm, nodeMap),
+			...(nested.length === 0 ? {} : { nested: Object.fromEntries(nested) })
+		};
 	}
 	if ((source.flattens ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'flatten' };
@@ -484,6 +495,14 @@ function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap, includeSe
 	const targetShape = classifyFactoryShape(target, nodeMap);
 	if (targetShape === 'spread' || (includeSeparated && targetShape === 'elements')) return true;
 	return targetShape === 'forwarded' && forwardsToSpreadTarget(target, nodeMap, includeSeparated);
+}
+
+export function mountCallOf(sub: SubFactory, nodeMap: NodeMap): PortableMountCall {
+	if (sub.arm.via === 'value') return sub.residual.length === 0 ? 'none' : 'holder';
+	if (sub.residual.length === 0) return 'child';
+	if (sub.arm.path.length === 0 && sub.merges) return 'merge';
+	if (sub.arm.child.parameterless) return 'holder';
+	return seatsConfigChild(sub, nodeMap) ? 'keyed' : 'keyedArgs';
 }
 
 export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {

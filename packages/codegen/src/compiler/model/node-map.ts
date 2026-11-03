@@ -1459,7 +1459,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		slot.fieldName ??
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
-			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
+			: slot.inlinedFrom?.replace(/^_+/, '') || (slot.values.length > 0 && slot.values.every(isTerminalValue) ? 'operator' : 'content'));
 	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
@@ -1619,6 +1619,10 @@ export function layoutDisplaysOf(node: AssembledNode): readonly AssembledNode[] 
 
 export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isFixedTextLeaf(node) && node.factoryName !== undefined;
+}
+
+export function suppliesNoContent(node: AssembledNode): boolean {
+	return node instanceof AbstractAssembledCompound ? node.slots.length === 0 : isBuilderTextLeaf(node);
 }
 
 export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
@@ -1798,13 +1802,8 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
-		// A registered site never collapses a node to zero remaining config
-		// slots — a node whose ONLY slot is registered (e.g. a polymorph's
-		// sole dispatch slot bound to a preference default) still needs
-		// something a caller can construct from, so registration is inert
-		// for that node: every slot stays a config slot.
 		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
-		return real.length > 0 ? real : this._slots;
+		return real.length > 0 || this._slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : this._slots;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
@@ -1920,11 +1919,14 @@ export function slotFilledWhenOmitted(slot: { values: readonly NodeOrTerminal[] 
 	return target.rawFactoryName !== undefined && target.argumentOptional(ctx);
 }
 
-export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
-	const value = soleRequiredValue(slot);
-	if (value === undefined) return false;
+export function isFixedTextValue(value: NodeOrTerminal): boolean {
 	if (!isNodeRef(value)) return isTerminalValue(value);
 	return !isUnresolvedRef(value.node) && isFixedTextLeaf(value.node);
+}
+
+export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	const value = soleRequiredValue(slot);
+	return value !== undefined && isFixedTextValue(value);
 }
 
 function fillsItself(slot: AssembledNonterminal): boolean {
@@ -2325,6 +2327,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 	get defaultVariantSubtype(): NodeBackedRef | undefined {
 		return this.variantSubtypes?.find((ref) => ref.default === true);
+	}
+
+	get optionDefaultSubtype(): NodeBackedRef | undefined {
+		return this.optionDefaultArm === undefined ? undefined : this.variantSubtypes?.find((ref) => ref.variant === this.optionDefaultArm);
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

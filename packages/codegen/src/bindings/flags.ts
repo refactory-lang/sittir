@@ -1,8 +1,8 @@
 import { join } from 'node:path';
-import { VOCABULARY_DIR } from './facts.ts';
+import { PACKAGES_DIR } from '../grammars.ts';
 import { tsname } from './names.ts';
 
-export const FLAGS_PATH = join(VOCABULARY_DIR, 'flags.ts');
+export const FLAGS_PATH = join(PACKAGES_DIR, 'common', 'src', 'portable', 'flags.ts');
 
 export const FLAG_BITS = 31;
 

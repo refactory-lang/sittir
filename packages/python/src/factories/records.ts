@@ -27,6 +27,7 @@ import {
 	refuseJSON,
 	describeValue,
 	restItems,
+	blankArmStored,
 	admitAliasContent,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
@@ -78,27 +79,27 @@ import {
 	_leafRe_buildEscapeInterpolation,
 	_leafRe_buildStringEnd,
 	_slotRe_buildComment_content,
-	_slotRe_buildIntegerHex_prefix,
+	_slotRe_buildIntegerHex_radix_prefix,
 	_slotRe_buildIntegerHex_content,
-	_slotRe_buildIntegerOctal_prefix,
+	_slotRe_buildIntegerOctal_radix_prefix,
 	_slotRe_buildIntegerOctal_content,
-	_slotRe_buildIntegerBinary_prefix,
+	_slotRe_buildIntegerBinary_radix_prefix,
 	_slotRe_buildIntegerBinary_content,
 	_slotRe_buildFloatPoint_integer,
 	_slotRe_buildFloatPoint_fraction,
 	_slotRe_buildFloatPoint_marker,
-	_slotRe_buildFloatPoint_sign,
+	_slotRe_buildFloatPoint_exponent_sign,
 	_slotRe_buildFloatPoint_exponent,
 	_slotRe_buildFloatPoint_imaginary,
 	_slotRe_buildFloatLeadingPoint_integer,
 	_slotRe_buildFloatLeadingPoint_fraction,
 	_slotRe_buildFloatLeadingPoint_marker,
-	_slotRe_buildFloatLeadingPoint_sign,
+	_slotRe_buildFloatLeadingPoint_exponent_sign,
 	_slotRe_buildFloatLeadingPoint_exponent,
 	_slotRe_buildFloatLeadingPoint_imaginary,
 	_slotRe_buildFloatScientific_integer,
 	_slotRe_buildFloatScientific_marker,
-	_slotRe_buildFloatScientific_sign,
+	_slotRe_buildFloatScientific_exponent_sign,
 	_slotRe_buildFloatScientific_exponent,
 	_slotRe_buildFloatScientific_imaginary,
 	_slotRe_buildEscapeSequenceUnicodeFixed_content,
@@ -6264,7 +6265,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 	const _left = config.left;
 	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.rights, kindIdStorage);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.ForInClause['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const handle = currentHandle();
@@ -6298,7 +6299,7 @@ function buildForInClause$patch(
 	const _left = config.left;
 	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.rights, kindIdStorage);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.ForInClause['_trailing_comma']>>(
-		options?.trailingComma === null ? 0 : options?.trailingComma,
+		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
 	const handle = currentHandle();
@@ -8656,23 +8657,23 @@ export function buildIntegerHex(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerHex.Options
 ): T.IntegerHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
-		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_hex', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_hex', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.IntegerHex as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.IntegerHex.Bound;
@@ -8684,23 +8685,23 @@ function buildIntegerHex$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerHex.Options
 ): T.IntegerHex.Bound {
-	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
-		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0x';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_hex', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_hex', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.IntegerHex as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.IntegerHex.Bound;
@@ -8716,9 +8717,9 @@ function withIntegerHex(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerHex$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`integer_hex has no $with.${setter}`);
@@ -8732,23 +8733,23 @@ export function buildIntegerOctal(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerOctal.Options
 ): T.IntegerOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
-		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_octal', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_octal', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.IntegerOctal as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.IntegerOctal.Bound;
@@ -8760,23 +8761,23 @@ function buildIntegerOctal$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerOctal.Options
 ): T.IntegerOctal.Bound {
-	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
-		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_octal', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_octal', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.IntegerOctal as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.IntegerOctal.Bound;
@@ -8792,9 +8793,9 @@ function withIntegerOctal(node: object, setter: string, args: readonly unknown[]
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerOctal$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`integer_octal has no $with.${setter}`);
@@ -8808,23 +8809,23 @@ export function buildIntegerBinary(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerBinary.Options
 ): T.IntegerBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
-		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_binary', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_binary', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.IntegerBinary as const);
-		storeCell(arena, record, 2, 2, _prefix);
+		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
 		return node as unknown as T.IntegerBinary.Bound;
@@ -8836,23 +8837,23 @@ function buildIntegerBinary$patch(
 	value: Admit<string | number | bigint>,
 	options?: T.IntegerBinary.Options
 ): T.IntegerBinary.Bound {
-	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`integer_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
-		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_binary', { prefix: _prefix, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'integer_binary', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _radix_prefix, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.IntegerBinary as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.IntegerBinary.Bound;
@@ -8868,9 +8869,9 @@ function withIntegerBinary(node: object, setter: string, args: readonly unknown[
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, options))
 			);
-		case 'prefix':
+		case 'radixPrefix':
 			return applySetter(args, (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, { ...options, prefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerBinary$patch(node, value, { ...options, radixPrefix: spelling }))
 			);
 	}
 	throw new Error(`integer_binary has no $with.${setter}`);
@@ -8975,7 +8976,7 @@ export function buildFloatPoint<
 	>,
 	IntegerSlot extends T.FloatPoint.Config['integer'],
 	FractionSlot extends T.FloatPoint.Config['fraction'],
-	SignSlot extends T.FloatPoint.Config['sign'],
+	ExponentSignSlot extends T.FloatPoint.Config['exponentSign'],
 	ExponentSlot extends T.FloatPoint.Config['exponent'],
 	ImaginarySlot extends T.FloatPoint.Config['imaginary']
 >(
@@ -8993,7 +8994,13 @@ export function buildFloatPoint<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{
+				integer: IntegerSlot;
+				fraction: FractionSlot;
+				exponentSign: ExponentSignSlot;
+				exponent: ExponentSlot;
+				imaginary: ImaginarySlot;
+			}
 		>,
 	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound;
@@ -9015,16 +9022,17 @@ export function buildFloatPoint(
 		throw new Error(`float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatPoint_sign.test(_sign))
-		throw new Error(`float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9041,18 +9049,25 @@ export function buildFloatPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FloatPoint as const, { _integer, _fraction, _marker, _sign, _exponent, _imaginary });
+	handle?.verifyStored?.(TSKindId.FloatPoint as const, {
+		_integer,
+		_fraction,
+		_marker,
+		_exponent_sign,
+		_exponent,
+		_imaginary
+	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FloatPoint as const);
 		storeCell(arena, record, 2, 2, _integer);
 		storeCell(arena, record, 3, 4, _fraction);
 		storeCell(arena, record, 4, 6, _marker);
-		storeCell(arena, record, 5, 8, _sign);
+		storeCell(arena, record, 5, 8, _exponent_sign);
 		storeCell(arena, record, 6, 10, _exponent);
 		storeCell(arena, record, 7, 12, _imaginary);
 		const node = arena.view(record);
@@ -9079,16 +9094,17 @@ function buildFloatPoint$patch(
 		throw new Error(`float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatPoint_sign.test(_sign))
-		throw new Error(`float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9105,18 +9121,25 @@ function buildFloatPoint$patch(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FloatPoint as const, { _integer, _fraction, _marker, _sign, _exponent, _imaginary });
+	handle?.verifyStored?.(TSKindId.FloatPoint as const, {
+		_integer,
+		_fraction,
+		_marker,
+		_exponent_sign,
+		_exponent,
+		_imaginary
+	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FloatPoint as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'integer', _integer));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'fraction', _fraction));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 5, 8, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 6, 10, carriedSlot(source, 'exponent', _exponent));
 		patchCell(arena, record, 7, 12, carriedSlot(source, 'imaginary', _imaginary));
 		const node = arena.view(record);
@@ -9137,9 +9160,9 @@ function withFloatPoint(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, fraction: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, exponentSign: value }, options))
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
@@ -9164,7 +9187,7 @@ export function buildFloatLeadingPoint<
 	>,
 	IntegerSlot extends T.FloatLeadingPoint.Config['integer'],
 	FractionSlot extends T.FloatLeadingPoint.Config['fraction'],
-	SignSlot extends T.FloatLeadingPoint.Config['sign'],
+	ExponentSignSlot extends T.FloatLeadingPoint.Config['exponentSign'],
 	ExponentSlot extends T.FloatLeadingPoint.Config['exponent'],
 	ImaginarySlot extends T.FloatLeadingPoint.Config['imaginary']
 >(
@@ -9182,7 +9205,13 @@ export function buildFloatLeadingPoint<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
-			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{
+				integer: IntegerSlot;
+				fraction: FractionSlot;
+				exponentSign: ExponentSignSlot;
+				exponent: ExponentSlot;
+				imaginary: ImaginarySlot;
+			}
 		>,
 	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound;
@@ -9204,16 +9233,17 @@ export function buildFloatLeadingPoint(
 		throw new Error(`float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9230,7 +9260,7 @@ export function buildFloatLeadingPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
@@ -9239,7 +9269,7 @@ export function buildFloatLeadingPoint(
 		_integer,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		_imaginary
 	});
@@ -9248,7 +9278,7 @@ export function buildFloatLeadingPoint(
 		storeCell(arena, record, 2, 2, _integer);
 		storeCell(arena, record, 3, 4, _fraction);
 		storeCell(arena, record, 4, 6, _marker);
-		storeCell(arena, record, 5, 8, _sign);
+		storeCell(arena, record, 5, 8, _exponent_sign);
 		storeCell(arena, record, 6, 10, _exponent);
 		storeCell(arena, record, 7, 12, _imaginary);
 		const node = arena.view(record);
@@ -9275,16 +9305,17 @@ function buildFloatLeadingPoint$patch(
 		throw new Error(`float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
 	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
+	const _marker =
+		config.exponentSign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && typeof _marker !== 'string')
 		throw new Error(`float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_leading_point.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatLeadingPoint_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_leading_point.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && typeof _exponent !== 'string')
 		throw new Error(`float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9301,7 +9332,7 @@ function buildFloatLeadingPoint$patch(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
@@ -9310,7 +9341,7 @@ function buildFloatLeadingPoint$patch(
 		_integer,
 		_fraction,
 		_marker,
-		_sign,
+		_exponent_sign,
 		_exponent,
 		_imaginary
 	});
@@ -9319,7 +9350,7 @@ function buildFloatLeadingPoint$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'integer', _integer));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'fraction', _fraction));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 5, 8, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 6, 10, carriedSlot(source, 'exponent', _exponent));
 		patchCell(arena, record, 7, 12, carriedSlot(source, 'imaginary', _imaginary));
 		const node = arena.view(record);
@@ -9340,9 +9371,9 @@ function withFloatLeadingPoint(node: object, setter: string, args: readonly unkn
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, fraction: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, exponentSign: value }, options))
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
@@ -9363,7 +9394,7 @@ function withFloatLeadingPoint(node: object, setter: string, args: readonly unkn
 export function buildFloatScientific<
 	const C extends WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.FloatScientific.Config['integer'],
-	SignSlot extends T.FloatScientific.Config['sign'],
+	ExponentSignSlot extends T.FloatScientific.Config['exponentSign'],
 	ExponentSlot extends T.FloatScientific.Config['exponent'],
 	ImaginarySlot extends T.FloatScientific.Config['imaginary']
 >(
@@ -9372,7 +9403,7 @@ export function buildFloatScientific<
 		RefuseUndeclared<C, WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>> &
 		RefusingConfig<
 			WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
-			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
+			{ integer: IntegerSlot; exponentSign: ExponentSignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound;
@@ -9391,11 +9422,11 @@ export function buildFloatScientific(
 		throw new Error(`float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatScientific_sign.test(_sign))
-		throw new Error(`float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9411,17 +9442,23 @@ export function buildFloatScientific(
 		admitChildren(handle, 'float_scientific', {
 			integer: _integer,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FloatScientific as const, { _integer, _marker, _sign, _exponent, _imaginary });
+	handle?.verifyStored?.(TSKindId.FloatScientific as const, {
+		_integer,
+		_marker,
+		_exponent_sign,
+		_exponent,
+		_imaginary
+	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FloatScientific as const);
 		storeCell(arena, record, 2, 2, _integer);
 		storeCell(arena, record, 3, 4, _marker);
-		storeCell(arena, record, 4, 6, _sign);
+		storeCell(arena, record, 4, 6, _exponent_sign);
 		storeCell(arena, record, 5, 8, _exponent);
 		storeCell(arena, record, 6, 10, _imaginary);
 		const node = arena.view(record);
@@ -9445,11 +9482,11 @@ function buildFloatScientific$patch(
 		throw new Error(`float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
 	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
-	const _sign = config.sign;
-	if (_sign !== undefined && typeof _sign !== 'string')
-		throw new Error(`float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
-	if (_sign !== undefined && !_slotRe_buildFloatScientific_sign.test(_sign))
-		throw new Error(`float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
+	const _exponent_sign = config.exponentSign;
+	if (_exponent_sign !== undefined && typeof _exponent_sign !== 'string')
+		throw new Error(`float_scientific.exponent_sign: text must be a string: ${describeValue(_exponent_sign)}`);
+	if (_exponent_sign !== undefined && !_slotRe_buildFloatScientific_exponent_sign.test(_exponent_sign))
+		throw new Error(`float_scientific.exponent_sign: text does not match pattern: ${describeValue(_exponent_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string')
 		throw new Error(`float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
@@ -9465,17 +9502,23 @@ function buildFloatScientific$patch(
 		admitChildren(handle, 'float_scientific', {
 			integer: _integer,
 			marker: _marker,
-			sign: _sign,
+			exponentSign: _exponent_sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FloatScientific as const, { _integer, _marker, _sign, _exponent, _imaginary });
+	handle?.verifyStored?.(TSKindId.FloatScientific as const, {
+		_integer,
+		_marker,
+		_exponent_sign,
+		_exponent,
+		_imaginary
+	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FloatScientific as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'integer', _integer));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'sign', _sign));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'exponentSign', _exponent_sign));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'exponent', _exponent));
 		patchCell(arena, record, 6, 10, carriedSlot(source, 'imaginary', _imaginary));
 		const node = arena.view(record);
@@ -9492,9 +9535,9 @@ function withFloatScientific(node: object, setter: string, args: readonly unknow
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, integer: value }, options))
 			);
-		case 'sign':
+		case 'exponentSign':
 			return applySetter(args, (value?: Admit<'-' | '+'>) =>
-				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, sign: value }, options))
+				rebuilt(node, handle, () => buildFloatScientific$patch(node, { ...config, exponentSign: value }, options))
 			);
 		case 'exponent':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>

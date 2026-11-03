@@ -3,6 +3,7 @@
   "kinds": {
     "_named_expression_lhs": {
       "container": {
+        "slot": "identifier",
         "kinds": [
           "identifier"
         ],
@@ -12,6 +13,7 @@
     },
     "_simple_pattern": {
       "container": {
+        "slot": "content",
         "kinds": [
           "class_pattern",
           "splat_pattern",
@@ -37,6 +39,7 @@
     },
     "_simple_statements": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -82,6 +85,7 @@
     },
     "argument_list": {
       "container": {
+        "slot": "arguments",
         "kinds": [
           "argument_list_elements"
         ],
@@ -91,6 +95,7 @@
     },
     "argument_list_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression",
           "list_splat",
@@ -104,6 +109,7 @@
     },
     "as_pattern_target": {
       "container": {
+        "slot": "content",
         "kinds": [
           "expression"
         ],
@@ -136,6 +142,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -780,6 +787,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "primary_expression"
         ],
@@ -1186,6 +1194,7 @@
         }
       ],
       "container": {
+        "slot": "statements",
         "kinds": [
           "_statement"
         ],
@@ -1218,6 +1227,7 @@
         }
       ],
       "container": {
+        "slot": "statements",
         "kinds": [
           "_statement_class_definition"
         ],
@@ -1503,6 +1513,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "list_pattern_case_patterns"
         ],
@@ -1512,6 +1523,7 @@
     },
     "case_pattern": {
       "container": {
+        "slot": "content",
         "kinds": [
           "case_as_pattern",
           "keyword_pattern",
@@ -1541,6 +1553,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "item",
         "kinds": [
           "case_pattern"
         ],
@@ -1573,6 +1586,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "list_pattern_case_patterns"
         ],
@@ -1605,6 +1619,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -1775,6 +1790,7 @@
     },
     "collection_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression",
           "yield",
@@ -1866,7 +1882,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.not_equal",
+          "vocab": "expression.binary.comparison.not_equal.legacy",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2249,7 +2265,7 @@
           ]
         },
         {
-          "vocab": "element.comparator.comparison.not_equal",
+          "vocab": "element.comparator.comparison.not_equal.legacy",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -2617,6 +2633,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "for_in_clause",
           "if_clause"
@@ -2650,6 +2667,7 @@
         }
       ],
       "container": {
+        "slot": "string",
         "kinds": [
           "string"
         ],
@@ -2825,23 +2843,57 @@
     },
     "decorated_definition": {
       "container": {
+        "slot": "definition",
         "kinds": [
           "class_definition",
           "function_definition"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": true,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "decorated_definition_class_declaration": {
       "container": {
+        "slot": "definition",
         "kinds": [
           "class_definition",
           "method_declaration",
           "constructor_declaration"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": true,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "decorator": {
@@ -2869,6 +2921,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -2937,6 +2990,7 @@
         }
       ],
       "container": {
+        "slot": "expressions",
         "kinds": [
           "expression",
           "expression_list"
@@ -2970,6 +3024,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "dict_pattern_elements"
         ],
@@ -2979,6 +3034,7 @@
     },
     "dict_pattern_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "key_value_pattern",
           "splat_pattern"
@@ -3012,6 +3068,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "dictionary_elements"
         ],
@@ -3057,6 +3114,7 @@
     },
     "dictionary_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "pair",
           "dictionary_splat"
@@ -3090,6 +3148,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -3239,6 +3298,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "_suite"
         ],
@@ -3581,6 +3641,7 @@
     },
     "except_clause_exception": {
       "container": {
+        "slot": "content",
         "kinds": [
           "except_clause_exception_as",
           "except_clause_exception_list"
@@ -3591,6 +3652,7 @@
     },
     "except_clause_exception_list": {
       "container": {
+        "slot": "value",
         "kinds": [
           "expression"
         ],
@@ -3647,6 +3709,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "item",
         "kinds": [
           "expression"
         ],
@@ -3679,6 +3742,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "expression",
           "expression_statement_tuple",
@@ -3692,6 +3756,7 @@
     },
     "expression_statement_tuple": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression"
         ],
@@ -3737,6 +3802,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "_suite"
         ],
@@ -3790,13 +3856,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_leading_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -3870,13 +3936,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -3939,13 +4005,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "float_scientific",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -4127,6 +4193,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "format_specifier_text",
           "format_expression"
@@ -4308,6 +4375,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "import_list",
           "parenthesized_import_list"
@@ -4413,6 +4481,7 @@
         }
       ],
       "container": {
+        "slot": "names",
         "kinds": [
           "identifier"
         ],
@@ -4458,6 +4527,7 @@
         }
       ],
       "container": {
+        "slot": "condition",
         "kinds": [
           "expression"
         ],
@@ -4550,6 +4620,7 @@
     },
     "import_list": {
       "container": {
+        "slot": "name",
         "kinds": [
           "qualified_identifier",
           "aliased_import"
@@ -4596,6 +4667,7 @@
         }
       ],
       "container": {
+        "slot": "names",
         "kinds": [
           "names"
         ],
@@ -4616,13 +4688,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_binary",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -4691,13 +4763,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_hex",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -4727,13 +4799,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "integer_octal",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -4946,6 +5018,7 @@
     },
     "lambda_parameters": {
       "container": {
+        "slot": "parameters_elements",
         "kinds": [
           "parameters_elements"
         ],
@@ -5021,6 +5094,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "collection_elements"
         ],
@@ -5089,6 +5163,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "patterns"
         ],
@@ -5098,6 +5173,7 @@
     },
     "list_pattern_case_patterns": {
       "container": {
+        "slot": "item",
         "kinds": [
           "case_pattern"
         ],
@@ -5130,6 +5206,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -5191,6 +5268,7 @@
     },
     "match_block_block": {
       "container": {
+        "slot": "alternative",
         "kinds": [
           "case_clause"
         ],
@@ -5200,6 +5278,7 @@
     },
     "match_block_empty": {
       "container": {
+        "slot": "newline",
         "kinds": [
           "_newline"
         ],
@@ -5525,6 +5604,7 @@
         }
       ],
       "container": {
+        "slot": "statements",
         "kinds": [
           "_statement"
         ],
@@ -5570,6 +5650,7 @@
     },
     "names": {
       "container": {
+        "slot": "name",
         "kinds": [
           "qualified_identifier",
           "aliased_import"
@@ -5616,6 +5697,7 @@
         }
       ],
       "container": {
+        "slot": "names",
         "kinds": [
           "identifier"
         ],
@@ -5648,6 +5730,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "expression"
         ],
@@ -5693,6 +5776,7 @@
     },
     "parameters": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "parameters_elements"
         ],
@@ -5702,6 +5786,7 @@
     },
     "parameters_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "parameter"
         ],
@@ -5736,6 +5821,7 @@
     },
     "parenthesized_import_list": {
       "container": {
+        "slot": "import_list",
         "kinds": [
           "import_list"
         ],
@@ -5794,6 +5880,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "item",
         "kinds": [
           "pattern"
         ],
@@ -5803,6 +5890,7 @@
     },
     "patterns": {
       "container": {
+        "slot": "item",
         "kinds": [
           "pattern"
         ],
@@ -5812,6 +5900,7 @@
     },
     "print_arguments": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression"
         ],
@@ -5821,6 +5910,7 @@
     },
     "print_chevron_arguments": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression"
         ],
@@ -5853,6 +5943,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "print_statement_chevron",
           "print_statement_plain"
@@ -5922,6 +6013,7 @@
         }
       ],
       "container": {
+        "slot": "print_arguments",
         "kinds": [
           "print_arguments"
         ],
@@ -6059,6 +6151,7 @@
         }
       ],
       "container": {
+        "slot": "expressions",
         "kinds": [
           "expression",
           "expression_list"
@@ -6092,6 +6185,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "collection_elements"
         ],
@@ -6162,6 +6256,7 @@
     },
     "simple_statements_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_simple_statement"
         ],
@@ -6218,6 +6313,7 @@
     },
     "slice_group": {
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -6674,6 +6770,7 @@
     },
     "string_content": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "escape_interpolation",
           "escape_sequence",
@@ -6699,6 +6796,7 @@
     },
     "subjects": {
       "container": {
+        "slot": "subject",
         "kinds": [
           "expression"
         ],
@@ -6758,6 +6856,7 @@
     },
     "subscripts": {
       "container": {
+        "slot": "subscript",
         "kinds": [
           "expression",
           "slice"
@@ -6768,6 +6867,7 @@
     },
     "suite_block": {
       "container": {
+        "slot": "block",
         "kinds": [
           "block"
         ],
@@ -6777,6 +6877,7 @@
     },
     "suite_block_class_declaration": {
       "container": {
+        "slot": "block_class_declaration",
         "kinds": [
           "block_class_declaration"
         ],
@@ -6786,6 +6887,7 @@
     },
     "suite_empty": {
       "container": {
+        "slot": "newline",
         "kinds": [
           "_newline"
         ],
@@ -6795,6 +6897,7 @@
     },
     "suite_inline": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -6898,6 +7001,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "tuple_elements"
         ],
@@ -6907,6 +7011,7 @@
     },
     "tuple_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "expression",
           "yield",
@@ -6942,6 +7047,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "tuple_pattern_elements"
         ],
@@ -6951,6 +7057,7 @@
     },
     "tuple_pattern_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "pattern"
         ],
@@ -6983,6 +7090,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "expression",
           "splat_type",
@@ -7069,6 +7177,7 @@
         }
       ],
       "container": {
+        "slot": "types",
         "kinds": [
           "types"
         ],
@@ -7161,6 +7270,7 @@
     },
     "types": {
       "container": {
+        "slot": "item",
         "kinds": [
           "type"
         ],
@@ -7438,6 +7548,7 @@
         }
       ],
       "container": {
+        "slot": "items",
         "kinds": [
           "with_item"
         ],
@@ -7470,6 +7581,7 @@
         }
       ],
       "container": {
+        "slot": "items",
         "kinds": [
           "with_clause_with_items"
         ],
@@ -7479,6 +7591,7 @@
     },
     "with_clause_with_items": {
       "container": {
+        "slot": "item",
         "kinds": [
           "with_item"
         ],
@@ -7561,6 +7674,7 @@
         }
       ],
       "container": {
+        "slot": "value",
         "kinds": [
           "expression"
         ],
@@ -7641,6 +7755,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "yield_from_clause",
           "expression",
@@ -7675,6 +7790,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -7711,9 +7827,9 @@
       },
       {
         "depth": 5,
-        "paths": 2,
-        "kinds": 1,
-        "refinements": 2
+        "paths": 4,
+        "kinds": 3,
+        "refinements": 4
       }
     ]
   }

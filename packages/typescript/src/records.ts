@@ -26,14 +26,14 @@ export const records = {
 	ExportSpecifierNode: {
 		words: 11,
 		builtWords: 5,
-		type_only: { word: 2, width: 1, forms: 2, built: 2 },
+		type_keyword: { word: 2, width: 1, forms: 2, built: 2 },
 		name: { word: 3, width: 4, inline: 3, forms: 11, built: 3 },
 		alias: { word: 7, width: 4, inline: 3, forms: 11, built: 4 }
 	},
 	ImportStatementNode: {
 		words: 29,
 		builtWords: 6,
-		type_only: { word: 2, width: 1, forms: 2, built: 2 },
+		type_keyword: { word: 2, width: 1, forms: 2, built: 2 },
 		from_clause: { word: 3, width: 19, inline: 19, forms: 8, built: 3 },
 		import_attribute: { word: 22, width: 6, inline: 6, forms: 8, built: 4 },
 		terminator: { word: 28, width: 1, forms: 2, built: 5 }
@@ -288,7 +288,7 @@ export const records = {
 		words: 12,
 		builtWords: 5,
 		object: { word: 2, width: 4, forms: 3, built: 2 },
-		optional_chain: { word: 6, width: 1, forms: 2, built: 3 },
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
 		property: { word: 7, width: 5, inline: 5, forms: 8, built: 4 }
 	},
 	SubscriptExpressionNode: {
@@ -603,7 +603,7 @@ export const records = {
 		words: 12,
 		builtWords: 5,
 		object: { word: 2, width: 4, forms: 3, built: 2 },
-		content: { word: 6, width: 1, forms: 2, built: 3 },
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
 		property: { word: 7, width: 5, inline: 5, forms: 8, built: 4 }
 	},
 	TypeQuerySubscriptExpressionNode: {
@@ -682,7 +682,7 @@ export const records = {
 	ConstraintNode: {
 		words: 7,
 		builtWords: 4,
-		content: { word: 2, width: 1, forms: 2, built: 2 },
+		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		bounds: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	ConstructSignatureNode: {
@@ -762,7 +762,7 @@ export const records = {
 	NumberHexNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	NumberFloatPointNode: {
@@ -771,7 +771,7 @@ export const records = {
 		integer: { word: 2, width: 2, forms: 4, built: 2 },
 		fraction: { word: 4, width: 2, forms: 4, built: 3 },
 		marker: { word: 6, width: 2, forms: 4, built: 4 },
-		sign: { word: 8, width: 2, forms: 4, built: 5 },
+		exponent_sign: { word: 8, width: 2, forms: 4, built: 5 },
 		exponent: { word: 10, width: 2, forms: 4, built: 6 }
 	},
 	NumberFloatLeadingPointNode: {
@@ -779,7 +779,7 @@ export const records = {
 		builtWords: 6,
 		fraction: { word: 2, width: 2, forms: 4, built: 2 },
 		marker: { word: 4, width: 2, forms: 4, built: 3 },
-		sign: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent_sign: { word: 6, width: 2, forms: 4, built: 4 },
 		exponent: { word: 8, width: 2, forms: 4, built: 5 }
 	},
 	NumberFloatScientificNode: {
@@ -787,20 +787,20 @@ export const records = {
 		builtWords: 6,
 		integer: { word: 2, width: 2, forms: 4, built: 2 },
 		marker: { word: 4, width: 2, forms: 4, built: 3 },
-		sign: { word: 6, width: 2, forms: 4, built: 4 },
+		exponent_sign: { word: 6, width: 2, forms: 4, built: 4 },
 		exponent: { word: 8, width: 2, forms: 4, built: 5 }
 	},
 	NumberDecimalNode: { words: 2, builtWords: 2 },
 	NumberBinaryNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	NumberOctalNode: {
 		words: 6,
 		builtWords: 4,
-		prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	NumberBigintHexNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
@@ -859,13 +859,13 @@ export const records = {
 	ImportSpecifierNameNode: {
 		words: 6,
 		builtWords: 4,
-		type_only: { word: 2, width: 1, forms: 2, built: 2 },
+		type_keyword: { word: 2, width: 1, forms: 2, built: 2 },
 		name: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	ImportSpecifierAsNode: {
 		words: 10,
 		builtWords: 5,
-		type_only: { word: 2, width: 1, forms: 2, built: 2 },
+		type_keyword: { word: 2, width: 1, forms: 2, built: 2 },
 		name: { word: 3, width: 4, inline: 3, forms: 11, built: 3 },
 		alias: { word: 7, width: 3, forms: 1, built: 4 }
 	},
@@ -1008,9 +1008,9 @@ export const records = {
 	ForHeaderUsingKindNode: {
 		words: 13,
 		builtWords: 7,
-		kind: { word: 3, width: 1, forms: 2, built: 3 },
-		left: { word: 4, width: 4, inline: 3, forms: 9, built: 4 },
-		terminator: { word: 2, bit: 0 },
+		kind: { word: 2, width: 1, forms: 2, built: 2 },
+		left: { word: 3, width: 4, inline: 3, forms: 9, built: 3 },
+		terminator: { word: 7, width: 1, forms: 18, built: 4 },
 		operator: { word: 8, width: 1, forms: 2, built: 5 },
 		right: { word: 9, width: 4, forms: 3, built: 6 }
 	},

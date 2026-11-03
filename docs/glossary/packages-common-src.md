@@ -824,11 +824,11 @@ Whether a node or a bare kind id reads as a vocabulary path by one language's ro
 
 The ids and exactness a bound grammar's rows give a vocabulary path, or `undefined` when the grammar reads nothing at or under it. It reads the table's own keys only, so a path a caller supplies (a query's portable kind) cannot reach a prototype member such as `constructor`.
 
-### `packages/common/src/portable/index.ts::registerPortableRows`
+### `packages/common/src/portable/language-guard.ts::registerPortableRows`
 
 Records a bound grammar's rows in `rowsByLoad`, keyed by the descriptor's `load` function; `loadLanguage` calls it once the hooks resolve. The key is `load` rather than the descriptor object because a copied descriptor (`{ ...rust }`) shares the original's `load`, so rows loaded through either serve both. The map is weak, so a descriptor that goes away takes its rows with it.
 
-### `packages/common/src/portable/index.ts::PortableLanguage`
+### `packages/common/src/portable/language-guard.ts::PortableLanguage`
 
 What a language's portable guards need from a descriptor: its `name`, for the error a guard raises before the language has loaded, and its `load` function, the key its rows are recorded under (`registerPortableRows`). It is structural, so `@sittir/common/portable` does not import the `Language` type and a descriptor satisfies it as it is.
 
@@ -836,7 +836,7 @@ What a language's portable guards need from a descriptor: its `name`, for the er
 
 A language's view of the portable guards: `portableTrees` over the same `vocabularyPaths`, each guard built by `languageGuardOf`, so it has the shared tree's keys at every level but guard objects of its own. It is memoized per language object (`views`), so the descriptor's `is.portable`, the `is.portable` of every engine of that descriptor and its portable engine's `is` are one object. An engine of a copied descriptor gets the copy's own view (`guardsOf` rebuilds the shared members through the recorded builder), which finds the same rows. The shared tree, `portable.is`, stays node-only.
 
-### `packages/common/src/portable/index.ts::languageGuardOf`
+### `packages/common/src/portable/language-guard.ts::languageGuardOf`
 
 The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and pass the language check (`ofLanguage`, the `inLanguage` check `portableGuardsOf` builds once per view, the same one the language's kind test makes), and its engine must carry portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
 
@@ -1311,3 +1311,247 @@ Wraps a shared builder that also carries members, so the result keeps the builde
 ### `packages/common/src/runtime.ts::withEmptyForm`
 
 Wraps a builder with its empty form, typed `EmptyForm<Empty, F>`.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext`
+
+What the portable builder needs: the language, the build table, the builders, the kind-name lookup, and the reads-as test.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext::language`
+
+The language the builder is for.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext::table`
+
+The build table.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext::builders`
+
+The builders, by name.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext::kindName`
+
+Maps a kind id to its name.
+
+### `packages/common/src/portable/build.ts::PortableBuildContext::readsAs`
+
+Whether a node is read as the given path.
+
+### `packages/common/src/portable/build.ts::portableBuilder`
+
+Returns the portable builder for a structure, built from the build context.
+
+### `packages/common/src/portable/classify.ts::RowsReader::flagHolds`
+
+Whether a value holds the given flag.
+
+### `packages/common/src/portable/classify.ts::RowsReader::builtReadsAs`
+
+Whether a built node is read as the given path.
+
+### `packages/common/src/portable/flags.ts::Flags::Abstract`
+
+The `abstract` flag bit (`1 << 0`).
+
+### `packages/common/src/portable/flags.ts::Flags::Async`
+
+The `async` flag bit (`1 << 1`).
+
+### `packages/common/src/portable/flags.ts::Flags::ByReference`
+
+The by-reference flag bit (`1 << 2`).
+
+### `packages/common/src/portable/flags.ts::Flags::Byte`
+
+The byte flag bit (`1 << 3`).
+
+### `packages/common/src/portable/flags.ts::Flags::Computed`
+
+The computed flag bit (`1 << 4`).
+
+### `packages/common/src/portable/flags.ts::Flags::Const`
+
+The `const` flag bit (`1 << 5`).
+
+### `packages/common/src/portable/flags.ts::Flags::Debug`
+
+The debug flag bit (`1 << 6`).
+
+### `packages/common/src/portable/flags.ts::Flags::Declare`
+
+The `declare` flag bit (`1 << 7`).
+
+### `packages/common/src/portable/flags.ts::Flags::Default`
+
+The `default` flag bit (`1 << 8`).
+
+### `packages/common/src/portable/flags.ts::Flags::Definite`
+
+The definite flag bit (`1 << 9`).
+
+### `packages/common/src/portable/flags.ts::Flags::Disposable`
+
+The disposable flag bit (`1 << 10`).
+
+### `packages/common/src/portable/flags.ts::Flags::Exclusive`
+
+The exclusive flag bit (`1 << 11`).
+
+### `packages/common/src/portable/flags.ts::Flags::Generator`
+
+The generator flag bit (`1 << 12`).
+
+### `packages/common/src/portable/flags.ts::Flags::Group`
+
+The group flag bit (`1 << 13`).
+
+### `packages/common/src/portable/flags.ts::Flags::Move`
+
+The move flag bit (`1 << 14`).
+
+### `packages/common/src/portable/flags.ts::Flags::Mutable`
+
+The mutable flag bit (`1 << 15`).
+
+### `packages/common/src/portable/flags.ts::Flags::Optional`
+
+The optional flag bit (`1 << 16`).
+
+### `packages/common/src/portable/flags.ts::Flags::OptionalChain`
+
+The optional-chain flag bit (`1 << 17`).
+
+### `packages/common/src/portable/flags.ts::Flags::Override`
+
+The `override` flag bit (`1 << 18`).
+
+### `packages/common/src/portable/flags.ts::Flags::PrivateName`
+
+The private-name flag bit (`1 << 20`).
+
+### `packages/common/src/portable/flags.ts::Flags::Raw`
+
+The raw flag bit (`1 << 21`).
+
+### `packages/common/src/portable/flags.ts::Flags::Readonly`
+
+The `readonly` flag bit (`1 << 22`).
+
+### `packages/common/src/portable/flags.ts::Flags::Static`
+
+The `static` flag bit (`1 << 23`).
+
+### `packages/common/src/portable/flags.ts::Flags::TypeOnly`
+
+The type-only flag bit (`1 << 24`).
+
+### `packages/common/src/portable/flags.ts::Flags::Unique`
+
+The unique flag bit (`1 << 25`).
+
+### `packages/common/src/portable/flags.ts::Flags::Unsafe`
+
+The unsafe flag bit (`1 << 26`).
+
+### `packages/common/src/portable/flags.ts::Flags::Unsigned`
+
+The unsigned flag bit (`1 << 27`).
+
+### `packages/common/src/portable/flags.ts::Flags::Writable`
+
+The writable flag bit (`1 << 28`).
+
+### `packages/common/src/portable/language-guard.ts::PortableLanguage::name`
+
+The language's name.
+
+### `packages/common/src/portable/language-guard.ts::PortableLanguage::load`
+
+Loads the language's builder tables.
+
+### `packages/common/src/portable/runtime.ts::portableRuntimeTree`
+
+The guard tree of a portable language, for runtime checks.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime`
+
+A portable runtime: the strict engine, the guard tree, and the builder.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime::engine`
+
+The strict engine.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime::is`
+
+The guard tree.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime::build`
+
+Builds a node from a portable structure.
+
+### `packages/common/src/portable/runtime.ts::portableRuntime`
+
+Creates the portable runtime for a language.
+
+### `packages/common/src/portable/classify.ts::portableTextOf`
+
+The text of a portable value, or undefined when the value has none.
+
+### `packages/common/src/portable/read.ts::PortableCarry`
+
+What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.
+
+### `packages/common/src/portable/read.ts::PortableCarry::reason`
+
+Why the read carries the node.
+
+### `packages/common/src/portable/read.ts::PortableCarry::flags`
+
+The flags a flag carry names.
+
+### `packages/common/src/portable/read.ts::PortableCarried`
+
+The callback that receives each carried node and what it carries.
+
+### `packages/common/src/portable/read.ts::PortableReadContext`
+
+What the portable reader needs: the build table, the classifier, the flag and text readers, and the flags per kind.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::table`
+
+The build table.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::classify`
+
+The classifier.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::flagHolds`
+
+Whether a value holds a flag.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::flagsOf`
+
+The flags a kind carries.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::textOf`
+
+The text of a value, or undefined.
+
+### `packages/common/src/portable/read.ts::portableReader`
+
+Returns the portable reader that turns a node into a structure, given the read context.
+
+### `packages/common/src/portable/read.ts::Hop`
+
+One step of a portable read route: the key it reads and the build it names, when it names one.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
+
+Reads a node into the structure that builds it back, with the carried callback for what the read leaves out.
+
+### `packages/common/src/blank-arm.ts::blankArmStored`
+
+Stores a value in a slot whose blank arm is `null`. A `null` becomes the `BLANK_KIND_ID` marker, so a stored slot value is never `null`.
+
+### `packages/common/src/blank-arm.ts::blankArmRead`
+
+Reads a stored slot value back. The `BLANK_KIND_ID` marker becomes `null`, and any other value is returned unchanged. It is the inverse of `blankArmStored`.

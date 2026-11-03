@@ -903,18 +903,18 @@ impl ::sittir_core::render::Render for LookaroundAssertionContentNodeSlotRecord<
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum LookaheadAssertionContentNodeSlot {
+pub enum LookaheadAssertionOperatorNodeSlot {
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::BANG)]
     Bang,
 }
 
-impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentNodeSlot {
+impl ::sittir_core::prepare::Prepare for LookaheadAssertionOperatorNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LookaheadAssertionContentNodeSlot::Eq => Ok(()),
-            LookaheadAssertionContentNodeSlot::Bang => Ok(()),
+            LookaheadAssertionOperatorNodeSlot::Eq => Ok(()),
+            LookaheadAssertionOperatorNodeSlot::Bang => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -922,7 +922,7 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for LookaheadAssertionContentNodeSlot {
+impl ::sittir_core::view::KindOf for LookaheadAssertionOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -931,17 +931,17 @@ impl ::sittir_core::view::KindOf for LookaheadAssertionContentNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LookaheadAssertionContentNodeSlot {
+impl ::sittir_core::render::Render for LookaheadAssertionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaheadAssertionContentNodeSlot::Eq => {
+            LookaheadAssertionOperatorNodeSlot::Eq => {
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE);
                 let written = render_eq(w);
                 written?;
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER);
                 Ok(())
             }
-            LookaheadAssertionContentNodeSlot::Bang => {
+            LookaheadAssertionOperatorNodeSlot::Bang => {
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE);
                 let written = render_bang(w);
                 written?;
@@ -954,18 +954,18 @@ impl ::sittir_core::render::Render for LookaheadAssertionContentNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum LookbehindAssertionContentNodeSlot {
+pub enum LookbehindAssertionOperatorNodeSlot {
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::BANG)]
     Bang,
 }
 
-impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentNodeSlot {
+impl ::sittir_core::prepare::Prepare for LookbehindAssertionOperatorNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LookbehindAssertionContentNodeSlot::Eq => Ok(()),
-            LookbehindAssertionContentNodeSlot::Bang => Ok(()),
+            LookbehindAssertionOperatorNodeSlot::Eq => Ok(()),
+            LookbehindAssertionOperatorNodeSlot::Bang => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -973,7 +973,7 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for LookbehindAssertionContentNodeSlot {
+impl ::sittir_core::view::KindOf for LookbehindAssertionOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -982,17 +982,17 @@ impl ::sittir_core::view::KindOf for LookbehindAssertionContentNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LookbehindAssertionContentNodeSlot {
+impl ::sittir_core::render::Render for LookbehindAssertionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookbehindAssertionContentNodeSlot::Eq => {
+            LookbehindAssertionOperatorNodeSlot::Eq => {
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE);
                 let written = render_eq(w);
                 written?;
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER);
                 Ok(())
             }
-            LookbehindAssertionContentNodeSlot::Bang => {
+            LookbehindAssertionOperatorNodeSlot::Bang => {
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE);
                 let written = render_bang(w);
                 written?;
@@ -1293,18 +1293,18 @@ impl ::sittir_core::render::Render for ClassRangeStartNodeSlotRecord<'_> {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum NamedCapturingGroupContentNodeSlot {
+pub enum NamedCapturingGroupOperatorNodeSlot {
     #[kind(kind::LPAREN_QMARK_LT)]
     LparenQmarkLt,
     #[kind(kind::LPAREN_QMARK_P_LT)]
     LparenQmarkPLt,
 }
 
-impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentNodeSlot {
+impl ::sittir_core::prepare::Prepare for NamedCapturingGroupOperatorNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedCapturingGroupContentNodeSlot::LparenQmarkLt => Ok(()),
-            NamedCapturingGroupContentNodeSlot::LparenQmarkPLt => Ok(()),
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkLt => Ok(()),
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkPLt => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1312,7 +1312,7 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for NamedCapturingGroupContentNodeSlot {
+impl ::sittir_core::view::KindOf for NamedCapturingGroupOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LparenQmarkLt => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
@@ -1321,17 +1321,17 @@ impl ::sittir_core::view::KindOf for NamedCapturingGroupContentNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for NamedCapturingGroupContentNodeSlot {
+impl ::sittir_core::render::Render for NamedCapturingGroupOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedCapturingGroupContentNodeSlot::LparenQmarkLt => {
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkLt => {
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE);
                 let written = render_lparen_qmark_lt(w);
                 written?;
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
                 Ok(())
             }
-            NamedCapturingGroupContentNodeSlot::LparenQmarkPLt => {
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkPLt => {
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE);
                 let written = render_lparen_qmark_plt(w);
                 written?;
@@ -2467,9 +2467,9 @@ pub struct LookaheadAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
+    #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
-    pub content: ::sittir_core::SlotValue<LookaheadAssertionContentNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<LookaheadAssertionOperatorNodeSlot>,
     #[wire(key = "_pattern")]
     #[slot(word = 3, width = 5, inline = 5, forms = 8, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
@@ -2533,7 +2533,7 @@ fn prepare_lookahead_assertion<N: LookaheadAssertionPrepare + ?Sized>(node: &mut
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(56), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -2544,9 +2544,9 @@ pub struct LookbehindAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
+    #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
-    pub content: ::sittir_core::SlotValue<LookbehindAssertionContentNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<LookbehindAssertionOperatorNodeSlot>,
     #[wire(key = "_pattern")]
     #[slot(word = 3, width = 5, inline = 5, forms = 8, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
@@ -2610,7 +2610,7 @@ fn prepare_lookbehind_assertion<N: LookbehindAssertionPrepare + ?Sized>(node: &m
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(57), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -3140,9 +3140,9 @@ pub struct NamedCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
+    #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
-    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<NamedCapturingGroupOperatorNodeSlot>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
@@ -3208,8 +3208,8 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupNode {
 fn prepare_named_capturing_group<N: NamedCapturingGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.content, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(63), arms, ctx); }
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(63), arms, ctx); }
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
@@ -6237,12 +6237,12 @@ fn render_lookaround_assertion<N: LookaroundAssertionFields + ?Sized>(node: &N, 
 }
 
 fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let operator = node.operator();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6251,12 +6251,12 @@ fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w:
 }
 
 fn render_lookbehind_assertion<N: LookbehindAssertionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let operator = node.operator();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?<")?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6350,12 +6350,11 @@ fn render_anonymous_capturing_group<N: AnonymousCapturingGroupFields + ?Sized>(n
 }
 
 fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
     let group_name = node.group_name();
+    let operator = node.operator();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -7284,4 +7283,4 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionContentNodeSlot, LookbehindAssertionContentNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupContentNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, LazyNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, QmarkNode, PlusNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, LookbehindAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, LazyNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, QmarkNode, PlusNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);

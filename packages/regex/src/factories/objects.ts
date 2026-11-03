@@ -184,22 +184,22 @@ export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion
 ): T.LookaheadAssertion.Bound;
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator, pattern: _pattern });
 	const node = {
 		$type: TSKindId.LookaheadAssertion as const,
-		_content,
+		_operator,
 		_pattern,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.LookaheadAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.LookaheadAssertion.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, operator: value })),
 			pattern: (value: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -220,22 +220,22 @@ export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAsserti
 ): T.LookbehindAssertion.Bound;
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
-	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { content: _content, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator, pattern: _pattern });
 	const node = {
 		$type: TSKindId.LookbehindAssertion as const,
-		_content,
+		_operator,
 		_pattern,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.LookbehindAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.LookbehindAssertion.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, operator: value })),
 			pattern: (value: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -501,27 +501,27 @@ export function buildNamedCapturingGroup<
 ): T.NamedCapturingGroup.Bound;
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Bound {
 	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
-	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
 	const _group_name = config.groupName;
 	const _pattern = config.pattern;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'named_capturing_group', { content: _content, groupName: _group_name, pattern: _pattern });
+		admitChildren(handle, 'named_capturing_group', { operator: _operator, groupName: _group_name, pattern: _pattern });
 	const node = {
 		$type: TSKindId.NamedCapturingGroup as const,
-		_content,
+		_operator,
 		_group_name,
 		_pattern,
 		$_layout: undefined,
 		$with: {
-			content: (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['content']>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, content: value })),
+			operator: (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, operator: value })),
 			groupName: (value: Admit<T.GroupName>) =>
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, groupName: value })),
 			pattern: (value: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
 		},
-		content: () => _content,
+		operator: () => _operator,
 		groupName: () => hydrateStoredSlot(node, '_group_name'),
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),

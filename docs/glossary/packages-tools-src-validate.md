@@ -1585,7 +1585,7 @@ The options a run takes: `update` lowers the ceilings file, `table` and `json` c
 
 ### `packages/tools/src/validate/glossary-keys.ts::enumerateDeclarations`
 
-Lists the declarations one source file contains, parsed through the TypeScript compiler API. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses.
+Lists the declarations one source file contains, walked over the syntax tree of a program the checker belongs to. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses. A property of a named const object, at any depth, is left out when its contextual type declares that name: an interface or type-literal member, or a key of a mapped type over `keyof` a declared type. The checker resolves such a property to that declaration, which is dropped only when the enumeration counts that declaring node as undocumented-eligible (exported, depth ≤ 2); otherwise the literal's property stays counted. The walk runs twice per tree: first the declaring nodes, then the literals against them, so a literal never decides from its own copy. Each nested property is decided on its own, against its own contextual type. An index signature declares no name, so its properties still count, and so do properties whose contextual type has no declaration.
 
 ### `packages/tools/src/validate/glossary-keys.ts::inGlossaryTrees`
 
@@ -1593,7 +1593,7 @@ True when a file is a TypeScript source under one of the glossary trees. A key n
 
 ### `packages/tools/src/validate/glossary-keys.ts::enumerateTrees`
 
-Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
+Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. The files are read through one type-checker program over all of them, so a contextual type declared in another file is seen. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
 
 ### `packages/tools/src/validate/glossary-keys.ts::readKeys`
 
@@ -1618,6 +1618,26 @@ The ceilings an `--update` run writes: each count's ceiling lowered to the curre
 ### `packages/tools/src/validate/glossary-keys.ts::run`
 
 The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateSource`
+
+Lists the declarations of one in-memory TypeScript source, through a one-file program and its type checker, for tests that enumerate a snippet rather than a tree. Contextual types declared in other files are not seen; a snippet's own interfaces are.
+
+### `packages/tools/src/validate/glossary-keys.ts::isUndocumentedEligible`
+
+The one definition of a declaration the ratchet counts as undocumented-eligible: exported, and at most UNDOCUMENTED_DEPTH names deep. The declaring-node set and the undocumented count both use it.
+
+### `packages/tools/src/validate/glossary-keys.ts::isContextuallyDeclared`
+
+True when a literal's property name is declared by its contextual type through a declaring node the enumeration counts, and that node lies outside the literal. Such a property duplicates the declaration, so the enumeration leaves it out.
+
+### `packages/tools/src/validate/glossary-keys.ts::FileDeclarations`
+
+One file's enumeration: its declarations, and the declaring nodes the enumeration counts as undocumented-eligible. Internal to the enumerator.
+
+### `packages/tools/src/validate/glossary-keys.ts::SourceEntry`
+
+One source file of a checker program, keyed by its repo-relative path, as enumerateProgram takes it.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::forwardsArguments`
 
@@ -1698,3 +1718,195 @@ Whether a kind is a leaf (has no child slots) in the model.
 ### `packages/tools/src/validate/display-families.ts::displayStorageKinds`
 
 The storage kinds a display covers, across the families.
+
+### `packages/tools/src/validate/common.ts::createStrictNativeEngine`
+
+Creates the strict native engine for a grammar.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::slotBlankArms`
+
+For each kind that has blank-arm slots, the set of those slots' storage keys. Kinds with none have no entry.
+
+### `packages/tools/src/validate/common.ts::KindSlots::blankArms`
+
+The storage keys of this kind's slots that have a blank arm. The set is empty when none do.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
+
+The stage a round-trip failure reached: read, build, render, reparse or ast.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure`
+
+A round-trip failure: the entry, the stage it reached, and its message.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::entry`
+
+The corpus entry that failed.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::stage`
+
+The stage the failure reached.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::message`
+
+The failure message.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::rendered`
+
+The rendered text at the failure, when there is one.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried`
+
+A corpus entry whose round trip carried something past the structure, with what it carried.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried::entry`
+
+The corpus entry.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried::carries`
+
+What the entry carried.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult`
+
+The round-trip result for a grammar: the totals, the carried entries, and the errors and AST mismatches.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::total`
+
+The number of entries.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::pass`
+
+The number of entries that round-tripped.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::astMatchPass`
+
+The number of entries whose syntax tree matched.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::carried`
+
+The entries that carried something past the structure.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::errors`
+
+The failures that stopped an entry.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::astMismatches`
+
+The entries whose syntax tree did not match.
+
+### `packages/tools/src/validate/portable-round-trip.ts::runPortableRoundTrip`
+
+Runs the round trip over a grammar's corpus entries and returns the result.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause`
+
+One cause of conformance errors: its name, what it means, how many errors it accounts for, and one example error when there is one.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::name`
+
+The cause's short name, as the report prints it.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::why`
+
+What the cause means, in one line.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::count`
+
+How many errors the cause accounts for.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceCause::example`
+
+One error's text that falls under the cause, when there is one.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport`
+
+The conformance result for one grammar: its causes, the reads the emitter skipped, and the total error count.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::grammar`
+
+The grammar the report covers.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::causes`
+
+Every cause, including those with no errors.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::unemitted`
+
+The reads the emitter skipped, each with its reason.
+
+### `packages/tools/src/portable/conformance.ts::ConformanceReport::total`
+
+The number of errors across all causes.
+
+### `packages/tools/src/portable/conformance.ts::CAUSES`
+
+The causes of type errors in the typed module, each a test over one diagnostic. A diagnostic that no test claims is unclassified. The order of the list is the order of the report.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE`
+
+The cause that counts reads the emitter skipped. It has no test of its own: its count comes from the typed module's unemitted list.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE::name`
+
+The unemitted cause's name.
+
+### `packages/tools/src/portable/conformance.ts::UNEMITTED_CAUSE::why`
+
+What the unemitted cause means.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE`
+
+The cause for an error in the typed module that no cause claims.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE::name`
+
+The unclassified cause's name.
+
+### `packages/tools/src/portable/conformance.ts::UNCLASSIFIED_CAUSE::why`
+
+What the unclassified cause means.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE`
+
+The cause for an error reported outside the typed module, such as in another file the checker loaded.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE::name`
+
+The outside cause's name.
+
+### `packages/tools/src/portable/conformance.ts::OUTSIDE_CAUSE::why`
+
+What the outside cause means.
+
+### `packages/tools/src/portable/conformance.ts::portableTypedPath`
+
+The path of a grammar's typed module, under its typed directory.
+
+### `packages/tools/src/portable/conformance.ts::classify`
+
+Sorts the type checker's diagnostics for one module into causes and counts them, and adds the unemitted reads as their own cause. Errors outside the module count as outside errors.
+
+### `packages/tools/src/portable/conformance.ts::writeTypedModule`
+
+Generates a grammar's typed module, writes it into the typed directory, and returns the emitter's output. Returns undefined when the grammar has no typed module.
+
+### `packages/tools/src/portable/conformance.ts::portableConformance`
+
+Computes one grammar's conformance report. It writes the typed module, type-checks it with the typed tsconfig, and classifies the errors. Returns undefined when the grammar has no typed module.
+
+### `packages/tools/src/portable/conformance.ts::formatConformance`
+
+Formats a report as plain text: a header with the error total, then each non-empty cause with its count, why and example. The skipped reads print under the unemitted cause.
+
+### `packages/tools/src/portable/conformance.ts::PortableConformanceOptions`
+
+Options for the conformance run. The grammars to check default to every grammar that has bindings.
+
+### `packages/tools/src/portable/conformance.ts::PortableConformanceOptions::grammars`
+
+The grammars to check. When absent, every grammar that has bindings is checked.
+
+### `packages/tools/src/portable/conformance.ts::run`
+
+Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.

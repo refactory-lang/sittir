@@ -3,7 +3,7 @@ import type { IndentOption } from './options.ts';
 import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
-import type { PortableRows, PortableSurface } from './portable.ts';
+import type { PortableBuildTable, PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts<Kind extends number = number> {
 	kindName(type: Kind): string | undefined;
@@ -228,6 +228,8 @@ export interface StructureRow {
 	readonly kind: string;
 	/** `[storageKey, slot]`: the slot holds a value. */
 	readonly required?: readonly (readonly [storageKey: string, slot: string])[];
+	/** `[storageKey, label]`: the slot holds one value, never a list. */
+	readonly single?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label]`: the list holds at least one item. */
 	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label, expected, kinds]`: the slot holds a built node, a coordinate or a kind id, never bare text or any other value; when `kinds` is given, a built node of one of those kinds (membership, so a supertype admits its members). */
@@ -266,6 +268,8 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
 	readonly portable?: PortableRows;
+	/** Loads the language's portable build table; a language with no bindings has none. */
+	readonly portableBuild?: () => Promise<PortableBuildTable>;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {

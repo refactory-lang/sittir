@@ -5,7 +5,7 @@ import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, l
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
-import { BLANK_KIND_ID } from './error-kind.ts';
+import { BLANK_KIND_ID } from './blank-arm.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';

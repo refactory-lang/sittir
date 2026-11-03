@@ -3,6 +3,7 @@
   "kinds": {
     "_formal_parameters_elements_set_accessor_signature": {
       "container": {
+        "slot": "item",
         "kinds": [
           "setter_parameter"
         ],
@@ -12,6 +13,7 @@
     },
     "_formal_parameters_set_accessor_signature": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "_formal_parameters_elements_set_accessor_signature"
         ],
@@ -21,6 +23,7 @@
     },
     "_lhs_expression": {
       "container": {
+        "slot": "content",
         "kinds": [
           "member_expression",
           "subscript_expression",
@@ -144,6 +147,51 @@
             {
               "owner": "class_heritage_extends_clause",
               "slot": "extends_clause"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "abstract_class_declaration",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
             }
           ]
         },
@@ -968,6 +1016,7 @@
     },
     "adding_type_annotation": {
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -1000,6 +1049,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "declaration",
           "ambient_declaration_global",
@@ -1011,6 +1061,7 @@
     },
     "ambient_declaration_global": {
       "container": {
+        "slot": "body",
         "kinds": [
           "statement_block"
         ],
@@ -1076,6 +1127,7 @@
     },
     "arguments": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "expression",
           "spread_element"
@@ -1109,6 +1161,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "expression",
           "spread_element"
@@ -1142,6 +1195,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "pattern",
           "assignment_pattern"
@@ -1175,6 +1229,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "primary_type"
         ],
@@ -1351,11 +1406,37 @@
               "slot": "item"
             }
           ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "call_signature",
+          "slot": "type_parameters",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "content"
+            },
+            {
+              "owner": "call_signature",
+              "slot": "type_parameters"
+            }
+          ]
         }
       ]
     },
     "arrow_function_parameter": {
       "container": {
+        "slot": "parameter",
         "kinds": [
           "identifier"
         ],
@@ -1426,6 +1507,7 @@
     },
     "asserts_annotation": {
       "container": {
+        "slot": "asserts",
         "kinds": [
           "asserts"
         ],
@@ -1954,6 +2036,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -3212,6 +3295,51 @@
             },
             {
               "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "class_heritage",
               "after": null,
               "anchor": null
@@ -3239,6 +3367,7 @@
     },
     "class_body": {
       "container": {
+        "slot": "members",
         "kinds": [
           "_class_body_member"
         ],
@@ -3248,6 +3377,7 @@
     },
     "class_body_member_declaration": {
       "container": {
+        "slot": "member",
         "kinds": [
           "abstract_method_signature",
           "index_signature",
@@ -3260,15 +3390,33 @@
     },
     "class_body_member_method": {
       "container": {
+        "slot": "method_definition",
         "kinds": [
           "_method_definition_class_body_member_method"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "decorators",
+            "slot": {
+              "name": "decorator",
+              "propertyName": "decorators",
+              "required": false,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "decorator"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "class_body_member_method_sig": {
       "container": {
+        "slot": "method_signature",
         "kinds": [
           "method_signature"
         ],
@@ -3379,6 +3527,51 @@
             },
             {
               "field": null,
+              "kind": "class_heritage_extends_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "class_heritage",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "implements_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "heritage"
+            },
+            {
+              "owner": "class_heritage",
+              "slot": "content"
+            },
+            {
+              "owner": "class_heritage_extends_clause",
+              "slot": "implements_clause"
+            },
+            {
+              "owner": "implements_clause",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "implements_clause",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "class_heritage",
               "after": null,
               "anchor": null
@@ -3406,6 +3599,7 @@
     },
     "class_heritage": {
       "container": {
+        "slot": "content",
         "kinds": [
           "class_heritage_extends_clause",
           "implements_clause"
@@ -3508,6 +3702,7 @@
     },
     "computed_property_name": {
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -4133,6 +4328,19 @@
               "slot": "receiver"
             }
           ]
+        },
+        {
+          "name": "abstract",
+          "route": "presence",
+          "via": [],
+          "token": "abstract",
+          "path": [
+            {
+              "owner": "constructor_type",
+              "slot": "abstract"
+            }
+          ],
+          "flag": true
         }
       ]
     },
@@ -4332,6 +4540,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -4400,6 +4609,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "statement"
         ],
@@ -4458,6 +4668,7 @@
     },
     "enum_body": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "enum_body_elements"
         ],
@@ -4492,6 +4703,7 @@
     },
     "enum_body_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_enum_body_element"
         ],
@@ -4610,6 +4822,7 @@
         }
       ],
       "container": {
+        "slot": "export_specifiers",
         "kinds": [
           "export_specifiers"
         ],
@@ -4626,8 +4839,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -4684,7 +4897,7 @@
           "path": [
             {
               "owner": "export_specifier",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -4693,6 +4906,7 @@
     },
     "export_specifiers": {
       "container": {
+        "slot": "item",
         "kinds": [
           "export_specifier"
         ],
@@ -4848,6 +5062,7 @@
     },
     "export_statement_default_declaration_default_kw": {
       "container": {
+        "slot": "content",
         "kinds": [
           "declaration",
           "export_statement_default_declaration_default_kw_value"
@@ -5031,6 +5246,7 @@
     },
     "export_statement_default_from_star_from": {
       "container": {
+        "slot": "source",
         "kinds": [
           "string"
         ],
@@ -5138,6 +5354,7 @@
         }
       ],
       "container": {
+        "slot": "types",
         "kinds": [
           "extends_clause_single"
         ],
@@ -5170,6 +5387,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type_identifier",
           "nested_type_identifier",
@@ -5217,6 +5435,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "statement_block"
         ],
@@ -5249,6 +5468,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "primary_type"
         ],
@@ -5365,6 +5585,7 @@
     },
     "formal_parameters_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "required_parameter",
           "optional_parameter"
@@ -5375,6 +5596,7 @@
     },
     "formal_parameters_elements_receiver_group": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "formal_parameters_elements"
         ],
@@ -6659,6 +6881,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -6839,6 +7062,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "namespace_import",
           "named_imports",
@@ -6850,6 +7074,7 @@
     },
     "import_clause_group": {
       "container": {
+        "slot": "content",
         "kinds": [
           "namespace_import",
           "named_imports"
@@ -6916,8 +7141,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -6974,7 +7199,7 @@
           "path": [
             {
               "owner": "import_specifier_as",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -6990,8 +7215,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -7037,7 +7262,7 @@
           "path": [
             {
               "owner": "import_specifier_name",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -7046,6 +7271,7 @@
     },
     "import_specifiers": {
       "container": {
+        "slot": "item",
         "kinds": [
           "import_specifier"
         ],
@@ -7062,8 +7288,8 @@
           "within": [],
           "pins": [
             {
-              "member": "typeOnly",
-              "slot": "type_only",
+              "member": "typeKeyword",
+              "slot": "type_keyword",
               "text": "typeof"
             }
           ],
@@ -7123,7 +7349,7 @@
           "path": [
             {
               "owner": "import_statement",
-              "slot": "type_only"
+              "slot": "type_keyword"
             }
           ],
           "flag": true
@@ -7354,6 +7580,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "primary_type"
         ],
@@ -7713,6 +7940,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "literal_type_negative_number",
           "number",
@@ -7751,6 +7979,7 @@
         }
       ],
       "container": {
+        "slot": "value",
         "kinds": [
           "number"
         ],
@@ -7882,7 +8111,7 @@
           "path": [
             {
               "owner": "member_expression",
-              "slot": "optional_chain"
+              "slot": "operator"
             }
           ],
           "flag": true
@@ -9708,6 +9937,7 @@
     },
     "named_imports": {
       "container": {
+        "slot": "import_specifiers",
         "kinds": [
           "import_specifiers"
         ],
@@ -9740,6 +9970,7 @@
         }
       ],
       "container": {
+        "slot": "module_export_name",
         "kinds": [
           "identifier",
           "string"
@@ -9775,6 +10006,7 @@
         }
       ],
       "container": {
+        "slot": "name",
         "kinds": [
           "identifier"
         ],
@@ -9960,6 +10192,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -10154,13 +10387,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_binary",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -10239,13 +10472,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_leading_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10315,13 +10548,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_point",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10380,13 +10613,13 @@
           ]
         },
         {
-          "name": "sign",
+          "name": "exponentSign",
           "route": "slot",
-          "slot": "sign",
+          "slot": "exponent_sign",
           "path": [
             {
               "owner": "number_float_scientific",
-              "slot": "sign"
+              "slot": "exponent_sign"
             }
           ]
         },
@@ -10423,13 +10656,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_hex",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -10486,13 +10719,13 @@
       ],
       "members": [
         {
-          "name": "prefix",
+          "name": "radixPrefix",
           "route": "slot",
-          "slot": "prefix",
+          "slot": "radix_prefix",
           "path": [
             {
               "owner": "number_octal",
-              "slot": "prefix"
+              "slot": "radix_prefix"
             }
           ]
         },
@@ -10534,6 +10767,7 @@
         }
       ],
       "container": {
+        "slot": "properties",
         "kinds": [
           "pair",
           "spread_element",
@@ -10625,6 +10859,7 @@
         }
       ],
       "container": {
+        "slot": "properties",
         "kinds": [
           "pair_pattern",
           "rest_pattern",
@@ -10684,6 +10919,7 @@
     },
     "object_type_content": {
       "container": {
+        "slot": "item",
         "kinds": [
           "export_statement",
           "property_signature",
@@ -10698,6 +10934,7 @@
     },
     "omitting_type_annotation": {
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -10707,6 +10944,7 @@
     },
     "opting_type_annotation": {
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -10971,6 +11209,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -11112,6 +11351,7 @@
         }
       ],
       "container": {
+        "slot": "sequence_expression",
         "kinds": [
           "sequence_expression"
         ],
@@ -11180,6 +11420,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -11258,6 +11499,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -12082,6 +12324,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -12567,6 +12810,7 @@
         }
       ],
       "container": {
+        "slot": "lhs_expression",
         "kinds": [
           "member_expression",
           "subscript_expression",
@@ -12605,6 +12849,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -12698,6 +12943,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -12894,6 +13140,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -12914,6 +13161,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -12946,6 +13194,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
@@ -12991,6 +13240,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -13036,6 +13286,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "unescaped_double_string_fragment",
           "escape_sequence"
@@ -13102,6 +13353,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "unescaped_single_string_fragment",
           "escape_sequence"
@@ -13173,6 +13425,7 @@
     },
     "switch_body": {
       "container": {
+        "slot": "cases",
         "kinds": [
           "switch_case",
           "switch_default"
@@ -13242,6 +13495,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "statement"
         ],
@@ -13330,6 +13584,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "_template_chars",
           "template_type"
@@ -13363,6 +13618,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "_template_chars",
           "escape_sequence",
@@ -13628,6 +13884,7 @@
         }
       ],
       "container": {
+        "slot": "tuple_type_members",
         "kinds": [
           "tuple_type_members"
         ],
@@ -13637,6 +13894,7 @@
     },
     "tuple_type_members": {
       "container": {
+        "slot": "item",
         "kinds": [
           "tuple_parameter",
           "optional_tuple_parameter",
@@ -13697,6 +13955,7 @@
     },
     "type_annotation": {
       "container": {
+        "slot": "type",
         "kinds": [
           "type"
         ],
@@ -13706,6 +13965,7 @@
     },
     "type_arguments": {
       "container": {
+        "slot": "types",
         "kinds": [
           "types"
         ],
@@ -13776,6 +14036,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -13858,6 +14119,7 @@
     },
     "type_parameters": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "type_parameters_elements"
         ],
@@ -13867,6 +14129,7 @@
     },
     "type_parameters_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "type_parameter"
         ],
@@ -13912,6 +14175,7 @@
     },
     "type_predicate_annotation": {
       "container": {
+        "slot": "type_predicate",
         "kinds": [
           "type_predicate"
         ],
@@ -13946,6 +14210,7 @@
     },
     "types": {
       "container": {
+        "slot": "item",
         "kinds": [
           "type"
         ],
@@ -14674,6 +14939,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "yield_expression_delegate",
           "expression"
@@ -14707,6 +14973,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "expression"
         ],
