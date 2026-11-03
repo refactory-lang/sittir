@@ -916,7 +916,7 @@
     "type": "bare_tuple_pattern",
     "named": true,
     "fields": {
-      "item": {
+      "elements": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2165,7 +2165,7 @@
     "type": "expression_list",
     "named": true,
     "fields": {
-      "item": {
+      "elements": {
         "multiple": true,
         "required": true,
         "types": [

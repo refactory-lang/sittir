@@ -175,6 +175,8 @@
 (list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
+(expression_list item: (_) @elements)
+(expression_list "," @trailingComma .)
 (set (collection_elements) @elements) @expression.collection.set
 (dictionary) @expression.collection.dictionary
 (ellipsis) @literal.ellipsis
@@ -184,7 +186,11 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
+(pattern_list item: (_) @elements)
+(pattern_list "," @trailingComma .)
 (case_pattern_list) @pattern.tuple.bare
+(case_pattern_list item: (_) @elements)
+(case_pattern_list "," @trailingComma .)
 (list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)

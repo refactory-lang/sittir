@@ -1992,25 +1992,25 @@ function _buildExpressionList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionList.Bound {
 	currentHandle()?.admit(TSKindId.ExpressionList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3266,24 +3266,25 @@ function _buildPatternList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PatternList.Bound {
 	currentHandle()?.admit(TSKindId.PatternList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatternList(options, ...vs)),
+			elements: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+				rebuilt(node, handle, () => buildPatternList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5441,25 +5442,25 @@ function _buildCasePatternList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CasePatternList.Bound {
 	currentHandle()?.admit(TSKindId.CasePatternList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePatternList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
 				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

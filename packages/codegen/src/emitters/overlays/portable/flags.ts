@@ -27,6 +27,8 @@ const isNative = (plan: QueryPlan<QuerySubject>): plan is QueryPlan => {
 		case 'is':
 			return !('self' in plan);
 		case 'present':
+		case 'count':
+		case 'delimiter':
 			return true;
 		case 'child':
 		case 'not':
@@ -57,10 +59,16 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 				const captured = route.selector.kind;
 				return captured === null || captured === '_' ? { op: 'present', ...subjectAt(route.name, last) } : { op: 'is', types: typesOf(captured), ...subjectAt(route.name, last) };
 			}
+			case 'delimiter':
+				return refuse(route.name, 'a list\'s delimiter is no slot a route ends in');
 		}
 	};
 	const planOf = (route: MemberRoute): QueryPlan => {
 		if (route.spelled === true) return ALWAYS;
+		if (route.route === 'delimiter') {
+			const stamped: QueryPlan = { op: 'delimiter', delimiter: route.delimiter };
+			return route.items === undefined ? stamped : { op: 'and', of: [stamped, { op: 'count', min: 2, ...subjectAt(route.name, route.items) }] };
+		}
 		if (route.path === undefined) return refuse(route.name, 'its route reaches no slot');
 		const last = route.path.at(-1) ?? refuse(route.name, 'its route has no step');
 		return route.path.slice(0, -1).reduceRight<QueryPlan>((of, step) => ({ op: 'child', ...subjectAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), leafOf(route, last));

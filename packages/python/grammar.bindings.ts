@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "b7d8b3cffa8af711888fedbf30b9ac895db56569591cc9f2c99c2b7290665be5";
+export const hash = "c6bc6ae0f899a7dac37de08593ec84f8342f573b9521d758c1d9c58c0bc27bc1";
 
 export const renames = {
 	module: "file",
@@ -108,6 +108,7 @@ export default grammar(
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
 			case_clause: [{ "4": field("body") }, { "1/0/1": alias("bare_tuple_pattern") }],
+			case_pattern_list: { "0/0": field("elements"), "1/0/0": field("elements"), "2/0": field("elements") },
 			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
 			conditional_expression: { "0": field("consequence") },
@@ -115,6 +116,7 @@ export default grammar(
 			dictionary_splat_pattern: { "1": field("pattern") },
 			dotted_name: { "0/0/0/0": alias("qualified_identifier") },
 			expression: { "-5": alias("lambda_expression") },
+			expression_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			finally_clause: { "2": field("body") },
 			import_from_statement: { "1/0/1": alias("qualified_identifier") },
 			keyword_pattern: { "2": field("pattern") },
@@ -125,6 +127,7 @@ export default grammar(
 			named_expression: { "0": field("left"), "2": field("right") },
 			parameter: { "-5": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
 			pattern: { "-3": alias("rest_pattern") },
+			pattern_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			primary_expression: { "-1": alias("rest_pattern") },
 			relative_import: { "1/0/0": alias("qualified_identifier") },
 			set: { "1": field("elements") },

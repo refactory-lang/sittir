@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 55,
+	python: 40,
 	rust: 25,
 	typescript: 11
 };

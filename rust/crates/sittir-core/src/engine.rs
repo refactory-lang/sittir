@@ -87,6 +87,14 @@ pub trait EngineGrammar: Copy {
         let _ = cursor;
         None
     }
+    /// The delimiter flags the read stamps on the list the cursor is on
+    /// (`ReadNode::delimiter`); none for a node that is no list with an
+    /// optional flank, or a grammar with no nodes. The cursor ends where it
+    /// started.
+    fn delimiter(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<crate::types::Delimiter> {
+        let _ = cursor;
+        None
+    }
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -635,7 +643,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node);
         let router = |node: &tree_sitter::Node<'_>| self.grammar.router(crate::read::grammar_id(node), crate::read::display_id(node));
-        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router };
+        let delimiter = |cursor: &mut tree_sitter::TreeCursor<'_>| self.grammar.delimiter(cursor);
+        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router, delimiter: &delimiter };
         let mut cursor = self.tree.walk();
         addresses
             .iter()
@@ -698,7 +707,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node);
         let router = |node: &tree_sitter::Node<'_>| self.grammar.router(crate::read::grammar_id(node), crate::read::display_id(node));
-        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router };
+        let delimiter = |cursor: &mut tree_sitter::TreeCursor<'_>| self.grammar.delimiter(cursor);
+        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router, delimiter: &delimiter };
         let mut at = self.tree.walk();
         let surface = self.grammar.surface_kinds();
         let depth_member = |node: &tree_sitter::Node<'_>| { let kind = crate::read::grammar_id(node); kind != KindId::BLANK && [surface.indent, surface.dedent].contains(&kind) };

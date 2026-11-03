@@ -55,6 +55,7 @@ class Frame {
 	input: unknown;
 	mount: string | undefined;
 	seated: PortableCallShape | undefined;
+	delimiter: number | undefined;
 	listed = false;
 	constructor(
 		public builder: string | undefined,
@@ -163,6 +164,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 	const inputFrom = (frame: Frame, config: Readonly<Record<string, unknown>>): unknown => (shapeOf(frame) === 'config' ? config : sole(config));
 	const inputOf = (frame: Frame): unknown => (frame.input !== undefined ? frame.input : inputFrom(frame, configOf(frame)));
 	const builtFrom = (frame: Frame, builder: string): unknown => {
+		if (frame.delimiter !== undefined) {
+			if (table.builders[builder] !== 'elements') throw new Error(`portable build: ${builder} builds no list, so it takes no delimiter`);
+			return builderAt(builder)({ delimiter: frame.delimiter }, ...argsOf('elements', inputOf(frame)));
+		}
 		const keys = table.options?.[builder] ?? [];
 		if (frame.input !== undefined || keys.length === 0) return call(builder, inputOf(frame));
 		const config = configOf(frame);
@@ -598,6 +603,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				if (steps === undefined && !arm.when.some((test) => 'flag' in test && test.flag === flag && test.set))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
+				if (steps?.delimiter !== undefined) frame.delimiter = (frame.delimiter ?? 0) | steps.delimiter;
 			}
 			for (const [flag, steps] of Object.entries(arm.flags))
 				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);

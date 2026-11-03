@@ -594,7 +594,7 @@
 	"case_pattern_list": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "elements"
 		}
 	],
 	"case_tuple_pattern": [
@@ -1790,7 +1790,7 @@
 	"expression_list": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "elements"
 		}
 	],
 	"expression_statement": [
@@ -3675,7 +3675,7 @@
 	"pattern_list": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "elements"
 		}
 	],
 	"patterns": [

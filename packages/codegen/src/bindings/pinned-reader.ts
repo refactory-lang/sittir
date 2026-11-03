@@ -275,7 +275,8 @@ function expressionsOf(node: PatternNode, origin: PatternOrigin): readonly Ancho
 function refuseLooseAnchors(parent: Visit, origin: PatternOrigin): void {
 	for (const v of parent.children) {
 		if (v.anchor === null && !joined(v)) continue;
-		if (tokenText(v) !== null) refuse(origin, 'an anchor next to a token: an anchor names the nodes it ties together');
+		if (tokenText(v) !== null && (joined(v) || captures(v).length === 0)) refuse(origin, 'an anchor next to a token: an anchor names the nodes it ties together');
+		if (tokenText(v) !== null) continue;
 		if (isGroup(v) || v.alternation !== null) refuse(origin, 'an anchor next to a grouping or an alternation ties no one node');
 		if (mayBeAbsent(v)) refuse(origin, 'an anchor next to a node the pattern makes optional ties nothing when the node is absent');
 	}
@@ -568,15 +569,17 @@ function memberFact(
 	const token = tokenText(v);
 	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	if (direct) {
-		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...of };
+		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...anchorOf(v), ...of };
 		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	}
 	const via: SlotSelector[] = [];
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== home; cursor = cursor.parent)
 		if (kindOf(cursor) !== null) via.push(selector(cursor));
-	if (token !== null) return { route: 'presence', owner: homeKind, name, token, via, ...of };
+	if (token !== null) return { route: 'presence', owner: homeKind, name, token, via, ...anchorOf(v), ...of };
 	return { route: 'nested', owner: homeKind, name, parent: owner, multiple: quantified(v), via, ...selector(v), ...of };
 }
+
+const anchorOf = (v: Visit): { readonly anchor?: Anchor } => (v.anchor === null || tokenText(v) === null ? {} : { anchor: v.anchor });
 
 function claimedHome(parent: Visit, top: Visit, claimed: ReadonlyMap<Visit, readonly number[]>): Visit {
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)

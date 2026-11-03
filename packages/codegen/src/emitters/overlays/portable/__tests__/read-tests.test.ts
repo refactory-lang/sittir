@@ -52,6 +52,7 @@ const MODEL = new Map(
 		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])]),
 		node('field_def', [slot('accessor', [], { required: false, storage: 'boolean', terminals: ['accessor'] }), slot('name', ['identifier'])]),
 		node('member', [slot('modifier', ['modifier'], { required: false })]),
+		{ ...node('args', [slot('items', ['identifier'], { multiple: true })]), modelType: 'list', list: { trailing: 'optional' as const, separator: ',' } },
 		{ ...node('modifier'), modelType: 'enum', enumMembers: [{ kind: 'private_keyword', text: 'private' }, { kind: 'public_keyword', text: 'public' }] }
 	].map((n) => [n.kind, n])
 );
@@ -70,7 +71,8 @@ const SLOTS = {
 	'cmp.ops': { slots: { 110: 1 } },
 	'cmp_op.operators': { slots: { 111: 2 } },
 	'field_def.accessor': { slots: { 112: 0 } },
-	'member.modifier': { slots: { 113: 1 } }
+	'member.modifier': { slots: { 113: 1 } },
+	'args.items': { slots: { 114: 0 } }
 } as const satisfies Readonly<Record<string, SlotSubject>>;
 const BY_KEY: Readonly<Record<string, SlotSubject>> = SLOTS;
 
@@ -87,6 +89,12 @@ const testsOf = async (bindings: string, kind: string) => {
 };
 
 describe('readTestOf', () => {
+	it('tests a claim on a list\'s own separator as two items or a trailing one', async () => {
+		expect(await testsOf('(args ",") @expression.tuple', 'args')).toEqual([
+			['expression.tuple', [{ up: 0, via: [], plan: { op: 'or', of: [{ op: 'count', min: 2, ...SLOTS['args.items'] }, { op: 'delimiter', delimiter: 2 }] } }]]
+		]);
+	});
+
 	it('tests a plain claim by nothing', async () => {
 		expect(await testsOf('(boolean) @literal.boolean', 'boolean')).toEqual([['literal.boolean', []]]);
 	});

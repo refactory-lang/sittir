@@ -386,9 +386,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 346
+		281, 289, 290, 291, 292, 301, 348
 	]),
-	import_statement: new Set([137, 182, 346]),
+	import_statement: new Set([137, 182, 348]),
 	future_import_statement: new Set([136, 137, 182, 281]),
 	import_list: new Set([137, 182]),
 	print_statement: new Set([
@@ -417,13 +417,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 346
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 348
 	]),
 	finally_clause: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 346
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 348
 	]),
 	with_item: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -526,7 +526,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 268, 272, 276, 278, 279, 281,
-		289, 290, 291, 292, 301, 346
+		289, 290, 291, 292, 301, 348
 	]),
 	subjects: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -619,7 +619,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 346
+		281, 289, 290, 291, 292, 301, 348
 	]),
 	suite_block: new Set([180]),
 	suite_empty: new Set([116]),
@@ -3161,7 +3161,7 @@ export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType
 	currentHandle()?.admit(TSKindId.ExpressionList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionList)) {
 		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExpressionList(
 			{
@@ -4256,7 +4256,7 @@ export const coerceToPatternList: Seat<T.PatternList.LooseArgs, ReturnType<typeo
 	currentHandle()?.admit(TSKindId.PatternList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PatternList)) {
 		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPatternList(
 			{
@@ -5796,7 +5796,7 @@ export const coerceToCasePatternList: Seat<T.CasePatternList.LooseArgs, ReturnTy
 	currentHandle()?.admit(TSKindId.CasePatternList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CasePatternList)) {
 		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildCasePatternList(
 			{

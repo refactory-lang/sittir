@@ -752,6 +752,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
 				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
 			}
+			for (const route of entry.members) if (route.route === 'delimiter') flagSteps[route.name] = { presets: [], delimiter: route.delimiter };
 			const sharingAt = (path: readonly SlotStep[], i: number): readonly { readonly name: string; readonly path: readonly SlotStep[] }[] =>
 				survivors.flatMap(({ name, site: { path: other } }) => (other.length < i || !path.slice(0, i).every((step, j) => sameStep(step, other[j]!)) ? [] : [{ name, path: other }]));
 			const holdsOnly = (step: SlotStep, kind: string): boolean => {

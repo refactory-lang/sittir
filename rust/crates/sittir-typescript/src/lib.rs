@@ -100,6 +100,10 @@ impl EngineGrammar for TypeScriptGrammar {
     fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::KindId> {
         <AnyNode as sittir_core::read::ReadNode>::unit_id(cursor)
     }
+
+    fn delimiter(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::Delimiter> {
+        <AnyNode as sittir_core::read::ReadNode>::delimiter(cursor)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

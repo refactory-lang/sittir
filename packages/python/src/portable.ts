@@ -3549,12 +3549,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '345': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '347': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '345': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '347': 1 } } }]
 			}
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
@@ -3824,8 +3824,26 @@ const table: PortableTable = {
 };
 
 export const queryFlags: QueryFlags = Object.freeze({
+	[TSKindId.CasePatternList]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '271': 0 } }
+			]
+		}
+	},
 	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
+	[TSKindId.ExpressionList]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '181': 0 } }
+			]
+		}
+	},
 	[TSKindId.ForInClause]: {
 		async: { op: 'present', slots: { '244': 0 } },
 		trailingComma: { op: 'present', slots: { '244': 3 } }
@@ -3833,7 +3851,16 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '345': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '347': 0 } } },
+	[TSKindId.PatternList]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '218': 0 } }
+			]
+		}
+	},
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
 
@@ -3841,22 +3868,38 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
+	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
+	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
+	147: { expressions: { trailingComma: { types: [], kinds: [181] } } },
+	157: { right: { trailingComma: { types: [], kinds: [181] } } },
 	159: { handlers: { group: { types: [], kinds: [160] } } },
 	178: { definition: { async: { types: [], kinds: [165] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
+	217: { right: { trailingComma: { types: [], kinds: [181] } } },
+	220: { content: { trailingComma: { types: [], kinds: [181] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
+	250: { expression: { trailingComma: { types: [], kinds: [181] } } },
 	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
-	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
-	306: { definition: { async: { types: [], kinds: [302, 345] } } }
+	289: { value: { trailingComma: { types: [], kinds: [181] } } },
+	291: { value: { trailingComma: { types: [], kinds: [181] } } },
+	304: { statements: { async: { types: [], kinds: [157, 162, 302, 347] } } },
+	306: { definition: { async: { types: [], kinds: [302, 347] } } },
+	346: { expression: { trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
 	interface PortableReads extends PortableIds {}
+	interface CasePatternList {
+		readonly __flags__?: 'trailingComma';
+	}
 	interface ConstructorDeclaration {
 		readonly __flags__?: 'async';
 	}
 	interface ExceptClause {
 		readonly __flags__?: 'group';
+	}
+	interface ExpressionList {
+		readonly __flags__?: 'trailingComma';
 	}
 	interface ForInClause {
 		readonly __flags__?: 'async' | 'trailingComma';
@@ -3873,11 +3916,26 @@ declare module './types.js' {
 	interface MethodDeclaration {
 		readonly __flags__?: 'async';
 	}
+	interface PatternList {
+		readonly __flags__?: 'trailingComma';
+	}
 	interface WithStatement {
 		readonly __flags__?: 'async';
 	}
 	interface Module {
 		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface ReturnStatement {
+		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+	}
+	interface DeleteStatement {
+		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+	}
+	interface RaiseStatement {
+		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+	}
+	interface ForStatement {
+		readonly __slotFlags__?: { readonly right: 'trailingComma' };
 	}
 	interface TryStatement {
 		readonly __slotFlags__?: { readonly handlers: 'group' };
@@ -3888,16 +3946,34 @@ declare module './types.js' {
 	interface Block {
 		readonly __slotFlags__?: { readonly statements: 'async' };
 	}
+	interface AugmentedAssignment {
+		readonly __slotFlags__?: { readonly right: 'trailingComma' };
+	}
+	interface Yield {
+		readonly __slotFlags__?: { readonly content: 'trailingComma' };
+	}
 	interface String {
 		readonly __slotFlags__?: { readonly contents: 'debug' };
 	}
+	interface Interpolation {
+		readonly __slotFlags__?: { readonly expression: 'trailingComma' };
+	}
 	interface ComprehensionClauses {
 		readonly __slotFlags__?: { readonly contents: 'async' | 'trailingComma' };
+	}
+	interface AssignmentEq {
+		readonly __slotFlags__?: { readonly value: 'trailingComma' };
+	}
+	interface AssignmentTyped {
+		readonly __slotFlags__?: { readonly value: 'trailingComma' };
 	}
 	interface BlockClassDeclaration {
 		readonly __slotFlags__?: { readonly statements: 'async' };
 	}
 	interface DecoratedDefinitionClassDeclaration {
 		readonly __slotFlags__?: { readonly definition: 'async' };
+	}
+	interface FormatExpression {
+		readonly __slotFlags__?: { readonly expression: 'trailingComma' };
 	}
 }

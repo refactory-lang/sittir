@@ -383,9 +383,9 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						continue;
 					}
 					const bySelector = route.route === 'nested' && route.selector.kind === null;
-					const kinds = route.route === 'presence' ? [] : route.selector.kind !== null ? [route.selector.kind] : [...(route.slot?.kinds ?? [])];
+					const kinds = route.route === 'presence' || route.route === 'delimiter' ? [] : route.selector.kind !== null ? [route.selector.kind] : [...(route.slot?.kinds ?? [])];
 					const multiple = route.route === 'nested' && ((bySelector && (route.slot?.multiple ?? false)) || route.multiple);
-					if (route.route === 'presence' || (bySelector && route.slot?.storage === 'boolean')) f.kinds.add('boolean');
+					if (route.route === 'presence' || route.route === 'delimiter' || (bySelector && route.slot?.storage === 'boolean')) f.kinds.add('boolean');
 					let list = multiple;
 					let scalar = false;
 					for (const k of kinds) {

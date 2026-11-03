@@ -559,6 +559,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			left('nested route', row);
 			continue;
 		}
+		if (m.route === 'presence' && m.anchor !== undefined) {
+			realizedMembers.push(row);
+			continue;
+		}
 		if (m.route === 'presence' && m.via.length > 0) {
 			left('token reached through a child', row);
 			continue;

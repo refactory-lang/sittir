@@ -1575,17 +1575,17 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 
 export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.ExpressionList.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.ExpressionList as const,
-		items() {
-			return hydrateSlots<T.Expression>(this, '_item', tree);
+		elements() {
+			return hydrateSlots<T.Expression>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2665,17 +2665,17 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 
 export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.PatternList.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.PatternList as const,
-		items() {
-			return hydrateSlots<T.Pattern>(this, '_item', tree);
+		elements() {
+			return hydrateSlots<T.Pattern>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4203,17 +4203,17 @@ export function wrapTuplePatternElements(
 
 export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): T.CasePatternList.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.CasePatternList as const,
-		items() {
-			return hydrateSlots<T.CasePattern>(this, '_item', tree);
+		elements() {
+			return hydrateSlots<T.CasePattern>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

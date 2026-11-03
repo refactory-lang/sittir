@@ -110,6 +110,9 @@ const MODEL = [
 	node('_params_copy', [slot('elements', ['params_items'])], { modelType: 'envelope', shownAs: ['params_shown'] }),
 	node('params_shown', [slot('elements', ['params_items'])]),
 	node('params_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
+	node('tuple_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'optional', separator: ',', singleElementNeedsTrailing: true } }),
+	node('call_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'optional', separator: ',' } }),
+	node('fixed_items', [slot('item', ['identifier'], { multiple: true })], { modelType: 'list', elementKinds: ['identifier'], list: { trailing: 'mandatory', separator: ';' } }),
 	node('twin_mid', [slot('detail', ['identifier'], { required: false })]),
 	node('_plain_text', [], { modelType: 'pattern' }),
 	node('plain_text', [], { modelType: 'pattern' }),
@@ -750,9 +753,15 @@ describe("keptKinds over a supertype the slot holds", () => {
 		]);
 	});
 
-	it("routes no member through a list's item slot: a claimed list's items are its container content", async () => {
-		const routes = resolveRoutes(await grammar('(values) @expression.tuple'));
-		expect(routes.members.get('values')).toEqual([]);
+	it("routes a claimed list's items through its item slot", async () => {
+		const routes = resolveRoutes(await grammar('(params_items) @expression.tuple'));
+		expect(routes.members.get('params_items')).toEqual([
+			{ route: 'slot', name: 'item', slot: expect.objectContaining({ name: 'item', multiple: true }), path: [{ owner: 'params_items', slot: 'item' }] }
+		]);
+	});
+
+	it('refuses a claimed list whose items sit in more than one slot', async () => {
+		await expect(grammar('(values) @expression.tuple').then(resolveRoutes)).rejects.toThrow(/values is a list whose items sit in 2 slots \(first, rest\)/);
 	});
 
 	it("builds a deep member back through the anchored first node of a slot that holds many, a list's included", async () => {
@@ -1766,5 +1775,53 @@ describe('a claim on an anonymous token', () => {
 			[null, 'nothing', 'identifier'],
 			['missing_kind', undefined, 'declaration']
 		]);
+	});
+});
+
+describe('a list\'s trailing separator', () => {
+	const FLAGGED: Vocabulary = {
+		kinds: new Map(),
+		flags: new Set(['trailingComma']),
+		synonyms: { levels: new Map(), flags: new Map() },
+		members: () => new Map([['trailingComma', { optional: true, flag: true }]]),
+		featuresOf: () => new Set(),
+		composedAs: () => FLAGGED
+	};
+	const membersOf = async (bindings: string, kind: string) => {
+		const input = await grammar(bindings);
+		return resolveRoutes({ ...input, bindings: resolveFlags(input.bindings, FLAGGED, input.model) }).members.get(kind) ?? [];
+	};
+
+	it('reads as the list\'s Trailing bit, and by two items or more where one item always spells it', async () => {
+		expect((await membersOf('(call_items "," @trailingComma .) @expression.call.arguments', 'call_items')).find((m) => m.name === 'trailingComma')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			path: undefined,
+			flag: true
+		});
+		expect((await membersOf('(tuple_items "," @trailingComma .) @expression.tuple', 'tuple_items')).find((m) => m.name === 'trailingComma')).toEqual({
+			route: 'delimiter',
+			name: 'trailingComma',
+			delimiter: 2,
+			items: { owner: 'tuple_items', slot: 'item' },
+			path: undefined,
+			flag: true
+		});
+	});
+
+	it('refuses an anchored token that is not the list\'s own optional separator, or that sits on no list', async () => {
+		await expect(membersOf('(call_items ";" @trailingComma .) @expression.call.arguments', 'call_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(membersOf('(fixed_items ";" @trailingComma .) @expression.block', 'fixed_items')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+		await expect(membersOf('(function_definition "," @trailingComma .) @declaration.function', 'function_definition')).rejects.toThrow(/an anchored token names a list's own optional separator/);
+	});
+
+	it('refuses an anchored token the pattern does not capture', async () => {
+		await expect(membersOf('(call_items "," .) @expression.call.arguments', 'call_items')).rejects.toThrow(/anchor/);
+	});
+
+	it('stamps a claim on the list\'s own separator as separated, and leaves the list\'s other claims unstamped', async () => {
+		const entries = resolveRoutes(await grammar('(call_items ",") @expression.tuple\n(call_items) @expression.call.arguments')).readEntries.get('call_items') ?? [];
+		expect(entries.map((entry) => [entry.vocab, entry.separated])).toEqual(expect.arrayContaining([['expression.tuple', true], ['expression.call.arguments', undefined]]));
 	});
 });

@@ -87,6 +87,7 @@ type MemberRouteFact =
 			readonly name: string;
 			readonly token: string;
 			readonly via: readonly SlotSelector[];
+			readonly anchor?: Anchor;
 	  }
 	| {
 			readonly route: 'kind';
@@ -196,6 +197,15 @@ export interface ModelNode {
 	readonly aliasStorage: string | null;
 	readonly interiorPart: string | null;
 	readonly shownAs: readonly string[];
+	readonly list?: ModelList;
+}
+
+export type ListDelimiter = 'mandatory' | 'optional' | 'none';
+
+export interface ModelList {
+	readonly trailing: ListDelimiter;
+	readonly separator?: string;
+	readonly singleElementNeedsTrailing?: true;
 }
 
 export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>

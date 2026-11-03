@@ -60,6 +60,19 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
+	it('reads a bare tuple\'s trailing comma as its flag where it holds two items or more, and builds it back from the flag', () => {
+		const tuple = (source: string) => ((firstOf(source) as Read).content as Read).value;
+		expect(tuple('x = 1, 2,')).toMatchObject({ $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'] });
+		expect(tuple('x = 1, 2')).not.toHaveProperty('$flags');
+		expect(tuple('x = 1,')).not.toHaveProperty('$flags');
+		expect(((firstOf('a, b, = c') as Read).content as Read).name).toMatchObject({ $path: 'pattern.tuple.bare', $flags: ['trailingComma'] });
+		for (const source of ['x = 1, 2,\n', 'x = 1, 2\n', 'x = 1,\n', 'a, b, = c\n', 'for a, b, in c: pass\n', 'match x:\n    case a, b,:\n        pass\n']) expect(roundTrip(source)).toBe(source);
+		const built = (flags: readonly string[]) =>
+			String(runtime.engine.render(runtime.build({ $path: 'expression.collection.tuple.bare', $flags: flags, elements: ['a', 'b'] } as never) as never));
+		expect(built(['trailingComma'])).toBe('a, b,');
+		expect(built([])).toBe('a, b');
+	});
+
 	it('builds a single statement as the one item of an inline suite', () => {
 		for (const source of ['def f(): return 1\n', 'def f(): pass\n', 'class A: x = 1\n']) expect(roundTrip(source)).toBe(source);
 	});

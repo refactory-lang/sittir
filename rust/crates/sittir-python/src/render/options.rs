@@ -112,17 +112,17 @@ pub const SITE_AUGMENTED_ASSIGNMENT_AUGMENTED_ASSIGNMENT_AFTER: SiteId = SiteId(
 pub const SITE_AWAIT_AWAIT_KEYWORD_AFTER: SiteId = SiteId(103);
 pub const SITE_AWAIT_AWAIT_BEFORE: SiteId = SiteId(104);
 pub const SITE_AWAIT_AWAIT_AFTER: SiteId = SiteId(105);
-pub const SITE_PATTERN_LIST_ITEM_ATTRIBUTE_AFTER: SiteId = SiteId(106);
-pub const SITE_CASE_PATTERN_LIST_ITEM_CASE_AS_PATTERN_AFTER: SiteId = SiteId(107);
-pub const SITE_CASE_PATTERN_LIST_ITEM_KEYWORD_PATTERN_AFTER: SiteId = SiteId(108);
-pub const SITE_PATTERN_LIST_ITEM_LIST_PATTERN_AFTER: SiteId = SiteId(109);
-pub const SITE_PATTERN_LIST_ITEM_LIST_SPLAT_PATTERN_AFTER: SiteId = SiteId(110);
-pub const SITE_PATTERN_LIST_ITEM_SUBSCRIPT_AFTER: SiteId = SiteId(111);
-pub const SITE_PATTERN_LIST_ITEM_TUPLE_PATTERN_AFTER: SiteId = SiteId(112);
-pub const SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(113);
-pub const SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(114);
-pub const SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(115);
-pub const SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(116);
+pub const SITE_PATTERN_LIST_ELEMENTS_ATTRIBUTE_AFTER: SiteId = SiteId(106);
+pub const SITE_CASE_PATTERN_LIST_ELEMENTS_CASE_AS_PATTERN_AFTER: SiteId = SiteId(107);
+pub const SITE_CASE_PATTERN_LIST_ELEMENTS_KEYWORD_PATTERN_AFTER: SiteId = SiteId(108);
+pub const SITE_PATTERN_LIST_ELEMENTS_LIST_PATTERN_AFTER: SiteId = SiteId(109);
+pub const SITE_PATTERN_LIST_ELEMENTS_LIST_SPLAT_PATTERN_AFTER: SiteId = SiteId(110);
+pub const SITE_PATTERN_LIST_ELEMENTS_SUBSCRIPT_AFTER: SiteId = SiteId(111);
+pub const SITE_PATTERN_LIST_ELEMENTS_TUPLE_PATTERN_AFTER: SiteId = SiteId(112);
+pub const SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(113);
+pub const SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(114);
+pub const SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(115);
+pub const SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(116);
 pub const SITE_BINARY_OPERATOR_OPERATOR_BEFORE: SiteId = SiteId(117);
 pub const SITE_BINARY_OPERATOR_OPERATOR_AFTER: SiteId = SiteId(118);
 pub const SITE_BINARY_OPERATOR_BINARY_OPERATOR_BEFORE: SiteId = SiteId(119);
@@ -402,37 +402,37 @@ pub const SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE: SiteId = SiteId(392);
 pub const SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER: SiteId = SiteId(393);
 pub const SITE_EXEC_STATEMENT_EXEC_STATEMENT_BEFORE: SiteId = SiteId(394);
 pub const SITE_EXEC_STATEMENT_EXEC_STATEMENT_AFTER: SiteId = SiteId(395);
-pub const SITE_EXPRESSION_LIST_ITEM_AS_PATTERN_AFTER: SiteId = SiteId(396);
-pub const SITE_EXPRESSION_LIST_ITEM_ATTRIBUTE_AFTER: SiteId = SiteId(397);
-pub const SITE_EXPRESSION_LIST_ITEM_AWAIT_AFTER: SiteId = SiteId(398);
-pub const SITE_EXPRESSION_LIST_ITEM_BINARY_OPERATOR_AFTER: SiteId = SiteId(399);
-pub const SITE_EXPRESSION_LIST_ITEM_BOOLEAN_OPERATOR_AFTER: SiteId = SiteId(400);
-pub const SITE_EXPRESSION_LIST_ITEM_CALL_AFTER: SiteId = SiteId(401);
-pub const SITE_EXPRESSION_LIST_ITEM_COMPARISON_OPERATOR_AFTER: SiteId = SiteId(402);
-pub const SITE_EXPRESSION_LIST_ITEM_CONCATENATED_STRING_AFTER: SiteId = SiteId(403);
-pub const SITE_EXPRESSION_LIST_ITEM_CONDITIONAL_EXPRESSION_AFTER: SiteId = SiteId(404);
-pub const SITE_EXPRESSION_LIST_ITEM_DICTIONARY_AFTER: SiteId = SiteId(405);
-pub const SITE_EXPRESSION_LIST_ITEM_DICTIONARY_COMPREHENSION_AFTER: SiteId = SiteId(406);
-pub const SITE_EXPRESSION_LIST_ITEM_ELLIPSIS_AFTER: SiteId = SiteId(407);
-pub const SITE_EXPRESSION_LIST_ITEM_FALSE_AFTER: SiteId = SiteId(408);
-pub const SITE_EXPRESSION_LIST_ITEM_GENERATOR_EXPRESSION_AFTER: SiteId = SiteId(409);
-pub const SITE_EXPRESSION_LIST_ITEM_LAMBDA_AFTER: SiteId = SiteId(410);
-pub const SITE_EXPRESSION_LIST_ITEM_LIST_AFTER: SiteId = SiteId(411);
-pub const SITE_EXPRESSION_LIST_ITEM_LIST_COMPREHENSION_AFTER: SiteId = SiteId(412);
-pub const SITE_EXPRESSION_LIST_ITEM_NAMED_EXPRESSION_AFTER: SiteId = SiteId(413);
-pub const SITE_EXPRESSION_LIST_ITEM_NONE_AFTER: SiteId = SiteId(414);
-pub const SITE_EXPRESSION_LIST_ITEM_NOT_OPERATOR_AFTER: SiteId = SiteId(415);
-pub const SITE_EXPRESSION_LIST_ITEM_PARENTHESIZED_EXPRESSION_AFTER: SiteId = SiteId(416);
-pub const SITE_EXPRESSION_LIST_ITEM_LIST_SPLAT_PATTERN_AFTER: SiteId = SiteId(417);
-pub const SITE_EXPRESSION_LIST_ITEM_SET_AFTER: SiteId = SiteId(418);
-pub const SITE_EXPRESSION_LIST_ITEM_SET_COMPREHENSION_AFTER: SiteId = SiteId(419);
-pub const SITE_EXPRESSION_LIST_ITEM_STRING_AFTER: SiteId = SiteId(420);
-pub const SITE_EXPRESSION_LIST_ITEM_SUBSCRIPT_AFTER: SiteId = SiteId(421);
-pub const SITE_EXPRESSION_LIST_ITEM_TRUE_AFTER: SiteId = SiteId(422);
-pub const SITE_EXPRESSION_LIST_ITEM_TUPLE_AFTER: SiteId = SiteId(423);
-pub const SITE_EXPRESSION_LIST_ITEM_UNARY_OPERATOR_AFTER: SiteId = SiteId(424);
-pub const SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(425);
-pub const SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(426);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_AS_PATTERN_AFTER: SiteId = SiteId(396);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_ATTRIBUTE_AFTER: SiteId = SiteId(397);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_AWAIT_AFTER: SiteId = SiteId(398);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_BINARY_OPERATOR_AFTER: SiteId = SiteId(399);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_BOOLEAN_OPERATOR_AFTER: SiteId = SiteId(400);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_CALL_AFTER: SiteId = SiteId(401);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_COMPARISON_OPERATOR_AFTER: SiteId = SiteId(402);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_CONCATENATED_STRING_AFTER: SiteId = SiteId(403);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_CONDITIONAL_EXPRESSION_AFTER: SiteId = SiteId(404);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_DICTIONARY_AFTER: SiteId = SiteId(405);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_DICTIONARY_COMPREHENSION_AFTER: SiteId = SiteId(406);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_ELLIPSIS_AFTER: SiteId = SiteId(407);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_FALSE_AFTER: SiteId = SiteId(408);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_GENERATOR_EXPRESSION_AFTER: SiteId = SiteId(409);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_LAMBDA_AFTER: SiteId = SiteId(410);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_LIST_AFTER: SiteId = SiteId(411);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_LIST_COMPREHENSION_AFTER: SiteId = SiteId(412);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_NAMED_EXPRESSION_AFTER: SiteId = SiteId(413);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_NONE_AFTER: SiteId = SiteId(414);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_NOT_OPERATOR_AFTER: SiteId = SiteId(415);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_PARENTHESIZED_EXPRESSION_AFTER: SiteId = SiteId(416);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_LIST_SPLAT_PATTERN_AFTER: SiteId = SiteId(417);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_SET_AFTER: SiteId = SiteId(418);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_SET_COMPREHENSION_AFTER: SiteId = SiteId(419);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_STRING_AFTER: SiteId = SiteId(420);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_SUBSCRIPT_AFTER: SiteId = SiteId(421);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_TRUE_AFTER: SiteId = SiteId(422);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_TUPLE_AFTER: SiteId = SiteId(423);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_UNARY_OPERATOR_AFTER: SiteId = SiteId(424);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(425);
+pub const SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(426);
 pub const SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_AS_PATTERN_AFTER: SiteId = SiteId(427);
 pub const SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_ATTRIBUTE_AFTER: SiteId = SiteId(428);
 pub const SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_AWAIT_AFTER: SiteId = SiteId(429);
@@ -1097,12 +1097,12 @@ pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: SiteId = SiteId(1087);
 pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: SiteId = SiteId(1088);
 pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: SiteId = SiteId(1089);
 pub const DELIM_ARGUMENT_LIST_ELEMENTS_ITEM: FlankId = FlankId(0);
-pub const DELIM_PATTERN_LIST_ITEM: FlankId = FlankId(1);
-pub const DELIM_CASE_PATTERN_LIST_ITEM: FlankId = FlankId(2);
+pub const DELIM_PATTERN_LIST_ELEMENTS: FlankId = FlankId(1);
+pub const DELIM_CASE_PATTERN_LIST_ELEMENTS: FlankId = FlankId(2);
 pub const DELIM_COLLECTION_ELEMENTS_ITEM: FlankId = FlankId(3);
 pub const DELIM_DICT_PATTERN_ELEMENTS_ITEM: FlankId = FlankId(4);
 pub const DELIM_DICTIONARY_ELEMENTS_ITEM: FlankId = FlankId(5);
-pub const DELIM_EXPRESSION_LIST_ITEM: FlankId = FlankId(6);
+pub const DELIM_EXPRESSION_LIST_ELEMENTS: FlankId = FlankId(6);
 pub const DELIM_EXPRESSION_STATEMENT_TUPLE_ITEM: FlankId = FlankId(7);
 pub const DELIM_IMPORT_LIST_NAME: FlankId = FlankId(8);
 pub const DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM: FlankId = FlankId(9);
@@ -1227,17 +1227,17 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("await", "await_keyword_after", "await_keyword_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("await", "await_before", "await_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("await", "await_after", "await_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_attribute_after", "attribute_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_case_as_pattern_after", "case_as_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_keyword_pattern_after", "keyword_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_list_pattern_after", "list_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_rest_pattern_after", "rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_subscript_after", "subscript_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_tuple_pattern_after", "tuple_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("bare_tuple_pattern", "item_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_attribute_after", "attribute_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_case_as_pattern_after", "case_as_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_keyword_pattern_after", "keyword_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_list_pattern_after", "list_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_rest_pattern_after", "rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_subscript_after", "subscript_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_tuple_pattern_after", "tuple_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("bare_tuple_pattern", "elements_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("binary_operator", "operator_before", "operator_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("binary_operator", "operator_after", "operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("binary_operator", "binary_operator_before", "binary_operator_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
@@ -1517,37 +1517,37 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("exec_statement", "in_keyword_after", "in_keyword_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("exec_statement", "exec_statement_before", "exec_statement_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("exec_statement", "exec_statement_after", "exec_statement_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_as_pattern_after", "as_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_attribute_after", "attribute_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_await_after", "await_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_binary_operator_after", "binary_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_boolean_operator_after", "boolean_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_call_after", "call_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_comparison_operator_after", "comparison_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_concatenated_string_after", "concatenated_string_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_conditional_expression_after", "conditional_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_dictionary_after", "dictionary_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_dictionary_comprehension_after", "dictionary_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_ellipsis_after", "ellipsis_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_false_after", "false_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_generator_expression_after", "generator_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_lambda_expression_after", "lambda_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_list_after", "list_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_list_comprehension_after", "list_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_named_expression_after", "named_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_none_after", "none_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_not_operator_after", "not_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_parenthesized_expression_after", "parenthesized_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_rest_pattern_after", "rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_set_after", "set_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_set_comprehension_after", "set_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_string_after", "string_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_subscript_after", "subscript_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_true_after", "true_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_tuple_after", "tuple_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_unary_operator_after", "unary_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("expression_list", "item_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_as_pattern_after", "as_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_attribute_after", "attribute_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_await_after", "await_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_binary_operator_after", "binary_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_boolean_operator_after", "boolean_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_call_after", "call_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_comparison_operator_after", "comparison_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_concatenated_string_after", "concatenated_string_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_conditional_expression_after", "conditional_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_dictionary_after", "dictionary_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_dictionary_comprehension_after", "dictionary_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_ellipsis_after", "ellipsis_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_false_after", "false_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_generator_expression_after", "generator_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_lambda_expression_after", "lambda_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_list_after", "list_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_list_comprehension_after", "list_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_named_expression_after", "named_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_none_after", "none_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_not_operator_after", "not_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_parenthesized_expression_after", "parenthesized_expression_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_rest_pattern_after", "rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_set_after", "set_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_set_comprehension_after", "set_comprehension_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_string_after", "string_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_subscript_after", "subscript_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_true_after", "true_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_tuple_after", "tuple_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_unary_operator_after", "unary_operator_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_separator_space_before", "comma_separator_space_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("expression_list", "elements_separator_space_after", "comma_separator_space_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("expression_statement_tuple", "item_as_pattern_after", "as_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("expression_statement_tuple", "item_attribute_after", "attribute_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("expression_statement_tuple", "item_await_after", "await_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
@@ -2327,7 +2327,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(233)), after: Some(SiteId(234)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(111), site: SiteId(222) }, ::sittir_core::options::ArmSite { arm: KindId(108), site: SiteId(223) }, ::sittir_core::options::ArmSite { arm: KindId(109), site: SiteId(224) }, ::sittir_core::options::ArmSite { arm: KindId(114), site: SiteId(225) }, ::sittir_core::options::ArmSite { arm: KindId(110), site: SiteId(226) }, ::sittir_core::options::ArmSite { arm: KindId(113), site: SiteId(227) }, ::sittir_core::options::ArmSite { arm: KindId(112), site: SiteId(228) }, ::sittir_core::options::ArmSite { arm: KindId(25), site: SiteId(229) }, ::sittir_core::options::ArmSite { arm: KindId(60), site: SiteId(230) }, ::sittir_core::options::ArmSite { arm: KindId(212), site: SiteId(231) }, ::sittir_core::options::ArmSite { arm: KindId(211), site: SiteId(232) }], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(1088)), after: Some(SiteId(1089)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(264)), after: Some(SiteId(265)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(32), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(262))] }], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(145)), after: Some(SiteId(146)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(130), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(151), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(154), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(157), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(158), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(159), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(162), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(174), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(260), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), ::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(302), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(306), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(345), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(145)), after: Some(SiteId(146)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(130), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(151), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(154), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(157), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(158), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(159), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(162), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(174), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(260), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), ::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(302), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(306), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(347), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(935)), after: Some(SiteId(936)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(304), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(272)), after: Some(SiteId(273)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
 ];
@@ -2368,7 +2368,7 @@ pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
-    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -2386,12 +2386,12 @@ pub const LEAF_EDGES: &[u16] = &[
 /// (kind, `<slot>_delimiter` key, allowed delimiters, default delimiters), in site order.
 pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[
     ("argument_list_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
-    ("bare_tuple_pattern", "item_delimiter", Delimiter(2), Delimiter(0)),
-    ("bare_tuple_pattern", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("bare_tuple_pattern", "elements_delimiter", Delimiter(2), Delimiter(0)),
+    ("bare_tuple_pattern", "elements_delimiter", Delimiter(2), Delimiter(0)),
     ("collection_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("dict_pattern_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("dictionary_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
-    ("expression_list", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("expression_list", "elements_delimiter", Delimiter(2), Delimiter(0)),
     ("expression_statement_tuple", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("import_list", "name_delimiter", Delimiter(2), Delimiter(0)),
     ("list_pattern_case_patterns", "item_delimiter", Delimiter(2), Delimiter(0)),
@@ -3586,7 +3586,7 @@ pub static SEATS_ASSERT_STATEMENT_EXPRESSION: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_PATTERN_LIST_ITEM: &[Option<SiteId>] = &[
+pub static SEATS_PATTERN_LIST_ELEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -3604,7 +3604,7 @@ pub static SEATS_PATTERN_LIST_ITEM: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_CASE_PATTERN_LIST_ITEM: &[Option<SiteId>] = &[
+pub static SEATS_CASE_PATTERN_LIST_ELEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -3860,7 +3860,7 @@ pub static SEATS_EXEC_STATEMENT_IN_CLAUSE: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_EXPRESSION_LIST_ITEM: &[Option<SiteId>] = &[
+pub static SEATS_EXPRESSION_LIST_ELEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -4557,34 +4557,34 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_AWAIT_AWAIT_BEFORE, path: "(await)/before" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "bareTuplePattern", path: "(bare_tuple_pattern)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(bare_tuple_pattern)/item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(bare_tuple_pattern)/item:/(attribute)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_ATTRIBUTE_AFTER, path: "(bare_tuple_pattern)/item:/(attribute)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "elements", path: "(bare_tuple_pattern)/elements:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(bare_tuple_pattern)/elements:/(attribute)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_ATTRIBUTE_AFTER, path: "(bare_tuple_pattern)/elements:/(attribute)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "caseAsPattern", path: "(bare_tuple_pattern)/item:/(case_as_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_CASE_AS_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(case_as_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "caseAsPattern", path: "(bare_tuple_pattern)/elements:/(case_as_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ELEMENTS_CASE_AS_PATTERN_AFTER, path: "(bare_tuple_pattern)/elements:/(case_as_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PATTERN_LIST_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }, ::sittir_core::options::SiteRef { site: DELIM_CASE_PATTERN_LIST_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "keywordPattern", path: "(bare_tuple_pattern)/item:/(keyword_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_KEYWORD_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(keyword_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PATTERN_LIST_ELEMENTS, path: "(bare_tuple_pattern)/elements:/delimiter" }, ::sittir_core::options::SiteRef { site: DELIM_CASE_PATTERN_LIST_ELEMENTS, path: "(bare_tuple_pattern)/elements:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "keywordPattern", path: "(bare_tuple_pattern)/elements:/(keyword_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ELEMENTS_KEYWORD_PATTERN_AFTER, path: "(bare_tuple_pattern)/elements:/(keyword_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "listPattern", path: "(bare_tuple_pattern)/item:/(list_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_LIST_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(list_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "listPattern", path: "(bare_tuple_pattern)/elements:/(list_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_LIST_PATTERN_AFTER, path: "(bare_tuple_pattern)/elements:/(list_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "restPattern", path: "(bare_tuple_pattern)/item:/(rest_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_LIST_SPLAT_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(rest_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "restPattern", path: "(bare_tuple_pattern)/elements:/(rest_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_LIST_SPLAT_PATTERN_AFTER, path: "(bare_tuple_pattern)/elements:/(rest_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(bare_tuple_pattern)/item:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(bare_tuple_pattern)/item:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(bare_tuple_pattern)/elements:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(bare_tuple_pattern)/elements:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/elements:/separator/\",\"/after" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/elements:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/elements:/separator/\",\"/before" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/elements:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(bare_tuple_pattern)/item:/(subscript)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SUBSCRIPT_AFTER, path: "(bare_tuple_pattern)/item:/(subscript)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(bare_tuple_pattern)/elements:/(subscript)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_SUBSCRIPT_AFTER, path: "(bare_tuple_pattern)/elements:/(subscript)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(bare_tuple_pattern)/item:/(tuple_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_TUPLE_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(tuple_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(bare_tuple_pattern)/elements:/(tuple_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ELEMENTS_TUPLE_PATTERN_AFTER, path: "(bare_tuple_pattern)/elements:/(tuple_pattern)/after" }] },
             ] },
         ] },
     ] },
@@ -5343,100 +5343,100 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "expressionList", path: "(expression_list)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(expression_list)/item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "asPattern", path: "(expression_list)/item:/(as_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_AS_PATTERN_AFTER, path: "(expression_list)/item:/(as_pattern)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "elements", path: "(expression_list)/elements:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asPattern", path: "(expression_list)/elements:/(as_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_AS_PATTERN_AFTER, path: "(expression_list)/elements:/(as_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(expression_list)/item:/(attribute)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_ATTRIBUTE_AFTER, path: "(expression_list)/item:/(attribute)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(expression_list)/elements:/(attribute)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_ATTRIBUTE_AFTER, path: "(expression_list)/elements:/(attribute)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "await", path: "(expression_list)/item:/(await)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_AWAIT_AFTER, path: "(expression_list)/item:/(await)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "await", path: "(expression_list)/elements:/(await)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_AWAIT_AFTER, path: "(expression_list)/elements:/(await)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "binaryOperator", path: "(expression_list)/item:/(binary_operator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_BINARY_OPERATOR_AFTER, path: "(expression_list)/item:/(binary_operator)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "binaryOperator", path: "(expression_list)/elements:/(binary_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_BINARY_OPERATOR_AFTER, path: "(expression_list)/elements:/(binary_operator)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "booleanOperator", path: "(expression_list)/item:/(boolean_operator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_BOOLEAN_OPERATOR_AFTER, path: "(expression_list)/item:/(boolean_operator)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "booleanOperator", path: "(expression_list)/elements:/(boolean_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_BOOLEAN_OPERATOR_AFTER, path: "(expression_list)/elements:/(boolean_operator)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "call", path: "(expression_list)/item:/(call)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_CALL_AFTER, path: "(expression_list)/item:/(call)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "call", path: "(expression_list)/elements:/(call)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_CALL_AFTER, path: "(expression_list)/elements:/(call)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "comparisonOperator", path: "(expression_list)/item:/(comparison_operator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_COMPARISON_OPERATOR_AFTER, path: "(expression_list)/item:/(comparison_operator)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "comparisonOperator", path: "(expression_list)/elements:/(comparison_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_COMPARISON_OPERATOR_AFTER, path: "(expression_list)/elements:/(comparison_operator)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "concatenatedString", path: "(expression_list)/item:/(concatenated_string)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_CONCATENATED_STRING_AFTER, path: "(expression_list)/item:/(concatenated_string)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "concatenatedString", path: "(expression_list)/elements:/(concatenated_string)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_CONCATENATED_STRING_AFTER, path: "(expression_list)/elements:/(concatenated_string)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "conditionalExpression", path: "(expression_list)/item:/(conditional_expression)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_CONDITIONAL_EXPRESSION_AFTER, path: "(expression_list)/item:/(conditional_expression)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "conditionalExpression", path: "(expression_list)/elements:/(conditional_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_CONDITIONAL_EXPRESSION_AFTER, path: "(expression_list)/elements:/(conditional_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_EXPRESSION_LIST_ITEM, path: "(expression_list)/item:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "dictionary", path: "(expression_list)/item:/(dictionary)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_DICTIONARY_AFTER, path: "(expression_list)/item:/(dictionary)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_EXPRESSION_LIST_ELEMENTS, path: "(expression_list)/elements:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "dictionary", path: "(expression_list)/elements:/(dictionary)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_DICTIONARY_AFTER, path: "(expression_list)/elements:/(dictionary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "dictionaryComprehension", path: "(expression_list)/item:/(dictionary_comprehension)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_DICTIONARY_COMPREHENSION_AFTER, path: "(expression_list)/item:/(dictionary_comprehension)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "dictionaryComprehension", path: "(expression_list)/elements:/(dictionary_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_DICTIONARY_COMPREHENSION_AFTER, path: "(expression_list)/elements:/(dictionary_comprehension)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ellipsis", path: "(expression_list)/item:/(ellipsis)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_ELLIPSIS_AFTER, path: "(expression_list)/item:/(ellipsis)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "ellipsis", path: "(expression_list)/elements:/(ellipsis)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_ELLIPSIS_AFTER, path: "(expression_list)/elements:/(ellipsis)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "false", path: "(expression_list)/item:/(false)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_FALSE_AFTER, path: "(expression_list)/item:/(false)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "false", path: "(expression_list)/elements:/(false)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_FALSE_AFTER, path: "(expression_list)/elements:/(false)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(expression_list)/item:/(generator_expression)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(expression_list)/item:/(generator_expression)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(expression_list)/elements:/(generator_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_GENERATOR_EXPRESSION_AFTER, path: "(expression_list)/elements:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(expression_list)/item:/(lambda_expression)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LAMBDA_AFTER, path: "(expression_list)/item:/(lambda_expression)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(expression_list)/elements:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_LAMBDA_AFTER, path: "(expression_list)/elements:/(lambda_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "list", path: "(expression_list)/item:/(list)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LIST_AFTER, path: "(expression_list)/item:/(list)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "list", path: "(expression_list)/elements:/(list)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_LIST_AFTER, path: "(expression_list)/elements:/(list)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "listComprehension", path: "(expression_list)/item:/(list_comprehension)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LIST_COMPREHENSION_AFTER, path: "(expression_list)/item:/(list_comprehension)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "listComprehension", path: "(expression_list)/elements:/(list_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_LIST_COMPREHENSION_AFTER, path: "(expression_list)/elements:/(list_comprehension)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "namedExpression", path: "(expression_list)/item:/(named_expression)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_NAMED_EXPRESSION_AFTER, path: "(expression_list)/item:/(named_expression)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "namedExpression", path: "(expression_list)/elements:/(named_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_NAMED_EXPRESSION_AFTER, path: "(expression_list)/elements:/(named_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "none", path: "(expression_list)/item:/(none)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_NONE_AFTER, path: "(expression_list)/item:/(none)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "none", path: "(expression_list)/elements:/(none)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_NONE_AFTER, path: "(expression_list)/elements:/(none)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "notOperator", path: "(expression_list)/item:/(not_operator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_NOT_OPERATOR_AFTER, path: "(expression_list)/item:/(not_operator)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "notOperator", path: "(expression_list)/elements:/(not_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_NOT_OPERATOR_AFTER, path: "(expression_list)/elements:/(not_operator)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(expression_list)/item:/(parenthesized_expression)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_PARENTHESIZED_EXPRESSION_AFTER, path: "(expression_list)/item:/(parenthesized_expression)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(expression_list)/elements:/(parenthesized_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_PARENTHESIZED_EXPRESSION_AFTER, path: "(expression_list)/elements:/(parenthesized_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "restPattern", path: "(expression_list)/item:/(rest_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LIST_SPLAT_PATTERN_AFTER, path: "(expression_list)/item:/(rest_pattern)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "restPattern", path: "(expression_list)/elements:/(rest_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_LIST_SPLAT_PATTERN_AFTER, path: "(expression_list)/elements:/(rest_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(expression_list)/item:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(expression_list)/item:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(expression_list)/item:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(expression_list)/item:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(expression_list)/elements:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(expression_list)/elements:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(expression_list)/elements:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE, path: "(expression_list)/elements:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "set", path: "(expression_list)/item:/(set)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_SET_AFTER, path: "(expression_list)/item:/(set)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "set", path: "(expression_list)/elements:/(set)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_SET_AFTER, path: "(expression_list)/elements:/(set)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "setComprehension", path: "(expression_list)/item:/(set_comprehension)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_SET_COMPREHENSION_AFTER, path: "(expression_list)/item:/(set_comprehension)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "setComprehension", path: "(expression_list)/elements:/(set_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_SET_COMPREHENSION_AFTER, path: "(expression_list)/elements:/(set_comprehension)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "string", path: "(expression_list)/item:/(string)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_STRING_AFTER, path: "(expression_list)/item:/(string)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "string", path: "(expression_list)/elements:/(string)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_STRING_AFTER, path: "(expression_list)/elements:/(string)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(expression_list)/item:/(subscript)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_SUBSCRIPT_AFTER, path: "(expression_list)/item:/(subscript)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(expression_list)/elements:/(subscript)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_SUBSCRIPT_AFTER, path: "(expression_list)/elements:/(subscript)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "true", path: "(expression_list)/item:/(true)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_TRUE_AFTER, path: "(expression_list)/item:/(true)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "true", path: "(expression_list)/elements:/(true)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_TRUE_AFTER, path: "(expression_list)/elements:/(true)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple", path: "(expression_list)/item:/(tuple)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_TUPLE_AFTER, path: "(expression_list)/item:/(tuple)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "tuple", path: "(expression_list)/elements:/(tuple)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_TUPLE_AFTER, path: "(expression_list)/elements:/(tuple)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unaryOperator", path: "(expression_list)/item:/(unary_operator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_UNARY_OPERATOR_AFTER, path: "(expression_list)/item:/(unary_operator)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "unaryOperator", path: "(expression_list)/elements:/(unary_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ELEMENTS_UNARY_OPERATOR_AFTER, path: "(expression_list)/elements:/(unary_operator)/after" }] },
             ] },
         ] },
     ] },

@@ -1,6 +1,7 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { aliasContentSlot, comparesOwnText, heldSteps, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
+import { Delimiter } from '@sittir/common/utils';
+import { aliasContentSlot, comparesOwnText, heldSteps, listItems, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { nodeSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
@@ -131,11 +132,19 @@ function absenceTestOf(owner: string, slot: string, subjectOf: SlotSubjectOf): Q
 	return subject === undefined ? `no number for ${owner}'s slot ${slot}` : { op: 'not', of: { op: 'present', ...subject } };
 }
 
+function separatedTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf): PortableCondition | string {
+	const items = listItems(model.get(entry.kind));
+	const subject = items === undefined ? undefined : subjectOf(entry.kind, items.name);
+	if (subject === undefined) return `${entry.kind}'s claim tests its separator, and no numbered slot holds its items`;
+	return { up: 0, via: [], plan: { op: 'or', of: [{ op: 'count', min: 2, ...subject }, { op: 'delimiter', delimiter: Delimiter.Trailing }] } };
+}
+
 export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin) => slotConditionOf(entry, model, subjectOf, pin.slot, (holder, slot) => keywordTestOf(holder, slot, pin.text, subjectOf, presenceOf)));
 	const absent = entry.absent.map((field) => slotConditionOf(entry, model, subjectOf, field, (holder, slot) => absenceTestOf(holder, slot, subjectOf)));
 	const predicates = entry.decided === true ? [] : [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
-	const conditions = [...pins, ...absent, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
+	const separated = entry.separated === true ? [separatedTestOf(entry, model, subjectOf)] : [];
+	const conditions = [...pins, ...absent, ...separated, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));

@@ -49,6 +49,13 @@ describe('flagPlansOf', () => {
 		expect(plans([marked]).get('marked')).toEqual({ op: 'child', ...SLOTS['list.items'], anchor: 'first', of: { op: 'present', ...SLOTS['item.marker'] } });
 	});
 
+	it('tests a list\'s trailing separator by its delimiter stamp, and by two items when one item always writes it', () => {
+		const trailing: MemberRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: undefined };
+		expect(plans([trailing]).get('trailingComma')).toEqual({ op: 'delimiter', delimiter: 2 });
+		const counted: MemberRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
+		expect(plans([counted]).get('trailingComma')).toEqual({ op: 'and', of: [{ op: 'delimiter', delimiter: 2 }, { op: 'count', min: 2, ...SLOTS['list.items'] }] });
+	});
+
 	it('holds always for a flag the kind\'s own form spells', () => {
 		const generator: MemberRoute = { route: 'presence', name: 'generator', via: [], token: '*', flag: true, spelled: true, path: undefined };
 		expect(plans([generator]).get('generator')).toEqual({ op: 'and', of: [] });

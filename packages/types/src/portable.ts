@@ -155,10 +155,14 @@ export interface PortablePreset {
 	readonly builder?: string;
 }
 
-/** What setting a flag adds to a build, and what leaving it unset writes: where the flag's slot must hold one of two tokens, the other one. */
+/**
+ * What setting a flag adds to a build, and what leaving it unset writes: where the flag's slot must hold one of two tokens, the other one.
+ * A flag that reads a list's delimiter sets those delimiter flags (`delimiter`) on the arm's list builder.
+ */
 export interface PortableFlagStep {
 	readonly presets: readonly PortablePreset[];
 	readonly unset?: readonly PortablePreset[];
+	readonly delimiter?: number;
 }
 
 /** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */

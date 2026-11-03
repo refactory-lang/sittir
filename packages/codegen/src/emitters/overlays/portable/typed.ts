@@ -354,10 +354,9 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 				optional ||= pinned === undefined || pinned.some((k) => k !== step.owner);
 			}
 			held = concreteKinds(model, slot.kinds);
-			const listed = nodeOf(step.owner)?.modelType === 'list' && slot.multiple;
-			if (!listed) expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
-			const tested: readonly string[] | undefined = optional || listed ? undefined : sure.present(path.slice(0, i + 1));
-			if (!optional && !listed) {
+			expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
+			const tested: readonly string[] | undefined = optional ? undefined : sure.present(path.slice(0, i + 1));
+			if (!optional) {
 				const narrowed = tested !== undefined && tested.length > 0 && held.some((k) => !tested.includes(k)) ? tested.flatMap((k) => idOf(k) ?? []) : [];
 				present.push({ accessor: slot.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined });
 			}

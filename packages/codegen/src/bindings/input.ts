@@ -7,7 +7,7 @@ import { groupLiftNames } from '../dsl/rule-metadata.ts';
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
-import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { bindFacts, bindingsPath, type EnumMember, type ListDelimiter, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
 import { expandHeldMembers, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
@@ -52,6 +52,9 @@ export interface NodeModelNode {
 	readonly aliasStorage?: string;
 	readonly interiorPart?: string;
 	readonly shownAs?: readonly string[];
+	readonly trailingDelimiter?: ListDelimiter;
+	readonly singleElementNeedsTrailing?: true;
+	readonly separator?: string;
 }
 
 export interface NodeModelRecord {
@@ -105,7 +108,10 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			splitFrom: n.splitFrom ?? null,
 			aliasStorage: n.aliasStorage ?? null,
 			interiorPart: n.interiorPart ?? null,
-			shownAs: n.shownAs ?? []
+			shownAs: n.shownAs ?? [],
+			...(n.modelType === 'list' && n.trailingDelimiter !== undefined
+				? { list: { trailing: n.trailingDelimiter, ...(n.separator === undefined ? {} : { separator: n.separator }), ...(n.singleElementNeedsTrailing === true ? { singleElementNeedsTrailing: true as const } : {}) } }
+				: {})
 		});
 	}
 	return out;

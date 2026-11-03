@@ -50,7 +50,7 @@ describe('emitPortableTyped', () => {
 	it("reads a member through each of its routes in the route table's order, and an absent list as []", () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(typed.source).toContain(
-			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].parameters().elements(), TSKindId.ParametersElements)) ?? read(of(this[low].parameters().elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup()?.elements()) ?? [];\n}`
+			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].parameters().elements(), TSKindId.ParametersElements)?.items()) ?? read(of(this[low].parameters().elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup()?.elements()?.items()) ?? [];\n}`
 		);
 	});
 
