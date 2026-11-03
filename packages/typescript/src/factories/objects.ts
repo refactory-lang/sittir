@@ -180,14 +180,12 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 		hashBangLine: (value?: Admit<T.HashBangLine>) =>
 			rebuilt(node, handle, () => buildProgram({ ...config, hashBangLine: value })),
 		statements: (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
-			rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.Program.Bound;
 }
@@ -222,14 +220,10 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildHashBangLine(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: (value: Admit<string>) => rebuilt(node, handle, () => buildHashBangLine(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.HashBangLine.Bound;
 }
@@ -269,13 +263,11 @@ export function buildNamespaceExport(
 	};
 	node.$with = {
 		moduleExportName: (value: Admit<NonNullable<T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
-			rebuilt(node, handle, () => buildNamespaceExport(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNamespaceExport(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NamespaceExport.Bound;
 }
@@ -368,14 +360,12 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 					{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
 					(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.ExportClause.Bound;
@@ -437,13 +427,11 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		name: (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
 			rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value })),
 		alias: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['alias']>) =>
-			rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportSpecifier.Bound;
 }
@@ -508,13 +496,11 @@ export function buildImportStatement(
 		importAttribute: (value?: Admit<T.ImportAttribute>) =>
 			rebuilt(node, handle, () => buildImportStatement({ ...config, importAttribute: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportStatement.Bound;
 }
@@ -544,13 +530,11 @@ export function buildImportClause(
 	};
 	node.$with = {
 		content: (value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>) =>
-			rebuilt(node, handle, () => buildImportClause(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportClause(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportClause.Bound;
 }
@@ -576,14 +560,10 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNamespaceImport(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNamespaceImport(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NamespaceImport.Bound;
 }
@@ -674,14 +654,12 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 					{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
 					(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.NamedImports.Bound;
@@ -716,13 +694,11 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 	node.$with = {
 		attributeKind: (value: Admit<NonNullable<T.ImportAttribute.Config>['attributeKind']>) =>
 			rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value })),
-		object: (value: Admit<T.Object>) => rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value })),
-		[RECEIVER]: node
+		object: (value: Admit<T.Object>) => rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportAttribute.Bound;
 }
@@ -768,13 +744,11 @@ export function buildExpressionStatement(
 		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 			rebuilt(node, handle, () => buildExpressionStatement(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExpressionStatement(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExpressionStatement(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExpressionStatement.Bound;
 }
@@ -824,13 +798,11 @@ export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclarat
 		declarators: (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
 			rebuilt(node, handle, () => buildVariableDeclaration(options, ...restItems('declarators', vs))),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildVariableDeclaration({ ...options, terminator: spelling }, ...children)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildVariableDeclaration({ ...options, terminator: spelling }, ...children))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.VariableDeclaration.Bound;
 }
@@ -879,13 +851,11 @@ export function buildLexicalDeclaration(
 				buildLexicalDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
 			),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildLexicalDeclaration(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildLexicalDeclaration(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LexicalDeclaration.Bound;
 }
@@ -940,13 +910,11 @@ export function buildUsingDeclaration(
 				buildUsingDeclaration({ ...config, variableDeclarators: restItems('variableDeclarators', values) }, options)
 			),
 		automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UsingDeclaration.Bound;
 }
@@ -997,14 +965,12 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 		statements: (...vs: Admit<T.Statement>[]) =>
 			rebuilt(node, handle, () => buildStatementBlock(options, ...restItems('statements', vs))),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.StatementBlock.Bound;
 }
@@ -1029,13 +995,11 @@ export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<NonNullable<T.Statement>>) => rebuilt(node, handle, () => buildElseClause(value)),
-		[RECEIVER]: node
+		body: (value: Admit<NonNullable<T.Statement>>) => rebuilt(node, handle, () => buildElseClause(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ElseClause.Bound;
 }
@@ -1086,13 +1050,11 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		consequence: (value: Admit<NonNullable<T.IfStatement.Config>['consequence']>) =>
 			rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value })),
 		alternative: (value?: Admit<T.ElseClause>) =>
-			rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.IfStatement.Bound;
 }
@@ -1126,13 +1088,11 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 	node.$with = {
 		value: (value: Admit<T.ParenthesizedExpression>) =>
 			rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value })),
-		body: (value: Admit<T.SwitchBody>) => rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value })),
-		[RECEIVER]: node
+		body: (value: Admit<T.SwitchBody>) => rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SwitchStatement.Bound;
 }
@@ -1205,13 +1165,11 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		increment: (value?: Admit<NonNullable<T.ForStatement.Config>['increment']>) =>
 			rebuilt(node, handle, () => buildForStatement({ ...config, increment: value })),
 		body: (value: Admit<NonNullable<T.ForStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildForStatement({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForStatement.Bound;
 }
@@ -1251,13 +1209,11 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		header: (value: Admit<T.ForHeader>) =>
 			rebuilt(node, handle, () => buildForInStatement({ ...config, header: value })),
 		body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildForInStatement({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForInStatement.Bound;
 }
@@ -1294,13 +1250,11 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		condition: (value: Admit<T.ParenthesizedExpression>) =>
 			rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value })),
 		body: (value: Admit<NonNullable<T.WhileStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.WhileStatement.Bound;
 }
@@ -1347,13 +1301,11 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		condition: (value: Admit<T.ParenthesizedExpression>) =>
 			rebuilt(node, handle, () => buildDoStatement({ ...config, condition: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DoStatement.Bound;
 }
@@ -1400,13 +1352,11 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		handlers: (value?: Admit<T.CatchClause>) =>
 			rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: value })),
 		finalizer: (value?: Admit<T.FinallyClause>) =>
-			rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TryStatement.Bound;
 }
@@ -1441,13 +1391,11 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		object: (value: Admit<T.ParenthesizedExpression>) =>
 			rebuilt(node, handle, () => buildWithStatement({ ...config, object: value })),
 		body: (value: Admit<NonNullable<T.WithStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildWithStatement({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.WithStatement.Bound;
 }
@@ -1509,13 +1457,11 @@ function _buildBreakStatement(
 		label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
 			rebuilt(node, handle, () => _buildBreakStatement(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => _buildBreakStatement(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => _buildBreakStatement(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.BreakStatement.Bound;
 }
@@ -1580,13 +1526,11 @@ function _buildContinueStatement(
 		label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
 			rebuilt(node, handle, () => _buildContinueStatement(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => _buildContinueStatement(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => _buildContinueStatement(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ContinueStatement.Bound;
 }
@@ -1618,13 +1562,11 @@ export function buildDebuggerStatement(
 	};
 	node.$with = {
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DebuggerStatement.Bound;
 }
@@ -1669,13 +1611,11 @@ export function buildReturnStatement(
 		expression: (value?: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 			rebuilt(node, handle, () => buildReturnStatement(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildReturnStatement(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildReturnStatement(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ReturnStatement.Bound;
 }
@@ -1721,13 +1661,11 @@ export function buildThrowStatement(
 		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 			rebuilt(node, handle, () => buildThrowStatement(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildThrowStatement(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildThrowStatement(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ThrowStatement.Bound;
 }
@@ -1767,13 +1705,11 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 		label: (value: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
 			rebuilt(node, handle, () => buildLabeledStatement({ ...config, label: value })),
 		body: (value: Admit<NonNullable<T.LabeledStatement.Config>['body']>) =>
-			rebuilt(node, handle, () => buildLabeledStatement({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildLabeledStatement({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LabeledStatement.Bound;
 }
@@ -1803,14 +1739,12 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 	};
 	node.$with = {
 		cases: (...vs: Admit<T.SwitchCase | T.SwitchDefault>[]) =>
-			rebuilt(node, handle, () => buildSwitchBody(...restItems('cases', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSwitchBody(...restItems('cases', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.SwitchBody.Bound;
 }
@@ -1850,13 +1784,11 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		value: (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 			rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value })),
 		bodies: (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
-			rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SwitchCase.Bound;
 }
@@ -1884,14 +1816,11 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		bodies: (...vs: Admit<T.Statement>[]) =>
-			rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs))),
-		[RECEIVER]: node
+		bodies: (...vs: Admit<T.Statement>[]) => rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SwitchDefault.Bound;
 }
@@ -1971,13 +1900,11 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 					(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
 					() => readGroup_catchClauseGroup.call(node)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CatchClause.Bound;
 }
@@ -2028,14 +1955,10 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildFinallyClause(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildFinallyClause(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FinallyClause.Bound;
 }
@@ -2068,13 +1991,11 @@ export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T
 	};
 	node.$with = {
 		expression: (value?: Admit<NonNullable<T.YieldExpressionDelegate | T.Expression>>) =>
-			rebuilt(node, handle, () => buildYieldExpression(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildYieldExpression(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.YieldExpression.Bound;
 }
@@ -2123,14 +2044,12 @@ export function buildObject(
 				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
 				| T.ShorthandPropertyIdentifier.Types
 			>[]
-		) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs))),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.Object.Bound;
 }
@@ -2179,14 +2098,12 @@ export function buildObjectPattern(
 				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
 				| T.ShorthandPropertyIdentifierPattern.Types
 			>[]
-		) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs))),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.ObjectPattern.Bound;
 }
@@ -2225,13 +2142,11 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 	node.$with = {
 		left: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => buildAssignmentPattern({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.AssignmentPattern.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAssignmentPattern({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAssignmentPattern({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AssignmentPattern.Bound;
 }
@@ -2289,13 +2204,11 @@ export function buildObjectAssignmentPattern(
 			>
 		) => rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.ObjectAssignmentPattern.Config>['right']>) =>
-			rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ObjectAssignmentPattern.Bound;
 }
@@ -2325,14 +2238,12 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
-			rebuilt(node, handle, () => buildArray(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildArray(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.Array.Bound;
 }
@@ -2362,14 +2273,12 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.Pattern | T.AssignmentPattern>[]) =>
-			rebuilt(node, handle, () => buildArrayPattern(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildArrayPattern(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.ArrayPattern.Bound;
 }
@@ -2414,13 +2323,11 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 		qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 			rebuilt(node, handle, () => buildNestedIdentifier({ ...config, qualifier: value })),
 		name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NestedIdentifier.Bound;
 }
@@ -2499,13 +2406,11 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 			),
 		heritage: (value?: Admit<T.ClassHeritage>) =>
 			rebuilt(node, handle, () => buildClass({ ...config, heritage: value })),
-		body: (value: Admit<T.ClassBody>) => rebuilt(node, handle, () => buildClass({ ...config, body: value })),
-		[RECEIVER]: node
+		body: (value: Admit<T.ClassBody>) => rebuilt(node, handle, () => buildClass({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Class.Bound;
 }
@@ -2600,13 +2505,11 @@ export function buildClassDeclaration(
 		body: (value: Admit<T.ClassBody>) =>
 			rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildClassDeclaration(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassDeclaration(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassDeclaration.Bound;
 }
@@ -2636,13 +2539,11 @@ export function buildClassHeritage(
 	};
 	node.$with = {
 		content: (value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>) =>
-			rebuilt(node, handle, () => buildClassHeritage(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassHeritage(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassHeritage.Bound;
 }
@@ -2730,13 +2631,11 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 			rebuilt(node, handle, () => buildFunctionExpression({ ...config, returnType: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FunctionExpression.Bound;
 }
@@ -2837,13 +2736,11 @@ export function buildFunctionDeclaration(
 		body: (value: Admit<T.StatementBlock>) =>
 			rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildFunctionDeclaration(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFunctionDeclaration(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FunctionDeclaration.Bound;
 }
@@ -2931,13 +2828,11 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.GeneratorFunction.Bound;
 }
@@ -3039,13 +2934,11 @@ export function buildGeneratorFunctionDeclaration(
 		body: (value: Admit<T.StatementBlock>) =>
 			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
-			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildGeneratorFunctionDeclaration(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.GeneratorFunctionDeclaration.Bound;
 }
@@ -3090,13 +2983,11 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 		content: (value: Admit<T.ArrowFunctionParameter | T.CallSignature>) =>
 			rebuilt(node, handle, () => buildArrowFunction({ ...config, content: value })),
 		body: (value: Admit<NonNullable<T.ArrowFunction.Config>['body']>) =>
-			rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ArrowFunction.Bound;
 }
@@ -3160,13 +3051,11 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 				)
 			),
 		arguments: (value?: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NewExpression.Bound;
 }
@@ -3198,13 +3087,11 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAwaitExpression(value)),
-		[RECEIVER]: node
+		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAwaitExpression(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AwaitExpression.Bound;
 }
@@ -3255,13 +3142,11 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		operator: (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value })),
 		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MemberExpression.Bound;
 }
@@ -3314,13 +3199,11 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 		optionalChain: (value?: Admit<NonNullable<T.SubscriptExpression.Config>['optionalChain']>) =>
 			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, optionalChain: value })),
 		index: (value: Admit<NonNullable<T.SubscriptExpression.Config>['index']>) =>
-			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, index: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSubscriptExpression({ ...config, index: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SubscriptExpression.Bound;
 }
@@ -3387,13 +3270,11 @@ export function buildLhsExpression(
 					| T.NonNullExpression
 				>
 			>
-		) => rebuilt(node, handle, () => buildLhsExpression(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildLhsExpression(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LhsExpression.Bound;
 }
@@ -3441,13 +3322,11 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		left: (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
 			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.AssignmentExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AssignmentExpression.Bound;
 }
@@ -3505,13 +3384,11 @@ export function buildAugmentedAssignmentExpression(
 		operator: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, operator: value })),
 		right: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>) =>
-			rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AugmentedAssignmentExpression.Bound;
 }
@@ -3543,13 +3420,11 @@ export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSpreadElement(value)),
-		[RECEIVER]: node
+		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSpreadElement(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SpreadElement.Bound;
 }
@@ -3615,13 +3490,11 @@ export function buildTernaryExpression(config: T.TernaryExpression.Config): T.Te
 		consequence: (value: Admit<NonNullable<T.TernaryExpression.Config>['consequence']>) =>
 			rebuilt(node, handle, () => buildTernaryExpression({ ...config, consequence: value })),
 		alternative: (value: Admit<NonNullable<T.TernaryExpression.Config>['alternative']>) =>
-			rebuilt(node, handle, () => buildTernaryExpression({ ...config, alternative: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTernaryExpression({ ...config, alternative: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TernaryExpression.Bound;
 }
@@ -3688,13 +3561,11 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		right: (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
 			rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value })),
 		binaryExpressionIn: (value?: Admit<T.BinaryExpressionIn>) =>
-			rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.BinaryExpression.Bound;
 }
@@ -3733,13 +3604,11 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
 		argument: (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UnaryExpression.Bound;
 }
@@ -3773,13 +3642,11 @@ export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expre
 	};
 	node.$with = {
 		expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-			rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SequenceExpression.Bound;
 }
@@ -3805,8 +3672,7 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UnescapedDoubleStringFragment.Bound;
 }
@@ -3832,8 +3698,7 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UnescapedSingleStringFragment.Bound;
 }
@@ -3868,14 +3733,10 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.EscapeSequence.Bound;
 }
@@ -3906,13 +3767,11 @@ export function buildTemplateString(
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>[]) =>
-			rebuilt(node, handle, () => buildTemplateString(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTemplateString(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TemplateString.Bound;
 }
@@ -3947,13 +3806,11 @@ export function buildTemplateSubstitution(
 	};
 	node.$with = {
 		expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
-			rebuilt(node, handle, () => buildTemplateSubstitution(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTemplateSubstitution(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TemplateSubstitution.Bound;
 }
@@ -3985,13 +3842,11 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 	};
 	node.$with = {
 		pattern: (value: Admit<T.RegexPattern>) => rebuilt(node, handle, () => buildRegex({ ...config, pattern: value })),
-		flags: (value?: Admit<T.RegexFlags>) => rebuilt(node, handle, () => buildRegex({ ...config, flags: value })),
-		[RECEIVER]: node
+		flags: (value?: Admit<T.RegexFlags>) => rebuilt(node, handle, () => buildRegex({ ...config, flags: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Regex.Bound;
 }
@@ -4016,8 +3871,7 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.RegexPattern.Bound;
 }
@@ -4042,8 +3896,7 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.RegexFlags.Bound;
 }
@@ -4068,8 +3921,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Identifier.Bound;
 }
@@ -4094,8 +3946,7 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Identifier.Bound;
 }
@@ -4134,13 +3985,11 @@ export function buildPrivatePropertyIdentifier(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value)),
-		[RECEIVER]: node
+		content: (value: Admit<string>) => rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PrivatePropertyIdentifier.Bound;
 }
@@ -4187,14 +4036,12 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
-			rebuilt(node, handle, () => buildArguments(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildArguments(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.Arguments.Bound;
 }
@@ -4231,13 +4078,11 @@ export function buildDecorator(
 			value: Admit<
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 			>
-		) => rebuilt(node, handle, () => buildDecorator(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildDecorator(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Decorator.Bound;
 }
@@ -4295,13 +4140,11 @@ export function buildDecoratorMemberExpression(
 		object: (value: Admit<NonNullable<T.DecoratorMemberExpression.Config>['object']>) =>
 			rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, object: value })),
 		property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DecoratorMemberExpression.Bound;
 }
@@ -4365,13 +4208,11 @@ export function buildDecoratorCallExpression(
 				)
 			),
 		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DecoratorCallExpression.Bound;
 }
@@ -4401,14 +4242,12 @@ export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.Class
 	};
 	node.$with = {
 		members: (...vs: Admit<T.ClassBodyMember>[]) =>
-			rebuilt(node, handle, () => buildClassBody(...restItems('members', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassBody(...restItems('members', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.ClassBody.Bound;
 }
@@ -4439,14 +4278,12 @@ export function buildFormalParameters(
 	};
 	node.$with = {
 		elements: (value?: Admit<T.FormalParametersElements | T.FormalParametersElementsReceiver>) =>
-			rebuilt(node, handle, () => buildFormalParameters(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFormalParameters(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	return node as unknown as T.FormalParameters.Bound;
 }
@@ -4506,13 +4343,11 @@ function _buildClassStaticBlock(
 	node.$with = {
 		terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
 			rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling })),
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildClassStaticBlock(value, options)),
-		[RECEIVER]: node
+		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildClassStaticBlock(value, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassStaticBlock.Bound;
 }
@@ -4592,13 +4427,11 @@ export function buildRestPattern(
 					| Admit<T.LhsExpression>
 				>
 			>
-		) => rebuilt(node, handle, () => buildRestPattern(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildRestPattern(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.RestPattern.Bound;
 }
@@ -4648,13 +4481,11 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 			>
 		) => rebuilt(node, handle, () => buildPair({ ...config, key: value })),
 		value: (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPair({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildPair({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Pair.Bound;
 }
@@ -4700,13 +4531,11 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 			>
 		) => rebuilt(node, handle, () => buildPairPattern({ ...config, key: value })),
 		value: (value: Admit<T.Pattern | T.AssignmentPattern>) =>
-			rebuilt(node, handle, () => buildPairPattern({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildPairPattern({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PairPattern.Bound;
 }
@@ -4739,13 +4568,11 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 	};
 	node.$with = {
 		expression: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildComputedPropertyName(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildComputedPropertyName(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ComputedPropertyName.Bound;
 }
@@ -4777,13 +4604,11 @@ export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExp
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNonNullExpression(value)),
-		[RECEIVER]: node
+		expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNonNullExpression(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NonNullExpression.Bound;
 }
@@ -4873,13 +4698,11 @@ export function buildFunctionSignature(
 			rebuilt(node, handle, () => buildFunctionSignature({ ...config, returnType: value }, options)),
 		terminator: (
 			spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
-		) => rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FunctionSignature.Bound;
 }
@@ -4914,13 +4737,11 @@ export function buildDecoratorParenthesizedExpression(
 	};
 	node.$with = {
 		expression: (value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>) =>
-			rebuilt(node, handle, () => buildDecoratorParenthesizedExpression(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDecoratorParenthesizedExpression(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DecoratorParenthesizedExpression.Bound;
 }
@@ -4969,13 +4790,11 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 				)
 			),
 		expression: (value: Admit<NonNullable<T.TypeAssertion.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeAssertion.Bound;
 }
@@ -5023,13 +4842,11 @@ export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression
 		expression: (value: Admit<NonNullable<T.AsExpression.Config>['expression']>) =>
 			rebuilt(node, handle, () => buildAsExpression({ ...config, expression: value })),
 		type: (value: Admit<NonNullable<T.AsExpression.Config>['type']>) =>
-			rebuilt(node, handle, () => buildAsExpression({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAsExpression({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AsExpression.Bound;
 }
@@ -5079,13 +4896,11 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 		expression: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['expression']>) =>
 			rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, expression: value })),
 		type: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['type']>) =>
-			rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SatisfiesExpression.Bound;
 }
@@ -5139,13 +4954,11 @@ export function buildInstantiationExpression(
 					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
 					(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InstantiationExpression.Bound;
 }
@@ -5187,13 +5000,11 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 		name: (value: Admit<T.Identifier>) =>
 			rebuilt(node, handle, () => buildImportRequireClause({ ...config, name: value })),
 		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportRequireClause.Bound;
 }
@@ -5222,13 +5033,11 @@ export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsCla
 	};
 	node.$with = {
 		types: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
-			rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExtendsClause.Bound;
 }
@@ -5277,13 +5086,11 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 					{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
 					(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExtendsClauseSingle.Bound;
 }
@@ -5317,13 +5124,11 @@ export function buildImplementsClause(
 	};
 	node.$with = {
 		types: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImplementsClause.Bound;
 }
@@ -5353,13 +5158,11 @@ export function buildAmbientDeclaration(
 	};
 	node.$with = {
 		content: (value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>) =>
-			rebuilt(node, handle, () => buildAmbientDeclaration(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAmbientDeclaration(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AmbientDeclaration.Bound;
 }
@@ -5448,13 +5251,11 @@ export function buildAbstractClassDeclaration(
 		heritage: (value?: Admit<T.ClassHeritage>) =>
 			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value })),
 		body: (value: Admit<T.ClassBody>) =>
-			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AbstractClassDeclaration.Bound;
 }
@@ -5487,13 +5288,11 @@ export function buildModule(config: T.Module.Config): T.Module.Bound {
 	node.$with = {
 		name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
 			rebuilt(node, handle, () => buildModule({ ...config, name: value })),
-		body: (value?: Admit<T.StatementBlock>) => rebuilt(node, handle, () => buildModule({ ...config, body: value })),
-		[RECEIVER]: node
+		body: (value?: Admit<T.StatementBlock>) => rebuilt(node, handle, () => buildModule({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Module.Bound;
 }
@@ -5533,13 +5332,11 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 		name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
 			rebuilt(node, handle, () => buildInternalModule({ ...config, name: value })),
 		body: (value?: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildInternalModule({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInternalModule({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InternalModule.Bound;
 }
@@ -5596,13 +5393,11 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 		value: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 			rebuilt(node, handle, () => buildImportAlias({ ...config, value: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildImportAlias(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportAlias(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportAlias.Bound;
 }
@@ -5647,13 +5442,11 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 		qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 			rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, qualifier: value })),
 		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NestedTypeIdentifier.Bound;
 }
@@ -5720,13 +5513,11 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		extendsTypeClause: (value?: Admit<T.ExtendsTypeClause>) =>
 			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
 		body: (value: Admit<T.InterfaceBody>) =>
-			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InterfaceDeclaration.Bound;
 }
@@ -5763,13 +5554,11 @@ export function buildExtendsTypeClause(
 	node.$with = {
 		types: (
 			...vs: NonEmptyArray<Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>>
-		) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs))),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExtendsTypeClause.Bound;
 }
@@ -5819,13 +5608,11 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 					{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
 					(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.EnumDeclaration.Bound;
 }
@@ -5916,14 +5703,12 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 					{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
 					(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.EnumBody.Bound;
@@ -5975,13 +5760,11 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 			>
 		) => rebuilt(node, handle, () => buildEnumAssignment({ ...config, name: value })),
 		value: (value: Admit<NonNullable<T.EnumAssignment.Config>['value']>) =>
-			rebuilt(node, handle, () => buildEnumAssignment({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildEnumAssignment({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.EnumAssignment.Bound;
 }
@@ -6062,13 +5845,11 @@ export function buildTypeAliasDeclaration(
 		value: (value: Admit<NonNullable<T.TypeAliasDeclaration.Config>['value']>) =>
 			rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, value: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeAliasDeclaration.Bound;
 }
@@ -6152,13 +5933,11 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
-			rebuilt(node, handle, () => buildRequiredParameter({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildRequiredParameter({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.RequiredParameter.Bound;
 }
@@ -6241,13 +6020,11 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
-			rebuilt(node, handle, () => buildOptionalParameter({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildOptionalParameter({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.OptionalParameter.Bound;
 }
@@ -6285,13 +6062,11 @@ export function buildOmittingTypeAnnotation(
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOmittingTypeAnnotation(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildOmittingTypeAnnotation(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.OmittingTypeAnnotation.Bound;
 }
@@ -6327,13 +6102,11 @@ export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildAddingTypeAnnotation(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAddingTypeAnnotation(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AddingTypeAnnotation.Bound;
 }
@@ -6369,13 +6142,11 @@ export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOptingTypeAnnotation(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildOptingTypeAnnotation(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.OptingTypeAnnotation.Bound;
 }
@@ -6411,13 +6182,11 @@ export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTypeAnnotation(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeAnnotation(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeAnnotation.Bound;
 }
@@ -6468,13 +6237,11 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		object: (value: Admit<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>) =>
 			rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, object: value })),
 		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQueryMemberExpressionInTypeAnnotation.Bound;
 }
@@ -6520,13 +6287,11 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		function: (value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>) =>
 			rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value })),
 		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Bound;
 }
@@ -6561,13 +6326,11 @@ export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKin
 	};
 	node.$with = {
 		value: (value: Admit<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>) =>
-			rebuilt(node, handle, () => buildAsserts(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAsserts(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Asserts.Bound;
 }
@@ -6611,14 +6374,10 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		asserts: (value: Admit<T.Asserts>) => rebuilt(node, handle, () => _buildAssertsAnnotation(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { asserts: (value: Admit<T.Asserts>) => rebuilt(node, handle, () => _buildAssertsAnnotation(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AssertsAnnotation.Bound;
 }
@@ -6658,13 +6417,11 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		name: (value: Admit<T.Identifier | T.RestPattern>) =>
 			rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value })),
 		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TupleParameter.Bound;
 }
@@ -6706,13 +6463,11 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		name: (value: Admit<T.Identifier>) =>
 			rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value })),
 		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.OptionalTupleParameter.Bound;
 }
@@ -6748,13 +6503,11 @@ export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildOptionalType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildOptionalType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.OptionalType.Bound;
 }
@@ -6790,13 +6543,11 @@ export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildRestType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildRestType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.RestType.Bound;
 }
@@ -6867,13 +6618,11 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value })),
 		type: (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
-			rebuilt(node, handle, () => buildConstructorType({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildConstructorType({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ConstructorType.Bound;
 }
@@ -6911,13 +6660,11 @@ export function buildTemplateType(
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildTemplateType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTemplateType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TemplateType.Bound;
 }
@@ -6948,13 +6695,11 @@ export function buildTemplateLiteralType(
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.TemplateChars | T.TemplateType>[]) =>
-			rebuilt(node, handle, () => buildTemplateLiteralType(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTemplateLiteralType(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TemplateLiteralType.Bound;
 }
@@ -7000,13 +6745,11 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
 		name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 			rebuilt(node, handle, () => buildInferType({ ...config, name: value })),
 		type: (value?: Admit<NonNullable<T.InferType.Config>['type']>) =>
-			rebuilt(node, handle, () => buildInferType({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInferType({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InferType.Bound;
 }
@@ -7096,13 +6839,11 @@ export function buildConditionalType(config: T.ConditionalType.Config): T.Condit
 		consequence: (value: Admit<NonNullable<T.ConditionalType.Config>['consequence']>) =>
 			rebuilt(node, handle, () => buildConditionalType({ ...config, consequence: value })),
 		alternative: (value: Admit<NonNullable<T.ConditionalType.Config>['alternative']>) =>
-			rebuilt(node, handle, () => buildConditionalType({ ...config, alternative: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildConditionalType({ ...config, alternative: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ConditionalType.Bound;
 }
@@ -7148,13 +6889,11 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
 					(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.GenericType.Bound;
 }
@@ -7207,13 +6946,11 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 		name: (value: Admit<NonNullable<T.TypePredicate.Config>['name']>) =>
 			rebuilt(node, handle, () => buildTypePredicate({ ...config, name: value })),
 		type: (value: Admit<NonNullable<T.TypePredicate.Config>['type']>) =>
-			rebuilt(node, handle, () => buildTypePredicate({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypePredicate({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypePredicate.Bound;
 }
@@ -7263,13 +7000,11 @@ function _buildTypePredicateAnnotation(value: Admit<T.TypePredicate>): T.TypePre
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		typePredicate: (value: Admit<T.TypePredicate>) => rebuilt(node, handle, () => _buildTypePredicateAnnotation(value)),
-		[RECEIVER]: node
+		typePredicate: (value: Admit<T.TypePredicate>) => rebuilt(node, handle, () => _buildTypePredicateAnnotation(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypePredicateAnnotation.Bound;
 }
@@ -7336,13 +7071,11 @@ export function buildTypeQueryMemberExpression(
 		operator: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, operator: value })),
 		property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQueryMemberExpression.Bound;
 }
@@ -7401,13 +7134,11 @@ export function buildTypeQuerySubscriptExpression(
 		optionalChain: (value?: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']>) =>
 			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value })),
 		index: (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>) =>
-			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQuerySubscriptExpression.Bound;
 }
@@ -7457,13 +7188,11 @@ export function buildTypeQueryCallExpression(
 		function: (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
 			rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, function: value })),
 		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQueryCallExpression.Bound;
 }
@@ -7525,13 +7254,11 @@ export function buildTypeQueryInstantiationExpression(
 					{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
 					(value: Admit<T.TypeArguments>) => buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQueryInstantiationExpression.Bound;
 }
@@ -7595,13 +7322,11 @@ export function buildTypeQuery(
 					| TSKindId.This
 				>
 			>
-		) => rebuilt(node, handle, () => buildTypeQuery(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildTypeQuery(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeQuery.Bound;
 }
@@ -7637,13 +7362,11 @@ export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifie
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildIndexTypeQuery(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildIndexTypeQuery(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.IndexTypeQuery.Bound;
 }
@@ -7694,13 +7417,11 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound
 		type: (value: Admit<NonNullable<T.LookupType.Config>['type']>) =>
 			rebuilt(node, handle, () => buildLookupType({ ...config, type: value })),
 		indexType: (value: Admit<NonNullable<T.LookupType.Config>['indexType']>) =>
-			rebuilt(node, handle, () => buildLookupType({ ...config, indexType: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildLookupType({ ...config, indexType: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LookupType.Bound;
 }
@@ -7762,13 +7483,11 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 		type: (value: Admit<NonNullable<T.MappedTypeClause.Config>['type']>) =>
 			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, type: value })),
 		alias: (value?: Admit<NonNullable<T.MappedTypeClause.Config>['alias']>) =>
-			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, alias: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMappedTypeClause({ ...config, alias: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MappedTypeClause.Bound;
 }
@@ -7825,13 +7544,11 @@ export function buildLiteralType(
 					| TSKindId.Undefined
 				>
 			>
-		) => rebuilt(node, handle, () => buildLiteralType(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildLiteralType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LiteralType.Bound;
 }
@@ -7869,13 +7586,11 @@ export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildFlowMaybeType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFlowMaybeType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FlowMaybeType.Bound;
 }
@@ -7911,13 +7626,11 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildParenthesizedType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildParenthesizedType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ParenthesizedType.Bound;
 }
@@ -8007,13 +7720,11 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 					{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
 					(value: Admit<T.Types>) => _buildTypeArguments(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeArguments.Bound;
@@ -8060,13 +7771,11 @@ export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bo
 				)
 			),
 		closing: (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
-			rebuilt(node, handle, () => buildObjectType({ ...config, closing: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildObjectType({ ...config, closing: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ObjectType.Bound;
 }
@@ -8102,13 +7811,11 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 	};
 	node.$with = {
 		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ObjectType.Curly.Bound;
 }
@@ -8144,13 +7851,11 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 	};
 	node.$with = {
 		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ObjectType.Flow.Bound;
 }
@@ -8207,13 +7912,11 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value })),
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CallSignature.Bound;
 }
@@ -8295,13 +7998,11 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		optional: (value?: Admit<NonNullable<T.PropertySignature.Config>['optional']>) =>
 			rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value })),
 		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PropertySignature.Bound;
 }
@@ -8395,13 +8096,11 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 					{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
 					(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TypeParameters.Bound;
@@ -8454,13 +8153,11 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		constraint: (value?: Admit<T.Constraint>) =>
 			rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value })),
 		default: (value?: Admit<T.DefaultType>) =>
-			rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeParameter.Bound;
 }
@@ -8496,13 +8193,11 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildDefaultType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildDefaultType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.DefaultType.Bound;
 }
@@ -8550,13 +8245,11 @@ export function buildConstraint(
 		operator: (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
 			rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling })),
 		bounds: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildConstraint(value, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildConstraint(value, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.Constraint.Bound;
 }
@@ -8619,13 +8312,11 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value })),
 		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ConstructSignature.Bound;
 }
@@ -8661,13 +8352,11 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildArrayType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildArrayType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ArrayType.Bound;
 }
@@ -8764,14 +8453,12 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 					{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
 					(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		inner: (...items: unknown[]) => triviaInner(node, handle, items),
-		[RECEIVER]: node
+		inner: (...items: unknown[]) => triviaInner(node, handle, items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.TupleType.Bound;
@@ -8808,13 +8495,11 @@ export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 	};
 	node.$with = {
 		type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-			rebuilt(node, handle, () => buildReadonlyType(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildReadonlyType(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ReadonlyType.Bound;
 }
@@ -8865,13 +8550,11 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		left: (value?: Admit<NonNullable<T.UnionType.Config>['left']>) =>
 			rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.UnionType.Config>['right']>) =>
-			rebuilt(node, handle, () => buildUnionType({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UnionType.Bound;
 }
@@ -8922,13 +8605,11 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 		left: (value?: Admit<NonNullable<T.IntersectionType.Config>['left']>) =>
 			rebuilt(node, handle, () => buildIntersectionType({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.IntersectionType.Config>['right']>) =>
-			rebuilt(node, handle, () => buildIntersectionType({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildIntersectionType({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.IntersectionType.Bound;
 }
@@ -8993,13 +8674,11 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value })),
 		returnType: (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
-			rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FunctionType.Bound;
 }
@@ -9104,13 +8783,11 @@ function _buildExportSpecifiers(
 		items: (...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
 			rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, elements, buildExportSpecifiers$wrapper);
 	return node as unknown as T.ExportSpecifiers.Bound;
@@ -9198,13 +8875,11 @@ function _buildImportSpecifiers(
 		items: (...vs: NonEmptyArray<Admit<T.ImportSpecifier>>) =>
 			rebuilt(node, handle, () => buildImportSpecifiers(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ImportSpecifiers.Bound;
@@ -9296,13 +8971,11 @@ function _buildFormalParametersElements(
 		items: (...vs: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>) =>
 			rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.FormalParametersElements.Bound;
@@ -9346,13 +9019,11 @@ export function buildEnumBodyElementName(
 				| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
 				| T.PropertyIdentifier.Types
 			>
-		) => rebuilt(node, handle, () => buildEnumBodyElementName(value)),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildEnumBodyElementName(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.EnumBodyElementName.Bound;
 }
@@ -9439,13 +9110,11 @@ function _buildEnumBodyElements(
 		items: (...vs: NonEmptyArray<Admit<T.EnumBodyElement>>) =>
 			rebuilt(node, handle, () => buildEnumBodyElements(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.EnumBodyElements.Bound;
@@ -9537,13 +9206,11 @@ function _buildTypes(
 		items: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
 			rebuilt(node, handle, () => buildTypes(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.Types.Bound;
@@ -9649,13 +9316,11 @@ function _buildTypeParametersElements(
 		items: (...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
 			rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, elements, buildTypeParametersElements$wrapper);
 	return node as unknown as T.TypeParametersElements.Bound;
@@ -9763,13 +9428,11 @@ function _buildTupleTypeMembers(
 			>
 		) => rebuilt(node, handle, () => buildTupleTypeMembers(options, ...vs)),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-			rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.TupleTypeMembers.Bound;
@@ -9798,13 +9461,11 @@ export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedI
 	};
 	node.$with = {
 		content: (value: Admit<T.NamespaceImport | T.NamedImports>) =>
-			rebuilt(node, handle, () => buildImportClauseGroup(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportClauseGroup(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportClauseGroup.Bound;
 }
@@ -9848,13 +9509,11 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		parameter: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 			rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value })),
 		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CatchClauseGroup.Bound;
 }
@@ -9885,13 +9544,11 @@ export function buildGetAccessorSignature(
 	};
 	node.$with = {
 		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildGetAccessorSignature({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildGetAccessorSignature({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.GetAccessorSignature.Bound;
 }
@@ -9947,13 +9604,11 @@ function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.Ambie
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value)),
-		[RECEIVER]: node
+		body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AmbientDeclarationGlobal.Bound;
 }
@@ -10019,13 +9674,11 @@ export function buildAmbientDeclarationModule(
 		type: (value: Admit<NonNullable<T.AmbientDeclarationModule.Config>['type']>) =>
 			rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, type: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AmbientDeclarationModule.Bound;
 }
@@ -10187,13 +9840,11 @@ function _buildObjectTypeContent(
 		separator: (v: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon) =>
 			rebuilt(node, handle, () => buildObjectTypeContent({ ...options, separator: v }, ...elements)),
 		delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
-			rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdBuiltItems(node, listedItems);
 	return node as unknown as T.ObjectTypeContent.Bound;
@@ -10240,13 +9891,11 @@ export function buildExportStatementNamespaceExport(
 		name: (value: Admit<T.Identifier>) =>
 			rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementNamespaceExport.Bound;
 }
@@ -10292,13 +9941,11 @@ export function buildExportStatementEqualsExport(
 		value: (value: Admit<NonNullable<T.Expression>>) =>
 			rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementEqualsExport.Bound;
 }
@@ -10332,10 +9979,7 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentLine(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentLine(value)) };
 	return node as unknown as T.CommentLine.Bound;
 }
 
@@ -10368,10 +10012,7 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentBlock(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentBlock(value)) };
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
 	return node as unknown as T.CommentBlock.Bound;
 }
@@ -10398,13 +10039,11 @@ export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.Litera
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		value: (value: Admit<T.Number>) => rebuilt(node, handle, () => buildLiteralTypeNegativeNumber(value)),
-		[RECEIVER]: node
+		value: (value: Admit<T.Number>) => rebuilt(node, handle, () => buildLiteralTypeNegativeNumber(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.LiteralTypeNegativeNumber.Bound;
 }
@@ -10448,13 +10087,11 @@ export function buildNumberHex(
 	node.$with = {
 		radixPrefix: (spelling: '0x' | '0X') =>
 			rebuilt(node, handle, () => buildNumberHex(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberHex(value, options)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberHex(value, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberHex.Bound;
 }
@@ -10562,13 +10199,11 @@ export function buildNumberFloatPoint(
 		exponentSign: (value?: Admit<'-' | '+'>) =>
 			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponentSign: value }, options)),
 		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberFloatPoint.Bound;
 }
@@ -10660,13 +10295,11 @@ export function buildNumberFloatLeadingPoint(
 		exponentSign: (value?: Admit<'-' | '+'>) =>
 			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponentSign: value }, options)),
 		exponent: (value?: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberFloatLeadingPoint.Bound;
 }
@@ -10752,13 +10385,11 @@ export function buildNumberFloatScientific(
 		exponentSign: (value?: Admit<'-' | '+'>) =>
 			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponentSign: value }, options)),
 		exponent: (value: Admit<string | number | bigint>) =>
-			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberFloatScientific.Bound;
 }
@@ -10787,8 +10418,7 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberDecimal.Bound;
 }
@@ -10832,13 +10462,11 @@ export function buildNumberBinary(
 	node.$with = {
 		radixPrefix: (spelling: '0b' | '0B') =>
 			rebuilt(node, handle, () => buildNumberBinary(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBinary(value, options)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBinary(value, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberBinary.Bound;
 }
@@ -10882,13 +10510,11 @@ export function buildNumberOctal(
 	node.$with = {
 		radixPrefix: (spelling: '0o' | '0O') =>
 			rebuilt(node, handle, () => buildNumberOctal(value, { ...options, radixPrefix: spelling })),
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberOctal(value, options)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberOctal(value, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberOctal.Bound;
 }
@@ -10927,13 +10553,11 @@ export function buildNumberBigintHex(input: string | number | bigint, affix: boo
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintHex(value)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintHex(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberBigintHex.Bound;
 }
@@ -10975,13 +10599,11 @@ export function buildNumberBigintBinary(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintBinary(value)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintBinary(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberBigintBinary.Bound;
 }
@@ -11023,13 +10645,11 @@ export function buildNumberBigintOctal(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintOctal(value)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintOctal(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberBigintOctal.Bound;
 }
@@ -11071,13 +10691,11 @@ export function buildNumberBigintDecimal(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintDecimal(value)),
-		[RECEIVER]: node
+		content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintDecimal(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.NumberBigintDecimal.Bound;
 }
@@ -11124,13 +10742,11 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 		left: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['left']>) =>
 			rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, left: value })),
 		right: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['right']>) =>
-			rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.BinaryExpressionIn.Bound;
 }
@@ -11191,13 +10807,11 @@ export function buildClassBodyMemberMethod(
 		methodDefinition: (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
 			rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassBodyMemberMethod.Bound;
 }
@@ -11241,13 +10855,11 @@ export function buildClassBodyMemberMethodSig(
 		methodSignature: (value: Admit<T.MethodSignature>) =>
 			rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, options)),
 		terminator: (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
-			rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 }
@@ -11288,13 +10900,11 @@ export function buildClassBodyMemberDeclaration(
 			value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>
 		) => rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
-			rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 }
@@ -11368,13 +10978,11 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 			rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, indexType: value })),
 		type: (
 			value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
-		) => rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value })),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.IndexSignatureColon.Bound;
 }
@@ -11433,13 +11041,11 @@ export function buildIndexSignatureMappedTypeClause(
 			rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value })),
 		type: (
 			value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
-		) => rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value })),
-		[RECEIVER]: node
+		) => rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.IndexSignatureMappedTypeClause.Bound;
 }
@@ -11479,13 +11085,11 @@ export function buildImportStatementClauseFrom(
 		importClause: (value: Admit<T.ImportClause>) =>
 			rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value })),
 		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, source: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, source: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportStatementClauseFrom.Bound;
 }
@@ -11518,13 +11122,11 @@ export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.Yiel
 	};
 	node.$with = {
 		expression: (value: Admit<NonNullable<T.Expression>>) =>
-			rebuilt(node, handle, () => buildYieldExpressionDelegate(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildYieldExpressionDelegate(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.YieldExpressionDelegate.Bound;
 }
@@ -11565,13 +11167,11 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		typeKeyword: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['typeKeyword']>) =>
 			rebuilt(node, handle, () => buildImportSpecifierName({ ...config, typeKeyword: value })),
 		name: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportSpecifierName.Bound;
 }
@@ -11627,13 +11227,11 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		name: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
 			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value })),
 		alias: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportSpecifierAs.Bound;
 }
@@ -11678,13 +11276,11 @@ export function buildParenthesizedExpressionTyped(
 		expression: (value: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>) =>
 			rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value })),
 		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ParenthesizedExpressionTyped.Bound;
 }
@@ -11737,13 +11333,11 @@ function _buildParenthesizedExpressionSequence(
 	};
 	node.$with = {
 		sequenceExpression: (value: Admit<T.SequenceExpression>) =>
-			rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ParenthesizedExpressionSequence.Bound;
 }
@@ -11805,13 +11399,11 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 				)
 			),
 		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CallExpressionCall.Bound;
 }
@@ -11856,13 +11448,11 @@ export function buildCallExpressionTemplateCall(
 		function: (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['function']>) =>
 			rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value })),
 		arguments: (value: Admit<T.TemplateString>) =>
-			rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CallExpressionTemplateCall.Bound;
 }
@@ -11924,13 +11514,11 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 				)
 			),
 		arguments: (value: Admit<T.Arguments>) =>
-			rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.CallExpressionMember.Bound;
 }
@@ -11961,13 +11549,11 @@ export function buildStringDouble(
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.UnescapedDoubleStringFragment | T.EscapeSequence>[]) =>
-			rebuilt(node, handle, () => buildStringDouble(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildStringDouble(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.StringDouble.Bound;
 }
@@ -11998,13 +11584,11 @@ export function buildStringSingle(
 	};
 	node.$with = {
 		elements: (...vs: Admit<T.UnescapedSingleStringFragment | T.EscapeSequence>[]) =>
-			rebuilt(node, handle, () => buildStringSingle(...restItems('elements', vs))),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildStringSingle(...restItems('elements', vs)))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.StringSingle.Bound;
 }
@@ -12046,13 +11630,11 @@ export function buildUpdateExpressionPostfix(
 		argument: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>) =>
 			rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, argument: value })),
 		operator: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, operator: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, operator: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UpdateExpressionPostfix.Bound;
 }
@@ -12092,13 +11674,11 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 		operator: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, operator: value })),
 		argument: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>) =>
-			rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, argument: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, argument: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.UpdateExpressionPrefix.Bound;
 }
@@ -12130,13 +11710,11 @@ export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.Arrow
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		parameter: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildArrowFunctionParameter(value)),
-		[RECEIVER]: node
+		parameter: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildArrowFunctionParameter(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ArrowFunctionParameter.Bound;
 }
@@ -12182,13 +11760,11 @@ export function buildClassHeritageExtendsClause(
 		extendsClause: (value: Admit<T.ExtendsClause>) =>
 			rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value })),
 		implementsClause: (value?: Admit<T.ImplementsClause>) =>
-			rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ClassHeritageExtendsClause.Bound;
 }
@@ -12239,13 +11815,11 @@ export function buildImportClauseDefaultImport(
 		identifier: (value: Admit<T.Identifier>) =>
 			rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value })),
 		importClauseGroup: (value?: Admit<T.ImportClauseGroup>) =>
-			rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ImportClauseDefaultImport.Bound;
 }
@@ -12301,13 +11875,11 @@ export function buildExportStatementDefaultFrom(
 			>
 		) => rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, content: value }, options)),
 		terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFrom(config, { ...options, terminator: spelling })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementDefaultFrom(config, { ...options, terminator: spelling }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultFrom.Bound;
 }
@@ -12354,13 +11926,11 @@ export function buildExportStatementDefaultDeclaration(
 				buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
 			),
 		content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultDeclaration.Bound;
 }
@@ -12389,13 +11959,11 @@ export function buildExportStatementDefaultFromStarFrom(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		source: (value: Admit<T.String>) => rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value)),
-		[RECEIVER]: node
+		source: (value: Admit<T.String>) => rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultFromStarFrom.Bound;
 }
@@ -12441,13 +12009,11 @@ export function buildExportStatementDefaultFromNsFrom(
 		namespaceExport: (value: Admit<T.NamespaceExport>) =>
 			rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, namespaceExport: value })),
 		source: (value: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, source: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, source: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultFromNsFrom.Bound;
 }
@@ -12500,13 +12066,11 @@ export function buildExportStatementDefaultFromClauseFrom(
 				)
 			),
 		source: (value?: Admit<T.String>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
 }
@@ -12537,13 +12101,11 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 	};
 	node.$with = {
 		content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>) =>
-			rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKw.Bound;
 }
@@ -12593,13 +12155,11 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 		automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 			rebuilt(node, handle, () =>
 				buildExportStatementDefaultDeclarationDefaultKwValue(value, { ...options, automaticSemicolon: spelling })
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ExportStatementDefaultDeclarationDefaultKwValue.Bound;
 }
@@ -12655,13 +12215,11 @@ export function buildVariableDeclaratorPlain(
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.VariableDeclaratorPlain.Bound;
 }
@@ -12705,13 +12263,11 @@ export function buildVariableDeclaratorDefinite(
 		name: (value: Admit<T.Identifier>) =>
 			rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value })),
 		type: (value: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.VariableDeclaratorDefinite.Bound;
 }
@@ -12761,13 +12317,11 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 		operator: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, operator: value })),
 		right: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForHeaderLhs({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForHeaderLhs.Bound;
 }
@@ -12831,13 +12385,11 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 		operator: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, operator: value })),
 		right: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, right: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, right: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForHeaderVarKind.Bound;
 }
@@ -12913,13 +12465,11 @@ export function buildForHeaderLetConstKind(
 		operator: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value }, options)),
 		right: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForHeaderLetConstKind.Bound;
 }
@@ -12995,13 +12545,11 @@ export function buildForHeaderUsingKind(
 		operator: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
 			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value }, options)),
 		right: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ForHeaderUsingKind.Bound;
 }
@@ -13062,13 +12610,11 @@ function _buildFormalParametersSetAccessorSignature(
 	};
 	node.$with = {
 		elements: (value: Admit<T.FormalParametersElementsSetAccessorSignature>) =>
-			rebuilt(node, handle, () => _buildFormalParametersSetAccessorSignature(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => _buildFormalParametersSetAccessorSignature(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FormalParametersSetAccessorSignature.Bound;
 }
@@ -13127,13 +12673,11 @@ function _buildFormalParametersElementsSetAccessorSignature(
 	};
 	node.$with = {
 		item: (value: Admit<T.SetterParameter>) =>
-			rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value)),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 }
@@ -13201,13 +12745,11 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 		pattern: (value: Admit<NonNullable<T.SetterParameter.Config>['pattern']>) =>
 			rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value })),
 		type: (value?: Admit<T.TypeAnnotation>) =>
-			rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.SetterParameter.Bound;
 }
@@ -13339,13 +12881,11 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, returnType: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodDefinitionPlain.Bound;
 }
@@ -13424,13 +12964,11 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, type: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodDefinitionGetter.Bound;
 }
@@ -13512,13 +13050,11 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
 			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodDefinitionSetter.Bound;
 }
@@ -13637,13 +13173,11 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value })),
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, returnType: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, returnType: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodSignaturePlain.Bound;
 }
@@ -13715,13 +13249,11 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 			>
 		) => rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, name: value })),
 		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodSignatureGetter.Bound;
 }
@@ -13793,13 +13325,11 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 			>
 		) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value })),
 		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.MethodSignatureSetter.Bound;
 }
@@ -13908,13 +13438,11 @@ export function buildAbstractMethodSignaturePlain(
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value })),
 		returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, returnType: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, returnType: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AbstractMethodSignaturePlain.Bound;
 }
@@ -13988,13 +13516,11 @@ export function buildAbstractMethodSignatureGetter(
 			>
 		) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, name: value })),
 		type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, type: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, type: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AbstractMethodSignatureGetter.Bound;
 }
@@ -14068,13 +13594,11 @@ export function buildAbstractMethodSignatureSetter(
 			>
 		) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value })),
 		parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-			rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.AbstractMethodSignatureSetter.Bound;
 }
@@ -14201,13 +13725,11 @@ export function buildPublicFieldDefinitionPlain(
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PublicFieldDefinitionPlain.Bound;
 }
@@ -14317,13 +13839,11 @@ export function buildPublicFieldDefinitionAccessor(
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
-			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
 }
@@ -14368,8 +13888,7 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.JsxText.Bound;
 }
@@ -14394,8 +13913,7 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TemplateChars.Bound;
 }
@@ -14467,13 +13985,11 @@ export function buildConstructorDeclaration(
 		parameters: (value: Admit<T.FormalParameters>) =>
 			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value })),
 		body: (value: Admit<T.StatementBlock>) =>
-			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ConstructorDeclaration.Bound;
 }
@@ -14554,13 +14070,11 @@ export function buildReceiverParameterDeclaration(
 		type: (value?: Admit<T.TypeAnnotation>) =>
 			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value })),
 		value: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['value']>) =>
-			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, value: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, value: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ReceiverParameterDeclaration.Bound;
 }
@@ -14618,13 +14132,11 @@ export function buildFormalParametersElementsReceiver(
 					(value?: Admit<T.FormalParametersElementsReceiverGroup>) =>
 						buildFormalParametersElementsReceiver({ ...config, formalParametersElementsReceiverGroup: value })
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.FormalParametersElementsReceiver.Bound;
 }
@@ -14724,13 +14236,11 @@ function _buildFormalParametersElementsReceiverGroup(
 					{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
 					(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
 				)
-			),
-		[RECEIVER]: node
+			)
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.FormalParametersElementsReceiverGroup.Bound;
@@ -14754,8 +14264,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TernaryQmark.Bound;
 }
@@ -14778,8 +14287,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ErrorRecovery.Bound;
 }
@@ -14811,13 +14319,11 @@ export function buildStatementIdentifier(value: Admit<T.Identifier>): T.Statemen
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildStatementIdentifier(value)),
-		[RECEIVER]: node
+		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildStatementIdentifier(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.StatementIdentifier.Bound;
 }
@@ -14849,13 +14355,11 @@ export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildShorthandPropertyIdentifier(value)),
-		[RECEIVER]: node
+		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildShorthandPropertyIdentifier(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ShorthandPropertyIdentifier.Bound;
 }
@@ -14889,14 +14393,11 @@ export function buildShorthandPropertyIdentifierPattern(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<T.Identifier>) =>
-			rebuilt(node, handle, () => buildShorthandPropertyIdentifierPattern(value)),
-		[RECEIVER]: node
+		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildShorthandPropertyIdentifierPattern(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.ShorthandPropertyIdentifierPattern.Bound;
 }
@@ -14923,13 +14424,11 @@ export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.Pr
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildPropertyIdentifierContent(value)),
-		[RECEIVER]: node
+		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildPropertyIdentifierContent(value))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.PropertyIdentifier.Bound;
 }
@@ -14971,14 +14470,10 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 		[SOURCE]: Source.Factory,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value)),
-		[RECEIVER]: node
-	};
+	node.$with = { content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value)) };
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.TypeIdentifier.Bound;
 }
@@ -15024,13 +14519,11 @@ export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.Interfa
 				)
 			),
 		closing: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
-			rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InterfaceBody.Bound;
 }
@@ -15066,13 +14559,11 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 	};
 	node.$with = {
 		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InterfaceBody.Curly.Bound;
 }
@@ -15108,13 +14599,11 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 	};
 	node.$with = {
 		members: (value?: Admit<T.ObjectTypeContent>) =>
-			rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value })),
-		[RECEIVER]: node
+			rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
 	};
 	node.$trivia = {
 		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-		[RECEIVER]: node
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 	};
 	return node as unknown as T.InterfaceBody.Flow.Bound;
 }

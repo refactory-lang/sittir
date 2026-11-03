@@ -111,9 +111,10 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
 		'    [Symbol.dispose]: releaseNothing'
 	);
+	const plain = (member: string, entries: readonly string[]): string => `  node.${member} = { ${entries.join(', ')} };`;
 	const after = [
-		...(spec.setters === undefined ? [] : [receivedMembers('$with', spec.setters.map(withEntry))]),
-		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map(triviaMember))])
+		...(spec.setters === undefined ? [] : [plain('$with', spec.setters.map(withEntry))]),
+		...(spec.trivia === undefined ? [] : [plain('$trivia', triviaSides(spec.trivia).map(triviaMember))])
 	];
 	return { members: lines, after };
 }
