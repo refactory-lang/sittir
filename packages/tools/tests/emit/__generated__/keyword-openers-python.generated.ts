@@ -68,7 +68,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			name: py.build.identifier("v"),
 			value: py.build.subscript({
 				object: py.build.identifier("a"),
-				subscripts: [py.build.parenthesizedExpression(py.build.integerDecimal.plain("1"))],
+				index: [py.build.parenthesizedExpression(py.build.integerDecimal.plain("1"))],
 			}),
 		}))), py.build.simpleStatements(py.build.expressionStatement(py.build.assignmentEq({
 			name: py.build.identifier("u"),

@@ -68,7 +68,7 @@ export function rebuildKeywordOpenersPythonLoose() {
 			name: "v",
 			value: py.build.subscript({
 				object: "a",
-				subscripts: [py.build.parenthesizedExpression("1")],
+				index: [py.build.parenthesizedExpression("1")],
 			}),
 		})), py.build.simpleStatements(py.build.assignmentEq({
 			name: "u",

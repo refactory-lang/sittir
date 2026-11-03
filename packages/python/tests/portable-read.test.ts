@@ -68,9 +68,39 @@ describe('the portable read', () => {
 		expect(((firstOf('a, b, = c') as Read).content as Read).name).toMatchObject({ $path: 'pattern.tuple.bare', $flags: ['trailingComma'] });
 		for (const source of ['x = 1, 2,\n', 'x = 1, 2\n', 'x = 1,\n', 'a, b, = c\n', 'for a, b, in c: pass\n', 'match x:\n    case a, b,:\n        pass\n']) expect(roundTrip(source)).toBe(source);
 		const built = (flags: readonly string[]) =>
-			String(runtime.engine.render(runtime.build({ $path: 'expression.collection.tuple.bare', $flags: flags, elements: ['a', 'b'] } as never) as never));
-		expect(built(['trailingComma'])).toBe('a, b,');
-		expect(built([])).toBe('a, b');
+			String(
+				runtime.engine.render(
+					runtime.build({
+						$path: 'statement.expression',
+						content: { $path: 'declaration.variable', name: 'x', value: { $path: 'expression.collection.tuple.bare', $flags: flags, elements: ['a', 'b'] } }
+					} as never) as never
+				)
+			);
+		expect(built(['trailingComma'])).toBe('x = a, b,');
+		expect(built([])).toBe('x = a, b');
+	});
+
+	it.each(['x = a,\n', 'c[1,]\n', 'c[1]\n', 'c[1, 2,]\n', 'match x:\n    case a,:\n        pass\n', 'match a,:\n    case b:\n        pass\n', 'match a:\n    case b:\n        pass\n'])(
+		'reads a one-item tuple back from its build without rendering, and a subscript or subject without its comma as its one value: %j',
+		(source) => {
+			const parsed = read(source);
+			const built = runtime.build(parsed);
+			expect(runtime.read(built as never)).toEqual(parsed);
+			expect(String(runtime.engine.render(built as never))).toBe(source);
+		}
+	);
+
+	it('reads a subscript or match subject list as the bare tuple by its comma, and builds its one item with the comma', () => {
+		const content = (source: string) => (firstOf(source) as Read).content as Read;
+		const one = { $path: 'literal.number.integer', $value: 1 };
+		expect(content('c[1]\n')).toMatchObject({ $path: 'expression.subscript', index: one });
+		expect(content('c[1,]\n').index).toEqual({ $path: 'expression.collection.tuple.bare', elements: [one] });
+		expect(content('c[1, 2,]\n').index).toMatchObject({ $flags: ['trailingComma'] });
+		expect((firstOf('match a:\n    case b:\n        pass\n') as Read).subject).toBe('a');
+		expect((firstOf('match a,:\n    case b:\n        pass\n') as Read).subject).toEqual({ $path: 'expression.collection.tuple.bare', elements: ['a'] });
+		const subscript = { $path: 'expression.subscript', object: 'c', index: { $path: 'expression.collection.tuple.bare', elements: ['b'] } };
+		expect(String(runtime.engine.render(runtime.build(subscript as never) as never))).toBe('c[b,]');
+		expect(runtime.read(runtime.build(subscript as never) as never)).toEqual(subscript);
 	});
 
 	it('builds a single statement as the one item of an inline suite', () => {

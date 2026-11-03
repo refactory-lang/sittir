@@ -684,20 +684,20 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.MatchStatement as const,
-		subjects() {
-			return hydrateSlot<T.Subjects>(this, '_subjects', tree);
+		subject() {
+			return hydrateSlot<T.Subjects>(this, '_subject', tree);
 		},
 		body() {
 			return hydrateSlot<T.MatchBlock>(this, '_body', tree);
 		},
 		$with: {
-			subjects: (...args: unknown[]) =>
+			subject: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subjects as const, optional: false, make: RAW.buildSubjects },
-						(v: NonNullable<T.MatchStatement['_subjects']>) =>
-							wrapMatchStatement({ ...$edited(data), _subjects: v }, tree)
+						(v: NonNullable<T.MatchStatement['_subject']>) =>
+							wrapMatchStatement({ ...$edited(data), _subject: v }, tree)
 					)
 				),
 			body: (v: NonNullable<T.MatchStatement['_body']>) =>
@@ -2761,18 +2761,18 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 		object() {
 			return hydrateSlot<T.PrimaryExpression>(this, '_object', tree);
 		},
-		subscripts() {
-			return hydrateSlot<T.Subscripts>(this, '_subscripts', tree);
+		index() {
+			return hydrateSlot<T.Subscripts>(this, '_index', tree);
 		},
 		$with: {
 			object: (v: NonNullable<T.Subscript['_object']>) =>
 				rebuilt(node, handle, () => wrapSubscript({ ...$edited(data), _object: v }, tree)),
-			subscripts: (...args: unknown[]) =>
+			index: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subscripts as const, optional: false, make: RAW.buildSubscripts },
-						(v: NonNullable<T.Subscript['_subscripts']>) => wrapSubscript({ ...$edited(data), _subscripts: v }, tree)
+						(v: NonNullable<T.Subscript['_index']>) => wrapSubscript({ ...$edited(data), _index: v }, tree)
 					)
 				)
 		},
@@ -3869,17 +3869,17 @@ export function wrapSimpleStatementsElements(
 
 export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._subject);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.Subjects as const,
-		subjects() {
-			return hydrateSlots<T.Expression>(this, '_subject', tree);
+		elements() {
+			return hydrateSlots<T.Expression>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subjects'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4075,17 +4075,17 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 
 export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscripts.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._subscript);
+	const listedStored = storedElements(data._elements);
 	const node = {
 		...data,
 		$type: TSKindId.Subscripts as const,
-		subscripts() {
-			return hydrateSlots<T.Expression | T.Slice>(this, '_subscript', tree);
+		elements() {
+			return hydrateSlots<T.Expression | T.Slice>(this, '_elements', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subscripts'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

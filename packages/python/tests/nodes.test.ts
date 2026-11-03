@@ -1306,11 +1306,11 @@ describe('else_clause', () => {
 describe('match_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchStatement({
-			subjects: stampBuilt({
+			subject: stampBuilt({
 				$type: TSKindId.Subjects,
 				$text: 'test',
 				$named: true,
-				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
 			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
@@ -1319,11 +1319,11 @@ describe('match_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.matchStatement({
-			subjects: stampBuilt({
+			subject: stampBuilt({
 				$type: TSKindId.Subjects,
 				$text: 'test',
 				$named: true,
-				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
 			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
@@ -4273,11 +4273,11 @@ describe('subscript', () => {
 	it('factory produces correct type', () => {
 		const node = ir.subscript({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			subscripts: stampBuilt({
+			index: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
 				$named: true,
-				_subscript: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.Subscript);
@@ -4286,11 +4286,11 @@ describe('subscript', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.subscript({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			subscripts: stampBuilt({
+			index: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
 				$named: true,
-				_subscript: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any
 		});
 		const rendered = node.$render!();

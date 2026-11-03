@@ -120,3 +120,19 @@ describe('emitPortableTyped', () => {
 		expect(typed.source.match(/function LetChainAsClauseLetChain\d*\(/g)).toHaveLength(1);
 	});
 });
+
+describe('emitPortableTyped, python', () => {
+	let python: PortableTypedOutput;
+
+	beforeAll(async () => {
+		const generated = await generate({ grammar: 'python', outputDir: '/tmp/sittir-portable-typed-python/src' });
+		if (generated.portableTyped === undefined) throw new Error('python emitted no typed module');
+		python = generated.portableTyped;
+	}, 120_000);
+
+	it.each(['VK_Subscripts', 'VK_Subjects'])('types %s, a list claimed by its own separator, as its claim or the one value it holds when the claim fails', (alias) => {
+		const type = new RegExp(`type ${alias} = (.*);`).exec(python.source)?.[1];
+		expect(type?.startsWith('VocabViews["expression.collection.tuple.bare"] | ')).toBe(true);
+		expect(type).not.toContain('readonly');
+	});
+});

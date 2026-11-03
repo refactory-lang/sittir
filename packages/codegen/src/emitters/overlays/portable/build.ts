@@ -17,6 +17,7 @@ import type {
 	PortableValueBuild,
 	QueryPlan
 } from '@sittir/types';
+import { Delimiter } from '@sittir/common/utils';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, reachedBy, shownSlots, valueTokensOf, type Guaranteed } from '../../../bindings/routes.ts';
 import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
@@ -288,7 +289,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		owner: string,
 		slot: AssembledNonterminal,
 		within: readonly PortableContainer[],
-		entered: readonly string[]
+		entered: readonly string[],
+		many = isMultiple(slot)
 	): Seat[] => {
 		const kinds = new Set<string>();
 		const refined = new Set<string>();
@@ -326,7 +328,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
 						throw new Error(`portable build: ${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container`);
 					const next = outer === undefined ? [...within, container] : [...within.slice(0, -1), container];
-					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind]));
+					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind], unwrap!.list));
 				} else if (node instanceof AssembledSupertype) {
 					if (node.kindId !== undefined) kinds.add(kind);
 					visit(node.subtypes);
@@ -334,7 +336,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			}
 		};
 		visit(slot.values);
-		return [{ holder, key, slot, kinds, refined, within, many: isMultiple(slot), entered }, ...nested.filter((seat) => seat.kinds.size > 0 || seat.many)];
+		return [{ holder, key, slot, kinds, refined, within, many, entered }, ...nested.filter((seat) => seat.kinds.size > 0 || seat.many)];
 	};
 	const seatsOfRoute = (path: readonly SlotStep[]): Seat[] | undefined => {
 		const slot = lastSlot(path);
@@ -843,13 +845,20 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
-						...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } })
+						...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } }),
+						...soleOf(entry, armMembers)
 					}
 				}
 			];
 		});
 	};
 
+	const soleOf = (entry: ReadEntry, members: readonly PortableMemberStep[]): { readonly sole?: PortableBuildArm['sole'] } => {
+		if (entry.separated !== true) return {};
+		const listed = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
+		if (listed.length !== 1) throw new Error(`portable build: ${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list member; it has ${listed.length}`);
+		return { sole: { member: listed[0]!, delimiter: Delimiter.Trailing } };
+	};
 	const emptiedOf = (members: readonly PortableMemberStep[]): { readonly empty?: readonly string[] } => {
 		const names = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
 		const empty = names.filter((name) => members.filter((member) => member.name === name).every((member) => member.steps.every((step) => step.optional !== true)));

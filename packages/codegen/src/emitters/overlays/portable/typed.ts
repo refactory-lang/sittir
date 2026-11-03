@@ -227,7 +227,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const containerView = (node: ModelNode, unwrap: ContainerUnwrap): View => {
 		const slot = node.slots.find((s) => s.name === unwrap.slot);
 		const elements = refsOf(unwrap.kinds, unwrap.terminals);
-		if (unwrap.list || slot?.multiple === true) return { type: `readonly (${elements})[]`, elements: unwrap.kinds };
+		if (unwrap.list) return { type: `readonly (${elements})[]`, elements: unwrap.kinds };
 		return { type: slot !== undefined && (slot.required || listsOnly(slot)) ? elements : `${elements} | undefined`, elements: unwrap.kinds };
 	};
 	const viewOf = (node: ModelNode): View => {

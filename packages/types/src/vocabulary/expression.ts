@@ -387,7 +387,7 @@ export namespace Expression {
 	export interface Subscript<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.subscript';
-		readonly index?: G['slots']['expression.subscript']['index'] | G['slots']['expression.subscript']['index'][];
+		readonly index?: G['slots']['expression.subscript']['index'];
 		readonly object: G['slots']['expression.subscript']['object'];
 	}
 	export interface Unary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {

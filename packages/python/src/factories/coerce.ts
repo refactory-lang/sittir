@@ -386,9 +386,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 348
+		281, 289, 290, 291, 292, 301, 347
 	]),
-	import_statement: new Set([137, 182, 348]),
+	import_statement: new Set([137, 182, 347]),
 	future_import_statement: new Set([136, 137, 182, 281]),
 	import_list: new Set([137, 182]),
 	print_statement: new Set([
@@ -417,13 +417,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 348
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 347
 	]),
 	finally_clause: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 348
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 347
 	]),
 	with_item: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -526,7 +526,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 268, 272, 276, 278, 279, 281,
-		289, 290, 291, 292, 301, 348
+		289, 290, 291, 292, 301, 347
 	]),
 	subjects: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -619,7 +619,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 268, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 348
+		281, 289, 290, 291, 292, 301, 347
 	]),
 	suite_block: new Set([180]),
 	suite_empty: new Set([116]),
@@ -2439,9 +2439,9 @@ export const coerceToElseClause: ConfigSeat<T.ElseClause.Loose, ReturnType<typeo
 	);
 };
 
-export function resolveMatchStatement_subjects(
-	value: T.MatchStatement.LooseConfig['subjects']
-): Admit<T.MatchStatement['_subjects']> {
+export function resolveMatchStatement_subject(
+	value: T.MatchStatement.LooseConfig['subject']
+): Admit<T.MatchStatement['_subject']> {
 	return _resolveOneBranch<T.Subjects>(value, 'subjects');
 }
 
@@ -2458,7 +2458,7 @@ export const coerceToMatchStatement: ConfigSeat<T.MatchStatement.Loose, ReturnTy
 		return input as unknown as ReturnType<typeof F.buildMatchStatement>;
 	currentHandle()?.admit(TSKindId.MatchStatement, [input]);
 	return F.buildMatchStatement({
-		subjects: resolveMatchStatement_subjects(input.subjects),
+		subject: resolveMatchStatement_subject(input.subject),
 		body: resolveMatchStatement_body(input.body)
 	});
 };
@@ -4340,9 +4340,7 @@ export function resolveSubscript_object(value: T.Subscript.LooseConfig['object']
 	);
 }
 
-export function resolveSubscript_subscripts(
-	value: T.Subscript.LooseConfig['subscripts']
-): Admit<T.Subscript['_subscripts']> {
+export function resolveSubscript_index(value: T.Subscript.LooseConfig['index']): Admit<T.Subscript['_index']> {
 	return _resolveOneBranch<T.Subscripts>(value, 'subscripts');
 }
 
@@ -4353,7 +4351,7 @@ export const coerceToSubscript: ConfigSeat<T.Subscript.Loose, ReturnType<typeof 
 	currentHandle()?.admit(TSKindId.Subscript, [input]);
 	return F.buildSubscript({
 		object: resolveSubscript_object(input.object),
-		subscripts: resolveSubscript_subscripts(input.subscripts)
+		index: resolveSubscript_index(input.index)
 	});
 };
 
@@ -5350,7 +5348,7 @@ export const coerceToSubjects: Seat<T.Subjects.LooseArgs, ReturnType<typeof F.bu
 	currentHandle()?.admit(TSKindId.Subjects, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Subjects)) {
 		const data = input[0];
-		const stored = (data as unknown as { _subject?: unknown })._subject;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSubjects(
 			{
@@ -5622,7 +5620,7 @@ export const coerceToSubscripts: Seat<T.Subscripts.LooseArgs, ReturnType<typeof 
 	currentHandle()?.admit(TSKindId.Subscripts, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Subscripts)) {
 		const data = input[0];
-		const stored = (data as unknown as { _subscript?: unknown })._subscript;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSubscripts(
 			{

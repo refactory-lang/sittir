@@ -124,7 +124,9 @@ export interface PortableIds {
 		| TSKindId.Set
 		| TSKindId.SetComprehension
 		| TSKindId.Slice
+		| TSKindId.Subjects
 		| TSKindId.Subscript
+		| TSKindId.Subscripts
 		| TSKindId.Tuple
 		| TSKindId.TypeConversion
 		| TSKindId.UnaryOperator
@@ -188,12 +190,14 @@ export interface PortableIds {
 		| TSKindId.ExpressionList
 		| TSKindId.List
 		| TSKindId.Set
+		| TSKindId.Subjects
+		| TSKindId.Subscripts
 		| TSKindId.Tuple;
 	'expression.collection.list': TSKindId.List;
 	'expression.collection.map': TSKindId.Dictionary;
 	'expression.collection.set': TSKindId.Set;
-	'expression.collection.tuple': TSKindId.ExpressionList | TSKindId.Tuple;
-	'expression.collection.tuple.bare': TSKindId.ExpressionList;
+	'expression.collection.tuple': TSKindId.ExpressionList | TSKindId.Subjects | TSKindId.Subscripts | TSKindId.Tuple;
+	'expression.collection.tuple.bare': TSKindId.ExpressionList | TSKindId.Subjects | TSKindId.Subscripts;
 	'expression.comprehension':
 		| TSKindId.DictionaryComprehension
 		| TSKindId.GeneratorExpression
@@ -2755,14 +2759,16 @@ const table: PortableTable = {
 				TSKindId.Set,
 				TSKindId.SetComprehension,
 				TSKindId.Slice,
+				TSKindId.Subjects,
 				TSKindId.Subscript,
+				TSKindId.Subscripts,
 				TSKindId.Tuple,
 				TSKindId.TypeConversion,
 				TSKindId.UnaryOperator,
 				TSKindId.Yield,
 				TSKindId.YieldFromClause
 			],
-			exact: true
+			exact: false
 		},
 		'expression.assignment': { ids: [TSKindId.AugmentedAssignment, TSKindId.NamedExpression], exact: true },
 		'expression.assignment.compound': { ids: [TSKindId.AugmentedAssignment], exact: true },
@@ -2821,14 +2827,28 @@ const table: PortableTable = {
 		'expression.call': { ids: [TSKindId.Call], exact: true },
 		'expression.call.member': { ids: [TSKindId.Call], exact: false },
 		'expression.collection': {
-			ids: [TSKindId.Dictionary, TSKindId.ExpressionList, TSKindId.List, TSKindId.Set, TSKindId.Tuple],
-			exact: true
+			ids: [
+				TSKindId.Dictionary,
+				TSKindId.ExpressionList,
+				TSKindId.List,
+				TSKindId.Set,
+				TSKindId.Subjects,
+				TSKindId.Subscripts,
+				TSKindId.Tuple
+			],
+			exact: false
 		},
 		'expression.collection.list': { ids: [TSKindId.List], exact: true },
 		'expression.collection.map': { ids: [TSKindId.Dictionary], exact: true },
 		'expression.collection.set': { ids: [TSKindId.Set], exact: true },
-		'expression.collection.tuple': { ids: [TSKindId.ExpressionList, TSKindId.Tuple], exact: true },
-		'expression.collection.tuple.bare': { ids: [TSKindId.ExpressionList], exact: true },
+		'expression.collection.tuple': {
+			ids: [TSKindId.ExpressionList, TSKindId.Subjects, TSKindId.Subscripts, TSKindId.Tuple],
+			exact: false
+		},
+		'expression.collection.tuple.bare': {
+			ids: [TSKindId.ExpressionList, TSKindId.Subjects, TSKindId.Subscripts],
+			exact: false
+		},
 		'expression.comprehension': {
 			ids: [
 				TSKindId.DictionaryComprehension,
@@ -3549,12 +3569,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '347': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '346': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '347': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '346': 1 } } }]
 			}
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
@@ -3669,7 +3689,45 @@ const table: PortableTable = {
 			{ path: 'literal.string', within: [], test: [] }
 		],
 		[TSKindId.StringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
+		[TSKindId.Subjects]: [
+			{
+				path: 'expression.collection.tuple.bare',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'or',
+							of: [
+								{ op: 'count', min: 2, slots: { '261': 0 } },
+								{ op: 'delimiter', delimiter: 2 }
+							]
+						}
+					}
+				]
+			}
+		],
 		[TSKindId.Subscript]: [{ path: 'expression.subscript', within: [], test: [] }],
+		[TSKindId.Subscripts]: [
+			{
+				path: 'expression.collection.tuple.bare',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'or',
+							of: [
+								{ op: 'count', min: 2, slots: { '267': 0 } },
+								{ op: 'delimiter', delimiter: 2 }
+							]
+						}
+					}
+				]
+			}
+		],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
@@ -3851,13 +3909,31 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '347': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '346': 0 } } },
 	[TSKindId.PatternList]: {
 		trailingComma: {
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
 				{ op: 'count', min: 2, slots: { '218': 0 } }
+			]
+		}
+	},
+	[TSKindId.Subjects]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '261': 0 } }
+			]
+		}
+	},
+	[TSKindId.Subscripts]: {
+		trailingComma: {
+			op: 'and',
+			of: [
+				{ op: 'delimiter', delimiter: 2 },
+				{ op: 'count', min: 2, slots: { '267': 0 } }
 			]
 		}
 	},
@@ -3871,20 +3947,22 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	147: { expressions: { trailingComma: { types: [], kinds: [181] } } },
+	154: { subject: { trailingComma: { types: [], kinds: [261] } } },
 	157: { right: { trailingComma: { types: [], kinds: [181] } } },
 	159: { handlers: { group: { types: [], kinds: [160] } } },
 	178: { definition: { async: { types: [], kinds: [165] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	217: { right: { trailingComma: { types: [], kinds: [181] } } },
 	220: { content: { trailingComma: { types: [], kinds: [181] } } },
+	222: { index: { trailingComma: { types: [], kinds: [267] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	250: { expression: { trailingComma: { types: [], kinds: [181] } } },
 	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
 	289: { value: { trailingComma: { types: [], kinds: [181] } } },
 	291: { value: { trailingComma: { types: [], kinds: [181] } } },
-	304: { statements: { async: { types: [], kinds: [157, 162, 302, 347] } } },
-	306: { definition: { async: { types: [], kinds: [302, 347] } } },
-	346: { expression: { trailingComma: { types: [], kinds: [181] } } }
+	304: { statements: { async: { types: [], kinds: [157, 162, 302, 346] } } },
+	306: { definition: { async: { types: [], kinds: [302, 346] } } },
+	345: { expression: { trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -3919,6 +3997,12 @@ declare module './types.js' {
 	interface PatternList {
 		readonly __flags__?: 'trailingComma';
 	}
+	interface Subjects {
+		readonly __flags__?: 'trailingComma';
+	}
+	interface Subscripts {
+		readonly __flags__?: 'trailingComma';
+	}
 	interface WithStatement {
 		readonly __flags__?: 'async';
 	}
@@ -3933,6 +4017,9 @@ declare module './types.js' {
 	}
 	interface RaiseStatement {
 		readonly __slotFlags__?: { readonly expressions: 'trailingComma' };
+	}
+	interface MatchStatement {
+		readonly __slotFlags__?: { readonly subject: 'trailingComma' };
 	}
 	interface ForStatement {
 		readonly __slotFlags__?: { readonly right: 'trailingComma' };
@@ -3951,6 +4038,9 @@ declare module './types.js' {
 	}
 	interface Yield {
 		readonly __slotFlags__?: { readonly content: 'trailingComma' };
+	}
+	interface Subscript {
+		readonly __slotFlags__?: { readonly index: 'trailingComma' };
 	}
 	interface String {
 		readonly __slotFlags__?: { readonly contents: 'debug' };

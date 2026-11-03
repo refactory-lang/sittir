@@ -9,8 +9,8 @@ describe('re-seating an untouched parsed wrapper', () => {
 	it('keeps the line break a line-break-terminated arm ends in', () => {
 		const [m1, m2] = py.parse('match x:\nmatch y:\n').statements();
 		if (!m1 || !m2 || !py.is.matchStatement(m1) || !py.is.matchStatement(m2)) throw new Error('expected match statements');
-		const first = ir.matchStatement({ subjects: ir.subjects(ir.identifier('p')), body: m1.body() });
-		const second = ir.matchStatement({ subjects: ir.subjects(ir.identifier('q')), body: m2.body() });
+		const first = ir.matchStatement({ subject: ir.subjects(ir.identifier('p')), body: m1.body() });
+		const second = ir.matchStatement({ subject: ir.subjects(ir.identifier('q')), body: m2.body() });
 		expect(ir.module(first, second).$render()).toBe('match p:\nmatch q:\n');
 	});
 

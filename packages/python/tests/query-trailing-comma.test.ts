@@ -45,6 +45,15 @@ describe('c.is(\'trailingComma\') on a bare tuple in a where condition', () => {
 		selects(source, [...lists()], [...lists().where((c) => c.is('trailingComma'))], [...lists().where((c) => c.is('trailingComma').not())], ['a, b,']);
 	});
 
+	it.each([
+		['subscript', 'Subscripts', 'c[1, 2,]\nc[3, 4]\nc[5,]\nc[6]\n'],
+		['match subject', 'Subjects', 'match a, b,:\n    case _:\n        pass\nmatch c, d:\n    case _:\n        pass\nmatch e,:\n    case _:\n        pass\n']
+	] as const)('selects natively the %s lists the read stamps Trailing with two items or more, where one item\'s comma is the tuple', (_, kind, source) => {
+		const lists = () => py.parse(source).$query().$descendants.ofType(py.kinds[kind]);
+		const trailing = kind === 'Subscripts' ? ['1, 2,'] : ['a, b,'];
+		selects(source, [...lists()], [...lists().where((c) => c.is('trailingComma'))], [...lists().where((c) => c.is('trailingComma').not())], trailing);
+	});
+
 	it('pushes the flag\'s plan down with the kind', () => {
 		const { root: data, tree: native } = py.diagnostics.parseAndRead('x = 1, 2,\ny = 3, 4\n');
 		const steps: { kinds?: readonly number[]; plan?: unknown }[] = [];

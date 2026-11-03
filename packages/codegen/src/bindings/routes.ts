@@ -614,15 +614,7 @@ function delimiterRouteOf(member: Extract<DeepMember, { readonly route: 'presenc
 	if (list === undefined || member.via.length > 0 || member.anchor !== 'last' || !separated)
 		throw new Error(`bindings: ${list?.kind ?? member.owner}'s ${name} anchors the token "${member.token}"; an anchored token names a list's own optional separator after its last item`);
 	if (member.flag !== true) throw new Error(`bindings: ${list.kind}'s ${name} reads its list's trailing separator, which is a flag`);
-	const items = listItems(list);
-	return {
-		route: 'delimiter',
-		name,
-		delimiter: Delimiter.Trailing,
-		...(list.list?.singleElementNeedsTrailing === true && items !== undefined ? { items: stepOf(list.kind, items.name, null) } : {}),
-		path: undefined,
-		flag: true
-	};
+	return { route: 'delimiter', name, delimiter: Delimiter.Trailing, path: undefined, flag: true };
 }
 
 export interface Guaranteed {
@@ -694,7 +686,11 @@ function membersOf(
 	if (node === undefined) return [];
 	if (node.modelType === 'list') {
 		const delimiters = input.bindings.members.filter((member) => isListDelimiter(input.model, member, kind));
-		const routes = delimiters.flatMap((member) => deepRoutesOf(input.model, kind, { ...member, owner: kind }));
+		const items = listItems(node);
+		const counted = items !== undefined && (node.list?.singleElementNeedsTrailing === true || entries.some((entry) => entry.separated === true));
+		const routes = delimiters
+			.flatMap((member) => deepRoutesOf(input.model, kind, { ...member, owner: kind }))
+			.map((route) => (counted && route.route === 'delimiter' ? { ...route, items: stepOf(kind, items.name, null) } : route));
 		return [...listFormItems(input, node, slotNamesOf), ...routes.filter((route, i) => routes.findIndex((other) => other.name === route.name) === i)];
 	}
 	const envelope = envelopeStorage(input.model, kind);
@@ -1045,7 +1041,10 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): Cla
 const plainRead =
 	(model: SlotModel, kind: string) =>
 	({ claim }: ClaimRead): boolean =>
-		claim.predicates.length === 0 && pinnedLiterals(model, modelNode(model, kind)?.slots ?? [], claim).length === 0 && claimChildTests(model, kind, claim).length === 0;
+		claim.predicates.length === 0 &&
+		!separatedBy(model, kind, claim) &&
+		pinnedLiterals(model, modelNode(model, kind)?.slots ?? [], claim).length === 0 &&
+		claimChildTests(model, kind, claim).length === 0;
 
 export const declaredContainerKinds = (model: SlotModel, containers: readonly ContainerFact[]): ReadonlySet<string> =>
 	new Set(containers.flatMap((container) => formsOf(model, container.kind)));
@@ -1246,7 +1245,11 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		const unwrap = containerOf(input, node);
 		if (unwrap === undefined) continue;
 		const members = containerDataMembers(input, node, vocabOf);
-		containers.set(node.kind, { ...unwrap, ...(members.length === 0 ? {} : { members }), ...(refined.has(node.kind) ? { refined: true as const } : {}) });
+		const isRefined = refined.has(node.kind);
+		const separated = (readEntries.get(node.kind) ?? []).some((entry) => entry.separated === true);
+		if (isRefined && unwrap.list && !separated)
+			throw new Error(`bindings: ${node.kind} is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails`);
+		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(isRefined ? { refined: true as const } : {}) });
 	}
 
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));

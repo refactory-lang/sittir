@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "c6bc6ae0f899a7dac37de08593ec84f8342f573b9521d758c1d9c58c0bc27bc1";
+export const hash = "55a94afa819088140a82c13931be5ccf39a2e54c595c823118ad0fcdb1e48d03";
 
 export const renames = {
 	module: "file",
@@ -123,6 +123,7 @@ export default grammar(
 			list: { "1/0": field("elements") },
 			list_pattern: { "1/0": field("elements") },
 			list_splat_pattern: { "1": field("pattern") },
+			match_statement: { "1": field("subject"), "1/0": field("elements"), "1/1/0/1": field("elements") },
 			member_type: { "0": field("qualifier") },
 			named_expression: { "0": field("left"), "2": field("right") },
 			parameter: { "-5": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
@@ -135,7 +136,7 @@ export default grammar(
 			splat_pattern_dictionary: { "1": field("pattern") },
 			splat_pattern_list: { "1": field("pattern") },
 			splat_type: { "1": field("type") },
-			subscript: { "0": field("object") },
+			subscript: { "0": field("object"), "2": field("index"), "2/0": field("elements"), "2/1/0/1": field("elements") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 			type: { "-1": alias("qualified_identifier") },
 			type_parameter: { "1": field("types") },

@@ -3246,17 +3246,17 @@
             "named": true
           }
         ]
+      },
+      "subject": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "subjects",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "subjects",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4202,7 +4202,7 @@
     "type": "subjects",
     "named": true,
     "fields": {
-      "subject": {
+      "elements": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4218,6 +4218,16 @@
     "type": "subscript",
     "named": true,
     "fields": {
+      "index": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "subscripts",
+            "named": true
+          }
+        ]
+      },
       "object": {
         "multiple": false,
         "required": true,
@@ -4228,23 +4238,13 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "subscripts",
-          "named": true
-        }
-      ]
     }
   },
   {
     "type": "subscripts",
     "named": true,
     "fields": {
-      "subscript": {
+      "elements": {
         "multiple": true,
         "required": true,
         "types": [

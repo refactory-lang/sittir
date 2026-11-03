@@ -208,10 +208,10 @@ export {
 	buildMethodDeclaration
 } from './raw.js';
 
-export const subscript$seated: Seat<
-	T.Subscript.BuildArgs,
-	ReturnType<typeof F.buildSubscript>
-> = K.subscript$subscripts(F.buildSubscript, F.buildSubscripts);
+export const subscript$seated: Seat<T.Subscript.BuildArgs, ReturnType<typeof F.buildSubscript>> = K.subscript$index(
+	F.buildSubscript,
+	F.buildSubscripts
+);
 
 export const comparisonOperator$seated: Seat<
 	T.ComparisonOperator.BuildArgs,
@@ -221,7 +221,7 @@ export const comparisonOperator$seated: Seat<
 export const matchStatement$seated: Seat<
 	T.MatchStatement.BuildArgs,
 	ReturnType<typeof F.buildMatchStatement>
-> = K.matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
+> = K.matchStatement$subject(F.buildMatchStatement, F.buildSubjects);
 
 export const classPattern$seated: Seat<
 	T.ClassPattern.BuildArgs,

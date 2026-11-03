@@ -1824,6 +1824,28 @@ describe('a list\'s trailing separator', () => {
 		const entries = resolveRoutes(await grammar('(call_items ",") @expression.tuple\n(call_items) @expression.call.arguments')).readEntries.get('call_items') ?? [];
 		expect(entries.map((entry) => [entry.vocab, entry.separated])).toEqual(expect.arrayContaining([['expression.tuple', true], ['expression.call.arguments', undefined]]));
 	});
+
+	it('reads the flag by two items or more on a list claimed by its own separator, though one item does not spell it', async () => {
+		expect((await membersOf('(call_items ",") @expression.tuple\n(call_items "," @trailingComma .)', 'call_items')).find((m) => m.name === 'trailingComma')).toMatchObject({
+			route: 'delimiter',
+			items: { owner: 'call_items', slot: 'item' }
+		});
+	});
+});
+
+describe('a claimed list that unwraps to its element', () => {
+	const CONTAINER = '((call_items (_) @element) (#set! reason "one item without a separator reads as itself"))';
+
+	it('unwraps to one value where the claim is its own separator, the one item it holds when the claim fails', async () => {
+		const routes = resolveRoutes(await grammar(['(call_items ",") @expression.tuple', CONTAINER].join('\n')));
+		expect(routes.containers.get('call_items')).toEqual({ slot: 'item', kinds: ['identifier'], terminals: [], list: false, refined: true });
+	});
+
+	it('refuses a claim that is not its own separator, since the list it unwraps to can hold more than one element', async () => {
+		await expect(grammar(['((call_items (identifier) @first) @expression.tuple (#eq? @first "a"))', CONTAINER].join('\n')).then(resolveRoutes)).rejects.toThrow(
+			/call_items is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails/
+		);
+	});
 });
 
 describe('a claim token', () => {

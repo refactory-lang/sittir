@@ -195,7 +195,8 @@ export interface PortableDecimalParts {
  * lists each set of routes (by index into `members`) that build together; a structure builds through the one owner whose routes take every
  * member it states, by the member's kinds and whether it is a list. `empty` names the list members a structure that leaves them out builds
  * as `[]`: each route of such a member reaches its slot through steps the arm always holds. A `literal` arm's kind is a token whose meaning is a value: it reads as its
- * path, with the `$value` its claim declares, never as its text.
+ * path, with the `$value` its claim declares, never as its text. A `sole` arm builds a list its claim reads by its own separator: where the
+ * `member` holds one item, the list is built with `delimiter`, the separator that makes one item that list.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -213,6 +214,7 @@ export interface PortableBuildArm {
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
 	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
+	readonly sole?: { readonly member: string; readonly delimiter: number };
 }
 
 /** A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. */

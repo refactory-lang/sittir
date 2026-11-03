@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { PortableBuildArm, PortableBuildTable } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { portableBuilder } from '../src/portable/build.ts';
+import { Delimiter } from '../src/utils.ts';
 import python from '@sittir/python';
 import rust from '@sittir/rust';
 import typescript from '@sittir/typescript';
@@ -306,6 +307,15 @@ describe('the portable build table', () => {
 			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
 		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
 		expect(entries.filter(({ code }) => code.startsWith('portable-')).map(({ code, message }) => ({ code, message }))).toEqual([]);
+	});
+
+	it('writes the trailing separator on the one item of a list claimed by its own separator, and on no other list', () => {
+		const sole = { member: 'elements', delimiter: Delimiter.Trailing };
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subscripts).sole).toEqual(sole);
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subjects).sole).toEqual(sole);
+		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.ExpressionList).sole).toBeUndefined();
+		const soles = Object.values(tables).flatMap(({ table }) => Object.values(table.paths).flatMap(({ arms }) => arms.filter((arm) => arm.sole !== undefined)));
+		expect(soles.map((arm) => arm.kind).sort()).toEqual([python.kinds.Subjects, python.kinds.Subscripts].sort());
 	});
 
 	it('builds the default form of a variant family, and the others by render option', () => {

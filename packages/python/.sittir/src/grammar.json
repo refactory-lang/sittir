@@ -1015,10 +1015,17 @@
           "value": "match"
         },
         {
-          "type": "SYMBOL",
-          "name": "subjects",
+          "type": "FIELD",
+          "name": "subject",
+          "content": {
+            "type": "SYMBOL",
+            "name": "subjects",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "override"
           }
         },
         {
@@ -4694,10 +4701,17 @@
             "value": "["
           },
           {
-            "type": "SYMBOL",
-            "name": "subscripts",
+            "type": "FIELD",
+            "name": "index",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscripts",
+              "metadata": {
+                "symbolSource": "group-lift"
+              }
+            },
             "metadata": {
-              "symbolSource": "group-lift"
+              "fieldSource": "override"
             }
           },
           {
@@ -6420,10 +6434,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "subject",
+          "name": "elements",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -6437,10 +6454,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "subject",
+                "name": "elements",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               }
             ]
@@ -6888,7 +6908,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "subscript",
+            "name": "elements",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -6901,6 +6921,9 @@
                   "name": "slice"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -6914,7 +6937,7 @@
                 },
                 {
                   "type": "FIELD",
-                  "name": "subscript",
+                  "name": "elements",
                   "content": {
                     "type": "CHOICE",
                     "members": [
@@ -6927,6 +6950,9 @@
                         "name": "slice"
                       }
                     ]
+                  },
+                  "metadata": {
+                    "fieldSource": "override"
                   }
                 }
               ]

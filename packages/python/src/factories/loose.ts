@@ -208,10 +208,10 @@ export {
 	coerceToMethodDeclaration as buildMethodDeclaration
 } from './coerce.js';
 
-export const subscript$seated: Seat<
-	T.Subscript.LooseArgs,
-	ReturnType<typeof C.coerceToSubscript>
-> = K.subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts);
+export const subscript$seated: Seat<T.Subscript.LooseArgs, ReturnType<typeof C.coerceToSubscript>> = K.subscript$index(
+	C.coerceToSubscript,
+	C.coerceToSubscripts
+);
 
 export const comparisonOperator$seated: Seat<
 	T.ComparisonOperator.LooseArgs,
@@ -221,7 +221,7 @@ export const comparisonOperator$seated: Seat<
 export const matchStatement$seated: Seat<
 	T.MatchStatement.LooseArgs,
 	ReturnType<typeof C.coerceToMatchStatement>
-> = K.matchStatement$subjects(C.coerceToMatchStatement, C.coerceToSubjects);
+> = K.matchStatement$subject(C.coerceToMatchStatement, C.coerceToSubjects);
 
 export const classPattern$seated: Seat<
 	T.ClassPattern.LooseArgs,

@@ -6,6 +6,6 @@ export namespace Statement {
 		// claimed by pr
 		readonly $kind: 'statement.match';
 		readonly body: G['slots']['statement.match']['body'] | G['slots']['statement.match']['body'][];
-		readonly subject?: G['slots']['statement.match']['subject'] | G['slots']['statement.match']['subject'][];
+		readonly subject?: G['slots']['statement.match']['subject'];
 	}
 }

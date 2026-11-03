@@ -10855,7 +10855,7 @@ impl ::sittir_core::render::Render for DictPatternElementsItemNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum SubscriptsSubscriptNodeSlot {
+pub enum SubscriptsElementsNodeSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
     ComparisonOperator(ComparisonOperatorNode),
     #[kind(kind::NOT_OPERATOR)]
@@ -10944,230 +10944,230 @@ pub enum SubscriptsSubscriptNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::prepare::Prepare for SubscriptsElementsNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::String(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::List(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.prepare(ctx),
-            SubscriptsSubscriptNodeSlot::True(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::False(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::None(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => Ok(()),
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Await(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::String(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Call(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::List(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Set(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::Slice(t) => t.prepare(ctx),
+            SubscriptsElementsNodeSlot::True(_) => Ok(()),
+            SubscriptsElementsNodeSlot::False(_) => Ok(()),
+            SubscriptsElementsNodeSlot::None(_) => Ok(()),
+            SubscriptsElementsNodeSlot::Ellipsis(_) => Ok(()),
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.gap_edges(),
-            SubscriptsSubscriptNodeSlot::True(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::False(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::None(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::Ellipsis(edges) => Some(edges),
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Await(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::String(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Call(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::List(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Set(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.gap_edges(),
+            SubscriptsElementsNodeSlot::True(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::False(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::None(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::Ellipsis(edges) => Some(edges),
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.snapshot_edge(),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Await(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::String(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Call(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::List(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Set(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.snapshot_edge(),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::String(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::List(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.source_coordinate(),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Await(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::String(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Call(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::List(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Set(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::Slice(t) => t.source_coordinate(),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::NotOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Lambda(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Await(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Identifier(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::String(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerHex(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatPoint(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::FloatScientific(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Attribute(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Subscript(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Call(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::List(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ListComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Dictionary(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Set(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::SetComprehension(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Tuple(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::NamedExpression(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::AsPattern(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::Slice(t) => t.source_separator(ctx),
-            SubscriptsSubscriptNodeSlot::True(_) => None,
-            SubscriptsSubscriptNodeSlot::False(_) => None,
-            SubscriptsSubscriptNodeSlot::None(_) => None,
-            SubscriptsSubscriptNodeSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::NotOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::BooleanOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Lambda(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Await(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::BinaryOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Identifier(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::String(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerHex(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatPoint(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::FloatScientific(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::UnaryOperator(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Attribute(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Subscript(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Call(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::List(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ListComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Dictionary(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Set(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::SetComprehension(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Tuple(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::NamedExpression(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::AsPattern(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::Slice(t) => t.source_separator(ctx),
+            SubscriptsElementsNodeSlot::True(_) => None,
+            SubscriptsElementsNodeSlot::False(_) => None,
+            SubscriptsElementsNodeSlot::None(_) => None,
+            SubscriptsElementsNodeSlot::Ellipsis(_) => None,
+            SubscriptsElementsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -11175,7 +11175,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::view::KindOf for SubscriptsElementsNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ComparisonOperator(inner) => inner.kind_in(kinds),
@@ -11223,50 +11223,50 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::render::Render for SubscriptsElementsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptsSubscriptNodeSlot::ComparisonOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::NotOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::BooleanOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Lambda(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Await(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::BinaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Identifier(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::String(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ConcatenatedString(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerHex(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerOctal(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerBinary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::FloatScientific(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::UnaryOperator(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Attribute(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Subscript(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Call(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::List(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ListComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Dictionary(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::DictionaryComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Set(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::SetComprehension(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Tuple(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::GeneratorExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ListSplatPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::ConditionalExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::NamedExpression(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::AsPattern(inner) => inner.render(w),
-            SubscriptsSubscriptNodeSlot::Slice(inner) => inner.as_ref().render(w),
-            SubscriptsSubscriptNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
-            SubscriptsSubscriptNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
-            SubscriptsSubscriptNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
-            SubscriptsSubscriptNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
-            SubscriptsSubscriptNodeSlot::Verbatim(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ComparisonOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::NotOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::BooleanOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Lambda(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Await(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::BinaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Identifier(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::String(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ConcatenatedString(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerHex(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerOctal(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerBinary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::FloatScientific(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::UnaryOperator(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Attribute(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Subscript(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Call(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::List(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ListComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Dictionary(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::DictionaryComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Set(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::SetComprehension(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Tuple(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ParenthesizedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::GeneratorExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ListSplatPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::ConditionalExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::NamedExpression(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::AsPattern(inner) => inner.render(w),
+            SubscriptsElementsNodeSlot::Slice(inner) => inner.as_ref().render(w),
+            SubscriptsElementsNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(69), edges, w, render_true),
+            SubscriptsElementsNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_false),
+            SubscriptsElementsNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_none),
+            SubscriptsElementsNodeSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(63), edges, w, render_ellipsis),
+            SubscriptsElementsNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -13241,9 +13241,9 @@ impl ::sittir_core::prepare::Prepare for ElseClauseNode {
 pub struct MatchStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_subjects")]
-    #[slot(word = 2, width = 5)]
-    pub subjects: ::sittir_core::SlotValue<SubjectsNode>,
+    #[wire(key = "_subject")]
+    #[slot(field = field::SUBJECT, word = 2, width = 5)]
+    pub subject: ::sittir_core::SlotValue<SubjectsNode>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<MatchBlockNode>,
@@ -13271,7 +13271,7 @@ impl ::sittir_core::prepare::Prepare for MatchStatementNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.subjects.prepare(ctx)?;
+        self.subject.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -16448,9 +16448,9 @@ pub struct SubscriptNode {
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 5)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
-    #[wire(key = "_subscripts")]
-    #[slot(word = 7, width = 5)]
-    pub subscripts: ::sittir_core::SlotValue<SubscriptsNode>,
+    #[wire(key = "_index")]
+    #[slot(field = field::INDEX, word = 7, width = 5)]
+    pub index: ::sittir_core::SlotValue<SubscriptsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SubscriptNode {
@@ -16476,7 +16476,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
-        self.subscripts.prepare(ctx)?;
+        self.index.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18747,20 +18747,20 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBJECTS, item = subject, words = 4)]
+#[node(kind = kind::SUBJECTS, item = elements, words = 4)]
 pub struct SubjectsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_subject")]
-    #[slot(field = field::SUBJECT, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_subject_separator_space_before")]
-    pub subject_separator_space_before: Option<KindId>,
-    #[wire(key = "_subject_separator_space_after")]
-    pub subject_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SubjectsNode {
@@ -18784,12 +18784,12 @@ impl ::sittir_core::render::Render for SubjectsNode {
 impl ::sittir_core::prepare::Prepare for SubjectsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.subject.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_subject"));
-        self.subject_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE).arm);
-        self.subject_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.subject.iter_mut().map(Some), options::SEATS_SUBJECTS_SUBJECT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(261), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBJECTS_SUBJECT), ctx));
-        self.subject.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        self.elements_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+        self.elements_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_SUBJECTS_ELEMENTS, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(261), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBJECTS_ELEMENTS), ctx));
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19124,20 +19124,20 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBSCRIPTS, item = subscript, words = 4)]
+#[node(kind = kind::SUBSCRIPTS, item = elements, words = 4)]
 pub struct SubscriptsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_subscript")]
-    #[slot(field = field::SUBSCRIPT, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptNodeSlot>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsElementsNodeSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_subscript_separator_space_before")]
-    pub subscript_separator_space_before: Option<KindId>,
-    #[wire(key = "_subscript_separator_space_after")]
-    pub subscript_separator_space_after: Option<KindId>,
+    #[wire(key = "_elements_separator_space_before")]
+    pub elements_separator_space_before: Option<KindId>,
+    #[wire(key = "_elements_separator_space_after")]
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SubscriptsNode {
@@ -19161,12 +19161,12 @@ impl ::sittir_core::render::Render for SubscriptsNode {
 impl ::sittir_core::prepare::Prepare for SubscriptsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.subscript.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_subscript"));
-        self.subscript_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE).arm);
-        self.subscript_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.subscript.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_SUBSCRIPT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_SUBSCRIPT), ctx));
-        self.subscript.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        self.elements_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
+        self.elements_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_ELEMENTS, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_ELEMENTS), ctx));
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22684,19 +22684,19 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(345)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(344)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(345) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(344) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(345)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(344)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -26888,7 +26888,7 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternElementsItemNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for SubscriptsElementsNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ComparisonOperator(t) => t.seat_target(table, ctx),
@@ -27339,11 +27339,11 @@ fn render_else_clause(node: &ElseClauseNode, w: &mut dyn ::sittir_core::render::
 
 fn render_match_statement(node: &MatchStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let subjects = &node.subjects;
+    let subject = &node.subject;
     w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("match")?;
     w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subjects", ::sittir_core::types::ItemIndex(0), w, |w| subjects.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subject", ::sittir_core::types::ItemIndex(0), w, |w| subject.render(w))?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
@@ -28205,14 +28205,14 @@ fn render_attribute(node: &AttributeNode, w: &mut dyn ::sittir_core::render::Ren
 }
 
 fn render_subscript(node: &SubscriptNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let index = &node.index;
     let object = &node.object;
-    let subscripts = &node.subscripts;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subscripts", ::sittir_core::types::ItemIndex(0), w, |w| subscripts.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_index", ::sittir_core::types::ItemIndex(0), w, |w| index.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -28700,20 +28700,20 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsNode, w: &mu
 }
 
 fn render_subjects(node: &SubjectsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let subject = ListView {
-        items: &node.subject,
+    let elements = ListView {
+        items: &node.elements,
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subject_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.subject_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_subject"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
-    subject.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -28808,20 +28808,20 @@ fn render_dict_pattern_elements(node: &DictPatternElementsNode, w: &mut dyn ::si
 }
 
 fn render_subscripts(node: &SubscriptsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let subscript = ListView {
-        items: &node.subscript,
+    let elements = ListView {
+        items: &node.elements,
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subscript_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.subscript_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_subscript"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
-    subscript.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -31051,4 +31051,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);

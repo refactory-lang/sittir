@@ -16,7 +16,7 @@ const contentOf = (source: string) => {
 const sliceOf = (source: string) => {
 	const subscript = contentOf(source);
 	if (!py.is.subscript(subscript)) throw new Error('not a subscript');
-	const [slice] = subscript.subscripts();
+	const [slice] = subscript.index();
 	if (slice === undefined || typeof slice === 'number' || !py.is.slice(slice)) throw new Error('not a slice');
 	if (slice.expression === undefined) throw new Error('no step group');
 	return slice;

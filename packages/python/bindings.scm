@@ -39,7 +39,11 @@
 (raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
-(match_statement (subjects subject: (_)+ @subject)) @statement.match
+(match_statement (subjects) @subject) @statement.match
+(subjects ",") @expression.collection.tuple.bare
+(subjects subject: (_) @elements)
+(subjects "," @trailingComma .)
+((subjects (_) @element) (#set! reason "a subject list with a comma reads as a tuple; one subject without one reads as itself"))
 (with_statement) @statement.resource
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
@@ -160,7 +164,11 @@
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.attribute
-(subscript value: (_) @object (subscripts subscript: (_)+ @index)) @expression.subscript
+(subscript value: (_) @object (subscripts) @index) @expression.subscript
+(subscripts ",") @expression.collection.tuple.bare
+(subscripts subscript: (_) @elements)
+(subscripts "," @trailingComma .)
+((subscripts (_) @element) (#set! reason "a subscript list with a comma reads as a tuple; one subscript without one reads as itself"))
 (slice) @expression.slice
 (lambda) @expression.lambda
 (await (_)? @expression) @expression.await

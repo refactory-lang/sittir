@@ -905,31 +905,31 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 }
 
 export function buildMatchStatement<
-	SubjectsSlot extends T.MatchStatement.Config['subjects'],
+	SubjectSlot extends T.MatchStatement.Config['subject'],
 	BodySlot extends T.MatchStatement.Config['body']
->(config: RefusingConfig<T.MatchStatement.Config, { subjects: SubjectsSlot; body: BodySlot }>): T.MatchStatement.Bound;
+>(config: RefusingConfig<T.MatchStatement.Config, { subject: SubjectSlot; body: BodySlot }>): T.MatchStatement.Bound;
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Bound {
 	currentHandle()?.admit(TSKindId.MatchStatement, [config]);
-	const _subjects = config.subjects;
+	const _subject = config.subject;
 	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchStatement as const,
 		$named: true as const,
-		_subjects,
+		_subject,
 		_body,
 		$with: {
-			subjects: (...args: unknown[]) =>
+			subject: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subjects as const, optional: false, make: buildSubjects },
-						(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subjects: value })
+						(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subject: value })
 					)
 				),
 			body: (value: Admit<T.MatchBlock>) => rebuilt(node, handle, () => buildMatchStatement({ ...config, body: value }))
 		},
-		subjects: () => hydrateStoredSlot(node, '_subjects'),
+		subject: () => hydrateStoredSlot(node, '_subject'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3382,32 +3382,32 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 
 export function buildSubscript<
 	ObjectSlot extends T.Subscript.Config['object'],
-	SubscriptsSlot extends T.Subscript.Config['subscripts']
->(config: RefusingConfig<T.Subscript.Config, { object: ObjectSlot; subscripts: SubscriptsSlot }>): T.Subscript.Bound;
+	IndexSlot extends T.Subscript.Config['index']
+>(config: RefusingConfig<T.Subscript.Config, { object: ObjectSlot; index: IndexSlot }>): T.Subscript.Bound;
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	currentHandle()?.admit(TSKindId.Subscript, [config]);
 	const _object = kindIdStorage<NonNullable<T.Subscript['_object']>>(config.object);
-	const _subscripts = config.subscripts;
+	const _index = config.index;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscript as const,
 		$named: true as const,
 		_object,
-		_subscripts,
+		_index,
 		$with: {
 			object: (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
 				rebuilt(node, handle, () => buildSubscript({ ...config, object: value })),
-			subscripts: (...args: unknown[]) =>
+			index: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subscripts as const, optional: false, make: buildSubscripts },
-						(value: Admit<T.Subscripts>) => buildSubscript({ ...config, subscripts: value })
+						(value: Admit<T.Subscripts>) => buildSubscript({ ...config, index: value })
 					)
 				)
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
-		subscripts: () => hydrateStoredSlot(node, '_subscripts'),
+		index: () => hydrateStoredSlot(node, '_index'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4837,25 +4837,25 @@ function _buildSubjects(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subjects.Bound {
 	currentHandle()?.admit(TSKindId.Subjects, elements);
-	const _subject = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subject);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subjects as const,
 		$named: true as const,
-		_subject,
+		_elements,
 		_delimiter,
 		$with: {
-			subjects: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildSubjects(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
 		},
-		subjects: () => hydrateStoredSlots(node, '_subject'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subjects'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5224,25 +5224,25 @@ function _buildSubscripts(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subscripts.Bound {
 	currentHandle()?.admit(TSKindId.Subscripts, elements);
-	const _subscript = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subscript);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscripts as const,
 		$named: true as const,
-		_subscript,
+		_elements,
 		_delimiter,
 		$with: {
-			subscripts: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
 				rebuilt(node, handle, () => buildSubscripts(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
 		},
-		subscripts: () => hydrateStoredSlots(node, '_subscript'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subscripts'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

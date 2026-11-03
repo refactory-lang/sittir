@@ -302,7 +302,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[350, '_simple_statements'],
+	[349, '_simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -357,7 +357,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[349, '_simple_pattern'],
+	[348, '_simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -500,28 +500,27 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, 'string_content_repeat1'],
 	[325, 'format_specifier_repeat1'],
 	[326, 'simple_statements_elements_repeat1'],
-	[327, 'subjects_repeat1'],
-	[328, 'with_clause_with_items_repeat1'],
-	[329, '_exec_statement_optional1_repeat1'],
-	[330, 'types_repeat1'],
-	[331, 'argument_list_elements_repeat1'],
-	[332, 'list_pattern_case_patterns_repeat1'],
-	[333, 'dict_pattern_elements_repeat1'],
-	[334, 'subscripts_repeat1'],
-	[335, 'dictionary_elements_repeat1'],
-	[336, '_tuple_pattern_elements_repeat1'],
-	[337, 'case_pattern_list_repeat1'],
-	[338, '_tuple_elements_repeat1'],
-	[339, '_print_arguments_repeat1'],
-	[340, 'comprehension_clauses_repeat1'],
-	[341, 'except_clause_exception_list_repeat1'],
-	[342, 'with_clause_bare_repeat1'],
-	[343, 'match_block_block_repeat1'],
-	[344, '_block_class_definition_repeat1'],
-	[345, 'as_pattern_target'],
-	[346, 'format_expression'],
-	[347, 'method_declaration'],
-	[348, 'names'],
+	[327, 'with_clause_with_items_repeat1'],
+	[328, '_exec_statement_optional1_repeat1'],
+	[329, 'types_repeat1'],
+	[330, 'argument_list_elements_repeat1'],
+	[331, 'list_pattern_case_patterns_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, 'case_pattern_list_repeat1'],
+	[337, '_tuple_elements_repeat1'],
+	[338, '_print_arguments_repeat1'],
+	[339, 'comprehension_clauses_repeat1'],
+	[340, 'except_clause_exception_list_repeat1'],
+	[341, 'with_clause_bare_repeat1'],
+	[342, 'match_block_block_repeat1'],
+	[343, '_block_class_definition_repeat1'],
+	[344, 'as_pattern_target'],
+	[345, 'format_expression'],
+	[346, 'method_declaration'],
+	[347, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -657,7 +656,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[350, 'simple_statements'],
+	[349, 'simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -712,7 +711,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'qualified_identifier'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[349, 'simple_pattern'],
+	[348, 'simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -855,28 +854,27 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[324, 'string_content_repeat1'],
 	[325, 'format_specifier_repeat1'],
 	[326, 'simple_statements_elements_repeat1'],
-	[327, 'subjects_repeat1'],
-	[328, 'with_clause_with_items_repeat1'],
-	[329, '_exec_statement_optional1_repeat1'],
-	[330, 'types_repeat1'],
-	[331, 'argument_list_elements_repeat1'],
-	[332, 'list_pattern_case_patterns_repeat1'],
-	[333, 'dict_pattern_elements_repeat1'],
-	[334, 'subscripts_repeat1'],
-	[335, 'dictionary_elements_repeat1'],
-	[336, '_tuple_pattern_elements_repeat1'],
-	[337, 'case_pattern_list_repeat1'],
-	[338, '_tuple_elements_repeat1'],
-	[339, '_print_arguments_repeat1'],
-	[340, 'comprehension_clauses_repeat1'],
-	[341, 'except_clause_exception_list_repeat1'],
-	[342, 'with_clause_bare_repeat1'],
-	[343, 'match_block_block_repeat1'],
-	[344, '_block_class_definition_repeat1'],
-	[345, 'as_pattern_target'],
-	[346, 'format_expression'],
-	[347, 'method_declaration'],
-	[348, 'names'],
+	[327, 'with_clause_with_items_repeat1'],
+	[328, '_exec_statement_optional1_repeat1'],
+	[329, 'types_repeat1'],
+	[330, 'argument_list_elements_repeat1'],
+	[331, 'list_pattern_case_patterns_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, 'case_pattern_list_repeat1'],
+	[337, '_tuple_elements_repeat1'],
+	[338, '_print_arguments_repeat1'],
+	[339, 'comprehension_clauses_repeat1'],
+	[340, 'except_clause_exception_list_repeat1'],
+	[341, 'with_clause_bare_repeat1'],
+	[342, 'match_block_block_repeat1'],
+	[343, '_block_class_definition_repeat1'],
+	[344, 'as_pattern_target'],
+	[345, 'format_expression'],
+	[346, 'method_declaration'],
+	[347, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1537,8 +1535,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormatSpecifierRepeat1;
 		case 'simple_statements_elements_repeat1':
 			return TSKindId.SimpleStatementsElementsRepeat1;
-		case 'subjects_repeat1':
-			return TSKindId.SubjectsRepeat1;
 		case 'with_clause_with_items_repeat1':
 			return TSKindId.WithClauseWithItemsRepeat1;
 		case '_exec_statement_optional1_repeat1':
@@ -2382,23 +2378,23 @@ export interface ElseClause {
 
 export interface MatchStatement {
 	readonly $type: TSKindId.MatchStatement;
-	readonly _subjects: Subjects;
+	readonly _subject: Subjects;
 	readonly _body: MatchBlock;
 	readonly __slotNames__?: {
-		readonly _subjects: 'subjects';
+		readonly _subject: 'subject';
 		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly subjects: readonly Expression[];
+		readonly subject: readonly Expression[];
 	};
 	readonly __slotHints__?: {
-		readonly subjects: SlotHint<T.Subjects>;
+		readonly subject: SlotHint<T.Subjects>;
 		readonly body: SlotHint<T.MatchBlock>;
 		readonly $listSlots: {
-			readonly subjects: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly subject: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly subjects: () => Subjects;
+	readonly subject: () => Subjects;
 	readonly body: () => MatchBlock;
 }
 
@@ -3919,10 +3915,10 @@ export interface Attribute {
 export interface Subscript {
 	readonly $type: TSKindId.Subscript;
 	readonly _object: PrimaryExpression;
-	readonly _subscripts: Subscripts;
+	readonly _index: Subscripts;
 	readonly __slotNames__?: {
 		readonly _object: 'object';
-		readonly _subscripts: 'subscripts';
+		readonly _index: 'index';
 	};
 	readonly __inputHints__?: {
 		readonly object:
@@ -3930,17 +3926,17 @@ export interface Subscript {
 			| PrimaryExpression;
 	};
 	readonly __looseHints__?: {
-		readonly subscripts: readonly (Expression | Slice)[];
+		readonly index: readonly (Expression | Slice)[];
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.Subscript.Config>['object']>;
-		readonly subscripts: SlotHint<T.Subscripts>;
+		readonly index: SlotHint<T.Subscripts>;
 		readonly $listSlots: {
-			readonly subscripts: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly index: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly object: () => PrimaryExpression;
-	readonly subscripts: () => Subscripts;
+	readonly index: () => Subscripts;
 }
 
 export interface Slice {
@@ -4644,16 +4640,16 @@ export interface SimpleStatementsElements {
 
 export interface Subjects {
 	readonly $type: TSKindId.Subjects;
-	readonly _subject: NonEmptyArray<Expression>;
+	readonly _elements: NonEmptyArray<Expression>;
 	readonly __slotNames__?: {
-		readonly _subject: 'subjects';
+		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly subjects: SlotHint<NonEmptyArray<T.Expression>, false, true>;
+		readonly elements: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly subjects: () => NonEmptyArray<Expression>;
+	readonly elements: () => NonEmptyArray<Expression>;
 }
 
 export interface WithClauseWithItems {
@@ -4740,16 +4736,16 @@ export interface DictPatternElements {
 
 export interface Subscripts {
 	readonly $type: TSKindId.Subscripts;
-	readonly _subscript: NonEmptyArray<Expression | Slice>;
+	readonly _elements: NonEmptyArray<Expression | Slice>;
 	readonly __slotNames__?: {
-		readonly _subscript: 'subscripts';
+		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly subscripts: SlotHint<NonEmptyArray<T.Expression | T.Slice>, false, true>;
+		readonly elements: SlotHint<NonEmptyArray<T.Expression | T.Slice>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly subscripts: () => NonEmptyArray<Expression | Slice>;
+	readonly elements: () => NonEmptyArray<Expression | Slice>;
 }
 
 export interface DictionaryElements {
@@ -7613,7 +7609,7 @@ export namespace SimpleStatementsElements {
 export namespace Subjects {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly subject?: {
+			readonly elements?: {
 				readonly asPattern?: { readonly after?: WhitespaceKindId };
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly await?: { readonly after?: WhitespaceKindId };
@@ -7792,7 +7788,7 @@ export namespace DictPatternElements {
 export namespace Subscripts {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly subscript?: {
+			readonly elements?: {
 				readonly asPattern?: { readonly after?: WhitespaceKindId };
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly await?: { readonly after?: WhitespaceKindId };
@@ -9871,7 +9867,7 @@ export interface SubjectsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Subjects.Bound,
-	'subject',
+	'elements',
 	TSKindId.Subjects,
 	Subjects.Parsed,
 	never
@@ -9955,7 +9951,7 @@ export interface SubscriptsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Subscripts.Bound,
-	'subscript',
+	'elements',
 	TSKindId.Subscripts,
 	Subscripts.Parsed,
 	never
@@ -12243,12 +12239,12 @@ export namespace MatchStatement {
 	export type BuildArgs = [
 		config:
 			| ConfigOf<T.MatchStatement>
-			| (OmitEach<NonNullable<ConfigOf<T.MatchStatement>>, 'subjects'> & { subjects: T.Subjects.BuildArgs })
+			| (OmitEach<NonNullable<ConfigOf<T.MatchStatement>>, 'subject'> & { subject: T.Subjects.BuildArgs })
 	];
 	export type LooseArgs = [
 		config:
 			| T.MatchStatement.Loose
-			| (OmitEach<NonNullable<T.MatchStatement.Loose>, 'subjects'> & { subjects: T.Subjects.LooseArgs })
+			| (OmitEach<NonNullable<T.MatchStatement.Loose>, 'subject'> & { subject: T.Subjects.LooseArgs })
 	];
 	export type Kind = TSKindId.MatchStatement;
 }
@@ -13828,12 +13824,10 @@ export namespace Subscript {
 	export type BuildArgs = [
 		config:
 			| ConfigOf<T.Subscript>
-			| (OmitEach<NonNullable<ConfigOf<T.Subscript>>, 'subscripts'> & { subscripts: T.Subscripts.BuildArgs })
+			| (OmitEach<NonNullable<ConfigOf<T.Subscript>>, 'index'> & { index: T.Subscripts.BuildArgs })
 	];
 	export type LooseArgs = [
-		config:
-			| T.Subscript.Loose
-			| (OmitEach<NonNullable<T.Subscript.Loose>, 'subscripts'> & { subscripts: T.Subscripts.LooseArgs })
+		config: T.Subscript.Loose | (OmitEach<NonNullable<T.Subscript.Loose>, 'index'> & { index: T.Subscripts.LooseArgs })
 	];
 	export type Kind = TSKindId.Subscript;
 }
@@ -14818,9 +14812,9 @@ export namespace Subjects {
 	export type Kind = TSKindId.Subjects;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'subjects'>,
-			KeyRefusesEmpty<LooseConfig, 'subjects'>,
-			SetterRefusesEmpty<Bound, 'subjects'>
+			KeyRefusesEmpty<Config, 'elements'>,
+			KeyRefusesEmpty<LooseConfig, 'elements'>,
+			SetterRefusesEmpty<Bound, 'elements'>
 		]
 	>;
 }
@@ -15163,9 +15157,9 @@ export namespace Subscripts {
 	export type Kind = TSKindId.Subscripts;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'subscripts'>,
-			KeyRefusesEmpty<LooseConfig, 'subscripts'>,
-			SetterRefusesEmpty<Bound, 'subscripts'>
+			KeyRefusesEmpty<Config, 'elements'>,
+			KeyRefusesEmpty<LooseConfig, 'elements'>,
+			SetterRefusesEmpty<Bound, 'elements'>
 		]
 	>;
 }

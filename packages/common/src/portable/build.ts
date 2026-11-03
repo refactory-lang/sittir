@@ -605,6 +605,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
 				if (steps?.delimiter !== undefined) frame.delimiter = (frame.delimiter ?? 0) | steps.delimiter;
 			}
+			const sole = arm.sole === undefined ? undefined : structure[arm.sole.member];
+			if (arm.sole !== undefined && Array.isArray(sole) && sole.length === 1) frame.delimiter = (frame.delimiter ?? 0) | arm.sole.delimiter;
 			for (const [flag, steps] of Object.entries(arm.flags))
 				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
 			const holes = new Set(arm.template?.holes ?? []);
