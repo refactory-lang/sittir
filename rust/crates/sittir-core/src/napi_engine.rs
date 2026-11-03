@@ -109,45 +109,65 @@ macro_rules! napi_engine {
             }
         }
 
+        /// Runs `f` on the live tree `tree_id`, refusing a tree that is not
+        /// live, then reports the tree if it grew (`report_tree`).
+        fn with_live_tree<R>(
+            env: &::napi::Env,
+            tree_id: $crate::types::TreeId,
+            f: impl FnOnce(&mut $crate::ParsedTree<$grammar>) -> ::napi::Result<R>,
+        ) -> ::napi::Result<R> {
+            LIVE_TREES.with(|trees| {
+                let mut trees = trees.borrow_mut();
+                let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                let out = f(parsed);
+                report_tree(env, tree_id, parsed)?;
+                out
+            })
+        }
+
         /// Runs `f` on the live tree `tree_id` and the node at `index` of it,
         /// both checked: refuses a tree that is not live and an index naming
-        /// no node of it. Then reports the trees that grew (`report_grown`).
+        /// no node of it (`with_live_tree`).
         fn with_live_node<R>(
             env: &::napi::Env,
             tree_id: $crate::types::TreeId,
             index: $crate::types::NodeIndex,
             f: impl FnOnce(&mut $crate::ParsedTree<$grammar>, $crate::types::NodeIndex) -> ::napi::Result<R>,
         ) -> ::napi::Result<R> {
-            let out = LIVE_TREES.with(|trees| {
-                let mut trees = trees.borrow_mut();
-                let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(env, tree_id, |parsed| {
                 $crate::napi_engine::check_node(parsed, index)?;
                 f(parsed, index)
-            });
-            report_grown(env)?;
+            })
+        }
+
+        /// Runs `f` on the table of live trees, through which a render reads
+        /// every tree a coordinate names, then reports each tree that grew
+        /// (`report_live`).
+        fn with_live_trees<R>(
+            env: &::napi::Env,
+            f: impl FnOnce(&::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>) -> ::napi::Result<R>,
+        ) -> ::napi::Result<R> {
+            let out = LIVE_TREES.with(|trees| f(&trees.borrow()));
+            report_live(env)?;
             out
         }
 
+        /// Reports each live tree that grew since its last report
+        /// (`report_tree`).
+        fn report_live(env: &::napi::Env) -> ::napi::Result<()> {
+            LIVE_TREES.with(|trees| trees.borrow_mut().iter_mut().try_for_each(|(&tree_id, parsed)| report_tree(env, tree_id, parsed)))
+        }
+
         /// Reports to V8 what the live tree `tree_id` holds natively now
-        /// (`ParsedTree::native_bytes`), in place of what it reported.
+        /// (`ParsedTree::native_bytes`), in place of what it reported, once a
+        /// table of it grew since (`ParsedTree::take_grown`).
         fn report_tree(env: &::napi::Env, tree_id: $crate::types::TreeId, parsed: &mut $crate::ParsedTree<$grammar>) -> ::napi::Result<()> {
+            if !parsed.take_grown() {
+                return Ok(());
+            }
             let change = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().entry(tree_id).or_default().report(env, parsed.native_bytes()))?;
             TREES_REPORTED.with(|total| total.set(total.get() + change));
             Ok(())
-        }
-
-        /// Reports each tree a table of which grew since its last report
-        /// (`heap::take_grown`), while it is live: a disposed tree gave back
-        /// what it reported.
-        fn report_grown(env: &::napi::Env) -> ::napi::Result<()> {
-            let grown = $crate::heap::take_grown();
-            if grown.is_empty() {
-                return Ok(());
-            }
-            LIVE_TREES.with(|trees| {
-                let mut trees = trees.borrow_mut();
-                grown.into_iter().try_for_each(|id| trees.get_mut(&id).map_or(Ok(()), |parsed| report_tree(env, id, parsed)))
-            })
         }
 
         /// What the live trees hold natively and what their reports have
@@ -156,7 +176,7 @@ macro_rules! napi_engine {
         /// every tree is disposed.
         #[::napi_derive::napi(ts_return_type = "{ trees: number; counted: number; reported: number }")]
         pub fn tree_memory(env: ::napi::Env) -> ::napi::Result<$crate::napi_engine::TreeMemory> {
-            report_grown(&env)?;
+            report_live(&env)?;
             let (trees, counted) = LIVE_TREES.with(|trees| {
                 let mut trees = trees.borrow_mut();
                 (trees.len(), trees.values_mut().map($crate::ParsedTree::native_bytes).sum::<usize>())
@@ -295,8 +315,7 @@ macro_rules! napi_engine {
                 })
                 .to_string();
                 LIVE_TREES.with(|trees| trees.borrow_mut().insert(tree_id, parsed));
-                $crate::heap::grew(tree_id);
-                report_grown(&env)?;
+                with_live_tree(&env, tree_id, |_| Ok(()))?;
                 Ok(json)
             }
 
@@ -320,13 +339,9 @@ macro_rules! napi_engine {
         #[::napi_derive::napi(ts_return_type = "object")]
         pub fn read(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
             let depth = $crate::napi_engine::depth_from_wire(depth)?;
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(&env, tree_id, |parsed| {
                 read_node(parsed, index, depth)
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         /// The sides of the unit children of the node at `index` of the
@@ -375,13 +390,9 @@ macro_rules! napi_engine {
         #[::napi_derive::napi(ts_return_type = "object")]
         pub fn snapshot(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
             let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(&env, tree_id, |parsed| {
                 $crate::napi_engine::node_or_error(parsed, index, "snapshot panicked", || parsed.snapshot_node::<$any>(index, holder_byte))
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         /// The entries of `side` (`leading`, `trailing` or `inner`) of the
@@ -438,9 +449,7 @@ macro_rules! napi_engine {
         /// and an index naming no node of it.
         #[::napi_derive::napi]
         pub fn siblings(env: ::napi::Env, tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<Vec<u32>> {
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(&env, tree_id, |parsed| {
                 let mut words = Vec::with_capacity(indexes.len() * 8);
                 for index in indexes {
                     $crate::napi_engine::check_node(parsed, index)?;
@@ -450,9 +459,7 @@ macro_rules! napi_engine {
                     }
                 }
                 Ok(words)
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         /// The text `span` covers in the source of the live tree `treeId`:
@@ -546,16 +553,12 @@ macro_rules! napi_engine {
             let from = $crate::napi_engine::address_from_json(&from)?;
             let kinds = kinds.unwrap_or_default();
             let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(&env, tree_id, |parsed| {
                 let batch = parsed
                     .descendants(from, &kinds, plan.as_ref(), resume.as_deref(), limit.max(1), depth)
                     .map_err(::napi::Error::from_reason)?;
                 ::serde_json::to_string(&batch).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         /// The byte offsets of the lines under the node at `index` of the
@@ -587,13 +590,9 @@ macro_rules! napi_engine {
                 ::serde_json::from_str(&addresses).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
             let Some(first) = addresses.first() else { return Ok(Vec::new()) };
             let (tree_id, _) = $crate::engine::decode_handle(first.tree_handle());
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+            with_live_tree(&env, tree_id, |parsed| {
                 parsed.plan_holds(&addresses, &plan).map_err(::napi::Error::from_reason)
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         /// Render a typed node object (napi-native, numeric `$type`).
@@ -615,19 +614,16 @@ macro_rules! napi_engine {
             let engine = engine_of(engine)?;
             // No JavaScript runs while the table is borrowed, so the
             // borrow cannot be re-entered.
-            let out = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
+            with_live_trees(&env, |trees| {
                 let resolved = render_options(&engine, tree_id.and_then(|id| trees.get(&id)), options)?;
                 let table = &resolved;
-                let canonical = $crate::napi_engine::entry_sources(engine.grammar(), &*trees, |sources| {
+                let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                     let ctx = $crate::prepare::RenderContext { options: table, sources };
                     $render_parts(node, &ctx, None).map(|(_, canonical)| canonical)
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
                 Ok($crate::line_endings::spell(canonical, &table.newline))
-            });
-            report_grown(&env)?;
-            out
+            })
         }
 
         #[::napi_derive::napi(
@@ -824,19 +820,16 @@ macro_rules! napi_engine {
             ) -> ::napi::Result<String> {
                 let chunks = owner.written().built();
                 let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
+                with_live_trees(env, |trees| {
                     let table = render_options(engine, tree_id.and_then(|id| trees.get(&id)), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), &*trees, |sources| {
+                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                         let ctx = $crate::prepare::RenderContext { options: &table, sources };
-                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, &*trees, &ctx)))
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, trees, &ctx)))
                     })
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))
-                });
-                report_grown(env)?;
-                out
+                })
             }
 
             /// The record wire: a node's record named by its tree and its
@@ -850,14 +843,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn read_record(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<Option<u32>> {
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     let at = record_of(parsed, index, depth, false)?;
                     Ok(at)
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// `read_record`'s record with what a view of it is named by,
@@ -867,16 +856,12 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn read_record_stub(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<Option<Vec<u32>>> {
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     let at = record_of(parsed, index, depth, false)?;
                     let Some(at) = at else { return Ok(None) };
                     let stub = parsed.record_stub($crate::arena::Address(at)).map_err(::napi::Error::from_reason)?;
                     Ok(Some([at].into_iter().chain(stub).collect()))
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// Materializes the node at `index` in the live tree `treeId`
@@ -887,14 +872,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn hydrate_record(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<Option<u32>> {
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     let at = record_of(parsed, index, depth, true)?;
                     Ok(at)
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The address of the record the parsed cell at `word`, item
@@ -907,16 +888,12 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn read_cell(env: ::napi::Env, tree_id: $crate::types::TreeId, holder: u32, word: u32, item: u32, depth: Option<f64>) -> ::napi::Result<u32> {
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     let at = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read_cell::<$any>($crate::arena::Address(holder), word, item, depth)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
                         .map_err(::napi::Error::from_reason)?;
                     Ok(at.0)
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The hydrated typed nodes below `index` in stored field
@@ -925,18 +902,14 @@ macro_rules! napi_engine {
             /// words.
             #[::napi_derive::napi]
             pub fn record_candidates(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<String> {
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     $crate::napi_engine::check_node(parsed, index)?;
                     let candidates = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.record_candidates::<$any>(index)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "record_candidates panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("record_candidates failed: {e}")))?;
                     let wire = candidates.into_iter().map($crate::query::QueryCoordinate::from).collect::<Vec<_>>();
                     ::serde_json::to_string(&wire).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The nodes at `indexes` of the live tree `treeId`, in order:
@@ -954,9 +927,7 @@ macro_rules! napi_engine {
                 wire: String,
             ) -> ::napi::Result<::napi::Either<Vec<::napi::Either<$any, $crate::ErrorRead>>, ::napi::bindgen_prelude::Uint32Array>> {
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     match wire.as_str() {
                         "object" => indexes.into_iter().map(|index| read_node(parsed, index, depth)).collect::<::napi::Result<_>>().map(::napi::Either::A),
                         "record" => indexes
@@ -966,9 +937,7 @@ macro_rules! napi_engine {
                             .map(|addresses| ::napi::Either::B(::napi::bindgen_prelude::Uint32Array::new(addresses))),
                         other => Err(::napi::Error::from_reason(format!("{other:?} is not a read wire (object or record)"))),
                     }
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The record at `address` of the live tree `treeId` rendered, as
@@ -983,17 +952,14 @@ macro_rules! napi_engine {
             pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
+                with_live_trees(&env, |trees| {
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
+                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The built record at `address` of the built arena `owner`
@@ -1240,17 +1206,14 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, index: number, options?: object | undefined | null")]
             pub fn render_candidate(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, options: Option<$options>) -> ::napi::Result<String> {
                 let engine = engine_of(engine)?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
+                with_live_trees(&env, |trees| {
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate::<$any>(index, &table, sources))))
+                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate::<$any>(index, &table, sources))))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// The coordinate a read of the live tree `treeId` names the node
@@ -1260,16 +1223,12 @@ macro_rules! napi_engine {
             /// tree that is not live and an index past its last node.
             #[::napi_derive::napi]
             pub fn coordinate(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Vec<u32>> {
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     $crate::napi_engine::check_node(parsed, index)?;
                     let at = parsed.row_coordinate(index).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id} has no node {}", index.0)))?;
                     let kind = at.kind.ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s node {} has no stamped kind", index.0)))?;
                     Ok(vec![u32::from(kind.0), at.end.0])
-                });
-                report_grown(&env)?;
-                out
+                })
             }
 
             /// Chunk `n` of the live tree `treeId`'s arena: a `Uint32Array`
@@ -1283,18 +1242,14 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_return_type = "Uint32Array")]
             pub fn chunk(env: ::napi::Env, tree_id: $crate::types::TreeId, n: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                 let n: u32 = $crate::napi_engine::checked_whole(n, "chunk")?;
-                let out = LIVE_TREES.with(|trees| {
-                    let trees = trees.borrow();
-                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                with_live_tree(&env, tree_id, |parsed| {
                     TREE_BUFFERS.with(|buffers| {
                         let mut buffers = buffers.borrow_mut();
                         let buffers = buffers.entry(tree_id).or_default();
                         let view = buffers.view::<u32>(&env, false, n, || parsed.record_chunk_memory(n))?;
                         view.ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))
                     })
-                });
-                report_grown(&env)?;
-                out
+                })
             }
         }
     };

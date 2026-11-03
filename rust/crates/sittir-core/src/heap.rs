@@ -40,32 +40,6 @@ pub const fn table_bytes<T>(capacity: usize) -> usize {
 /// The bytes an `Arc`'s allocation takes beyond its value: its two counts.
 pub const ARC_COUNTS: usize = 2 * size_of::<usize>();
 
-thread_local! {
-    static GROWN: std::cell::RefCell<Vec<crate::types::TreeId>> = const { std::cell::RefCell::new(Vec::new()) };
-}
-
-/// Marks `tree` as holding more than it was last reported to hold: one of
-/// its counted tables grew on this thread.
-pub fn grew(tree: crate::types::TreeId) {
-    GROWN.with(|grown| {
-        let mut grown = grown.borrow_mut();
-        if grown.last() != Some(&tree) {
-            grown.push(tree);
-        }
-    });
-}
-
-/// The trees marked since the last call (`grew`), each once.
-#[must_use]
-pub fn take_grown() -> Vec<crate::types::TreeId> {
-    GROWN.with(|grown| {
-        let mut taken = std::mem::take(&mut *grown.borrow_mut());
-        taken.sort_unstable();
-        taken.dedup();
-        taken
-    })
-}
-
 macro_rules! no_heap {
     ($($t:ty),* $(,)?) => {
         $(impl HeapBytes for $t {

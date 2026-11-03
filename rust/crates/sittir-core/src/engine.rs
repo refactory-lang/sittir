@@ -471,6 +471,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The heap the values of `records`, `slots` and `items` hold, added as
     /// each is inserted (`count_cached`).
     cached: std::sync::atomic::AtomicUsize,
+    /// Whether a table the tree counts grew since the last `take_grown`;
+    /// its arena keeps its own.
+    grown: std::sync::atomic::AtomicBool,
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write set, in the store of the engine that parsed the tree.
@@ -641,6 +644,21 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.grammar
     }
 
+    /// Whether a table the tree counts grew since the last call, and so
+    /// holds other than its last report (`native_bytes`). A new tree has
+    /// grown.
+    pub fn take_grown(&mut self) -> bool {
+        let own = std::mem::take(self.grown.get_mut());
+        #[cfg(feature = "arena")]
+        let own = self.arena.get_mut().is_some_and(|arena| owned(arena).take_grown()) | own;
+        own
+    }
+
+    /// Marks a table the tree counts grown (`take_grown`).
+    fn grew(&self) {
+        self.grown.store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+
     /// The bytes the tree holds natively: its own size and every table's
     /// heap, each counted by its capacity. tree-sitter's tree is left out,
     /// and so is a B-tree's node slack (`heap`).
@@ -672,6 +690,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             slots,
             items,
             cached,
+            grown: _,
             work: _,
             written,
             #[cfg(feature = "arena")]
@@ -713,7 +732,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(replaced) = replaced {
             self.cached.fetch_sub(replaced.heap_bytes(), Relaxed);
         }
-        crate::heap::grew(self.tree_id);
+        self.grew();
     }
 
     /// The tree's records, held while the guard lives, the arena made on the
@@ -722,7 +741,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(feature = "arena")]
     pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {
         self.arena
-            .get_or_init(|| std::sync::Mutex::new(crate::arena::TreeArena::new(self.tree_id, G::KIND_BITS, crate::read::descendant_count(&self.tree.root_node()))))
+            .get_or_init(|| std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree.root_node()))))
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
     }
@@ -848,7 +867,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The source's row starts (`LineTable`), built on first use.
     pub fn lines(&self) -> &crate::points::LineTable {
         self.lines.get_or_init(|| {
-            crate::heap::grew(self.tree_id);
+            self.grew();
             crate::points::LineTable::new(&self.source)
         })
     }
@@ -1444,7 +1463,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The tree's trivia table, assigned on first use.
     pub fn trivia_table(&self) -> &TriviaTable {
         self.trivia.get_or_init(|| {
-            crate::heap::grew(self.tree_id);
+            self.grew();
             TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width)
         })
     }
@@ -1557,17 +1576,21 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Replace `side` of the node at `index` with `entries`, holding the
-    /// built records among them (`TriviaStore::write_held_side`).
+    /// built records among them (`TriviaStore::write_held_side`), and mark
+    /// the tree grown: its rows count in its native bytes.
     ///
     /// # Errors
     ///
     /// What holding or releasing a built record refuses.
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
-        self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries).map_err(|e| e.to_string())
+        self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries).map_err(|e| e.to_string())?;
+        self.grew();
+        Ok(())
     }
 
-    /// Replace `side` of the node at `index` with `entries`.
+    /// Replace `side` of the node at `index` with `entries`, and mark the
+    /// tree grown: its rows count in its native bytes.
     ///
     /// # Errors
     ///
@@ -1575,6 +1598,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(not(feature = "arena"))]
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
         self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+        self.grew();
         Ok(())
     }
 
@@ -1804,6 +1828,7 @@ impl<G: EngineGrammar> Engine<G> {
             slots: std::sync::Mutex::new(HashMap::new()),
             items: std::sync::Mutex::new(HashMap::new()),
             cached: std::sync::atomic::AtomicUsize::new(0),
+            grown: std::sync::atomic::AtomicBool::new(true),
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
             #[cfg(feature = "arena")]
@@ -2750,18 +2775,19 @@ mod tests {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
         let id = tree.tree_id();
-        let _ = crate::heap::take_grown();
+        assert!(tree.take_grown(), "a new tree has grown");
+        assert!(!tree.take_grown(), "until its growth is taken");
         let parsed = tree.native_bytes();
         assert!(parsed >= std::mem::size_of::<ParsedTree<TestGrammar>>() + "fn f() {}\n".len(), "the tree and its source");
         let f = index_of_kind(&tree, "function_item", 0);
         let _ = tree.slot_layouts(f);
-        assert!(crate::heap::take_grown().contains(&id), "a read that fills a cache marks its tree grown");
+        assert!(tree.take_grown(), "a read that fills a cache marks its tree grown");
         let read = tree.native_bytes();
         assert!(read > parsed, "the read's caches add to the count");
         assert_eq!(tree.cached.load(std::sync::atomic::Ordering::Relaxed), tree.cached_by_walk(), "the count kept at each insert is what a walk of the caches finds");
         let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
         tree.write_trivia_side(f, TriviaSide::Leading, vec![note]).expect("a side write");
-        assert!(crate::heap::take_grown().contains(&id), "a write to a row marks its tree grown");
+        assert!(tree.take_grown(), "a write to a row marks its tree grown");
         let row = std::mem::size_of::<((Place, TriviaSide), Vec<TriviaEntry<TestTrivia>>)>();
         let entry = std::mem::size_of::<TriviaEntry<TestTrivia>>() + "// a note".len();
         assert_eq!(tree.native_bytes(), read + row + entry, "the row and its entry");

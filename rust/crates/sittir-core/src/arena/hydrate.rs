@@ -578,13 +578,13 @@ mod tests {
         cursor.goto_first_child();
         let item = index_of(&cursor);
 
-        let mut whole = TreeArena::new(crate::types::TreeId(0), PARSED_KIND_BITS, rows);
+        let mut whole = TreeArena::new(PARSED_KIND_BITS, rows);
         let file = hydrate_at::<File<false>>(&mut tree.walk(), &mut ctx, NodeIndex::ROOT, Depth::All, &mut Hydration::new(&mut whole)).expect("a walk").expect("a record");
         let starts = whole.snapshot().records;
         assert_eq!(starts.len(), 5, "the file's record, each item's, and each name's in its item's cell");
         assert!(starts.contains(&file));
 
-        let mut arena = TreeArena::new(crate::types::TreeId(0), PARSED_KIND_BITS, rows);
+        let mut arena = TreeArena::new(PARSED_KIND_BITS, rows);
         let kept = hydrate_at::<Item>(&mut tree.walk(), &mut ctx, item, Depth::ONE, &mut Hydration::new(&mut arena)).expect("a walk").expect("a record");
         arena.hold(item, kept).expect("the row had none");
         let before = arena.snapshot();

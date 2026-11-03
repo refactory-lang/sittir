@@ -361,11 +361,12 @@ impl<T: Clone> TriviaStore<T> {
         let mut bytes = self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner);
         let count = bytes.entry(tree).or_default();
         *count = (*count + added).saturating_sub(removed);
-        crate::heap::grew(tree);
         replaced
     }
 
-    /// The bytes `tree`'s rows of the store take (`tree_bytes`).
+    /// The bytes `tree`'s rows of the store take (`tree_bytes`). A row is
+    /// written through its tree (`ParsedTree::write_trivia_side`), which
+    /// marks itself grown, so its next report counts them.
     #[must_use]
     pub fn tree_bytes(&self, tree: TreeId) -> usize {
         self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner).get(&tree).copied().unwrap_or(0)
