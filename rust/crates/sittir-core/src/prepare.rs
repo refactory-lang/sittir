@@ -521,28 +521,30 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// source renders it (`SourceTable::renders_as_source`) is its
     /// coordinate: it prepares as one, the seams its holder gave it seated.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        if let SlotValue::Node(node) = self {
-            if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
-                let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
-                *self = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
-            }
-        }
-        match self {
-            SlotValue::Coord(coord) => {
-                coord.resolve(ctx.sources)?;
-                if let Some(mut node) = read_edited::<T>(coord, ctx)? {
-                    if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
-                        seat_read_node(edges, seated);
-                    }
-                    node.prepare(ctx)?;
-                    *self = SlotValue::Node(node);
-                    return Ok(());
+        crate::stack::grown(|| {
+            if let SlotValue::Node(node) = self {
+                if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
+                    let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
+                    *self = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
                 }
-                coord.edges = coordinate_edges(coord, coord.edges, ctx);
-                Ok(())
             }
-            SlotValue::Node(t) => t.prepare(ctx),
-        }
+            match self {
+                SlotValue::Coord(coord) => {
+                    coord.resolve(ctx.sources)?;
+                    if let Some(mut node) = read_edited::<T>(coord, ctx)? {
+                        if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
+                            seat_read_node(edges, seated);
+                        }
+                        node.prepare(ctx)?;
+                        *self = SlotValue::Node(node);
+                        return Ok(());
+                    }
+                    coord.edges = coordinate_edges(coord, coord.edges, ctx);
+                    Ok(())
+                }
+                SlotValue::Node(t) => t.prepare(ctx),
+            }
+        })
     }
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {

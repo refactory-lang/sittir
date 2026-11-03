@@ -1006,11 +1006,11 @@ pub fn read_value<T: ReadNode, const A: bool>(
     ctx: &mut ReadCtx<'_>,
     depth: Depth,
 ) -> Result<SlotValue<T, A>, ReadError> {
-    match depth.below() {
+    crate::stack::grown(|| match depth.below() {
         Some(below) => Ok(SlotValue::Node(T::read(cursor, ctx, below)?)),
         None if ctx.reads_leaf_inline(depth) && cursor.node().named_child_count() == 0 => Ok(SlotValue::Node(T::read(cursor, ctx, Depth::ONE)?)),
         None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
-    }
+    })
 }
 
 /// How a slot's field stores the children routed to it. Presence and text

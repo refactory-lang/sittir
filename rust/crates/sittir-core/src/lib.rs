@@ -34,6 +34,7 @@ pub mod record;
 pub mod render;
 pub mod slot;
 pub mod spacing;
+pub mod stack;
 pub mod trivia;
 pub mod trivia_store;
 pub mod types;

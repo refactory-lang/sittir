@@ -608,6 +608,10 @@ impl<'r, T, N: PrepareRecord<T>> ArmOf<RecordPrep<'r, T>> for SlotAt<'r, T, N> {
 /// the seams its holder seated on it; any other value prepares through its
 /// type.
 fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    crate::stack::grown(|| prepare_item_in_place::<T, N>(prep, item, ctx))
+}
+
+fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
     let Some(row) = item.row else { return N::prepare_record(prep, item.at, ctx) };
     let coord = prep.row_coordinate(item.at.tree, row)?;
     coord.resolve(ctx.sources)?;
