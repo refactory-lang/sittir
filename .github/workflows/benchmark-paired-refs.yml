@@ -18,6 +18,14 @@ on:
       candidates:
         type: string
         required: true
+      rounds:
+        type: string
+        required: false
+        default: ''
+      grammars:
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -77,6 +85,8 @@ jobs:
         shell: bash
         env:
           ARENA: ${{ inputs.arena }}
+          ROUNDS: ${{ inputs.rounds }}
+          GRAMMARS: ${{ inputs.grammars }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi

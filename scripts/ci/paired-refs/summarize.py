@@ -29,7 +29,8 @@ storageOf = lambda v: 'arena' if v.endswith('-arena') else 'object'
 PAIRS = [(a, b) for a, b in [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')]
          + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base'), (c, 'feature'), (c + '-arena', 'feature-arena')]] if a in VERSIONS and b in VERSIONS]
 AGAINST_BASE = [a for a, b in PAIRS if b == 'base' and a != 'master']
-GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
+protocol = read('complete.json')
+GRAMMARS, ROUNDS = protocol['grammars'], protocol['rounds']
 
 
 def interval(values, seed=20261029):
@@ -66,7 +67,7 @@ profiles = set()
 mismatches = []
 corpus = []
 for g in GRAMMARS:
-    results = {v: [read(f'corpus-{g}-{v}-{r}.json') for r in range(5)] for v in VERSIONS}
+    results = {v: [read(f'corpus-{g}-{v}-{r}.json') for r in range(ROUNDS)] for v in VERSIONS}
     signature = results['base'][0]['signature']
     mismatches += [f'corpus {g} {v} round {r}' for v, xs in results.items() for r, x in enumerate(xs) if x['signature'] != signature]
     profiles.update(x['buildProfile'] for xs in results.values() for x in xs)
@@ -79,7 +80,7 @@ for n in [2000, 8000]:
         data = {}
         for v in VERSIONS:
             data[v] = []
-            for r in range(5):
+            for r in range(ROUNDS):
                 d = read(f'timing-rust-{v}-{r}.json')
                 profiles.add(d['buildProfile'])
                 data[v].append([s for s in d['samples'] if s['n'] == n and s['reuse'] == reuse])
@@ -123,7 +124,7 @@ lines = [
     + ("A version ending in -arena is its tree read with `nodeStorage: 'arena'`; the others use object storage." if any(v.endswith('-arena') for v in VERSIONS) else 'Every version uses object storage.'),
     f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
-    'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
+    f'Each ratio is the median over {ROUNDS} rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
     f"Pipeline (parse + render) against base above ×{BAR:.2f}: {', '.join(over) if over else 'none'}.",
     f"Renders and edits that differ from base: {', '.join(mismatches) if mismatches else 'none'}.", '',
     '### Corpus', '',

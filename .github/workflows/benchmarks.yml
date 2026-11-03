@@ -27,9 +27,13 @@ on:
         type: boolean
         default: true
       grammars:
-        description: probe only. The grammars to probe, space-separated.
+        description: probe and paired-refs. The grammars to measure, space-separated; empty is python regex typescript for probe and all five for paired-refs.
         type: string
-        default: python regex typescript
+        default: ''
+      rounds:
+        description: paired-refs only. Rounds of every corpus and construction worker; empty is five.
+        type: string
+        default: ''
       candidates:
         description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
         type: string
@@ -68,6 +72,8 @@ jobs:
       profile: ${{ inputs.profile }}
       arena: ${{ inputs.arena }}
       candidates: ${{ inputs.candidates }}
+      rounds: ${{ inputs.rounds }}
+      grammars: ${{ inputs.grammars }}
   probe:
     if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile'
     uses: ./.github/workflows/benchmark-probe.yml
@@ -77,5 +83,5 @@ jobs:
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}
       arena: ${{ inputs.arena }}
-      grammars: ${{ inputs.grammars }}
+      grammars: ${{ inputs.grammars || 'python regex typescript' }}
       candidates: ${{ inputs.candidates }}

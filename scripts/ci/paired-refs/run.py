@@ -1,8 +1,9 @@
 # Usage: python3 run.py <out-dir> <name>=<tree>[@<storage>] <name>=<tree>[@<storage>]...
 # The protocol of docs/reviews/2026-10-29-paired-backends.md over any number of
 # versions, each a built tree read with one node storage (object unless named):
-# five rounds of every grammar's corpus worker and of the Rust construction
-# timing worker, then three rounds of the retained-memory worker. Each round
+# $ROUNDS rounds (five when unset) of the corpus worker of every grammar in
+# $GRAMMARS (all five when unset) and of the Rust construction timing worker,
+# then three rounds of the retained-memory worker. Each round
 # runs every version once in a fresh process; the order rotates by round and
 # reverses on odd rounds. Each receipt records the one-minute load beside the
 # process.
@@ -20,7 +21,8 @@ def version(spec):
 
 versions = {k: version(v) for k, v in (a.split('=', 1) for a in sys.argv[2:])}
 names = list(versions)
-GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
+GRAMMARS = os.environ.get('GRAMMARS', '').split() or ['python', 'rust', 'typescript', 'regex', 'scm']
+ROUNDS = int(os.environ.get('ROUNDS') or 5)
 out.mkdir(parents=True, exist_ok=True)
 receipts = []
 start = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -53,7 +55,7 @@ def worker(name, phase, index, grammar=None):
         raise SystemExit(run.returncode)
 
 
-for index in range(5):
+for index in range(ROUNDS):
     order = orderOf(index)
     for grammar in GRAMMARS:
         for name in order:
@@ -63,4 +65,4 @@ for index in range(5):
 for index in range(3):
     for name in orderOf(index):
         worker(name, 'memory', index)
-(out / 'complete.json').write_text(json.dumps({'start': start, 'end': now(), 'workers': len(receipts), 'versions': {k: {'tree': str(t), 'nodeStorage': s} for k, (t, s) in versions.items()}}, indent=2) + '\n')
+(out / 'complete.json').write_text(json.dumps({'start': start, 'end': now(), 'workers': len(receipts), 'rounds': ROUNDS, 'grammars': GRAMMARS, 'versions': {k: {'tree': str(t), 'nodeStorage': s} for k, (t, s) in versions.items()}}, indent=2) + '\n')
