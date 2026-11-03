@@ -303,7 +303,7 @@ impl<T: HydrateNode> HydrateNode for Box<T> {
 /// holds it, within a holder read at `depth`.
 fn hydrate_value<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<Hydrated, HydrateError> {
     let inline = records.embed(holder, shape)?;
-    T::hydrate(cursor, ctx, depth.and_then(Depth::below), records, inline)
+    crate::stack::grown(|| T::hydrate(cursor, ctx, depth.and_then(Depth::below), records, inline))
 }
 
 fn one(acc: &mut Option<Hydrated>, at: SlotSite, value: impl FnOnce() -> Result<Hydrated, HydrateError>) -> Result<(), HydrateError> {
