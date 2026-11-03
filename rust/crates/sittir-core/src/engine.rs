@@ -493,9 +493,10 @@ impl<G: EngineGrammar> Drop for ParsedTree<G> {
 /// answers, or the error its read or render refused with.
 type Record = Arc<Result<crate::baseline::Baseline, String>>;
 
-/// `mutex` held, whether or not a holder panicked.
-fn lock<T>(mutex: &std::sync::Mutex<T>) -> std::sync::MutexGuard<'_, T> {
-    mutex.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+/// What `mutex` holds, reached through sole access without a lock,
+/// whether or not a holder panicked.
+fn owned<T>(mutex: &mut std::sync::Mutex<T>) -> &mut T {
+    mutex.get_mut().unwrap_or_else(std::sync::PoisonError::into_inner)
 }
 
 /// What a read of a node by its index answers (`ParsedTree::read_node`):
@@ -643,8 +644,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The bytes the tree holds natively: its own size and every table's
     /// heap, each counted by its capacity. tree-sitter's tree is left out,
     /// and so is a B-tree's node slack (`heap`).
+    ///
+    /// The count takes the tree mutably, so it reads every table without a
+    /// lock, and nothing can hold one of them while it counts. A count is
+    /// refused while anything borrows the tree:
+    ///
+    /// ```compile_fail,E0502
+    /// fn count<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::ParsedTree<G>) -> usize {
+    ///     let source = tree.source();
+    ///     let bytes = tree.native_bytes();
+    ///     source.len() + bytes
+    /// }
+    /// ```
     #[must_use]
-    pub fn native_bytes(&self) -> usize {
+    pub fn native_bytes(&mut self) -> usize {
         let Self {
             grammar: _,
             tree: _,
@@ -664,11 +677,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
             #[cfg(feature = "arena")]
             arena,
         } = self;
-        let tables = crate::heap::table_bytes::<((NodeIndex, crate::read::Depth), Record)>(lock(records).capacity())
-            + crate::heap::table_bytes::<(NodeIndex, Arc<NodeSlots>)>(lock(slots).capacity())
-            + crate::heap::table_bytes::<(NodeIndex, Arc<Option<SlotItems>>)>(lock(items).capacity());
+        let tables = crate::heap::table_bytes::<((NodeIndex, crate::read::Depth), Record)>(owned(records).capacity())
+            + crate::heap::table_bytes::<(NodeIndex, Arc<NodeSlots>)>(owned(slots).capacity())
+            + crate::heap::table_bytes::<(NodeIndex, Arc<Option<SlotItems>>)>(owned(items).capacity());
         #[cfg(feature = "arena")]
-        let arena = arena.get().map_or(0, |arena| lock(arena).heap_bytes());
+        let arena = arena.get_mut().map_or(0, |arena| owned(arena).heap_bytes());
         #[cfg(not(feature = "arena"))]
         let arena = 0;
         std::mem::size_of::<Self>()
@@ -686,10 +699,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// What a walk of the read caches finds their values hold: the count
     /// `count_cached` keeps.
     #[cfg(test)]
-    fn cached_by_walk(&self) -> usize {
-        lock(&self.records).values().map(HeapBytes::heap_bytes).sum::<usize>()
-            + lock(&self.slots).values().map(HeapBytes::heap_bytes).sum::<usize>()
-            + lock(&self.items).values().map(HeapBytes::heap_bytes).sum::<usize>()
+    fn cached_by_walk(&mut self) -> usize {
+        owned(&mut self.records).values().map(HeapBytes::heap_bytes).sum::<usize>()
+            + owned(&mut self.slots).values().map(HeapBytes::heap_bytes).sum::<usize>()
+            + owned(&mut self.items).values().map(HeapBytes::heap_bytes).sum::<usize>()
     }
 
     /// Adds the heap of `value`, inserted into a read cache, to the tree's
@@ -2735,7 +2748,7 @@ mod tests {
     #[test]
     fn a_tree_counts_what_its_read_caches_and_its_written_rows_hold() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
         let id = tree.tree_id();
         let _ = crate::heap::take_grown();
         let parsed = tree.native_bytes();

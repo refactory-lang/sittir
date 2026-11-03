@@ -130,7 +130,7 @@ macro_rules! napi_engine {
 
         /// Reports to V8 what the live tree `tree_id` holds natively now
         /// (`ParsedTree::native_bytes`), in place of what it reported.
-        fn report_tree(env: &::napi::Env, tree_id: $crate::types::TreeId, parsed: &$crate::ParsedTree<$grammar>) -> ::napi::Result<()> {
+        fn report_tree(env: &::napi::Env, tree_id: $crate::types::TreeId, parsed: &mut $crate::ParsedTree<$grammar>) -> ::napi::Result<()> {
             let change = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().entry(tree_id).or_default().report(env, parsed.native_bytes()))?;
             TREES_REPORTED.with(|total| total.set(total.get() + change));
             Ok(())
@@ -145,8 +145,8 @@ macro_rules! napi_engine {
                 return Ok(());
             }
             LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                grown.into_iter().filter_map(|id| trees.get(&id).map(|parsed| (id, parsed))).try_for_each(|(id, parsed)| report_tree(env, id, parsed))
+                let mut trees = trees.borrow_mut();
+                grown.into_iter().try_for_each(|id| trees.get_mut(&id).map_or(Ok(()), |parsed| report_tree(env, id, parsed)))
             })
         }
 
@@ -158,8 +158,8 @@ macro_rules! napi_engine {
         pub fn tree_memory(env: ::napi::Env) -> ::napi::Result<$crate::napi_engine::TreeMemory> {
             report_grown(&env)?;
             let (trees, counted) = LIVE_TREES.with(|trees| {
-                let trees = trees.borrow();
-                (trees.len(), trees.values().map($crate::ParsedTree::native_bytes).sum::<usize>())
+                let mut trees = trees.borrow_mut();
+                (trees.len(), trees.values_mut().map($crate::ParsedTree::native_bytes).sum::<usize>())
             });
             Ok($crate::napi_engine::TreeMemory::new(trees, counted, TREES_REPORTED.with(::std::cell::Cell::get)))
         }
