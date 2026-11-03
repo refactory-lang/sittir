@@ -55,7 +55,7 @@ describe('a tree nested thousands of levels deep', () => {
 		});
 	}, 120_000);
 
-	it('refuses a malformed item after one 400000 levels deep on a Worker, and releases what it decoded', async () => {
+	it('refuses a malformed item after one 400000 levels deep on a Worker, releases what it decoded, and decodes the next tree on that thread', async () => {
 		const { status, signal, outcome } = await runCase('object', 'refuse', '400000', 'worker');
 		expect({ status, signal }).toEqual({ status: 0, signal: null });
 		expect(outcome).toEqual({

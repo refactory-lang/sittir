@@ -121,6 +121,50 @@ impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for std::vec::IntoIter<T> {
     }
 }
 
+impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for std::vec::Drain<'_, T> {
+    fn dismantle(self, out: &mut Vec<W::Whole>) {
+        for item in self {
+            item.dismantle(out);
+        }
+    }
+}
+
+/// The most of a spare stack's capacity a pool keeps, in bytes.
+pub const KEPT_STACK_BYTES: usize = 64 * 1024;
+
+/// The frame stack a loop keeps on a thread between its runs, so a run
+/// allocates only when it outgrows the spare or runs inside another run.
+pub struct StackPool<F> {
+    spare: core::cell::Cell<Vec<F>>,
+}
+
+impl<F> StackPool<F> {
+    #[must_use]
+    pub const fn new() -> Self {
+        Self { spare: core::cell::Cell::new(Vec::new()) }
+    }
+
+    /// The spare stack, empty: a new one while another run holds it.
+    pub fn take(&self) -> Vec<F> {
+        self.spare.take()
+    }
+
+    /// Keeps `stack`, emptied and cut back to `KEPT_STACK_BYTES`, as the
+    /// spare, unless the spare it holds already is larger.
+    pub fn give(&self, mut stack: Vec<F>) {
+        stack.clear();
+        stack.shrink_to(KEPT_STACK_BYTES / core::mem::size_of::<F>().max(1));
+        let spare = self.spare.take();
+        self.spare.set(if spare.capacity() > stack.capacity() { spare } else { stack });
+    }
+}
+
+impl<F> Default for StackPool<F> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// A list whose items may each be absent, encoded as a JavaScript array
 /// whose absent items are `undefined` (`boundary::holes`); it decodes as the
 /// `Vec` it wraps.
@@ -262,6 +306,12 @@ macro_rules! grammar_nodes {
             impl $crate::codec::Frames for $trivia {
                 type DecodeFrame = __DecodeFrame;
                 type EncodeFrame = __EncodeFrame;
+                fn pools() -> &'static ::std::thread::LocalKey<$crate::codec::Pools<Self>> {
+                    ::std::thread_local! {
+                        static POOLS: $crate::codec::Pools<$trivia> = const { $crate::codec::Pools::new() };
+                    }
+                    &POOLS
+                }
             }
 
             impl $crate::codec::DecodeStep<$trivia> for __DecodeFrame {
@@ -330,7 +380,7 @@ pub use wire::*;
 
 #[cfg(feature = "napi-bindings")]
 mod wire {
-    use super::{release, Dismantle, Holes, Nodes};
+    use super::{release, Dismantle, Holes, Nodes, StackPool};
     use crate::non_empty::NonEmptyVec;
     use crate::slot::SlotValue;
     use ::napi::sys::{napi_env, napi_value};
@@ -342,6 +392,71 @@ mod wire {
         type DecodeFrame: DecodeStep<Self> + Dismantle<Self>;
         /// Any node struct of the grammar, partly encoded.
         type EncodeFrame: EncodeStep<Self> + Dismantle<Self>;
+        /// The grammar's frame stacks on this thread.
+        fn pools() -> &'static ::std::thread::LocalKey<Pools<Self>>;
+    }
+
+    /// A grammar's frame stacks on one thread: one pool for each loop.
+    pub struct Pools<W: Frames> {
+        decode: StackPool<W::DecodeFrame>,
+        encode: StackPool<W::EncodeFrame>,
+    }
+
+    impl<W: Frames> Pools<W> {
+        #[must_use]
+        pub const fn new() -> Self {
+            Self { decode: StackPool::new(), encode: StackPool::new() }
+        }
+
+        fn decoding(&self) -> &StackPool<W::DecodeFrame> {
+            &self.decode
+        }
+
+        fn encoding(&self) -> &StackPool<W::EncodeFrame> {
+            &self.encode
+        }
+    }
+
+    impl<W: Frames> Default for Pools<W> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    /// A frame stack its grammar's pool lends one run, given back however
+    /// the run ends, with any frame left on it released first.
+    struct Lent<W: Frames, F: Dismantle<W> + 'static> {
+        stack: Vec<F>,
+        pool: fn(&Pools<W>) -> &StackPool<F>,
+    }
+
+    impl<W: Frames, F: Dismantle<W> + 'static> Lent<W, F> {
+        fn from(pool: fn(&Pools<W>) -> &StackPool<F>) -> Self {
+            Self { stack: W::pools().try_with(|pools| pool(pools).take()).unwrap_or_default(), pool }
+        }
+    }
+
+    impl<W: Frames, F: Dismantle<W> + 'static> Drop for Lent<W, F> {
+        fn drop(&mut self) {
+            release::<W, _>(self.stack.drain(..));
+            let stack = ::std::mem::take(&mut self.stack);
+            let pool = self.pool;
+            // A thread that is ending has dropped its pools: the stack is freed with the lease.
+            let _ = W::pools().try_with(|pools| pool(pools).give(stack));
+        }
+    }
+
+    impl<W: Frames, F: Dismantle<W> + 'static> ::std::ops::Deref for Lent<W, F> {
+        type Target = Vec<F>;
+        fn deref(&self) -> &Vec<F> {
+            &self.stack
+        }
+    }
+
+    impl<W: Frames, F: Dismantle<W> + 'static> ::std::ops::DerefMut for Lent<W, F> {
+        fn deref_mut(&mut self) -> &mut Vec<F> {
+            &mut self.stack
+        }
     }
 
     /// A value done, or what it keeps while it waits on the frame it wrote
@@ -457,7 +572,7 @@ mod wire {
     pub unsafe fn decode<W: Frames, T: Codec<W>>(env: napi_env, value: napi_value) -> Result<T> {
         crate::stack::assert_central("the wire decode");
         let mut above = None;
-        let mut stack = Vec::new();
+        let mut stack = None;
         // SAFETY: this fn requires `value` to be live in `env`.
         let mut begun = unsafe { T::decode(env, value, &mut above)? };
         loop {
@@ -465,9 +580,10 @@ mod wire {
                 Begun::Whole(value) => return Ok(value),
                 Begun::Waits(wait) => wait,
             };
+            let stack = stack.get_or_insert_with(|| Lent::<W, _>::from(Pools::decoding));
             stack.push(written(&mut above));
             // SAFETY: `env` is live, and the frame was read from a value live in it.
-            let child = match unsafe { run_decode::<W>(env, &mut stack) } {
+            let child = match unsafe { run_decode::<W>(env, stack) } {
                 Ok(child) => child,
                 Err(err) => {
                     release::<W, _>(wait);
@@ -500,7 +616,7 @@ mod wire {
                 Err(err) => {
                     let below = stack.len() - 1;
                     let err = stack[..below].iter().rev().fold(err, |err, frame| frame.refusal(err));
-                    release::<W, _>((::std::mem::take(stack), above));
+                    release::<W, _>((stack.drain(..), above));
                     return Err(err);
                 }
             }
@@ -514,7 +630,7 @@ mod wire {
     pub unsafe fn encode<W: Frames, T: Codec<W>>(env: napi_env, value: T) -> Result<napi_value> {
         crate::stack::assert_central("the wire encode");
         let mut above = None;
-        let mut stack = Vec::new();
+        let mut stack = None;
         // SAFETY: this fn requires a live `env`.
         let mut begun = unsafe { value.encode(env, &mut above)? };
         loop {
@@ -522,9 +638,10 @@ mod wire {
                 Begun::Whole(value) => return Ok(value),
                 Begun::Waits(wait) => wait,
             };
+            let stack = stack.get_or_insert_with(|| Lent::<W, _>::from(Pools::encoding));
             stack.push(written(&mut above));
             // SAFETY: `env` is live, and every value the frame holds was created in it.
-            let child = match unsafe { run_encode::<W>(env, &mut stack) } {
+            let child = match unsafe { run_encode::<W>(env, stack) } {
                 Ok(child) => child,
                 Err(err) => {
                     release::<W, _>(wait);
@@ -553,7 +670,7 @@ mod wire {
                     child = Some(value);
                 }
                 Err(err) => {
-                    release::<W, _>((::std::mem::take(stack), above));
+                    release::<W, _>((stack.drain(..), above));
                     return Err(err);
                 }
             }
@@ -957,5 +1074,46 @@ mod wire {
             unsafe { ::napi::sys::napi_set_element(env, array, index, value) },
             "failed to set a list item"
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{StackPool, KEPT_STACK_BYTES};
+
+    #[test]
+    fn a_stack_given_back_is_lent_again_empty_with_its_capacity() {
+        let pool = StackPool::<u64>::new();
+        let mut stack = pool.take();
+        stack.extend(0..100);
+        let capacity = stack.capacity();
+        pool.give(stack);
+        let again = pool.take();
+        assert_eq!(again, [0u64; 0]);
+        assert_eq!(again.capacity(), capacity);
+    }
+
+    #[test]
+    fn a_stack_that_grew_past_the_bound_is_cut_back_to_it() {
+        let pool = StackPool::<[u8; 1000]>::new();
+        let mut stack = pool.take();
+        stack.resize(10_000, [0; 1000]);
+        pool.give(stack);
+        assert_eq!(pool.take().capacity(), KEPT_STACK_BYTES / 1000);
+    }
+
+    #[test]
+    fn a_run_inside_another_gets_its_own_stack_and_the_pool_keeps_the_larger() {
+        let pool = StackPool::<u64>::new();
+        pool.give(Vec::with_capacity(64));
+        let outer = pool.take();
+        let kept = outer.capacity();
+        let mut inner = pool.take();
+        assert_eq!(inner.capacity(), 0);
+        inner.reserve(8);
+        assert!(inner.capacity() < kept);
+        pool.give(inner);
+        pool.give(outer);
+        assert_eq!(pool.take().capacity(), kept);
     }
 }
