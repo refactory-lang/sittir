@@ -447,13 +447,5 @@
       "shape": "choice[5]",
       "ruleId": "rule:_let_chain:root"
     }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-owner-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "modifier.visibility.public.restricted: visibility_modifier_pub takes scope through two forms with the same members and kinds; nothing in the input tells them apart"
   }
 ]

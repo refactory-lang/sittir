@@ -840,6 +840,99 @@
           ]
         },
         {
+          "vocab": "declaration.field.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "432": 1
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "432": 1
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "432": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "432": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field.public.restricted",
           "toplevel": true,
           "within": [],
@@ -889,6 +982,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "432": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -899,7 +1016,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -1026,6 +1142,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -1037,8 +1165,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -1052,6 +1180,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -3040,6 +3176,99 @@
           ]
         },
         {
+          "vocab": "declaration.constant.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "205": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "205": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "205": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "205": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.constant.public.restricted",
           "toplevel": true,
           "within": [],
@@ -3089,6 +3318,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "205": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -3099,7 +3352,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -3237,6 +3489,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -3248,8 +3512,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -3263,6 +3527,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -3792,6 +4064,99 @@
           ]
         },
         {
+          "vocab": "declaration.enum.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "198": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "198": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "198": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "198": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.enum.public.restricted",
           "toplevel": true,
           "within": [],
@@ -3841,6 +4206,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "198": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -3851,7 +4240,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -4000,6 +4388,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -4011,8 +4411,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -4026,6 +4426,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -4247,6 +4655,112 @@
           ]
         },
         {
+          "vocab": "declaration.enum_member.tuple.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "200": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  203
+                ],
+                "slots": {
+                  "200": 2
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.enum_member.tuple.public.restricted",
           "toplevel": true,
           "within": [],
@@ -4296,6 +4810,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -4306,7 +4844,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -4542,6 +5079,112 @@
           ]
         },
         {
+          "vocab": "declaration.enum_member.struct.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "200": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  201
+                ],
+                "slots": {
+                  "200": 2
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.enum_member.struct.public.restricted",
           "toplevel": true,
           "within": [],
@@ -4591,6 +5234,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -4601,7 +5268,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -4811,6 +5477,99 @@
           ]
         },
         {
+          "vocab": "declaration.enum_member.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "200": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.enum_member.public.restricted",
           "toplevel": true,
           "within": [],
@@ -4860,6 +5619,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "200": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -4870,7 +5653,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -5262,6 +6044,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -5273,8 +6067,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -5288,6 +6082,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -5716,6 +6518,99 @@
           ]
         },
         {
+          "vocab": "statement.import.package.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "204": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "204": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "204": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "204": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "statement.import.package.public.restricted",
           "toplevel": true,
           "within": [],
@@ -5765,6 +6660,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "204": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -5775,7 +6694,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -5902,6 +6820,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -5913,8 +6843,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -5928,6 +6858,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -6223,6 +7161,99 @@
           ]
         },
         {
+          "vocab": "declaration.field.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "202": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "202": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "202": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "202": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field.public.restricted",
           "toplevel": true,
           "within": [],
@@ -6272,6 +7303,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "202": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -6282,7 +7337,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -6402,6 +7456,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -6413,8 +7479,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -6428,6 +7494,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -7121,6 +8195,99 @@
           ]
         },
         {
+          "vocab": "declaration.function.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "208": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "208": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "208": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "208": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.function.public.restricted",
           "toplevel": true,
           "within": [],
@@ -7170,6 +8337,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "208": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -7180,7 +8371,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -7461,6 +8651,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -7472,8 +8674,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -7487,6 +8689,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         },
@@ -7822,6 +9032,99 @@
           ]
         },
         {
+          "vocab": "declaration.function.signature.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "209": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "209": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "209": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "209": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.function.signature.public.restricted",
           "toplevel": true,
           "within": [],
@@ -7871,6 +9174,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "209": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -7881,7 +9208,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -8041,6 +9367,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -8052,8 +9390,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -8067,6 +9405,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         },
@@ -10531,6 +11877,99 @@
           ]
         },
         {
+          "vocab": "declaration.method.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "480": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "480": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "480": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "480": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.method.public.restricted",
           "toplevel": true,
           "within": [],
@@ -10580,6 +12019,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "480": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -10590,7 +12053,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -10899,6 +12361,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -10910,8 +12384,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -10925,6 +12399,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         },
@@ -11223,6 +12705,99 @@
           ]
         },
         {
+          "vocab": "declaration.module.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "384": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "384": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "384": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "384": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.module.public.restricted",
           "toplevel": true,
           "within": [],
@@ -11272,6 +12847,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "384": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -11282,7 +12881,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -11398,6 +12996,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -11409,8 +13019,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -11424,6 +13034,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -11619,6 +13237,99 @@
           ]
         },
         {
+          "vocab": "declaration.module.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "385": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "385": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "385": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "385": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.module.public.restricted",
           "toplevel": true,
           "within": [],
@@ -11668,6 +13379,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "385": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -11678,7 +13413,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -11805,6 +13539,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -11816,8 +13562,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -11831,6 +13577,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -13806,6 +15560,99 @@
           ]
         },
         {
+          "vocab": "declaration.method.signature.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "483": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "483": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "483": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "483": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.method.signature.public.restricted",
           "toplevel": true,
           "within": [],
@@ -13855,6 +15702,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "483": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -13865,7 +15736,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -14018,6 +15888,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -14029,8 +15911,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -14044,6 +15926,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         },
@@ -14437,6 +16327,99 @@
           ]
         },
         {
+          "vocab": "declaration.variable.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "206": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "206": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "206": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "206": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.variable.public.restricted",
           "toplevel": true,
           "within": [],
@@ -14486,6 +16469,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "206": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -14496,7 +16503,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -14668,6 +16674,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -14679,8 +16697,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -14694,6 +16712,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -15066,6 +17092,99 @@
           ]
         },
         {
+          "vocab": "declaration.struct.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "423": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "423": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "423": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "423": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.struct.public.restricted",
           "toplevel": true,
           "within": [],
@@ -15115,6 +17234,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "423": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -15125,7 +17268,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -15274,6 +17416,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -15285,8 +17439,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -15300,6 +17454,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -15495,6 +17657,99 @@
           ]
         },
         {
+          "vocab": "declaration.struct.tuple.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "424": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "424": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "424": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "424": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.struct.tuple.public.restricted",
           "toplevel": true,
           "within": [],
@@ -15544,6 +17799,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "424": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -15554,7 +17833,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -15710,6 +17988,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -15721,8 +18011,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -15736,6 +18026,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -15931,6 +18229,99 @@
           ]
         },
         {
+          "vocab": "declaration.struct.unit.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "425": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "425": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "425": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "425": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.struct.unit.public.restricted",
           "toplevel": true,
           "within": [],
@@ -15980,6 +18371,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "425": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -15990,7 +18405,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -16124,6 +18538,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -16135,8 +18561,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -16150,6 +18576,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -16867,6 +19301,99 @@
           ]
         },
         {
+          "vocab": "declaration.interface.trait.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "214": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "214": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "214": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "214": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.interface.trait.public.restricted",
           "toplevel": true,
           "within": [],
@@ -16916,6 +19443,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "214": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -16926,7 +19477,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -17112,6 +19662,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -17123,8 +19685,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -17138,6 +19700,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -17768,6 +20338,99 @@
           ]
         },
         {
+          "vocab": "declaration.type_alias.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "207": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "207": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "207": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "207": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.type_alias.public.restricted",
           "toplevel": true,
           "within": [],
@@ -17817,6 +20480,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "207": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -17827,7 +20514,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -17987,6 +20673,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -17998,8 +20696,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -18013,6 +20711,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -18499,6 +21205,99 @@
           ]
         },
         {
+          "vocab": "declaration.union.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "197": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "197": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "197": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "197": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.union.public.restricted",
           "toplevel": true,
           "within": [],
@@ -18548,6 +21347,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "197": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -18558,7 +21381,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -18707,6 +21529,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -18718,8 +21552,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -18733,6 +21567,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -19086,6 +21928,99 @@
           ]
         },
         {
+          "vocab": "statement.import.public.parent",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "224": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "224": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "224": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "224": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "statement.import.public.restricted",
           "toplevel": true,
           "within": [],
@@ -19135,6 +22070,30 @@
                   "slots": {
                     "235": 0
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "224": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
                 },
                 {
                   "slots": {
@@ -19145,7 +22104,6 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125,
                   379
                 ],
                 "slots": {
@@ -19261,6 +22219,18 @@
           "via": [
             {
               "field": null,
+              "kind": "visibility_modifier_pub_scope_in_path",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub_scope",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "visibility_modifier_pub",
               "after": null,
               "anchor": null
@@ -19272,8 +22242,8 @@
               "anchor": null
             }
           ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
+          "parent": "visibility_modifier_pub_scope_in_path",
+          "slot": "path",
           "multiple": false,
           "path": [
             {
@@ -19287,6 +22257,14 @@
             {
               "owner": "visibility_modifier_pub",
               "slot": "visibility_modifier_pub_scope"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub_scope_in_path",
+              "slot": "path"
             }
           ]
         }
@@ -19523,7 +22501,7 @@
           ]
         },
         {
-          "vocab": "modifier.visibility.public.restricted",
+          "vocab": "modifier.visibility.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19611,31 +22589,6 @@
         }
       ],
       "members": [
-        {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub_scope",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub_scope",
-          "slot": "content",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
-            },
-            {
-              "owner": "visibility_modifier_pub_scope",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "scope",
           "route": "nested",
@@ -19918,15 +22871,15 @@
       },
       {
         "depth": 4,
-        "paths": 93,
+        "paths": 106,
         "kinds": 59,
-        "refinements": 67
+        "refinements": 80
       },
       {
         "depth": 5,
-        "paths": 22,
+        "paths": 30,
         "kinds": 13,
-        "refinements": 22
+        "refinements": 30
       }
     ]
   }

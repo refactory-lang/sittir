@@ -11,6 +11,32 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	const visibilities = [
+		['pub(super)', 'public.parent', undefined],
+		['pub(in super)', 'public.restricted', 'super'],
+		['pub(in super::a)', 'public.restricted', { $path: 'identifier.qualified', qualifier: 'super', name: 'a' }],
+		['pub(crate)', 'public.internal', undefined],
+		['pub(in crate)', 'public.restricted', 'crate'],
+		['pub(self)', 'private', undefined],
+		['pub(in self)', 'public.restricted', 'self'],
+		['pub', 'public', undefined]
+	] as const;
+	const holders = [
+		['declaration.function', (v: string) => `${v} fn f() {}`],
+		['declaration.field', (v: string) => `struct S {\n    ${v} a: u8,\n}`],
+		['statement.import', (v: string) => `${v} use a::b;`]
+	] as const;
+	it.each(holders.flatMap(([path, source]) => visibilities.map(([v, refinement, scope]) => [source(v), `${path}.${refinement}`, scope] as const)))(
+		'reads the visibility of %j as %s, and builds it back as written',
+		(source, path, scope) => {
+			const read = (runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[];
+			const holder = path.startsWith('declaration.field') ? ((read[0]!.body as readonly Read[])[0] as Read) : read[0]!;
+			expect(holder.$path).toBe(path);
+			expect(holder.scope).toEqual(scope);
+			expect(roundTrip(source)).toBe(`${source}\n`);
+		}
+	);
+
 	it('reads a function as its most specific path, the flags that hold, its name and one parameter structure', () => {
 		const fn = readFirst('pub async fn f(a: u8) {}');
 		expect(fn).toMatchObject({ $path: 'declaration.function.public', $flags: ['async'], name: 'f' });

@@ -60,17 +60,19 @@ describe('emitPortableTyped', () => {
 	});
 
 	it("types an entry's node by what its claim tests present, and reads through that guarantee", () => {
-		const held = 'ConstItemAsDeclarationConstantPublicRestricted115$Held';
+		const held = /type (ConstItemAsDeclarationConstantPublicRestricted\d+)\$Held = /.exec(typed.source)?.[1];
 		expect(typed.source).toContain(
-			`type ${held} = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, {}]; }]; }]; }>;`
+			`type ${held}$Held = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, { readonly content: [TSKindId.VisibilityModifierPubScopeInPath, {}]; }]; }]; }]; }>;`
 		);
-		expect(typed.source).toContain(`function ConstItemAsDeclarationConstantPublicRestricted115(n: ${held}, set = 0)`);
-		expect(typed.source).toMatch(/function ConstItemAsDeclarationConstantPublicRestricted115\$scope\(this: Held<ConstItemAsDeclarationConstantPublicRestricted115\$Held>\) \{\n\treturn read\(of\(this\[low\]\.visibilityModifier\(\)\.content\(\), TSKindId\.VisibilityModifierPub\)\.visibilityModifierPubScope\(\)\);/);
+		expect(typed.source).toContain(`function ${held}(n: ${held}$Held, set = 0)`);
+		expect(typed.source).toContain(
+			`function ${held}$scope(this: Held<${held}$Held>) {\n\treturn read(of(of(this[low].visibilityModifier().content(), TSKindId.VisibilityModifierPub).visibilityModifierPubScope().content(), TSKindId.VisibilityModifierPubScopeInPath).path());`
+		);
 	});
 
-	it('writes no route through a kind the claim rules out', () => {
+	it('writes no route through a kind the claim rules out: a restricted scope reads through the in-path form only', () => {
 		expect(typed.source).toMatch(
-			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted\1\$Held>\) \{\n\treturn read\(this\[low\]\.visibilityModifierPubScope\(\)\.content\(\)\);\n\}/
+			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted\1\$Held>\) \{\n\treturn read\(of\(this\[low\]\.visibilityModifierPubScope\(\)\.content\(\), TSKindId\.VisibilityModifierPubScopeInPath\)\.path\(\)\);\n\}/
 		);
 	});
 

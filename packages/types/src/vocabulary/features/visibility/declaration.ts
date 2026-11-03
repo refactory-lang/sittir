@@ -16,6 +16,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.constant.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Constant.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.constant.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Constant.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.constant.public.restricted';
@@ -50,6 +54,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.enum.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Enum.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.enum.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Enum.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.enum.public.restricted';
@@ -70,6 +78,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.enum_member.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.enum_member.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.enum_member.public.restricted';
@@ -88,6 +100,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.enum_member.struct.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.enum_member.struct.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -108,6 +124,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.enum_member.tuple.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.enum_member.tuple.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -133,6 +153,10 @@ export namespace Declaration {
 			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Field.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.field.public.internal';
+			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Field.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.field.public.parent';
 			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Field.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
@@ -168,6 +192,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.function.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.function.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.function.public.restricted';
@@ -186,6 +214,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function.Signature.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.function.signature.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function.Signature.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.function.signature.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function.Signature.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -208,6 +240,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Interface.Trait.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.interface.trait.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Interface.Trait.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.interface.trait.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Interface.Trait.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -233,6 +269,10 @@ export namespace Declaration {
 			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.method.public.internal';
+			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.method.public.parent';
 			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
@@ -271,6 +311,10 @@ export namespace Declaration {
 					// claimed by r
 					readonly $kind: 'declaration.method.signature.public.internal';
 				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.method.signature.public.parent';
+				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.method.signature.public.restricted';
@@ -291,6 +335,10 @@ export namespace Declaration {
 			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.module.public.internal';
+			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.module.public.parent';
 			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
@@ -428,6 +476,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.struct.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.struct.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.struct.public.restricted';
@@ -446,6 +498,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.struct.tuple.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.struct.tuple.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -466,6 +522,10 @@ export namespace Declaration {
 				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Unit.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.struct.unit.public.internal';
+				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Unit.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'declaration.struct.unit.public.parent';
 				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Struct.Unit.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
@@ -488,6 +548,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.type_alias.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.TypeAlias.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.type_alias.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.TypeAlias.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.type_alias.public.restricted';
@@ -508,6 +572,10 @@ export namespace Declaration {
 				// claimed by r
 				readonly $kind: 'declaration.union.public.internal';
 			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Union.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.union.public.parent';
+			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Union.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.union.public.restricted';
@@ -527,6 +595,10 @@ export namespace Declaration {
 			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
 				readonly $kind: 'declaration.variable.public.internal';
+			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'declaration.variable.public.parent';
 			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r

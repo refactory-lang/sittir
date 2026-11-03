@@ -2861,6 +2861,156 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.constant.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 205,
+					builder: 'constItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [205, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [205, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [205, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'type']
+						}
+					]
+				}
+			]
+		},
 		'declaration.constant.public.restricted': {
 			root: true,
 			arms: [
@@ -2986,35 +3136,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -3028,18 +3171,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -3055,6 +3187,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -3933,6 +4082,232 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.enum.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.enum.public.restricted': {
 			root: true,
 			arms: [
@@ -4134,35 +4509,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -4176,18 +4544,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -4203,6 +4560,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -4868,6 +5242,196 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.enum_member.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [200, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.enum_member.public.restricted': {
 			root: true,
 			arms: [
@@ -5033,35 +5597,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -5075,18 +5632,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -5102,6 +5648,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -5857,6 +6420,205 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.enum_member.struct.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [200, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.enum_member.struct.public.restricted': {
 			root: true,
 			arms: [
@@ -6022,35 +6784,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -6064,18 +6819,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -6091,6 +6835,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -6818,6 +7579,205 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.enum_member.tuple.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [200, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.enum_member.tuple.public.restricted': {
 			root: true,
 			arms: [
@@ -6983,35 +7943,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -7025,18 +7978,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -7052,6 +7994,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -8566,6 +9525,235 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.field.public.parent': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					members: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [190],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
 		'declaration.field.public.restricted': {
 			root: false,
 			arms: [
@@ -8659,35 +9847,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -8701,18 +9882,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -8728,6 +9898,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -8831,35 +10018,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -8873,18 +10053,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -8900,6 +10069,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -10871,6 +12057,505 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.function.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 208,
+					builder: 'functionItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [208, 'name'],
+									kinds: [1, 127],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [208, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [208, 'returnType'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [208, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [208, 'body'],
+									kinds: [313]
+								}
+							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'parametersElementsReceiverGroup',
+									optional: true,
+									seated: 'forwarded'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							],
+							requires: [['receiver']]
+						},
+						{
+							name: 'receiver',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'receiver'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [441, 'receiver'],
+									kinds: []
+								},
+								{
+									at: [440, 'content'],
+									kinds: [231, 439],
+									within: [
+										{
+											key: 'content',
+											flatten: true
+										}
+									]
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4, 5, 6],
+						[0, 1, 2, 3, 4, 5, 7, 8]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.function.public.restricted': {
 			root: true,
 			arms: [
@@ -11094,35 +12779,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -11136,18 +12814,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						},
@@ -11345,6 +13012,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -13068,6 +14752,426 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.function.signature.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 209,
+					builder: 'functionSignatureItem',
+					members: [
+						{
+							name: 'functionModifiers',
+							steps: [
+								{
+									key: 'functionModifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [209, 'functionModifiers'],
+									kinds: []
+								},
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									within: [
+										{
+											builder: 'functionModifiers',
+											key: 'modifiers'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [209, 'name'],
+									kinds: [1, 127],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [209, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [209, 'returnType'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [209, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'parametersElementsReceiverGroup',
+									optional: true,
+									seated: 'forwarded'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							],
+							requires: [['receiver']]
+						},
+						{
+							name: 'receiver',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'receiver'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [441, 'receiver'],
+									kinds: []
+								},
+								{
+									at: [440, 'content'],
+									kinds: [231, 439],
+									within: [
+										{
+											key: 'content',
+											flatten: true
+										}
+									]
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 4, 6, 7]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.function.signature.public.restricted': {
 			root: true,
 			arms: [
@@ -13281,35 +15385,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -13323,18 +15420,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						},
@@ -13532,6 +15618,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -14534,6 +16637,263 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.interface.trait.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [435, 'declarations'],
+									kinds: [
+										178, 180, 190, 191, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377,
+										378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									builder: 'traitBounds',
+									optional: true
+								},
+								{
+									key: 'bounds'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.interface.trait.public.restricted': {
 			root: true,
 			arms: [
@@ -14752,35 +17112,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -14794,18 +17147,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -14821,6 +17163,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -17222,6 +19581,505 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.method.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 480,
+					builder: 'methodDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [480, 'name'],
+									kinds: [1, 127],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [480, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [480, 'returnType'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [480, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [480, 'body'],
+									kinds: [313]
+								}
+							]
+						},
+						{
+							name: 'extern',
+							steps: [
+								{
+									key: 'functionModifiers',
+									builder: 'functionModifiers',
+									optional: true
+								},
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									many: true
+								}
+							],
+							reads: [234]
+						},
+						{
+							name: 'receiver',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'receiver'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [441, 'receiver'],
+									kinds: []
+								},
+								{
+									at: [440, 'content'],
+									kinds: [231, 439],
+									within: [
+										{
+											key: 'content',
+											flatten: true
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'parametersElementsReceiverGroup',
+									optional: true,
+									seated: 'forwarded'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							],
+							requires: [['receiver']]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4, 5, 6, 8],
+						[0, 1, 2, 3, 4, 5, 7]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 112
+								}
+							]
+						},
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 35
+								}
+							]
+						},
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 111
+								}
+							]
+						},
+						default: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'functionModifiers',
+											builder: 'functionModifiers',
+											optional: true
+										},
+										{
+											key: 'modifiers'
+										}
+									],
+									kind: 50
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.method.public.restricted': {
 			root: true,
 			arms: [
@@ -17480,35 +20338,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -17522,18 +20373,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						},
@@ -17696,6 +20536,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -19419,6 +22276,426 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.method.signature.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 483,
+					builder: 'signatureMethodDeclaration',
+					members: [
+						{
+							name: 'functionModifiers',
+							steps: [
+								{
+									key: 'functionModifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [483, 'functionModifiers'],
+									kinds: []
+								},
+								{
+									at: [210, 'modifiers'],
+									kinds: [35, 50, 111, 112, 234],
+									tokens: {
+										async: 112,
+										const: 35,
+										default: 50,
+										unsafe: 111
+									},
+									within: [
+										{
+											builder: 'functionModifiers',
+											key: 'modifiers'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [483, 'name'],
+									kinds: [1, 127],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [483, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [483, 'returnType'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [483, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'parametersElementsReceiverGroup',
+									optional: true,
+									seated: 'forwarded'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [349, 'items'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [429, 'content'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 136, 218, 232, 233, 236,
+										240, 242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										_: 136,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											key: 'content'
+										}
+									]
+								}
+							],
+							requires: [['receiver']]
+						},
+						{
+							name: 'receiver',
+							steps: [
+								{
+									key: 'parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									builder: 'parametersElementsReceiver',
+									optional: true
+								},
+								{
+									key: 'receiver'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [441, 'receiver'],
+									kinds: []
+								},
+								{
+									at: [440, 'content'],
+									kinds: [231, 439],
+									within: [
+										{
+											key: 'content',
+											flatten: true
+										}
+									]
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 4, 6, 7]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.method.signature.public.restricted': {
 			root: true,
 			arms: [
@@ -19632,35 +22909,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -19674,18 +22944,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						},
@@ -19883,6 +23142,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -20645,6 +23921,178 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.module.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 384,
+					builder: 'modItemExternal',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [384, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['body'],
+							required: ['name']
+						}
+					]
+				},
+				{
+					kind: 385,
+					builder: 'modItemInline',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [385, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [385, 'body'],
+									kinds: []
+								},
+								{
+									at: [195, 'declarations'],
+									kinds: [
+										178, 180, 190, 191, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224,
+										259, 377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'declarationList',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.module.public.restricted': {
 			root: true,
 			arms: [
@@ -20692,35 +24140,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -20734,18 +24175,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -20761,6 +24191,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -20854,35 +24301,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -20896,18 +24336,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -20923,6 +24352,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -22591,6 +26037,232 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.struct.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 423,
+					builder: 'structItemBrace',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [423, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [423, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [423, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [423, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.struct.public.restricted': {
 			root: true,
 			arms: [
@@ -22792,35 +26464,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -22834,18 +26499,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -22861,6 +26515,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -23591,6 +27262,195 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.struct.tuple.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 424,
+					builder: 'structItemTuple',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [424, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [424, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [424, 'body'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [424, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.struct.tuple.public.restricted': {
 			root: true,
 			arms: [
@@ -23755,35 +27615,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -23797,18 +27650,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -23824,6 +27666,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -24358,6 +28217,146 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.struct.unit.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 425,
+					builder: 'structItemUnit',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [425, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [425, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.struct.unit.public.restricted': {
 			root: true,
 			arms: [
@@ -24473,35 +28472,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -24515,18 +28507,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -24542,6 +28523,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -25574,6 +29572,226 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.type_alias.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 207,
+					builder: 'typeItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [207, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [207, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [207, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [207, 'value'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'trailingWhereClause',
+							steps: [
+								{
+									key: 'trailingWhereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [207, 'trailingWhereClause'],
+									kinds: [211]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'value']
+						}
+					]
+				}
+			]
+		},
 		'declaration.type_alias.public.restricted': {
 			root: true,
 			arms: [
@@ -25769,35 +29987,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -25811,18 +30022,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -25838,6 +30038,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -27056,6 +31273,232 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.union.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [190],
+															many: true
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
 		'declaration.union.public.restricted': {
 			root: true,
 			arms: [
@@ -27257,35 +31700,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -27299,18 +31735,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -27326,6 +31751,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -28170,6 +32612,183 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'declaration.variable.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 206,
+					builder: 'staticItem',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [206, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [206, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [206, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {
+						mutable: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'mutable',
+											optional: true
+										}
+									],
+									kind: 57
+								}
+							]
+						},
+						byReference: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'byReference',
+											optional: true
+										}
+									],
+									kind: 114
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'type']
+						}
+					]
+				}
+			]
+		},
 		'declaration.variable.public.restricted': {
 			root: true,
 			arms: [
@@ -28295,35 +32914,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -28337,18 +32949,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -28364,6 +32965,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -39425,7 +44043,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'modifier.visibility.public.restricted': {
+		'modifier.visibility.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -39435,9 +44053,9 @@ export const build: PortableBuildTable = {
 						call: 'child',
 						key: 'content'
 					},
-					members: [
+					members: [],
+					presets: [
 						{
-							name: 'scope',
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
@@ -39452,21 +44070,25 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									}
-								}
-							],
-							reads: [125]
-						},
+							kind: 125
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'modifier.visibility.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 235,
+					builder: 'visibilityModifier.pub',
+					mounted: {
+						call: 'child',
+						key: 'content'
+					},
+					members: [
 						{
 							name: 'scope',
 							steps: [
@@ -39512,7 +44134,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					owners: [[0], [1]],
 					presets: [
 						{
 							steps: [
@@ -39526,10 +44147,14 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'content'
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
 								}
-							],
-							kind: 125
+							]
 						}
 					],
 					flags: {},
@@ -41562,6 +46187,101 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'statement.import.package.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 204,
+					builder: 'externCrateDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [204, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'alias',
+							steps: [
+								{
+									key: 'alias',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [204, 'alias'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
 		'statement.import.package.public.restricted': {
 			root: true,
 			arms: [
@@ -41632,35 +46352,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -41674,18 +46387,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -41701,6 +46403,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'
@@ -41937,6 +46656,83 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'statement.import.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 224,
+					builder: 'useDeclaration',
+					members: [
+						{
+							name: 'argument',
+							steps: [
+								{
+									key: 'argument'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [224, 'argument'],
+									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['argument']
+						}
+					]
+				}
+			]
+		},
 		'statement.import.public.restricted': {
 			root: true,
 			arms: [
@@ -41989,35 +46785,28 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
-									optional: true
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'path'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
-								{
-									at: [381, 'visibilityModifierPubScope'],
-									kinds: []
-								},
-								{
-									at: [380, 'content'],
-									kinds: [125, 126, 481],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope',
-											key: 'content',
-											mounted: {
-												call: 'child',
-												key: 'visibilityModifierPubScope'
-											}
-										}
-									]
-								},
 								{
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 481],
@@ -42031,18 +46820,7 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'visibilityModifier.pub.scope.inPath',
-											key: 'path',
-											mounted: {
-												call: 'child',
-												key: 'content'
-											},
-											through: ['content']
-										}
-									]
+									}
 								}
 							]
 						}
@@ -42058,6 +46836,23 @@ export const build: PortableBuildTable = {
 								{
 									key: 'content',
 									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
 									mounted: {
 										call: 'child',
 										key: 'content'

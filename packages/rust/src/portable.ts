@@ -121,26 +121,31 @@ export interface PortableIds {
 	'declaration.constant.private': TSKindId.ConstItem;
 	'declaration.constant.public': TSKindId.ConstItem;
 	'declaration.constant.public.internal': TSKindId.ConstItem;
+	'declaration.constant.public.parent': TSKindId.ConstItem;
 	'declaration.constant.public.restricted': TSKindId.ConstItem;
 	'declaration.enum': TSKindId.EnumItem;
 	'declaration.enum.private': TSKindId.EnumItem;
 	'declaration.enum.public': TSKindId.EnumItem;
 	'declaration.enum.public.internal': TSKindId.EnumItem;
+	'declaration.enum.public.parent': TSKindId.EnumItem;
 	'declaration.enum.public.restricted': TSKindId.EnumItem;
 	'declaration.enum_member': TSKindId.EnumVariant;
 	'declaration.enum_member.private': TSKindId.EnumVariant;
 	'declaration.enum_member.public': TSKindId.EnumVariant;
 	'declaration.enum_member.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.struct': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.private': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.private': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public.restricted': TSKindId.EnumVariant;
 	'declaration.extension': TSKindId.ImplItemBody | TSKindId.ImplItemSemi;
 	'declaration.extension.conformance': TSKindId.ImplItemBody;
@@ -148,22 +153,26 @@ export interface PortableIds {
 	'declaration.field.private': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.public.parent': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public.internal': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.public.parent': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public.restricted': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.signature': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.private': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.internal': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.public.parent': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.restricted': TSKindId.FunctionSignatureItem;
 	'declaration.interface': TSKindId.TraitItem;
 	'declaration.interface.trait': TSKindId.TraitItem;
 	'declaration.interface.trait.private': TSKindId.TraitItem;
 	'declaration.interface.trait.public': TSKindId.TraitItem;
 	'declaration.interface.trait.public.internal': TSKindId.TraitItem;
+	'declaration.interface.trait.public.parent': TSKindId.TraitItem;
 	'declaration.interface.trait.public.restricted': TSKindId.TraitItem;
 	'declaration.macro':
 		| TSKindId.MacroDefinition
@@ -177,11 +186,13 @@ export interface PortableIds {
 	'declaration.method.private': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public.internal': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.public.parent': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public.restricted': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.private': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public.internal': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.public.parent': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public.restricted': TSKindId.SignatureMethodDeclaration;
 	'declaration.module':
 		| TSKindId.ForeignModItem
@@ -194,6 +205,7 @@ export interface PortableIds {
 	'declaration.module.private': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public.internal': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.parent': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public.restricted': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.parameter':
 		| TSKindId.ClosureParameter
@@ -211,22 +223,26 @@ export interface PortableIds {
 	'declaration.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public.internal': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.parent': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public.restricted': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public.internal': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.public.parent': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public.restricted': TSKindId.StructItemTuple;
 	'declaration.struct.unit': TSKindId.StructItemUnit;
 	'declaration.struct.unit.private': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public.internal': TSKindId.StructItemUnit;
+	'declaration.struct.unit.public.parent': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public.restricted': TSKindId.StructItemUnit;
 	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
 	'declaration.type_alias.associated': TSKindId.AssociatedType;
 	'declaration.type_alias.private': TSKindId.TypeItem;
 	'declaration.type_alias.public': TSKindId.TypeItem;
 	'declaration.type_alias.public.internal': TSKindId.TypeItem;
+	'declaration.type_alias.public.parent': TSKindId.TypeItem;
 	'declaration.type_alias.public.restricted': TSKindId.TypeItem;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
 	'declaration.type_parameter.lifetime': TSKindId.LifetimeParameter;
@@ -235,11 +251,13 @@ export interface PortableIds {
 	'declaration.union.private': TSKindId.UnionItem;
 	'declaration.union.public': TSKindId.UnionItem;
 	'declaration.union.public.internal': TSKindId.UnionItem;
+	'declaration.union.public.parent': TSKindId.UnionItem;
 	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
 	'declaration.variable.private': TSKindId.StaticItem;
 	'declaration.variable.public': TSKindId.StaticItem;
 	'declaration.variable.public.internal': TSKindId.StaticItem;
+	'declaration.variable.public.parent': TSKindId.StaticItem;
 	'declaration.variable.public.restricted': TSKindId.StaticItem;
 	element:
 		| TSKindId.BaseFieldInitializer
@@ -612,6 +630,7 @@ export interface PortableIds {
 	'modifier.visibility.private': TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.internal': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
+	'modifier.visibility.public.parent': TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.restricted': TSKindId.VisibilityModifierPub;
 	pattern:
 		| TSKindId.CapturedPattern
@@ -681,10 +700,12 @@ export interface PortableIds {
 	'statement.import.package.private': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.internal': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.public.parent': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.restricted': TSKindId.ExternCrateDeclaration;
 	'statement.import.private': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public.internal': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
+	'statement.import.public.parent': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public.restricted': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.loop': TSKindId.ForExpression | TSKindId.LoopExpression | TSKindId.WhileExpression;
 	'statement.loop.for_each': TSKindId.ForExpression;
@@ -823,26 +844,31 @@ export interface PortableTexts {
 	'declaration.constant.private': never;
 	'declaration.constant.public': never;
 	'declaration.constant.public.internal': never;
+	'declaration.constant.public.parent': never;
 	'declaration.constant.public.restricted': never;
 	'declaration.enum': never;
 	'declaration.enum.private': never;
 	'declaration.enum.public': never;
 	'declaration.enum.public.internal': never;
+	'declaration.enum.public.parent': never;
 	'declaration.enum.public.restricted': never;
 	'declaration.enum_member': never;
 	'declaration.enum_member.private': never;
 	'declaration.enum_member.public': never;
 	'declaration.enum_member.public.internal': never;
+	'declaration.enum_member.public.parent': never;
 	'declaration.enum_member.public.restricted': never;
 	'declaration.enum_member.struct': never;
 	'declaration.enum_member.struct.private': never;
 	'declaration.enum_member.struct.public': never;
 	'declaration.enum_member.struct.public.internal': never;
+	'declaration.enum_member.struct.public.parent': never;
 	'declaration.enum_member.struct.public.restricted': never;
 	'declaration.enum_member.tuple': never;
 	'declaration.enum_member.tuple.private': never;
 	'declaration.enum_member.tuple.public': never;
 	'declaration.enum_member.tuple.public.internal': never;
+	'declaration.enum_member.tuple.public.parent': never;
 	'declaration.enum_member.tuple.public.restricted': never;
 	'declaration.extension': never;
 	'declaration.extension.conformance': never;
@@ -850,22 +876,26 @@ export interface PortableTexts {
 	'declaration.field.private': never;
 	'declaration.field.public': never;
 	'declaration.field.public.internal': never;
+	'declaration.field.public.parent': never;
 	'declaration.field.public.restricted': never;
 	'declaration.function': never;
 	'declaration.function.private': never;
 	'declaration.function.public': never;
 	'declaration.function.public.internal': never;
+	'declaration.function.public.parent': never;
 	'declaration.function.public.restricted': never;
 	'declaration.function.signature': never;
 	'declaration.function.signature.private': never;
 	'declaration.function.signature.public': never;
 	'declaration.function.signature.public.internal': never;
+	'declaration.function.signature.public.parent': never;
 	'declaration.function.signature.public.restricted': never;
 	'declaration.interface': never;
 	'declaration.interface.trait': never;
 	'declaration.interface.trait.private': never;
 	'declaration.interface.trait.public': never;
 	'declaration.interface.trait.public.internal': never;
+	'declaration.interface.trait.public.parent': never;
 	'declaration.interface.trait.public.restricted': never;
 	'declaration.macro': never;
 	'declaration.macro.brace': never;
@@ -875,17 +905,20 @@ export interface PortableTexts {
 	'declaration.method.private': never;
 	'declaration.method.public': never;
 	'declaration.method.public.internal': never;
+	'declaration.method.public.parent': never;
 	'declaration.method.public.restricted': never;
 	'declaration.method.signature': never;
 	'declaration.method.signature.private': never;
 	'declaration.method.signature.public': never;
 	'declaration.method.signature.public.internal': never;
+	'declaration.method.signature.public.parent': never;
 	'declaration.method.signature.public.restricted': never;
 	'declaration.module': never;
 	'declaration.module.foreign': never;
 	'declaration.module.private': never;
 	'declaration.module.public': never;
 	'declaration.module.public.internal': never;
+	'declaration.module.public.parent': never;
 	'declaration.module.public.restricted': never;
 	'declaration.parameter': never;
 	'declaration.parameter.receiver': never;
@@ -894,22 +927,26 @@ export interface PortableTexts {
 	'declaration.struct.private': never;
 	'declaration.struct.public': never;
 	'declaration.struct.public.internal': never;
+	'declaration.struct.public.parent': never;
 	'declaration.struct.public.restricted': never;
 	'declaration.struct.tuple': never;
 	'declaration.struct.tuple.private': never;
 	'declaration.struct.tuple.public': never;
 	'declaration.struct.tuple.public.internal': never;
+	'declaration.struct.tuple.public.parent': never;
 	'declaration.struct.tuple.public.restricted': never;
 	'declaration.struct.unit': never;
 	'declaration.struct.unit.private': never;
 	'declaration.struct.unit.public': never;
 	'declaration.struct.unit.public.internal': never;
+	'declaration.struct.unit.public.parent': never;
 	'declaration.struct.unit.public.restricted': never;
 	'declaration.type_alias': never;
 	'declaration.type_alias.associated': never;
 	'declaration.type_alias.private': never;
 	'declaration.type_alias.public': never;
 	'declaration.type_alias.public.internal': never;
+	'declaration.type_alias.public.parent': never;
 	'declaration.type_alias.public.restricted': never;
 	'declaration.type_parameter': never;
 	'declaration.type_parameter.lifetime': never;
@@ -918,11 +955,13 @@ export interface PortableTexts {
 	'declaration.union.private': never;
 	'declaration.union.public': never;
 	'declaration.union.public.internal': never;
+	'declaration.union.public.parent': never;
 	'declaration.union.public.restricted': never;
 	'declaration.variable': never;
 	'declaration.variable.private': never;
 	'declaration.variable.public': never;
 	'declaration.variable.public.internal': never;
+	'declaration.variable.public.parent': never;
 	'declaration.variable.public.restricted': never;
 	element:
 		| 'block'
@@ -1095,6 +1134,7 @@ export interface PortableTexts {
 	'modifier.visibility.private': never;
 	'modifier.visibility.public': 'crate';
 	'modifier.visibility.public.internal': 'crate';
+	'modifier.visibility.public.parent': never;
 	'modifier.visibility.public.restricted': never;
 	pattern: '..' | '_';
 	'pattern.as': never;
@@ -1125,10 +1165,12 @@ export interface PortableTexts {
 	'statement.import.package.private': never;
 	'statement.import.package.public': never;
 	'statement.import.package.public.internal': never;
+	'statement.import.package.public.parent': never;
 	'statement.import.package.public.restricted': never;
 	'statement.import.private': never;
 	'statement.import.public': never;
 	'statement.import.public.internal': never;
+	'statement.import.public.parent': never;
 	'statement.import.public.restricted': never;
 	'statement.loop': never;
 	'statement.loop.for_each': never;
@@ -1311,9 +1353,11 @@ export interface PortableKindsAt {
 	'declaration.constant.public': {
 		readonly $path: 'declaration.constant.public';
 		readonly internal: PortableKindsAt['declaration.constant.public.internal'];
+		readonly parent: PortableKindsAt['declaration.constant.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.constant.public.restricted'];
 	};
 	'declaration.constant.public.internal': { readonly $path: 'declaration.constant.public.internal' };
+	'declaration.constant.public.parent': { readonly $path: 'declaration.constant.public.parent' };
 	'declaration.constant.public.restricted': { readonly $path: 'declaration.constant.public.restricted' };
 	'declaration.enum': {
 		readonly $path: 'declaration.enum';
@@ -1324,9 +1368,11 @@ export interface PortableKindsAt {
 	'declaration.enum.public': {
 		readonly $path: 'declaration.enum.public';
 		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
 	};
 	'declaration.enum.public.internal': { readonly $path: 'declaration.enum.public.internal' };
+	'declaration.enum.public.parent': { readonly $path: 'declaration.enum.public.parent' };
 	'declaration.enum.public.restricted': { readonly $path: 'declaration.enum.public.restricted' };
 	'declaration.enum_member': {
 		readonly $path: 'declaration.enum_member';
@@ -1339,9 +1385,11 @@ export interface PortableKindsAt {
 	'declaration.enum_member.public': {
 		readonly $path: 'declaration.enum_member.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.public.restricted'];
 	};
 	'declaration.enum_member.public.internal': { readonly $path: 'declaration.enum_member.public.internal' };
+	'declaration.enum_member.public.parent': { readonly $path: 'declaration.enum_member.public.parent' };
 	'declaration.enum_member.public.restricted': { readonly $path: 'declaration.enum_member.public.restricted' };
 	'declaration.enum_member.struct': {
 		readonly $path: 'declaration.enum_member.struct';
@@ -1352,11 +1400,13 @@ export interface PortableKindsAt {
 	'declaration.enum_member.struct.public': {
 		readonly $path: 'declaration.enum_member.struct.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.struct.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': {
 		readonly $path: 'declaration.enum_member.struct.public.internal';
 	};
+	'declaration.enum_member.struct.public.parent': { readonly $path: 'declaration.enum_member.struct.public.parent' };
 	'declaration.enum_member.struct.public.restricted': {
 		readonly $path: 'declaration.enum_member.struct.public.restricted';
 	};
@@ -1369,9 +1419,11 @@ export interface PortableKindsAt {
 	'declaration.enum_member.tuple.public': {
 		readonly $path: 'declaration.enum_member.tuple.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.tuple.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
 	};
 	'declaration.enum_member.tuple.public.internal': { readonly $path: 'declaration.enum_member.tuple.public.internal' };
+	'declaration.enum_member.tuple.public.parent': { readonly $path: 'declaration.enum_member.tuple.public.parent' };
 	'declaration.enum_member.tuple.public.restricted': {
 		readonly $path: 'declaration.enum_member.tuple.public.restricted';
 	};
@@ -1389,9 +1441,11 @@ export interface PortableKindsAt {
 	'declaration.field.public': {
 		readonly $path: 'declaration.field.public';
 		readonly internal: PortableKindsAt['declaration.field.public.internal'];
+		readonly parent: PortableKindsAt['declaration.field.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
 	};
 	'declaration.field.public.internal': { readonly $path: 'declaration.field.public.internal' };
+	'declaration.field.public.parent': { readonly $path: 'declaration.field.public.parent' };
 	'declaration.field.public.restricted': { readonly $path: 'declaration.field.public.restricted' };
 	'declaration.function': {
 		readonly $path: 'declaration.function';
@@ -1403,9 +1457,11 @@ export interface PortableKindsAt {
 	'declaration.function.public': {
 		readonly $path: 'declaration.function.public';
 		readonly internal: PortableKindsAt['declaration.function.public.internal'];
+		readonly parent: PortableKindsAt['declaration.function.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.function.public.restricted'];
 	};
 	'declaration.function.public.internal': { readonly $path: 'declaration.function.public.internal' };
+	'declaration.function.public.parent': { readonly $path: 'declaration.function.public.parent' };
 	'declaration.function.public.restricted': { readonly $path: 'declaration.function.public.restricted' };
 	'declaration.function.signature': {
 		readonly $path: 'declaration.function.signature';
@@ -1416,11 +1472,13 @@ export interface PortableKindsAt {
 	'declaration.function.signature.public': {
 		readonly $path: 'declaration.function.signature.public';
 		readonly internal: PortableKindsAt['declaration.function.signature.public.internal'];
+		readonly parent: PortableKindsAt['declaration.function.signature.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': {
 		readonly $path: 'declaration.function.signature.public.internal';
 	};
+	'declaration.function.signature.public.parent': { readonly $path: 'declaration.function.signature.public.parent' };
 	'declaration.function.signature.public.restricted': {
 		readonly $path: 'declaration.function.signature.public.restricted';
 	};
@@ -1437,9 +1495,11 @@ export interface PortableKindsAt {
 	'declaration.interface.trait.public': {
 		readonly $path: 'declaration.interface.trait.public';
 		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
+		readonly parent: PortableKindsAt['declaration.interface.trait.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
 	};
 	'declaration.interface.trait.public.internal': { readonly $path: 'declaration.interface.trait.public.internal' };
+	'declaration.interface.trait.public.parent': { readonly $path: 'declaration.interface.trait.public.parent' };
 	'declaration.interface.trait.public.restricted': { readonly $path: 'declaration.interface.trait.public.restricted' };
 	'declaration.macro': {
 		readonly $path: 'declaration.macro';
@@ -1460,9 +1520,11 @@ export interface PortableKindsAt {
 	'declaration.method.public': {
 		readonly $path: 'declaration.method.public';
 		readonly internal: PortableKindsAt['declaration.method.public.internal'];
+		readonly parent: PortableKindsAt['declaration.method.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.method.public.restricted'];
 	};
 	'declaration.method.public.internal': { readonly $path: 'declaration.method.public.internal' };
+	'declaration.method.public.parent': { readonly $path: 'declaration.method.public.parent' };
 	'declaration.method.public.restricted': { readonly $path: 'declaration.method.public.restricted' };
 	'declaration.method.signature': {
 		readonly $path: 'declaration.method.signature';
@@ -1473,9 +1535,11 @@ export interface PortableKindsAt {
 	'declaration.method.signature.public': {
 		readonly $path: 'declaration.method.signature.public';
 		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
+		readonly parent: PortableKindsAt['declaration.method.signature.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
 	};
 	'declaration.method.signature.public.internal': { readonly $path: 'declaration.method.signature.public.internal' };
+	'declaration.method.signature.public.parent': { readonly $path: 'declaration.method.signature.public.parent' };
 	'declaration.method.signature.public.restricted': {
 		readonly $path: 'declaration.method.signature.public.restricted';
 	};
@@ -1490,9 +1554,11 @@ export interface PortableKindsAt {
 	'declaration.module.public': {
 		readonly $path: 'declaration.module.public';
 		readonly internal: PortableKindsAt['declaration.module.public.internal'];
+		readonly parent: PortableKindsAt['declaration.module.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.module.public.restricted'];
 	};
 	'declaration.module.public.internal': { readonly $path: 'declaration.module.public.internal' };
+	'declaration.module.public.parent': { readonly $path: 'declaration.module.public.parent' };
 	'declaration.module.public.restricted': { readonly $path: 'declaration.module.public.restricted' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
@@ -1512,9 +1578,11 @@ export interface PortableKindsAt {
 	'declaration.struct.public': {
 		readonly $path: 'declaration.struct.public';
 		readonly internal: PortableKindsAt['declaration.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.public.restricted'];
 	};
 	'declaration.struct.public.internal': { readonly $path: 'declaration.struct.public.internal' };
+	'declaration.struct.public.parent': { readonly $path: 'declaration.struct.public.parent' };
 	'declaration.struct.public.restricted': { readonly $path: 'declaration.struct.public.restricted' };
 	'declaration.struct.tuple': {
 		readonly $path: 'declaration.struct.tuple';
@@ -1525,9 +1593,11 @@ export interface PortableKindsAt {
 	'declaration.struct.tuple.public': {
 		readonly $path: 'declaration.struct.tuple.public';
 		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.tuple.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
 	};
 	'declaration.struct.tuple.public.internal': { readonly $path: 'declaration.struct.tuple.public.internal' };
+	'declaration.struct.tuple.public.parent': { readonly $path: 'declaration.struct.tuple.public.parent' };
 	'declaration.struct.tuple.public.restricted': { readonly $path: 'declaration.struct.tuple.public.restricted' };
 	'declaration.struct.unit': {
 		readonly $path: 'declaration.struct.unit';
@@ -1538,9 +1608,11 @@ export interface PortableKindsAt {
 	'declaration.struct.unit.public': {
 		readonly $path: 'declaration.struct.unit.public';
 		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.unit.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
 	};
 	'declaration.struct.unit.public.internal': { readonly $path: 'declaration.struct.unit.public.internal' };
+	'declaration.struct.unit.public.parent': { readonly $path: 'declaration.struct.unit.public.parent' };
 	'declaration.struct.unit.public.restricted': { readonly $path: 'declaration.struct.unit.public.restricted' };
 	'declaration.type_alias': {
 		readonly $path: 'declaration.type_alias';
@@ -1553,9 +1625,11 @@ export interface PortableKindsAt {
 	'declaration.type_alias.public': {
 		readonly $path: 'declaration.type_alias.public';
 		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type_alias.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.public.internal': { readonly $path: 'declaration.type_alias.public.internal' };
+	'declaration.type_alias.public.parent': { readonly $path: 'declaration.type_alias.public.parent' };
 	'declaration.type_alias.public.restricted': { readonly $path: 'declaration.type_alias.public.restricted' };
 	'declaration.type_parameter': {
 		readonly $path: 'declaration.type_parameter';
@@ -1573,9 +1647,11 @@ export interface PortableKindsAt {
 	'declaration.union.public': {
 		readonly $path: 'declaration.union.public';
 		readonly internal: PortableKindsAt['declaration.union.public.internal'];
+		readonly parent: PortableKindsAt['declaration.union.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
 	};
 	'declaration.union.public.internal': { readonly $path: 'declaration.union.public.internal' };
+	'declaration.union.public.parent': { readonly $path: 'declaration.union.public.parent' };
 	'declaration.union.public.restricted': { readonly $path: 'declaration.union.public.restricted' };
 	'declaration.variable': {
 		readonly $path: 'declaration.variable';
@@ -1586,9 +1662,11 @@ export interface PortableKindsAt {
 	'declaration.variable.public': {
 		readonly $path: 'declaration.variable.public';
 		readonly internal: PortableKindsAt['declaration.variable.public.internal'];
+		readonly parent: PortableKindsAt['declaration.variable.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.variable.public.restricted'];
 	};
 	'declaration.variable.public.internal': { readonly $path: 'declaration.variable.public.internal' };
+	'declaration.variable.public.parent': { readonly $path: 'declaration.variable.public.parent' };
 	'declaration.variable.public.restricted': { readonly $path: 'declaration.variable.public.restricted' };
 	element: {
 		readonly $path: 'element';
@@ -1900,9 +1978,11 @@ export interface PortableKindsAt {
 	'modifier.visibility.public': {
 		readonly $path: 'modifier.visibility.public';
 		readonly internal: PortableKindsAt['modifier.visibility.public.internal'];
+		readonly parent: PortableKindsAt['modifier.visibility.public.parent'];
 		readonly restricted: PortableKindsAt['modifier.visibility.public.restricted'];
 	};
 	'modifier.visibility.public.internal': { readonly $path: 'modifier.visibility.public.internal' };
+	'modifier.visibility.public.parent': { readonly $path: 'modifier.visibility.public.parent' };
 	'modifier.visibility.public.restricted': { readonly $path: 'modifier.visibility.public.restricted' };
 	pattern: {
 		readonly $path: 'pattern';
@@ -1981,17 +2061,21 @@ export interface PortableKindsAt {
 	'statement.import.package.public': {
 		readonly $path: 'statement.import.package.public';
 		readonly internal: PortableKindsAt['statement.import.package.public.internal'];
+		readonly parent: PortableKindsAt['statement.import.package.public.parent'];
 		readonly restricted: PortableKindsAt['statement.import.package.public.restricted'];
 	};
 	'statement.import.package.public.internal': { readonly $path: 'statement.import.package.public.internal' };
+	'statement.import.package.public.parent': { readonly $path: 'statement.import.package.public.parent' };
 	'statement.import.package.public.restricted': { readonly $path: 'statement.import.package.public.restricted' };
 	'statement.import.private': { readonly $path: 'statement.import.private' };
 	'statement.import.public': {
 		readonly $path: 'statement.import.public';
 		readonly internal: PortableKindsAt['statement.import.public.internal'];
+		readonly parent: PortableKindsAt['statement.import.public.parent'];
 		readonly restricted: PortableKindsAt['statement.import.public.restricted'];
 	};
 	'statement.import.public.internal': { readonly $path: 'statement.import.public.internal' };
+	'statement.import.public.parent': { readonly $path: 'statement.import.public.parent' };
 	'statement.import.public.restricted': { readonly $path: 'statement.import.public.restricted' };
 	'statement.loop': {
 		readonly $path: 'statement.loop';
@@ -2267,6 +2351,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.constant.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.constant.public.internal'];
+		readonly parent: PortableIsAt['declaration.constant.public.parent'];
 		readonly restricted: PortableIsAt['declaration.constant.public.restricted'];
 	};
 	'declaration.constant.public.internal': PortableGuard<
@@ -2274,6 +2359,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.constant.public.internal']
+	> & {};
+	'declaration.constant.public.parent': PortableGuard<
+		PortableIds['declaration.constant.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.constant.public.parent']
 	> & {};
 	'declaration.constant.public.restricted': PortableGuard<
 		PortableIds['declaration.constant.public.restricted'],
@@ -2303,6 +2394,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.enum.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
 	};
 	'declaration.enum.public.internal': PortableGuard<
@@ -2310,6 +2402,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.enum.public.internal']
+	> & {};
+	'declaration.enum.public.parent': PortableGuard<
+		PortableIds['declaration.enum.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum.public.parent']
 	> & {};
 	'declaration.enum.public.restricted': PortableGuard<
 		PortableIds['declaration.enum.public.restricted'],
@@ -2341,6 +2439,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.enum_member.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.public.restricted'];
 	};
 	'declaration.enum_member.public.internal': PortableGuard<
@@ -2348,6 +2447,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.enum_member.public.internal']
+	> & {};
+	'declaration.enum_member.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.public.parent']
 	> & {};
 	'declaration.enum_member.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.public.restricted'],
@@ -2377,6 +2482,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.enum_member.struct.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.struct.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': PortableGuard<
@@ -2384,6 +2490,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.enum_member.struct.public.internal']
+	> & {};
+	'declaration.enum_member.struct.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.struct.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.public.parent']
 	> & {};
 	'declaration.enum_member.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public.restricted'],
@@ -2413,6 +2525,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.enum_member.tuple.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.tuple.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
 	};
 	'declaration.enum_member.tuple.public.internal': PortableGuard<
@@ -2420,6 +2533,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.enum_member.tuple.public.internal']
+	> & {};
+	'declaration.enum_member.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.tuple.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.public.parent']
 	> & {};
 	'declaration.enum_member.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public.restricted'],
@@ -2461,6 +2580,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.field.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.field.public.internal'];
+		readonly parent: PortableIsAt['declaration.field.public.parent'];
 		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
 	};
 	'declaration.field.public.internal': PortableGuard<
@@ -2468,6 +2588,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.field.public.internal']
+	> & {};
+	'declaration.field.public.parent': PortableGuard<
+		PortableIds['declaration.field.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.field.public.parent']
 	> & {};
 	'declaration.field.public.restricted': PortableGuard<
 		PortableIds['declaration.field.public.restricted'],
@@ -2498,6 +2624,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.function.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.function.public.internal'];
+		readonly parent: PortableIsAt['declaration.function.public.parent'];
 		readonly restricted: PortableIsAt['declaration.function.public.restricted'];
 	};
 	'declaration.function.public.internal': PortableGuard<
@@ -2505,6 +2632,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.function.public.internal']
+	> & {};
+	'declaration.function.public.parent': PortableGuard<
+		PortableIds['declaration.function.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.public.parent']
 	> & {};
 	'declaration.function.public.restricted': PortableGuard<
 		PortableIds['declaration.function.public.restricted'],
@@ -2534,6 +2667,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.function.signature.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.function.signature.public.internal'];
+		readonly parent: PortableIsAt['declaration.function.signature.public.parent'];
 		readonly restricted: PortableIsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': PortableGuard<
@@ -2541,6 +2675,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.function.signature.public.internal']
+	> & {};
+	'declaration.function.signature.public.parent': PortableGuard<
+		PortableIds['declaration.function.signature.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.signature.public.parent']
 	> & {};
 	'declaration.function.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.function.signature.public.restricted'],
@@ -2576,6 +2716,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.interface.trait.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
+		readonly parent: PortableIsAt['declaration.interface.trait.public.parent'];
 		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
 	};
 	'declaration.interface.trait.public.internal': PortableGuard<
@@ -2583,6 +2724,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.interface.trait.public.internal']
+	> & {};
+	'declaration.interface.trait.public.parent': PortableGuard<
+		PortableIds['declaration.interface.trait.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.interface.trait.public.parent']
 	> & {};
 	'declaration.interface.trait.public.restricted': PortableGuard<
 		PortableIds['declaration.interface.trait.public.restricted'],
@@ -2641,6 +2788,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.method.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.method.public.internal'];
+		readonly parent: PortableIsAt['declaration.method.public.parent'];
 		readonly restricted: PortableIsAt['declaration.method.public.restricted'];
 	};
 	'declaration.method.public.internal': PortableGuard<
@@ -2648,6 +2796,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.method.public.internal']
+	> & {};
+	'declaration.method.public.parent': PortableGuard<
+		PortableIds['declaration.method.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.public.parent']
 	> & {};
 	'declaration.method.public.restricted': PortableGuard<
 		PortableIds['declaration.method.public.restricted'],
@@ -2677,6 +2831,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.method.signature.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
+		readonly parent: PortableIsAt['declaration.method.signature.public.parent'];
 		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
 	};
 	'declaration.method.signature.public.internal': PortableGuard<
@@ -2684,6 +2839,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.method.signature.public.internal']
+	> & {};
+	'declaration.method.signature.public.parent': PortableGuard<
+		PortableIds['declaration.method.signature.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.signature.public.parent']
 	> & {};
 	'declaration.method.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.method.signature.public.restricted'],
@@ -2720,6 +2881,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.module.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.module.public.internal'];
+		readonly parent: PortableIsAt['declaration.module.public.parent'];
 		readonly restricted: PortableIsAt['declaration.module.public.restricted'];
 	};
 	'declaration.module.public.internal': PortableGuard<
@@ -2727,6 +2889,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.module.public.internal']
+	> & {};
+	'declaration.module.public.parent': PortableGuard<
+		PortableIds['declaration.module.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module.public.parent']
 	> & {};
 	'declaration.module.public.restricted': PortableGuard<
 		PortableIds['declaration.module.public.restricted'],
@@ -2779,6 +2947,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.struct.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.public.restricted'];
 	};
 	'declaration.struct.public.internal': PortableGuard<
@@ -2786,6 +2955,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.struct.public.internal']
+	> & {};
+	'declaration.struct.public.parent': PortableGuard<
+		PortableIds['declaration.struct.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.public.parent']
 	> & {};
 	'declaration.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.public.restricted'],
@@ -2815,6 +2990,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.struct.tuple.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.tuple.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
 	};
 	'declaration.struct.tuple.public.internal': PortableGuard<
@@ -2822,6 +2998,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.struct.tuple.public.internal']
+	> & {};
+	'declaration.struct.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.struct.tuple.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.public.parent']
 	> & {};
 	'declaration.struct.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.tuple.public.restricted'],
@@ -2851,6 +3033,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.struct.unit.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.unit.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
 	};
 	'declaration.struct.unit.public.internal': PortableGuard<
@@ -2858,6 +3041,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.struct.unit.public.internal']
+	> & {};
+	'declaration.struct.unit.public.parent': PortableGuard<
+		PortableIds['declaration.struct.unit.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.unit.public.parent']
 	> & {};
 	'declaration.struct.unit.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.unit.public.restricted'],
@@ -2894,6 +3083,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.type_alias.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
+		readonly parent: PortableIsAt['declaration.type_alias.public.parent'];
 		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.public.internal': PortableGuard<
@@ -2901,6 +3091,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.type_alias.public.internal']
+	> & {};
+	'declaration.type_alias.public.parent': PortableGuard<
+		PortableIds['declaration.type_alias.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type_alias.public.parent']
 	> & {};
 	'declaration.type_alias.public.restricted': PortableGuard<
 		PortableIds['declaration.type_alias.public.restricted'],
@@ -2951,6 +3147,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.union.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.union.public.internal'];
+		readonly parent: PortableIsAt['declaration.union.public.parent'];
 		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
 	};
 	'declaration.union.public.internal': PortableGuard<
@@ -2958,6 +3155,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.union.public.internal']
+	> & {};
+	'declaration.union.public.parent': PortableGuard<
+		PortableIds['declaration.union.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.union.public.parent']
 	> & {};
 	'declaration.union.public.restricted': PortableGuard<
 		PortableIds['declaration.union.public.restricted'],
@@ -2987,6 +3190,7 @@ export interface PortableIsAt {
 		PortableTexts['declaration.variable.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.variable.public.internal'];
+		readonly parent: PortableIsAt['declaration.variable.public.parent'];
 		readonly restricted: PortableIsAt['declaration.variable.public.restricted'];
 	};
 	'declaration.variable.public.internal': PortableGuard<
@@ -2994,6 +3198,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.variable.public.internal']
+	> & {};
+	'declaration.variable.public.parent': PortableGuard<
+		PortableIds['declaration.variable.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.variable.public.parent']
 	> & {};
 	'declaration.variable.public.restricted': PortableGuard<
 		PortableIds['declaration.variable.public.restricted'],
@@ -3852,6 +4062,7 @@ export interface PortableIsAt {
 		PortableTexts['modifier.visibility.public']
 	> & {
 		readonly internal: PortableIsAt['modifier.visibility.public.internal'];
+		readonly parent: PortableIsAt['modifier.visibility.public.parent'];
 		readonly restricted: PortableIsAt['modifier.visibility.public.restricted'];
 	};
 	'modifier.visibility.public.internal': PortableGuard<
@@ -3859,6 +4070,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['modifier.visibility.public.internal']
+	> & {};
+	'modifier.visibility.public.parent': PortableGuard<
+		PortableIds['modifier.visibility.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.visibility.public.parent']
 	> & {};
 	'modifier.visibility.public.restricted': PortableGuard<
 		PortableIds['modifier.visibility.public.restricted'],
@@ -4027,6 +4244,7 @@ export interface PortableIsAt {
 		PortableTexts['statement.import.package.public']
 	> & {
 		readonly internal: PortableIsAt['statement.import.package.public.internal'];
+		readonly parent: PortableIsAt['statement.import.package.public.parent'];
 		readonly restricted: PortableIsAt['statement.import.package.public.restricted'];
 	};
 	'statement.import.package.public.internal': PortableGuard<
@@ -4034,6 +4252,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['statement.import.package.public.internal']
+	> & {};
+	'statement.import.package.public.parent': PortableGuard<
+		PortableIds['statement.import.package.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.package.public.parent']
 	> & {};
 	'statement.import.package.public.restricted': PortableGuard<
 		PortableIds['statement.import.package.public.restricted'],
@@ -4054,6 +4278,7 @@ export interface PortableIsAt {
 		PortableTexts['statement.import.public']
 	> & {
 		readonly internal: PortableIsAt['statement.import.public.internal'];
+		readonly parent: PortableIsAt['statement.import.public.parent'];
 		readonly restricted: PortableIsAt['statement.import.public.restricted'];
 	};
 	'statement.import.public.internal': PortableGuard<
@@ -4061,6 +4286,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['statement.import.public.internal']
+	> & {};
+	'statement.import.public.parent': PortableGuard<
+		PortableIds['statement.import.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.public.parent']
 	> & {};
 	'statement.import.public.restricted': PortableGuard<
 		PortableIds['statement.import.public.restricted'],
@@ -4431,26 +4662,31 @@ const table: PortableTable = {
 		'declaration.constant.private': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.internal': { ids: [TSKindId.ConstItem], exact: false },
+		'declaration.constant.public.parent': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.restricted': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumItem], exact: true },
 		'declaration.enum.private': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public.internal': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.enum.public.parent': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public.restricted': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum_member': { ids: [TSKindId.EnumVariant], exact: true },
 		'declaration.enum_member.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.extension': { ids: [TSKindId.ImplItemBody, TSKindId.ImplItemSemi], exact: true },
 		'declaration.extension.conformance': { ids: [TSKindId.ImplItemBody], exact: false },
@@ -4458,6 +4694,10 @@ const table: PortableTable = {
 		'declaration.field.private': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
 		'declaration.field.public': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
 		'declaration.field.public.internal': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.field.public.parent': {
 			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
 			exact: false
 		},
@@ -4472,6 +4712,10 @@ const table: PortableTable = {
 			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
 			exact: false
 		},
+		'declaration.function.public.parent': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
 		'declaration.function.public.restricted': {
 			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
 			exact: false
@@ -4480,12 +4724,14 @@ const table: PortableTable = {
 		'declaration.function.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.public.parent': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.interface': { ids: [TSKindId.TraitItem], exact: true },
 		'declaration.interface.trait': { ids: [TSKindId.TraitItem], exact: true },
 		'declaration.interface.trait.private': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public.internal': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.interface.trait.public.parent': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public.restricted': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.macro': {
 			ids: [
@@ -4512,6 +4758,10 @@ const table: PortableTable = {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
+		'declaration.method.public.parent': {
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
+			exact: false
+		},
 		'declaration.method.public.restricted': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
@@ -4520,6 +4770,7 @@ const table: PortableTable = {
 		'declaration.method.signature.private': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public.internal': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.method.signature.public.parent': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public.restricted': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.module': {
 			ids: [
@@ -4539,6 +4790,7 @@ const table: PortableTable = {
 		'declaration.module.private': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public.internal': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.parent': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public.restricted': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.parameter': {
 			ids: [
@@ -4571,6 +4823,10 @@ const table: PortableTable = {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
+		'declaration.struct.public.parent': {
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
 		'declaration.struct.public.restricted': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
@@ -4579,17 +4835,20 @@ const table: PortableTable = {
 		'declaration.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public.internal': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.struct.tuple.public.parent': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public.restricted': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
 		'declaration.struct.unit.private': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public.internal': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.struct.unit.public.parent': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public.restricted': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
 		'declaration.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
 		'declaration.type_alias.private': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public.internal': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type_alias.public.parent': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public.restricted': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_parameter': {
 			ids: [TSKindId.ConstParameter, TSKindId.LifetimeParameter, TSKindId.TypeParameter],
@@ -4601,11 +4860,13 @@ const table: PortableTable = {
 		'declaration.union.private': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.union.public.parent': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
 		'declaration.variable.private': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public.internal': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.parent': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
@@ -5070,6 +5331,7 @@ const table: PortableTable = {
 			ids: [TSKindId.CrateVisibilityModifier, TSKindId.VisibilityModifierPub],
 			exact: false
 		},
+		'modifier.visibility.public.parent': { ids: [TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.restricted': { ids: [TSKindId.VisibilityModifierPub], exact: false },
 		pattern: {
 			ids: [
@@ -5157,6 +5419,7 @@ const table: PortableTable = {
 		'statement.import.package.private': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package.public.parent': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.private': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
 		'statement.import.public': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
@@ -5164,6 +5427,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
 			exact: false
 		},
+		'statement.import.public.parent': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
 		'statement.import.public.restricted': {
 			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
 			exact: false
@@ -5339,6 +5603,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.field.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
@@ -5346,8 +5628,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5609,6 +5896,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.constant.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.constant.public.restricted',
 				within: [],
 				test: [
@@ -5616,8 +5921,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5698,6 +6008,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.enum.public.restricted',
 				within: [],
 				test: [
@@ -5705,8 +6033,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5768,6 +6101,25 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.tuple.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
+				]
+			},
+			{
 				path: 'declaration.enum_member.tuple.public.restricted',
 				within: [],
 				test: [
@@ -5775,8 +6127,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
@@ -5820,6 +6177,25 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.struct.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
+				]
+			},
+			{
 				path: 'declaration.enum_member.struct.public.restricted',
 				within: [],
 				test: [
@@ -5827,8 +6203,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
@@ -5870,6 +6251,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.enum_member.public.restricted',
 				within: [],
 				test: [
@@ -5877,8 +6276,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5992,6 +6396,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'statement.import.package.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'statement.import.package.public.restricted',
 				within: [],
 				test: [
@@ -5999,8 +6421,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6074,6 +6501,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.field.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
@@ -6081,8 +6526,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6153,6 +6603,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.function.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.function.public.restricted',
 				within: [],
 				test: [
@@ -6160,8 +6628,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6221,6 +6694,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.function.signature.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.function.signature.public.restricted',
 				within: [],
 				test: [
@@ -6228,8 +6719,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6408,6 +6904,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.method.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.method.public.restricted',
 				within: [],
 				test: [
@@ -6415,8 +6929,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6476,6 +6995,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.module.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
@@ -6483,8 +7020,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6544,6 +7086,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.module.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
@@ -6551,8 +7111,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6749,6 +7314,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.method.signature.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.method.signature.public.restricted',
 				within: [],
 				test: [
@@ -6756,8 +7339,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6818,6 +7406,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.variable.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.variable.public.restricted',
 				within: [],
 				test: [
@@ -6825,8 +7431,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6912,6 +7523,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.public.restricted',
 				within: [],
 				test: [
@@ -6919,8 +7548,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6980,6 +7614,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.tuple.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.tuple.public.restricted',
 				within: [],
 				test: [
@@ -6987,8 +7639,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7049,6 +7706,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.unit.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.unit.public.restricted',
 				within: [],
 				test: [
@@ -7056,8 +7731,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7150,6 +7830,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.interface.trait.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.interface.trait.public.restricted',
 				within: [],
 				test: [
@@ -7157,8 +7855,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7234,6 +7937,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.type_alias.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.type_alias.public.restricted',
 				within: [],
 				test: [
@@ -7241,8 +7962,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7341,6 +8067,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.union.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.union.public.restricted',
 				within: [],
 				test: [
@@ -7348,8 +8092,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7414,6 +8163,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'statement.import.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'statement.import.public.restricted',
 				within: [],
 				test: [
@@ -7421,8 +8188,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7470,7 +8242,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'modifier.visibility.public.restricted',
+				path: 'modifier.visibility.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },

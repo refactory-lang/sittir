@@ -287,21 +287,12 @@ describe('the portable build table', () => {
 		});
 	});
 
-	const undecided: Partial<Record<keyof typeof languages, readonly { readonly code: string; readonly message: string }[]>> = {
-		rust: [
-			{
-				code: 'portable-owner-undecided',
-				message: 'modifier.visibility.public.restricted: visibility_modifier_pub takes scope through two forms with the same members and kinds; nothing in the input tells them apart'
-			}
-		]
-	};
-
-	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic but the undecided owners it names', (grammar) => {
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic', (grammar) => {
 		const diagnostics = JSON.parse(readFileSync(new URL(`../../${grammar}/.sittir/grammar-diagnostics.json`, import.meta.url), 'utf8')) as
 			| readonly { readonly code: string; readonly message: string }[]
 			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
 		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
-		expect(entries.filter(({ code }) => code.startsWith('portable-')).map(({ code, message }) => ({ code, message }))).toEqual(undecided[grammar] ?? []);
+		expect(entries.filter(({ code }) => code.startsWith('portable-')).map(({ code, message }) => ({ code, message }))).toEqual([]);
 	});
 
 	it('builds the default form of a variant family, and the others by render option', () => {
