@@ -89,7 +89,7 @@ export interface NodeMemberParts {
 
 export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 	const lines: string[] = spec.parsed ? [] : ['    $_layout: undefined,'];
-	if (spec.setters !== undefined) lines.push('    $with: undefined as unknown as object,');
+	if (spec.setters !== undefined) lines.push(`    $with: { ${spec.setters.map(withEntry).join(', ')} },`);
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
@@ -97,7 +97,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
 		'    toJSON: refuseJSON,',
-		...(spec.trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
+		...(spec.trivia === undefined ? [] : [`    $trivia: { ${triviaSides(spec.trivia).map(triviaMember).join(', ')} },`]),
 		...(spec.parsed
 			? [
 					'    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
@@ -111,10 +111,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
 		'    [Symbol.dispose]: releaseNothing'
 	);
-	const after = [
-		...(spec.setters === undefined ? [] : [receivedMembers('$with', spec.setters.map(withEntry))]),
-		...(spec.trivia === undefined ? [] : [receivedMembers('$trivia', triviaSides(spec.trivia).map(triviaMember))])
-	];
+	const after: string[] = [];
 	return { members: lines, after };
 }
 
