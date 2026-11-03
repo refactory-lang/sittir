@@ -17,16 +17,12 @@ import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNo
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { resolveRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
-import { link } from '../../compiler/link.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import { compileGrammar } from '../../compiler/compile.ts';
 import { computeNodeSCC } from '../../compiler/scc.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
@@ -100,14 +96,7 @@ let _rustOptionsRs: string | undefined;
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
 async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
-	const raw = await evaluatePackage(grammarPackage(grammar));
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
-	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
-	const linked = link(raw, { generatedIdTables });
-	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(
-		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
-	);
+	const { raw, nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage(grammar) });
 	nodeMap.scc = computeNodeSCC(nodeMap);
 
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
@@ -117,10 +106,8 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		options: raw.options,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
-	const prepass = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, prepass, kindEntries);
-	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
 	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
 	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
