@@ -125,7 +125,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		if (slot === undefined) return [];
 		const [accessor, , keyword, , keywordKind] = slot;
-		const items = slotItems(node, accessor);
+		const items = slotItems(node, accessor).filter((item) => item !== null);
 		if (keyword === undefined) return items;
 		const present = new Keyword(keyword, keywordKind);
 		return items.flatMap((item) => (item === true ? [present] : []));
@@ -169,7 +169,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 			texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
 			types: (subject) => subjects(subject).flatMap(typeOf),
 			children: (subject) => subjects(subject).filter(hasKind).map((child) => subjectsOf([child])),
-			count: (subject) => subjects(subject).filter((item) => item !== null).length,
+			count: (subject) => subjects(subject).length,
 			delimiters: () => reached.flatMap(delimiterOf)
 		};
 	};
