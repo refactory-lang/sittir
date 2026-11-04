@@ -34,8 +34,8 @@ const target = flags[flags.indexOf('--target') + 1];
 const suffix = flags.includes('--target') && target !== undefined ? targetSuffix(target) : platformSuffix(hostPlatform());
 const apple = suffix.startsWith('darwin-');
 
-function run(command: string, args: readonly string[], cwd: string): void {
-	const result = spawnSync(command, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' });
+function run(command: string, args: readonly string[], cwd: string, shell = false): void {
+	const result = spawnSync(command, args, { cwd, stdio: 'inherit', shell });
 	if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
@@ -44,7 +44,8 @@ const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
 	'pnpm',
 	['exec', 'napi', 'build', '--platform', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
-	nativeCrateDir(grammar)
+	nativeCrateDir(grammar),
+	process.platform === 'win32'
 );
 
 const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
