@@ -464,10 +464,13 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      # llvm-tools carries the llvm-strip build-native strips a release
+      # binding with on every target but Apple's.
       - name: Install Rust toolchain (pinned, ${{ matrix.target }})
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
+          components: llvm-tools
       # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
       # longer resolves), which failed EVERY matrix leg — GitHub Actions
       # fails job setup if any referenced action can't be resolved, even
