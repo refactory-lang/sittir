@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, dirname, join, normalize, relative } from 'node:path';
+import { basename, dirname, join, normalize, posix, relative, sep } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
@@ -112,6 +112,10 @@ function quotedIncludeClosure(file: string, seen: Set<string>): void {
 	}
 }
 
+function checkoutPath(repoRoot: string, file: string): string {
+	return relative(repoRoot, file).split(sep).join(posix.sep);
+}
+
 export function nativeInputs(repoRoot: string, grammar: string): Record<string, string> {
 	const parserSources = join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir/src');
 	const roots = [
@@ -127,7 +131,7 @@ export function nativeInputs(repoRoot: string, grammar: string): Record<string, 
 		quotedIncludeClosure(scanner, scannerIncludes);
 	}
 	const inputs: Record<string, string> = {};
-	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[relative(repoRoot, file)] = sha256File(file);
+	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[checkoutPath(repoRoot, file)] = sha256File(file);
 	return inputs;
 }
 
@@ -144,7 +148,7 @@ function cargoConfigFiles(repoRoot: string, grammar: string, env: NodeJS.Process
 export function nativeBuildConfig(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): Record<string, string> {
 	const config: Record<string, string> = {};
 	for (const name of Object.keys(env).filter((name) => BUILD_ENV.test(name)).sort()) config[name] = env[name] ?? '';
-	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[relative(repoRoot, file)] = sha256File(file);
+	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[checkoutPath(repoRoot, file)] = sha256File(file);
 	return config;
 }
 
@@ -173,7 +177,7 @@ export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile
 	const stamp: NativeBuildStamp = {
 		profile,
 		binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)),
-		...(unstripped === undefined ? {} : { unstripped: { path: relative(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
+		...(unstripped === undefined ? {} : { unstripped: { path: checkoutPath(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
 		...built
 	};
 	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');
