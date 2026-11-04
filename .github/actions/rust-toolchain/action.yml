@@ -1,5 +1,5 @@
 name: Rust toolchain
-description: Install the Rust version rust-toolchain.toml pins, with any extra targets and components.
+description: Install the Rust version and components rust-toolchain.toml pins, with any extra targets and components.
 inputs:
   targets:
     description: Comma-separated targets to add.
@@ -14,9 +14,14 @@ runs:
   steps:
     - id: pin
       shell: bash
-      run: echo "channel=$(sed -n 's/^channel *= *"\(.*\)"$/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      env:
+        EXTRA: ${{ inputs.components }}
+      run: |
+        echo "channel=$(sed -n 's/^channel *= *"\(.*\)"$/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+        pinned=$(sed -n 's/^components *= *\[\(.*\)\]$/\1/p' rust-toolchain.toml | tr -d '" ')
+        echo "components=$(printf '%s,%s' "$pinned" "$EXTRA" | sed 's/^,*//; s/,*$//')" >> "$GITHUB_OUTPUT"
     - uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ steps.pin.outputs.channel }}
         targets: ${{ inputs.targets }}
-        components: ${{ inputs.components }}
+        components: ${{ steps.pin.outputs.components }}

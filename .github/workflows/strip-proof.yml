@@ -4,8 +4,10 @@ name: Strip proof
 # build-native, which keeps the unstripped link beside its stamp and strips
 # the shipped one; on every target the copy and the shipped binary must have
 # every allocated section byte-identical, so a tool reading the copy reads
-# what ships. The encode stack is read from each copy, for information, and
-# the kept copies and stamps are uploaded. The builds are then repacked the
+# what ships. Every grammar is built on every target. The encode stack is
+# read from each copy, the typed read's stack ceilings are measured on darwin
+# arm64, all on the pinned toolchain, for information; the kept copies,
+# stamps and Windows PDBs are uploaded. The builds are then repacked the
 # way the release repacks them, and the layout is held to the complete set.
 
 on:
@@ -27,13 +29,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { target: aarch64-apple-darwin, host: macos-14, buildFlag: '', grammars: 'regex' }
-          - { target: x86_64-apple-darwin, host: macos-14, buildFlag: '', grammars: 'regex' }
-          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '', grammars: 'regex typescript' }
-          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex' }
-          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '--use-napi-cross', grammars: 'regex typescript' }
-          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex' }
-          - { target: x86_64-pc-windows-msvc, host: windows-2022, buildFlag: '', grammars: 'regex' }
+          - { target: aarch64-apple-darwin, host: macos-14, buildFlag: '', grammars: 'regex scm rust typescript python' }
+          - { target: x86_64-apple-darwin, host: macos-14, buildFlag: '', grammars: 'regex scm rust typescript python' }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '', grammars: 'regex scm rust typescript python' }
+          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex scm rust typescript python' }
+          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '--use-napi-cross', grammars: 'regex scm rust typescript python' }
+          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex scm rust typescript python' }
+          - { target: x86_64-pc-windows-msvc, host: windows-2022, buildFlag: '', grammars: 'regex scm rust typescript python' }
     steps:
       - uses: actions/checkout@v6
         with:
@@ -47,7 +49,6 @@ jobs:
       - uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-          components: llvm-tools
       - if: contains(matrix.target, 'musl')
         uses: mlugg/setup-zig@v2
         with:
@@ -71,6 +72,10 @@ jobs:
             for f in packages/"$g"/native/*.node; do
               b=$(basename "$f")
               node .github/strip-proof/section-hashes.mjs "node_modules/.cache/sittir/native-build/$g/$b" "$f" "$b" >> "$report" || status=1
+              if [[ "${{ matrix.target }}" == *windows-msvc ]]; then
+                pdb="target/${{ matrix.target }}/release/sittir_${g}.pdb"
+                cp "$pdb" "node_modules/.cache/sittir/native-build/$g/$b.pdb" || echo "no PDB at $pdb" >> "$report"
+              fi
             done
           done
           cat "$report" >> "$GITHUB_STEP_SUMMARY"
@@ -87,8 +92,20 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          out="encode-stack-${{ matrix.target }}.txt"
-          npx tsx packages/cli/src/cli.ts tool encode-stack ${{ matrix.grammars }} --paths > "$out" 2>&1 || echo "encode-stack exit $?" >> "$out"
+          out="encode-stack-${{ matrix.target }}"
+          npx tsx packages/cli/src/cli.ts tool encode-stack ${{ matrix.grammars }} --paths > "$out.txt" 2>&1 || echo "encode-stack exit $?" >> "$out.txt"
+          npx tsx packages/cli/src/cli.ts tool encode-stack ${{ matrix.grammars }} --json > "$out.json" 2>> "$out.txt" || true
+          cat "$out.txt" >> "$GITHUB_STEP_SUMMARY"
+      - name: the typed read's stack ceilings on the pin, for information
+        if: ${{ !cancelled() && matrix.target == 'aarch64-apple-darwin' }}
+        shell: bash
+        run: |
+          out="ceilings-${{ matrix.target }}.txt"
+          for profile in "" "--release"; do
+            echo "== profile ${profile:-dev}" >> "$out"
+            cargo test -p sittir-parity-tests --no-default-features $profile --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings >> "$out" 2>&1 || echo "cargo test exit $?" >> "$out"
+          done
+          rustc -vV >> "$out"
           cat "$out" >> "$GITHUB_STEP_SUMMARY"
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -97,7 +114,9 @@ jobs:
           path: |
             sections-${{ matrix.target }}.md
             encode-stack-${{ matrix.target }}.txt
+            encode-stack-${{ matrix.target }}.json
             llvm-tools-${{ matrix.target }}.txt
+            ceilings-${{ matrix.target }}.txt
           if-no-files-found: warn
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
