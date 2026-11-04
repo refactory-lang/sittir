@@ -727,9 +727,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_cont = payload.cont;
     }
 
+    /// Drops the held seam and all it carries: its payload, its strength
+    /// and its marks (token, flank, the root's edge, template).
     fn clear_payload(&mut self) {
         self.seam = None;
         self.take_payload();
+        self.seam_strength = SeamStrength::Fallback;
+        self.seam_is_token = false;
+        self.seam_is_flank = false;
+        self.seam_is_root = false;
         self.seam_template = false;
     }
 
@@ -941,7 +947,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.clear_payload();
         self.tail = None;
-        self.seam_is_root = false;
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
     }
@@ -1243,7 +1248,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let holds_trivia = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia;
         if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.clear_payload();
-            self.seam_is_token = false;
             return;
         }
         if !seam.is_empty() {
