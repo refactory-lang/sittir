@@ -91,6 +91,58 @@ pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &sittir_core::
     tree.write_trivia_side(index, inner, tree.trivia_side(index, inner)).expect("the node's own side writes back");
 }
 
+/// A source table that holds no tree, so a node renders from what it holds
+/// alone, as a snapshot does.
+pub struct NoSources;
+
+impl sittir_core::render::SourceTable for NoSources {
+    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&std::sync::Arc<str>> {
+        None
+    }
+}
+
+/// `$source` parsed by `$krate`'s `$grammar` under its default options, its
+/// root snapshot rendered.
+#[macro_export]
+macro_rules! snapshot_rendered {
+    ($krate:ident, $grammar:expr, $source:expr) => {{
+        let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
+        let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
+        let options = engine.options().clone();
+        let root: $krate::render::AnyNode = tree.snapshot(::sittir_core::types::NodeIndex::ROOT, None).expect("a snapshot");
+        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &$crate::NoSources };
+        $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
+    }};
+}
+
+/// `$source` parsed by `$krate`'s `$grammar` under its default options with
+/// every node's inner side written back (`edit_in_place`), so every node
+/// renders from its template, read whole seating its sides, and rendered.
+#[macro_export]
+macro_rules! edited_rendered {
+    ($krate:ident, $grammar:expr, $source:expr) => {{
+        let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
+        let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
+        (0..::sittir_core::read::descendant_count(&tree.tree().root_node())).map(::sittir_core::types::NodeIndex::new).for_each(|index| $crate::edit_in_place(&tree, index));
+        let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
+        let options = engine.options().clone();
+        let ctx = ::sittir_core::prepare::RenderContext { options: &options, sources: &tree };
+        $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
+    }};
+}
+
+/// Each `$source` renders as it reads, from its root snapshot
+/// (`snapshot_rendered`) and with every node edited (`edited_rendered`).
+#[macro_export]
+macro_rules! renders_as_read {
+    ($krate:ident, $grammar:expr, $($source:expr),+ $(,)?) => {
+        for source in [$($source),+] {
+            let rendered = ($crate::snapshot_rendered!($krate, $grammar, source), $crate::edited_rendered!($krate, $grammar, source));
+            assert_eq!((rendered.0.as_str(), rendered.1.as_str()), (source, source));
+        }
+    };
+}
+
 /// A fresh parse of `source` by an engine of its own, so no cache one read
 /// fills answers another.
 ///
