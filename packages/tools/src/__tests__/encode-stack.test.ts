@@ -384,29 +384,20 @@ describe('dynamic classes', () => {
 		expect(encodeStack(await disassemble(graph), HEIGHTS).reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[2]]);
 	});
 
-	it('holds a call between two picked functions only to the pair its class names, and reads on into both', async () => {
-		const pick = (read: string): string[] =>
-			below(LOCK, [
-				...fn(
-					0x2000,
-					LOCK,
-					['adrp x8, 0x2000 <x>', 'add x8, x8, #0x100', 'adrp x9, 0x2000 <x>', 'add x9, x9, #0x200', 'csel x22, x9, x8, ne', 'blr x22'],
-					[]
-				),
-				...fn(0x2100, WRITE_LOCK, [], []),
-				...fn(0x2200, read, ['blr x8'], [])
-			]);
-		const held = encodeStack(await disassemble(pick(READ_LOCK)), HEIGHTS);
-		expect(held.reached).toEqual([
-			{ fn: READ_LOCK, offset: 0, ins: 'blr x8', class: undefined },
-			{ fn: LOCK, offset: 0x14, ins: 'blr x22', class: DYNAMIC_CLASSES[3] }
+	it('reads a call between two picked functions as a call to both, and lists it with their names', async () => {
+		const graph = below(LOCK, [
+			...fn(
+				0x2000,
+				LOCK,
+				['adrp x8, 0x2000 <x>', 'add x8, x8, #0x100', 'adrp x9, 0x2000 <x>', 'add x9, x9, #0x200', 'csel x22, x9, x8, ne', 'blr x22'],
+				[]
+			),
+			...fn(0x2100, WRITE_LOCK, [], []),
+			...fn(0x2200, READ_LOCK, ['blr x8'], [])
 		]);
-		const other = 'std::sys::sync::rwlock::queue::other_lock';
-		const unheld = encodeStack(await disassemble(pick(other)), HEIGHTS);
-		expect(unheld.reached).toEqual([
-			{ fn: other, offset: 0, ins: 'blr x8', class: undefined },
-			{ fn: LOCK, offset: 0x14, ins: 'blr x22', class: undefined }
-		]);
+		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		expect(stack.selected).toEqual([{ fn: LOCK, offset: 0x14, ins: 'blr x22', targets: [WRITE_LOCK, READ_LOCK] }]);
+		expect(stack.reached).toEqual([{ fn: READ_LOCK, offset: 0, ins: 'blr x8', class: undefined }]);
 	});
 });
 

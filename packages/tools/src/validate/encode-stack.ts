@@ -79,7 +79,6 @@ export interface DynamicClass {
 	readonly name: string;
 	readonly reason: string;
 	readonly within: RegExp;
-	readonly selects?: readonly RegExp[];
 	readonly refutedBy?: RegExp;
 }
 
@@ -92,6 +91,10 @@ export interface ReachedCall extends UnresolvedCall {
 	readonly class: DynamicClass | undefined;
 }
 
+export interface SelectedCall extends Selected {
+	readonly fn: string;
+}
+
 export interface EncodeStack {
 	readonly level: StackPath;
 	readonly above: StackPath;
@@ -99,6 +102,7 @@ export interface EncodeStack {
 	readonly oneTime: number;
 	readonly unresolved: readonly UnresolvedCall[];
 	readonly reached: readonly ReachedCall[];
+	readonly selected: readonly SelectedCall[];
 	readonly refuted: readonly Refuted[];
 }
 
@@ -334,13 +338,6 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 		reason:
 			'runs only while a panic unwinds, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
 		within: /^(?:_Unwind_|_?_?unw_|unwind_phase2|libunwind::)/
-	},
-	{
-		name: 'std RwLock contended lock',
-		reason:
-			'lock_contended calls the one of read_lock and write_lock its caller picked; the guard reads both and counts their frames',
-		within: /^<std::sys::sync::rwlock::queue::RwLock>::lock_contended\b/,
-		selects: [/^std::sys::sync::rwlock::queue::read_lock\b/, /^std::sys::sync::rwlock::queue::write_lock\b/]
 	}
 ];
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
@@ -1048,38 +1045,16 @@ export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): Enc
 		return by ? [{ class: known, by }] : [];
 	});
 	const holding = DYNAMIC_CLASSES.filter((known) => !refuted.some((r) => r.class === known));
-	const classOf = (fn: string, targets?: readonly string[]): DynamicClass | undefined =>
-		holding.find(
-			(known) =>
-				known.within.test(fn) &&
-				(targets === undefined ? !known.selects : known.selects !== undefined && proves(known.selects, targets))
-		);
 	const outside = [...extent]
 		.filter((fn) => !measured.has(fn))
 		.sort()
-		.flatMap((fn) => dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: classOf(fn) })));
-	const selecting = [...new Set([...measured, ...extent])]
-		.sort()
 		.flatMap((fn) =>
-			dis.functions.get(fn)!.selected.map(({ targets, ...at }) => ({ fn, ...at, class: classOf(fn, targets) }))
+			dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: holding.find((c) => c.within.test(fn)) }))
 		);
-	return {
-		level,
-		above,
-		trivia: trip,
-		oneTime: above.bytes + trip.bytes,
-		unresolved,
-		reached: [...outside, ...selecting],
-		refuted
-	};
-}
-
-function proves(selects: readonly RegExp[], targets: readonly string[]): boolean {
-	return (
-		targets.length === selects.length &&
-		selects.every((pattern) => targets.filter((target) => pattern.test(target)).length === 1) &&
-		targets.every((target) => selects.some((pattern) => pattern.test(target)))
-	);
+	const selected = [...new Set([...measured, ...extent])]
+		.sort()
+		.flatMap((fn) => dis.functions.get(fn)!.selected.map((at) => ({ fn, ...at })));
+	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved, reached: outside, selected, refuted };
 }
 
 export function heightKinds(nodeRs: string): Set<string> {
@@ -1193,6 +1168,8 @@ export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 				const count = stack.reached.filter((call) => call.class === known).length;
 				if (count) console.log(`  ${count} reached dynamic calls, ${known.name}: ${known.reason}`);
 			}
+			for (const { fn, offset, ins, targets } of stack.selected)
+				console.log(`  picked call ${short(fn)}+0x${offset.toString(16)}: ${ins}, read as ${targets.map(short).join(' or ')}`);
 			for (const { class: known, by } of stack.refuted)
 				console.log(`  no longer a class, ${known.name}: the addon has ${short(by)}`);
 			for (const { fn, offset, ins } of stack.reached.filter((call) => !call.class))
