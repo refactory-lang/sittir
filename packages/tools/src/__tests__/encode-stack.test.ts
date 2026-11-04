@@ -319,8 +319,8 @@ describe('encodeStack', () => {
 	});
 
 	it('holds a class only while the addon has nothing that refutes it', async () => {
-		const drop = '<napi::bindgen_runtime::js_values::arraybuffer::Uint32Array as core::ops::drop::Drop>::drop';
-		const setter = '<napi::bindgen_runtime::js_values::arraybuffer::Uint32Array>::with_external_data::<sittir_x::Notify>';
+		const drop = '<napi::bindgen_runtime::js_values::arraybuffer::Uint8Array as core::ops::drop::Drop>::drop';
+		const setter = '<napi::bindgen_runtime::js_values::arraybuffer::Uint8Array>::with_external_data::<sittir_x::Notify>';
 		const graph = [
 			...GRAPH.flatMap((line) => (line.endsWith(`<${NAMES.b}>:`) ? [line, `    1208: \tbl 0x0 <${drop}>`] : [line])),
 			...fn(0x2000, drop, ['stp x29, x30, [sp, #-16]!', 'blr x8'], [])
