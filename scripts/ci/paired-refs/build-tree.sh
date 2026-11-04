@@ -5,9 +5,9 @@
 # worktree at <trees-dir>/<tree>, installs from that commit's own lockfile,
 # compiles packages/*/dist and builds every stable grammar's addon with the
 # profile refs.json names. The tree's own build-native script chooses the crate
-# features. When refs.json names a build path, the tree's build driver carries
-# it before the addons are built, after packages/*/dist is compiled
-# (build-path.mjs place). Each tree builds into its own cargo target, removed
+# features. When refs.json names a build path, a tree it applies to is patched
+# after packages/*/dist is compiled and before the addons are built
+# (build-path.mjs place); every tree's stamps must then agree on the path. Each tree builds into its own cargo target, removed
 # once its addons are built, so the runner's disk holds one target at a time.
 set -euo pipefail
 name=$1

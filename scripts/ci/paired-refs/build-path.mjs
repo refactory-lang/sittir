@@ -25,14 +25,6 @@ function isAncestor(cwd, ancestor, commit) {
 	}
 }
 
-const patchIds = (cwd, diff) =>
-	diff.trim()
-		? git(cwd, ['patch-id', '--stable'], diff)
-				.trim()
-				.split('\n')
-				.map((line) => line.split(' '))
-		: [];
-
 export async function driverClosure(repo, commit) {
 	const scratch = mkdtempSync(join(tmpdir(), 'build-path-'));
 	const archive = join(scratch, 'driver.tar');
@@ -57,24 +49,18 @@ export async function resolveBuildPath({ repo = process.cwd(), commit, ref = com
 		.sort();
 	assert(files.length, `build path ${ref}: ${short(commit)} changes nothing in the module closure of ${BUILD_DRIVER}`);
 	const patch = git(repo, ['diff', ...DIFF, parent, commit, '--', ...files]);
-	const [[patchId]] = patchIds(repo, patch);
-	return { commit, ref, files, patchId, patch };
+	return { commit, ref, files, patch };
 }
 
 export function placeBuildPath({ tree, buildPath, patch }) {
 	const commit = git(tree, ['rev-parse', 'HEAD']).trim();
 	if (!buildPath) return { commit, how: 'own' };
-	const { files, patchId, ref } = buildPath;
-	if (isAncestor(tree, buildPath.commit, commit)) return { commit, how: 'contained', via: 'ancestor', files };
-	const carriers = git(tree, ['log', '-p', ...DIFF, '--format=commit %H', commit, '--', ...files]);
-	const twin = patchIds(tree, carriers).find(([id]) => id === patchId)?.[1];
-	if (twin) return { commit, how: 'contained', via: `patch-id of ${short(twin)}`, files };
+	const { files } = buildPath;
+	if (isAncestor(tree, buildPath.commit, commit)) return { commit, how: 'ancestor', files };
 	try {
 		git(tree, ['apply', '--check'], patch);
 	} catch {
-		throw new Error(
-			`build path ${ref}: ${short(commit)} neither carries ${short(buildPath.commit)} nor takes its change to ${files.join(', ')} cleanly; it would be built on another path`
-		);
+		return { commit, how: 'as is', files };
 	}
 	git(tree, ['apply'], patch);
 	return { commit, how: 'patched', files };
@@ -120,7 +106,7 @@ export function describeBuildPath({ buildPath, placements, fact }) {
 	const driver = buildPath
 		? `build-native at ${buildPath.ref} \`${short(buildPath.commit)}\` (${buildPath.files.join(', ')}): ` +
 			placements
-				.map(({ tree, how, via }) => `${tree} ${how === 'contained' ? `contains it (${via})` : 'patched'}`)
+				.map(({ tree, how }) => `${tree} ${how === 'ancestor' ? 'contains it (ancestor)' : how}`)
 				.join(', ')
 		: "each tree's own build-native";
 	const copy = fact.keptUnstrippedCopy ? 'the unstripped copy kept' : 'no unstripped copy';
