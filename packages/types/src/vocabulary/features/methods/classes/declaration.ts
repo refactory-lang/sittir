@@ -14,7 +14,16 @@ export namespace Declaration {
 		// claimed by pt
 		readonly $kind: 'declaration.constructor';
 		readonly body: V.Statement.Block<G>;
-		readonly parameters: V.Declaration.Parameter.Any<G>[];
+		readonly parameters: (
+			| V.Declaration.Parameter<G>
+			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Private<G>
+			| V.Declaration.Parameter.Protected<G>
+			| V.Declaration.Parameter.Public<G>
+			| V.Declaration.Parameter.Receiver<G>
+			| V.Declaration.Parameter.Typed<G>
+			| V.Declaration.Parameter.TypedDefault<G>
+		)[];
 	}
 	export interface Field<G extends GrammarContext<G>> {
 		readonly static?: Flag;

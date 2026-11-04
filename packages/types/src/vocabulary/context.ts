@@ -238,7 +238,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly attributeKind: string;
 		};
 		readonly 'clause.import.list': {
-			readonly useClauses: G['identifier'] | V.Clause.Import.Any<G>;
+			readonly useClauses:
+				| G['identifier']
+				| V.Clause.Import.Alias<G>
+				| V.Clause.Import.List.Any<G>
+				| V.Clause.Import.Wildcard<G>;
 		};
 		readonly 'clause.import.names': {
 			readonly content: V.Clause.Import.Any<G>;
@@ -341,8 +345,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.constructor': {
 			readonly returnType:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
 		};
@@ -440,7 +442,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Variadic<G>
 				| string
 				| G['type'];
 			readonly returnType:
@@ -491,7 +498,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Variadic<G>
 				| string
 				| G['type'];
 			readonly returnType:
@@ -675,7 +687,17 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_tree': {
 			readonly tokens:
-				| V.Element.Macro.Any<G>
+				| V.Element.Macro.TokenBinding<G>
+				| V.Element.Macro.TokenRepetition.Any<G>
+				| V.Element.Macro.TokenTree.Brace<G>
+				| V.Element.Macro.TokenTree.Bracket<G>
+				| V.Element.Macro.TokenTree.Paren<G>
+				| V.Element.Macro.TokenTree.Delimited.Brace<G>
+				| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+				| V.Element.Macro.TokenTree.Delimited.Paren<G>
+				| V.Element.Macro.TokenTree.Pattern.Brace<G>
+				| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+				| V.Element.Macro.TokenTree.Pattern.Paren<G>
 				| G['identifier']
 				| G['literal']
 				| string;
@@ -912,7 +934,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Rest<G>
 				| G['statement']
 				| string;
 			readonly typeArguments: G['identifier'] | G['type'];
@@ -1120,7 +1141,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly parameters:
 				| G['identifier']
 				| G['pattern']
-				| V.Declaration.Parameter.Any<G>;
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Default<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Typed<G>
+				| V.Declaration.Parameter.TypedDefault<G>;
 			readonly returnType:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -1525,7 +1553,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly consequence: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.import': {
-			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
+			readonly argument:
+				| G['identifier']
+				| V.Clause.Import.Alias<G>
+				| V.Clause.Import.List.Any<G>
+				| V.Clause.Import.Wildcard<G>
+				| string;
 			readonly fromClause: V.Clause.Import.Require<G> | V.Literal.String<G>;
 		};
 		readonly 'statement.import.alias': {
@@ -1693,7 +1726,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Variadic<G>
 				| string
 				| G['type'];
 			readonly returnType:

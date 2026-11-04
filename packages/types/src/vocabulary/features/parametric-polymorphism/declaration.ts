@@ -3,25 +3,53 @@ import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Class<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter.Any<G> | V.Declaration.TypeParameter.Any<G>[];
+		readonly typeParameters?:
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Parameters<G>
+			| V.Declaration.TypeParameter.Variadic<G>
+			| (
+					| V.Declaration.TypeParameter<G>
+					| V.Declaration.TypeParameter.Parameters<G>
+					| V.Declaration.TypeParameter.Variadic<G>
+			  )[];
 	}
 	export interface Constructor<G extends GrammarContext<G>> {
 		readonly typeParameters?:
-			| V.Identifier.Metavariable<G>
-			| V.Declaration.TypeParameter.Any<G>
-			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Parameters<G>
+			| V.Declaration.TypeParameter.Variadic<G>
+			| (
+					| V.Declaration.TypeParameter<G>
+					| V.Declaration.TypeParameter.Parameters<G>
+					| V.Declaration.TypeParameter.Variadic<G>
+			  )[];
 		// p only
 	}
 	export interface Enum<G extends GrammarContext<G>> {
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly typeParameters?: (
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
+		)[];
 		// r only
 	}
 	export interface Extension<G extends GrammarContext<G>> {
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly typeParameters?: (
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
+		)[];
 	}
 	export namespace Extension {
 		export interface Conformance<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters?: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 	}
 	export interface Function<G extends GrammarContext<G>> {
@@ -32,16 +60,31 @@ export namespace Declaration {
 	}
 	export namespace Function {
 		export interface Signature<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters?: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 	}
 	export interface Interface<G extends GrammarContext<G>> {
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly typeParameters?: (
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
+		)[];
 		// rt only
 	}
 	export namespace Interface {
 		export interface Trait<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters?: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 	}
 	export interface Method<G extends GrammarContext<G>> {
@@ -52,7 +95,12 @@ export namespace Declaration {
 	}
 	export namespace Method {
 		export interface Signature<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters?: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 		export namespace Signature {
 			export interface Abstract<G extends GrammarContext<G>> {
@@ -73,7 +121,12 @@ export namespace Declaration {
 	}
 	export namespace TypeAlias {
 		export interface Associated<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters?: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 	}
 	export interface TypeParameter<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
@@ -100,6 +153,11 @@ export namespace Declaration {
 		}
 	}
 	export interface Union<G extends GrammarContext<G>> {
-		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		readonly typeParameters?: (
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter<G>
+			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
+		)[];
 	}
 }

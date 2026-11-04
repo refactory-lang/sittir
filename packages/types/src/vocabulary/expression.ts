@@ -161,7 +161,19 @@ export namespace Expression {
 			export interface Chain<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison<G>> {
 				// claimed by p
 				readonly $kind: 'expression.binary.comparison.chain';
-				readonly comparators: V.Element.Comparator.Any<G>[];
+				readonly comparators: (
+					| V.Element.Comparator<G>
+					| V.Element.Comparator.Comparison.Equal<G>
+					| V.Element.Comparator.Comparison.Greater<G>
+					| V.Element.Comparator.Comparison.GreaterEqual<G>
+					| V.Element.Comparator.Comparison.Less<G>
+					| V.Element.Comparator.Comparison.LessEqual<G>
+					| V.Element.Comparator.Comparison.NotEqual.Any<G>
+					| V.Element.Comparator.Identity.Is<G>
+					| V.Element.Comparator.Identity.IsNot<G>
+					| V.Element.Comparator.Membership.In<G>
+					| V.Element.Comparator.Membership.NotIn<G>
+				)[];
 			}
 			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.equal';
@@ -348,7 +360,13 @@ export namespace Expression {
 		readonly $kind: 'expression.function';
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
-		readonly parameters: V.Declaration.Parameter.Any<G>[];
+		readonly parameters: (
+			| V.Declaration.Parameter<G>
+			| V.Declaration.Parameter.Private<G>
+			| V.Declaration.Parameter.Protected<G>
+			| V.Declaration.Parameter.Public<G>
+			| V.Declaration.Parameter.Receiver<G>
+		)[];
 	}
 	export interface Lambda<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt

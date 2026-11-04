@@ -62,7 +62,13 @@ export namespace Type {
 		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {
 			// claimed by t
 			readonly $kind: 'type.function.constructor';
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+			)[];
 			readonly type: G['slots']['type.function.constructor']['type'];
 		}
 	}
