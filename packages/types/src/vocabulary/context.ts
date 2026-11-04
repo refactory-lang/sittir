@@ -116,7 +116,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly object: V.Attribute.Content.Member<G> | G['identifier'];
 		};
 		readonly 'attribute.content.parenthesized': {
-			readonly expression: G['identifier'] | V.Attribute.Content.Any<G>;
+			readonly expression: G['identifier'] | V.Attribute.Content.Call<G> | V.Attribute.Content.Member<G>;
 		};
 		readonly 'attribute.decorator': {
 			readonly content:
@@ -124,13 +124,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Attribute.Content.Any<G>;
+				| V.Attribute.Content.Call<G>
+				| V.Attribute.Content.Member<G>
+				| V.Attribute.Content.Parenthesized<G>;
 		};
 		readonly 'clause.bounds': {
 			readonly bounds:
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Clause.Bounds.Any<G>
+				| V.Clause.Bounds.HigherRanked<G>
+				| V.Clause.Bounds.Removed<G>
 				| G['type'];
 		};
 		readonly 'clause.bounds.higher_ranked': {
@@ -245,7 +248,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Clause.Import.Wildcard<G>;
 		};
 		readonly 'clause.import.names': {
-			readonly content: V.Clause.Import.Any<G>;
+			readonly content: V.Clause.Import.Namespace<G> | V.Clause.Import.Specifier.Any<G>;
 		};
 		readonly 'clause.import.specifier': {
 			readonly alias: G['identifier'] | string;
@@ -461,8 +464,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['attribute']
 				| G['declaration']
 				| V.Expression.Call.Macro<G>
-				| G['statement']
-				| V.Type.Object<G>;
+				| G['statement'];
 		};
 		readonly 'declaration.interface.trait': {
 			readonly body:
@@ -682,7 +684,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal']
 				| string
-				| V.Element.Macro.Any<G>
+				| V.Element.Macro.TokenBinding<G>
+				| V.Element.Macro.TokenRepetition.Pattern<G>
+				| V.Element.Macro.TokenTree.Pattern.Brace<G>
+				| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+				| V.Element.Macro.TokenTree.Pattern.Paren<G>
 				| V.Type.Primitive<G>;
 		};
 		readonly 'element.macro.token_tree': {
@@ -972,7 +978,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.cast.conversion': {
 			readonly expression:
-				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
@@ -1004,7 +1009,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'expression.collection.list': {
 			readonly elements:
 				| V.Declaration.Module<G>
-				| V.Element.Spread.Any<G>
+				| V.Element.Spread<G>
+				| V.Element.Spread.Parenthesized<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -1040,14 +1046,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Element.Spread.Any<G>;
+				| V.Element.Spread<G>
+				| V.Element.Spread.Parenthesized<G>;
 		};
 		readonly 'expression.collection.struct': {
 			readonly name: V.Identifier<G> | G['type'];
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
-				| V.Element.Spread.Any<G>
+				| V.Element.Spread<G>
+				| V.Element.Spread.Parenthesized<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -1697,12 +1705,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly left:
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Clause.Bounds.Any<G>
+				| V.Clause.Bounds.Removed<G>
+				| V.Clause.Bounds.Use<G>
 				| G['type'];
 			readonly right:
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
-				| V.Clause.Bounds.Any<G>
+				| V.Clause.Bounds.Removed<G>
+				| V.Clause.Bounds.Use<G>
 				| G['type'];
 		};
 		readonly 'type.bracketed': {
