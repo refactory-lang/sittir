@@ -171,13 +171,10 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      # llvm-tools carries the llvm-strip build-native strips a release
-      # binding with on every target but Apple's.
       - name: Install Rust toolchain (pinned, ${{ matrix.target }})
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-          components: llvm-tools
       # See ci.yml's `napi-build` job for why `napi-rs/setup-node-and-napi@v3`
       # was replaced with these flag-driven cross-compile steps.
       - name: Setup zig (musl cross-compile)
