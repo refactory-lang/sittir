@@ -458,6 +458,27 @@ Print the strict factory source that rebuilds a source file
 pnpm exec tsx packages/cli/src/cli.ts tool emit-factory-source [options]
 ```
 
+### `tool encode-stack`
+
+Check each built release addon's whole-encode stack, RECURSION_LIMIT levels and the one-time frames, against ENCODE_STACK_BUDGET
+
+**Arguments**
+
+- `grammars…` (optional) — Grammars whose built addons to check (default: every stable grammar)
+
+**Options**
+
+- `--addon <paths...>` — Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)
+- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)
+- `--paths` — Print every costliest path, not only those over budget
+- `--json` — Print the measurements as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool encode-stack [grammars] [options]
+```
+
 ### `tool exercise`
 
 Exercise factory round-trips with built-in or corpus cases

@@ -21,6 +21,7 @@ import { dumpAstMismatches } from './dump-ast-mismatches.ts';
 import { bindingsInventory } from './bindings-inventory.ts';
 import { syncBase } from './sync-base.ts';
 import { emitFactorySource } from './emit-factory-source.ts';
+import { encodeStack } from './encode-stack.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { glossaryKeys } from './glossary-keys.ts';
@@ -73,6 +74,7 @@ export const toolModules: readonly CommandModule[] = [
 	bindingsInventory,
 	syncBase,
 	emitFactorySource,
+	encodeStack,
 	exercise,
 	fieldProvenance,
 	glossaryKeys,
