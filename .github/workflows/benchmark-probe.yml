@@ -21,6 +21,9 @@ on:
       candidates:
         type: string
         required: true
+      build-path:
+        type: string
+        required: true
       script:
         type: string
         required: true
@@ -46,7 +49,13 @@ jobs:
         with:
           node-version: '26.12.0'
           cache: pnpm
+      # llvm-tools carries the llvm-strip a tree's build driver strips its
+      # release addons with, once it builds on the path that strips after the build.
       - uses: ./.github/actions/rust-toolchain
+        with:
+          components: llvm-tools
+      - name: Test the build path placement
+        run: node --test scripts/ci/paired-refs/build-path.test.mjs
       - name: Resolve the commits
         shell: bash
         env:
@@ -55,6 +64,7 @@ jobs:
           PROFILE: ${{ inputs.profile }}
           ARENA: ${{ inputs.arena }}
           CANDIDATES: ${{ inputs.candidates }}
+          BUILD_PATH: ${{ inputs.build-path }}
         run: |
           mkdir -p "$RUNNER_TEMP/trees"
           scripts/ci/paired-refs/resolve-refs.sh "$RUNNER_TEMP/paired-refs"
@@ -70,6 +80,9 @@ jobs:
           for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
             scripts/ci/paired-refs/build-tree.sh "$tree" "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-$tree.log"
           done
+      - name: Hold every tree to one build path
+        shell: bash
+        run: node scripts/ci/paired-refs/build-path.mjs check "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" base feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json")
       - name: Fingerprint the built trees
         shell: bash
         run: |

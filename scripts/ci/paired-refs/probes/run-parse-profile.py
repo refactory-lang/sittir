@@ -41,7 +41,7 @@ for index in range(ROUNDS):
                 sys.stderr.write(run.stderr)
                 raise SystemExit(run.returncode)
             results.setdefault((grammar, name), []).append(json.loads(Path(f'{prefix}.json').read_text()))
-lines = []
+lines = [(out.parent / 'build-path.md').read_text().strip(), '']
 for grammar in grammars:
     cpu = results[(grammar, names[0])][0]['cpu']
     lines += [f'### {grammar} ({cpu})', '', '| version | parse | render | pipeline |', '|---|---|---|---|']

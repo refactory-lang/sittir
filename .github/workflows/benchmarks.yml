@@ -34,6 +34,10 @@ on:
         description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
         type: string
         default: ''
+      build-path:
+        description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with; a tree before it is patched, a tree carrying it is left as it is. Empty builds each tree with its own.
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -68,6 +72,7 @@ jobs:
       profile: ${{ inputs.profile }}
       arena: ${{ inputs.arena }}
       candidates: ${{ inputs.candidates }}
+      build-path: ${{ inputs.build-path }}
   probe:
     if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile'
     uses: ./.github/workflows/benchmark-probe.yml
@@ -79,3 +84,4 @@ jobs:
       arena: ${{ inputs.arena }}
       grammars: ${{ inputs.grammars }}
       candidates: ${{ inputs.candidates }}
+      build-path: ${{ inputs.build-path }}

@@ -1,6 +1,7 @@
 # Usage: python3 summarize.py <out-dir> <earlier-summary.json> [<bar>]
 # Reads <out-dir>/refs.json (resolve-refs.sh), the workers' results under
-# <out-dir>/runs and each tree's fingerprint (<out-dir>/before-<tree>.json).
+# <out-dir>/runs, each tree's fingerprint (<out-dir>/before-<tree>.json) and
+# the build path every tree was built on (build-path.mjs place and check).
 # The versions are base, master, feature and each candidate in object storage
 # and, when they ran, <tree>-arena (that tree in arena storage). A candidate
 # is compared with base and with feature in the same storage. Every
@@ -105,6 +106,7 @@ over = [f"{row['grammar']} {a} ×{row['pairs'][f'{a}/base']['pipelineMs']['ratio
 result = {'refs': refs, 'versions': {v: {'tree': treeOf(v), 'nodeStorage': storageOf(v)} for v in VERSIONS}, 'bar': BAR, 'overBar': over, 'mismatches': mismatches,
           'buildProfiles': sorted(profiles), 'processes': len(receipts), 'meanLoad1': statistics.mean(load), 'maxLoad1': max(load), 'machine': machine, 'runner': runner,
           'trees': {t: {'commit': x['commit'], 'workingTreeDiffSha256': x['workingTreeDiffSha256'], 'sections': {k: {'files': s['files'], 'sha256': s['sha256']} for k, s in x['sections'].items()}} for t, x in trees.items()},
+          'buildPath': {'path': refs.get('buildPath'), 'trees': {t: json.loads((out / f'build-path-{t}.json').read_text()) for t in TREES}},
           'corpus': corpus, 'construction': construction, 'memory': memory}
 (out / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
 
@@ -121,6 +123,7 @@ lines = [
     f"Trees: base `{refs['base'][:9]}` (merge base), master `{refs['master'][:9]}`, feature `{refs['feature'][:9]}`"
     + ''.join(f", {c} `{refs['candidates'][c]['commit'][:9]}` ({refs['candidates'][c]['ref']})" for c in CANDIDATES) + f"; build profile {', '.join(sorted(profiles))}. "
     + ("A version ending in -arena is its tree read with `nodeStorage: 'arena'`; the others use object storage." if any(v.endswith('-arena') for v in VERSIONS) else 'Every version uses object storage.'),
+    (out / 'build-path.md').read_text().strip(),
     f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
     'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
