@@ -131,7 +131,7 @@ def counted(label):
 
 
 base = names[0]
-lines = ['## perf: whole-tree reads against base', '', f"perf `{perf}`, kernel {kernel}; hardware counters {'available' if counters else 'not available on this runner'}. Each cell is the median over {ROUNDS} processes of the whole process's count.", '',
+lines = ['## perf: whole-tree reads against base', '', (out.parent / 'build-path.md').read_text().strip(), '', f"perf `{perf}`, kernel {kernel}; hardware counters {'available' if counters else 'not available on this runner'}. Each cell is the median over {ROUNDS} processes of the whole process's count.", '',
          '| grammar | event | ' + ' | '.join(names) + ' | ' + ' | '.join(f'{n}/{base}' for n in names[1:]) + ' |', '|' + '---|' * (1 + 2 * len(names))]
 for grammar in grammars:
     for event in EVENTS + ['batch ms']:
