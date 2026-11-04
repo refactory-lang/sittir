@@ -1,0 +1,104 @@
+name: Strip proof
+
+# A probe, run from its own branch only. On Windows, each release binding is
+# built by build-native, which launches only pnpm through the shell, keeps the
+# unstripped link beside its stamp and strips the shipped one with llvm-strip;
+# the copy and the shipped binary must have every allocated section
+# byte-identical.
+
+on:
+  push:
+    branches: [probe/release-windows]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  build:
+    name: copy and shipped (${{ matrix.target }})
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: x86_64-pc-windows-msvc, host: windows-2022, buildFlag: '', grammars: 'regex typescript' }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+      - if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: strip-proof-${{ matrix.target }}
+      - name: build each binding, and hold its unstripped copy to it
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="sections-${{ matrix.target }}.md"
+          : > "$report"
+          status=0
+          for g in ${{ matrix.grammars }}; do
+            npx tsx scripts/build-native.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            for f in packages/"$g"/native/*.node; do
+              b=$(basename "$f")
+              node .github/strip-proof/section-hashes.mjs "node_modules/.cache/sittir/native-build/$g/$b" "$f" "$b" >> "$report" || status=1
+            done
+          done
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - name: llvm-strip under a path with a space, with build-native before and after
+        shell: bash
+        run: |
+          set -uo pipefail
+          sysroot=$(cygpath -u "$(rustc --print sysroot)")
+          host=$(rustc -vV | sed -n 's/^host: //p')
+          spaced="$(cygpath -u "$RUNNER_TEMP")/llvm tools"
+          mkdir -p "$spaced"
+          cp "$sysroot/lib/rustlib/$host/bin/llvm-strip.exe" "$spaced/"
+          strip="$(cygpath -w "$spaced/llvm-strip.exe")"
+          git show 2da15ea64:scripts/build-native.mts > scripts/build-native-before.mts
+          status=0
+          for script in build-native-before build-native; do
+            if LLVM_STRIP="$strip" npx tsx "scripts/$script.mts" regex --release --target "${{ matrix.target }}"; then
+              line="$script: built, stripping with $strip"
+            else
+              line="$script: FAILED (exit $?), stripping with $strip"
+              [ "$script" = build-native ] && status=1
+            fi
+            echo "$line" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+          exit "$status"
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sections-${{ matrix.target }}
+          path: sections-${{ matrix.target }}.md
+          if-no-files-found: warn
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: |
+            packages/*/native/*.node
+          if-no-files-found: error
+
