@@ -138,7 +138,6 @@ export const NATIVE_LOADER = 'index.cjs';
 export const NATIVE_TYPINGS = 'index.d.ts';
 
 export const NATIVE_TARGETS = [
-	'x86_64-apple-darwin',
 	'aarch64-apple-darwin',
 	'x86_64-unknown-linux-gnu',
 	'x86_64-unknown-linux-musl',
