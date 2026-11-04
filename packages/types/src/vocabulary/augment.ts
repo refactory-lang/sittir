@@ -992,6 +992,7 @@ declare module './declaration.ts' {
 		}
 		interface ModuleProperty<G extends GrammarContext<G>> extends ambientDeclarations.Declaration.ModuleProperty<G> {}
 		interface Parameter<G extends GrammarContext<G>> {
+			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Parameter<G>['attributes']>;
 			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Parameter<G>['decorators']>;
 			readonly default?: gate.In<G, features.DefaultArguments, defaultArguments.Declaration.Parameter<G>['default']>;
 			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Parameter<G>['optional']>;

@@ -10408,7 +10408,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10484,7 +10503,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10520,7 +10558,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10877,7 +10934,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10953,7 +11029,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -10989,7 +11084,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11377,7 +11491,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11453,7 +11586,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11489,7 +11641,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11864,7 +12035,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11940,7 +12130,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -11976,7 +12185,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -12364,7 +12592,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -12440,7 +12687,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -12476,7 +12742,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -12919,7 +13204,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -12995,7 +13299,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13031,7 +13354,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13413,7 +13755,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13489,7 +13850,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13525,7 +13905,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13803,7 +14202,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13879,7 +14297,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -13915,7 +14352,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14224,7 +14680,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14300,7 +14775,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14336,7 +14830,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14632,7 +15145,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14708,7 +15240,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -14744,7 +15295,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15053,7 +15623,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15129,7 +15718,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15165,7 +15773,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15529,7 +16156,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15605,7 +16251,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -15641,7 +16306,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -17919,7 +18603,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -17985,7 +18688,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18061,7 +18783,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18388,7 +19129,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18454,7 +19214,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18530,7 +19309,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18888,7 +19686,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -18954,7 +19771,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19030,7 +19866,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19375,7 +20230,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19441,7 +20315,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19517,7 +20410,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19875,7 +20787,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -19941,7 +20872,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -20017,7 +20967,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -20375,7 +21344,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -20496,7 +21484,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -20572,7 +21579,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -20955,7 +21981,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21031,7 +22076,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21067,7 +22131,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21345,7 +22428,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21421,7 +22523,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21457,7 +22578,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21766,7 +22906,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21842,7 +23001,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -21878,7 +23056,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22174,7 +23371,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22250,7 +23466,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22286,7 +23521,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22595,7 +23849,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22671,7 +23944,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -22707,7 +23999,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -23071,7 +24382,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -23147,7 +24477,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -23183,7 +24532,26 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											key: 'content',
-											flatten: true
+											flatten: true,
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [440, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -47920,7 +49288,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
@@ -48143,7 +49530,26 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											key: 'content'
+											key: 'content',
+											members: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItem',
+															optional: true
+														}
+													],
+													multiple: false,
+													list: true,
+													seats: [
+														{
+															at: [429, 'attributeItem'],
+															kinds: [190]
+														}
+													]
+												}
+											]
 										}
 									]
 								}

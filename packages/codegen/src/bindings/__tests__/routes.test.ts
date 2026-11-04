@@ -1916,6 +1916,16 @@ describe('a selector no form of its owner holds', () => {
 	it('stops codegen at a container selector', async () => {
 		await expect(grammar('((wrapper missing: (_) @element) (#set! reason "reads as its element"))').then(resolveRoutes)).rejects.toThrow(/wrapper's container selects the field missing, which no form of wrapper holds/);
 	});
+
+	it('judges a container line by every kind it applies to: a line a copy holds is not refused at a base that does not', async () => {
+		const input = await grammar('((wrapper missing: (_) @element) (#set! reason "reads as its element"))');
+		const model = new Map(input.model);
+		model.set('wrapper_copy', node('wrapper_copy', [slot('missing', ['identifier'])], { modelType: 'envelope' }));
+		const [base] = input.bindings.containers;
+		const copied = { ...input, model, bindings: { ...input.bindings, containers: [base!, { ...base!, kind: 'wrapper_copy' }] } };
+		expect(resolveRoutes(copied).containers.get('wrapper_copy')).toMatchObject({ slot: 'missing' });
+		expect(resolveRoutes(copied).containers.get('wrapper')).toMatchObject({ slot: 'inner' });
+	});
 });
 
 describe('a claimed list that unwraps to its element', () => {

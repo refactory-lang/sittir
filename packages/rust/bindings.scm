@@ -186,7 +186,9 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameter (_) @name) @declaration.parameter
-((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
+(attributed_parameter (attribute_item)* @attributes (parameter) @element)
+(attributed_parameter (attribute_item)* @attributes (variadic_parameter) @element)
+(attributed_parameter (attribute_item)* @attributes (self_parameter) @element)
 (type_parameter default_type: (_)? @default) @declaration.type_parameter
 (type_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (const_parameter value: (_)? @default) @declaration.type_parameter.value

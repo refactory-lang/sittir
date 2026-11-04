@@ -174,6 +174,13 @@ function capturedSlot(model: SlotModel, member: SlotCapture, form: string): Mode
 
 export const holdsCapture = (model: SlotModel, member: SlotCapture): boolean => heldForms(model, member.owner).some((form) => capturedSlot(model, member, form) !== undefined);
 
+const holdsSelector = (model: SlotModel, kind: string, selector: SlotSelector): boolean =>
+	heldForms(model, kind).some((form) => slotFor(model, modelNode(model, form)?.slots ?? [], selector) !== undefined);
+
+const containerSelectors = (container: ContainerFact): readonly SlotSelector[] => [container.element, ...container.captures, ...container.dropped];
+
+export const holdsContainer = (model: SlotModel, container: ContainerFact): boolean => containerSelectors(container).every((selector) => holdsSelector(model, container.kind, selector));
+
 const selectorText = (selector: SlotSelector): string =>
 	selector.field !== null ? `the field ${selector.field}` : selector.kind !== null ? `a ${selector.kind} child` : 'a child by position';
 
@@ -305,7 +312,7 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 }
 
 function declaredContainersOf(input: GrammarInput, node: ModelNode): readonly ContainerFact[] {
-	const { containers } = input.bindings;
+	const containers = input.bindings.containers.filter((c) => holdsContainer(input.model, c));
 	return [...containers.filter((c) => c.kind === node.kind), ...containers.filter((c) => c.kind !== node.kind && formsOf(input.model, c.kind).includes(node.kind))];
 }
 
@@ -1284,9 +1291,10 @@ function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEnt
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const reads = readsByKind(input.model, input.bindings.claims);
 
-	for (const container of input.bindings.containers)
-		for (const selector of [container.element, ...container.captures, ...container.dropped])
-			if (!heldForms(input.model, container.kind).some((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], selector) !== undefined))
+	const heldLines = new Set(input.bindings.containers.filter((container) => holdsContainer(input.model, container)).map((container) => container.pattern.line));
+	for (const container of input.bindings.containers.filter((container) => !heldLines.has(container.pattern.line)))
+		for (const selector of containerSelectors(container))
+			if (!holdsSelector(input.model, container.kind, selector))
 				throw new Error(`bindings: ${container.kind}'s container selects ${selectorText(selector)}, which no form of ${container.kind} holds`);
 
 	const slotNames = new Map<string, Map<string, string | null>>();

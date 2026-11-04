@@ -1206,7 +1206,24 @@
         "terminals": [
           "_"
         ],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItem",
+              "required": false,
+              "multiple": false,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            },
+            "list": true
+          }
+        ]
       }
     },
     "attributed_parameter_receiver": {
@@ -1217,7 +1234,24 @@
           "self_parameter"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItem",
+              "required": false,
+              "multiple": false,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            },
+            "list": true
+          }
+        ]
       }
     },
     "attributed_type_parameter": {

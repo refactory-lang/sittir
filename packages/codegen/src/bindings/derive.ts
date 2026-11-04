@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -412,7 +412,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const untargeted: string[] = [];
 	const uncaptured: string[] = [];
 	for (const input of inputs) {
-		for (const container of input.bindings.containers) {
+		for (const container of input.bindings.containers.filter((c) => holdsContainer(input.model, c))) {
 			const slots = modelNode(input.model, container.kind)?.slots ?? [];
 			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => containerCaptureSlot(input.model, slots, capture);
 			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;

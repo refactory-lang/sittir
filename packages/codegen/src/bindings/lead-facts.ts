@@ -1,6 +1,6 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
 import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
-import { concreteKinds, formsOf, heldInto, heldSteps, holdsCapture, reachedBy, shownSlots } from './routes.ts';
+import { concreteKinds, formsOf, heldInto, heldSteps, holdsCapture, holdsContainer, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
 	field,
@@ -272,7 +272,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 		...facts,
 		claims,
 		members: projectedMembers(facts, variants, effect, indices, model),
-		containers: [...facts.containers, ...variants.containers.filter((_, index) => facts.containers[index]!.kind in effect.variants)],
+		containers: [...facts.containers, ...variants.containers.filter((copy, index) => facts.containers[index]!.kind in effect.variants && holdsContainer(model, copy))],
 		unclaimed: [...facts.unclaimed, ...variants.unclaimed.filter((_, index) => facts.unclaimed[index]!.kind in effect.variants)]
 	};
 }
