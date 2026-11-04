@@ -220,27 +220,30 @@ about them changes.
 
 ### The model type follows the interior
 
-A token wrapper is not a class. Today `classifyNode` reaches a
-content-bearing token through `classifyTerminalFallback`, where any all-text
-shape becomes `pattern`; that is how typescript `comment` and `identifier`
-and rust `char_literal` are `pattern` leaves with no pattern on the node,
-and why their factories carry no regex. Under this design the classifier
-reads the interior as if the wrapper were absent, and the wrapper stamps
-one attribute on whatever class results: the kind is lexed and read as one
-text, and every seam inside it is immediate.
+The classifier reads a token's interior as if the wrapper were absent. A
+single pattern, string or choice of strings keeps the leaf class it would
+have unwrapped. A sequence of strings and patterns is a lexed pattern:
+`AssembledLexedPattern`, model type `lexedPattern`, a compound class of its
+own whose string members are immediate faces and whose pattern members are
+its slots. Every seam inside it is immediate, and it is read as one text.
 
 | interior | model type | as it would be unwrapped |
 | --- | --- | --- |
 | one pattern | `pattern` | `identifier`, `number` |
 | one string | `keyword` or `punctuation` by word shape | `_automatic_semicolon` |
 | a choice of strings | `enum` | rust `mutable_specifier` |
-| strings and patterns in a sequence | the compound class the sequence yields, its string members immediate faces, its pattern members slots | `char_literal`, `private_property_identifier`, python `comment` |
-| a choice of such sequences | the compound with forms, one per arm | typescript `comment` |
+| strings and patterns in a sequence | `lexedPattern` | `char_literal`, `private_property_identifier`, python `comment` |
+| a choice of such sequences | one `lexedPattern` per arm, hoisted into forms | typescript `comment` |
 
-Consumers follow the class, not the wrapper: the factory, types, guard,
-render body and lazy projection of a token-wrapped compound are those of a
-compound whose leaves are immediate. A bare pattern with named groups is the
-fourth row with the groups as its pattern members.
+Consumers follow the class: what is particular to a lexed token is decided by
+`instanceof AssembledLexedPattern`, and its factory, types, guard, render body
+and lazy projection are those of a compound whose leaves are immediate. A bare
+pattern with named groups is the fourth row, with the groups as its pattern
+members.
+
+A lexed pattern is one token, so its slots are text facets of that token. The
+leaf rule already covers them, since a slot that holds text alone routes
+nothing, so a lexed pattern needs no exception to it.
 
 ### The read side does not drill
 

@@ -273,7 +273,7 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 	return out;
 }
 
-const BRANCH_MODEL_TYPES: ReadonlySet<string> = new Set(['branch', 'envelope', 'polymorph', 'list']);
+const BRANCH_MODEL_TYPES: ReadonlySet<string> = new Set(['branch', 'lexedPattern', 'envelope', 'polymorph', 'list']);
 
 function expandSlotKinds(kinds: readonly string[], facts: ModelFacts, ctx: PrintContext): string[] {
 	const out: string[] = [];

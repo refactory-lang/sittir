@@ -1685,6 +1685,7 @@ export function constructorSurface(
 		}
 		case 'envelope':
 		case 'branch':
+		case 'lexedPattern':
 		case 'polymorph':
 		case 'alias': {
 			if (target instanceof AssembledSupertype) return undefined;
@@ -2968,6 +2969,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'envelope':
 			case 'branch':
+			case 'lexedPattern':
 				this.emitBranch(node);
 				break;
 			case 'polymorph':

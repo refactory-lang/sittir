@@ -1030,6 +1030,7 @@ export type ModelType =
 	| 'keyword'
 	| 'punctuation'
 	| 'pattern'
+	| 'lexedPattern'
 	| 'list';
 
 export interface KindFacts {
@@ -1835,10 +1836,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return lead.value;
 	}
 
-	get lexedInterior(): boolean {
-		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
-	}
-
 	get innerSite(): InnerGap | undefined {
 		return this.innerGaps.at(-1);
 	}
@@ -1956,6 +1953,14 @@ export class AssembledBranch extends AbstractAssembledCompound {
 	readonly modelType = 'branch' as const;
 }
 
+export class AssembledLexedPattern extends AbstractAssembledCompound {
+	readonly modelType = 'lexedPattern' as const;
+}
+
+export function isLexedRule(rule: RenderRule): boolean {
+	return rule.tokenized === true || rule.lexed === true;
+}
+
 export class AssembledEnvelope<
 	R extends RenderRule = RenderRule,
 	M extends 'envelope' | 'polymorph' | 'list' | 'alias' = 'envelope'
@@ -2002,7 +2007,7 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 	}
 }
 
-export type AuthoredCompound = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
+export type AuthoredCompound = AssembledBranch | AssembledLexedPattern | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
 
 export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
@@ -2021,6 +2026,7 @@ export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
 export type CompoundClass =
 	| typeof AssembledBranch
+	| typeof AssembledLexedPattern
 	| typeof AssembledEnvelope
 	| typeof AssembledPolymorph
 	| typeof AssembledAlias;
@@ -2461,6 +2467,7 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 }
 export type AssembledNode =
 	| AssembledBranch
+	| AssembledLexedPattern
 	| AssembledEnvelope
 	| AssembledPolymorph
 	| AssembledAlias

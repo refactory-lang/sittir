@@ -86,7 +86,7 @@ interface SerializedNodeBase {
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
-	modelType: 'branch' | 'envelope' | 'polymorph' | 'alias';
+	modelType: 'branch' | 'lexedPattern' | 'envelope' | 'polymorph' | 'alias';
 	slots: SerializedSlot[];
 	fullForm?: FullForm;
 	interiorPart?: string;
@@ -251,6 +251,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 	};
 	switch (node.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'polymorph':
 		case 'alias':

@@ -556,6 +556,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
+			case 'lexedPattern':
 			case 'polymorph':
 			case 'alias':
 				structNodes.push(node);

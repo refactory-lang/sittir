@@ -43,7 +43,7 @@ import {
 	storageTargetOf,
 	isSurfaceHiddenIn,
 	surfaceHiddenOfRef,
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledLeaf,
 	AssembledPattern,
 	AssembledList,
@@ -570,8 +570,7 @@ function classifyFieldStorageInfo(
 	});
 	const walked = enumArmsOf(field, nodeMap);
 	if (
-		owner instanceof AbstractAssembledCompound &&
-		owner.lexedInterior &&
+		owner instanceof AssembledLexedPattern &&
 		!walked.verbatim &&
 		!walked.sawNodeArm &&
 		walked.texts.length > 0
@@ -879,7 +878,7 @@ export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
 }
 
 export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {
-	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
+	if (!(node instanceof AssembledLexedPattern)) return undefined;
 	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
 }
@@ -1242,7 +1241,7 @@ export function emitsFieldResolvers(
 	kind: string,
 	node: AssembledNode,
 	context: FromDispatchContext
-): node is Extract<AssembledNode, { modelType: 'branch' }> {
+): node is Extract<AssembledNode, { modelType: 'branch' | 'lexedPattern' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
 	if (!isAuthoredCompound(node)) return false;
 	return classifyChildFactorySurface(node, context.nodeMap) !== 'spread';
@@ -1573,7 +1572,7 @@ export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, re
 				return;
 		}
 	};
-	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
+	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledLexedPattern)) walk(node.renderRule, undefined);
 	return out;
 }
 

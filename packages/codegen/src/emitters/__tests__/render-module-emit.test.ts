@@ -27,7 +27,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
 import { isTextLeaf } from '../shared.ts';
-import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledLexedPattern, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
 	assertOneUntaggedSlot,
@@ -598,7 +598,7 @@ describe('node read facts', () => {
 	it('reads a layout token from its stamp and refuses one with none', () => {
 		const n = node('UseBoundsNode');
 		expect(() => nodeArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
-		const unstamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<' } };
+		const unstamped = { kind: 'use_bounds', renderRule: { type: 'STRING', value: '<' } };
 		expect(() => layoutTokenIds(unstamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(
 			/'use_bounds' layout token "<" has no stamped kind id/
 		);
@@ -761,7 +761,7 @@ describe('every string a kind writes is stamped', () => {
 		it(`${grammar}: no compound's render rule holds an unstamped string`, async () => {
 			const { nodeMap } = await modelFor(grammar);
 			const compounds: AbstractAssembledCompound[] = [];
-			for (const node of nodeMap.nodes.values()) if (node instanceof AbstractAssembledCompound && !node.lexedInterior) compounds.push(node);
+			for (const node of nodeMap.nodes.values()) if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledLexedPattern)) compounds.push(node);
 			const unstamped = compounds.flatMap((node) => [...unstampedStrings(node.renderRule)].filter((text) => !RENDER_ONLY.has(text)).map((text) => `${node.kind} ${JSON.stringify(text)}`));
 			expect(unstamped).toEqual([]);
 		}, 120_000);

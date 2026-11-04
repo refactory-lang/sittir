@@ -371,6 +371,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
+			case 'lexedPattern':
 			case 'polymorph':
 			case 'alias':
 				this.emitBranch(node);

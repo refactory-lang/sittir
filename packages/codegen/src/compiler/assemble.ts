@@ -66,6 +66,8 @@ import {
 	type AssembleWarning,
 	type NamingEvent,
 	AssembledAlias,
+	AssembledLexedPattern,
+	isLexedRule,
 	branchClassFor,
 	aliasEnvelopeOf,
 	compoundModelTypeFor,
@@ -193,11 +195,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				break;
 			}
 			case 'branch':
+			case 'lexedPattern':
 			case 'envelope':
 			case 'polymorph':
 			case 'alias': {
 				const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: normalized.rules, kindEntries, variantParents };
-				const CompoundClass = branchClassFor(kind, simplifiedRule, compoundCtx);
+				const CompoundClass = modelType === 'lexedPattern' ? AssembledLexedPattern : branchClassFor(kind, simplifiedRule, compoundCtx);
 				const aliasEntry = CompoundClass === AssembledAlias ? findEntryForKindName(kindEntries, kind) : undefined;
 				const aliasTypeId = aliasEntry !== undefined ? (aliasEntry.parseId ?? aliasEntry.id) : undefined;
 				nodes.set(
@@ -1078,9 +1081,10 @@ export function classifyNode(
 		kindEntries: opts.kindEntries,
 		variantParents: opts.variantParents
 	};
+	const compound = (): ModelType => (opts.renderRule !== undefined && isLexedRule(opts.renderRule) ? 'lexedPattern' : compoundModelTypeFor(kind, rule, compoundCtx));
 	if (opts.seated && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
-		return compoundModelTypeFor(kind, rule, compoundCtx);
+		return compound();
 	}
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
@@ -1094,8 +1098,8 @@ export function classifyNode(
 		}
 	}
 	if (isSeparatedListShape(rule)) return 'list';
-	if (hasSlotBearingContent(rule)) return compoundModelTypeFor(kind, rule, compoundCtx);
-	if (opts.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
+	if (hasSlotBearingContent(rule)) return compound();
+	if (opts.renderRule !== undefined && referencesKind(opts.renderRule)) return compound();
 	return classifyTerminalFallback(rule);
 }
 

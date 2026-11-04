@@ -140,6 +140,7 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
+			case 'lexedPattern':
 			case 'envelope':
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries, writesTextOf);
 				emitSubFactoryTests(target, node, kind, subFactoryBase(node, key, polymorphWires), nodeMap, kindEntries, polymorphWires, config.expectTestFailures, writesTextOf);
@@ -352,6 +353,7 @@ function childBareCallArgs(
 ): string | undefined {
 	switch (child.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'polymorph':
 		case 'alias': {

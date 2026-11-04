@@ -712,6 +712,7 @@ function renderTypedKindFn(
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
+		case 'lexedPattern':
 		case 'envelope':
 		case 'list': {
 			const struct = structsByKind.get(node.kind);
@@ -3397,6 +3398,7 @@ function renderNodeStruct(
 function isCompoundOf(node: AssembledNode): boolean {
 	return (
 		node.modelType === 'branch' ||
+		node.modelType === 'lexedPattern' ||
 		node.modelType === 'envelope' ||
 		node.modelType === 'list' ||
 		node.modelType === 'alias' ||

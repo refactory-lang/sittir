@@ -1,7 +1,7 @@
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledBranch, AssembledKeyword } from '../../compiler/model/node-map.ts';
+import { AssembledBranch, AssembledKeyword, AssembledLexedPattern } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -20,7 +20,7 @@ const interiorRule = {
 function nodeMapWith(lexed: boolean, kindEntries: readonly GeneratedKindEntry[]) {
 	const flat = { ...(flatten(interiorRule as never) as object), ...(lexed ? { lexed: true } : {}) } as never;
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('integer_literal', new AssembledBranch('integer_literal', flat, flat, { kindEntries }));
+	nodes.set('integer_literal', new (lexed ? AssembledLexedPattern : AssembledBranch)('integer_literal', flat, flat, { kindEntries }));
 	nodes.set('u8', new AssembledKeyword('u8', { type: STRING, value: 'u8' } as never, { kindEntries }));
 	nodes.set('i8', new AssembledKeyword('i8', { type: STRING, value: 'i8' } as never, { kindEntries }));
 	return makeNodeMapWith(nodes);
