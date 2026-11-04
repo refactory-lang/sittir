@@ -619,7 +619,6 @@ export const vocabularyPaths = Object.freeze([
 	'type.receiver',
 	'type.reference',
 	'type.rest',
-	'type.rest.map',
 	'type.template',
 	'type.tuple',
 	'type.union',

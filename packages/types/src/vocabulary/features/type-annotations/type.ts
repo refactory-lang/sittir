@@ -214,12 +214,6 @@ export namespace Type {
 		readonly $kind: 'type.rest';
 		readonly type: G['slots']['type.rest']['type'];
 	}
-	export namespace Rest {
-		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Type.Rest<G>> {
-			// claimed by p
-			readonly $kind: 'type.rest.map';
-		}
-	}
 	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.template';

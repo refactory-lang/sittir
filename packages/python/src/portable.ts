@@ -424,7 +424,6 @@ export interface PortableIds {
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
 	'type.rest': TSKindId.SplatType;
-	'type.rest.map': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
 }
 
@@ -647,7 +646,6 @@ export interface PortableTexts {
 	'type.constrained': never;
 	'type.generic': never;
 	'type.rest': never;
-	'type.rest.map': never;
 	'type.union': never;
 }
 
@@ -1169,8 +1167,7 @@ export interface PortableKindsAt {
 	};
 	'type.constrained': { readonly $path: 'type.constrained' };
 	'type.generic': { readonly $path: 'type.generic' };
-	'type.rest': { readonly $path: 'type.rest'; readonly map: PortableKindsAt['type.rest.map'] };
-	'type.rest.map': { readonly $path: 'type.rest.map' };
+	'type.rest': { readonly $path: 'type.rest' };
 	'type.union': { readonly $path: 'type.union' };
 }
 
@@ -2571,15 +2568,7 @@ export interface PortableIsAt {
 		PortableTexts['type.constrained']
 	> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId, PortableTexts['type.generic']> & {};
-	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId, PortableTexts['type.rest']> & {
-		readonly map: PortableIsAt['type.rest.map'];
-	};
-	'type.rest.map': PortableGuard<
-		PortableIds['type.rest.map'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['type.rest.map']
-	> & {};
+	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId, PortableTexts['type.rest']> & {};
 	'type.union': PortableGuard<PortableIds['type.union'], PythonNode, TSKindId, PortableTexts['type.union']> & {};
 }
 
@@ -3133,7 +3122,6 @@ const table: PortableTable = {
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
 		'type.rest': { ids: [TSKindId.SplatType], exact: true },
-		'type.rest.map': { ids: [TSKindId.SplatType], exact: false },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
 	},
 	entries: {
@@ -3633,14 +3621,7 @@ const table: PortableTable = {
 		[TSKindId.Slice]: [{ path: 'expression.slice', within: [], test: [] }],
 		[TSKindId.SplatPatternDictionary]: [{ path: 'pattern.rest.map', within: [], test: [] }],
 		[TSKindId.SplatPatternList]: [{ path: 'pattern.rest', within: [], test: [] }],
-		[TSKindId.SplatType]: [
-			{
-				path: 'type.rest.map',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '227': 0 } } }]
-			},
-			{ path: 'type.rest', within: [], test: [] }
-		],
+		[TSKindId.SplatType]: [{ path: 'type.rest', within: [], test: [] }],
 		[TSKindId.String]: [
 			{
 				path: 'literal.string.interpolated.raw.multiline',

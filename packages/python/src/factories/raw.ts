@@ -3620,25 +3620,17 @@ export function buildType(
 	return stampBuilt(node) as unknown as T.Type.Bound;
 }
 
-export function buildSplatType<TypeSlot extends T.SplatType.Config['type']>(
-	config: RefusingConfig<T.SplatType.Config, { type: TypeSlot }>
-): T.SplatType.Bound;
-export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
-	currentHandle()?.admit(TSKindId.SplatType, [config]);
-	const _operator = kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator);
-	const _type = config.type;
+export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+	const _type = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatType as const,
 		$named: true as const,
-		_operator,
 		_type,
 		$with: {
-			operator: (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildSplatType({ ...config, operator: value })),
-			type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, type: value }))
+			type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType(value))
 		},
-		operator: () => _operator,
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

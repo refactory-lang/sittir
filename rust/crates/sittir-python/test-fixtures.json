@@ -220337,7 +220337,6 @@
                             "$type": 226,
                             "_content": {
                               "$type": 227,
-                              "_operator": 8,
                               "_type": {
                                 "$type": 1,
                                 "$text": "Ts"
@@ -220859,7 +220858,6 @@
                         "$type": 226,
                         "_content": {
                           "$type": 227,
-                          "_operator": 8,
                           "_type": {
                             "$type": 1,
                             "$text": "Ts"
@@ -221411,7 +221409,6 @@
                       "$type": 226,
                       "_content": {
                         "$type": 227,
-                        "_operator": 8,
                         "_type": {
                           "$type": 1,
                           "$text": "Ts"
@@ -221925,7 +221922,6 @@
                   "$type": 226,
                   "_content": {
                     "$type": 227,
-                    "_operator": 8,
                     "_type": {
                       "$type": 1,
                       "$text": "Ts"
@@ -222493,7 +222489,6 @@
                 "$type": 226,
                 "_content": {
                   "$type": 227,
-                  "_operator": 8,
                   "_type": {
                     "$type": 1,
                     "$text": "Ts"
@@ -222561,7 +222556,6 @@
       "$type": 226,
       "_content": {
         "$type": 227,
-        "_operator": 8,
         "_type": {
           "$type": 1,
           "$text": "Ts"
@@ -222993,7 +222987,6 @@
               "$type": 226,
               "_content": {
                 "$type": 227,
-                "_operator": 8,
                 "_type": {
                   "$type": 1,
                   "$text": "Ts"
@@ -223268,7 +223261,6 @@
             "$type": 226,
             "_content": {
               "$type": 227,
-              "_operator": 8,
               "_type": {
                 "$type": 1,
                 "$text": "Ts"
@@ -223517,7 +223509,6 @@
           "$type": 226,
           "_content": {
             "$type": 227,
-            "_operator": 8,
             "_type": {
               "$type": 1,
               "$text": "Ts"
@@ -224212,7 +224203,6 @@
     "pattern": "splat_type",
     "input": {
       "$type": 227,
-      "_operator": 8,
       "_type": {
         "$type": 1,
         "$text": "Ts"
@@ -224461,7 +224451,6 @@
                                                         "$type": 226,
                                                         "_content": {
                                                           "$type": 227,
-                                                          "_operator": 8,
                                                           "_type": {
                                                             "$type": 1,
                                                             "$text": "Ts"
@@ -224524,7 +224513,6 @@
                                                         "$type": 226,
                                                         "_content": {
                                                           "$type": 227,
-                                                          "_operator": 8,
                                                           "_type": {
                                                             "$type": 1,
                                                             "$text": "Ts2"
@@ -224742,7 +224730,6 @@
                                                     "$type": 226,
                                                     "_content": {
                                                       "$type": 227,
-                                                      "_operator": 8,
                                                       "_type": {
                                                         "$type": 1,
                                                         "$text": "Ts"
@@ -224805,7 +224792,6 @@
                                                     "$type": 226,
                                                     "_content": {
                                                       "$type": 227,
-                                                      "_operator": 8,
                                                       "_type": {
                                                         "$type": 1,
                                                         "$text": "Ts2"
@@ -225381,7 +225367,6 @@
                                                   "$type": 226,
                                                   "_content": {
                                                     "$type": 227,
-                                                    "_operator": 8,
                                                     "_type": {
                                                       "$type": 1,
                                                       "$text": "Ts"
@@ -225444,7 +225429,6 @@
                                                   "$type": 226,
                                                   "_content": {
                                                     "$type": 227,
-                                                    "_operator": 8,
                                                     "_type": {
                                                       "$type": 1,
                                                       "$text": "Ts2"
@@ -225616,7 +225600,6 @@
                                                 "$type": 226,
                                                 "_content": {
                                                   "$type": 227,
-                                                  "_operator": 8,
                                                   "_type": {
                                                     "$type": 1,
                                                     "$text": "Ts"
@@ -225679,7 +225662,6 @@
                                                 "$type": 226,
                                                 "_content": {
                                                   "$type": 227,
-                                                  "_operator": 8,
                                                   "_type": {
                                                     "$type": 1,
                                                     "$text": "Ts2"
@@ -225847,7 +225829,6 @@
                                             "$type": 226,
                                             "_content": {
                                               "$type": 227,
-                                              "_operator": 8,
                                               "_type": {
                                                 "$type": 1,
                                                 "$text": "Ts"
@@ -225910,7 +225891,6 @@
                                             "$type": 226,
                                             "_content": {
                                               "$type": 227,
-                                              "_operator": 8,
                                               "_type": {
                                                 "$type": 1,
                                                 "$text": "Ts2"
@@ -226096,7 +226076,6 @@
                                           "$type": 226,
                                           "_content": {
                                             "$type": 227,
-                                            "_operator": 8,
                                             "_type": {
                                               "$type": 1,
                                               "$text": "Ts"
@@ -226159,7 +226138,6 @@
                                           "$type": 226,
                                           "_content": {
                                             "$type": 227,
-                                            "_operator": 8,
                                             "_type": {
                                               "$type": 1,
                                               "$text": "Ts2"
@@ -226338,7 +226316,6 @@
                                       "$type": 226,
                                       "_content": {
                                         "$type": 227,
-                                        "_operator": 8,
                                         "_type": {
                                           "$type": 1,
                                           "$text": "Ts"
@@ -226401,7 +226378,6 @@
                                       "$type": 226,
                                       "_content": {
                                         "$type": 227,
-                                        "_operator": 8,
                                         "_type": {
                                           "$type": 1,
                                           "$text": "Ts2"
@@ -226506,7 +226482,6 @@
                                     "$type": 226,
                                     "_content": {
                                       "$type": 227,
-                                      "_operator": 8,
                                       "_type": {
                                         "$type": 1,
                                         "$text": "Ts"
@@ -226569,7 +226544,6 @@
                                     "$type": 226,
                                     "_content": {
                                       "$type": 227,
-                                      "_operator": 8,
                                       "_type": {
                                         "$type": 1,
                                         "$text": "Ts2"
@@ -226660,7 +226634,6 @@
                           "$type": 226,
                           "_content": {
                             "$type": 227,
-                            "_operator": 8,
                             "_type": {
                               "$type": 1,
                               "$text": "Ts"
@@ -226754,7 +226727,6 @@
                 "$type": 226,
                 "_content": {
                   "$type": 227,
-                  "_operator": 8,
                   "_type": {
                     "$type": 1,
                     "$text": "Ts"
@@ -226822,7 +226794,6 @@
       "$type": 226,
       "_content": {
         "$type": 227,
-        "_operator": 8,
         "_type": {
           "$type": 1,
           "$text": "Ts"
@@ -226895,7 +226866,6 @@
                           "$type": 226,
                           "_content": {
                             "$type": 227,
-                            "_operator": 8,
                             "_type": {
                               "$type": 1,
                               "$text": "Ts2"
@@ -226989,7 +226959,6 @@
                 "$type": 226,
                 "_content": {
                   "$type": 227,
-                  "_operator": 8,
                   "_type": {
                     "$type": 1,
                     "$text": "Ts2"
@@ -227057,7 +227026,6 @@
       "$type": 226,
       "_content": {
         "$type": 227,
-        "_operator": 8,
         "_type": {
           "$type": 1,
           "$text": "Ts2"
@@ -227141,7 +227109,6 @@
                                   "$type": 226,
                                   "_content": {
                                     "$type": 227,
-                                    "_operator": 8,
                                     "_type": {
                                       "$type": 1,
                                       "$text": "Ts"
@@ -227204,7 +227171,6 @@
                                   "$type": 226,
                                   "_content": {
                                     "$type": 227,
-                                    "_operator": 8,
                                     "_type": {
                                       "$type": 1,
                                       "$text": "Ts2"
@@ -227292,7 +227258,6 @@
                         "$type": 226,
                         "_content": {
                           "$type": 227,
-                          "_operator": 8,
                           "_type": {
                             "$type": 1,
                             "$text": "Ts"
@@ -227354,7 +227319,6 @@
               "$type": 226,
               "_content": {
                 "$type": 227,
-                "_operator": 8,
                 "_type": {
                   "$type": 1,
                   "$text": "Ts"
@@ -227430,7 +227394,6 @@
                         "$type": 226,
                         "_content": {
                           "$type": 227,
-                          "_operator": 8,
                           "_type": {
                             "$type": 1,
                             "$text": "Ts2"
@@ -227492,7 +227455,6 @@
               "$type": 226,
               "_content": {
                 "$type": 227,
-                "_operator": 8,
                 "_type": {
                   "$type": 1,
                   "$text": "Ts2"
@@ -227575,7 +227537,6 @@
                                 "$type": 226,
                                 "_content": {
                                   "$type": 227,
-                                  "_operator": 8,
                                   "_type": {
                                     "$type": 1,
                                     "$text": "Ts"
@@ -227638,7 +227599,6 @@
                                 "$type": 226,
                                 "_content": {
                                   "$type": 227,
-                                  "_operator": 8,
                                   "_type": {
                                     "$type": 1,
                                     "$text": "Ts2"
@@ -227719,7 +227679,6 @@
                       "$type": 226,
                       "_content": {
                         "$type": 227,
-                        "_operator": 8,
                         "_type": {
                           "$type": 1,
                           "$text": "Ts"
@@ -227774,7 +227733,6 @@
             "$type": 226,
             "_content": {
               "$type": 227,
-              "_operator": 8,
               "_type": {
                 "$type": 1,
                 "$text": "Ts"
@@ -227843,7 +227801,6 @@
                       "$type": 226,
                       "_content": {
                         "$type": 227,
-                        "_operator": 8,
                         "_type": {
                           "$type": 1,
                           "$text": "Ts2"
@@ -227898,7 +227855,6 @@
             "$type": 226,
             "_content": {
               "$type": 227,
-              "_operator": 8,
               "_type": {
                 "$type": 1,
                 "$text": "Ts2"
@@ -227978,7 +227934,6 @@
                               "$type": 226,
                               "_content": {
                                 "$type": 227,
-                                "_operator": 8,
                                 "_type": {
                                   "$type": 1,
                                   "$text": "Ts"
@@ -228041,7 +227996,6 @@
                               "$type": 226,
                               "_content": {
                                 "$type": 227,
-                                "_operator": 8,
                                 "_type": {
                                   "$type": 1,
                                   "$text": "Ts2"
@@ -228119,7 +228073,6 @@
                     "$type": 226,
                     "_content": {
                       "$type": 227,
-                      "_operator": 8,
                       "_type": {
                         "$type": 1,
                         "$text": "Ts"
@@ -228171,7 +228124,6 @@
           "$type": 226,
           "_content": {
             "$type": 227,
-            "_operator": 8,
             "_type": {
               "$type": 1,
               "$text": "Ts"
@@ -228237,7 +228189,6 @@
                     "$type": 226,
                     "_content": {
                       "$type": 227,
-                      "_operator": 8,
                       "_type": {
                         "$type": 1,
                         "$text": "Ts2"
@@ -228289,7 +228240,6 @@
           "$type": 226,
           "_content": {
             "$type": 227,
-            "_operator": 8,
             "_type": {
               "$type": 1,
               "$text": "Ts2"
@@ -228323,7 +228273,6 @@
     "pattern": "splat_type",
     "input": {
       "$type": 227,
-      "_operator": 8,
       "_type": {
         "$type": 1,
         "$text": "Ts"
@@ -228353,7 +228302,6 @@
     "pattern": "splat_type",
     "input": {
       "$type": 227,
-      "_operator": 8,
       "_type": {
         "$type": 1,
         "$text": "Ts2"

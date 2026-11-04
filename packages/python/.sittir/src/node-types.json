@@ -4094,20 +4094,6 @@
     "type": "splat_type",
     "named": true,
     "fields": {
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "**",
-            "named": false
-          }
-        ]
-      },
       "type": {
         "multiple": false,
         "required": true,

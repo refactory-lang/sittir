@@ -4120,12 +4120,12 @@
 			"field": "splat_type_before"
 		},
 		{
-			"kind": "slot",
-			"name": "operator"
+			"kind": "text",
+			"text": "*"
 		},
 		{
 			"kind": "seam",
-			"field": "operator_after"
+			"field": "star_after"
 		},
 		{
 			"kind": "slot",

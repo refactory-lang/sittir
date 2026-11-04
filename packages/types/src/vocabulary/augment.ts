@@ -3168,10 +3168,6 @@ declare module './type.ts' {
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G>['lifetime']>;
 		}
 		interface Rest<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest<G> {}
-		namespace Rest {
-			interface Map<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest.Map<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Rest<G> | V.Type.Rest.Map<G>;
-		}
 		interface Template<G extends GrammarContext<G>> extends typeAnnotations.Type.Template<G> {}
 		interface Tuple<G extends GrammarContext<G>> extends typeAnnotations.Type.Tuple<G> {}
 		interface Union<G extends GrammarContext<G>> extends typeAnnotations.Type.Union<G> {}
@@ -3229,7 +3225,6 @@ declare module './type.ts' {
 			| V.Type.Receiver<G>
 			| V.Type.Reference<G>
 			| V.Type.Rest<G>
-			| V.Type.Rest.Map<G>
 			| V.Type.Template<G>
 			| V.Type.Tuple<G>
 			| V.Type.Union<G>

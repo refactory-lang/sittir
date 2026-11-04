@@ -70,6 +70,14 @@ const CLASS_TYPE_PARAMS_WITNESSES = [
 	}
 ] as const;
 
+const SPLAT_TYPE_PRODUCTION = 'CPython starred_expression: "*" expression; star_annotation: ":" star_expression; no type takes "**"';
+
+const SPLAT_TYPE_WITNESSES = [
+	{ text: 'x: tuple[int, **P]\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION },
+	{ text: 'def f(**kw: **P): pass\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION },
+	{ text: 'x: Callable[**P, int]\n', form: ['**', { symbol: 'identifier' }], kind: 'splat_type', production: SPLAT_TYPE_PRODUCTION }
+] as const;
+
 const TYPE_ALIAS_WITNESSES = [
 	{
 		text: 'type a.b = int\n',
@@ -201,7 +209,7 @@ export default grammar(enrich(base), wire({
 		list_splat_pattern: { '"*"/after': preference('tight') },
 		dictionary_splat: { '"**"/after': preference('tight') },
 		dictionary_splat_pattern: { '"**"/after': preference('tight') },
-		splat_type: { 'operator:/after': preference('tight') },
+		splat_type: { '"*"/after': preference('tight') },
 		type_param_type_var_tuple: { '"*"/after': preference('tight') },
 		type_param_param_spec: { '"**"/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
@@ -398,12 +406,6 @@ export default grammar(enrich(base), wire({
 			1: field('name')
 		},
 
-		splat_type: {
-			// See docs/python-grammar-sittir-glossary.md::splat_type
-			0: field('operator'),
-			1: field('name')
-		},
-
 		string: {
 			1: field('content')
 		},
@@ -477,6 +479,7 @@ export default grammar(enrich(base), wire({
 		type_params_items: vocabulary(($) =>
 			seq(field('item', $.type_param), repeat(seq(',', field('item', $.type_param))), optional(','))
 		),
+		splat_type: reauthored('accepts-invalid-syntax', SPLAT_TYPE_WITNESSES, ($) => prec(1, seq('*', field('name', $.identifier)))),
 		type_alias_statement: reauthored('accepts-invalid-syntax', TYPE_ALIAS_WITNESSES, ($) =>
 			prec.dynamic(1, seq('type', field('name', $.identifier), optional(field('type_parameters', $.type_params)), '=', field('value', $.type)))
 		),

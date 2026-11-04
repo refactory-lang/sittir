@@ -145,7 +145,7 @@ export const build: PortableBuildTable = {
 		slice: 'config',
 		splatPatternDictionary: 'direct',
 		splatPatternList: 'direct',
-		splatType: 'config',
+		splatType: 'forwarded',
 		string: 'config',
 		stringContent: 'spread',
 		stringFragment: 'text',
@@ -14486,10 +14486,6 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'type.rest': {
-			root: false,
-			arms: []
-		},
-		'type.rest.map': {
 			root: true,
 			arms: [
 				{
@@ -14519,16 +14515,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 35
-						}
-					],
+					presets: [],
 					flags: {},
 					when: [
 						{

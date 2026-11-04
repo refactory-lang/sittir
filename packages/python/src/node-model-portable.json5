@@ -6530,31 +6530,6 @@
       "vocab": "type.rest",
       "read": [
         {
-          "vocab": "type.rest.map",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "**"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "**",
-                "slots": {
-                  "227": 0
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "type.rest",
           "toplevel": true,
           "within": [],
@@ -6574,7 +6549,15 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "string": {
       "vocab": "literal.string",
@@ -8205,9 +8188,9 @@
       },
       {
         "depth": 3,
-        "paths": 65,
-        "kinds": 60,
-        "refinements": 43
+        "paths": 64,
+        "kinds": 59,
+        "refinements": 42
       },
       {
         "depth": 4,

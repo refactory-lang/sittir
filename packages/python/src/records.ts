@@ -172,7 +172,7 @@ export const records = {
 	CallNode: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	TypedParameterNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	TypeNode: { words: 7, content: { word: 2, width: 5 } },
-	SplatTypeNode: { words: 12, operator: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	SplatTypeNode: { words: 7, type_: { word: 2, width: 5 } },
 	GenericTypeNode: { words: 12, name: { word: 2, width: 5 }, type_parameter: { word: 7, width: 5 } },
 	UnionTypeNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	ConstrainedTypeNode: { words: 12, base_type: { word: 2, width: 5 }, constraint: { word: 7, width: 5 } },

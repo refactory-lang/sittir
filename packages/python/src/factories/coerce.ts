@@ -370,6 +370,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'_simple_pattern',
 	'parenthesized_expression',
+	'splat_type',
 	'splat_pattern_list',
 	'splat_pattern_dictionary',
 	'suite_empty',
@@ -491,6 +492,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		214, 220, 221, 222, 224, 227, 228, 229, 230, 231, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247,
 		248, 257, 268, 276, 303
 	]),
+	splat_type: new Set([1]),
 	list: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 268, 276, 303
@@ -837,6 +839,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	pattern_list: TSKindId.PatternList,
 	yield: TSKindId.Yield,
 	type: TSKindId.Type,
+	splat_type: TSKindId.SplatType,
 	list: TSKindId.List,
 	set: TSKindId.Set,
 	tuple: TSKindId.Tuple,
@@ -918,6 +921,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	list_pattern: 'patterns',
 	not_operator: 'expression',
 	pattern_list: 'pattern',
+	splat_type: 'identifier',
 	list: 'collection_elements',
 	set: 'collection_elements',
 	tuple: 'tuple_elements',
@@ -987,6 +991,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'not_operator',
 	'yield',
 	'type',
+	'splat_type',
 	'list',
 	'set',
 	'tuple',
@@ -1113,6 +1118,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildYield(children[0] as Parameters<typeof F.buildYield>[0]);
 		case 'type':
 			return F.buildType(children[0] as Parameters<typeof F.buildType>[0]);
+		case 'splat_type':
+			return F.buildSplatType(children[0] as Parameters<typeof F.buildSplatType>[0]);
 		case 'list':
 			return F.buildList(children[0] as Parameters<typeof F.buildList>[0]);
 		case 'set':
@@ -4526,13 +4533,6 @@ export const coerceToType: ConfigSeat<T.Type.Loose, ReturnType<typeof F.buildTyp
 	);
 };
 
-export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operator']): Admit<T.SplatType['_operator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
-		[['*', TSKindId.Star] as const, ['**', TSKindId.StarStar] as const]
-	);
-}
-
 export function resolveSplatType_type(value: T.SplatType.LooseConfig['type']): Admit<T.SplatType['_type']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
@@ -4540,12 +4540,13 @@ export function resolveSplatType_type(value: T.SplatType.LooseConfig['type']): A
 export const coerceToSplatType: ConfigSeat<T.SplatType.Loose, ReturnType<typeof F.buildSplatType>> = (
 	input: T.SplatType.Loose
 ): ReturnType<typeof F.buildSplatType> => {
-	if (!_isLooseConfig<T.SplatType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildSplatType>;
-	currentHandle()?.admit(TSKindId.SplatType, [input]);
-	return F.buildSplatType({
-		operator: resolveSplatType_operator(input.operator),
-		type: resolveSplatType_type(input.type)
-	});
+	if (isNodeOfKind(input, TSKindId.SplatType)) return input as unknown as ReturnType<typeof F.buildSplatType>;
+	return F.buildSplatType(
+		_resolveOneLeaf<T.Identifier>(
+			configFieldOr(input, 'type', () => (typeof input === 'string' ? spelledInterior(input, '*', '') : input)),
+			'identifier'
+		)
+	);
 };
 
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): Admit<T.GenericType['_name']> {

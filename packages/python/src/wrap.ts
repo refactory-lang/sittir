@@ -2976,15 +2976,10 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 	const node = {
 		...data,
 		$type: TSKindId.SplatType as const,
-		operator() {
-			return this._operator;
-		},
 		type() {
 			return hydrateSlot<T.Identifier>(this, '_type', tree);
 		},
 		$with: {
-			operator: (v: NonNullable<T.SplatType['_operator']>) =>
-				rebuilt(node, handle, () => wrapSplatType({ ...$edited(data), _operator: v }, tree)),
 			type: (v: NonNullable<T.SplatType['_type']>) =>
 				rebuilt(node, handle, () => wrapSplatType({ ...$edited(data), _type: v }, tree))
 		},

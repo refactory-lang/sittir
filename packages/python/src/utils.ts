@@ -327,10 +327,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', 1, undefined, '_type']
 	],
 	226: [['content', 0, undefined, '_content']],
-	227: [
-		['operator', 0, undefined, '_operator'],
-		['type', 1, undefined, '_type']
-	],
+	227: [['type', 0, undefined, '_type']],
 	228: [
 		['name', 0, undefined, '_name'],
 		['typeParameter', 1, undefined, '_type_parameter']
@@ -1571,14 +1568,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	227: {
 		kind: 'splat_type',
-		required: [
-			['_operator', 'operator'],
-			['_type', 'type']
-		],
+		required: [['_type', 'type']],
 		single: [['_type', 'SplatType.type']],
-		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1]]],
-		kindIds: [['_operator', 'SplatType.operator', [8, 35]]],
-		config: ['operator', 'type']
+		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1]]]
 	},
 	228: {
 		kind: 'generic_type',

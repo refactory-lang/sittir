@@ -4467,10 +4467,7 @@ describe('type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('splatType builds the parent', () => {
-		const node = ir.type.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.type.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4566,20 +4563,15 @@ describe('type sub-factories', () => {
 
 describe('splat_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.SplatType);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 

@@ -4082,20 +4082,13 @@ export interface Type {
 
 export interface SplatType {
 	readonly $type: TSKindId.SplatType;
-	readonly _operator: TSKindId.Star | TSKindId.StarStar;
 	readonly _type: Identifier;
 	readonly __slotNames__?: {
-		readonly _operator: 'operator';
 		readonly _type: 'type';
 	};
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
-	};
 	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.SplatType.Config>['operator']>;
 		readonly type: SlotHint<T.Identifier>;
 	};
-	readonly operator: () => TSKindId.Star | TSKindId.StarStar;
 	readonly type: () => Identifier;
 }
 
@@ -7332,9 +7325,7 @@ export namespace SplatType {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
-			readonly operator?: { readonly after?: WhitespaceKindId };
-			readonly star?: { readonly before?: WhitespaceKindId };
-			readonly starStar?: { readonly before?: WhitespaceKindId };
+			readonly star?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -9638,7 +9629,7 @@ export interface SplatTypeNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	SplatType.Bound,
-	never,
+	'type',
 	TSKindId.SplatType,
 	SplatType.Parsed,
 	never
@@ -14214,8 +14205,8 @@ export namespace SplatType {
 	}
 	export type Loose = LooseFor<TSKindId.SplatType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatType>;
-	export type BuildArgs = [config: ConfigOf<T.SplatType>];
-	export type LooseArgs = [config: T.SplatType.Loose];
+	export type BuildArgs = [value: Admit<T.Identifier>];
+	export type LooseArgs = [value: T.SplatType.Loose];
 	export type Kind = TSKindId.SplatType;
 }
 export namespace GenericType {
