@@ -19,12 +19,15 @@
 // will not load unsigned code. Every other target is stripped with the
 // pinned toolchain's `llvm-strip`, which reads every target's format, so a
 // cross-compiled binary is stripped by the same tool. An MSVC image carries
-// no symbol table, so its release link also writes a linker map (`/MAP`)
-// beside the copy, which the stamp records: the map names the code, and it
-// changes no allocated byte of the image.
+// no symbol table, so its release link also writes a linker map (`/MAP`),
+// kept beside the copy and recorded by the stamp: the map names the code,
+// and it changes no allocated byte of the image. The flag names no path, so
+// RUSTFLAGS is the same for every grammar and cargo keeps one build of the
+// dependencies; the linker writes the map beside the image in cargo's
+// `deps` directory, where the image's own link last left it.
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
@@ -44,11 +47,26 @@ function run(command: string, args: readonly string[], cwd: string, shell = fals
 	if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+interface CargoMetadata {
+	readonly target_directory: string;
+	readonly packages: readonly { readonly manifest_path: string; readonly targets: readonly { readonly name: string; readonly kind: readonly string[] }[] }[];
+}
+
+function writtenLinkerMap(crateDir: string, triple: string | undefined): string {
+	const result = spawnSync('cargo', ['metadata', '--format-version', '1', '--no-deps'], { cwd: crateDir, encoding: 'utf8', maxBuffer: 1 << 28 });
+	if (result.status !== 0) throw new Error(`cargo metadata exited ${result.status} in ${crateDir}`);
+	const metadata = JSON.parse(result.stdout) as CargoMetadata;
+	const library = metadata.packages
+		.find((pkg) => resolve(dirname(pkg.manifest_path)) === resolve(crateDir))
+		?.targets.find((built) => built.kind.includes('cdylib'))?.name;
+	if (library === undefined) throw new Error(`cargo metadata names no cdylib for ${crateDir}`);
+	return join(metadata.target_directory, ...(triple === undefined ? [] : [triple]), 'release', 'deps', `${library.replaceAll('-', '_')}.map`);
+}
+
 const outDir = nativeBindingDir(grammar);
 const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
 const copy = unstrippedBinaryPath(REPO_ROOT, grammar, binary);
 const linkerMap = release && suffix.endsWith('-msvc') ? linkerMapOf(copy) : undefined;
-if (linkerMap !== undefined && /\s/.test(linkerMap)) throw new Error(`the linker map's path ${linkerMap} holds a space, which RUSTFLAGS can't carry`);
 mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
@@ -56,9 +74,13 @@ run(
 	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	nativeCrateDir(grammar),
 	process.platform === 'win32',
-	linkerMap === undefined ? process.env : { ...process.env, RUSTFLAGS: [process.env.RUSTFLAGS, `-C link-arg=/MAP:${linkerMap}`].filter(Boolean).join(' ') }
+	linkerMap === undefined ? process.env : { ...process.env, RUSTFLAGS: [process.env.RUSTFLAGS, '-C link-arg=/MAP'].filter(Boolean).join(' ') }
 );
-if (linkerMap !== undefined && !existsSync(linkerMap)) throw new Error(`the release link wrote no linker map at ${linkerMap}`);
+if (linkerMap !== undefined) {
+	const written = writtenLinkerMap(nativeCrateDir(grammar), flags.includes('--target') ? target : undefined);
+	if (!existsSync(written)) throw new Error(`the release link wrote no linker map at ${written}`);
+	copyFileSync(written, linkerMap);
+}
 
 const shipped = join(outDir, binary);
 let unstripped: string | undefined;
