@@ -827,8 +827,16 @@ function membersOf(
 		return held.length === 0 ? [] : [[m, held] as const];
 	}));
 	const via = new Set(
-		[...reached].flatMap(([m, routes]) =>
-			routes.flatMap((route) => (route.path === undefined ? m.via.flatMap((step) => step.kind ?? []) : route.path.flatMap((step) => (step.owner === kind || step.owner === holder ? [] : [step.owner]))))
+		[...reached].flatMap(([m, routes]) => routes.flatMap((route) => (route.path === undefined ? m.via.flatMap((step) => step.kind ?? []) : [])))
+	);
+	const entered = new Set(
+		[...reached].flatMap(([, routes]) =>
+			routes.flatMap((route) =>
+				(route.path ?? []).flatMap((step, i, path) => {
+					const next = path[i + 1];
+					return (step.owner === kind || step.owner === holder) && next !== undefined && next.owner !== kind && next.owner !== holder ? [`${step.slot} ${next.owner}`] : [];
+				})
+			)
 		)
 	);
 	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
@@ -869,7 +877,7 @@ function membersOf(
 			continue;
 		}
 		const kept = keptKinds(input.model, slot, capturesOf(slot));
-		const except = slot.kinds.filter((k) => via.has(k) || !kept.has(k));
+		const except = slot.kinds.filter((k) => via.has(k) || entered.has(`${slot.name} ${k}`) || !kept.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) {
 			unrouted(slot, 'is the path of a deeper member');
 			continue;

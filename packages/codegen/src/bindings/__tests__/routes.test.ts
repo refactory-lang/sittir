@@ -1922,3 +1922,39 @@ describe('a claim token', () => {
 		await expect(entriesOf('(binary "*") @expression.binary.multiply', 'binary')).rejects.toThrow('bindings: binary\'s claim as expression.binary.multiply tests "*", which no slot of binary holds and its own text does not spell');
 	});
 });
+
+describe("a kind a deep member's path enters stays in the holder's other slots", () => {
+	const ENTERED_MODEL = new Map(
+		[
+			node("pair", [slot("left", ["wrap"]), slot("right", ["wrap"])]),
+			node("wrap", [slot("inner", ["identifier"])]),
+			node("identifier")
+		].map((n) => [n.kind, n])
+	);
+	const entered = async (bindings: string): Promise<GrammarInput> => ({
+		grammar: "g",
+		bindings: await readBindings(bindings),
+		model: ENTERED_MODEL,
+		textTokens: new Set(),
+		layoutSlots: [],
+		vocabulary: EMPTY_VOCABULARY
+	});
+
+	it("excludes the entered kind only from the slot the path enters it through, by field", async () => {
+		const members = resolveRoutes(await entered("(pair left: (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
+		expect(members.find((m) => m.name === "name")?.path).toEqual([
+			{ owner: "pair", slot: "left" },
+			{ owner: "wrap", slot: "inner" }
+		]);
+	});
+
+	it("excludes the entered kind only from the slot the path enters it through, unfielded", async () => {
+		const members = resolveRoutes(await entered("(pair (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
+		expect(members.find((m) => m.name === "name")?.path).toEqual([
+			{ owner: "pair", slot: "left" },
+			{ owner: "wrap", slot: "inner" }
+		]);
+	});
+});
