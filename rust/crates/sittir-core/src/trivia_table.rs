@@ -551,7 +551,7 @@ impl Nodes {
 }
 
 /// Where the assignment puts an entry of a gap.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum Place {
     Side(NodeIndex, TriviaSide),
     Unowned,
@@ -734,10 +734,9 @@ impl TriviaTable {
             let left_row = left.map(|token| row(token.end));
             excess.close_until(from, &mut table);
             let mut at = from;
-            let mut led = None;
-            let mut run = |at: u32, until: u32, led: Option<NodeIndex>, table: &mut TriviaTable, excess: &mut Excess| {
+            let mut run = |at: u32, until: u32, beside: Option<Place>, table: &mut TriviaTable, excess: &mut Excess| {
                 let Some(text) = source.get(at as usize..until as usize) else { return };
-                let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
+                let place = beside.unwrap_or_else(|| place(left, right, false, None));
                 let owner = match place {
                     Place::Side(node, TriviaSide::Inner) => local(node),
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
@@ -764,23 +763,36 @@ impl TriviaTable {
                     _ => {}
                 }
             };
+            let mut gap = Vec::new();
             while let Some(&&index) = next.peek() {
                 let (start, end) = (nodes.start[local(index) as usize], nodes.end[local(index) as usize]);
                 if start >= to && !(start == to && right.is_some_and(|right| right.start == right.end && right.start == start && start < end)) {
                     break;
                 }
                 next.next();
-                run(at, start, led, &mut table, &mut excess);
-                if kinds.layout.contains(&nodes.kind[local(index) as usize]) {
-                    table.push(place(left, right, false, None), Assigned::Member(index));
-                } else {
-                    let entry = if nodes.kind[local(index) as usize] == KindId::ERROR { Assigned::Error(index) } else { Assigned::Extra(index) };
-                    let placed = place(left, right, left_row == Some(row(start)), Some(kinds));
-                    led = match placed {
-                        Place::Side(node, TriviaSide::Leading) => Some(node),
-                        _ => None,
-                    };
-                    table.push(placed, entry);
+                let placed = (!kinds.layout.contains(&nodes.kind[local(index) as usize])).then(|| place(left, right, left_row == Some(row(start)), Some(kinds)));
+                gap.push((index, start, end, placed));
+            }
+            let trailed = gap.iter().rposition(|&(.., placed)| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
+            let moved = trailed.and_then(|last| gap[last].3).filter(|&side| side != place(left, right, false, None));
+            let held = excess.current;
+            let mut led = None;
+            for (i, &(index, start, end, placed)) in gap.iter().enumerate() {
+                let beside = trailed.filter(|&last| i <= last).map_or(led, |last| gap[last].3);
+                run(at, start, beside, &mut table, &mut excess);
+                match placed {
+                    None => table.push(beside.unwrap_or_else(|| place(left, right, false, None)), Assigned::Member(index)),
+                    Some(placed) => {
+                        let entry = if nodes.kind[local(index) as usize] == KindId::ERROR { Assigned::Error(index) } else { Assigned::Extra(index) };
+                        led = matches!(placed, Place::Side(_, TriviaSide::Leading)).then_some(placed);
+                        table.push(placed, entry);
+                    }
+                }
+                if let Some(side) = moved.filter(|_| trailed == Some(i)) {
+                    let depth = excess.reset(held);
+                    if depth != 0 {
+                        table.push(side, Assigned::Depth(depth));
+                    }
                 }
                 at = end;
             }
@@ -1022,6 +1034,15 @@ impl Excess {
         if depth != 0 && self.open.last().is_none_or(|open| open.owner != owner) {
             self.open.push(OpenOwner { owner, end, restore: self.current, side: side() });
         }
+        self.current = excess;
+        depth
+    }
+
+    /// The change from the running excess back to `excess`, which it
+    /// becomes: what restores the excess at the end of a side whose frame
+    /// closes before the rest of its gap renders.
+    fn reset(&mut self, excess: i32) -> i32 {
+        let depth = excess - self.current;
         self.current = excess;
         depth
     }
