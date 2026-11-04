@@ -1,0 +1,83 @@
+name: Windows map
+
+# A probe, run from its own branch only. Each grammar's release binding is
+# built for x86_64-pc-windows-msvc by build-native three times: as it is,
+# relinked as it is, and with the linker writing a map (/MAP). Two links of
+# the same code may differ by themselves (the debug directory's PDB GUID and
+# timestamp), so the map build is held to the plain one section by section
+# beside the two plain builds held to each other: a map costs the shipped
+# code nothing when it differs from plain only where plain differs from
+# itself. The builds, their maps and their stamps are uploaded.
+
+on:
+  push:
+    branches: [probe/windows-map]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  map:
+    name: with and without a map (x86_64-pc-windows-msvc)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: windows-map
+      - name: build each grammar as it is and with a map, and hold the two to each other
+        shell: bash
+        run: |
+          set -uo pipefail
+          target=x86_64-pc-windows-msvc
+          report=map-proof.md
+          : > "$report"
+          status=0
+          for g in regex typescript; do
+            for variant in plain again map; do
+              out="out/$variant/$g"
+              mkdir -p "$out"
+              if [ "$variant" = map ]; then
+                export RUSTFLAGS="-C link-arg=/MAP:$(cygpath -w "$PWD/$out")\\sittir_$g.map"
+              else
+                unset RUSTFLAGS
+              fi
+              [ "$variant" = again ] && touch "rust/crates/sittir-$g/src/lib.rs"
+              npx tsx scripts/build-native.mts "$g" --release --target "$target" || status=1
+              cp packages/"$g"/native/*.node "$out/"
+              cp node_modules/.cache/sittir/native-build/"$g"/* "$out/"
+              cp "target/$target/release/sittir_$g.pdb" "$out/" || echo "(no pdb for $g $variant)" >> "$report"
+              ls -la "$out" >> "$report"
+            done
+            unset RUSTFLAGS
+            for f in out/plain/"$g"/*.node; do
+              b=$(basename "$f")
+              for other in again map; do
+                echo "### $g shipped, plain against $other" >> "$report"
+                node .github/strip-proof/section-hashes.mjs "out/plain/$g/$b" "out/$other/$g/$b" "$b" >> "$report" || echo "(plain against $other: allocated sections differ)" >> "$report"
+              done
+            done
+          done
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-map
+          path: |
+            out/
+            map-proof.md
+          if-no-files-found: error
