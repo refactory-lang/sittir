@@ -61,6 +61,12 @@ describe('emitPortableTyped', () => {
 		expect(property).not.toContain('V.Literal.Number.Integer.Imaginary');
 	});
 
+	it('types a slot holding a supertype by the paths its subtypes read as, never the supertype path no node reads as', () => {
+		const input = /\treadonly ["']attribute\.content["']: \{\n\t\treadonly input: ([^\n]*);/.exec(typed.source)?.[1];
+		expect(input).toContain('V.Element.Macro.TokenTree.Delimited.Paren<Ctx>');
+		expect(input).not.toContain('V.Element.Macro.TokenTree.Delimited<Ctx>');
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);

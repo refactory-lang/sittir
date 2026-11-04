@@ -210,6 +210,8 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	};
 	const concrete = [...model.values()].filter((n) => n.subtypes.length === 0 && idOf(n.kind) !== undefined);
 	const typed = new Set(concrete.map((n) => n.kind));
+	const readPathsOf = (list: readonly ReadEntry[]): string[] => [...new Set(readableEntries(list.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => path))];
+	const readPaths = new Set(concrete.flatMap((n) => readPathsOf(entriesFor(n.kind) ?? [])));
 	const refsOf = (kinds: readonly string[], terminals: readonly string[] = []): string => {
 		const parts = new Set<string>(terminals.map(q));
 		for (const k of kinds) for (const c of concreteKinds(model, [k])) if (typed.has(c)) parts.add(aliasOf(c));
@@ -235,7 +237,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		const claimed = entriesFor(node.kind);
 		const unwrap = routes.containers.get(node.kind);
 		if (claimed !== undefined) {
-			const type = [...new Set(readableEntries(claimed.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => `VocabViews[${q(path)}]`))].join(' | ');
+			const type = readPathsOf(claimed).map((path) => `VocabViews[${q(path)}]`).join(' | ');
 			if (unwrap?.refined !== true) return { type };
 			const contained = containerView(node, unwrap);
 			return { ...contained, type: `${type} | ${contained.type}` };
@@ -290,7 +292,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, new Set(claimedPaths)) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, readPaths) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
@@ -555,14 +557,14 @@ function slotArmOf(
 	model: GrammarInput['model'],
 	tokenTypeOf: (kind: string) => string | undefined,
 	formsAt: (path: string, base: string) => readonly string[],
-	claimed: ReadonlySet<string>
+	read: ReadonlySet<string>
 ): (kind: string) => string {
 	const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
 	const qname = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
 	const setOf = (path: string): string => {
 		const family = [...vocabulary.kinds.keys()].filter((member) => member === path || member.startsWith(`${path}.`)).sort();
-		const forms = family.filter((member) => claimed.has(member)).map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
-		if (forms.length === 0) throw new Error(`a slot holds the ${path} family, but the grammar claims none of its paths`);
+		const forms = family.filter((member) => read.has(member)).map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
+		if (forms.length === 0) throw new Error(`a slot holds the ${path} family, but nothing in the grammar reads as any of its paths`);
 		return forms.length === family.length && forms.every(({ base, forms: [only, ...rest] }) => only === base && rest.length === 0) ? `V.${qname(path)}.Any<Ctx>` : forms.flatMap(({ forms: arms }) => arms).join(' | ');
 	};
 	return (k) => {
@@ -574,7 +576,7 @@ function slotArmOf(
 			case 'unmapped':
 				return `V.Unmapped<'${k.slice(1, -1)}'>`;
 			case 'ref':
-				return k.startsWith('set:') ? setOf(k.slice(4)) : formsAt(k, `V.${qname(k)}<Ctx>`).join(' | ');
+				return k.startsWith('set:') ? setOf(k.slice(4)) : read.has(k) ? formsAt(k, `V.${qname(k)}<Ctx>`).join(' | ') : setOf(k);
 			case 'text': {
 				if (k.startsWith('literal:')) return tokenTypeOf(k.slice(8)) ?? 'string';
 				return patterns.has(k.slice(5)) ? 'string' : q(k.slice(5));
