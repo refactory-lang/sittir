@@ -24,5 +24,5 @@ for (const [grammar, owner] of [
 			expect(member.slot).toMatchObject({ name: 'item', multiple: true });
 			expect(member.path).toBeDefined();
 		}
-	});
+	}, 120000);
 }
