@@ -44,7 +44,7 @@ for index in range(ROUNDS):
                 sys.stderr.write(run.stderr)
                 raise SystemExit(run.returncode)
 
-lines = []
+lines = [(out.parent / 'build-path.md').read_text().strip(), '']
 first = names[0]
 for grammar in grammars:
     runs = {mode: {n: [json.loads((out / f'{grammar}-{n}-{mode}-{i}.json').read_text()) for i in range(ROUNDS)] for n in names} for mode in MODES}

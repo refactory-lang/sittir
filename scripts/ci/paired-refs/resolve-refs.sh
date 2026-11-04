@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Usage: FEATURE_REF=<ref> MASTER_REF=<ref> PROFILE=<profile> ARENA=<true|false> CANDIDATES='<name>=<ref> ...' resolve-refs.sh <out-dir>
+# Usage: FEATURE_REF=<ref> MASTER_REF=<ref> PROFILE=<profile> ARENA=<true|false> CANDIDATES='<name>=<ref> ...' [BUILD_PATH=<ref>] resolve-refs.sh <out-dir>
 # Writes <out-dir>/refs.json: the feature and master commits, their merge base,
-# the cargo profile, whether the arena versions run, and each candidate's
-# commit and ref by name. A candidate is one more tree measured beside feature
+# the cargo profile, whether the arena versions run, each candidate's
+# commit and ref by name, and the build path every tree's addons are built on
+# (build-path.mjs resolve: BUILD_PATH's change to the build driver, or null for
+# each tree's own). A candidate is one more tree measured beside feature
 # against the same merge base; its name is lowercase and is none of base,
 # master or feature, nor ends in -arena, which names a tree read in arena storage.
 set -euo pipefail
@@ -25,4 +27,11 @@ done
 jq -n --arg base "$base" --arg master "$master" --arg feature "$feature" \
 	--arg featureRef "$FEATURE_REF" --arg masterRef "$MASTER_REF" --arg profile "$PROFILE" --argjson arena "$ARENA" --argjson candidates "$candidates" \
 	'{base: $base, master: $master, feature: $feature, featureRef: $featureRef, masterRef: $masterRef, profile: $profile, arena: $arena, candidates: $candidates}' \
-	| tee "$out/refs.json"
+	> "$out/refs.json"
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+if [[ -n ${BUILD_PATH:-} ]]; then
+	node "$here/build-path.mjs" resolve "$out" "$(resolve "$BUILD_PATH")" "$BUILD_PATH"
+else
+	node "$here/build-path.mjs" resolve "$out"
+fi
+cat "$out/refs.json"
