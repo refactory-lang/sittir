@@ -1,0 +1,65 @@
+name: Read stack
+
+# A probe, run from its own branch only. The typed read's least stack at
+# each nesting level, dev and release, for each tree, on the targets CI
+# pins a row for and on the runners CI measures them on. Each tree is
+# checked out whole and tested with its own pinned toolchain; the test
+# fails where a tree is over its ceilings, and the levels are printed
+# either way.
+
+on:
+  push:
+    branches: [probe/read-stack]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  ceilings:
+    name: ceilings (${{ matrix.tree }}, ${{ matrix.target }})
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        tree: [lean, 3a]
+        target: [aarch64-apple-darwin, x86_64-unknown-linux-gnu]
+        include:
+          - { tree: lean, sha: 48db0465630314b3e05df783f5270f36513307d1 }
+          - { tree: 3a, sha: 5d5946b1b56653a92753deccf59e0e9cbd04dac2 }
+          - { target: aarch64-apple-darwin, host: macos-14 }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04 }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: read-stack-${{ matrix.tree }}-${{ matrix.target }}
+      - name: least stack, dev and release
+        shell: bash
+        run: |
+          out="read-stack-${{ matrix.tree }}-${{ matrix.target }}.txt"
+          echo "tree ${{ matrix.tree }} ${{ matrix.sha }} on ${{ matrix.host }}, $(rustc --version)" > "$out"
+          for profile in "" "--release"; do
+            echo "== profile ${profile:-dev}" >> "$out"
+            cargo test -p sittir-parity-tests --no-default-features $profile --test typed_read_nesting --target ${{ matrix.target }} -- --nocapture the_typed_read_stays_within_its_pinned_stack_ceilings >> "$out" 2>&1 || echo "test exit $?" >> "$out"
+          done
+          grep -E '^(tree|==)|least stack|exceeds|test exit|test result' "$out" | sed 's/^/    /' >> "$GITHUB_STEP_SUMMARY"
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: read-stack-${{ matrix.tree }}-${{ matrix.target }}
+          path: read-stack-*.txt
