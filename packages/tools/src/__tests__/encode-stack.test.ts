@@ -5,10 +5,13 @@ import { REPO_ROOT } from '@sittir/codegen/grammars';
 import {
 	codecBounds,
 	disassemble,
+	elfInt32,
 	encodeStack,
 	frameBytes,
+	gotSlots,
 	heightKinds,
-	largestLimit
+	largestLimit,
+	type Image
 } from '../validate/encode-stack.ts';
 
 describe('frameBytes', () => {
@@ -186,22 +189,188 @@ describe('disassemble', () => {
 	});
 });
 
+const HEIGHTS = new Set(['ANode', 'BNode', 'CommentNode']);
+
 describe('encodeStack', () => {
-	it('costs a level apart from the trivia trip, the loop entry and the frames above the loop', async () => {
-		const stack = encodeStack(await disassemble(GRAPH), new Set(['ANode', 'BNode', 'CommentNode']));
+	it('costs a level apart from the trivia trip and the frames from the callback to the first whole encode', async () => {
+		const stack = encodeStack(await disassemble(GRAPH), HEIGHTS);
 		expect(stack.level.bytes).toBe(112 + 48);
 		expect(stack.level.steps.map((step) => step.fn)).toEqual([NAMES.a, NAMES.list]);
 		expect(stack.level.to).toBe(NAMES.b);
 		expect(stack.trivia.bytes).toBe(112 + 80 + 16);
-		expect(stack.entry.bytes).toBe(272 + 48);
-		expect(stack.entry.steps.find((step) => step.fn === NAMES.step)?.tail).toBe(true);
-		expect(stack.above.bytes).toBe(32 + 96);
-		expect(stack.oneTime).toBe(128 + 320 + 208);
+		expect(stack.above.bytes).toBe(32 + 96 + 272 + 48);
+		expect(stack.above.steps.map((step) => step.fn)).toEqual([NAMES.callback, NAMES.any, NAMES.loop, NAMES.step, NAMES.encodeStep]);
+		expect(stack.above.steps.find((step) => step.fn === NAMES.step)?.tail).toBe(true);
+		expect(stack.above.to).toBe(NAMES.a);
+		expect(stack.oneTime).toBe(448 + 208);
+		expect(stack.unresolved).toEqual([]);
 		expect(largestLimit(stack, 65_536)).toBe(Math.floor((65_536 - 656) / 160));
+	});
+
+	it('costs a route into the first whole encode that bypasses the loop', async () => {
+		const direct = 'sittir_x::read';
+		const read = 'sittir_x::read_c_callback';
+		const graph = [
+			...GRAPH,
+			...fn(0x2000, read, ['stp x29, x30, [sp, #-16]!'], [['bl', direct]]),
+			...fn(0x2100, direct, ['stp x29, x30, [sp, #-16]!', 'sub sp, sp, #0x400'], [['bl', NAMES.a]])
+		];
+		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		expect(stack.above.bytes).toBe(16 + 1040);
+		expect(stack.above.steps.map((step) => step.fn)).toEqual([read, direct]);
+	});
+
+	it('refuses a function that leads to a whole encode when no napi callback leads to it', async () => {
+		const graph = [...GRAPH, ...fn(0x2000, 'sittir_x::orphan', ['stp x29, x30, [sp, #-16]!'], [['bl', NAMES.a]])];
+		await expect(disassemble(graph).then((dis) => encodeStack(dis, HEIGHTS))).rejects.toThrow(
+			/no known caller and no napi callback leads to sittir_x::orphan/
+		);
+	});
+
+	it('lists the indirect calls on a measured path it cannot resolve', async () => {
+		const graph = GRAPH.flatMap((line) => (line.endsWith(`bl 0x0 <${NAMES.list}>`) ? [line, '    100a: \tblr x8'] : [line]));
+		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		expect(stack.unresolved).toEqual([{ fn: NAMES.a, offset: 0xa, ins: 'blr x8' }]);
 	});
 
 	it('refuses a build whose names it cannot read', async () => {
 		await expect(disassemble(GRAPH).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
+	});
+});
+
+const hex = (n: number): string => `0x${n.toString(16)}`;
+
+function x86(start: number, name: string, body: readonly string[]): string[] {
+	return [
+		`${start.toString(16).padStart(16, '0')} <${name}>:`,
+		...body.map((ins, at) => `  ${(start + 4 * at).toString(16)}:      \t${ins.replace(/@(\d+)/g, (_, k) => `${hex(start + 4 * Number(k))} <${name}+${hex(4 * Number(k))}>`)}`)
+	];
+}
+
+const ELF = ['x.node:\tfile format elf64-x86-64', '', 'Disassembly of section .text:', ''];
+const SLOTS = gotSlots([
+	'0000000000003000 R_X86_64_RELATIVE        *ABS*+0x2100',
+	'0000000000003008 R_X86_64_GLOB_DAT        memcpy'
+]);
+const image = (table: ReadonlyMap<number, number> = new Map()): Image => ({ ...SLOTS, int32: (address) => table.get(address) });
+const G = 'sittir_x::g';
+const STAR = 'core::ptr::drop_glue::<*mut u8>';
+
+describe('disassemble on x86-64', () => {
+	it('follows a call through a GOT slot to the function its relocation names, and leaves an unrelocated slot unread', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', [
+					'callq *0x10(%rip) # 0x3000 <x>',
+					'callq *0x10(%rip) # 0x3008 <x>',
+					'callq *0x10(%rip) # 0x3010 <x>',
+					`callq 0x2200 <${STAR}>`,
+					'retq'
+				]),
+				...x86(0x2100, G, ['retq']),
+				...x86(0x2200, STAR, ['retq'])
+			],
+			image()
+		);
+		const f = dis.functions.get('sittir_x::f')!;
+		expect([...f.calls].sort()).toEqual([STAR, G].sort());
+		expect(f.unresolved.map((site) => site.offset)).toEqual([8]);
+	});
+
+	it('follows a slot held in a register along each path that keeps it', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', [
+					'movq 0x10(%rip), %rbx # 0x3000 <x>',
+					'callq *%rbx',
+					'testl %eax, %eax',
+					'jne @6',
+					'movq 0x28(%rsp), %rbx',
+					'jmp @7',
+					'callq *%rbx',
+					'callq *%rbx',
+					'retq'
+				]),
+				...x86(0x2100, G, ['retq'])
+			],
+			image()
+		);
+		const f = dis.functions.get('sittir_x::f')!;
+		expect([...f.calls]).toEqual([G]);
+		expect(f.unresolved.map((site) => site.offset)).toEqual([0x1c]);
+	});
+
+	it('enters a jump table only at the targets the table holds', async () => {
+		const listing = [
+			...ELF,
+			...x86(0x4000, 'sittir_x::t', [
+				'leaq 0x1000(%rip), %rbx # 0x5000 <table>',
+				'movq 0x10(%rip), %r13 # 0x3000 <x>',
+				'movq (%rdi), %rax',
+				'cmpq $0x1, %rax',
+				'ja @12',
+				'movslq (%rbx,%rax,4), %rax',
+				'addq %rbx, %rax',
+				'jmpq *%rax',
+				'callq *%r13',
+				'jmp @2',
+				'callq *%r13',
+				'jmp @2',
+				'retq'
+			]),
+			...x86(0x2100, G, ['retq'])
+		];
+		const table = new Map([
+			[0x5000, 0x4020 - 0x5000],
+			[0x5004, 0x4028 - 0x5000]
+		]);
+		const read = (await disassemble(listing, image(table))).functions.get('sittir_x::t')!;
+		expect([...read.calls]).toEqual([G]);
+		expect(read.unresolved).toEqual([]);
+		expect(read.jumps.map((site) => site.ins)).toEqual(['jmpq *%rax']);
+		const unread = (await disassemble(listing, image())).functions.get('sittir_x::t')!;
+		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
+	});
+
+	it('takes a PLT stub for the external function it binds', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', ['callq 0x6010 <foo@plt>', 'retq']),
+				'',
+				'Disassembly of section .plt:',
+				'',
+				...x86(0x6000, '.plt', ['pushq 0x8(%rip) # 0x7008 <_GLOBAL_OFFSET_TABLE_+0x8>', 'jmpq *0x10(%rip) # 0x7010 <_GLOBAL_OFFSET_TABLE_+0x10>']),
+				...x86(0x6010, 'foo@plt', ['jmpq *0x10(%rip) # 0x7018 <_GLOBAL_OFFSET_TABLE_+0x18>', 'pushq $0x0', 'jmp 0x6000 <.plt>'])
+			],
+			image()
+		);
+		expect([...dis.functions.keys()]).toEqual(['sittir_x::f']);
+		expect(dis.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+	});
+});
+
+describe('elfInt32', () => {
+	it('reads a signed word at an address inside a loaded section', () => {
+		const bytes = Buffer.alloc(0x100);
+		bytes.writeUInt32LE(0x464c457f, 0);
+		bytes[4] = 2;
+		bytes[5] = 1;
+		bytes.writeBigUInt64LE(0x80n, 0x28);
+		bytes.writeUInt16LE(0x40, 0x3a);
+		bytes.writeUInt16LE(2, 0x3c);
+		const section = 0x80 + 0x40;
+		bytes.writeUInt32LE(1, section + 4);
+		bytes.writeBigUInt64LE(0x1000n, section + 0x10);
+		bytes.writeBigUInt64LE(0x40n, section + 0x18);
+		bytes.writeBigUInt64LE(8n, section + 0x20);
+		bytes.writeInt32LE(-0xfe0, 0x40);
+		bytes.writeInt32LE(7, 0x44);
+		const int32 = elfInt32(bytes);
+		expect([int32(0x1000), int32(0x1004), int32(0x1008), int32(0xfff)]).toEqual([-0xfe0, 7, undefined, undefined]);
+		expect(elfInt32(Buffer.from('MZ not an ELF image'))(0x1000)).toBeUndefined();
 	});
 });
 
