@@ -302,6 +302,114 @@ describe('disassemble on arm64', () => {
 	});
 });
 
+const LOCK = '<std::sys::sync::rwlock::queue::RwLock>::lock_contended';
+const READ_LOCK = 'std::sys::sync::rwlock::queue::read_lock';
+const WRITE_LOCK = 'std::sys::sync::rwlock::queue::write_lock';
+const ARM_ELF = ['x.node:\tfile format elf64-littleaarch64', '', 'Disassembly of section .text:', ''];
+
+describe('arm64 registers', () => {
+	it('follows an address or a GOT slot a register holds along each path that keeps it, and leaves a signed branch unread', async () => {
+		const dis = await disassemble(
+			[
+				...ARM_ELF,
+				...fn(
+					0x1000,
+					'sittir_x::f',
+					[
+						'adrp x8, 0x2000 <x>',
+						'add x8, x8, #0x100',
+						'blr x8',
+						'adrp x19, 0x3000 <x>',
+						'ldr x19, [x19, #0x8]',
+						`bl 0x2100 <${G}>`,
+						'blr x19',
+						'adrp x9, 0x3000 <x>',
+						'ldr x9, [x9]',
+						`bl 0x2100 <${G}>`,
+						'blr x9',
+						'blraaz x10'
+					],
+					[]
+				),
+				...fn(0x2100, G, [], [])
+			],
+			image()
+		);
+		const f = dis.functions.get('sittir_x::f')!;
+		expect([...f.calls]).toEqual([G]);
+		expect(f.unresolved.map((site) => site.ins)).toEqual(['blr x9', 'blraaz x10']);
+	});
+
+	it('calls both functions a csel picks between, across calls and a loop', async () => {
+		const dis = await disassemble(
+			[
+				...ARM_ELF,
+				...fn(
+					0x1000,
+					LOCK,
+					[
+						'adrp x8, 0x2000 <x>',
+						'add x8, x8, #0x100',
+						'adrp x9, 0x2000 <x>',
+						'add x9, x9, #0x200',
+						'cmp w1, #0x0',
+						'csel x22, x9, x8, ne',
+						`bl 0x2300 <${G}>`,
+						'blr x22',
+						`cbnz w0, 0x1018 <${LOCK}+0x18>`
+					],
+					[]
+				),
+				...fn(0x2100, WRITE_LOCK, [], []),
+				...fn(0x2200, READ_LOCK, [], []),
+				...fn(0x2300, G, [], [])
+			],
+			image()
+		);
+		const lock = dis.functions.get(LOCK)!;
+		expect([...lock.calls].sort()).toEqual([G, READ_LOCK, WRITE_LOCK].sort());
+		expect(lock.unresolved).toEqual([]);
+		expect(lock.selected).toEqual([{ offset: 0x1c, ins: 'blr x22', targets: [WRITE_LOCK, READ_LOCK] }]);
+	});
+});
+
+describe('dynamic classes', () => {
+	const below = (callee: string, functions: readonly string[]): string[] => [
+		...GRAPH.flatMap((line) => (line.endsWith(`<${NAMES.b}>:`) ? [line, `    1208: \tbl 0x2000 <${callee}>`] : [line])),
+		...functions
+	];
+
+	it('takes the static unwinder for a class of its own', async () => {
+		const graph = below('unwind_phase2', fn(0x2000, 'unwind_phase2', ['stp x29, x30, [sp, #-16]!', 'blr x8'], []));
+		expect(encodeStack(await disassemble(graph), HEIGHTS).reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[2]]);
+	});
+
+	it('holds a call between two picked functions only to the pair its class names, and reads on into both', async () => {
+		const pick = (read: string): string[] =>
+			below(LOCK, [
+				...fn(
+					0x2000,
+					LOCK,
+					['adrp x8, 0x2000 <x>', 'add x8, x8, #0x100', 'adrp x9, 0x2000 <x>', 'add x9, x9, #0x200', 'csel x22, x9, x8, ne', 'blr x22'],
+					[]
+				),
+				...fn(0x2100, WRITE_LOCK, [], []),
+				...fn(0x2200, read, ['blr x8'], [])
+			]);
+		const held = encodeStack(await disassemble(pick(READ_LOCK)), HEIGHTS);
+		expect(held.reached).toEqual([
+			{ fn: READ_LOCK, offset: 0, ins: 'blr x8', class: undefined },
+			{ fn: LOCK, offset: 0x14, ins: 'blr x22', class: DYNAMIC_CLASSES[3] }
+		]);
+		const other = 'std::sys::sync::rwlock::queue::other_lock';
+		const unheld = encodeStack(await disassemble(pick(other)), HEIGHTS);
+		expect(unheld.reached).toEqual([
+			{ fn: other, offset: 0, ins: 'blr x8', class: undefined },
+			{ fn: LOCK, offset: 0x14, ins: 'blr x22', class: undefined }
+		]);
+	});
+});
+
 const hex = (n: number): string => `0x${n.toString(16)}`;
 
 function x86(start: number, name: string, body: readonly string[]): string[] {
@@ -440,6 +548,28 @@ describe('disassemble on x86-64', () => {
 		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
 		expect((await disassemble(listing, tlv)).functions.get('sittir_x::f')!.unresolved).toEqual([]);
 		expect((await disassemble(listing, image())).functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['callq *(%rdi)']);
+	});
+
+	it('calls both functions a cmov picks between', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, LOCK, [
+					'leaq 0xf9(%rip), %rax ## 0x2100 <x>',
+					'leaq 0x1f5(%rip), %r13 ## 0x2200 <x>',
+					'testl %esi, %esi',
+					'cmovneq %rax, %r13',
+					'callq *%r13',
+					'retq'
+				]),
+				...x86(0x2100, WRITE_LOCK, ['retq']),
+				...x86(0x2200, READ_LOCK, ['retq'])
+			],
+			image()
+		);
+		const lock = dis.functions.get(LOCK)!;
+		expect([...lock.calls].sort()).toEqual([READ_LOCK, WRITE_LOCK].sort());
+		expect(lock.selected).toEqual([{ offset: 0x10, ins: 'callq *%r13', targets: [WRITE_LOCK, READ_LOCK] }]);
 	});
 
 	it('takes a PLT stub for the external function it binds', async () => {
