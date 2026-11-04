@@ -157,13 +157,20 @@ pub struct StoredLayout {
 
 /// The work a parsed tree's layout reads have done so far, counted where it
 /// is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
-/// compares counts, never times.
+/// compares counts, never times. The addon's `layoutWork` answers the
+/// region nodes and sibling items; the rest are counted for Rust only.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct LayoutWork {
     /// The nodes the region-depth walks entered (`ParsedTree::region_depth`).
     pub region_nodes: u32,
     /// The items the sibling lookups visited (`ParsedTree::siblings`).
     pub sibling_items: u32,
+    /// The nodes a region's render looked up outside the region, each found
+    /// from the tree's root (`Region::node`).
+    pub region_fallbacks: u32,
+    /// The levels the lookup cursors of the tree's calls climbed and
+    /// descended to reach the nodes they looked up (`read::goto_from`).
+    pub cursor_steps: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -171,6 +178,8 @@ pub struct LayoutWork {
 pub struct LayoutWorkCounter {
     region_nodes: std::sync::atomic::AtomicU64,
     sibling_items: std::sync::atomic::AtomicU64,
+    region_fallbacks: std::sync::atomic::AtomicU64,
+    cursor_steps: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -182,9 +191,17 @@ impl LayoutWorkCounter {
         self.sibling_items.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn region_fallbacks(&self, n: usize) {
+        self.region_fallbacks.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn cursor_steps(&self, n: u32) {
+        self.cursor_steps.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
     pub fn counts(&self) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_steps: read(&self.cursor_steps) }
     }
 }
 

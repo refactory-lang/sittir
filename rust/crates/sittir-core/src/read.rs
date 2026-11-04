@@ -624,11 +624,33 @@ pub fn descendant_count(node: &Node<'_>) -> u32 {
     crate::types::narrow(node.descendant_count())
 }
 
-/// Moves a cursor created at the tree's root to the node at `index`. The one
-/// call of `TreeCursor::goto_descendant`.
+/// Moves a cursor created at the tree's root to the node at `index`, and
+/// answers the steps it took (`goto_from`).
+pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
+    goto_from(cursor, NodeIndex::ROOT, index)
+}
+
+/// Moves a cursor created at the node at descendant `from` to the node at
+/// `index`, which lies in that node's subtree: each is numbered from the
+/// node the cursor was created at. From where the cursor is, the move climbs
+/// to the nearest node holding `index` and descends from there, so it costs
+/// the path between the two nodes, not the path from the root. Answers the
+/// steps it took, each a level climbed or descended. The one call of
+/// `TreeCursor::goto_descendant`.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
-pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) {
-    cursor.goto_descendant(index.index());
+pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+    let goal = index.index() - from.index();
+    let holds = |cursor: &TreeCursor<'_>| {
+        let at = offset_of(cursor) as usize;
+        (at..at + descendant_count(&cursor.node()) as usize).contains(&goal)
+    };
+    let mut climbed = 0;
+    while !holds(cursor) && cursor.goto_parent() {
+        climbed += 1;
+    }
+    let holder = cursor.depth();
+    cursor.goto_descendant(goal);
+    climbed + cursor.depth().saturating_sub(holder)
 }
 
 /// What the first pass learns about one child.
@@ -917,13 +939,6 @@ impl HeapBytes for Routed {
         let Self { children, routes, keys } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
-}
-
-/// The routes of the node at `index` read as `T` (`ReadNode::routes`).
-/// The cursor was created at the tree's root.
-pub fn routes_at<T: ReadNode>(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> Option<Routed> {
-    goto(cursor, index);
-    T::routes(cursor)
 }
 
 impl<T: ReadNode> ReadNode for Box<T> {
@@ -1457,9 +1472,16 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
 }
 
 /// Read the node at `index` into `T`, a read of its own that starts there
-/// (`ReadCtx::begin_read`). The cursor was created at the tree's root.
+/// (`read_from`). The cursor was created at the tree's root.
 pub fn read_at<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth) -> Result<T, ReadError> {
     goto(cursor, index);
+    read_from(cursor, ctx, depth)
+}
+
+/// Read the node the cursor is on into `T`, a read of its own that starts
+/// there (`ReadCtx::begin_read`). The cursor was created at the tree's root
+/// and ends where it started.
+pub fn read_from<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<T, ReadError> {
     ctx.begin_read();
     T::read(cursor, ctx, depth)
 }

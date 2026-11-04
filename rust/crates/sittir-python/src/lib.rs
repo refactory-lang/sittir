@@ -85,14 +85,14 @@ impl EngineGrammar for PythonGrammar {
             .map_or_else(Vec::new, |layout| layout.units)
     }
 
-    fn render_read(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<String, String> {
-        let node = sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, depth)
+    fn render_read(self, cursor: &mut tree_sitter::TreeCursor<'_>, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<String, String> {
+        let node = sittir_core::read::read_from::<AnyNode>(cursor, ctx, depth)
             .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
         render_node_parts(sittir_core::SlotValue::Node(node), render, Some(baseline)).map(|(_, text)| text).map_err(|error| error.to_string())
     }
 
-    fn slot_routes(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex) -> Option<sittir_core::read::Routed> {
-        sittir_core::read::routes_at::<AnyNode>(&mut tree.walk(), index)
+    fn slot_routes(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::read::Routed> {
+        <AnyNode as sittir_core::read::ReadNode>::routes(cursor)
     }
 
     fn router(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> Option<sittir_core::read::Router> {
