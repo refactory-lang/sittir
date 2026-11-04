@@ -4,9 +4,9 @@
 //! round-trip fixtures read, their `ERROR`s included.
 
 use sittir_core::baseline::Tally;
-use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
+use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{load_fixtures, on_deep_stack, parsed, ParityFixture};
 
 /// Each distinct source the grammar's round-trip fixtures read.
 fn sources(grammar: &str) -> std::collections::BTreeSet<String> {
@@ -23,7 +23,7 @@ fn sources(grammar: &str) -> std::collections::BTreeSet<String> {
 /// another in the whole tree's record, each measure on a fresh parse, with
 /// the runs measured in all.
 fn disagreeing<G: EngineGrammar>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
-    let parse = |source: &str| -> ParsedTree<G> { Engine::new(grammar, options()).expect("an engine").parse(source, claim_tree_id().expect("a tree id")).expect("a parse") };
+    let parse = |source: &str| parsed(grammar, options(), source);
     let mut runs = 0;
     let disagree = sources(name)
         .into_iter()
@@ -39,7 +39,7 @@ fn disagreeing<G: EngineGrammar>(name: &str, grammar: G, options: fn() -> Resolv
 }
 
 fn agrees<G: EngineGrammar + Send + 'static>(name: &'static str, grammar: G, options: fn() -> ResolvedOptions) {
-    let (disagree, runs) = std::thread::Builder::new().stack_size(64 * 1024 * 1024).spawn(move || disagreeing(name, grammar, options)).expect("a thread").join().expect("no panic");
+    let (disagree, runs) = on_deep_stack(move || disagreeing(name, grammar, options));
     assert_ne!(runs, 0, "{name}: the fixtures have runs");
     assert_eq!(disagree, Vec::<String>::new(), "{name}: {} sources measure a run differently in its region and in the whole tree", disagree.len());
 }

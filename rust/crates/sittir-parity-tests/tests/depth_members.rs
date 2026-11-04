@@ -56,8 +56,7 @@ fn the_members_of_every_subtree_count_as_a_walk_of_it() {
 fn a_tree_counts_its_depth_members_from_its_first_depth_move() {
     use sittir_core::heap::HeapBytes;
     use sittir_core::render::SourceTable;
-    let mut engine = sittir_core::engine::Engine::new(sittir_python::PythonGrammar, sittir_python::render::options::defaults()).expect("an engine");
-    let mut tree = engine.parse("def f(a):\n    if a:\n        return 1\n", sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
+    let mut tree = sittir_parity_tests::parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), "def f(a):\n    if a:\n        return 1\n");
     let _ = tree.take_grown();
     let parsed = tree.native_bytes();
     let root = tree.tree().root_node();

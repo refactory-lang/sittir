@@ -3,11 +3,11 @@
 //! lookup seats each alone, each run measured in its region: a region alone
 //! and inside the subtrees around it agree.
 
-use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, NodeRead, ParsedTree};
+use sittir_core::engine::{EngineGrammar, NodeRead};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::read::{read_at, Depth, ReadNode, SnapshotCtx};
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{load_fixtures, on_deep_stack, parsed, parsed_rust, ParityFixture};
 
 /// Each distinct source the grammar's round-trip fixtures read.
 fn sources(grammar: &str) -> std::collections::BTreeSet<String> {
@@ -25,7 +25,7 @@ fn sources(grammar: &str) -> std::collections::BTreeSet<String> {
 /// a fresh parse, so no cache one measure fills answers the other. Nodes an
 /// `ERROR` holds, and those no type reads alone, are passed over.
 fn agree<G: EngineGrammar, T: ReadNode + PartialEq + std::fmt::Debug>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
-    let parse = |source: &str| -> ParsedTree<G> { Engine::new(grammar, options()).expect("an engine").parse(source, claim_tree_id().expect("a tree id")).expect("a parse") };
+    let parse = |source: &str| parsed(grammar, options(), source);
     let mut agreed = 0;
     for source in sources(name) {
         let count = sittir_core::read::descendant_count(&parse(&source).tree().root_node());
@@ -43,33 +43,29 @@ fn agree<G: EngineGrammar, T: ReadNode + PartialEq + std::fmt::Debug>(name: &str
     agreed
 }
 
-fn on_stack(f: impl FnOnce() -> usize + Send + 'static) -> usize {
-    std::thread::Builder::new().stack_size(64 * 1024 * 1024).spawn(f).expect("a thread").join().expect("no panic")
-}
-
 #[test]
 fn every_python_node_snapshots_as_its_sides_seated_alone() {
-    assert_ne!(on_stack(|| agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults)), 0);
+    assert_ne!(on_deep_stack(|| agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults)), 0);
 }
 
 #[test]
 fn every_regex_node_snapshots_as_its_sides_seated_alone() {
-    assert_ne!(on_stack(|| agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults)), 0);
+    assert_ne!(on_deep_stack(|| agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults)), 0);
 }
 
 #[test]
 fn every_rust_node_snapshots_as_its_sides_seated_alone() {
-    assert_ne!(on_stack(|| agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults)), 0);
+    assert_ne!(on_deep_stack(|| agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults)), 0);
 }
 
 #[test]
 fn every_scm_node_snapshots_as_its_sides_seated_alone() {
-    assert_ne!(on_stack(|| agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults)), 0);
+    assert_ne!(on_deep_stack(|| agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults)), 0);
 }
 
 #[test]
 fn every_typescript_node_snapshots_as_its_sides_seated_alone() {
-    assert_ne!(on_stack(|| agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)), 0);
+    assert_ne!(on_deep_stack(|| agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)), 0);
 }
 
 /// A snapshot whose enclosing record refuses measures each run in its
@@ -82,7 +78,7 @@ fn every_typescript_node_snapshots_as_its_sides_seated_alone() {
 fn a_snapshot_whose_record_refuses_measures_each_run_in_its_region() {
     use sittir_rust::render::AnyNode;
     let source = "let p = P {: 1, y: 2 };\nlet q =\n    1;\nlet r = 2;\n";
-    let parse = || -> ParsedTree<sittir_rust::RustGrammar> { Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine").parse(source, claim_tree_id().expect("a tree id")).expect("a parse") };
+    let parse = || parsed_rust(source);
     let statement = |nth: usize| {
         let tree = parse();
         let count = sittir_core::read::descendant_count(&tree.tree().root_node());

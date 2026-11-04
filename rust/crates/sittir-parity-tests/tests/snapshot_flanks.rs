@@ -2,15 +2,13 @@
 //! where its first child's render begins and from where its last child's
 //! ends to its end, measured from geometry as the render once measured them.
 
-use sittir_core::engine::{claim_tree_id, Engine};
 use sittir_core::layout_kinds::{Flanks, LayoutKinds};
 use sittir_core::types::NodeIndex;
+use sittir_parity_tests::parsed_rust;
 use sittir_rust::render::AnyNode;
 
 fn flanks_of(source: &str) -> Flanks {
-    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
-    let tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
-    match tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot") {
+    match parsed_rust(source).snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot") {
         AnyNode::SourceFile(root) => root.layout.map(|layout| layout.flanks).unwrap_or_default(),
         _ => panic!("{source:?} snapshots as a source file"),
     }
