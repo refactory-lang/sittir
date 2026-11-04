@@ -85,9 +85,41 @@ fn the_trivia_walk_of_a_chain_folds_the_same_bounds_at_each_level() {
 }
 
 #[test]
-fn a_snapshot_s_depth_moves_walk_each_node_of_a_chain_once() {
+fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
+    use sittir_core::render::SourceTable;
     for levels in [100, 200, 400] {
-        let nodes = sittir_core::read::descendant_count(&parsed(&chain(levels)).tree().root_node());
-        assert_eq!(chain_work(levels).depth_nodes, nodes, "{levels} levels");
+        let tree = parsed(&chain(levels));
+        let nodes = sittir_core::read::descendant_count(&tree.tree().root_node());
+        for index in (0..nodes).map(NodeIndex::new) {
+            let node = sittir_core::engine::node_at_index(tree.tree(), index).expect("a node");
+            let coord = sittir_core::slot::NodeCoordinate {
+                tree: tree.tree_id(),
+                index,
+                end: index + sittir_core::read::descendant_count(&node),
+                span: sittir_core::types::Span::of(&node),
+                kind: None,
+                edges: None,
+                writes: None,
+            };
+            assert_eq!(tree.depth_move(&coord), 0, "{levels} levels: a chain of tuples opens no level");
+        }
+        assert_eq!(tree.layout_work().depth_nodes, nodes, "{levels} levels");
+    }
+}
+
+#[test]
+fn a_snapshot_renders_one_record_however_deep_its_tree() {
+    for levels in [100, 200, 400] {
+        let records = std::thread::Builder::new()
+            .stack_size(64 * 1024 * 1024)
+            .spawn(move || {
+                let tree = parsed(&chain(levels));
+                tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+                tree.records_rendered()
+            })
+            .expect("a thread")
+            .join()
+            .expect("no panic");
+        assert_eq!(records, 1, "{levels} levels");
     }
 }

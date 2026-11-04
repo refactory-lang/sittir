@@ -132,6 +132,27 @@ never wraps, as it refuses a caller's byte after the first byte it measures.
 row, and its column is added to the base's column. A point with a row offset above 0 is on a later
 line, and its column is measured from that line's start.
 
+**What a snapshot's runs are measured in:** one record, the full-depth render of the node enclosing
+the snapshot's own. That is the nearest node whose span reaches past it on both sides, or the root
+where none does, so the record holds the runs at the snapshot's edges.
+
+- A full-depth render records every region in it at once (the layout-deviations plan, § Regions,
+  "Computing a region"), so a snapshot renders one record, linear in its enclosing node's size,
+  however deep the tree. The record is kept on the tree by its node, so a later snapshot with the
+  same enclosing node renders none.
+- A run that record holds no frame for is measured in its region, as an edit's runs are.
+- When the record's render refuses, every run is measured in its region, so the other regions keep
+  their baselines and a refusing region stores its runs' source classes, as it does for an edit.
+
+Measured with rust, release, on a `let` statement: one snapshot, every `let` statement's snapshot,
+and the root's snapshot, against measuring each region alone:
+
+| source | one snapshot | every snapshot | the root's |
+|---|---|---|---|
+| 23 lines | 0.61 → 0.22 ms | 0.5 → 0.2 ms (1) | 0.9 → 0.3 ms |
+| 1,416 lines | 3.72 → 3.03 ms | 18.8 → 9.8 ms (77) | 82.6 → 22.5 ms |
+| 17,004 lines | 45.8 → 34.3 ms | 225 → 115 ms (924) | 1053 → 297 ms |
+
 ### Rendering snapshot data
 
 The seams between untouched neighbours come from geometry:

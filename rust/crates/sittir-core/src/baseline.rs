@@ -121,6 +121,7 @@ pub struct Baseline {
     opens: CountedMap<u32, (Option<Tally>, Tally)>,
     closes: CountedMap<u32, (Tally, Tally)>,
     frames: CountedMap<NodeIndex, FrameItems>,
+    entered: u32,
 }
 
 impl HeapBytes for Tally {
@@ -155,7 +156,7 @@ impl HeapBytes for FrameItems {
 
 impl HeapBytes for Baseline {
     fn heap_bytes(&self) -> usize {
-        let Self { opens, closes, frames } = self;
+        let Self { opens, closes, frames, entered: _ } = self;
         opens.heap_bytes() + closes.heap_bytes() + frames.heap_bytes()
     }
 }
@@ -177,6 +178,13 @@ impl Baseline {
     #[must_use]
     pub fn frame(&self, index: NodeIndex) -> Option<&FrameItems> {
         self.frames.get(&index)
+    }
+
+    /// The nodes the recording render entered: each node read from the tree
+    /// it rendered in a frame, and each source slice it wrote.
+    #[must_use]
+    pub fn entered(&self) -> u32 {
+        self.entered
     }
 }
 
@@ -261,6 +269,7 @@ impl<'a> Recorder<'a> {
     pub fn open_frame(&mut self, origin: Option<(NodeIndex, u32, u32)>) {
         self.frames.push(OpenFrame { index: origin.map(|(index, ..)| index), end: origin.map(|(.., end)| end), open: None, items: Vec::new() });
         if let Some((_, start, _)) = origin {
+            self.baseline.entered += 1;
             self.open(start);
         }
     }
@@ -364,6 +373,7 @@ impl<'a> Recorder<'a> {
     /// The text just written was a slice of the source of the node at
     /// descendant `index`: an item of the frame around it.
     pub fn wrote_slice(&mut self, index: NodeIndex) {
+        self.baseline.entered += 1;
         if self.deferring.is_some() {
             return;
         }

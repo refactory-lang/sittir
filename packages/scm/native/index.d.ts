@@ -25,6 +25,43 @@ export interface BaselineRun {
 }
 
 /**
+ * The work a parsed tree's layout reads have done so far, counted where it
+ * is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
+ * compares counts, never times. The addon's `layoutWork` answers every
+ * count.
+ */
+export interface LayoutWork {
+  /** The nodes the region-depth walks entered (`ParsedTree::region_depth`). */
+  regionNodes: number
+  /** The items the sibling lookups visited (`ParsedTree::siblings`). */
+  siblingItems: number
+  /**
+   * The nodes a region's render looked up outside the region, each found
+   * from the tree's root (`Region::node`).
+   */
+  regionFallbacks: number
+  /**
+   * The levels the lookup cursors of the tree's calls climbed to reach
+   * the nodes they looked up (`read::goto_from`), which bound the levels
+   * they descended.
+   */
+  cursorClimbs: number
+  /**
+   * The nodes the depth moves of the tree's slices walked, its depth
+   * members found once for every move (`DepthMembers::of`).
+   */
+  depthNodes: number
+  /**
+   * The nodes the renders of the tree's layout records entered, region
+   * records and full-depth ones alike: each node a render framed and
+   * each source slice it wrote (`baseline::Baseline::entered`).
+   */
+  recordNodes: number
+  /** The layout records rendered (`ParsedTree::records_rendered`). */
+  recordsRendered: number
+}
+
+/**
  * What the live trees hold natively and what their reports have told V8
  * (`tree_memory`), in bytes.
  */
@@ -315,10 +352,10 @@ export declare function layoutBaseline(treeId: TreeId, whole?: boolean | undefin
 
 /**
  * The work the live tree `treeId`'s layout reads have done so far
- * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
- * diagnostic. Refuses a tree that is not live.
+ * (`ParsedTree::layout_work`). A diagnostic. Refuses a tree that is
+ * not live.
  */
-export declare function layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
+export declare function layoutWork(treeId: TreeId): LayoutWork
 
 /**
  * The byte offsets of the lines under the node at `index` of the

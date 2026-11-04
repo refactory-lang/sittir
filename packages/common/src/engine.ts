@@ -86,10 +86,15 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
-/** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`). */
+/** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
 export interface LayoutWork {
 	readonly regionNodes: number;
 	readonly siblingItems: number;
+	readonly regionFallbacks: number;
+	readonly cursorClimbs: number;
+	readonly depthNodes: number;
+	readonly recordNodes: number;
+	readonly recordsRendered: number;
 }
 
 export interface BaselineRun {
@@ -263,8 +268,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	storedLayout(treeId: number): StoredLayout;
 	/**
-	 * The work tree `treeId`'s layout reads have done so far: the nodes the region-depth walks entered
-	 * and the items the sibling lookups visited. A diagnostic, so a growth test compares counts, not times.
+	 * The work tree `treeId`'s layout reads have done so far: the nodes its region-depth walks entered, the
+	 * items its sibling lookups visited, the nodes its region renders found outside their regions, the levels
+	 * its lookup cursors climbed, the nodes its depth moves walked, the nodes its layout records' renders
+	 * entered, and the records rendered. A diagnostic, so a growth test compares counts, not times.
 	 *
 	 * @throws when the tree is not live.
 	 */

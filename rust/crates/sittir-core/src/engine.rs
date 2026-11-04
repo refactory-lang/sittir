@@ -907,7 +907,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn snapshot_from<T: crate::read::ReadNode>(&self, cursor: &mut tree_sitter::TreeCursor<'_>, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
-        let seating = Seating(std::cell::RefCell::new(self.lookups()));
+        let mut lookups = self.lookups();
+        lookups.record = Some(lookups.enclosing(index));
+        let seating = Seating(std::cell::RefCell::new(lookups));
         let start = Span::of(&cursor.node()).start;
         let from = seating.0.borrow_mut().leading_start(index).map_or(start, |leading| leading.min(start));
         let mut ctx = self.read_ctx().with_sides(&seating).snapshot(self.snapshot_measure(index, from, holder)?);
@@ -1116,9 +1118,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.slot_siblings(index).unwrap_or_else(|| siblings_counting(&self.tree, index, |n| self.work.sibling_items(n)))
     }
 
-    /// The work the tree's layout reads have done so far.
+    /// The work the tree's layout reads have done so far, with the records
+    /// rendered (`records_rendered`).
     pub fn layout_work(&self) -> crate::layout::LayoutWork {
-        self.work.counts()
+        self.work.counts(crate::types::narrow(self.records_rendered()))
     }
 
     /// The children of the node the cursor is on as its read routes them,
@@ -1178,7 +1181,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// One call's lookups in this tree, from a cursor at its root
     /// (`Lookups`).
     fn lookups(&self) -> Lookups<'_, G> {
-        Lookups { tree: self, cursor: self.tree.walk() }
+        Lookups { tree: self, cursor: self.tree.walk(), record: None }
     }
 
     /// The source of the run at `at` among the table's runs, measured as
@@ -1487,6 +1490,12 @@ struct Lookups<'t, G: EngineGrammar> {
     tree: &'t ParsedTree<G>,
     /// Created at the tree's root.
     cursor: tree_sitter::TreeCursor<'t>,
+    /// The node whose full-depth record measures every run, when one record
+    /// does, as a snapshot's: the nearest node around the snapshot's own
+    /// (`enclosing`), so the record holds the runs at the snapshot's edges.
+    /// A region measures a run that record holds no frame for or cannot
+    /// render (`measured_record`).
+    record: Option<NodeIndex>,
 }
 
 impl<'t, G: EngineGrammar> Nodes<'t> for Lookups<'t, G> {
@@ -1631,7 +1640,10 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     /// frame writes after the first and before the second.
     fn written_separator(&mut self, index: NodeIndex, items: (NodeIndex, NodeIndex)) -> Option<String> {
         use crate::baseline::Written;
-        let record = self.recorded(index, REGION_DEPTH);
+        let record = match self.measured_record(index) {
+            Some(record) => record,
+            None => self.recorded(index, REGION_DEPTH),
+        };
         let frame = record.as_ref().as_ref().ok()?.frame(index)?;
         let first = frame.items.iter().position(|item| item.what == Written::Node(items.0))?;
         let last = frame.items[first..].iter().position(|item| item.what == Written::Node(items.1))? + first;
@@ -1666,6 +1678,16 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         self.node_slots(index).layouts.iter().filter(|layout| !layout.is_empty()).cloned().collect()
     }
 
+    /// The full-depth record of `record`, when these lookups measure in one,
+    /// it renders and it holds a frame for the node at `at`; the cursor is
+    /// left on that node.
+    fn measured_record(&mut self, at: NodeIndex) -> Option<Record> {
+        let root = self.record?;
+        let record = self.recorded(root, crate::read::Depth::All);
+        self.goto(at);
+        record.as_ref().as_ref().is_ok_and(|baseline| baseline.frame(at).is_some()).then_some(record)
+    }
+
     /// What the options in effect at read time render at the gaps under the
     /// node at descendant `index`, recorded on first use and kept: the node
     /// read `depth` levels down and rendered from its templates, with its
@@ -1684,18 +1706,27 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         let mut ctx = tree.read_ctx().with_sides(&sides);
         let render = crate::prepare::RenderContext { options: &tree.read_options, sources: &sides };
         let rendered = tree.grammar.render_read(&mut self.cursor, depth, &mut ctx, &render, &mut recorded);
+        tree.work.record_nodes(recorded.entered());
         let record = Arc::new(rendered.map(|_| recorded));
         let replaced = tree.records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
         tree.count_cached(&record, replaced.as_ref());
         record
     }
 
-    /// The region around the node at `index`: the subtree of its nearest
-    /// ancestor whose span reaches past the node's on both sides, or the
-    /// root's. Every gap beside the node lies inside that ancestor, and so
-    /// does every extra and `ERROR` its sides hold. The cursor ends on the
-    /// node.
+    /// The region around the node at `index`: the subtree of the node
+    /// `enclosing` it. The cursor ends on the node.
     fn around(&mut self, index: NodeIndex) -> Region<'t> {
+        let enclosing = self.enclosing(index);
+        let region = Region::new(&self.tree.tree, enclosing, self.cursor.node(), &self.tree.work);
+        self.goto(index);
+        region
+    }
+
+    /// The nearest node whose span reaches past the node at `index` on both
+    /// sides, the root where none does, the cursor left on it: it holds
+    /// every gap beside the node, and so every run, extra and `ERROR` of its
+    /// sides.
+    fn enclosing(&mut self, index: NodeIndex) -> NodeIndex {
         self.goto(index);
         let span = Span::of(&self.cursor.node());
         let mut climbed = 0;
@@ -1706,9 +1737,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
             climbed += 1;
         }
         self.tree.work.cursor_climbs(climbed);
-        let region = Region::new(&self.tree.tree, crate::read::index_of(&self.cursor), self.cursor.node(), &self.tree.work);
-        self.goto(index);
-        region
+        crate::read::index_of(&self.cursor)
     }
 
     /// What `ParsedTree::baseline_gap` answers.
@@ -1722,6 +1751,8 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
             let at = crate::read::index_of(&self.cursor);
             let record = if whole {
                 self.recorded(NodeIndex::ROOT, crate::read::Depth::All)
+            } else if let Some(record) = self.measured_record(at) {
+                record
             } else {
                 let depth = tree.region_depth(self.cursor.node(), run);
                 self.recorded(at, depth)

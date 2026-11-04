@@ -521,9 +521,9 @@ macro_rules! napi_engine {
         }
 
         /// The work the live tree `treeId`'s layout reads have done so far
-        /// (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
-        /// diagnostic. Refuses a tree that is not live.
-        #[::napi_derive::napi(ts_return_type = "{ regionNodes: number; siblingItems: number }")]
+        /// (`ParsedTree::layout_work`). A diagnostic. Refuses a tree that is
+        /// not live.
+        #[::napi_derive::napi]
         pub fn layout_work(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::LayoutWork> {
             with_live_node(&env, tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
         }
