@@ -112,8 +112,8 @@ function quotedIncludeClosure(file: string, seen: Set<string>): void {
 	}
 }
 
-function checkoutPath(repoRoot: string, file: string): string {
-	return relative(repoRoot, file).split(sep).join(posix.sep);
+export function checkoutPath(repoRoot: string, file: string, flavor: Pick<typeof posix, 'relative' | 'sep'> = { relative, sep }): string {
+	return flavor.relative(repoRoot, file).split(flavor.sep).join(posix.sep);
 }
 
 export function nativeInputs(repoRoot: string, grammar: string): Record<string, string> {

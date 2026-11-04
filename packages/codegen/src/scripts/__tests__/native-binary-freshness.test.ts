@@ -1,10 +1,11 @@
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, posix, relative, win32 } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type BuildSetting,
 	assertNativeBinaryFresh,
+	checkoutPath,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
 	llvmTool,
@@ -227,6 +228,13 @@ describe('a binary built elsewhere', () => {
 		} finally {
 			rmSync(consumer, { recursive: true, force: true });
 		}
+	});
+});
+
+describe('a path a stamp records from the checkout', () => {
+	it('is written with forward slashes on every host', () => {
+		expect(checkoutPath('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(checkoutPath('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
 	});
 });
 
