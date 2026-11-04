@@ -85,6 +85,12 @@ fn the_trivia_walk_of_a_chain_folds_the_same_bounds_at_each_level() {
 }
 
 #[test]
+fn the_trivia_table_of_a_chain_steps_through_the_same_children_at_each_level() {
+    let [one, two, four] = [100, 200, 400].map(|levels| parsed(&chain(levels)).trivia_table().steps());
+    assert_eq!(four - two, 2 * (two - one), "children stepped at 100, 200 and 400 levels: {one}, {two}, {four}");
+}
+
+#[test]
 fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
     use sittir_core::render::SourceTable;
     for levels in [100, 200, 400] {

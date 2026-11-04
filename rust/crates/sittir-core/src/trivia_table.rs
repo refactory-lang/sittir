@@ -227,6 +227,40 @@ struct Nodes {
     holder: Vec<bool>,
     holds: Vec<bool>,
     count: Vec<u32>,
+    last: Vec<u32>,
+    prev: Vec<u32>,
+    steps: std::cell::Cell<u64>,
+}
+
+/// The children of one node, from either end: forward by each child's
+/// descendant count, back by each child's previous sibling.
+struct Children<'n> {
+    nodes: &'n Nodes,
+    ends: Option<(u32, u32)>,
+}
+
+impl<'n> Children<'n> {
+    fn of(nodes: &'n Nodes, parent: u32) -> Self {
+        let last = nodes.last[parent as usize];
+        Children { nodes, ends: (last != NONE).then_some((parent + 1, last)) }
+    }
+}
+
+impl Iterator for Children<'_> {
+    type Item = u32;
+    fn next(&mut self) -> Option<u32> {
+        let (front, back) = self.ends?;
+        self.ends = (front != back).then(|| (front + self.nodes.count[front as usize], back));
+        Some(self.nodes.stepped(front))
+    }
+}
+
+impl DoubleEndedIterator for Children<'_> {
+    fn next_back(&mut self) -> Option<u32> {
+        let (front, back) = self.ends?;
+        self.ends = (front != back).then(|| (front, self.nodes.prev[back as usize]));
+        Some(self.nodes.stepped(back))
+    }
 }
 
 const NONE: u32 = u32::MAX;
@@ -309,6 +343,9 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         holder: vec![false; count],
         holds: vec![false; count],
         count: vec![0; count],
+        last: vec![NONE; count],
+        prev: vec![NONE; count],
+        steps: std::cell::Cell::new(0),
     };
     let mut tokens: Vec<Token> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
@@ -343,6 +380,8 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         if let Some(frame) = frames.last_mut() {
             nodes.parent[i] = frame.at_index;
             nodes.depth[i] = depth;
+            nodes.prev[i] = nodes.last[frame.at_index as usize];
+            nodes.last[frame.at_index as usize] = local;
             if let Some(token) = hidden(frame.at_index, frame.at, start) {
                 push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
             }
@@ -407,6 +446,11 @@ pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: NodeIndex) -> Vec<T
 }
 
 impl Nodes {
+    fn stepped(&self, child: u32) -> u32 {
+        self.steps.set(self.steps.get() + 1);
+        child
+    }
+
     fn common(&self, mut a: u32, mut b: u32) -> u32 {
         while self.depth[a as usize] > self.depth[b as usize] {
             a = self.parent[a as usize];
@@ -475,7 +519,7 @@ impl Nodes {
 
     /// The children of `parent` that hold trivia, in source order.
     fn holders(&self, parent: u32) -> impl DoubleEndedIterator<Item = u32> + '_ {
-        (parent + 1..parent + self.count[parent as usize]).filter(move |&at| self.parent[at as usize] == parent && self.holder[at as usize])
+        Children::of(self, parent).filter(move |&at| self.holder[at as usize])
     }
 
     /// `child`, or, while it is a list node, its first (for a `Leading`
@@ -549,11 +593,12 @@ pub struct TriviaTable {
     /// The heap the table holds, walked once it is assigned: an assigned
     /// table never changes.
     heap: usize,
+    steps: u64,
 }
 
 impl TriviaTable {
     fn walked(&self) -> usize {
-        let Self { sides, edge_items, unowned, runs, heap: _ } = self;
+        let Self { sides, edge_items, unowned, runs, heap: _, steps: _ } = self;
         sides.heap_bytes() + edge_items.heap_bytes() + unowned.heap_bytes() + runs.heap_bytes()
     }
 }
@@ -679,7 +724,15 @@ impl TriviaTable {
         parted.finish(&mut table.runs);
         excess.close_until(u32::MAX, &mut table);
         table.heap = table.walked();
+        table.steps = nodes.steps.get();
         table
+    }
+
+    /// The children the assignment stepped through to find the nodes beside
+    /// each gap and at each list's edges that take trivia.
+    #[must_use]
+    pub fn steps(&self) -> u64 {
+        self.steps
     }
 
     fn push(&mut self, place: Place, entry: Assigned) {
