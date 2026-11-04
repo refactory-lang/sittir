@@ -97,8 +97,14 @@ export interface ContainerUnwrap {
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
 	readonly list: boolean;
-	readonly members?: readonly { readonly name: string; readonly slot: ModelSlot }[];
+	readonly members?: readonly ContainerDataMember[];
 	readonly refined?: true;
+}
+
+export interface ContainerDataMember {
+	readonly name: string;
+	readonly slot: ModelSlot;
+	readonly list?: boolean;
 }
 
 export interface StoppedRead {
@@ -304,16 +310,29 @@ function declaredContainersOf(input: GrammarInput, node: ModelNode): readonly Co
 }
 
 function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['members']> {
-	const members = new Map<string, { readonly name: string; readonly slot: ModelSlot }>();
+	const members = new Map<string, ContainerDataMember>();
 	for (const container of declaredContainersOf(input, node)) {
 		const resolved = containerMembers(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
 		for (const { name, slot, flag } of resolved.members) {
 			const own = slot === undefined || flag ? undefined : node.slots.find((candidate) => candidate.name === slot.name);
-			if (own !== undefined && !members.has(name)) members.set(name, { name, slot: own });
+			if (own === undefined || members.has(name)) continue;
+			const list = declaredListAt(input.vocabulary, container.kind, resolved.targets, name);
+			members.set(name, { name, slot: own, ...(list === undefined ? {} : { list }) });
 		}
 	}
 	return [...members.values()];
+}
+
+function declaredListAt(vocabulary: Vocabulary, kind: string, targets: readonly string[], name: string): boolean | undefined {
+	const lists = targets.flatMap((target) => {
+		const declared = vocabulary.members(target).get(name);
+		return declared === undefined || declared.arity === 'either' ? [] : [{ target, list: declared.arity === 'list' }];
+	});
+	const listed = lists.filter((at) => at.list);
+	if (listed.length > 0 && listed.length < lists.length)
+		throw new Error(`bindings: ${kind}'s @${name} is a list at ${listed.map((at) => at.target).join(', ')} and one value at ${lists.filter((at) => !at.list).map((at) => at.target).join(', ')}; one member has one arity`);
+	return lists[0]?.list;
 }
 
 const textOfKind = (model: SlotModel, kind: string): string | undefined => {

@@ -3368,7 +3368,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }

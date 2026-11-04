@@ -2412,6 +2412,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],
@@ -2739,6 +2740,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],
@@ -27155,6 +27157,7 @@ export const build: PortableBuildTable = {
 														}
 													],
 													multiple: true,
+													list: true,
 													seats: [
 														{
 															at: [408, 'decorators'],

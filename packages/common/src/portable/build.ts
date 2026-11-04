@@ -44,6 +44,7 @@ interface Placed {
 	readonly value: unknown;
 	readonly mount?: PortableContainer;
 	readonly key?: string;
+	readonly beside?: Readonly<Record<string, unknown>>;
 	readonly host?: { readonly structure: PortableStructure; readonly seats: readonly PortableSeat[] };
 	readonly delimited?: true;
 }
@@ -108,15 +109,19 @@ const holdsOne = (route: PortableMemberStep, seat: PortableSeat): boolean => rou
 
 const sameContainer = (a: PortableContainer, b: PortableContainer): boolean => a.builder === b.builder && a.key === b.key;
 
-const flattened = (containers: readonly PortableContainer[]): { readonly key?: string; readonly containers: readonly PortableContainer[] } => {
+const flattened = (containers: readonly PortableContainer[]): { readonly into?: PortableContainer; readonly containers: readonly PortableContainer[] } => {
 	const kept: PortableContainer[] = [];
-	let key: string | undefined;
+	let into: PortableContainer | undefined;
 	for (const container of containers) {
 		if (container.flatten !== true) kept.push(container);
-		else if (kept.length === 0) key = container.key;
-		else kept.push({ ...kept.pop()!, key: container.key });
+		else if (kept.length === 0) into = container;
+		else {
+			const outer = kept.pop()!;
+			const members = [...(outer.members ?? []), ...(container.members ?? [])];
+			kept.push({ ...outer, key: container.key, ...(members.length === 0 ? {} : { members }) });
+		}
 	}
-	return key === undefined ? { containers: kept } : { key, containers: kept };
+	return into === undefined ? { containers: kept } : { into, containers: kept };
 };
 
 const extending = (seats: readonly PortableSeat[], base: PortableSeat): readonly PortableSeat[] => {
@@ -213,13 +218,14 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		delimiter?: number
 	): Placed => {
 		const [head, ...after] = all;
-		const { key, containers } = flattened(head?.mounted === undefined ? all : after);
+		const { into, containers } = flattened(head?.mounted === undefined ? all : after);
 		const listed = delimiter !== undefined && !empty && containers.at(-1)?.builder !== undefined;
 		const placed = {
 			value: empty ? (containers.length === 0 && head?.mounted !== undefined ? undefined : wrapEmpty(containers)) : wrap(value, containers, fill, listed ? delimiter : undefined),
 			...(listed ? { delimited: true as const } : {})
 		};
-		const keyed = key === undefined ? placed : { ...placed, key };
+		const beside = into === undefined || empty ? {} : (fill?.(into) ?? {});
+		const keyed = into === undefined ? placed : { ...placed, key: into.key, ...(Object.keys(beside).length === 0 ? {} : { beside }) };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
 	const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
@@ -441,7 +447,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const head = placed.mount!;
 			const target = frame.input === undefined ? enter(frame, head.builder!, head.mounted!, true) : undefined;
 			if (target === undefined) throw new Error(`portable build: ${path} builds ${head.builder} beside other members`);
-			if (placed.value !== undefined) set(target.frame, placed.key ?? head.key, placed.value, path);
+			if (placed.value !== undefined) setPlaced(target.frame, placed.key ?? head.key, placed, path);
+		};
+		const setPlaced = (frame: Frame, key: string, placed: Placed, path: string): void => {
+			set(frame, key, placed.value, path);
+			for (const [at, value] of Object.entries(placed.beside ?? {})) set(frame, at, value, path);
 		};
 		const preset = (frame: Frame, step: PortablePreset, path: string): void => {
 			const last = step.steps.at(-1)!;
@@ -469,7 +479,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 							const held = value[owned.name];
 							if (held === undefined) return [];
 							if (owned.steps.length !== 1) throw new Error(`portable build: ${value.$path}'s ${owned.name} sits ${owned.steps.length} steps into ${container.builder}`);
-							return [[owned.steps[0]!.key, unmounted(valueOf(held, owned, value.$path), owned, value.$path)]];
+							if (!admits(owned, held)) refuseValue(value.$path, owned.name, held, [owned]);
+							const given = Array.isArray(held) && !takesMany(owned) ? held[0] : held;
+							if (given === undefined) return [];
+							return [[owned.steps[0]!.key, unmounted(valueOf(given, owned, value.$path), owned, value.$path)]];
 						})
 					);
 				const containers = within(built.seat ?? seats[0]!).slice(depth);
@@ -539,7 +552,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const placed = valueOf(value, member, path, delimiter);
 			if (placed.host !== undefined) build(placed.host.structure, placed.host.seats, owner);
 			else if (placed.mount !== undefined) mountOn(owner, placed, path);
-			else set(owner, placed.key ?? key, placed.value, path);
+			else setPlaced(owner, placed.key ?? key, placed, path);
 			return placed.delimited === true;
 		};
 		const spelledParts = (spelling: string, parts: PortableDecimalParts, arm: PortableBuildArm): ReadonlyMap<string, string> | undefined => {

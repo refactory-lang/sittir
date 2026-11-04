@@ -318,7 +318,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					const builder = mount?.builder ?? builderOf(kind);
 					const outer = mount !== undefined && within.length > 0 ? within.at(-1) : undefined;
 					const mounted = mount === undefined ? undefined : within.length === 0 ? mount.mounted : outer?.mounted !== undefined ? mount.mounted : undefined;
-					const members = (unwrap?.members ?? []).flatMap(({ name, slot }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }] })?.member ?? []);
+					const members = (unwrap?.members ?? []).flatMap(({ name, slot, list }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }], ...(list === undefined ? {} : { list }) })?.member ?? []);
 					const container: PortableContainer = {
 						...(builder === undefined ? {} : { builder }),
 						key: element.propertyName,

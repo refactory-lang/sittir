@@ -619,7 +619,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -645,7 +646,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -1242,7 +1244,8 @@
                 "attribute_item"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }

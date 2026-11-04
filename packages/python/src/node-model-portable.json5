@@ -2864,7 +2864,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -2892,7 +2893,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }

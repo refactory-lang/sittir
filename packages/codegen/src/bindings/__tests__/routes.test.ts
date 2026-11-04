@@ -634,6 +634,29 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(envelopeTargets(model, wildcard!, vocabOf)).toEqual(['declaration.method', 'declaration.class']);
 	});
 
+	it("stamps a container's data member with the arity its element paths declare, and refuses paths that disagree", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		for (const kind of ['tag_x', 'fn_x', 'cls_x']) model.set(kind, node(kind));
+		model.set('holder_x', node('holder_x', [slot('tag', ['tag_x'], { required: false }), slot('definition', ['fn_x', 'cls_x'])]));
+		const declaring = (arities: Readonly<Record<string, VocabularyMember>>): Vocabulary => ({
+			...EMPTY_VOCABULARY,
+			members: (path) => new Map(arities[path] === undefined ? [] : [['tags', arities[path]!]])
+		});
+		const input = async (arities: Readonly<Record<string, VocabularyMember>>): Promise<GrammarInput> => ({
+			...(await grammar('(fn_x) @declaration.method\n(cls_x) @declaration.class\n(holder_x (tag_x)? @tags (_) @element)')),
+			model,
+			vocabulary: declaring(arities)
+		});
+		const list: VocabularyMember = { optional: true, flag: false, arity: 'list' };
+		const one: VocabularyMember = { optional: true, flag: false };
+		expect(resolveRoutes(await input({ 'declaration.method': list, 'declaration.class': list })).containers.get('holder_x')?.members).toEqual([
+			{ name: 'tags', slot: expect.objectContaining({ name: 'tag', multiple: false }), list: true }
+		]);
+		await expect(input({ 'declaration.method': list, 'declaration.class': one }).then(resolveRoutes)).rejects.toThrow(
+			"bindings: holder_x's @tags is a list at declaration.method and one value at declaration.class; one member has one arity"
+		);
+	});
+
 	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
