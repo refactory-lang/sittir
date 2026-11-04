@@ -42,8 +42,8 @@ pub fn height_over(tallest: Option<u16>) -> u16 {
 ///
 /// The budget covers sittir's own frames. The calls below the deepest level
 /// whose stack doesn't grow with depth run past it: napi into V8 (a garbage
-/// collection included), the allocator, `memcpy`, and std's panic and
-/// formatting code. Node's default V8 stack limit on the main thread is
+/// collection included), the allocator, `memcpy`, std's panic and formatting
+/// code, and the unwinder. Node's default V8 stack limit on the main thread is
 /// 984 KiB, which leaves them about 920 KiB.
 pub const ENCODE_STACK_BUDGET: usize = 64 * 1024;
 
