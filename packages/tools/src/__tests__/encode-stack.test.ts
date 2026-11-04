@@ -252,6 +252,21 @@ describe('encodeStack', () => {
 		]);
 	});
 
+	it('holds a class only while the addon has nothing that refutes it', async () => {
+		const drop = '<napi::bindgen_runtime::js_values::arraybuffer::Uint32Array as core::ops::drop::Drop>::drop';
+		const setter = '<napi::bindgen_runtime::js_values::arraybuffer::Uint32Array>::with_external_data::<sittir_x::Notify>';
+		const graph = [
+			...GRAPH.flatMap((line) => (line.endsWith(`<${NAMES.b}>:`) ? [line, `    1208: \tbl 0x0 <${drop}>`] : [line])),
+			...fn(0x2000, drop, ['stp x29, x30, [sp, #-16]!', 'blr x8'], [])
+		];
+		const kept = encodeStack(await disassemble(graph), HEIGHTS);
+		expect(kept.reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[1]]);
+		expect(kept.refuted).toEqual([]);
+		const refuted = encodeStack(await disassemble([...graph, ...fn(0x2100, setter, ['ret'], [])]), HEIGHTS);
+		expect(refuted.reached.map((call) => call.class)).toEqual([undefined]);
+		expect(refuted.refuted).toEqual([{ class: DYNAMIC_CLASSES[1], by: setter }]);
+	});
+
 	it('refuses a build whose names it cannot read', async () => {
 		await expect(disassemble(GRAPH).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
 	});

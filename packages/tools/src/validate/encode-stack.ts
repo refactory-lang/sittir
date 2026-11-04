@@ -71,6 +71,12 @@ export interface DynamicClass {
 	readonly name: string;
 	readonly reason: string;
 	readonly within: RegExp;
+	readonly refutedBy?: RegExp;
+}
+
+export interface Refuted {
+	readonly class: DynamicClass;
+	readonly by: string;
 }
 
 export interface ReachedCall extends UnresolvedCall {
@@ -84,6 +90,7 @@ export interface EncodeStack {
 	readonly oneTime: number;
 	readonly unresolved: readonly UnresolvedCall[];
 	readonly reached: readonly ReachedCall[];
+	readonly refuted: readonly Refuted[];
 }
 
 export interface CodecBounds {
@@ -278,6 +285,13 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 			'runs once, at the frame that faults or formats, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
 		within:
 			/^(?:<&?)?(?:std::panicking::|core::fmt::write\b|std::sys::sync::once::|std::alloc::rust_oom\b|std::thread::current::|__rustc::__rust_start_panic\b|core::ptr::drop_glue::<panic_unwind::|std::io::stdio::|std::sys::thread_local::destructors::)/
+	},
+	{
+		name: 'napi typed-array external-data finalizer (never set: no caller of with_external_data)',
+		reason:
+			'the drop calls finalizer_notify, which only with_external_data sets; the addon has no with_external_data, so the pointer is null and the call never runs',
+		within: /^<napi::bindgen_runtime::js_values::arraybuffer::\w+ as core::ops::drop::Drop>::drop\b/,
+		refutedBy: /::with_external_data\b/
 	}
 ];
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) # 0x([0-9a-f]+)\b/;
@@ -804,13 +818,18 @@ export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): Enc
 		[...measured].filter((fn) => !roots.includes(fn)),
 		() => true
 	);
+	const refuted = DYNAMIC_CLASSES.flatMap((known) => {
+		const by = known.refutedBy && names.find((fn) => known.refutedBy!.test(fn));
+		return by ? [{ class: known, by }] : [];
+	});
+	const holding = DYNAMIC_CLASSES.filter((known) => !refuted.some((r) => r.class === known));
 	const outside = [...extent]
 		.filter((fn) => !measured.has(fn))
 		.sort()
 		.flatMap((fn) =>
-			dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: DYNAMIC_CLASSES.find((c) => c.within.test(fn)) }))
+			dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: holding.find((c) => c.within.test(fn)) }))
 		);
-	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved, reached: outside };
+	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved, reached: outside, refuted };
 }
 
 export function heightKinds(nodeRs: string): Set<string> {
@@ -924,6 +943,8 @@ export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 				const count = stack.reached.filter((call) => call.class === known).length;
 				if (count) console.log(`  ${count} reached dynamic calls, ${known.name}: ${known.reason}`);
 			}
+			for (const { class: known, by } of stack.refuted)
+				console.log(`  no longer a class, ${known.name}: the addon has ${short(by)}`);
 			for (const { fn, offset, ins } of stack.reached.filter((call) => !call.class))
 				console.log(`  unread call the encode reaches, in no class, ${short(fn)}+0x${offset.toString(16)}: ${ins}`);
 			if (status === 'ok' && !opts.paths) continue;
