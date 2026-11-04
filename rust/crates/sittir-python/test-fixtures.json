@@ -198509,7 +198509,7 @@
     "wrappedText": "_ = (\"default\")"
   },
   {
-    "expectedOutput": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\n\\\n\\\n",
+    "expectedOutput": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\\\n\\\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -198999,13 +198999,12 @@
                 126
               ],
               "trailing": [
-                124,
                 {
+                  "$after": "",
                   "$before": " ",
                   "$text": "\\\n",
                   "$type": 106
                 },
-                116,
                 {
                   "$text": "\\\n",
                   "$type": 106
@@ -199062,13 +199061,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (map_rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) default: (integer_decimal_plain)) item: (map_rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (expression_list item: (identifier) item: (identifier) item: (identifier) item: (identifier) item: (identifier)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
-    "expectedSourceOut": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\n\\\n\\\n",
+    "expectedSourceOut": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\\\n\\\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "wrappedOffset": 0,
-    "wrappedText": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\n\\\n\\\n"
+    "wrappedText": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\\\n\\\n"
   },
   {
     "expectedOutput": "def e((a,b)):\n  return (a,b)\n",
@@ -218603,8 +218602,8 @@
                     "$_layout": {
                       "trivia": {
                         "trailing": [
-                          124,
                           {
+                            "$after": "",
                             "$before": " ",
                             "$text": "\\\n",
                             "$type": 106
@@ -218731,8 +218730,8 @@
                 "$_layout": {
                   "trivia": {
                     "trailing": [
-                      124,
                       {
+                        "$after": "",
                         "$before": " ",
                         "$text": "\\\n",
                         "$type": 106
@@ -218855,8 +218854,8 @@
               "$_layout": {
                 "trivia": {
                   "trailing": [
-                    124,
                     {
+                      "$after": "",
                       "$before": " ",
                       "$text": "\\\n",
                       "$type": 106
@@ -218974,8 +218973,8 @@
           "$_layout": {
             "trivia": {
               "trailing": [
-                124,
                 {
+                  "$after": "",
                   "$before": " ",
                   "$text": "\\\n",
                   "$type": 106
@@ -219089,8 +219088,8 @@
         "$_layout": {
           "trivia": {
             "trailing": [
-              124,
               {
+                "$after": "",
                 "$before": " ",
                 "$text": "\\\n",
                 "$type": 106

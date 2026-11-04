@@ -559,8 +559,9 @@ enum Place {
 
 /// A run of whitespace between two tokens or entries that a side takes,
 /// with or without a line break, and empty where they touch: its bytes, the
-/// side, its owner (`Assigned::Layout`), and whether it carries the layout
-/// written between the tokens around it. The file's two edges are none.
+/// side, its owner (`Assigned::Layout`), whether it carries the layout
+/// written between the tokens around it, and whether an entry's adjacency
+/// spells it (`TriviaTable::adjacency`). The file's two edges are none.
 ///
 /// Gaps that only a zero-width token parts (an automatic semicolon, a
 /// dedent) are one gap to a render, which writes nothing for the token: the
@@ -574,11 +575,60 @@ pub struct LayoutRun {
     pub side: TriviaSide,
     pub owner: NodeIndex,
     pub carries: bool,
+    pub spelled: bool,
 }
 
 impl HeapBytes for LayoutRun {
     fn heap_bytes(&self) -> usize {
-        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _ } = self;
+        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _, spelled: _ } = self;
+        0
+    }
+}
+
+/// The in-line runs an entry the source fixes in place carries before and
+/// after its own bytes, up to the tokens beside it on its line: an
+/// `ERROR`'s, since a seam cannot be trusted beside what did not parse, and
+/// a line continuation's that has whitespace beside it, whose line ends
+/// inside it. A side is empty where the entry touches the text beside it,
+/// and `None` where a line break or the file's edge lies between them, or
+/// where the run is that of an entry before it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Adjacency {
+    pub before: Option<Span>,
+    pub after: Option<Span>,
+}
+
+impl Adjacency {
+    /// The adjacency of the entry spanning `span` of `source`; `taken` when
+    /// the run before it is the entry's before it.
+    fn of(source: &str, span: Span, taken: bool) -> Self {
+        let bytes = source.as_bytes();
+        let in_line = |byte: u8| byte == b' ' || byte == b'\t';
+        let breaks = |byte: u8| matches!(byte, b'\n' | b'\r');
+        let std::ops::Range { start, end } = span.range();
+        let mut after = end;
+        while after < bytes.len() && in_line(bytes[after]) {
+            after += 1;
+        }
+        let mut before = start;
+        while before > 0 && in_line(bytes[before - 1]) {
+            before -= 1;
+        }
+        Self {
+            before: (before > 0 && !breaks(bytes[before - 1]) && !taken).then(|| Span { start: crate::types::narrow(before), end: span.start }),
+            after: (after < bytes.len() && !breaks(bytes[after])).then(|| Span { start: span.end, end: crate::types::narrow(after) }),
+        }
+    }
+
+    /// Whether either side holds whitespace.
+    fn holds_whitespace(self) -> bool {
+        [self.before, self.after].into_iter().flatten().any(|run| run.start < run.end)
+    }
+}
+
+impl HeapBytes for Adjacency {
+    fn heap_bytes(&self) -> usize {
+        let Self { before: _, after: _ } = self;
         0
     }
 }
@@ -590,6 +640,7 @@ pub struct TriviaTable {
     edge_items: BTreeMap<(NodeIndex, TriviaSide), NodeIndex>,
     unowned: Vec<NodeIndex>,
     runs: Vec<LayoutRun>,
+    adjacency: BTreeMap<NodeIndex, Adjacency>,
     /// The heap the table holds, walked once it is assigned: an assigned
     /// table never changes.
     heap: usize,
@@ -598,8 +649,8 @@ pub struct TriviaTable {
 
 impl TriviaTable {
     fn walked(&self) -> usize {
-        let Self { sides, edge_items, unowned, runs, heap: _, steps: _ } = self;
-        sides.heap_bytes() + edge_items.heap_bytes() + unowned.heap_bytes() + runs.heap_bytes()
+        let Self { sides, edge_items, unowned, runs, adjacency, heap: _, steps: _ } = self;
+        sides.heap_bytes() + edge_items.heap_bytes() + unowned.heap_bytes() + runs.heap_bytes() + adjacency.heap_bytes()
     }
 }
 
@@ -627,6 +678,20 @@ impl TriviaTable {
                 }
             }
         }
+        let mut taken = None;
+        for &index in &entries {
+            let at = local(index) as usize;
+            let span = Span { start: nodes.start[at], end: nodes.end[at] };
+            let adjacency = Adjacency::of(source, span, taken == Some(span.start));
+            taken = None;
+            if nodes.kind[at] == KindId::ERROR || (kinds.layout.contains(&nodes.kind[at]) && adjacency.holds_whitespace()) {
+                taken = adjacency.after.map(|run| run.end);
+                table.adjacency.insert(index, adjacency);
+            }
+        }
+        let mut spelled: Vec<Span> = table.adjacency.values().flat_map(|adjacency| [adjacency.before, adjacency.after]).flatten().collect();
+        spelled.sort_unstable_by_key(|run| (run.start, run.end));
+        let spelled = |start: u32, end: u32| spelled[..spelled.partition_point(|run| run.start <= start)].iter().rev().take(2).any(|run| end <= run.end);
         let mut structure = Structure::new(tree, source, base, kinds.depth, &tokens, unit);
         let mut excess = Excess::default();
         let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
@@ -691,7 +756,7 @@ impl TriviaTable {
                     Place::Side(node, side) if !edge => {
                         let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
                         let run = RunId(crate::types::narrow(table.runs.len()));
-                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true });
+                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true, spelled: spelled(at, until) });
                         parted.placed(&mut table.runs, joined);
                         table.push(place, Assigned::Layout { run, start: at, end: until, owner: global(owner), depth });
                     }
@@ -709,7 +774,7 @@ impl TriviaTable {
                 if kinds.layout.contains(&nodes.kind[local(index) as usize]) {
                     table.push(place(left, right, false, None), Assigned::Member(index));
                 } else {
-                    let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
+                    let entry = if nodes.kind[local(index) as usize] == KindId::ERROR { Assigned::Error(index) } else { Assigned::Extra(index) };
                     let placed = place(left, right, left_row == Some(row(start)), Some(kinds));
                     led = match placed {
                         Place::Side(node, TriviaSide::Leading) => Some(node),
@@ -752,6 +817,14 @@ impl TriviaTable {
     #[must_use]
     pub fn edge_item(&self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.edge_items.get(&(index, side)).copied()
+    }
+
+    /// The adjacency of the entry at `index` when the source fixes it in
+    /// place (`Adjacency`): an `ERROR`'s always, a line continuation's when
+    /// whitespace lies beside it.
+    #[must_use]
+    pub fn adjacency(&self, index: NodeIndex) -> Option<Adjacency> {
+        self.adjacency.get(&index).copied()
     }
 
     /// The entries the assignment gives `side` of the node at `index`, in source order.
@@ -963,10 +1036,4 @@ impl Excess {
             self.current = open.restore;
         }
     }
-}
-
-fn is_error_index(tree: &tree_sitter::Tree, index: NodeIndex) -> bool {
-    let mut cursor = tree.walk();
-    crate::read::goto(&mut cursor, index);
-    cursor.node().is_error()
 }

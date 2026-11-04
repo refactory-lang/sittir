@@ -320,15 +320,20 @@ pub enum LineHold {
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     /// Text that keeps its source adjacency on both sides, an `ERROR`
-    /// region's: `text` with the source's in-line runs `before` and `after`
-    /// it. No seam that stays on the line is written on either side, so the
-    /// runs are the gaps beside it. A pending line break still writes, and
-    /// a line break beats the run on its side. `at`, the bytes of its tree's
-    /// source the text spans when read from a live tree, anchors it in a
-    /// recording render as a slice is anchored.
-    fn verbatim(&mut self, before: &str, text: &str, after: &str, at: Option<crate::types::Span>) -> RenderResult {
+    /// region's: `text` with the source's runs `before` and `after` it, each
+    /// `Some` where the source spells that side in-line (empty where the
+    /// text touches what is beside it) and `None` where a line break or the
+    /// file's edge lies between. The runs are the gaps beside it. On a side
+    /// spelled in-line, no seam below trivia strength is written, a line
+    /// break included, and a whitespace entry at trivia strength (one stored
+    /// or written on the side) replaces the run. On a side that breaks, a
+    /// line break writes and a seam that stays on the line does not, unless
+    /// a whitespace entry spells it. `at`, the bytes of its tree's source the
+    /// text spans when read from a live tree, anchors it in a recording
+    /// render as a slice is anchored.
+    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
         let _ = at;
-        self.text(&[before, text, after].concat())
+        self.text(&[before.unwrap_or_default(), text, after.unwrap_or_default()].concat())
     }
     /// The next text is a leaf whose pattern takes layout text only of the
     /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
@@ -405,6 +410,13 @@ pub trait RenderSink {
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);
+    }
+    /// A join between trivia entries, or between an entry and its owner: a
+    /// seam at trivia strength, as `trivia_seam`'s, but no whitespace entry,
+    /// so beside verbatim text it yields to the source's adjacency as a
+    /// template's seam does (`verbatim`).
+    fn trivia_join(&mut self, gap: crate::layout_kinds::LayoutKinds) {
+        self.trivia_seam(gap, None);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds, and move the depth as the node's template would

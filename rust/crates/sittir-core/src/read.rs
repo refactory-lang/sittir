@@ -209,8 +209,8 @@ pub struct UnitRead<T> {
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
     /// An extra or an `ERROR` of the source: its kind, the bytes it spans and,
-    /// for an `ERROR`, the in-line runs before and after it it carries.
-    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<(Span, Span)> },
+    /// for an entry the source fixes in place, its adjacency.
+    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<crate::trivia_table::Adjacency> },
     /// A layout run of the source.
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.

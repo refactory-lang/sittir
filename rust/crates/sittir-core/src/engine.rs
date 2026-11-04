@@ -241,35 +241,6 @@ pub struct ErrorRegion {
     pub span: Span,
 }
 
-/// The in-line runs an entry the source fixes in place carries before and
-/// after its own bytes, up to the tokens beside it on its line: an `ERROR`'s,
-/// since a seam cannot be trusted beside what did not parse, and a line
-/// continuation's, whose line ends inside it. A run that touches a line break stays layout,
-/// and the run between two `ERROR`s is the earlier one's. An empty span is
-/// no run.
-fn error_adjacency(node: &tree_sitter::Node<'_>, source: &str) -> (Span, Span) {
-    let bytes = source.as_bytes();
-    let in_line = |byte: u8| byte == b' ' || byte == b'\t';
-    let own = Span::of(node);
-    let std::ops::Range { mut start, mut end } = own.range();
-    let mut after = end;
-    while after < bytes.len() && in_line(bytes[after]) {
-        after += 1;
-    }
-    if after > end && after < bytes.len() && !matches!(bytes[after], b'\n' | b'\r') {
-        end = after;
-    }
-    let mut before = start;
-    while before > 0 && in_line(bytes[before - 1]) {
-        before -= 1;
-    }
-    let taken = node.prev_sibling().is_some_and(|prev| prev.is_error() && Span::of(&prev).range().end == before);
-    if before < start && before > 0 && !matches!(bytes[before - 1], b'\n' | b'\r') && !taken {
-        start = before;
-    }
-    (Span { start: crate::types::narrow(start), end: own.start }, Span { start: own.end, end: crate::types::narrow(end) })
-}
-
 /// Every ERROR and MISSING region of `tree`, in source order. The walk enters
 /// only nodes that hold an error, and never an ERROR node: a region nested in
 /// another is part of it.
@@ -1354,8 +1325,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// read-time options as its member (`Lookups::deviation`), the layout
     /// members, and the depth members. A member the source fixes in place
     /// with its adjacency (a line continuation with whitespace beside it,
-    /// `error_adjacency`) is no layout: it is an entry of the source, as an
-    /// `ERROR` is.
+    /// `TriviaTable::adjacency`) is no layout: it is an entry of the source,
+    /// as an `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
         let assigned = self.trivia_table().side(index, side);
         if assigned.is_empty() {
@@ -1384,7 +1355,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .map(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
-                            let adjacent = Some(error_adjacency(&node, &self.source));
+                            let adjacent = self.trivia_table().adjacency(at);
                             let text = TriviaText::of_source(kind, &self.source, span, adjacent, None);
                             SideEntry::Source { entry: entry(SlotValue::Node(G::Trivia::from_text(text))), kind, span, adjacent }
                         })
@@ -1399,7 +1370,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .and_then(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
-                            let adjacent = Some(error_adjacency(&node, &self.source));
+                            let adjacent = self.trivia_table().adjacency(at);
                             let member = entry(SlotValue::Node(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
                             Some(if member.is_layout() { SideEntry::Layout(member) } else { SideEntry::Source { entry: member, kind, span, adjacent } })
                         })
@@ -1547,9 +1518,14 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     /// shebang's line end) counts, back to the run before it at most.
     ///
     /// A run in a gap of a list slot (`node_slots`) measures against the
-    /// class the slot stores on its side instead, where it stores one.
+    /// class the slot stores on its side instead, where it stores one. A run
+    /// an entry's adjacency spells (`LayoutRun::spelled`) stores none: the
+    /// adjacency is its one carrier.
     fn deviation(&mut self, at: RunId) -> Option<G::Trivia> {
         let tree = self.tree;
+        if tree.trivia_table().run(at).spelled {
+            return None;
+        }
         let text = tree.run_text(at);
         let kind = tree.layout_kind(text)?;
         let class = self.slot_class(at).unwrap_or_else(|| self.baseline_class(at));
@@ -1587,7 +1563,8 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
 
     /// The list slots of the node at `index`, measured on first use and
     /// kept (`list_slots::slot_gaps`). Each side of a slot's gaps takes the
-    /// class most of its runs' sources have, a tie going to the class the
+    /// class most of its runs' sources have, a run an entry's adjacency
+    /// spells (`LayoutRun::spelled`) not among them, a tie going to the class the
     /// first gap's baseline writes when it is among the tied, else to the
     /// first gap's; the slot stores it only where it differs from that
     /// baseline class. Its separator is the one most of its gaps hold, a tie
@@ -1610,7 +1587,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         let mut measured = NodeSlots::default();
         for (slot, SlotGaps { key, gaps }) in slots.iter().enumerate() {
             let mut side = |side: SlotSide, of: fn(&SlotGap) -> Option<RunId>| {
-                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| table.run(at).carries).collect();
+                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| table.run(at).carries && !table.run(at).spelled).collect();
                 measured.runs.extend(carried.iter().map(|&at| (at, (slot, side))));
                 let classes: Vec<(KindId, KindId)> = carried.iter().filter_map(|&at| Some((tree.layout_kind(tree.run_text(at))?, self.baseline_class(at)?))).collect();
                 let baseline = classes.first()?.1;
