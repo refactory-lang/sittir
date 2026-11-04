@@ -39,6 +39,7 @@ export interface Disassembled {
 export interface Slots {
 	readonly internal: ReadonlyMap<number, number>;
 	readonly symbols: ReadonlyMap<number, string>;
+	readonly tls: ReadonlySet<number>;
 }
 
 export interface Image extends Slots {
@@ -66,12 +67,23 @@ export interface UnresolvedCall extends Unresolved {
 	readonly fn: string;
 }
 
+export interface DynamicClass {
+	readonly name: string;
+	readonly reason: string;
+	readonly within: RegExp;
+}
+
+export interface ReachedCall extends UnresolvedCall {
+	readonly class: DynamicClass | undefined;
+}
+
 export interface EncodeStack {
 	readonly level: StackPath;
 	readonly above: StackPath;
 	readonly trivia: StackPath;
 	readonly oneTime: number;
 	readonly unresolved: readonly UnresolvedCall[];
+	readonly reached: readonly ReachedCall[];
 }
 
 export interface CodecBounds {
@@ -95,7 +107,9 @@ const WHOLE = new RegExp(
 );
 const LOOP = new RegExp(String.raw`::codec::wire::run_encode(?:::<.*>)?${HASH}`);
 const CALLBACK = new RegExp(String.raw`::\w+_c_callback${HASH}`);
-const TRIVIA = /^<(?:\w+::)*Vec<sittir_core::trivia::TriviaEntry</;
+const TRIVIA = new RegExp(
+	String.raw`^<(?:\w+::)*Vec<sittir_core::trivia::TriviaEntry<.*> as napi::bindgen_runtime::js_values::ToNapiValue>::to_napi_value${HASH}`
+);
 const PROBE = /chkstk|probestack/;
 const CALL_OPS = new Set(['bl', 'call', 'callq']);
 const TAIL_OPS = /^(?:b|b\.\w+|cbn?z|tbn?z|jmpq?|j[a-z]{1,3})$/;
@@ -251,7 +265,21 @@ const LEGACY: Readonly<Record<string, string>> = Object.fromEntries(
 );
 const RELATIVE = /^([0-9a-f]+) R_\w+_RELATIVE\s+\*ABS\*\+0x([0-9a-f]+)$/;
 const SYMBOL_SLOT = /^([0-9a-f]+) R_\w+_(?:GLOB_DAT|JUMP_SLOT)\s+(.+?)$/;
-const NO_IMAGE: Image = { internal: new Map(), symbols: new Map(), int32: () => undefined };
+const NO_IMAGE: Image = { internal: new Map(), symbols: new Map(), tls: new Set(), int32: () => undefined };
+const TLS_SLOT = /^([0-9a-f]+) R_\w+_TLSDESC\b/;
+const TLS_PAGE = /^adrp (x\d+), 0x([0-9a-f]+)\b/;
+const TLS_LOAD = /^ldr x1, \[(x\d+), #0x([0-9a-f]+)\]$/;
+const TLS_ARGUMENT = /^add x0, (x\d+), #0x([0-9a-f]+)$/;
+
+export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
+	{
+		name: 'std panic and formatting',
+		reason:
+			'runs once, at the frame that faults or formats, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
+		within:
+			/^(?:<&?)?(?:std::panicking::|core::fmt::write\b|std::sys::sync::once::|std::alloc::rust_oom\b|std::thread::current::|__rustc::__rust_start_panic\b|core::ptr::drop_glue::<panic_unwind::|std::io::stdio::|std::sys::thread_local::destructors::)/
+	}
+];
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) # 0x([0-9a-f]+)\b/;
 const TABLE_ENTRY = /^movslq \(%(\w+),%\w+,4\), %(\w+)$/;
 const TABLE_ADD = /^addq %(\w+), %(\w+)$/;
@@ -285,13 +313,16 @@ export function elfInt32(bytes: Buffer): (address: number) => number | undefined
 export function gotSlots(lines: Iterable<string>): Slots {
 	const internal = new Map<number, number>();
 	const symbols = new Map<number, string>();
+	const tls = new Set<number>();
 	for (const line of lines) {
 		const relative = RELATIVE.exec(line.trim());
 		if (relative) internal.set(Number.parseInt(relative[1]!, 16), Number.parseInt(relative[2]!, 16));
 		const symbol = SYMBOL_SLOT.exec(line.trim());
 		if (symbol) symbols.set(Number.parseInt(symbol[1]!, 16), symbol[2]!);
+		const descriptor = TLS_SLOT.exec(line.trim());
+		if (descriptor) tls.add(Number.parseInt(descriptor[1]!, 16));
 	}
-	return { internal, symbols };
+	return { internal, symbols, tls };
 }
 
 interface Collected {
@@ -300,6 +331,7 @@ interface Collected {
 	readonly targets: (readonly [string, string])[];
 	readonly slots: (readonly [string, number, Unresolved])[];
 	readonly addresses: (readonly [string, number, Unresolved])[];
+	readonly descriptors: (readonly [number, Unresolved])[];
 	readonly unresolved: Unresolved[];
 	readonly jumps: Unresolved[];
 }
@@ -476,6 +508,15 @@ function heldStates(body: readonly Instruction[], image: Image): readonly Held[]
 	}
 }
 
+function tlsDescriptor(body: readonly Instruction[], at: number): number | undefined {
+	if (body[at]!.ins !== 'blr x1' || at < 3) return undefined;
+	const argument = TLS_ARGUMENT.exec(body[at - 1]!.ins);
+	const load = TLS_LOAD.exec(body[at - 2]!.ins);
+	const page = TLS_PAGE.exec(body[at - 3]!.ins);
+	if (!argument || !load || !page || argument[1] !== page[1] || load[1] !== page[1] || argument[2] !== load[2]) return undefined;
+	return Number.parseInt(page[2]!, 16) + Number.parseInt(load[2]!, 16);
+}
+
 function readBody(fn: Collected, body: readonly Instruction[], image: Image): void {
 	const holding = heldStates(body, image);
 	for (const [at, { address, ins }] of body.entries()) {
@@ -484,7 +525,9 @@ function readBody(fn: Collected, body: readonly Instruction[], image: Image): vo
 		const op = ins.split(' ', 1)[0]!;
 		const rip = RIP_BRANCH.exec(ins);
 		const reg = REG_BRANCH.exec(ins);
-		if (rip) fn.slots.push([rip[1]!, Number.parseInt(rip[2]!, 16), site]);
+		const descriptor = tlsDescriptor(body, at);
+		if (descriptor !== undefined) fn.descriptors.push([descriptor, site]);
+		else if (rip) fn.slots.push([rip[1]!, Number.parseInt(rip[2]!, 16), site]);
 		else if (reg) {
 			const value = holding[at]?.get(wide(reg[2]!));
 			if (value?.kind === 'slot') fn.slots.push([reg[1]!, value.at, site]);
@@ -533,7 +576,7 @@ export async function disassemble(
 			flush();
 			const start = Number.parseInt(header[1]!, 16);
 			byAddress.set(start, header[2]!);
-			current = collected.get(header[2]!) ?? { start, prologue: [], targets: [], slots: [], addresses: [], unresolved: [], jumps: [] };
+			current = collected.get(header[2]!) ?? { start, prologue: [], targets: [], slots: [], addresses: [], descriptors: [], unresolved: [], jumps: [] };
 			collected.set(header[2]!, current);
 			continue;
 		}
@@ -554,7 +597,7 @@ export async function disassemble(
 	flush();
 	if (!arch) throw new Error('the disassembly names no x86-64 or arm64 file format');
 	const functions = new Map<string, Disassembled>();
-	for (const [name, { prologue, targets, slots: through, addresses, unresolved, jumps }] of collected) {
+	for (const [name, { prologue, targets, slots: through, addresses, descriptors, unresolved, jumps }] of collected) {
 		const calls = new Set<string>();
 		const tails = new Set<string>();
 		const unread = [...unresolved];
@@ -575,6 +618,7 @@ export async function disassemble(
 			if (callee !== undefined) edge(op, callee);
 			else unread.push(at);
 		}
+		for (const [slot, at] of descriptors) if (!image.tls.has(slot)) unread.push(at);
 		functions.set(name, { prologue, calls, tails, unresolved: unread.sort((a, b) => a.offset - b.offset), jumps });
 	}
 	return { arch, functions };
@@ -755,7 +799,18 @@ export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): Enc
 	const unresolved = [...measured]
 		.sort()
 		.flatMap((fn) => dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at })));
-	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved };
+	const extent = reached(
+		dis,
+		[...measured].filter((fn) => !roots.includes(fn)),
+		() => true
+	);
+	const outside = [...extent]
+		.filter((fn) => !measured.has(fn))
+		.sort()
+		.flatMap((fn) =>
+			dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: DYNAMIC_CLASSES.find((c) => c.within.test(fn)) }))
+		);
+	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved, reached: outside };
 }
 
 export function heightKinds(nodeRs: string): Set<string> {
@@ -831,6 +886,11 @@ function describe(label: string, path: StackPath): string[] {
 	return [`  ${label} ${path.bytes}`, ...steps, ...(path.to ? [`    next\t${short(path.to)}`] : [])];
 }
 
+const unread = (stack: EncodeStack): readonly UnresolvedCall[] => [
+	...stack.unresolved,
+	...stack.reached.filter((call) => !call.class)
+];
+
 export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 	const bounds = codecBounds(readFileSync(CODEC, 'utf8'));
 	const grammars = opts.grammars?.length ? opts.grammars.map(assertGrammar) : stableGrammars();
@@ -855,11 +915,17 @@ export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 	else {
 		for (const { grammar, addon, stack, largestLimit: largest, fits } of reports) {
 			const total = bounds.limit * stack.level.bytes + stack.oneTime;
-			const status = stack.unresolved.length ? 'UNREAD' : fits ? 'ok' : 'OVER';
+			const status = unread(stack).length ? 'UNREAD' : fits ? 'ok' : 'OVER';
 			console.log(
 				`${status} ${grammar} ${basename(addon)}: ${bounds.limit} × ${stack.level.bytes} + ${stack.oneTime} = ${total} of ${bounds.budget} (largest limit ${largest})`
 			);
 			for (const { fn, offset, ins } of stack.unresolved) console.log(`  unread call ${short(fn)}+0x${offset.toString(16)}: ${ins}`);
+			for (const known of DYNAMIC_CLASSES) {
+				const count = stack.reached.filter((call) => call.class === known).length;
+				if (count) console.log(`  ${count} reached dynamic calls, ${known.name}: ${known.reason}`);
+			}
+			for (const { fn, offset, ins } of stack.reached.filter((call) => !call.class))
+				console.log(`  unread call the encode reaches, in no class, ${short(fn)}+0x${offset.toString(16)}: ${ins}`);
 			if (status === 'ok' && !opts.paths) continue;
 			for (const line of [
 				...describe('level', stack.level),
@@ -874,10 +940,10 @@ export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 		console.error(
 			`encode-stack: RECURSION_LIMIT ${bounds.limit} is over ENCODE_STACK_BUDGET for ${over.map((report) => `${report.grammar} (largest ${report.largestLimit})`).join(', ')}`
 		);
-	const unread = reports.filter((report) => report.stack.unresolved.length);
-	if (unread.length)
+	const unproven = reports.filter((report) => unread(report.stack).length);
+	if (unproven.length)
 		console.error(
-			`encode-stack: indirect calls on an encode path that the disassembly can't resolve, so the bound is unproven, in ${unread.map((report) => `${report.grammar} (${report.stack.unresolved.length})`).join(', ')}`
+			`encode-stack: indirect calls the encode reaches that the disassembly can't resolve and no class covers, so the bound is unproven, in ${unproven.map((report) => `${report.grammar} (${unread(report.stack).length})`).join(', ')}`
 		);
-	return over.length || unread.length ? 1 : 0;
+	return over.length || unproven.length ? 1 : 0;
 }

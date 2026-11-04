@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 import {
 	codecBounds,
+	DYNAMIC_CLASSES,
 	disassemble,
 	elfInt32,
 	encodeStack,
@@ -233,8 +234,43 @@ describe('encodeStack', () => {
 		expect(stack.unresolved).toEqual([{ fn: NAMES.a, offset: 0xa, ins: 'blr x8' }]);
 	});
 
+	it('classifies each indirect call the encode reaches off its measured paths, and names the ones no class covers', async () => {
+		const panic = 'std::panicking::begin_panic_handler';
+		const leaf = 'sittir_x::leaf';
+		const graph = [
+			...GRAPH.flatMap((line) =>
+				line.endsWith(`<${NAMES.b}>:`) ? [line, `    1208: \tbl 0x0 <${panic}>`, `    120c: \tbl 0x0 <${leaf}>`] : [line]
+			),
+			...fn(0x2000, panic, ['stp x29, x30, [sp, #-16]!', 'blr x8'], []),
+			...fn(0x2100, leaf, ['stp x29, x30, [sp, #-16]!', 'blr x9'], [])
+		];
+		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		expect(stack.unresolved).toEqual([]);
+		expect(stack.reached).toEqual([
+			{ fn: leaf, offset: 4, ins: 'blr x9', class: undefined },
+			{ fn: panic, offset: 4, ins: 'blr x8', class: DYNAMIC_CLASSES[0] }
+		]);
+	});
+
 	it('refuses a build whose names it cannot read', async () => {
 		await expect(disassemble(GRAPH).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
+	});
+});
+
+describe('disassemble on arm64', () => {
+	it('takes a TLS descriptor call for the dynamic linker its relocation names', async () => {
+		const listing = [
+			'x.node:\tfile format elf64-littleaarch64',
+			'',
+			'Disassembly of section .text:',
+			'',
+			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'ldr x1, [x0, #0x220]', 'add x0, x0, #0x220', 'blr x1'], [])
+		];
+		const relocated = gotSlots(['0000000000005220 R_AARCH64_TLSDESC        *ABS*']);
+		const read = await disassemble(listing, { ...relocated, int32: () => undefined });
+		expect(read.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		const unread = await disassemble(listing, image());
+		expect(unread.functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['blr x1']);
 	});
 });
 
