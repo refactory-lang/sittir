@@ -186,6 +186,7 @@
 (yield) @expression.yield
 (yield_from_clause (_) @expression) @expression.yield.delegate
 (interpolation) @expression.interpolation
+(format_expression) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
 (set_comprehension) @expression.comprehension.set
 (dictionary_comprehension) @expression.comprehension.dictionary

@@ -116,6 +116,7 @@ export interface PortableIds {
 		| TSKindId.DictionaryComprehension
 		| TSKindId.ExpressionList
 		| TSKindId.ExpressionStatementTuple
+		| TSKindId.FormatExpression
 		| TSKindId.FormatSpecifier
 		| TSKindId.GeneratorExpression
 		| TSKindId.Interpolation
@@ -222,7 +223,11 @@ export interface PortableIds {
 	'expression.comprehension.map': TSKindId.DictionaryComprehension;
 	'expression.comprehension.set': TSKindId.SetComprehension;
 	'expression.conditional': TSKindId.ConditionalExpression;
-	'expression.interpolation': TSKindId.FormatSpecifier | TSKindId.Interpolation | TSKindId.TypeConversion;
+	'expression.interpolation':
+		| TSKindId.FormatExpression
+		| TSKindId.FormatSpecifier
+		| TSKindId.Interpolation
+		| TSKindId.TypeConversion;
 	'expression.interpolation.conversion': TSKindId.TypeConversion;
 	'expression.interpolation.format': TSKindId.FormatSpecifier;
 	'expression.lambda': TSKindId.Lambda | TSKindId.LambdaWithinForInClause;
@@ -2750,6 +2755,7 @@ const table: PortableTable = {
 				TSKindId.DictionaryComprehension,
 				TSKindId.ExpressionList,
 				TSKindId.ExpressionStatementTuple,
+				TSKindId.FormatExpression,
 				TSKindId.FormatSpecifier,
 				TSKindId.GeneratorExpression,
 				TSKindId.Interpolation,
@@ -2874,7 +2880,7 @@ const table: PortableTable = {
 		'expression.comprehension.set': { ids: [TSKindId.SetComprehension], exact: true },
 		'expression.conditional': { ids: [TSKindId.ConditionalExpression], exact: true },
 		'expression.interpolation': {
-			ids: [TSKindId.FormatSpecifier, TSKindId.Interpolation, TSKindId.TypeConversion],
+			ids: [TSKindId.FormatExpression, TSKindId.FormatSpecifier, TSKindId.Interpolation, TSKindId.TypeConversion],
 			exact: true
 		},
 		'expression.interpolation.conversion': { ids: [TSKindId.TypeConversion], exact: true },
@@ -3557,6 +3563,7 @@ const table: PortableTable = {
 		[TSKindId.FloatScientific]: [{ path: 'literal.number.float.scientific', within: [], test: [] }],
 		[TSKindId.ForInClause]: [{ path: 'clause.comprehension.for', within: [], test: [] }],
 		[TSKindId.ForStatement]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
+		[TSKindId.FormatExpression]: [{ path: 'expression.interpolation', within: [], test: [] }],
 		[TSKindId.FormatSpecifier]: [{ path: 'expression.interpolation.format', within: [], test: [] }],
 		[TSKindId.FunctionDefinition]: [{ path: 'declaration.function', within: [], test: [] }],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],
@@ -3940,6 +3947,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 		trailingComma: { op: 'present', slots: { '244': 3 } }
 	},
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
+	[TSKindId.FormatExpression]: { debug: { op: 'present', slots: { '351': 1 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
 	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '352': 0 } } },
@@ -3998,6 +4006,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	222: { index: { trailingComma: { types: [], kinds: [267] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	250: { expression: { trailingComma: { types: [], kinds: [181] } } },
+	254: { elements: { debug: { types: [], kinds: [351] } } },
 	286: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
 	293: { value: { trailingComma: { types: [], kinds: [181] } } },
 	295: { value: { trailingComma: { types: [], kinds: [181] } } },
@@ -4028,6 +4037,9 @@ declare module './types.js' {
 	}
 	interface ForStatement {
 		readonly __flags__?: 'async';
+	}
+	interface FormatExpression {
+		readonly __flags__?: 'debug';
 	}
 	interface FunctionDefinition {
 		readonly __flags__?: 'async';
@@ -4103,6 +4115,9 @@ declare module './types.js' {
 	}
 	interface Interpolation {
 		readonly __slotFlags__?: { readonly expression: 'trailingComma' };
+	}
+	interface FormatSpecifier {
+		readonly __slotFlags__?: { readonly elements: 'debug' };
 	}
 	interface ComprehensionClauses {
 		readonly __slotFlags__?: { readonly contents: 'async' | 'trailingComma' };

@@ -75,6 +75,7 @@ export const build: PortableBuildTable = {
 		floatScientific: 'config',
 		forInClause: 'config',
 		forStatement: 'config',
+		formatExpression: 'config',
 		formatSpecifier: 'spread',
 		formatSpecifierText: 'text',
 		functionDefinition: 'config',
@@ -8918,7 +8919,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.interpolation': {
-			root: true,
+			root: false,
 			arms: [
 				{
 					kind: 250,
@@ -9012,7 +9013,103 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['expression']
 						}
-					]
+					],
+					holders: [[248, 'contents']]
+				},
+				{
+					kind: 351,
+					builder: 'formatExpression',
+					members: [
+						{
+							name: 'expression',
+							steps: [
+								{
+									key: 'expression'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [351, 'expression'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 181, 201, 203, 205, 206, 207, 208, 209,
+										210, 213, 214, 218, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248,
+										255, 256, 257, 287
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeConversion',
+							steps: [
+								{
+									key: 'typeConversion',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [351, 'typeConversion'],
+									kinds: [65],
+									leaf: 'typeConversion',
+									texts: [65],
+									pattern: {
+										source: '^(?:(?:![a-z]))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'formatSpecifier',
+							steps: [
+								{
+									key: 'formatSpecifier',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [351, 'formatSpecifier'],
+									kinds: [254]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						debug: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'debug',
+											optional: true
+										}
+									],
+									kind: 40
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['expression']
+						}
+					],
+					holders: [[254, 'elements']]
 				}
 			]
 		},

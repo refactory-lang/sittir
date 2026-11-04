@@ -4250,6 +4250,65 @@
         }
       ]
     },
+    "format_expression": {
+      "vocab": "expression.interpolation",
+      "read": [
+        {
+          "vocab": "expression.interpolation",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "expression"
+            }
+          ]
+        },
+        {
+          "name": "debug",
+          "route": "slot",
+          "slot": "debug",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "debug"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "typeConversion",
+          "route": "slot",
+          "slot": "type_conversion",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "type_conversion"
+            }
+          ]
+        },
+        {
+          "name": "formatSpecifier",
+          "route": "slot",
+          "slot": "format_specifier",
+          "path": [
+            {
+              "owner": "format_expression",
+              "slot": "format_specifier"
+            }
+          ]
+        }
+      ]
+    },
     "format_specifier": {
       "vocab": "expression.interpolation.format",
       "read": [
@@ -8185,7 +8244,7 @@
       {
         "depth": 2,
         "paths": 76,
-        "kinds": 80,
+        "kinds": 81,
         "refinements": 5
       },
       {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computePortableAdmission, formatAdmission } from '../src/index.ts';
 
-const CEILING = { overAdmitting: 4, untyped: 46 } as const;
+const CEILING = { overAdmitting: 3, untyped: 46 } as const;
 
 describe('portable admission ratchet', () => {
 	it(`${CEILING.overAdmitting} vocabulary sites admit a kind no read gives, and ${CEILING.untyped} read sites admit unknown`, async () => {
