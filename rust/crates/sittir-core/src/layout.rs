@@ -168,9 +168,10 @@ pub struct LayoutWork {
     /// The nodes a region's render looked up outside the region, each found
     /// from the tree's root (`Region::node`).
     pub region_fallbacks: u32,
-    /// The levels the lookup cursors of the tree's calls climbed and
-    /// descended to reach the nodes they looked up (`read::goto_from`).
-    pub cursor_steps: u32,
+    /// The levels the lookup cursors of the tree's calls climbed to reach
+    /// the nodes they looked up (`read::goto_from`), which bound the levels
+    /// they descended.
+    pub cursor_climbs: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -179,7 +180,7 @@ pub struct LayoutWorkCounter {
     region_nodes: std::sync::atomic::AtomicU64,
     sibling_items: std::sync::atomic::AtomicU64,
     region_fallbacks: std::sync::atomic::AtomicU64,
-    cursor_steps: std::sync::atomic::AtomicU64,
+    cursor_climbs: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -195,13 +196,13 @@ impl LayoutWorkCounter {
         self.region_fallbacks.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
     }
 
-    pub fn cursor_steps(&self, n: u32) {
-        self.cursor_steps.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    pub fn cursor_climbs(&self, n: u32) {
+        self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
 
     pub fn counts(&self) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_steps: read(&self.cursor_steps) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs) }
     }
 }
 

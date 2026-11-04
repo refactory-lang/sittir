@@ -625,7 +625,7 @@ pub fn descendant_count(node: &Node<'_>) -> u32 {
 }
 
 /// Moves a cursor created at the tree's root to the node at `index`, and
-/// answers the steps it took (`goto_from`).
+/// answers the levels it climbed (`goto_from`).
 pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
     goto_from(cursor, NodeIndex::ROOT, index)
 }
@@ -635,8 +635,10 @@ pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
 /// node the cursor was created at. From where the cursor is, the move climbs
 /// to the nearest node holding `index` and descends from there, so it costs
 /// the path between the two nodes, not the path from the root. Answers the
-/// steps it took, each a level climbed or descended. The one call of
-/// `TreeCursor::goto_descendant`.
+/// levels it climbed: over a run of moves, a cursor descends as many levels
+/// as it climbs, plus the depth it ends at. The one call of
+/// `TreeCursor::goto_descendant`; it never asks the cursor its depth, which
+/// counts the levels above it.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
 pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
     let goal = index.index() - from.index();
@@ -648,9 +650,8 @@ pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex)
     while !holds(cursor) && cursor.goto_parent() {
         climbed += 1;
     }
-    let holder = cursor.depth();
     cursor.goto_descendant(goal);
-    climbed + cursor.depth().saturating_sub(holder)
+    climbed
 }
 
 /// What the first pass learns about one child.

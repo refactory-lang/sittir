@@ -3,7 +3,7 @@
 //! each side alone: a side whose baseline renders a region that holds sides
 //! of its own seats both, the inner while the outer is being measured. Each
 //! lookup moves the cursor from where the last one left it, so a deeper tree
-//! costs its lookups no more steps a level.
+//! costs its lookups no more climbing a level.
 
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::layout::LayoutWork;
@@ -68,8 +68,8 @@ fn chain_work(levels: usize) -> LayoutWork {
 }
 
 #[test]
-fn a_snapshot_s_lookups_take_the_same_steps_at_each_level_of_a_chain() {
+fn a_snapshot_s_lookups_climb_the_same_levels_at_each_level_of_a_chain() {
     let [one, two, four] = [100, 200, 400].map(chain_work);
-    assert_eq!(four.cursor_steps - two.cursor_steps, 2 * (two.cursor_steps - one.cursor_steps), "steps at 100, 200 and 400 levels: {}, {}, {}", one.cursor_steps, two.cursor_steps, four.cursor_steps);
+    assert_eq!(four.cursor_climbs - two.cursor_climbs, 2 * (two.cursor_climbs - one.cursor_climbs), "climbs at 100, 200 and 400 levels: {}, {}, {}", one.cursor_climbs, two.cursor_climbs, four.cursor_climbs);
     assert_eq!(four.region_fallbacks, 0);
 }

@@ -1466,13 +1466,13 @@ impl<'t, G: EngineGrammar> Nodes<'t> for Lookups<'t, G> {
 }
 
 impl<'t, G: EngineGrammar> Lookups<'t, G> {
-    /// Moves the cursor to the node at descendant `index`, counting its
-    /// steps (`LayoutWork::cursor_steps`); false, the cursor unmoved, past
+    /// Moves the cursor to the node at descendant `index`, counting the
+    /// levels it climbs (`LayoutWork::cursor_climbs`); false, the cursor unmoved, past
     /// the tree's last node.
     fn goto(&mut self, index: NodeIndex) -> bool {
         let named = names_node(&self.tree.tree, index);
         if named {
-            self.tree.work.cursor_steps(crate::read::goto(&mut self.cursor, index));
+            self.tree.work.cursor_climbs(crate::read::goto(&mut self.cursor, index));
         }
         named
     }
@@ -1679,7 +1679,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
             }
             climbed += 1;
         }
-        self.tree.work.cursor_steps(climbed);
+        self.tree.work.cursor_climbs(climbed);
         let region = Region::new(&self.tree.tree, crate::read::index_of(&self.cursor), self.cursor.node(), &self.tree.work);
         self.goto(index);
         region
@@ -1794,7 +1794,7 @@ impl<'t> Nodes<'t> for &Region<'t> {
     fn node(&mut self, index: NodeIndex) -> Option<tree_sitter::Node<'t>> {
         if (self.at..self.end).contains(&index) {
             let mut cursor = self.cursor.borrow_mut();
-            self.work.cursor_steps(crate::read::goto_from(&mut cursor, self.at, index));
+            self.work.cursor_climbs(crate::read::goto_from(&mut cursor, self.at, index));
             return Some(cursor.node());
         }
         self.work.region_fallbacks(1);
