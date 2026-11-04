@@ -201,7 +201,9 @@ export interface PortableDecimalParts {
  * member it states, by the member's kinds and whether it is a list. `empty` names the list members a structure that leaves them out builds
  * as `[]`: each route of such a member reaches its slot through steps the arm always holds. A `literal` arm's kind is a token whose meaning is a value: it reads as its
  * path, with the `$value` its claim declares, never as its text. A `sole` arm builds a list its claim reads by its own separator: where the
- * `member` holds one item, the list is built with `delimiter`, the separator that makes one item that list.
+ * `member` holds one item, the list is built with `delimiter`, the separator that makes one item that list. A `content` arm builds a lexed
+ * identifier: it reads as its path with the text of its `content` slot as the `$value`, and builds by passing that text to its builder, which
+ * writes the affix its path stands for.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -220,6 +222,7 @@ export interface PortableBuildArm {
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
 	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
 	readonly sole?: { readonly member: string; readonly delimiter: number };
+	readonly content?: string;
 }
 
 /** A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. */

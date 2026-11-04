@@ -27,7 +27,6 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'integer_literal_decimal scalar',
 		'integer_literal_hex scalar',
 		'integer_literal_octal scalar',
-		'metavariable unclaimed',
 		'method_declaration flags',
 		'raw_string_literal unclaimed',
 		'token_repetition_pattern_text unclaimed',

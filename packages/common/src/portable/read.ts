@@ -228,6 +228,11 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 			if (scalar !== undefined) return { $path: path, $value: scalar };
 		}
 		if (arms.some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
+		const content = arms.find((arm) => arm.content !== undefined)?.content;
+		if (content !== undefined) {
+			const spelled = textOf(accessed(node, content));
+			return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
+		}
 		const text = nodeText(node);
 		if (text !== undefined) return rebuilds(kind, seats) ? text : kept(node, { reason: 'text' }, carried);
 		if (arms.every((arm) => arm.members.length === 0 && (arm.seated !== undefined || (arm.builder !== undefined && table.builders[arm.builder] === 'text'))))

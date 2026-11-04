@@ -3160,6 +3160,6 @@
     "severity": "warning",
     "canProceed": true,
     "ownerKind": "private_property_identifier",
-    "message": "identifier: private_property_identifier reads as a vocabulary path, but no arm builds it (nothing fills private_property_identifier.content), so every read carries it"
+    "message": "identifier: private_property_identifier reads as a vocabulary path, but no arm builds it, so every read carries it"
   }
 ]

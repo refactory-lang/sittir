@@ -24,6 +24,7 @@ import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.t
 import type { NodeMap } from '../../../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledLexedPattern,
 	AssembledPattern,
 	AssembledSupertype,
 	isMultiple,
@@ -41,7 +42,7 @@ import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interio
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
-import { finalSeatOf, registeredSlots } from '../../shared.ts';
+import { finalSeatOf, lexedContentSlot, registeredSlots } from '../../shared.ts';
 
 export type PickDiagnosticCode =
 	| 'portable-pick-undecided'
@@ -269,7 +270,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const admitted = (slot: AssembledNonterminal): readonly string[] => membershipKindsOf(valueParseKindsOf(slot), nodeMap);
 	const textLeaf = (kind: string): boolean => {
 		const node = nodeOf(kind);
-		return node instanceof AssembledPattern || (node !== undefined && transparentEnvelopeTextLeaves(node, nodeMap).length > 0);
+		return node instanceof AssembledPattern || node instanceof AssembledLexedPattern || (node !== undefined && transparentEnvelopeTextLeaves(node, nodeMap).length > 0);
 	};
 	const requiredSlot = (owner: string, slot: string): boolean => modelSlot(owner, slot)?.required === true;
 	const optional = (owner: string, slot: AssembledNonterminal): { readonly optional?: true } => (requiredSlot(owner, slot.name) ? {} : { optional: true });
@@ -840,6 +841,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const parts: PortableDecimalParts = Object.fromEntries(DECIMAL_PARTS.flatMap((part) => (memberAt(part) === undefined ? [] : [[part, memberAt(part)!]])));
 			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : (whole ?? parts);
 			const armMembers = completed.map(({ member }) => member);
+			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? lexedContentSlot(node)?.propertyName : undefined;
 			const owners = ownersOf(armMembers);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
@@ -871,7 +873,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						presets: deepest,
 						flags: flagSteps,
 						...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } }),
-						...soleOf(entry, armMembers)
+						...soleOf(entry, armMembers),
+						...(content === undefined ? {} : { content })
 					}
 				}
 			];

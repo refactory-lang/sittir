@@ -705,6 +705,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				else if (typeof arm.numeric === 'string') values.set(arm.numeric, scalar);
 				else for (const [name, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) values.set(name, part);
 			}
+			if (arm.content !== undefined) {
+				if (typeof structure.$value !== 'string') throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);
+				frame.input = structure.$value;
+			}
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);

@@ -243,7 +243,9 @@ members.
 
 A lexed pattern is one token, so its slots are text facets of that token. The
 leaf rule already covers them, since a slot that holds text alone routes
-nothing, so a lexed pattern needs no exception to it.
+nothing, so a lexed pattern needs no exception to it. A lexed identifier's
+portable text is its content (`x`, not `$x`): its affix comes from its
+vocabulary path or from the flag that reads it.
 
 ### The read side does not drill
 

@@ -11,6 +11,13 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	it('reads a metavariable as its path with its name as the value, and builds the $ back', () => {
+		expect(readFirst('struct S<$t>;\n')).toMatchObject({ $path: 'declaration.struct.unit', typeParameters: [{ $path: 'identifier.metavariable', $value: 't' }] });
+		expect(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never)).toBeDefined();
+		expect(String(runtime.engine.render(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never) as never))).toBe('$x');
+		expect(roundTrip('struct S<$t>;\n')).toBe('struct S<$t>;\n');
+	});
+
 	const visibilities = [
 		['pub(super)', 'public.parent', undefined],
 		['pub(in super)', 'public.restricted', 'super'],

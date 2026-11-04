@@ -44112,8 +44112,18 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'identifier.metavariable': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 127,
+					builder: 'metavariable',
+					members: [],
+					presets: [],
+					flags: {},
+					content: 'name',
+					when: []
+				}
+			]
 		},
 		'identifier.qualified': {
 			root: false,
