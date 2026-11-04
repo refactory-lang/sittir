@@ -1680,7 +1680,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Modifier.Extern<G>
 				| G['pattern']
 				| string
 				| G['type'];
