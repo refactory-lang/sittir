@@ -1422,16 +1422,33 @@ declare module './declaration.ts' {
 				>;
 			}
 			interface Parameters<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter
-				.Parameters<G> {}
+				.Parameters<G> {
+				readonly bounds?: gate.In<
+					G,
+					features.BoundedQuantification,
+					boundedQuantification.Declaration.TypeParameter.Parameters<G>['bounds']
+				>;
+			}
 			interface Value<G extends GrammarContext<G>> extends constGenerics.Declaration.TypeParameter.Value<G> {
 				readonly attributes?: gate.In<
 					G,
 					features.Attributes,
 					attributes.Declaration.TypeParameter.Value<G>['attributes']
 				>;
+				readonly bounds?: gate.In<
+					G,
+					features.BoundedQuantification,
+					boundedQuantification.Declaration.TypeParameter.Value<G>['bounds']
+				>;
 			}
 			interface Variadic<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter
-				.Variadic<G> {}
+				.Variadic<G> {
+				readonly bounds?: gate.In<
+					G,
+					features.BoundedQuantification,
+					boundedQuantification.Declaration.TypeParameter.Variadic<G>['bounds']
+				>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>

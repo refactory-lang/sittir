@@ -89,11 +89,13 @@ export namespace Declaration {
 		export interface Parameters<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
 			// claimed by p
 			readonly $kind: 'declaration.type_parameter.parameters';
+			readonly const?: never;
 			readonly name: G['identifier'];
 		}
 		export interface Variadic<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
 			// claimed by p
 			readonly $kind: 'declaration.type_parameter.variadic';
+			readonly const?: never;
 			readonly name: G['identifier'];
 		}
 	}
