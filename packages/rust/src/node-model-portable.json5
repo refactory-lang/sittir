@@ -21789,7 +21789,7 @@
           "super",
           "crate",
           "identifier",
-          "qualified_identifier",
+          "scoped_identifier",
           "use_as_clause",
           "use_list",
           "scoped_use_list",

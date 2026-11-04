@@ -4732,7 +4732,7 @@
       "container": {
         "slot": "name",
         "kinds": [
-          "qualified_identifier",
+          "dotted_name",
           "aliased_import"
         ],
         "terminals": [],
@@ -5790,7 +5790,7 @@
       "container": {
         "slot": "name",
         "kinds": [
-          "qualified_identifier",
+          "dotted_name",
           "aliased_import"
         ],
         "terminals": [],

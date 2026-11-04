@@ -106,7 +106,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 				...seatShapesOf(s)
 			})),
 			subtypes: n.subtypes ?? [],
-			elementKinds: n.elementKinds ?? [],
+			elementKinds: n.modelType === 'list' ? (n.slots ?? []).filter((s) => s.multiple === true).flatMap(slotKindsOf) : [],
 			enumMembers: n.members ?? [],
 			text: n.text ?? null,
 			pattern: n.pattern ?? null,
