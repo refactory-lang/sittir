@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, probe/master-release]
     tags: ["v*"]
   pull_request:
     branches-ignore: ["sub**"]
@@ -19,6 +19,23 @@ env:
   CARGO_HTTP_MULTIPLEXING: "false"
 
 jobs:
+  pin-installs-its-components:
+    name: rustup installs the pin's components from rust-toolchain.toml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: install the pin from the file alone, and find llvm-strip in it
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup --version
+          rustup toolchain list
+          rustup toolchain install || rustup show
+          rustup show
+          bin="$(rustc --print sysroot)/lib/rustlib/$(rustc -vV | sed -n 's/^host: //p')/bin"
+          ls -1 "$bin"
+          test -x "$bin/llvm-strip"
+          test -x "$bin/llvm-objdump"
   CI:
     name: CI
     runs-on: ubuntu-latest
