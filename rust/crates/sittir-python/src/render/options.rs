@@ -627,10 +627,10 @@ pub const SITE_DICTIONARY_SPLAT_PATTERN_MAP_REST_PATTERN_BEFORE: SiteId = SiteId
 pub const SITE_SPLAT_PATTERN_DICTIONARY_MAP_REST_PATTERN_BEFORE: SiteId = SiteId(618);
 pub const SITE_DICTIONARY_SPLAT_PATTERN_MAP_REST_PATTERN_AFTER: SiteId = SiteId(619);
 pub const SITE_SPLAT_PATTERN_DICTIONARY_MAP_REST_PATTERN_AFTER: SiteId = SiteId(620);
-pub const SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_CASE_CLAUSE_AFTER: SiteId = SiteId(621);
-pub const SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE: SiteId = SiteId(622);
-pub const SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_BEFORE: SiteId = SiteId(623);
-pub const SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_AFTER: SiteId = SiteId(624);
+pub const SITE_MATCH_BLOCK_ALTERNATIVE_CASE_CLAUSE_AFTER: SiteId = SiteId(621);
+pub const SITE_MATCH_BLOCK_ALTERNATIVE_SEPARATOR_SPACE: SiteId = SiteId(622);
+pub const SITE_MATCH_BLOCK_MATCH_BLOCK_BEFORE: SiteId = SiteId(623);
+pub const SITE_MATCH_BLOCK_MATCH_BLOCK_AFTER: SiteId = SiteId(624);
 pub const SITE_MATCH_STATEMENT_COLON_BEFORE: SiteId = SiteId(625);
 pub const SITE_MATCH_STATEMENT_COLON_AFTER: SiteId = SiteId(626);
 pub const SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER: SiteId = SiteId(627);
@@ -1741,10 +1741,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("map_rest_pattern", "map_rest_pattern_before", "map_rest_pattern_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("map_rest_pattern", "map_rest_pattern_after", "map_rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("map_rest_pattern", "map_rest_pattern_after", "map_rest_pattern_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("match_block_block", "alternative_case_clause_after", "case_clause_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("match_block_block", "alternative_separator_space", "empty_separator_space", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("match_block_block", "match_block_block_before", "match_block_block_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
-    ("match_block_block", "match_block_block_after", "match_block_block_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("match_block", "alternative_case_clause_after", "case_clause_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("match_block", "alternative_separator_space", "empty_separator_space", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("match_block", "match_block_before", "match_block_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
+    ("match_block", "match_block_after", "match_block_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("match_statement", "colon_before", "colon_before", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("match_statement", "colon_after", "colon_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
     ("match_statement", "match_keyword_after", "match_keyword_after", &[KindId(123), KindId(124), KindId(125), KindId(116), KindId(126), KindId(127)]),
@@ -2230,6 +2230,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(311)), after: Some(SiteId(312)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(316)), after: Some(SiteId(317)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(628)), after: Some(SiteId(629)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(623)), after: Some(SiteId(624)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(156), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(156), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(160)), after: Some(SiteId(161)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(511)), after: Some(SiteId(512)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(24), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(507))] }], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(1066)), after: Some(SiteId(1067)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
@@ -2319,14 +2320,13 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(87)), after: Some(SiteId(88)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(93)), after: Some(SiteId(94)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(1072)), after: Some(SiteId(1073)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(623)), after: Some(SiteId(624)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(156), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(156), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(936)), after: Some(SiteId(937)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(260), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE)] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(932)), after: Some(SiteId(933)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(180), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(233)), after: Some(SiteId(234)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(111), site: SiteId(222) }, ::sittir_core::options::ArmSite { arm: KindId(108), site: SiteId(223) }, ::sittir_core::options::ArmSite { arm: KindId(109), site: SiteId(224) }, ::sittir_core::options::ArmSite { arm: KindId(114), site: SiteId(225) }, ::sittir_core::options::ArmSite { arm: KindId(110), site: SiteId(226) }, ::sittir_core::options::ArmSite { arm: KindId(113), site: SiteId(227) }, ::sittir_core::options::ArmSite { arm: KindId(112), site: SiteId(228) }, ::sittir_core::options::ArmSite { arm: KindId(25), site: SiteId(229) }, ::sittir_core::options::ArmSite { arm: KindId(60), site: SiteId(230) }, ::sittir_core::options::ArmSite { arm: KindId(212), site: SiteId(231) }, ::sittir_core::options::ArmSite { arm: KindId(211), site: SiteId(232) }], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(1087)), after: Some(SiteId(1088)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(264)), after: Some(SiteId(265)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(32), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(262))] }], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(145)), after: Some(SiteId(146)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(130), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(151), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(154), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(157), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(158), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(159), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(162), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(174), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(260), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), ::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(302), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(306), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(346), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(934)), after: Some(SiteId(935)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(304), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(145)), after: Some(SiteId(146)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(130), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(151), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(154), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(157), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(158), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(159), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(162), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(174), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(260), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), ::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(300), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(304), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }, ::sittir_core::options::BoundaryArm { next: KindId(344), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(934)), after: Some(SiteId(935)), before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(302), field: None, marks: &[::sittir_core::options::BoundaryMark::Seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT)] }], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(272)), after: Some(SiteId(273)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
 ];
 
@@ -2341,17 +2341,17 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     Some(EdgeRow(0)), None, Some(EdgeRow(1)), Some(EdgeRow(2)), None, Some(EdgeRow(3)), Some(EdgeRow(4)), Some(EdgeRow(5)), None, Some(EdgeRow(6)), None, None, Some(EdgeRow(7)), Some(EdgeRow(8)), None, Some(EdgeRow(9)),
-    None, Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), None, None, None, Some(EdgeRow(13)), Some(EdgeRow(14)), Some(EdgeRow(15)), Some(EdgeRow(16)), None, Some(EdgeRow(17)), Some(EdgeRow(18)), Some(EdgeRow(19)), Some(EdgeRow(20)),
-    Some(EdgeRow(21)), Some(EdgeRow(22)), Some(EdgeRow(23)), None, None, Some(EdgeRow(24)), Some(EdgeRow(25)), None, Some(EdgeRow(26)), Some(EdgeRow(27)), Some(EdgeRow(28)), Some(EdgeRow(29)), Some(EdgeRow(30)), Some(EdgeRow(31)), Some(EdgeRow(32)), Some(EdgeRow(33)),
-    Some(EdgeRow(34)), Some(EdgeRow(35)), Some(EdgeRow(36)), Some(EdgeRow(37)), Some(EdgeRow(38)), None, Some(EdgeRow(39)), None, None, Some(EdgeRow(40)), Some(EdgeRow(41)), Some(EdgeRow(42)), Some(EdgeRow(43)), Some(EdgeRow(44)), None, Some(EdgeRow(45)),
-    Some(EdgeRow(46)), None, None, None, None, Some(EdgeRow(47)), Some(EdgeRow(48)), Some(EdgeRow(49)), Some(EdgeRow(50)), Some(EdgeRow(51)), Some(EdgeRow(52)), Some(EdgeRow(53)), None, None, None, Some(EdgeRow(54)),
-    Some(EdgeRow(55)), Some(EdgeRow(56)), Some(EdgeRow(57)), None, None, Some(EdgeRow(58)), Some(EdgeRow(59)), Some(EdgeRow(60)), None, Some(EdgeRow(61)), None, None, Some(EdgeRow(62)), Some(EdgeRow(63)), Some(EdgeRow(64)), Some(EdgeRow(65)),
-    Some(EdgeRow(66)), Some(EdgeRow(67)), None, Some(EdgeRow(68)), Some(EdgeRow(69)), Some(EdgeRow(70)), Some(EdgeRow(71)), Some(EdgeRow(72)), Some(EdgeRow(73)), Some(EdgeRow(74)), Some(EdgeRow(75)), Some(EdgeRow(76)), Some(EdgeRow(77)), Some(EdgeRow(78)), Some(EdgeRow(79)), Some(EdgeRow(80)),
-    Some(EdgeRow(81)), Some(EdgeRow(82)), Some(EdgeRow(83)), None, Some(EdgeRow(84)), Some(EdgeRow(85)), Some(EdgeRow(86)), Some(EdgeRow(87)), Some(EdgeRow(88)), None, Some(EdgeRow(89)), None, None, None, Some(EdgeRow(90)), None,
-    None, Some(EdgeRow(91)), None, None, None, None, None, None, None, None, None, None, None, Some(EdgeRow(92)), None, None,
-    None, Some(EdgeRow(93)), Some(EdgeRow(94)), Some(EdgeRow(95)), None, None, Some(EdgeRow(96)), Some(EdgeRow(97)), None, Some(EdgeRow(98)), None, None, Some(EdgeRow(99)), None, None, Some(EdgeRow(100)),
-    Some(EdgeRow(101)), Some(EdgeRow(102)), Some(EdgeRow(103)), Some(EdgeRow(104)), None, None, Some(EdgeRow(105)), Some(EdgeRow(106)), None, Some(EdgeRow(107)), Some(EdgeRow(108)), None, Some(EdgeRow(109)), Some(EdgeRow(110)), Some(EdgeRow(111)), None,
-    Some(EdgeRow(112)), Some(EdgeRow(113)), Some(EdgeRow(114)),
+    None, Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), None, None, None, Some(EdgeRow(13)), Some(EdgeRow(14)), Some(EdgeRow(15)), Some(EdgeRow(16)), Some(EdgeRow(17)), Some(EdgeRow(18)), Some(EdgeRow(19)), Some(EdgeRow(20)), Some(EdgeRow(21)),
+    Some(EdgeRow(22)), Some(EdgeRow(23)), Some(EdgeRow(24)), None, None, Some(EdgeRow(25)), Some(EdgeRow(26)), None, Some(EdgeRow(27)), Some(EdgeRow(28)), Some(EdgeRow(29)), Some(EdgeRow(30)), Some(EdgeRow(31)), Some(EdgeRow(32)), Some(EdgeRow(33)), Some(EdgeRow(34)),
+    Some(EdgeRow(35)), Some(EdgeRow(36)), Some(EdgeRow(37)), Some(EdgeRow(38)), Some(EdgeRow(39)), None, Some(EdgeRow(40)), None, None, Some(EdgeRow(41)), Some(EdgeRow(42)), Some(EdgeRow(43)), Some(EdgeRow(44)), Some(EdgeRow(45)), None, Some(EdgeRow(46)),
+    Some(EdgeRow(47)), None, None, None, None, Some(EdgeRow(48)), Some(EdgeRow(49)), Some(EdgeRow(50)), Some(EdgeRow(51)), Some(EdgeRow(52)), Some(EdgeRow(53)), Some(EdgeRow(54)), None, None, None, Some(EdgeRow(55)),
+    Some(EdgeRow(56)), Some(EdgeRow(57)), Some(EdgeRow(58)), None, None, Some(EdgeRow(59)), Some(EdgeRow(60)), Some(EdgeRow(61)), None, Some(EdgeRow(62)), None, None, Some(EdgeRow(63)), Some(EdgeRow(64)), Some(EdgeRow(65)), Some(EdgeRow(66)),
+    Some(EdgeRow(67)), Some(EdgeRow(68)), None, Some(EdgeRow(69)), Some(EdgeRow(70)), Some(EdgeRow(71)), Some(EdgeRow(72)), Some(EdgeRow(73)), Some(EdgeRow(74)), Some(EdgeRow(75)), Some(EdgeRow(76)), Some(EdgeRow(77)), Some(EdgeRow(78)), Some(EdgeRow(79)), Some(EdgeRow(80)), Some(EdgeRow(81)),
+    Some(EdgeRow(82)), Some(EdgeRow(83)), Some(EdgeRow(84)), None, Some(EdgeRow(85)), Some(EdgeRow(86)), Some(EdgeRow(87)), Some(EdgeRow(88)), Some(EdgeRow(89)), None, Some(EdgeRow(90)), None, None, None, Some(EdgeRow(91)), None,
+    None, Some(EdgeRow(92)), None, None, None, None, None, None, None, None, None, None, None, Some(EdgeRow(93)), None, None,
+    None, Some(EdgeRow(94)), Some(EdgeRow(95)), Some(EdgeRow(96)), None, None, Some(EdgeRow(97)), Some(EdgeRow(98)), None, Some(EdgeRow(99)), None, None, Some(EdgeRow(100)), None, None, Some(EdgeRow(101)),
+    Some(EdgeRow(102)), Some(EdgeRow(103)), Some(EdgeRow(104)), Some(EdgeRow(105)), None, None, Some(EdgeRow(106)), Some(EdgeRow(107)), Some(EdgeRow(108)), None, Some(EdgeRow(109)), Some(EdgeRow(110)), Some(EdgeRow(111)), None, Some(EdgeRow(112)), Some(EdgeRow(113)),
+    Some(EdgeRow(114)),
 ];
 
 /// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.
@@ -2360,13 +2360,13 @@ pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0),
     KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(2), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
-    KindFlags(8), KindFlags(0), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(8), KindFlags(0), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
-    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
-    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -2416,9 +2416,9 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
 
 /// Per kind id, the stretches of its children its template indents one level, by their anchors.
 pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(295), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(298), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(305), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
+    ::sittir_core::trivia_table::DepthRegion { kind: KindId(155), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
+    ::sittir_core::trivia_table::DepthRegion { kind: KindId(296), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
+    ::sittir_core::trivia_table::DepthRegion { kind: KindId(303), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
 ];
 
 #[must_use]
@@ -3652,8 +3652,8 @@ pub static SEATS_BLOCK_CLASS_DECLARATION_STATEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(135)), None,
-    None, None, Some(SiteId(136)),
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(135)), None, None, None,
+    Some(SiteId(136)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -3697,7 +3697,7 @@ pub static SEATS_COMPARISON_OPERATOR_COMPARATORS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(217)),
+    None, None, None, None, None, None, None, None, None, None, Some(SiteId(217)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -3966,7 +3966,7 @@ pub static SEATS_LIST_PATTERN_CASE_PATTERNS_ITEM: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE: &[Option<SiteId>] = &[
+pub static SEATS_MATCH_BLOCK_ALTERNATIVE: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -5721,7 +5721,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition_class_declaration)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_BLOCK_CLASS_DECLARATION_STATEMENTS_SEPARATOR_SPACE, path: "(block_class_declaration)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE, path: "(try_statement)/handlers:/separator" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition_class_declaration)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_BLOCK_CLASS_DECLARATION_STATEMENTS_SEPARATOR_SPACE, path: "(block_class_declaration)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE, path: "(try_statement)/handlers:/separator" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(generator_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_EXPRESSION_GENERATOR_EXPRESSION_AFTER, path: "(generator_expression)/after" }] },
@@ -5930,15 +5930,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SPLAT_PATTERN_DICTIONARY_UNDERSCORE_BEFORE, path: "(map_rest_pattern)/\"_\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "matchBlockBlock", path: "(match_block_block)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_AFTER, path: "(match_block_block)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "alternative", path: "(match_block_block)/alternative:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "caseClause", path: "(match_block_block)/alternative:/(case_clause)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_CASE_CLAUSE_AFTER, path: "(match_block_block)/alternative:/(case_clause)/after" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "matchBlock", path: "(match_block)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_MATCH_BLOCK_AFTER, path: "(match_block)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "alternative", path: "(match_block)/alternative:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "caseClause", path: "(match_block)/alternative:/(case_clause)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ALTERNATIVE_CASE_CLAUSE_AFTER, path: "(match_block)/alternative:/(case_clause)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block)/alternative:/separator" }] },
         ] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_BEFORE, path: "(match_block_block)/before" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_MATCH_BLOCK_BEFORE, path: "(match_block)/before" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "matchStatement", path: "(match_statement)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_STATEMENT_MATCH_STATEMENT_AFTER, path: "(match_statement)/after" }] },

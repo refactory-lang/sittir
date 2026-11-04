@@ -229,7 +229,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
 		const claimed = new Set(subs.map((sub) => sub.slot));
-		const tuples = tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
+		const tuples = classifyFactoryShape(node, nodeMap) === 'forwarded' ? [] : tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
 		for (const s of [...flattens, ...elements, ...tuples, ...(forwarded?.elements ?? [])]) visit(s.group);
 		if (forwarded !== undefined) visit(forwarded.list);

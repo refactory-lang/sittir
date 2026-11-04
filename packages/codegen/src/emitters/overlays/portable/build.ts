@@ -915,7 +915,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return [kind];
 		});
 	const holderSlots = [...nodeMap.nodes.values()].flatMap((holder) =>
-		holder.kindId === undefined ? [] : holder.slots.map((slot) => ({ holder, slot, kinds: new Set(storageKinds(slot.values)) }))
+		holder.kindId === undefined
+			? []
+			: holder.slots.flatMap((slot) => {
+					const seat = finalSeatOf(slot);
+					return (seat === undefined ? [slot] : [seat.rest, seat.last]).map((site) => ({ holder, slot: site, kinds: new Set(storageKinds(site.values)) }));
+				})
 	);
 	const storageOf = (arm: Arm): string => storageName(arm.kind);
 	const isLeaf = (arm: Arm): boolean => textLeaf(arm.kind);
@@ -1053,8 +1058,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			}
 			root = false;
 			const leaves = group.every(isLeaf);
-			for (const { holder, slot } of holderSlots) {
-				const hit = group.filter((arm) => admits(arm, holder.kindId!, slot.propertyName));
+			for (const { holder, slot, kinds } of holderSlots) {
+				const hit = group.filter((arm) => (arm.site === undefined ? kinds.has(arm.builds) : admits(arm, holder.kindId!, slot.propertyName)));
 				if (hit.length === 1 && !holders.has(hit[0]!)) holders.set(hit[0]!, []);
 				if (hit.length === 1 && !holders.get(hit[0]!)!.some(([h, k]) => h === holder.kindId && k === slot.propertyName)) holders.get(hit[0]!)!.push([holder.kindId!, slot.propertyName]);
 				else if (hit.length > 1 && hit.length < group.length) decide(hit);
@@ -1085,14 +1090,18 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		});
 		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
 		const stated = new Set(arms.flatMap(memberNames));
+		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
 		for (const arm of arms) {
 			if (arm.text !== undefined) continue;
-			const lacking = [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
+			const missing = [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
+			const empty = arm.entry.empty === true ? missing.filter((name) => listed.has(name)) : [];
+			const lacking = missing.filter((name) => !empty.includes(name));
 			const own = tests.get(arm)!;
 			const presence = own.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
 			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required])].sort();
 			const kept = own.filter((test) => test !== presence);
-			tests.set(arm, lacking.length === 0 && required.length === 0 ? kept : [...kept, { absent: lacking, required }]);
+			const emptied = empty.length === 0 ? kept : [...kept, { empty }];
+			tests.set(arm, lacking.length === 0 && required.length === 0 ? emptied : [...emptied, { absent: lacking, required }]);
 		}
 		paths[path] = {
 			root: root && ordered.some((arm) => !holders.has(arm)),

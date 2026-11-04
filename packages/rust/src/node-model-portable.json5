@@ -11557,12 +11557,36 @@
         },
         {
           "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "match_block_arms",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "match_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_block_arms",
+          "slot": "arms",
+          "multiple": false,
           "path": [
             {
               "owner": "match_expression",
               "slot": "body"
+            },
+            {
+              "owner": "match_block",
+              "slot": "match_block_arms"
+            },
+            {
+              "owner": "match_block_arms",
+              "slot": "arms"
             }
           ]
         }

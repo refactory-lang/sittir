@@ -12,21 +12,28 @@ const matchBlockOf = (source: string) => {
 	if (!rs.is.expressionStatement(statement)) throw new Error('not an expression statement');
 	const expression = statement.content();
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
-	const block = expression.body();
-	if (block.arms === undefined) throw new Error('no arms');
-	return block;
+	const arms = expression.body().matchBlockArms();
+	if (arms === undefined) throw new Error('no arms');
+	return arms.arms();
+};
+
+const lastArmOf = (source: string) => {
+	const arms = matchBlockOf(source);
+	const last = arms[arms.length - 1]!;
+	if (!rs.is.lastMatchArm(last)) throw new Error('the last arm is not a last match arm');
+	return last;
 };
 
 describe('a group seat flattens its group fields onto the parent', () => {
-	it('reads the arms of a match block through the flattened list accessor', () => {
-		const block = matchBlockOf('fn f() { match x { 1 => 1, _ => 2 } }\n');
-		expect(block.arms()).toHaveLength(1);
-		expect(block.lastArm()?.$render()).toBe('_ => 2');
+	it('reads the arms of a match block as one list, its last element the last arm', () => {
+		const arms = matchBlockOf('fn f() { match x { 1 => 1, _ => 2 } }\n');
+		expect(arms).toHaveLength(2);
+		expect(arms[1]!.$type).toBe(kinds.LastMatchArm);
+		expect(arms[1]!.$render()).toBe('_ => 2');
 	});
 
 	it('reads the group keys as the inner pattern and the condition, and the seat as the whole match pattern', () => {
-		const block = matchBlockOf('fn f() { match x { a if a > 1 => 1 } }\n');
-		const arm = block.lastArm()!;
+		const arm = lastArmOf('fn f() { match x { a if a > 1 => 1 } }\n');
 		const inner = arm.pattern();
 		expect(typeof inner === 'number' ? inner : inner.$type).not.toBe(kinds.MatchPattern);
 		expect(String(rs.render(arm.pattern()))).toBe('a');
@@ -36,8 +43,7 @@ describe('a group seat flattens its group fields onto the parent', () => {
 	});
 
 	it('takes the inner pattern through $with.pattern and the whole match pattern through $with.match', () => {
-		const block = matchBlockOf('fn f() { match x { a if a > 1 => 1 } }\n');
-		const arm = block.lastArm()!;
+		const arm = lastArmOf('fn f() { match x { a if a > 1 => 1 } }\n');
 		expect(arm.$with.pattern(rs.build.identifier('b')).$render()).toBe('b if a > 1 => 1');
 		const whole = rs.build.matchPattern({ pattern: rs.build.identifier('c'), condition: rs.build.identifier('d') });
 		expect(whole.$type).toBe(kinds.MatchPattern);
@@ -45,7 +51,6 @@ describe('a group seat flattens its group fields onto the parent', () => {
 	});
 
 	it('clears the condition through $with.condition', () => {
-		const block = matchBlockOf('fn f() { match x { a if a > 1 => 1 } }\n');
-		expect(block.lastArm()!.$with.condition(undefined).$render()).toBe('a => 1');
+		expect(lastArmOf('fn f() { match x { a if a > 1 => 1 } }\n').$with.condition(undefined).$render()).toBe('a => 1');
 	});
 });

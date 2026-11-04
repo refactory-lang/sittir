@@ -100,7 +100,7 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'dictionary',
 	'list',
 	'list_pattern',
-	'match_block_block',
+	'match_block',
 	'module',
 	'parameters',
 	'tuple',

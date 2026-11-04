@@ -144,7 +144,7 @@ describe('trivia model facts', () => {
 
 	it('counts a zero-width kind between the slots as a token, as it did when the grammar hid it', async () => {
 		const python = await nodeMapOf('python');
-		expect(innerGapsOf(python, 'match_block_block')).toEqual([{ key: 'alternative', precedingTokens: 1, slots: ['_alternative'] }]);
+		expect(innerGapsOf(python, 'match_block')).toEqual([{ key: 'alternative', precedingTokens: 1, slots: ['_alternative'] }]);
 		expect(innerGapsOf(python, 'block')).toEqual([]);
 		expect(innerGapsOf(python, 'suite_block')).toEqual([]);
 	});

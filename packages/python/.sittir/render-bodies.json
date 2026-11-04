@@ -3206,10 +3206,10 @@
 			"field": "rest_pattern_after"
 		}
 	],
-	"match_block_block": [
+	"match_block": [
 		{
 			"kind": "seam",
-			"field": "match_block_block_before"
+			"field": "match_block_before"
 		},
 		{
 			"kind": "indent"
@@ -3229,13 +3229,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "match_block_block_after"
-		}
-	],
-	"match_block_empty": [
-		{
-			"kind": "slot",
-			"name": "newline"
+			"field": "match_block_after"
 		}
 	],
 	"match_statement": [

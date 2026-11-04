@@ -94,7 +94,7 @@ describe('deriveVocabulary', () => {
 		const body = levelMembers(d, 'statement.match').get('body');
 		expect(body?.kinds).toContain('clause.case.match');
 		expect(d.unmapped.has('<python:_match_block>')).toBe(false);
-		expect(d.unmapped.has('<python:match_block_empty>')).toBe(false);
+		expect(d.unmapped.has('<python:match_block>')).toBe(false);
 	});
 	it('keeps the unmapped count at or below the recorded ceiling', () => {
 		const total = [...d.unmapped.values()].reduce((a, b) => a + b, 0);

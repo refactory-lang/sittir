@@ -104,7 +104,8 @@ describe('the portable read', () => {
 		expect((runtime.read(range) as Read).value).toMatchObject({ $path: 'expression.range.inclusive.legacy' });
 		expect(rust.is.portable.expression.range.inclusive(node)).toBe(true);
 		expect(rust.is.portable.expression.range.inclusive.legacy(node)).toBe(true);
-		for (const source of ['let r = a...b;', 'let r = a..=b;', 'match x { 1...2 => {} }', 'match x { 1..=2 => {} }']) expect(roundTrip(source)).toBe(`${source}\n`);
+		for (const source of ['let r = a...b;', 'let r = a..=b;']) expect(roundTrip(source)).toBe(`${source}\n`);
+		for (const operator of ['...', '..=']) expect(roundTrip(`match x { 1${operator}2 => {} }`)).toBe(`match x {\n    1${operator}2 => {}\n}\n`);
 	});
 
 	it('carries a node whose flags its path cannot build: a byte literal stays a byte', () => {

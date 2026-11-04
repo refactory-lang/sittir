@@ -28,6 +28,7 @@ import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
+import { layoutTokenKindsOf } from '../compiler/model/layout-kinds.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -70,6 +71,7 @@ interface SerializedNodeBase {
 	builderPathAlternates?: readonly (readonly string[])[];
 	seated?: true;
 	unit?: true;
+	layout?: true;
 	renamedFrom?: string;
 	splitFrom?: string;
 	aliasStorage?: string;
@@ -110,6 +112,7 @@ interface SerializedEnum extends SerializedNodeBase {
 interface SerializedSupertype extends SerializedNodeBase {
 	modelType: 'supertype';
 	subtypes: string[];
+	defaultSubtype?: string;
 }
 
 interface SerializedList extends SerializedNodeBase {
@@ -164,6 +167,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 	if (unshown.length > 0)
 		throw new Error(`node model: ${unshown.join(', ')} show as a display but have no node to carry it`);
 
+	const layoutKinds = layoutTokenKindsOf(nodeMap);
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
 	for (const kind of kinds) {
@@ -173,7 +177,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		if (factorySlots !== undefined && factoryData.factoryShapes[kind] === undefined) {
 			throw new Error(`node model: '${kind}' has factory slots but no factory shape, so its readers cannot tell it has a factory`);
 		}
-		const serialized = serializeNode(node, nodeMap, wires, factorySlots);
+		const serialized = serializeNode(node, nodeMap, wires, factorySlots, layoutKinds);
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
@@ -229,7 +233,7 @@ function enumMembersOf(node: AssembledEnum): { kind: string; text: string }[] {
 
 type FactorySlots = Readonly<Record<string, FactorySlotMeta>> | undefined;
 
-function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires, factorySlots: FactorySlots): SerializedNode {
+function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires, factorySlots: FactorySlots, layoutKinds: ReadonlySet<string>): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
 		modelType: node.modelType,
@@ -239,6 +243,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		...(node.builderPathAlternates === undefined ? {} : { builderPathAlternates: node.builderPathAlternates }),
 		...(node.seated ? { seated: true } : {}),
 		...(node.unit ? { unit: true } : {}),
+		...(layoutKinds.has(node.kind) ? { layout: true } : {}),
 		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
 		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
 		...(node.aliasStorage !== undefined ? { aliasStorage: node.aliasStorage } : {}),
@@ -251,7 +256,12 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		case 'alias':
 			return serializeCompoundNode(node, base, nodeMap, wires, factorySlots);
 		case 'supertype':
-			return { ...base, modelType: 'supertype', subtypes: [...node.subtypeNames].sort() };
+			return {
+				...base,
+				modelType: 'supertype',
+				subtypes: [...node.subtypeNames].sort(),
+				...(node.defaultVariantSubtype === undefined ? {} : { defaultSubtype: storageKindOfRef(node.defaultVariantSubtype.node) })
+			};
 		case 'pattern':
 			return {
 				...base,

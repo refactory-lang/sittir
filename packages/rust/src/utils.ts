@@ -739,10 +739,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['content', 0, undefined, '_content'],
 		['traitBounds', 1, undefined, '_trait_bounds']
 	],
-	434: [
-		['arms', 0, undefined, '_arms'],
-		['lastArm', 1, undefined, '_last_arm']
-	],
+	434: [['arms', 0, undefined, '_arms']],
 	435: [['declarations', 0, undefined, '_declarations']],
 	436: [['declarations', 0, undefined, '_declarations']],
 	437: [
@@ -795,7 +792,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
 		195, 210, 216, 302, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 405,
-		406, 407, 408, 409, 410, 411, 412, 413, 435, 436, 438
+		406, 407, 408, 409, 410, 411, 412, 413, 434, 435, 436, 438
 	]),
 	leaves: new Set<number>([1, 132, 133, 146, 155, 157, 159, 160, 161, 162, 165, 166, 399, 404]),
 	textEnvelopes: new Map<number, number>([
@@ -3326,14 +3323,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	434: {
 		kind: 'match_block_arms',
-		required: [['_last_arm', 'lastArm']],
-		single: [['_last_arm', 'MatchBlockArms.lastArm']],
-		nodeOnly: [
-			['_arms', 'MatchBlockArms.arms', 'a built MatchArm', [294]],
-			['_last_arm', 'MatchBlockArms.lastArm', 'a built LastMatchArm', [295]]
-		],
-		config: ['arms', 'lastArm'],
-		lists: [['arms', false, 'key']]
+		final: [['_arms', 'match_block_arms.children', [294], [295]]],
+		nodeOnly: [['_arms', 'MatchBlockArms.arms', 'a built MatchArm / LastMatchArm', [294, 295]]],
+		lists: [['arms', false, 0]]
 	},
 	435: {
 		kind: 'trait_interface_declaration_body',

@@ -7276,7 +7276,7 @@ export interface MatchExpression {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly body: readonly MatchArm[];
+		readonly body: readonly [...MatchArm[], LastMatchArm] | readonly [];
 	};
 	readonly __slotHints__?: {
 		readonly subject: SlotHint<NonNullable<T.MatchExpression.Config>['subject']>;
@@ -7292,15 +7292,11 @@ export interface MatchBlock {
 	readonly __slotNames__?: {
 		readonly _match_block_arms: 'matchBlockArms';
 	};
+	readonly __looseHints__?: {
+		readonly match_block_arms?: readonly [...MatchArm[], LastMatchArm] | readonly [];
+	};
 	readonly __slotHints__?: {
 		readonly matchBlockArms: SlotHint<T.MatchBlockArms, true>;
-		readonly $flat: FlatHint<
-			'matchBlockArms',
-			T.MatchBlockArms,
-			{ readonly arms: 'arms'; readonly lastArm: 'lastArm' },
-			true,
-			'_match_block_arms'
-		>;
 	};
 	readonly matchBlockArms: () => MatchBlockArms | undefined;
 }
@@ -10617,18 +10613,14 @@ export interface TypeArgument {
 
 export interface MatchBlockArms {
 	readonly $type: TSKindId.MatchBlockArms;
-	readonly _arms: readonly MatchArm[];
-	readonly _last_arm: LastMatchArm;
+	readonly _arms: readonly [...MatchArm[], LastMatchArm];
 	readonly __slotNames__?: {
 		readonly _arms: 'arms';
-		readonly _last_arm: 'lastArm';
 	};
 	readonly __slotHints__?: {
-		readonly arms: SlotHint<T.MatchArm[], true, true>;
-		readonly lastArm: SlotHint<T.LastMatchArm>;
+		readonly arms: SlotHint<[...T.MatchArm[], T.LastMatchArm], false, true>;
 	};
-	readonly arms: () => readonly MatchArm[];
-	readonly lastArm: () => LastMatchArm;
+	readonly arms: () => readonly [...MatchArm[], LastMatchArm];
 }
 
 export interface TraitInterfaceDeclarationBody {
@@ -14699,6 +14691,7 @@ export namespace MatchBlockArms {
 			readonly after?: LayoutKindId;
 			readonly arms?: {
 				readonly end?: LayoutKindId;
+				readonly lastMatchArm?: { readonly after?: LayoutKindId };
 				readonly matchArmBlockEnding?: { readonly after?: LayoutKindId };
 				readonly matchArmWithComma?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
@@ -22076,16 +22069,15 @@ export namespace MatchExpression {
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	interface BoundSurface extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
+		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.MatchBlock, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
+		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
-			Parsed,
+			this,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -22093,11 +22085,10 @@ export namespace MatchBlock {
 		>;
 		readonly $snapshot: () => Snapshot<T.MatchBlock['$type']>;
 	}
-	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.MatchBlock, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value?: Admit<T.MatchBlockArms> | T.MatchBlockArms.BuildArgs[0]];
-	export type LooseArgs = [value?: T.MatchBlock.Loose | T.MatchBlockArms.LooseArgs[0]];
+	export type BuildArgs = [value?: Admit<T.MatchBlockArms>] | T.MatchBlockArms.BuildArgs;
+	export type LooseArgs = [value?: T.MatchBlock.Loose] | T.MatchBlockArms.LooseArgs;
 	export type Kind = TSKindId.MatchBlock;
 }
 export namespace LastMatchArm {
@@ -26518,8 +26509,22 @@ export namespace MatchBlockArms {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockArms>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockArms>;
-	export type BuildArgs = [config: ConfigOf<T.MatchBlockArms>];
-	export type LooseArgs = [config: T.MatchBlockArms.Loose];
+	export type BuildArgs = [...children: Admit<[...T.MatchArm[], T.LastMatchArm]>];
+	export type LooseArgs =
+		| [
+				...children: [
+					...(T.MatchBlockArms.Loose | LooseValue<T.MatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[],
+					T.MatchBlockArms.Loose | LooseValue<T.LastMatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				]
+		  ]
+		| [
+				children: Readonly<
+					[
+						...LooseValue<T.MatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[],
+						LooseValue<T.LastMatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					]
+				>
+		  ];
 	export type Kind = TSKindId.MatchBlockArms;
 }
 export namespace TraitInterfaceDeclarationBody {
@@ -27685,9 +27690,9 @@ export namespace EmptyFieldInitializerList {
 		readonly $trivia: TriviaSetterOf<EmptyFieldInitializerList.Parsed> & InnerTrivia<EmptyFieldInitializerList.Parsed>;
 	};
 }
-export type EmptyMatchBlock = MatchBlock.Bound & {
-	readonly $trivia: TriviaSetterOf<EmptyMatchBlock> & InnerTrivia<EmptyMatchBlock>;
-};
+export interface EmptyMatchBlock extends MatchBlock.Bound {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
 export namespace EmptyMatchBlock {
 	export type Parsed = MatchBlock.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyMatchBlock.Parsed> & InnerTrivia<EmptyMatchBlock.Parsed>;

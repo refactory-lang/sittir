@@ -386,11 +386,12 @@ export interface PortableIds {
 		| TSKindId.PrintStatementPlain
 		| TSKindId.RaiseStatement
 		| TSKindId.ReturnStatement
+		| TSKindId.SuiteEmpty
 		| TSKindId.TryStatement
 		| TSKindId.WhileStatement
 		| TSKindId.WithStatement;
 	'statement.assert': TSKindId.AssertStatement;
-	'statement.block': TSKindId.Block | TSKindId.BlockClassDeclaration;
+	'statement.block': TSKindId.Block | TSKindId.BlockClassDeclaration | TSKindId.SuiteEmpty;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
 	'statement.delete': TSKindId.DeleteStatement;
@@ -3055,6 +3056,7 @@ const table: PortableTable = {
 				TSKindId.PrintStatementPlain,
 				TSKindId.RaiseStatement,
 				TSKindId.ReturnStatement,
+				TSKindId.SuiteEmpty,
 				TSKindId.TryStatement,
 				TSKindId.WhileStatement,
 				TSKindId.WithStatement
@@ -3062,7 +3064,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'statement.assert': { ids: [TSKindId.AssertStatement], exact: true },
-		'statement.block': { ids: [TSKindId.Block, TSKindId.BlockClassDeclaration], exact: true },
+		'statement.block': { ids: [TSKindId.Block, TSKindId.BlockClassDeclaration, TSKindId.SuiteEmpty], exact: true },
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
 		'statement.delete': { ids: [TSKindId.DeleteStatement], exact: true },
@@ -3308,56 +3310,56 @@ const table: PortableTable = {
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal.legacy',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }
 				]
 			},
 			{
@@ -3367,7 +3369,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'not in', slots: { '300': 0 } }
+						plan: { op: 'eq', text: 'not in', slots: { '298': 0 } }
 					}
 				]
 			},
@@ -3375,7 +3377,7 @@ const table: PortableTable = {
 				path: 'expression.binary.identity.is',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '300': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }
 				]
 			},
 			{
@@ -3385,7 +3387,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'is not', slots: { '300': 0 } }
+						plan: { op: 'eq', text: 'is not', slots: { '298': 0 } }
 					}
 				]
 			},
@@ -3396,7 +3398,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'not', of: { op: 'is', types: [300], self: true } }
+						plan: { op: 'not', of: { op: 'is', types: [298], self: true } }
 					}
 				]
 			},
@@ -3406,57 +3408,57 @@ const table: PortableTable = {
 			{
 				path: 'element.comparator.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal.legacy',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.not_in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '300': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '298': 0 } } }]
 			},
 			{ path: 'element.comparator', within: [], test: [] }
 		],
@@ -3565,12 +3567,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '346': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '344': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '346': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '344': 1 } } }]
 			}
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
@@ -3723,6 +3725,7 @@ const table: PortableTable = {
 				]
 			}
 		],
+		[TSKindId.SuiteEmpty]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
@@ -3765,7 +3768,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [301], slots: { '220': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [299], slots: { '220': 0 } } }]
 			},
 			{ path: 'expression.yield', within: [], test: [] }
 		]
@@ -3892,7 +3895,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 			]
 		}
 	},
-	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
+	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '300': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
 	[TSKindId.ExpressionList]: {
 		trailingComma: {
@@ -3919,7 +3922,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '346': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '344': 0 } } },
 	[TSKindId.PatternList]: {
 		trailingComma: {
 			op: 'and',
@@ -3978,9 +3981,9 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
 	289: { value: { trailingComma: { types: [], kinds: [181] } } },
 	291: { value: { trailingComma: { types: [], kinds: [181] } } },
-	304: { statements: { async: { types: [], kinds: [157, 162, 302, 346] } } },
-	306: { definition: { async: { types: [], kinds: [302, 346] } } },
-	345: { expression: { trailingComma: { types: [], kinds: [181] } } }
+	302: { statements: { async: { types: [], kinds: [157, 162, 300, 344] } } },
+	304: { definition: { async: { types: [], kinds: [300, 344] } } },
+	343: { expression: { trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

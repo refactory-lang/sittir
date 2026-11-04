@@ -392,7 +392,7 @@ describe('canonicalFacts', () => {
 			"export interface Constructor<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constructor'; readonly body: string; }"
 		);
 		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
-		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, slots: [slot('name'), slot('body')], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
+		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
 		const named = (name: string, claims: readonly number[], tested?: true): MemberFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
 		const facts: BindingFacts = {
 			claims: [{ ...claim('declaration.constant'), kind: 'assignment' }, { ...claim('declaration.constructor'), kind: 'assignment' }],
@@ -417,7 +417,7 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
 			unclaimed: []
 		};
-		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, layout: false, seated: false, slots: [], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
 		const model = new Map([['parameter', parameter]]);
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);

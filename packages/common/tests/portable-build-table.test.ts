@@ -112,10 +112,21 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'expression.reference', rust.kinds.ReferenceExpressionMut).when).toEqual([{ flag: 'exclusive', set: true }, { absent: [], required: ['argument'] }]);
 	});
 
+	it('gives the empty-list pick only to a seated envelope that holds nothing but layout: python\'s empty suite', () => {
+		const emptied = Object.entries(tables).flatMap(([grammar, { table }]) =>
+			Object.entries(table.paths).flatMap(([path, { arms }]) =>
+				arms.flatMap((arm) => arm.when.flatMap((test) => ('empty' in test ? [[grammar, path, arm.kind, test.empty] as const] : [])))
+			)
+		);
+		expect(emptied).toEqual([['python', 'statement.block', python.kinds.SuiteEmpty, ['statements']]]);
+		const arms = armsOf('python', 'statement.block');
+		expect(arms.findIndex((arm) => arm.kind === python.kinds.SuiteEmpty)).toBeLessThan(arms.findIndex((arm) => arm.kind === python.kinds.Block));
+	});
+
 	it("orders a match arm by its body's kinds, narrower first, and keys the last arm by the slot that holds it", () => {
 		expect(armsOf('rust', 'clause.case.match').map((arm) => arm.kind)).toEqual([rust.kinds.MatchArmBlockEnding, rust.kinds.MatchArmWithComma, rust.kinds.LastMatchArm]);
 		expect(armOf('rust', 'clause.case.match', rust.kinds.MatchArmBlockEnding).when).toContainEqual(expect.objectContaining({ member: 'body' }));
-		expect(armOf('rust', 'clause.case.match', rust.kinds.LastMatchArm).holders).toEqual([[rust.kinds.MatchBlockArms, 'lastArm']]);
+		expect(armOf('rust', 'clause.case.match', rust.kinds.LastMatchArm).holders).toEqual([[rust.kinds.MatchBlockArms, 'arms']]);
 	});
 
 	it("builds a token tree's paren form by default, and each delimiter by its refinement", () => {

@@ -24,8 +24,8 @@ describe('label provenance', () => {
 	});
 
 	it('carries an authored variant label to the assembled refs as authored', () => {
-		const refs = labelledRefsOf(nodeMap, '_match_block');
-		expect(refs.map((ref) => ref.variant).sort()).toEqual(['block', 'empty']);
+		const refs = labelledRefsOf(nodeMap, 'with_clause');
+		expect(refs.map((ref) => ref.variant).sort()).toEqual(['bare', 'paren']);
 		expect(new Set(refs.map((ref) => ref.definedBy))).toEqual(new Set(['override']));
 	});
 

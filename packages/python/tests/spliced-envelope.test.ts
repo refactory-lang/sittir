@@ -12,7 +12,7 @@ function firstCasePattern(pattern: string) {
 	const statement = py.parse(`match x:\n    case ${pattern}:\n        pass\n`).statements()[0]!;
 	if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
 	const body = statement.body();
-	if (!py.is.matchBlockBlock(body)) throw new Error('expected a match block');
+	if (!py.is.matchBlock(body)) throw new Error('expected a match block');
 	const first = body.alternatives()[0]!.pattern();
 	if (!py.is.casePattern(first)) throw new Error('expected one case pattern');
 	return first;

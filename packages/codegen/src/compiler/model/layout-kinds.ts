@@ -35,6 +35,11 @@ export function depthMembersOf(nodeMap: Pick<NodeMap, 'nodes'>): DepthMembers {
 	return { ...(indent === undefined ? {} : { indent }), ...(dedent === undefined ? {} : { dedent }) };
 }
 
+export function layoutTokenKindsOf(nodeMap: Pick<NodeMap, 'nodes'>): ReadonlySet<string> {
+	const depth = Object.values(depthMembersOf(nodeMap));
+	return new Set(declaresWhitespace(nodeMap) ? [...layoutSymbolsOf(nodeMap).values(), ...depth] : depth);
+}
+
 export function whitespaceKindsOf(nodeMap: NodeMap): readonly string[] {
 	return layoutKindsOf(nodeMap).filter((arm) => !(DEPTH_KINDS as readonly string[]).includes(arm));
 }

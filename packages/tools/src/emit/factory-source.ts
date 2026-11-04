@@ -628,6 +628,11 @@ export function printingFactoryMap(
 				}
 				case 'direct':
 				case 'forwarded': {
+					const target = ctx.facts.forwardsTo[kind];
+					if (target !== undefined && ctx.irPathOfKind(target) === undefined && (realShapes[target] === 'spread' || realShapes[target] === 'elements')) {
+						const argSource = args.map((a) => printValue(wrapDirectArg(target, a, ctx), ctx, 0)).join(', ');
+						return new Printed(id, `${spelled()}(${argSource})`, kind, argSource, { elements: { items: args } });
+					}
 					const placed = placeDirectArg(kind, args[0], ctx);
 					const value = placed.loose;
 					const ownedList = ownedListArgs(kind, value, ctx);

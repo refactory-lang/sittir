@@ -40,6 +40,9 @@ export interface NodeModelNode {
 	readonly kind: string;
 	readonly modelType?: string;
 	readonly unit?: true;
+	readonly layout?: true;
+	readonly seated?: true;
+	readonly defaultSubtype?: string;
 	readonly renamedFrom?: string;
 	readonly slots?: readonly NodeModelSlot[];
 	readonly subtypes?: readonly string[];
@@ -88,6 +91,9 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			kind: n.kind,
 			modelType: n.modelType ?? 'branch',
 			unit: n.unit === true,
+			layout: n.layout === true,
+			seated: n.seated === true,
+			defaultSubtype: n.defaultSubtype ?? null,
 			slots: (n.slots ?? []).map((s) => ({
 				name: s.name,
 				propertyName: slotPropertyName(s),

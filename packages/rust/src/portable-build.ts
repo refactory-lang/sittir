@@ -929,8 +929,7 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body', 'pattern']
 						}
-					],
-					holders: [[434, 'arms']]
+					]
 				},
 				{
 					kind: 397,
@@ -1218,7 +1217,7 @@ export const build: PortableBuildTable = {
 							required: ['body', 'pattern']
 						}
 					],
-					holders: [[434, 'lastArm']]
+					holders: [[434, 'arms']]
 				}
 			]
 		},
@@ -47172,25 +47171,32 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'matchBlock'
+								},
+								{
+									key: 'matchBlockArms',
+									optional: true,
+									seated: 'spread'
+								},
+								{
+									key: 'arms',
+									optional: true
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
-									at: [292, 'body'],
-									kinds: []
+									at: [434, 'arms'],
+									kinds: [294, 397, 398],
+									many: true
 								},
 								{
-									at: [293, 'matchBlockArms'],
-									kinds: [434],
-									within: [
-										{
-											builder: 'matchBlock',
-											key: 'matchBlockArms',
-											optional: true
-										}
-									]
+									at: [434, 'arms'],
+									kinds: [295],
+									many: true,
+									final: true
 								}
 							]
 						}
@@ -47200,7 +47206,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'subject']
+							required: ['subject']
 						}
 					]
 				}

@@ -1570,7 +1570,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.match': {
-			readonly body: unknown | V.Clause.Case.Match<G> | string;
+			readonly body: V.Clause.Case.Match<G>;
 			readonly subject:
 				| G['expression']
 				| G['identifier']

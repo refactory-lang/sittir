@@ -53,7 +53,7 @@ export default grammar(enrich(base), wire({
 		type_argument: ($) =>
 			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
 
-		match_block_arms: ($) => seq(field('arms', repeat($.match_arm)), field('last_arm', $.last_match_arm))
+		match_block_arms: ($) => seq(field('arms', repeat($.match_arm)), field('arms', $.last_match_arm))
 	},
 	options: {
 		indent: preference('    '),
@@ -311,7 +311,7 @@ export default grammar(enrich(base), wire({
 
 		match_block: {
 			'1/0/0': field('arms'),
-			'1/0/1': field('last_arm')
+			'1/0/1': field('arms')
 		},
 
 		async_block: {

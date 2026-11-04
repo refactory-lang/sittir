@@ -911,7 +911,7 @@ export function buildMatchStatement<
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Bound {
 	currentHandle()?.admit(TSKindId.MatchStatement, [config]);
 	const _subject = config.subject;
-	const _body = config.body;
+	const _body = orDefault(config.body, () => buildMatchBlock());
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchStatement as const,
@@ -941,6 +941,36 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
+}
+
+export function buildMatchBlock(): T.EmptyMatchBlock;
+export function buildMatchBlock<A extends Admit<T.CaseClause[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlock.Bound;
+export function buildMatchBlock(...children: Admit<T.CaseClause[]>): T.MatchBlock.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlock, children);
+	const _alternative = children;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchBlock as const,
+		$named: true as const,
+		_alternative,
+		$with: {
+			alternatives: (...vs: Admit<T.CaseClause>[]) =>
+				rebuilt(node, handle, () => buildMatchBlock(...restItems('alternatives', vs)))
+		},
+		alternatives: () => hydrateStoredSlots(node, '_alternative'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.MatchBlock.Bound;
 }
 
 export function buildCaseClause<
@@ -7348,79 +7378,6 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 	return stampBuilt(node) as unknown as T.WithClauseParen.Bound;
 }
 
-export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
-export function buildMatchBlockBlock<A extends Admit<T.CaseClause[]>>(
-	...children: A & RefuseUndeclared<A>
-): T.MatchBlockBlock.Bound;
-export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockBlock, children);
-	const _alternative = children;
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MatchBlockBlock as const,
-		$named: true as const,
-		_alternative,
-		$with: {
-			alternatives: (...vs: Admit<T.CaseClause>[]) =>
-				rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs)))
-		},
-		alternatives: () => hydrateStoredSlots(node, '_alternative'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.MatchBlockBlock.Bound;
-}
-
-export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
-export function buildMatchBlockEmpty<V extends Admit<TSKindId.Newline>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): ReturnType<typeof _buildMatchBlockEmpty>;
-export function buildMatchBlockEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildMatchBlockEmpty(args[0] as Parameters<typeof _buildMatchBlockEmpty>[0]);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
-	return prebuilt
-		? _buildMatchBlockEmpty(args[0] as Parameters<typeof _buildMatchBlockEmpty>[0])
-		: _buildMatchBlockEmpty(buildNewline as Parameters<typeof _buildMatchBlockEmpty>[0]);
-}
-function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmpty.Bound {
-	const _newline = kindIdStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(
-		orDefault(value, () => TSKindId.Newline as const)
-	);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MatchBlockEmpty as const,
-		$named: true as const,
-		_newline,
-		$with: {
-			newline: (value: Admit<NonNullable<TSKindId.Newline>>) =>
-				rebuilt(node, handle, () => _buildMatchBlockEmpty(value))
-		},
-		newline: () => _newline,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.MatchBlockEmpty.Bound;
-}
-
 export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteInline>;
@@ -8187,6 +8144,7 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Bound;
 	else_clause: T.ElseClause.Bound;
 	match_statement: T.MatchStatement.Bound;
+	match_block: T.MatchBlock.Bound;
 	case_clause: T.CaseClause.Bound;
 	for_statement: T.ForStatement.Bound;
 	while_statement: T.WhileStatement.Bound;
@@ -8336,8 +8294,6 @@ export type FluentKindMap = {
 	expression_statement_tuple: T.ExpressionStatementTuple.Bound;
 	with_clause_bare: T.WithClauseBare.Bound;
 	with_clause_paren: T.WithClauseParen.Bound;
-	match_block_block: T.MatchBlockBlock.Bound;
-	match_block_empty: T.MatchBlockEmpty.Bound;
 	suite_inline: T.SuiteInline.Bound;
 	suite_block: T.SuiteBlock.Bound;
 	suite_empty: T.SuiteEmpty.Bound;
@@ -8392,6 +8348,7 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
+	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
@@ -8541,8 +8498,6 @@ export const _factoryMap = {
 	expression_statement_tuple: buildExpressionStatementTuple,
 	with_clause_bare: buildWithClauseBare,
 	with_clause_paren: buildWithClauseParen,
-	match_block_block: buildMatchBlockBlock,
-	match_block_empty: buildMatchBlockEmpty,
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,

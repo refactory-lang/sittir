@@ -164,15 +164,11 @@ export interface Routes<Table extends AnyTable> {
 		readonly decorated: Table['buildDecoratedDefinition'];
 		readonly match: Routes<Table>['matchStatement'];
 	};
-	readonly matchBlock: Table['buildMatchBlockBlock'] & {
-		readonly block: Table['buildMatchBlockBlock'];
-		readonly empty: Table['buildMatchBlockEmpty'];
-	};
 	readonly withClause: Table['buildWithClauseBare'] & {
 		readonly bare: Table['buildWithClauseBare'];
 		readonly paren: Table['buildWithClauseParen'];
 	};
-	readonly suite: {
+	readonly suite: Table['buildSuiteBlock'] & {
 		readonly inline: Table['buildSuiteInline'];
 		readonly block: Table['buildSuiteBlock'];
 		readonly empty: Table['buildSuiteEmpty'];
@@ -2977,6 +2973,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly elifClause: Table['buildElifClause'];
 	readonly elseClause: Table['buildElseClause'];
 	readonly matchStatement: Routes<Table>['matchStatement'];
+	readonly matchBlock: Table['buildMatchBlock'];
 	readonly caseClause: Table['buildCaseClause'];
 	readonly forStatement: Table['buildForStatement'];
 	readonly whileStatement: Table['buildWhileStatement'];
@@ -3097,8 +3094,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly expressionStatementTuple: Table['buildExpressionStatementTuple'];
 	readonly withClauseBare: Table['buildWithClauseBare'];
 	readonly withClauseParen: Table['buildWithClauseParen'];
-	readonly matchBlockBlock: Table['buildMatchBlockBlock'];
-	readonly matchBlockEmpty: Table['buildMatchBlockEmpty'];
 	readonly suiteInline: Table['buildSuiteInline'];
 	readonly suiteBlock: Table['buildSuiteBlock'];
 	readonly suiteEmpty: Table['buildSuiteEmpty'];
@@ -3111,7 +3106,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly methodDeclaration: Table['buildMethodDeclaration'];
 	readonly simpleStatement: Routes<Table>['simpleStatement'];
 	readonly compoundStatement: Routes<Table>['compoundStatement'];
-	readonly matchBlock: Routes<Table>['matchBlock'];
 	readonly withClause: Routes<Table>['withClause'];
 	readonly suite: Routes<Table>['suite'];
 	readonly splatPattern: Routes<Table>['splatPattern'];
@@ -3271,23 +3265,19 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		decorated: $at('buildDecoratedDefinition'),
 		match: matchStatement
 	} as const);
-	const matchBlock: Routes<Table>['matchBlock'] = Object.freeze(
-		Object.assign(delegate($at('buildMatchBlockBlock')), {
-			block: $at('buildMatchBlockBlock'),
-			empty: $at('buildMatchBlockEmpty')
-		} as const)
-	);
 	const withClause: Routes<Table>['withClause'] = Object.freeze(
 		Object.assign(delegate($at('buildWithClauseBare')), {
 			bare: $at('buildWithClauseBare'),
 			paren: $at('buildWithClauseParen')
 		} as const)
 	);
-	const suite: Routes<Table>['suite'] = Object.freeze({
-		inline: $at('buildSuiteInline'),
-		block: $at('buildSuiteBlock'),
-		empty: $at('buildSuiteEmpty')
-	} as const);
+	const suite: Routes<Table>['suite'] = Object.freeze(
+		Object.assign(delegate($at('buildSuiteBlock')), {
+			inline: $at('buildSuiteInline'),
+			block: $at('buildSuiteBlock'),
+			empty: $at('buildSuiteEmpty')
+		} as const)
+	);
 	const splatPattern: Routes<Table>['splatPattern'] = Object.freeze({
 		list: $at('buildSplatPatternList'),
 		dictionary: $at('buildSplatPatternDictionary')
@@ -5275,6 +5265,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		elifClause: $at('buildElifClause'),
 		elseClause: $at('buildElseClause'),
 		matchStatement: matchStatement,
+		matchBlock: $at('buildMatchBlock'),
 		caseClause: $at('buildCaseClause'),
 		forStatement: $at('buildForStatement'),
 		whileStatement: $at('buildWhileStatement'),
@@ -5395,8 +5386,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		expressionStatementTuple: $at('buildExpressionStatementTuple'),
 		withClauseBare: $at('buildWithClauseBare'),
 		withClauseParen: $at('buildWithClauseParen'),
-		matchBlockBlock: $at('buildMatchBlockBlock'),
-		matchBlockEmpty: $at('buildMatchBlockEmpty'),
 		suiteInline: $at('buildSuiteInline'),
 		suiteBlock: $at('buildSuiteBlock'),
 		suiteEmpty: $at('buildSuiteEmpty'),
@@ -5409,7 +5398,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		methodDeclaration: $at('buildMethodDeclaration'),
 		simpleStatement: simpleStatement,
 		compoundStatement: compoundStatement,
-		matchBlock: matchBlock,
 		withClause: withClause,
 		suite: suite,
 		splatPattern: splatPattern,

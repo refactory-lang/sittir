@@ -212,7 +212,7 @@
 (while_expression) @statement.loop.while
 (for_expression pattern: (_) @left value: (_) @right) @statement.loop.for_each
 (return_expression (_)? @expression) @statement.return
-(match_expression value: (_) @subject) @statement.match
+(match_expression value: (_) @subject body: (match_block (match_block_arms arms: (_) @body)?)) @statement.match
 (use_declaration) @statement.use
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @statement.use.private
 (use_declaration (visibility_modifier (visibility_modifier_pub))) @statement.use.public
@@ -232,10 +232,10 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm value: _ @body) @clause.arm.match
+(match_arm value: _ @body) @clause.case.match
 (match_arm_with_comma match: (match_pattern pattern: _ @pattern condition: _? @guard))
 (match_arm_block_ending match: (match_pattern pattern: _ @pattern condition: _? @guard))
-(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.arm.match
+(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case.match
 ((match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))

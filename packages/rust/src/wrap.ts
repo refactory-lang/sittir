@@ -3876,7 +3876,6 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
 	const handle = currentHandle();
-	const readGroup_matchBlockArms = () => hydrateSlot<T.MatchBlockArms | undefined>(node, '_match_block_arms', tree);
 	const node = {
 		...data,
 		$type: TSKindId.MatchBlock as const,
@@ -3885,52 +3884,8 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 		},
 		$with: {
 			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)),
-			arms: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: RAW.buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'arms',
-						args,
-						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				),
-			lastArm: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: RAW.buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'lastArm',
-						args,
-						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
+				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree))
 		},
-		arms:
-			data._match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
-		lastArm:
-			data._match_block_arms === undefined
-				? undefined
-				: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -8616,16 +8571,11 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.MatchBlockArms as const,
 		arms() {
-			return hydrateSlots<T.MatchArm>(this, '_arms', tree);
-		},
-		lastArm() {
-			return hydrateSlot<T.LastMatchArm>(this, '_last_arm', tree);
+			return hydrateSlots<T.MatchArm | T.LastMatchArm>(this, '_arms', tree);
 		},
 		$with: {
-			arms: (...v: NonNullable<T.MatchBlockArms['_arms']>[number][]) =>
-				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _arms: restItems('arms', v) }, tree)),
-			lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) =>
-				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree))
+			arms: (...v: NonNullable<T.MatchBlockArms['_arms']>) =>
+				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _arms: restItems('arms', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

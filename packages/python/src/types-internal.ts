@@ -112,9 +112,6 @@ export interface SubBuilderRowKind {
 	lineContinuation: TSKindId.LineContinuationNewline;
 	'lineContinuation.newline': TSKindId.LineContinuationNewline;
 	'lineContinuation.nul': TSKindId.LineContinuationNul;
-	matchBlock: TSKindId.MatchBlockBlock;
-	'matchBlock.block': TSKindId.MatchBlockBlock;
-	'matchBlock.empty': TSKindId.MatchBlockEmpty;
 	'parameter.default': TSKindId.DefaultParameter;
 	'parameter.dictionarySplat': TSKindId.DictionarySplatPattern;
 	'parameter.identifier': TSKindId.Identifier;
@@ -183,6 +180,7 @@ export interface SubBuilderRowKind {
 	'simpleStatement.typeAlias': TSKindId.TypeAliasStatement;
 	'splatPattern.dictionary': TSKindId.SplatPatternDictionary;
 	'splatPattern.list': TSKindId.SplatPatternList;
+	suite: TSKindId.SuiteBlock;
 	'suite.block': TSKindId.SuiteBlock;
 	'suite.empty': TSKindId.SuiteEmpty;
 	'suite.inline': TSKindId.SuiteInline;

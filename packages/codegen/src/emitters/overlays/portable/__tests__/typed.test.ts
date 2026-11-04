@@ -107,12 +107,9 @@ describe('emitPortableTyped', () => {
 			'\t\t};',
 			'\t\treadonly "declaration": {',
 			"\t\t\treadonly traitClause: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>;",
-			'\t\t};',
-			'\t\treadonly "statement": {',
-			"\t\t\treadonly body: V.Unmapped<'rust:match_block_arms'>;",
 			'\t\t};'
 		]);
-		expect(typed.source).toContain('type UnmappedKeys = Fit<"clause" | "declaration" | "statement", V.NamespaceOf<keyof Slots>>;');
+		expect(typed.source).toContain('type UnmappedKeys = Fit<"clause" | "declaration", V.NamespaceOf<keyof Slots>>;');
 	});
 
 	it('reads a claim on a name the parser shows once, as the kind it shows', () => {

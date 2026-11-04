@@ -90,71 +90,68 @@ export function rebuildSpliceLoose() {
 				body: rs.build.block({
 					statements: [rs.build.matchExpression({
 						subject: rs.kinds.Self,
-						body: rs.build.matchBlock({
-							arms: [rs.build.matchArmBlockEnding({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: "SpliceError",
-										name: "InvalidRange",
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: "start",
-									}), rs.build.fieldPatternShorthand({
-										name: "end",
-									})],
+						body: [rs.build.matchArmBlockEnding({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: "SpliceError",
+									name: "InvalidRange",
 								}),
-								body: rs.build.block({
-									trailingExpression: rs.build.macroInvocation({
-										function: "write",
-										arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
-											stringOpen: "\"",
-											elements: ["invalid edit range: start={start}, end={end}"],
-										})),
-									}),
-								}),
-							}), rs.build.matchArmWithComma({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: "SpliceError",
-										name: "OutOfBounds",
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: "end",
-									}), rs.build.fieldPatternShorthand({
-										name: "source_len",
-									})],
-								}),
-								body: rs.build.macroInvocation({
-									function: "write",
-									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
-										stringOpen: "\"",
-										elements: ["edit out of bounds: end={end} > source length={source_len}"],
-									})),
-								}),
-							})],
-							lastArm: rs.build.lastMatchArm({
-								pattern: rs.build.structPattern({
-									type: rs.build.scopedTypeIdentifier({
-										qualifier: "SpliceError",
-										name: "NonCharBoundary",
-									}),
-									fields: [rs.build.fieldPatternShorthand({
-										name: "start",
-									}), rs.build.fieldPatternShorthand({
-										name: "end",
-									})],
-								}),
-								body: rs.build.macroInvocation({
-									function: "write",
-									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
-										stringOpen: "\"",
-										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
-									})),
-								}),
-							}, {
-								trailingComma: rs.kinds.Comma,
+								fields: [rs.build.fieldPatternShorthand({
+									name: "start",
+								}), rs.build.fieldPatternShorthand({
+									name: "end",
+								})],
 							}),
-						}),
+							body: rs.build.block({
+								trailingExpression: rs.build.macroInvocation({
+									function: "write",
+									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+										stringOpen: "\"",
+										elements: ["invalid edit range: start={start}, end={end}"],
+									})),
+								}),
+							}),
+						}), rs.build.matchArmWithComma({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: "SpliceError",
+									name: "OutOfBounds",
+								}),
+								fields: [rs.build.fieldPatternShorthand({
+									name: "end",
+								}), rs.build.fieldPatternShorthand({
+									name: "source_len",
+								})],
+							}),
+							body: rs.build.macroInvocation({
+								function: "write",
+								arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									stringOpen: "\"",
+									elements: ["edit out of bounds: end={end} > source length={source_len}"],
+								})),
+							}),
+						}), rs.build.lastMatchArm({
+							pattern: rs.build.structPattern({
+								type: rs.build.scopedTypeIdentifier({
+									qualifier: "SpliceError",
+									name: "NonCharBoundary",
+								}),
+								fields: [rs.build.fieldPatternShorthand({
+									name: "start",
+								}), rs.build.fieldPatternShorthand({
+									name: "end",
+								})],
+							}),
+							body: rs.build.macroInvocation({
+								function: "write",
+								arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									stringOpen: "\"",
+									elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
+								})),
+							}),
+						}, {
+							trailingComma: rs.kinds.Comma,
+						})],
 					})],
 				}),
 			}),

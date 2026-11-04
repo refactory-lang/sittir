@@ -35,6 +35,15 @@ function tupleElements(element: AuthoringRule) {
 	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
 }
 
+const MATCH_BLOCK_WITNESSES = [
+	{
+		text: 'match x:\n',
+		form: ['match', { symbol: 'expression' }, ':', { symbol: '_newline' }],
+		kind: 'match_statement',
+		production: 'CPython match_stmt: "match" subject_expr \':\' NEWLINE INDENT case_block+ DEDENT'
+	}
+] as const;
+
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'python',
@@ -178,7 +187,7 @@ export default grammar(enrich(base), wire({
 			'block/statements:/separator': 'gap/separator',
 			'decorated_definition/decorator:/separator': 'gap/separator',
 			'if_statement/alternative:/separator': 'gap/separator',
-			'match_block_block/alternative:/separator': 'gap/separator',
+			'match_block/alternative:/separator': 'gap/separator',
 			'try_statement/except_clauses:/separator': 'gap/separator'
 		}
 	},
@@ -394,10 +403,8 @@ export default grammar(enrich(base), wire({
 			1: variant('paren')
 		},
 
-		_match_block: { 0: variant('block', { default: true }), 1: variant('empty') },
-
 		// See docs/python-grammar-sittir-glossary.md::_suite
-		_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
+		_suite: { 0: variant('inline'), 1: variant('block', { default: true }), 2: variant('empty') }
 	},
 	expectDiagnostics: {
 		'patch-without-cause': [
@@ -414,6 +421,7 @@ export default grammar(enrich(base), wire({
 		]
 	},
 	rules: {
+		_match_block: reauthored('accepts-invalid-syntax', MATCH_BLOCK_WITNESSES, ($, original) => original.members[0]),
 		_tuple_pattern_elements: vocabulary(($) => tupleElements(field('item', $.pattern))),
 		tuple_pattern: reauthored(
 			'semantic-gap',

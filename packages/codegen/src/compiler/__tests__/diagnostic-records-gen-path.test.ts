@@ -40,9 +40,9 @@ describe('diagnostic records on the gen path', () => {
 
 	it('a hidden kind keeps its source rule id in every stage', async () => {
 		const { stages, raw } = await compilationOf('python');
-		expect(raw.ruleCatalog.rootsByKind.get('_match_block')).toBe('rule:_match_block:root');
+		expect(raw.ruleCatalog.rootsByKind.get('_suite')).toBe('rule:_suite:root');
 		for (const catalog of [stages!.raw.ruleCatalog!, stages!.enriched.ruleCatalog!]) {
-			expect([...catalog.rootsByKind.values()]).toContain('rule:_match_block:root');
+			expect([...catalog.rootsByKind.values()]).toContain('rule:_suite:root');
 		}
 	}, 180_000);
 });

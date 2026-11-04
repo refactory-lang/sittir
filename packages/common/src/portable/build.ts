@@ -287,6 +287,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure): boolean => {
 			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined) && test.absent.every((name) => structure[name] === undefined);
+			if ('empty' in test) return test.empty.every((name) => structure[name] === undefined || (Array.isArray(structure[name]) && structure[name].length === 0));
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
 			if ('boolean' in test) return structure.$value === test.boolean;
@@ -667,8 +668,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
 			const holes = new Set(arm.template?.holes ?? []);
 			const owned = seat === undefined ? new Set<string>() : ownedBy(seat);
+			const emptied = new Set(arm.when.flatMap((test) => ('empty' in test ? test.empty : [])));
 			const values = new Map<string, unknown>(
-				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
+				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || emptied.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
 			for (const name of arm.empty ?? []) if (!values.has(name) && !holes.has(name) && !owned.has(name)) values.set(name, []);
 			const spelled = templated(arm, structure);

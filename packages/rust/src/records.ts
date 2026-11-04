@@ -531,7 +531,7 @@ export const records = {
 		type_: { word: 9, width: 5 }
 	},
 	TypeArgumentNode: { words: 12, content: { word: 2, width: 5 }, trait_bounds: { word: 7, width: 5 } },
-	MatchBlockArmsNode: { words: 9, arms: { word: 2, width: 2, run: 5 }, last_arm: { word: 4, width: 5 } },
+	MatchBlockArmsNode: { words: 4, arms: { word: 2, width: 2, run: 5 } },
 	FloatLiteralNode: { words: 2 },
 	StringContentNode: { words: 2 },
 	RawStringLiteralContentNode: { words: 2 },

@@ -5060,58 +5060,36 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MatchBlockArms as const);
+	return prebuilt
+		? _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0])
+		: _buildMatchBlock(
+				(buildMatchBlockArms as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildMatchBlock>[0]
+			);
+}
+function _buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
-	const readGroup_matchBlockArms = () => _match_block_arms;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlock as const,
 		$named: true as const,
 		_match_block_arms,
 		$with: {
-			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => buildMatchBlock(value)),
-			arms: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'arms',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				),
-			lastArm: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'lastArm',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
+			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => _buildMatchBlock(value))
 		},
 		matchBlockArms: () => hydrateStoredSlot(node, '_match_block_arms'),
-		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
-		lastArm:
-			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -11428,28 +11406,22 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 	return stampBuilt(node) as unknown as T.TypeArgument.Bound;
 }
 
-export function buildMatchBlockArms<
-	ArmsSlot extends T.MatchBlockArms.Config['arms'],
-	LastArmSlot extends T.MatchBlockArms.Config['lastArm']
->(config: RefusingConfig<T.MatchBlockArms.Config, { arms: ArmsSlot; lastArm: LastArmSlot }>): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [config]);
-	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
-	const _last_arm = config.lastArm;
+export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlockArms.Bound;
+export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
+	const _arms = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockArms as const,
 		$named: true as const,
 		_arms,
-		_last_arm,
 		$with: {
-			arms: (...values: Admit<T.MatchArm[]>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, arms: restItems('arms', values) })),
-			lastArm: (value: Admit<T.LastMatchArm>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, lastArm: value }))
+			arms: (...vs: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]) =>
+				rebuilt(node, handle, () => buildMatchBlockArms(...restItems('arms', vs)))
 		},
 		arms: () => hydrateStoredSlots(node, '_arms'),
-		lastArm: () => hydrateStoredSlot(node, '_last_arm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

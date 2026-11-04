@@ -8,7 +8,7 @@ const caseClauseOf = (source: string) => {
 	const statement = py.parse(`match x:\n    case ${source}:\n        pass\n`, { errors: 'throw' }).statements()[0]!;
 	if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
 	const body = statement.body();
-	if (!py.is.matchBlockBlock(body)) throw new Error('expected a match block');
+	if (!py.is.matchBlock(body)) throw new Error('expected a match block');
 	return body.alternatives()[0]!;
 };
 const casePatternOf = (source: string) => caseClauseOf(source).pattern();
@@ -30,7 +30,7 @@ describe('a case tuple pattern with one pattern', () => {
 		const reparsed = py.parse(`match x:\n${text.replace(/^/gm, '    ')}\n`, { errors: 'throw' }).statements()[0]!;
 		if (!py.is.matchStatement(reparsed)) throw new Error('expected a match statement');
 		const block = reparsed.body();
-		if (!py.is.matchBlockBlock(block)) throw new Error('expected a match block');
+		if (!py.is.matchBlock(block)) throw new Error('expected a match block');
 		expect(py.is.casePatternList(block.alternatives()[0]!.pattern())).toBe(true);
 	});
 

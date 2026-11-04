@@ -33,6 +33,7 @@ export const records = {
 	ElifClauseNode: { words: 12, condition: { word: 2, width: 5 }, consequence: { word: 7, width: 5 } },
 	ElseClauseNode: { words: 7, body: { word: 2, width: 5 } },
 	MatchStatementNode: { words: 12, subject: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
+	MatchBlockNode: { words: 4, alternative: { word: 2, width: 2, run: 5 } },
 	CaseClauseNode: {
 		words: 17,
 		pattern: { word: 2, width: 5 },
@@ -296,8 +297,6 @@ export const records = {
 	ExpressionStatementTupleNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	WithClauseBareNode: { words: 4, items: { word: 2, width: 2, run: 5 } },
 	WithClauseParenNode: { words: 7, items: { word: 2, width: 5 } },
-	MatchBlockBlockNode: { words: 4, alternative: { word: 2, width: 2, run: 5 } },
-	MatchBlockEmptyNode: { words: 7, newline: { word: 2, width: 5 } },
 	SuiteInlineNode: { words: 7, elements: { word: 2, width: 5 } },
 	SuiteBlockNode: { words: 7, block: { word: 2, width: 5 } },
 	SuiteEmptyNode: { words: 7, newline: { word: 2, width: 5 } },

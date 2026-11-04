@@ -53,6 +53,7 @@ export interface ReadEntry {
 	readonly separated?: true;
 	readonly spelled?: true;
 	readonly decided?: true;
+	readonly empty?: true;
 }
 
 export type MemberRoute = (
@@ -251,6 +252,7 @@ export function memberNameOf(renames: SlotNames, slotName: string, propertyName:
 export function isLayout(input: GrammarInput, owner: string, slot: ModelSlot): boolean {
 	return (
 		input.layoutSlots.some((l) => (l.kind === null || l.kind === owner) && l.slot === slot.name) ||
+		(slot.kinds.length > 0 && slot.terminals.length === 0 && slot.kinds.every((k) => modelNode(input.model, k)?.layout === true)) ||
 		(slot.kinds.length > 0 &&
 			slot.terminals.length === 0 &&
 			slot.kinds.every((k) => input.bindings.unclaimed.some((u) => u.kind === k)))
@@ -258,6 +260,26 @@ export function isLayout(input: GrammarInput, owner: string, slot: ModelSlot): b
 }
 
 const TRANSPARENT_MODEL_TYPES: ReadonlySet<string> = new Set(['envelope', 'alias', 'polymorph']);
+
+export function layoutDefaultsOf(input: GrammarInput, readEntries: ReadonlyMap<string, readonly ReadEntry[]>): ReadonlyMap<string, string> {
+	const readsAs = (kind: string): string | undefined => {
+		if (readEntries.has(kind)) return kind;
+		const node = modelNode(input.model, kind);
+		const unwrap = node === undefined ? undefined : containerOf(input, node);
+		return unwrap === undefined || unwrap.list || unwrap.kinds.length !== 1 ? undefined : readsAs(unwrap.kinds[0]!);
+	};
+	return new Map(
+		[...input.model.values()].flatMap((node): (readonly [string, string])[] => {
+			if (!node.seated || node.variantOf === null || readEntries.has(node.kind) || node.slots.length === 0 || !node.slots.every((slot) => isLayout(input, node.kind, slot))) return [];
+			const fallback = modelNode(input.model, node.variantOf)?.defaultSubtype;
+			const target = fallback == null || fallback === node.kind ? undefined : readsAs(fallback);
+			return target === undefined ? [] : [[node.kind, target]];
+		})
+	);
+}
+
+const untested = (entry: ReadEntry): boolean =>
+	entry.pins.length === 0 && entry.present.length === 0 && entry.children.length === 0 && entry.claim.predicates.length === 0 && entry.separated !== true;
 
 function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | undefined {
 	const declared = declaredContainersOf(input, node)[0];
@@ -1310,6 +1332,10 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		);
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);
+	for (const [kind, target] of layoutDefaultsOf(input, readEntries)) {
+		const entries = (readEntries.get(target) ?? []).filter(untested).map((entry): ReadEntry => ({ ...entry, kind, absent: [], template: undefined, members: [], empty: true }));
+		if (entries.length > 0) readEntries.set(kind, entries);
+	}
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, routed] of readEntries) {

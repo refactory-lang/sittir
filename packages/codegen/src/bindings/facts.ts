@@ -187,8 +187,11 @@ export interface ModelNode {
 	readonly kind: string;
 	readonly modelType: string;
 	readonly unit: boolean;
+	readonly layout: boolean;
+	readonly seated: boolean;
 	readonly slots: readonly ModelSlot[];
 	readonly subtypes: readonly string[];
+	readonly defaultSubtype: string | null;
 	readonly elementKinds: readonly string[];
 	readonly enumMembers: readonly EnumMember[];
 	readonly text: string | null;

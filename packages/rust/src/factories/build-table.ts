@@ -365,7 +365,6 @@ export interface Routes<Table extends AnyTable> {
 	readonly argumentsElements: Table['argumentsElements$seated'];
 	readonly arguments_: Table['arguments_$seated'];
 	readonly tupleExpression: Table['tupleExpression$seated'];
-	readonly matchBlock: Table['matchBlock$seated'];
 	readonly lastMatchArm: Table['lastMatchArm$seated'];
 	readonly tupleStructPattern: Table['tupleStructPattern$seated'];
 	readonly structPattern: Table['structPattern$seated'];
@@ -867,7 +866,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly letChain: Table['buildLetChain'];
 	readonly elseClause: Table['buildElseClause'];
 	readonly matchExpression: Table['buildMatchExpression'];
-	readonly matchBlock: Routes<Table>['matchBlock'];
+	readonly matchBlock: Table['buildMatchBlock'];
 	readonly lastMatchArm: Routes<Table>['lastMatchArm'];
 	readonly matchPattern: Table['buildMatchPattern'];
 	readonly whileExpression: Table['buildWhileExpression'];
@@ -1450,7 +1449,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const argumentsElements: Routes<Table>['argumentsElements'] = $at('argumentsElements$seated');
 	const arguments_: Routes<Table>['arguments_'] = $at('arguments_$seated');
 	const tupleExpression: Routes<Table>['tupleExpression'] = $at('tupleExpression$seated');
-	const matchBlock: Routes<Table>['matchBlock'] = $at('matchBlock$seated');
 	const lastMatchArm: Routes<Table>['lastMatchArm'] = $at('lastMatchArm$seated');
 	const tupleStructPattern: Routes<Table>['tupleStructPattern'] = $at('tupleStructPattern$seated');
 	const structPattern: Routes<Table>['structPattern'] = $at('structPattern$seated');
@@ -1912,7 +1910,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		letChain: $at('buildLetChain'),
 		elseClause: $at('buildElseClause'),
 		matchExpression: $at('buildMatchExpression'),
-		matchBlock: matchBlock,
+		matchBlock: $at('buildMatchBlock'),
 		lastMatchArm: lastMatchArm,
 		matchPattern: $at('buildMatchPattern'),
 		whileExpression: $at('buildWhileExpression'),

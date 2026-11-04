@@ -359,11 +359,6 @@ export const tupleExpression$seated: Seat<
 	ReturnType<typeof F.buildTupleExpression>
 > = K.tupleExpression$elements(F.buildTupleExpression, F.buildExpressions);
 
-export const matchBlock$seated: EmptyForm<
-	T.EmptyMatchBlock,
-	Seat<T.MatchBlock.BuildArgs, ReturnType<typeof F.buildMatchBlock>>
-> = withEmptyForm(K.matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms));
-
 export const lastMatchArm$seated: Seat<
 	T.LastMatchArm.BuildArgs,
 	ReturnType<typeof F.buildLastMatchArm>

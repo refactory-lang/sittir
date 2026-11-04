@@ -410,7 +410,8 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
-	if (classifyFactoryShape(node, nodeMap) !== 'config') return [];
+	const parentShape = classifyFactoryShape(node, nodeMap);
+	if (parentShape !== 'config' && parentShape !== 'forwarded') return [];
 	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
@@ -419,6 +420,7 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Fla
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (group === undefined || !group.seated) continue;
 		if (group.rawFactoryName === undefined) continue;
+		if (parentShape === 'forwarded' && group.irKey !== undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		if (shape !== 'spread' && shape !== 'elements' && !(shape === 'forwarded' && forwardsToSpreadTarget(group, nodeMap, true))) continue;
 		seats.push({ slot, group });
@@ -453,6 +455,9 @@ export function seatOf(
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 	if (child === undefined || !isHoistedAt(value, child)) return undefined;
 	const forwarded: Seat | undefined = classifyFactoryShape(child, nodeMap) === 'forwarded' ? { kind: child.kind, shape: 'forwarded' } : undefined;
+	if (classifyFactoryShape(parent, nodeMap) === 'forwarded' && tupleSeatOf(parent, nodeMap).some((e) => e.slot === slot && e.group === child)) {
+		return { kind: child.kind, shape: 'tuple' };
+	}
 	if (source === undefined) return forwarded;
 	const text = textStorageOf(value, nodeMap)?.text;
 	const arm = source.subs.find(

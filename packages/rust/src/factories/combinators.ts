@@ -422,13 +422,6 @@ export const tupleExpression$elements = <
 	};
 };
 
-export const matchBlock$flatten$matchBlockArms =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config?: unknown, options?: unknown): ReturnType<PF> =>
-		config === undefined || _built(config)
-			? _fwd<ReturnType<PF>>(parent, config, options)
-			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
-
 export const lastMatchArm$flatten$match =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config?: unknown, options?: unknown): ReturnType<PF> => {

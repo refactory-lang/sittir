@@ -67,6 +67,7 @@ import {
 	isRequired,
 	isMultiple,
 	slotListTypeOf,
+	finalSeatOf,
 	slotKindNames,
 	slotLiteralValues,
 	referencedKinds,
@@ -1260,7 +1261,8 @@ function wrapChildrenListHint(
 	}
 	const elementSlot = target.slots.find((slot) => isMultiple(slot)) ?? target.slots[0];
 	if (elementSlot === undefined) return undefined;
-	return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
+	if (finalSeatOf(elementSlot) === undefined) return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
+	return `${slotListTypeOf(elementSlot, (slot) => fieldTypeExpr(slot, nodeMap, lookupUnion), 'readonly')} | readonly []`;
 }
 
 function fieldLooseHintTypeExpr(
