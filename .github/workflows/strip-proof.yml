@@ -1,0 +1,128 @@
+name: Strip proof
+
+# A probe, run from its own branch only. Each release binding is built the way
+# build-native built it before it stripped after the build (cargo stripping at
+# link on every target but Apple's) and the way it builds it now (linked with
+# its symbols, then llvm-strip), from the same source; every allocated
+# section must be byte-identical. The new builds are then repacked the way the
+# release repacks them, and the layout is held to the complete set.
+
+on:
+  push:
+    branches: [probe/strip-proof]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+  BEFORE: 5d5946b1b56653a92753deccf59e0e9cbd04dac2
+
+jobs:
+  build:
+    name: before and after (${{ matrix.target }})
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: aarch64-apple-darwin, host: macos-14, buildFlag: '', grammars: 'regex' }
+          - { target: x86_64-apple-darwin, host: macos-13, buildFlag: '', grammars: 'regex' }
+          - { target: x86_64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '', grammars: 'regex typescript' }
+          - { target: x86_64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex' }
+          - { target: aarch64-unknown-linux-gnu, host: ubuntu-22.04, buildFlag: '--use-napi-cross', grammars: 'regex typescript' }
+          - { target: aarch64-unknown-linux-musl, host: ubuntu-22.04, buildFlag: '--cross-compile', grammars: 'regex' }
+          - { target: x86_64-pc-windows-msvc, host: windows-2022, buildFlag: '', grammars: 'regex' }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          targets: ${{ matrix.target }}
+          components: llvm-tools
+      - if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: strip-proof-${{ matrix.target }}
+      - name: build each binding before and after, and hash its sections
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/strip-proof"
+          mkdir -p "$out/before" "$out/after"
+          git show "$BEFORE:scripts/build-native.mts" > scripts/build-native-before.mts
+          for g in ${{ matrix.grammars }}; do
+            npx tsx scripts/build-native-before.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            cp packages/"$g"/native/*.node "$out/before/"
+            npx tsx scripts/build-native.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            cp packages/"$g"/native/*.node "$out/after/"
+          done
+          status=0
+          for f in "$out"/after/*.node; do
+            b=$(basename "$f")
+            node .github/strip-proof/section-hashes.mjs "$out/before/$b" "$f" "$b" >> "$out/sections.md" || status=1
+          done
+          cp "$out/sections.md" "sections-${{ matrix.target }}.md"
+          cat "$out/sections.md" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sections-${{ matrix.target }}
+          path: sections-${{ matrix.target }}.md
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: |
+            packages/*/native/*.node
+          if-no-files-found: error
+
+  layout:
+    name: repack as the release does
+    needs: build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: bindings-*
+          merge-multiple: false
+      # Every crate's platform packages, as the release creates them; only
+      # regex, built on every target, is repacked.
+      - name: create the platform packages and collect the bindings into them
+        shell: bash
+        run: |
+          set -euo pipefail
+          for crate in $(npx tsx packages/tools/src/scripts/list-grammars.ts stable); do
+            (cd "rust/crates/sittir-${crate}" && pnpm exec napi create-npm-dirs)
+          done
+          (cd rust/crates/sittir-regex && pnpm exec napi artifacts --output-dir ../../../artifacts)
+      - name: hold the layout to the complete set
+        shell: bash
+        run: |
+          set -o pipefail
+          node .github/strip-proof/layout.mjs --static $(npx tsx packages/tools/src/scripts/list-grammars.ts stable) --repack regex | tee -a "$GITHUB_STEP_SUMMARY"
