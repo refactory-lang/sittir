@@ -190,6 +190,18 @@ function staleness(repoRoot: string, grammar: string, binary: string, stamp: Nat
 	return changed === undefined ? undefined : `${changed} changed since the build`;
 }
 
+export function unstrippedReleaseBinary(repoRoot: string, grammar: string, binary: string): string {
+	const stamp = nativeBuildStamp(repoRoot, grammar, binary);
+	const stale = staleness(repoRoot, grammar, binary, stamp);
+	if (stale !== undefined) throw new Error(`${binary}: ${stale}`);
+	if (stamp!.profile !== 'release') throw new Error(`${binary}: built under the ${stamp!.profile} profile, not release`);
+	const copy = stamp!.unstripped;
+	if (copy === undefined) throw new Error(`${binary}: its build kept no unstripped copy`);
+	const path = join(repoRoot, copy.path);
+	if (!existsSync(path) || sha256File(path) !== copy.sha256) throw new Error(`${binary}: ${copy.path} is not the unstripped copy its build kept`);
+	return path;
+}
+
 export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostBinaryFreshness[] {
 	const binary = hostBinaryName(grammar);
 	const path = join(repoRoot, nativeBindingRelDir(grammar), binary);

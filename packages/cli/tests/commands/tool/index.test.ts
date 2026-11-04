@@ -20,6 +20,7 @@ const EXPECTED = [
 	'diff-failures',
 	'dump-ast-mismatches',
 	'emit-factory-source',
+	'encode-stack',
 	'exercise',
 	'fetch-corpus',
 	'field-provenance',

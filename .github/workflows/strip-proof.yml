@@ -1,11 +1,12 @@
 name: Strip proof
 
-# A probe, run from its own branch only. Each release binding is built the way
-# build-native built it before it stripped after the build (cargo stripping at
-# link on every target but Apple's) and the way it builds it now (linked with
-# its symbols, then llvm-strip), from the same source; every allocated
-# section must be byte-identical. The new builds are then repacked the way the
-# release repacks them, and the layout is held to the complete set.
+# A probe, run from its own branch only. Each release binding is built by
+# build-native, which keeps the unstripped link beside its stamp and strips
+# the shipped one; on every target the copy and the shipped binary must have
+# every allocated section byte-identical, so a tool reading the copy reads
+# what ships. The encode stack is read from each copy, for information. The
+# builds are then repacked the way the release repacks them, and the layout
+# is held to the complete set.
 
 on:
   push:
@@ -17,7 +18,6 @@ permissions:
 env:
   CARGO_NET_RETRY: '10'
   CARGO_HTTP_MULTIPLEXING: 'false'
-  BEFORE: 5d5946b1b56653a92753deccf59e0e9cbd04dac2
 
 jobs:
   build:
@@ -59,32 +59,36 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: strip-proof-${{ matrix.target }}
-      - name: build each binding before and after, and hash its sections
+      - name: build each binding, and hold its unstripped copy to it
         shell: bash
         run: |
           set -euo pipefail
-          out="$RUNNER_TEMP/strip-proof"
-          mkdir -p "$out/before" "$out/after"
-          git show "$BEFORE:scripts/build-native.mts" > scripts/build-native-before.mts
-          for g in ${{ matrix.grammars }}; do
-            npx tsx scripts/build-native-before.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
-            cp packages/"$g"/native/*.node "$out/before/"
-            npx tsx scripts/build-native.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
-            cp packages/"$g"/native/*.node "$out/after/"
-          done
+          report="sections-${{ matrix.target }}.md"
+          : > "$report"
           status=0
-          for f in "$out"/after/*.node; do
-            b=$(basename "$f")
-            node .github/strip-proof/section-hashes.mjs "$out/before/$b" "$f" "$b" >> "$out/sections.md" || status=1
+          for g in ${{ matrix.grammars }}; do
+            npx tsx scripts/build-native.mts "$g" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            for f in packages/"$g"/native/*.node; do
+              b=$(basename "$f")
+              node .github/strip-proof/section-hashes.mjs "node_modules/.cache/sittir/native-build/$g/$b" "$f" "$b" >> "$report" || status=1
+            done
           done
-          cp "$out/sections.md" "sections-${{ matrix.target }}.md"
-          cat "$out/sections.md" >> "$GITHUB_STEP_SUMMARY"
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
+      - name: encode stack, for information
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          out="encode-stack-${{ matrix.target }}.txt"
+          npx tsx packages/cli/src/cli.ts tool encode-stack ${{ matrix.grammars }} --paths > "$out" 2>&1 || echo "encode-stack exit $?" >> "$out"
+          cat "$out" >> "$GITHUB_STEP_SUMMARY"
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: sections-${{ matrix.target }}
-          path: sections-${{ matrix.target }}.md
+          path: |
+            sections-${{ matrix.target }}.md
+            encode-stack-${{ matrix.target }}.txt
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:

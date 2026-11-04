@@ -12,6 +12,7 @@ import {
 	nativeBuildFreshness,
 	nativeBuildStamp,
 	unstrippedBinaryPath,
+	unstrippedReleaseBinary,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
 
@@ -240,6 +241,26 @@ describe('a stripped release binary', () => {
 
 	it('records no copy for a build it does not strip', () => {
 		expect(nativeBuildStamp(root, 'rust', BINARY)?.unstripped).toBeUndefined();
+	});
+
+	it('names the unstripped copy of a current release build', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
+	});
+
+	it('names no copy for a build that kept none, a build that is not release, a copy that changed or a stale build', () => {
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('built under the gate profile, not release');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current));
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('its build kept no unstripped copy');
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy);
+		write(relative(root, copy), 'another build');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('is not the unstripped copy its build kept');
+		write('rust/crates/sittir-rust/src/lib.rs', 'pub fn changed() {}\n');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('changed since the build');
 	});
 
 	it('strips with the llvm tool its variable names, when one is named', () => {
