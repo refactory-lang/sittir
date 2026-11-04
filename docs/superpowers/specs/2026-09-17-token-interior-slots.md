@@ -338,3 +338,58 @@ for the reader.
 
 - An interior enum is text-stored and typed as the union of its spellings; an interior flag is a boolean. Neither carries a kind id, because tree-sitter issues no symbol for a literal inside a token. Rust's `integer_literal.suffix` previously borrowed the ids of `primitive_type`'s tokens; it no longer does.
 - A token whose body holds an alternation of forms is not one lexed compound: the DSL layer hoists the outermost alternation into one token kind per arm (see the token-form hoist design), and each arm is then a lexed compound of its own.
+
+### String delimiters are derived, not read
+
+A string's delimiters are spelling, not meaning. Python's `string_start` and `string_end` and Rust's
+`raw_string_literal_start` and `_end` are `renderAs` bare patterns whose named groups say which characters are
+which:
+
+| token | `renderAs` |
+| --- | --- |
+| python `string_start` | `` /(?<prefix>[a-zA-Z]*)(?<quote>["'`]+)/ `` |
+| python `string_end` | `` token.immediate(/(?<content>(?:\\[\s\S])*)(?<quote>["'`]+)/) `` |
+| rust `raw_string_literal_start` | `/(?<prefix>[bc]?r)(?<hashes>#*)"/` |
+| rust `raw_string_literal_end` | `token.immediate(/"(?<hashes>#*)/)` |
+
+**The end token can hold content.** In a raw string, the scanner steps over a backslash and the character after it
+without counting either as content (tree-sitter-python 0.25.0 `src/scanner.c`, the `is_raw(delimiter)` branch of the
+`STRING_CONTENT` loop). A raw string whose content is only such pairs reaches its quote with nothing consumed, so
+`STRING_END` takes the pairs: `r"\\"`, `r"\""`, `r'\''`, `rb"\\"`, `r"""\\"""` and `r"\\\\"` all parse with an
+empty `string_content` and the pairs in `string_end`. Those characters are content, as CPython's `Constant` value
+says. The read appends the end's `content` group to the string's content facet. The closing quote's length is the
+start's `quote` group. A string has one content fact on the portable surface, wherever the scanner put it.
+
+**The read takes meaning from the vocabulary path alone.** No delimiter group reaches the portable surface. A Python
+prefix is already the path (`literal.string.bytes.raw` is `rb`), and the quote and the hash run are preferences or
+derivations.
+
+**The build fills every delimiter in native Prepare, and JS computes none.**
+
+- *Prefix:* a preset from the path, spelled canonically: lowercase letters in the order `r`, `b`, `f`, `u`
+  (`literal.string.bytes.raw` → `rb`).
+- *Python quote:* the registered preference channel. The default is `"`, or `"""` when the content holds a line
+  break.
+- *Rust hashes:* a derivation. The fewest `#` such that `"` followed by that run does not occur in the content.
+
+**One validator.** Prepare checks every delimiter against its content, whether the delimiter was filled or carried
+from a read. A carried delimiter that the content invalidates falls back to the preference or the derivation:
+- a carried `'` whose content gains `'` becomes `"`;
+- a carried `r#"` whose content gains `"#` becomes `r##"`.
+
+Python's raw-string rules hold in the same validator:
+- a quote in raw content is allowed only when escaped (`\"` keeps both characters);
+- raw content may not end in an odd run of backslashes (`r"\"` is not a string).
+
+When no delimiter fits, the build refuses, naming the kind and why no quote fits, rather than emitting text that does
+not parse.
+
+**Unicode strings are a feature.** Python's `u` prefix is `literal.string.unicode`. Like byte strings, it is a
+feature with no crossings.
+
+**Gates.**
+- Round trips, in both directions, for each raw string whose content is only escape pairs (the six above, plus
+  `r"a\\"`): the read gives content X; building from X renders the pairs in content and reparses to the same tree.
+- Each fallback case above, and each refusal.
+- `vocabulary-features --check`.
+- After these fixes, a corpus guard in the portable round trip.
