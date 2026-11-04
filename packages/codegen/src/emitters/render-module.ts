@@ -65,7 +65,7 @@ import {
 import { listViewOwners, wrappedItemLists } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
-import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
+import { boxedPayloadsOf, nodeSizesOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
 import { RECORD_HEADER_WORDS, STORED, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
@@ -1125,7 +1125,8 @@ export function emitRenderModule(
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimNode;',
 			'',
-			support.text
+			support.text,
+			...exactSizeAssertions(support.text)
 		].join('\n') + '\n';
 	if (support.boundaries.dropped.length > 0) {
 		const arms = support.boundaries.dropped.map((arm) => `  ${arm.drop} ${arm.kind} ${arm.side} next=${arm.next ?? '-'}: ${arm.variants.join(' | ')}`);
@@ -1710,6 +1711,13 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 	const name = rustNodeStructName(node);
 	read.choicePayloads.add(name);
 	return boxedInEnum(node, read.boxedPayloads) ? `Box<${name}>` : name;
+}
+
+export function exactSizeAssertions(nodeRs: string): string[] {
+	return [...nodeSizesOf(nodeRs)].flatMap(([name, size]) => [
+		'#[cfg(target_pointer_width = "64")]',
+		`const _: () = assert!(::core::mem::size_of::<${name}>() == ${size}, "${name} is not the ${size} bytes the byte rule in boxed-payloads.ts sizes it");`
+	]);
 }
 
 export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {

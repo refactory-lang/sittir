@@ -6001,3 +6001,139 @@ const _: () = assert!(::core::mem::size_of::<StringContentTextNode>() <= 256, "S
 const _: () = assert!(::core::mem::size_of::<StringNode>() <= 256, "StringNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
 ::sittir_core::grammar_nodes!(TriviaNode; AnyNode, DefinitionNode, NamedNodeNode, ListElementNode, NamedNodeGroupNode, StringContentContentNodeSlot, ParametersElementsNodeSlot, MissingNodeNameNodeSlot, AnonymousNodeNameNodeSlot, PredicatePrefixNodeSlot, GroupExpressionArmLeftNodeSlot, NamedNodeExpressionArmLeftNodeSlot, NamedNodePlainNameNodeSlot, NamedNodeSupertypedNameNodeSlot, ProgramNode, EscapeSequenceNode, QuantifierEnum, IdentifierNode, ImmediateIdentifierNode, CaptureNode, StringNode, ImmediateStringNode, StringContentNode, ParametersNode, CommentNode, ListNode, GroupingNode, MissingNodeNode, AnonymousNodeNode, FieldDefinitionNode, NegatedFieldNode, PredicateNode, PredicateTypeEnum, ListElementQuantifierNode, GroupExpressionArmNode, NamedNodeExpressionArmNode, GroupingGroupNode, StringContentTextNode, AnchorNode, NamedNodePlainNode, NamedNodeSupertypedNode, NamedNodeGroupChildrenNode, NamedNodeGroupAnchoredLastNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, StarNode, PlusNode, QmarkNode, AtNode, DquoteNode, LbrackNode, RbrackNode, LparenNode, RparenNode, MissingKeywordNode, UnderscoreNode, ColonNode, BangNode, PoundNode, DotNode, SlashNode, TriviaNode);
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AnchorNode>() == 0, "AnchorNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AnonymousNodeNameNodeSlot>() == 48, "AnonymousNodeNameNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AnonymousNodeNode>() == 88, "AnonymousNodeNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AnyNode>() == 192, "AnyNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<AtNode>() == 0, "AtNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BangNode>() == 0, "BangNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<BlanklineNode>() == 0, "BlanklineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CaptureNode>() == 48, "CaptureNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ColonNode>() == 0, "ColonNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<CommentNode>() == 32, "CommentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DedentNode>() == 0, "DedentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DefinitionNode>() == 176, "DefinitionNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DotNode>() == 0, "DotNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DoubleBlanklineNode>() == 0, "DoubleBlanklineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<DquoteNode>() == 0, "DquoteNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceNode>() == 32, "EscapeSequenceNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FieldDefinitionNode>() == 88, "FieldDefinitionNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GroupExpressionArmLeftNodeSlot>() == 176, "GroupExpressionArmLeftNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GroupExpressionArmNode>() == 88, "GroupExpressionArmNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GroupingGroupNode>() == 192, "GroupingGroupNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<GroupingNode>() == 64, "GroupingNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IdentifierNode>() == 32, "IdentifierNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImmediateIdentifierNode>() == 32, "ImmediateIdentifierNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ImmediateStringNode>() == 48, "ImmediateStringNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<IndentNode>() == 0, "IndentNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LbrackNode>() == 0, "LbrackNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListElementNode>() == 56, "ListElementNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListElementQuantifierNode>() == 48, "ListElementQuantifierNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ListNode>() == 64, "ListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<LparenNode>() == 0, "LparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MissingKeywordNode>() == 0, "MissingKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MissingNodeNameNodeSlot>() == 48, "MissingNodeNameNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<MissingNodeNode>() == 88, "MissingNodeNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeExpressionArmLeftNodeSlot>() == 176, "NamedNodeExpressionArmLeftNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeExpressionArmNode>() == 88, "NamedNodeExpressionArmNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeGroupAnchoredLastNode>() == 80, "NamedNodeGroupAnchoredLastNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeGroupChildrenNode>() == 40, "NamedNodeGroupChildrenNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeGroupNode>() == 80, "NamedNodeGroupNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeNode>() == 168, "NamedNodeNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodePlainNameNodeSlot>() == 40, "NamedNodePlainNameNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodePlainNode>() == 128, "NamedNodePlainNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeSupertypedNameNodeSlot>() == 48, "NamedNodeSupertypedNameNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NamedNodeSupertypedNode>() == 168, "NamedNodeSupertypedNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NegatedFieldNode>() == 48, "NegatedFieldNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<NewlineNode>() == 0, "NewlineNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParametersElementsNodeSlot>() == 56, "ParametersElementsNodeSlot is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ParametersNode>() == 40, "ParametersNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PlusNode>() == 0, "PlusNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PoundNode>() == 0, "PoundNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PredicateNode>() == 176, "PredicateNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PredicatePrefixNodeSlot>() == 1, "PredicatePrefixNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<PredicateTypeEnum>() == 1, "PredicateTypeEnum is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ProgramNode>() == 40, "ProgramNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<QmarkNode>() == 0, "QmarkNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<QuantifierEnum>() == 1, "QuantifierEnum is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RbrackNode>() == 0, "RbrackNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RparenNode>() == 0, "RparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SlashNode>() == 0, "SlashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SpaceNode>() == 0, "SpaceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StarNode>() == 0, "StarNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentContentNodeSlot>() == 40, "StringContentContentNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentNode>() == 32, "StringContentNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringContentTextNode>() == 32, "StringContentTextNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<StringNode>() == 48, "StringNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TabNode>() == 0, "TabNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 96, "TriviaNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<UnderscoreNode>() == 0, "UnderscoreNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");

@@ -33,7 +33,7 @@ const LEAVES: ReadonlyMap<string, Layout> = new Map([
 	['Vec', BUFFER],
 	['NonEmptyVec', BUFFER],
 	['String', BUFFER],
-	['VerbatimNode', BUFFER],
+	['VerbatimNode', { size: 32, align: 8, niche: CAPACITY }],
 	['KindId', { size: 2, align: 2, niche: undefined }],
 	['Delimiter', { size: 1, align: 1, niche: undefined }],
 	['Edges', { size: 8, align: 2, niche: { offset: 6, width: 1, available: 249n } }],
@@ -251,10 +251,21 @@ function unboundedPayloads(declarations: ReadonlyMap<string, Declaration>, paylo
 
 export function boxedPayloadsOf(nodeRs: string, payloads: ReadonlySet<string>): string[] {
 	const declarations = declarationsOf(nodeRs);
-	const sized = new Map<string, Layout>();
 	const unbounded = unboundedPayloads(declarations, payloads);
-	const open: string[] = [];
 	const boxed = (name: string): boolean => payloads.has(name) && (unbounded.has(name) || named(name).size > PAYLOAD_CEILING_BYTES);
+	const named = layoutsOf(declarations, boxed);
+	return [...payloads].filter(boxed).sort();
+}
+
+export function nodeSizesOf(nodeRs: string): ReadonlyMap<string, number> {
+	const declarations = declarationsOf(nodeRs);
+	const named = layoutsOf(declarations, () => false);
+	return new Map([...declarations.keys()].sort().map((name) => [name, named(name).size]));
+}
+
+function layoutsOf(declarations: ReadonlyMap<string, Declaration>, boxed: (name: string) => boolean): (name: string) => Layout {
+	const sized = new Map<string, Layout>();
+	const open: string[] = [];
 	const typeLayout = (type: RustType): Layout => {
 		switch (type.name) {
 			case 'Option':
@@ -280,5 +291,5 @@ export function boxedPayloadsOf(nodeRs: string, payloads: ReadonlySet<string>): 
 		sized.set(name, layout);
 		return layout;
 	};
-	return [...payloads].filter(boxed).sort();
+	return named;
 }
