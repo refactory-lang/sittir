@@ -57,6 +57,23 @@ describe('$snapshot()', () => {
 		const data = JSON.parse(JSON.stringify(snapshotOf(built)));
 		expect(data._statements[0].$_layout.span).toEqual({ start: { row: 0, column: 0 }, end: { row: 0, column: 9 } });
 	});
+	it('a clean node under a built parent is measured from where its leading comment begins', () => {
+		const root = engine.parse('// c\nfn f() {}\n', WHOLE);
+		const built = engine.build.sourceFile({ statements: [root.statements()[0]!] });
+		const data = JSON.parse(JSON.stringify(snapshotOf(built)));
+		const fn = data._statements[0];
+		expect(fn.$_layout.span).toEqual({ start: { row: 1, column: 0 }, end: { row: 1, column: 9 } });
+		expect(fn.$_layout.trivia.leading[0].span).toEqual({ start: { row: 0, column: 0 }, end: { row: 0, column: 4 } });
+	});
+	it.each([
+		['a doc comment', 'struct S {\n    /// a\n    x: u8,\n}\n'],
+		['a block comment', 'struct S { /* a */ x: u8 }\n'],
+		['a comment before a parameter', 'fn f(\n    // a\n    x: u8,\n) {}\n'],
+	])('measures a first item past %s its list passes it', (_, source) => {
+		const snap = engine.parse(source, WHOLE).$snapshot();
+		expect(JSON.stringify(snap)).not.toMatch(/4294967\d\d\d/);
+		expect(engine.render(snap).toString()).toBe(source);
+	});
 	it('is a new graph of plain data, not the node', () => {
 		const root = engine.parse('fn f() {}\n', WHOLE);
 		const snap = root.$snapshot();

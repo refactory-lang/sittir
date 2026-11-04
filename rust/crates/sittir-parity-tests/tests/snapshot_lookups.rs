@@ -35,7 +35,7 @@ fn seated_alone(tree: &ParsedTree<RustGrammar>) -> AnyNode {
 
 #[test]
 fn a_snapshot_seats_nested_sides_as_the_tree_seats_each_alone() {
-    for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs"))] {
+    for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs")), ("engine.rs", probe_input("engine.rs"))] {
         let through_one = parsed(&source).snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
         assert_eq!(through_one, seated_alone(&parsed(&source)), "{name}");
     }
@@ -43,7 +43,7 @@ fn a_snapshot_seats_nested_sides_as_the_tree_seats_each_alone() {
 
 #[test]
 fn a_region_s_render_finds_every_node_it_looks_up_inside_the_region() {
-    for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs"))] {
+    for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs")), ("engine.rs", probe_input("engine.rs"))] {
         let tree = parsed(&source);
         tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
         assert_ne!(tree.records_rendered(), 0, "{name}: the snapshot renders regions");

@@ -20,7 +20,7 @@ fn a_node_read_answers_the_error_holding_it_or_its_read() {
             };
             assert_eq!(tree.read_node::<AnyNode>(index, Depth::All), Some(apart), "{source:?} read at {index:?}");
             let snapped = match tree.snapshot_error(index, None) {
-                Some(error) => Ok(NodeRead::Error(error)),
+                Some(error) => error.map(NodeRead::Error),
                 None => tree.snapshot::<AnyNode>(index, None).map(NodeRead::Node),
             };
             assert_eq!(tree.snapshot_node::<AnyNode>(index, None), Some(snapped), "{source:?} snapshot at {index:?}");

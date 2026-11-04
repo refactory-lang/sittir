@@ -792,8 +792,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The `ERROR` holding the node at `index` (`read_error`) as `snapshot`
     /// reads one: its bytes and its span from the byte `holder`, or `None`
-    /// when no `ERROR` holds it.
-    pub fn snapshot_error(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<crate::ErrorRead> {
+    /// when no `ERROR` holds it. Refuses a holder after the `ERROR`'s start
+    /// (`ReadError::Unmeasured`).
+    pub fn snapshot_error(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<Result<crate::ErrorRead, crate::read::ReadError>> {
         if !self.tree.root_node().has_error() {
             return None;
         }
@@ -821,14 +822,18 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn snapshot_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
         let mut cursor = cursor_at(&self.tree, index)?;
         if let Some((error, node)) = error_holding(&self.tree, &cursor) {
-            return Some(Ok(NodeRead::Error(self.snapshot_error_at(error, node, holder))));
+            return Some(self.snapshot_error_at(error, node, holder).map(NodeRead::Error));
         }
         Some(self.snapshot_from(&mut cursor, index, holder).map(NodeRead::Node))
     }
 
-    fn snapshot_error_at(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, holder: Option<u32>) -> crate::ErrorRead {
-        let measure = self.snapshot_measure(index, node, holder);
-        self.error_at(index, node, &self.read_ctx().snapshot(measure))
+    /// The `ERROR` `node` at `index` as a snapshot reads it, measured from
+    /// the byte `holder` or its own start: an `ERROR`'s snapshot measures
+    /// its own span alone.
+    fn snapshot_error_at(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, holder: Option<u32>) -> Result<crate::ErrorRead, crate::read::ReadError> {
+        let ctx = self.read_ctx().snapshot(self.snapshot_measure(index, Span::of(&node).start, holder)?);
+        let read = self.error_at(index, node, &ctx);
+        ctx.unmeasured().map_or(Ok(read), |byte| Err(crate::read::ReadError::Unmeasured { index, byte }))
     }
 
     fn error_at(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, ctx: &crate::read::ReadCtx<'_>) -> crate::ErrorRead {
@@ -872,17 +877,24 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// What a snapshot of the node at `index` measures with: from the byte
-    /// `holder`, or from the node's own start when it has none. The root has
-    /// no holder and starts the source.
-    fn snapshot_measure(&self, index: crate::types::NodeIndex, node: tree_sitter::Node<'_>, holder: Option<u32>) -> crate::read::SnapshotCtx<'_> {
-        let own = (index != NodeIndex::ROOT).then(|| Span::of(&node).start);
-        crate::read::SnapshotCtx::new(self.lines(), holder.or(own), index)
+    /// `holder`, or, when it has none, from `from`, the first byte the
+    /// snapshot measures. The root has no holder and starts the source.
+    /// Refuses a holder after `from`, which no offset could measure from
+    /// (`ReadError::Unmeasured`).
+    fn snapshot_measure(&self, index: crate::types::NodeIndex, from: u32, holder: Option<u32>) -> Result<crate::read::SnapshotCtx<'_>, crate::read::ReadError> {
+        if holder.is_some_and(|byte| byte > from) {
+            return Err(crate::read::ReadError::Unmeasured { index, byte: from });
+        }
+        let own = (index != NodeIndex::ROOT).then_some(from);
+        Ok(crate::read::SnapshotCtx::new(self.lines(), holder.or(own), index))
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
     /// its span from the node that holds it, each extra and `ERROR` of
     /// its sides with its text, and the node itself measured from the byte
-    /// `holder`, or from its own start when absent.
+    /// `holder`, or, when absent, from where it or its leading side begins,
+    /// whichever is first. Refuses a holder after that byte, and any point a
+    /// holder would measure from after it (`ReadError::Unmeasured`).
     pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let mut cursor = self.tree.walk();
         crate::read::goto(&mut cursor, index);
@@ -890,9 +902,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn snapshot_from<T: crate::read::ReadNode>(&self, cursor: &mut tree_sitter::TreeCursor<'_>, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
-        let measure = self.snapshot_measure(index, cursor.node(), holder);
         let seating = Seating(std::cell::RefCell::new(self.lookups()));
-        T::read(cursor, &mut self.read_ctx().with_sides(&seating).snapshot(measure), crate::read::Depth::All)
+        let start = Span::of(&cursor.node()).start;
+        let from = seating.0.borrow_mut().leading_start(index).map_or(start, |leading| leading.min(start));
+        let mut ctx = self.read_ctx().with_sides(&seating).snapshot(self.snapshot_measure(index, from, holder)?);
+        let read = T::read(cursor, &mut ctx, crate::read::Depth::All)?;
+        ctx.unmeasured().map_or(Ok(read), |byte| Err(crate::read::ReadError::Unmeasured { index, byte }))
     }
 
     /// Reject a handle minted by a different tree.
@@ -1479,11 +1494,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
 
     /// The entries `ParsedTree::side_entries` answers.
     fn side_entries(&mut self, index: NodeIndex, side: TriviaSide, edge_changed: bool) -> Vec<SideEntry<G::Trivia>> {
-        let tree = self.tree;
-        let mut entries: Vec<SideEntry<G::Trivia>> = match tree.written.side(Place::Row { tree: tree.tree_id, row: index }, side) {
-            Some(written) => written.into_iter().map(SideEntry::Written).collect(),
-            None => tree.assigned_side(self, index, side, Some(Self::deviation)),
-        };
+        let mut entries = self.seated(index, side, Some(Self::deviation));
         if edge_changed {
             crate::trivia::on_changed_edge(
                 &mut entries,
@@ -1732,6 +1743,31 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         }
     }
 
+    /// The entries of `side` of the node at `index`: the ones a write gave
+    /// it, else the ones the assignment gives it (`assigned_side`, each run's
+    /// deviation found by `deviation` when given).
+    fn seated(&mut self, index: NodeIndex, side: TriviaSide, deviation: Option<Deviation<Self, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
+        let tree = self.tree;
+        match tree.written.side(Place::Row { tree: tree.tree_id, row: index }, side) {
+            Some(written) => written.into_iter().map(SideEntry::Written).collect(),
+            None => tree.assigned_side(self, index, side, deviation),
+        }
+    }
+
+    /// What `SideLookup::leading_start` answers: the first byte of the source
+    /// extras and `ERROR`s seated on the leading side of the node at `index`,
+    /// the side's layout left unmeasured; none on a side a write gave it,
+    /// whose entries a snapshot does not measure.
+    fn leading_start(&mut self, index: NodeIndex) -> Option<u32> {
+        self.seated(index, TriviaSide::Leading, None)
+            .iter()
+            .filter_map(|entry| match entry {
+                SideEntry::Source { span, .. } => Some(span.start),
+                SideEntry::Layout(_) | SideEntry::Written(_) => None,
+            })
+            .min()
+    }
+
     /// The first and last child of the node at `index` as a survey finds
     /// them (`SideLookup::end_children`).
     fn end_children(&mut self, index: NodeIndex) -> Option<[crate::read::Child; 2]> {
@@ -1743,9 +1779,9 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
 
 /// The sides one snapshot read seats (`SideLookup`), each found through the
 /// read's one `Lookups`, so a read in order moves its cursor a few steps a
-/// node. The snapshot's context is the only holder of a `Seating`, and no
-/// lookup reaches that context, so no lookup runs inside another and the
-/// cell is never borrowed twice.
+/// node. The snapshot's context is the only holder of a `Seating` besides
+/// the call that makes it, and no lookup reaches either, so no lookup runs
+/// inside another and the cell is never borrowed twice.
 struct Seating<'t, G: EngineGrammar>(std::cell::RefCell<Lookups<'t, G>>);
 
 impl<G: EngineGrammar> crate::read::SideLookup for Seating<'_, G> {
@@ -1763,6 +1799,10 @@ impl<G: EngineGrammar> crate::read::SideLookup for Seating<'_, G> {
 
     fn separator(&self, index: NodeIndex) -> Option<KindId> {
         self.0.borrow_mut().separator_before(index)
+    }
+
+    fn leading_start(&self, index: NodeIndex) -> Option<u32> {
+        self.0.borrow_mut().leading_start(index)
     }
 }
 
@@ -1817,6 +1857,10 @@ impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
 
     fn separator(&self, index: crate::types::NodeIndex) -> Option<KindId> {
         self.separator_before(index)
+    }
+
+    fn leading_start(&self, index: crate::types::NodeIndex) -> Option<u32> {
+        self.lookups().leading_start(index)
     }
 }
 
@@ -2696,9 +2740,10 @@ mod tests {
         assert!(node_at_index(tree.tree(), inside).is_some_and(|node| node.parent().is_some_and(|parent| parent.is_error())), "the ERROR holds a node");
         assert_eq!(tree.read_error(inside), Some(error.clone()), "a node an ERROR holds reads as its ERROR");
         assert_eq!(tree.snapshot_error(inside, None), tree.snapshot_error(index, None));
-        let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
+        let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots").expect("from its own start");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
+        assert_eq!(tree.snapshot_error(index, Some(11)), Some(Err(crate::read::ReadError::Unmeasured { index, byte: 10 })), "a holder after the ERROR is refused");
     }
 
     #[test]

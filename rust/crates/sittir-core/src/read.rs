@@ -251,6 +251,14 @@ pub trait SideLookup {
         let _ = index;
         None
     }
+    /// The first byte of the extras and `ERROR`s the leading side of the node
+    /// at `index` holds as its source has them, which lie before the node:
+    /// the points a snapshot measures on that side. None where the side holds
+    /// none, a write replaced it, or the lookup measures none.
+    fn leading_start(&self, index: NodeIndex) -> Option<u32> {
+        let _ = index;
+        None
+    }
 }
 
 /// What a snapshot read measures with: the source's lines, the descendant
@@ -264,6 +272,9 @@ pub struct SnapshotCtx<'s> {
     root: NodeIndex,
     holder: crate::points::Point,
     replaced: Vec<crate::points::Point>,
+    /// The first byte the read measured that lies before the holder it was
+    /// measured from, which no offset names (`unmeasured`).
+    before_holder: std::cell::Cell<Option<u32>>,
 }
 
 impl<'s> SnapshotCtx<'s> {
@@ -272,10 +283,13 @@ impl<'s> SnapshotCtx<'s> {
     #[must_use]
     pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: NodeIndex) -> Self {
         let holder = holder.and_then(|byte| lines.point(byte)).unwrap_or(crate::points::Point::ZERO);
-        Self { lines, root, holder, replaced: Vec::new() }
+        Self { lines, root, holder, replaced: Vec::new(), before_holder: std::cell::Cell::new(None) }
     }
 
-    /// `span`'s two ends as points measured from the holder's start.
+    /// `span`'s two ends as points measured from the holder's start. A byte
+    /// before the holder has no offset: the read notes the first such byte
+    /// (`unmeasured`), which refuses the snapshot, and writes the zero
+    /// point in its place.
     ///
     /// # Panics
     ///
@@ -284,8 +298,21 @@ impl<'s> SnapshotCtx<'s> {
     #[must_use]
     pub fn span_of(&self, span: Span) -> crate::points::PointSpan {
         let holder = self.holder;
-        let point = |byte: u32| self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
+        let point = |byte: u32| {
+            let measured = self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
+            if measured.is_none() && self.before_holder.get().is_none() {
+                self.before_holder.set(Some(byte));
+            }
+            measured.unwrap_or(crate::points::Point::ZERO)
+        };
         crate::points::PointSpan { start: point(span.start), end: point(span.end) }
+    }
+
+    /// The first byte the read measured before the holder it was measured
+    /// from, or `None` when every point it wrote names its offset.
+    #[must_use]
+    pub fn unmeasured(&self) -> Option<u32> {
+        self.before_holder.get()
     }
 }
 
@@ -508,7 +535,10 @@ impl<'s> ReadCtx<'s> {
 
     /// In a snapshot, makes the start of the node the cursor is on the
     /// holder its slots are measured from, keeping the holder it replaces for
-    /// the node's layout to restore (`Placement::into_layout`).
+    /// the node's layout to restore (`Placement::into_layout`). Where the
+    /// leading side of its first child begins before it (the extras a list
+    /// passes to the item at its edge), the holder is where that side begins,
+    /// so every point measured from it lies at or after it.
     /// Elsewhere nothing moves. A read that fails leaves the holder where it
     /// was moved: the snapshot is not read further.
     pub fn hold(&mut self, cursor: &TreeCursor<'_>) {
@@ -522,10 +552,36 @@ impl<'s> ReadCtx<'s> {
     #[inline(never)]
     fn hold_in(&mut self, cursor: &TreeCursor<'_>) {
         let start = self.coordinate(&cursor.node(), index_of(cursor)).span.start;
+        let held = self.first_child_leading(cursor).map_or(start, |leading| leading.min(start));
         if let Some(snapshot) = &mut self.snapshot {
-            let own = snapshot.lines.point(start).expect("a node's start lies in its source");
+            let own = snapshot.lines.point(held).expect("a node's start lies in its source");
             snapshot.replaced.push(std::mem::replace(&mut snapshot.holder, own));
         }
+    }
+
+    /// Where the leading side of the first child of the node the cursor is
+    /// on begins (`SideLookup::leading_start`), its extras and `ERROR`s passed
+    /// over: no other child's leading side can begin before its holder.
+    fn first_child_leading(&self, cursor: &TreeCursor<'_>) -> Option<u32> {
+        let lookup = self.sides?;
+        let mut child = cursor.node().walk();
+        if !child.goto_first_child() {
+            return None;
+        }
+        while child.node().is_extra() || child.node().is_error() {
+            if !child.goto_next_sibling() {
+                return None;
+            }
+        }
+        lookup.leading_start(index_of(cursor) + offset_of(&child))
+    }
+
+    /// The first byte a snapshot read measured before the holder it was
+    /// measured from (`SnapshotCtx::unmeasured`); `None` on a read that is
+    /// no snapshot.
+    #[must_use]
+    pub fn unmeasured(&self) -> Option<u32> {
+        self.snapshot.as_ref()?.unmeasured()
     }
 
     /// Restores the holder the last `hold` replaced.
@@ -788,6 +844,9 @@ pub enum ReadError {
     Interior { kind: KindId, index: NodeIndex },
     /// An enum kind whose spelling tokens display none of its members' ids.
     Unspelled { kind: KindId, index: NodeIndex },
+    /// A snapshot of the node at `index` that would measure the byte `byte`
+    /// from a holder after it, which no offset names.
+    Unmeasured { index: NodeIndex, byte: u32 },
 }
 
 impl ReadError {
@@ -816,6 +875,7 @@ impl ReadError {
             ReadError::Unspelled { kind, index } => {
                 format!("{} (kind {}) at index {index}: its tokens display none of its members' ids", name(kind), kind.0)
             }
+            ReadError::Unmeasured { index, byte } => format!("a snapshot of the node at index {index} would measure byte {byte} from a holder after it"),
         }
     }
 }

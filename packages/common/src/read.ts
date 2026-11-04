@@ -18,7 +18,7 @@ export interface TreeHandle {
 	/** The tree's layer of the render options (`NativeParseResult.options`). */
 	options?: Readonly<Record<string, unknown>>;
 	query?: TreeQuery;
-	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
+	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from where it or its leading side begins (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
 	triviaSide?(index: number, side: TriviaSideName): unknown[] | undefined;

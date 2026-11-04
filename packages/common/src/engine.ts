@@ -124,9 +124,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
 	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
 	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
-	 * byte `holderByte`, or from its own start when absent.
+	 * byte `holderByte`, or, when absent, from where it or its leading side begins, whichever is first.
 	 *
-	 * @throws as {@link read} does.
+	 * @throws as {@link read} does, and when `holderByte` lies after the first byte the snapshot measures.
 	 */
 	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
 	/**
