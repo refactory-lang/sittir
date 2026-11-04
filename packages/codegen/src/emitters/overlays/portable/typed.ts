@@ -290,7 +290,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, new Set(claimedPaths)) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
@@ -554,16 +554,16 @@ function slotArmOf(
 	vocabulary: Vocabulary,
 	model: GrammarInput['model'],
 	tokenTypeOf: (kind: string) => string | undefined,
-	formsAt: (path: string, base: string) => readonly string[]
+	formsAt: (path: string, base: string) => readonly string[],
+	claimed: ReadonlySet<string>
 ): (kind: string) => string {
 	const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
 	const qname = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
 	const setOf = (path: string): string => {
-		const forms = [...vocabulary.kinds.keys()]
-			.filter((member) => member === path || member.startsWith(`${path}.`))
-			.sort()
-			.map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
-		return forms.every(({ base, forms: [only, ...rest] }) => only === base && rest.length === 0) ? `V.${qname(path)}.Any<Ctx>` : forms.flatMap(({ forms: arms }) => arms).join(' | ');
+		const family = [...vocabulary.kinds.keys()].filter((member) => member === path || member.startsWith(`${path}.`)).sort();
+		const forms = family.filter((member) => claimed.has(member)).map((member) => ({ base: `V.${qname(member)}<Ctx>`, forms: formsAt(member, `V.${qname(member)}<Ctx>`) }));
+		if (forms.length === 0) throw new Error(`a slot holds the ${path} family, but the grammar claims none of its paths`);
+		return forms.length === family.length && forms.every(({ base, forms: [only, ...rest] }) => only === base && rest.length === 0) ? `V.${qname(path)}.Any<Ctx>` : forms.flatMap(({ forms: arms }) => arms).join(' | ');
 	};
 	return (k) => {
 		switch (armClass(k)) {

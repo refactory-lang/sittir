@@ -54,6 +54,13 @@ describe('emitPortableTyped', () => {
 		);
 	});
 
+	it("types a slot holding a family as the family paths the grammar claims, not the vocabulary's whole family", () => {
+		const property = /\treadonly ["']expression\.member["']: \{\n(?:\t\t[^\n]*\n)*?\t\treadonly property: ([^\n]*);/.exec(typed.source)?.[1];
+		expect(property).toContain('V.Literal.Number.Integer.Octal<Ctx>');
+		expect(property).not.toContain('V.Literal.Number.Integer.Big');
+		expect(property).not.toContain('V.Literal.Number.Integer.Imaginary');
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
