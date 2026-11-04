@@ -84,7 +84,7 @@ export namespace Declaration {
 		readonly $kind: 'declaration.variable';
 		readonly alternative?: V.Statement.Block<G>;
 		// r only
-		readonly declarators?: V.Declaration.Variable<G>[];
+		readonly declarators?: V.Declaration.Variable.Any<G>[];
 		// t only
 		readonly mutable?: Flag;
 		// r only
@@ -95,7 +95,7 @@ export namespace Declaration {
 		export interface Constant<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.constant';
-			readonly declarators: V.Declaration.Variable<G>[];
+			readonly declarators: V.Declaration.Variable.Any<G>[];
 		}
 		export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
@@ -106,7 +106,7 @@ export namespace Declaration {
 		export interface Reassignable<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.reassignable';
-			readonly declarators: V.Declaration.Variable<G>[];
+			readonly declarators: V.Declaration.Variable.Any<G>[];
 		}
 		export namespace Reassignable {
 			export interface FunctionScoped<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable.Reassignable<G>> {

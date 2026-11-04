@@ -6,7 +6,7 @@ export namespace Expression {
 		export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
 			// claimed by r
 			readonly $kind: 'expression.call.macro';
-			readonly arguments: V.Element.Macro.TokenTree.Delimited<G>;
+			readonly arguments: V.Element.Macro.TokenTree.Delimited.Any<G>;
 			readonly function: G['identifier'];
 		}
 	}

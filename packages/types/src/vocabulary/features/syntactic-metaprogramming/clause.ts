@@ -4,17 +4,17 @@ import type * as V from '../../index.ts';
 export namespace Clause {
 	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		readonly $kind: 'clause.macro';
-		readonly left: V.Element.Macro.TokenTree.Pattern<G>;
+		readonly left: V.Element.Macro.TokenTree.Pattern.Any<G>;
 		// r only
-		readonly right: V.Element.Macro.TokenTree<G>;
+		readonly right: V.Element.Macro.TokenTree.Any<G>;
 		// r only
 	}
 	export namespace Macro {
 		export interface Rule<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'clause.macro.rule';
-			readonly left: V.Element.Macro.TokenTree.Pattern<G>;
-			readonly right: V.Element.Macro.TokenTree<G>;
+			readonly left: V.Element.Macro.TokenTree.Pattern.Any<G>;
+			readonly right: V.Element.Macro.TokenTree.Any<G>;
 		}
 	}
 }

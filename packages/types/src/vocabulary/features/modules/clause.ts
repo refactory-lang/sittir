@@ -5,7 +5,7 @@ export namespace Clause {
 	export interface Export<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by t
 		readonly $kind: 'clause.export';
-		readonly exportSpecifiers?: V.Clause.Export.Specifier<G>[];
+		readonly exportSpecifiers?: V.Clause.Export.Specifier.Any<G>[];
 	}
 	export namespace Export {
 		export interface Namespace<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Export<G>> {
