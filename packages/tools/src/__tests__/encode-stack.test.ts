@@ -106,6 +106,24 @@ describe('frameBytes', () => {
 			)
 		).toBe(8 + 0x3000 + 8);
 	});
+	it('reads an immediate past the comment objdump prints after it, in each listing', () => {
+		expect(frameBytes(['pushq %rbx', 'subq $0x128, %rsp # imm = 0x128', 'callq 0x0 <g>'], 'x86_64')).toBe(8 + 0x128 + 8);
+		expect(frameBytes(['pushq %rbx', 'subq $0x128, %rsp ## imm = 0x128', 'callq 0x0 <g>'], 'x86_64')).toBe(8 + 0x128 + 8);
+		expect(
+			frameBytes(
+				['movl $0x3000, %eax # imm = 0x3000', 'callq 0x0 <__rust_probestack>', 'subq %rax, %rsp', 'callq 0x0 <g>'],
+				'x86_64'
+			)
+		).toBe(0x3000 + 8);
+		for (const comment of ['// =4800', '; =4800']) {
+			expect(
+				frameBytes(
+					['stp x29, x30, [sp, #-0x10]!', `mov x16, #0x12c0 ${comment}`, 'bl 0x0 <___chkstk_darwin>', 'sub sp, sp, x16', 'bl 0x100 <g>'],
+					'arm64'
+				)
+			).toBe(16 + 4800);
+		}
+	});
 });
 
 const whole = (kind: string): string =>

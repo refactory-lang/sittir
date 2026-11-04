@@ -44,8 +44,8 @@ pub fn height_over(tallest: Option<u16>) -> u16 {
 /// whose stack doesn't grow with depth run past it: napi into V8 (a garbage
 /// collection included), the allocator, `memcpy`, std's panic and formatting
 /// code, and the unwinder. Node's default V8 stack limit on the main thread is
-/// 984 KiB, which leaves them about 920 KiB.
-pub const ENCODE_STACK_BUDGET: usize = 64 * 1024;
+/// 984 KiB, which leaves them about 888 KiB.
+pub const ENCODE_STACK_BUDGET: usize = 96 * 1024;
 
 /// The heights below which a node is encoded by straight recursion rather
 /// than by a frame of the loop: its descent is bounded by its height, so it

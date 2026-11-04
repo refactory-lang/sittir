@@ -234,7 +234,7 @@ const PROLOGUE_RULES: readonly PrologueRule[] = [
 export function frameBytes(prologue: readonly string[], arch: Arch): number {
 	const state: Prologue = { bytes: 0, scratch: 0, probe: undefined, probeBase: false };
 	for (const raw of prologue) {
-		const ins = raw.split('//')[0]!.trim();
+		const ins = raw.replace(COMMENT, '').replace(ARM_COMMENT, '').trim();
 		const rule = PROLOGUE_RULES.find(([pattern]) => pattern.test(ins));
 		if (rule) {
 			rule[1](rule[0].exec(ins)!, state);
