@@ -1,0 +1,5 @@
+{
+	"python": { "portable-kind-armless": 1 },
+	"rust": { "portable-kind-armless": 2 },
+	"typescript": { "portable-kind-armless": 1 }
+}

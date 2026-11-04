@@ -12,9 +12,11 @@ export interface PortableRoundTripFailure {
 	readonly rendered?: string;
 }
 
+export type PortableRoundTripCarry = PortableCarry & { readonly kind: string };
+
 export interface PortableRoundTripCarried {
 	readonly entry: string;
-	readonly carries: readonly PortableCarry[];
+	readonly carries: readonly PortableRoundTripCarry[];
 }
 
 export interface PortableRoundTripResult {
@@ -46,8 +48,12 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 	const astMismatches: PortableRoundTripFailure[] = [];
 	const carried: PortableRoundTripCarried[] = [];
 	for (const { name, source } of entries) {
-		const carries: PortableCarry[] = [];
-		const structure = runtime.read(engine.parse(source), (_, carry) => carries.push(carry));
+		const carries: PortableRoundTripCarry[] = [];
+		const structure = runtime.read(engine.parse(source), (node, carry) => {
+			const kind = engine.trivia.kindName(node.$type);
+			if (kind === undefined) throw new Error(`portable round trip: ${name} carries a node of kind ${node.$type}, which has no name`);
+			carries.push({ kind, ...carry });
+		});
 		if (carries.length > 0) carried.push({ entry: name, carries });
 		if (!isStructure(structure)) {
 			errors.push({ entry: name, stage: 'read', message: 'the root reads as no vocabulary path' });
