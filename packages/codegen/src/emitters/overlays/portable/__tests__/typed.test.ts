@@ -74,6 +74,14 @@ describe('emitPortableTyped', () => {
 		expect(element).not.toContain('V.Element.Macro.TokenTree<Ctx>');
 	});
 
+	it('emits an own slot only for a path the grammar reads, and holds a family by the members it holds', () => {
+		const own = typed.source.slice(typed.source.indexOf('interface OwnSlots {'), typed.source.indexOf('\n}\n', typed.source.indexOf('interface OwnSlots {')));
+		expect(own).not.toMatch(/\treadonly ["']attribute\.decorator["']: \{/);
+		const elements = /\treadonly ["']literal\.string["']: \{\n\t\treadonly elements: ([^\n]*);/.exec(own)?.[1];
+		expect(elements).toContain('V.Literal.String.Text<Ctx>');
+		expect(elements).not.toContain('V.Literal.String.Bytes');
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);

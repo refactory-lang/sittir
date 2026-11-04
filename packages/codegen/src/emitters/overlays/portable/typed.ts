@@ -516,11 +516,13 @@ function contextOf({ grammar, own, vocabulary, readPaths, roleArmsOf, textPaths,
 		'interface OwnSlots {'
 	];
 	const fits: string[] = [];
-	for (const path of [...vocabulary.kinds.keys()].sort()) {
+	const read = new Set(readPaths);
+	for (const path of [...vocabulary.kinds.keys()].filter((path) => read.has(path)).sort()) {
 		const filled = [...vocabulary.members(path)].flatMap(([member, declared]) => {
 			if (declared.flag) return [];
 			const facts = ownMember(path, member);
-			const arms = facts === undefined ? [] : [...new Set(collapsedKinds(own, facts.kinds).map(slotArm))];
+			const held = facts === undefined ? [] : collapsedKinds(own, facts.kinds).flatMap((k) => (k.startsWith('set:') ? [...facts!.kinds].filter((h) => h === k.slice(4) || h.startsWith(`${k.slice(4)}.`)) : [k]));
+			const arms = [...new Set(held.map(slotArm))];
 			if (arms.length === 0) return [];
 			fits.push(`type Fit${fits.length} = Fit<OwnSlots[${q(path)}][${q(member)}], SlotOf<${q(path)}, ${q(member)}>>;`);
 			return [`\t\treadonly ${member}: ${arms.join(' | ')};`];
