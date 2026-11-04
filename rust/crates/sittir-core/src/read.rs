@@ -1596,7 +1596,7 @@ mod tests {
 
     impl SideLookup for OneOfEach {
         fn side(&self, _: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
                     SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
@@ -1615,7 +1615,7 @@ mod tests {
 
     impl SideLookup for EdgeRun {
         fn side(&self, _: NodeIndex, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
                 _ => Vec::new(),
@@ -1651,9 +1651,9 @@ mod tests {
         let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value().and_then(SlotValue::node).cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
-            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None, bytes: None },
         ]);
     }
 

@@ -323,8 +323,11 @@ pub trait RenderSink {
     /// region's: `text` with the source's in-line runs `before` and `after`
     /// it. No seam that stays on the line is written on either side, so the
     /// runs are the gaps beside it. A pending line break still writes, and
-    /// a line break beats the run on its side.
-    fn verbatim(&mut self, before: &str, text: &str, after: &str) -> RenderResult {
+    /// a line break beats the run on its side. `at`, the bytes of its tree's
+    /// source the text spans when read from a live tree, anchors it in a
+    /// recording render as a slice is anchored.
+    fn verbatim(&mut self, before: &str, text: &str, after: &str, at: Option<crate::types::Span>) -> RenderResult {
+        let _ = at;
         self.text(&[before, text, after].concat())
     }
     /// The next text is a leaf whose pattern takes layout text only of the

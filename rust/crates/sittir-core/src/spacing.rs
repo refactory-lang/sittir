@@ -967,7 +967,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         std::mem::replace(&mut self.swallow_cr, on)
     }
 
-    fn verbatim(&mut self, before: &str, text: &str, after: &str) -> crate::render::RenderResult {
+    fn verbatim(&mut self, before: &str, text: &str, after: &str, at: Option<crate::types::Span>) -> crate::render::RenderResult {
         let breaks = self.held_breaks();
         if !breaks {
             self.clear_payload();
@@ -982,10 +982,18 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 self.open_before = before.len();
             }
         }
-        let counting = self.recorder.as_mut().map(|recorder| recorder.count_texts(false));
+        let counting = self.recorder.as_mut().map(|recorder| {
+            if let Some(at) = at {
+                recorder.open(at.start);
+            }
+            recorder.count_texts(false)
+        });
         crate::render::RenderSink::text(self, &s)?;
         if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
             recorder.count_texts(counting);
+            if let Some(at) = at {
+                recorder.close(at.end);
+            }
         }
         self.glued = !s.is_empty();
         self.tail = Some(after).filter(|run| !run.is_empty()).map(str::to_owned);

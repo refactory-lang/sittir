@@ -41,7 +41,7 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
                 .filter(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::grammar_id(&node) == kind))
                 .nth(nth)
                 .expect("the node the write names");
-            let comment = sittir_core::trivia::TriviaText { kind: kind_ids::COMMENT, text: "# written".to_owned(), span: None, before: None, after: None };
+            let comment = sittir_core::trivia::TriviaText { kind: kind_ids::COMMENT, text: "# written".to_owned(), span: None, before: None, after: None, bytes: None };
             let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(sittir_core::SlotValue::Node(entry))).collect();
             tree.write_trivia_side(index, sittir_core::trivia_table::TriviaSide::Leading, entries).expect("a side write");
         }

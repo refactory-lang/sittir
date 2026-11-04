@@ -528,7 +528,7 @@ mod tests {
     use crate::types::KindId;
 
     fn entry(text: &str) -> TriviaEntry<TriviaText> {
-        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None }))
+        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None, bytes: None }))
     }
 
     fn row(tree: u32, row: u32) -> Place {

@@ -233,11 +233,15 @@ pub struct TriviaText {
     /// comment has none.
     pub before: Option<String>,
     pub after: Option<String>,
+    /// Read from a live tree, the bytes of its source the entry spans: a
+    /// recording render anchors its text there, as it anchors a slice. A
+    /// snapshot's entry has its `span` instead, and a written one neither.
+    pub bytes: Option<crate::types::Span>,
 }
 
 impl HeapBytes for TriviaText {
     fn heap_bytes(&self) -> usize {
-        let Self { kind: _, text, span, before, after } = self;
+        let Self { kind: _, text, span, before, after, bytes: _ } = self;
         text.heap_bytes() + span.heap_bytes() + before.heap_bytes() + after.heap_bytes()
     }
 }
@@ -247,7 +251,7 @@ impl TriviaText {
     /// snapshot and no adjacency.
     #[must_use]
     pub fn of(kind: KindId, text: &str) -> Self {
-        Self { kind, text: text.to_owned(), span: None, before: None, after: None }
+        Self { kind, text: text.to_owned(), span: None, before: None, after: None, bytes: None }
     }
 
     /// Whether the entry writes itself verbatim with its adjacency, in place
@@ -260,12 +264,13 @@ impl TriviaText {
 
     /// The entry of `kind` spanning `span` of `source`, with the in-line runs
     /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
-    /// snapshot places it.
+    /// snapshot places it; an entry no snapshot places is a live read's, and
+    /// keeps the bytes it spans.
     #[must_use]
     pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
         let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.range()].to_owned());
         let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
-        Self { kind, text: source[span.range()].to_owned(), span: at, before, after }
+        Self { kind, text: source[span.range()].to_owned(), span: at, before, after, bytes: at.is_none().then_some(span) }
     }
 }
 
@@ -274,7 +279,7 @@ impl Render for TriviaText {
         if self.verbatim() {
             let before = self.before.as_deref().unwrap_or_default();
             let after = self.after.as_deref().unwrap_or_default();
-            return w.verbatim(before, &self.text, after);
+            return w.verbatim(before, &self.text, after, self.bytes);
         }
         w.edge(self.kind, Side::Before, None);
         w.text(&self.text)?;
@@ -731,6 +736,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             after: unsafe { crate::boundary::property(env, obj, c"$after")? },
+            bytes: None,
         })
     }
 }
