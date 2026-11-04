@@ -133,12 +133,6 @@ jobs:
             host: macos-14
             cross: false
             buildFlag: ""
-          # GitHub retired the macos-13 image; an arm64 host builds the
-          # x86_64 binding, which the release only packs.
-          - target: x86_64-apple-darwin
-            host: macos-14
-            cross: true
-            buildFlag: ""
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: false
