@@ -237,8 +237,25 @@ const NONE: u32 = u32::MAX;
 pub struct Walk {
     pub tokens: Vec<Token>,
     pub entries: Vec<NodeIndex>,
+    /// The bounds the walk folded into the nodes it was inside (`Bounds`):
+    /// one for each token it pushed inside a node and one for each node it
+    /// left inside another.
+    pub folds: u32,
     nodes: Nodes,
     base: NodeIndex,
+}
+
+/// The first start and last end of the tokens pushed inside a node, its
+/// descendants' included, kept as the walk pushes them, so a node's own
+/// tokens need no second look when the walk leaves it.
+#[derive(Default)]
+struct Bounds(Option<(u32, u32)>);
+
+impl Bounds {
+    fn widen(&mut self, start: u32, end: u32, folds: &mut u32) {
+        *folds += 1;
+        self.0 = Some(self.0.map_or((start, end), |(first, last)| (first.min(start), last.max(end))));
+    }
 }
 
 impl Walk {
@@ -279,8 +296,8 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk {
     struct Frame {
         at_index: u32,
-        before: usize,
         at: u32,
+        bounds: Bounds,
     }
     let count = crate::read::descendant_count(&node) as usize;
     let mut nodes = Nodes {
@@ -296,14 +313,21 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
     let mut tokens: Vec<Token> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
     let mut frames: Vec<Frame> = Vec::new();
-    let hidden = |tokens: &mut Vec<Token>, owner: u32, from: u32, to: u32| {
-        let Some(text) = source.get(from as usize..to as usize) else { return };
+    let mut folds = 0;
+    let hidden = |owner: u32, from: u32, to: u32| {
+        let text = source.get(from as usize..to as usize)?;
         let trimmed = text.trim();
         if trimmed.is_empty() {
-            return;
+            return None;
         }
         let start = from + crate::types::narrow(text.len() - text.trim_start().len());
-        tokens.push(Token { start, end: start + crate::types::narrow(trimmed.len()), node: index + owner, own: true });
+        Some(Token { start, end: start + crate::types::narrow(trimmed.len()), node: index + owner, own: true })
+    };
+    let push = |tokens: &mut Vec<Token>, bounds: Option<&mut Bounds>, folds: &mut u32, token: Token| {
+        if let Some(bounds) = bounds {
+            bounds.widen(token.start, token.end, folds);
+        }
+        tokens.push(token);
     };
     let mut cursor = node.walk();
     loop {
@@ -316,10 +340,12 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         nodes.end[i] = end;
         nodes.count[i] = crate::read::descendant_count(&node);
         let depth = crate::types::narrow(frames.len());
-        if let Some(frame) = frames.last() {
+        if let Some(frame) = frames.last_mut() {
             nodes.parent[i] = frame.at_index;
             nodes.depth[i] = depth;
-            hidden(&mut tokens, frame.at_index, frame.at, start);
+            if let Some(token) = hidden(frame.at_index, frame.at, start) {
+                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
+            }
         }
         let entry = is_entry(&node);
         nodes.holder[i] = holds_sides(&node);
@@ -329,9 +355,9 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         if entry {
             entries.push(index + local);
         } else if node.child_count() == 0 {
-            tokens.push(Token { start, end, node: index + local, own: false });
+            push(&mut tokens, frames.last_mut().map(|frame| &mut frame.bounds), &mut folds, Token { start, end, node: index + local, own: false });
         } else {
-            frames.push(Frame { at_index: local, before: tokens.len(), at: start });
+            frames.push(Frame { at_index: local, at: start, bounds: Bounds::default() });
             cursor.goto_first_child();
             continue;
         }
@@ -342,26 +368,30 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
             if !frames.is_empty() && cursor.goto_next_sibling() {
                 break;
             }
-            let Some(frame) = frames.pop() else {
+            let Some(mut frame) = frames.pop() else {
                 tokens.sort_by_key(|token| (token.start, token.end));
-                return Walk { tokens, entries, nodes, base: index };
+                return Walk { tokens, entries, folds, nodes, base: index };
             };
             cursor.goto_parent();
             let (start, end) = (nodes.start[frame.at_index as usize], nodes.end[frame.at_index as usize]);
-            hidden(&mut tokens, frame.at_index, frame.at, end);
+            if let Some(token) = hidden(frame.at_index, frame.at, end) {
+                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
+            }
             if frame.at_index != 0 {
-                let own = &tokens[frame.before..];
-                let first = own.iter().map(|token| token.start).min();
-                let last = own.iter().map(|token| token.end).max();
-                if first.is_some_and(|first| start < first) {
-                    tokens.push(Token { start, end: start, node: index + frame.at_index, own: true });
-                }
-                if last.is_some_and(|last| end > last) {
-                    tokens.push(Token { start: end, end, node: index + frame.at_index, own: true });
+                if let Some((first, last)) = frame.bounds.0 {
+                    if start < first {
+                        push(&mut tokens, Some(&mut frame.bounds), &mut folds, Token { start, end: start, node: index + frame.at_index, own: true });
+                    }
+                    if end > last {
+                        push(&mut tokens, Some(&mut frame.bounds), &mut folds, Token { start: end, end, node: index + frame.at_index, own: true });
+                    }
                 }
             }
             if let Some(parent) = frames.last_mut() {
                 parent.at = end;
+                if let Some((first, last)) = frame.bounds.0 {
+                    parent.bounds.widen(first, last, &mut folds);
+                }
             }
         }
     }
@@ -539,7 +569,7 @@ impl TriviaTable {
     /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
     #[must_use]
     pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds, unit: u32) -> Self {
-        let Walk { tokens, entries, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
+        let Walk { tokens, entries, folds: _, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
         let local = |index: NodeIndex| index.offset_from(base);
         let global = |at: u32| base + at;
         let lines = crate::points::LineTable::new(source);

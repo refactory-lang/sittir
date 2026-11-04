@@ -75,6 +75,16 @@ fn a_snapshot_s_lookups_climb_the_same_levels_at_each_level_of_a_chain() {
 }
 
 #[test]
+fn the_trivia_walk_of_a_chain_folds_the_same_bounds_at_each_level() {
+    let folds = [100, 200, 400].map(|levels| {
+        let tree = parsed(&chain(levels));
+        sittir_core::trivia_table::walk(tree.tree().root_node(), NodeIndex::ROOT, &chain(levels)).folds
+    });
+    let [one, two, four] = folds;
+    assert_eq!(four - two, 2 * (two - one), "folds at 100, 200 and 400 levels: {one}, {two}, {four}");
+}
+
+#[test]
 fn a_snapshot_s_depth_moves_walk_each_node_of_a_chain_once() {
     for levels in [100, 200, 400] {
         let nodes = sittir_core::read::descendant_count(&parsed(&chain(levels)).tree().root_node());
