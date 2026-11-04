@@ -93,7 +93,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'attribute.content': {
 			readonly input:
-				| V.Element.Macro.TokenTree.Delimited.Any<G>
+				| V.Element.Macro.TokenTree.Delimited.Brace<G>
+				| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+				| V.Element.Macro.TokenTree.Delimited.Paren<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
