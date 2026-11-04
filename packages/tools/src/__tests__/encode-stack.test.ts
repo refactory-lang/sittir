@@ -12,8 +12,35 @@ import {
 	gotSlots,
 	heightKinds,
 	largestLimit,
+	namedCopy,
+	peSlots,
+	type Disassembled,
+	type Disassembly,
 	type Image
 } from '../validate/encode-stack.ts';
+
+const named = (dis: Disassembly, name: string): Disassembled => {
+	const found = [...dis.functions.values()].filter((fn) => fn.name === name);
+	expect(found).toHaveLength(1);
+	return found[0]!;
+};
+
+const names = (dis: Disassembly, starts: Iterable<number>): string[] => [...starts].map((start) => dis.functions.get(start)!.name);
+
+const linked = (lines: readonly string[]): string[] => {
+	const starts = new Map(
+		lines.flatMap((line) => {
+			const header = /^([0-9a-f]+) <(.*)>:$/.exec(line);
+			return header ? [[header[2]!, Number.parseInt(header[1]!, 16)] as const] : [];
+		})
+	);
+	return lines.map((line) =>
+		line.replace(/ 0x0 <(.+)>$/, (whole, name: string) => {
+			const start = starts.get(name);
+			return start === undefined ? whole : ` 0x${start.toString(16)} <${name}>`;
+		})
+	);
+};
 
 describe('frameBytes', () => {
 	it('sums an arm64 prologue up to its first call', () => {
@@ -106,6 +133,7 @@ describe('frameBytes', () => {
 			)
 		).toBe(8 + 0x3000 + 8);
 	});
+
 	it('reads an immediate past the comment objdump prints after it, in each listing', () => {
 		expect(frameBytes(['pushq %rbx', 'subq $0x128, %rsp # imm = 0x128', 'callq 0x0 <g>'], 'x86_64')).toBe(8 + 0x128 + 8);
 		expect(frameBytes(['pushq %rbx', 'subq $0x128, %rsp ## imm = 0x128', 'callq 0x0 <g>'], 'x86_64')).toBe(8 + 0x128 + 8);
@@ -198,13 +226,33 @@ const GRAPH = [
 ];
 
 describe('disassemble', () => {
-	it('keeps each function prologue and its calls and tail calls to other functions', async () => {
-		const dis = await disassemble(GRAPH);
+	it('keeps each function frame and its calls and tail calls to other functions', async () => {
+		const dis = await disassemble(linked(GRAPH));
 		expect(dis.arch).toBe('arm64');
 		expect(dis.functions.size).toBe(10);
-		expect([...dis.functions.get(NAMES.step)!.tails]).toEqual([NAMES.encodeStep]);
-		expect([...dis.functions.get(NAMES.callback)!.calls]).toEqual([NAMES.any]);
-		expect(dis.functions.get(NAMES.a)!.prologue[0]).toBe('stp x29, x30, [sp, #-16]!');
+		expect(names(dis, named(dis, NAMES.step).tails)).toEqual([NAMES.encodeStep]);
+		expect(names(dis, named(dis, NAMES.callback).calls)).toEqual([NAMES.any]);
+		expect(named(dis, NAMES.a).frame).toBe(16 + 0x60);
+	});
+
+	it('keeps apart the functions that share a name, each with its own frame, calls and sites', async () => {
+		const route = 'sittir_x::render::node::_::__route';
+		const dis = await disassemble(
+			linked([
+				...ARM_ELF,
+				...fn(0x1000, route, ['stp x29, x30, [sp, #-16]!', 'blr x8'], []),
+				...fn(0x2000, route, ['stp x29, x30, [sp, #-16]!', 'sub sp, sp, #0x100'], [['bl', G]]),
+				...fn(0x3000, 'sittir_x::f', ['stp x29, x30, [sp, #-16]!', 'bl 0x2000 <sittir_x::render::node::_::__route>'], []),
+				...fn(0x4000, G, [], [])
+			]),
+			image()
+		);
+		const [first, second] = [dis.functions.get(0x1000)!, dis.functions.get(0x2000)!];
+		expect([first.name, second.name]).toEqual([route, route]);
+		expect([first.frame, second.frame]).toEqual([16, 16 + 0x100]);
+		expect([first.unresolved, second.unresolved]).toEqual([[{ offset: 4, ins: 'blr x8' }], []]);
+		expect(names(dis, second.calls)).toEqual([G]);
+		expect([...named(dis, 'sittir_x::f').calls]).toEqual([0x2000]);
 	});
 });
 
@@ -212,7 +260,7 @@ const HEIGHTS = new Set(['ANode', 'BNode', 'CommentNode']);
 
 describe('encodeStack', () => {
 	it('costs a level apart from the trivia trip and the frames from the callback to the first whole encode', async () => {
-		const stack = encodeStack(await disassemble(GRAPH), HEIGHTS);
+		const stack = encodeStack(await disassemble(linked(GRAPH)), HEIGHTS);
 		expect(stack.level.bytes).toBe(112 + 48);
 		expect(stack.level.steps.map((step) => step.fn)).toEqual([NAMES.a, NAMES.list]);
 		expect(stack.level.to).toBe(NAMES.b);
@@ -234,21 +282,21 @@ describe('encodeStack', () => {
 			...fn(0x2000, read, ['stp x29, x30, [sp, #-16]!'], [['bl', direct]]),
 			...fn(0x2100, direct, ['stp x29, x30, [sp, #-16]!', 'sub sp, sp, #0x400'], [['bl', NAMES.a]])
 		];
-		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		const stack = encodeStack(await disassemble(linked(graph)), HEIGHTS);
 		expect(stack.above.bytes).toBe(16 + 1040);
 		expect(stack.above.steps.map((step) => step.fn)).toEqual([read, direct]);
 	});
 
 	it('refuses a function that leads to a whole encode when no napi callback leads to it', async () => {
 		const graph = [...GRAPH, ...fn(0x2000, 'sittir_x::orphan', ['stp x29, x30, [sp, #-16]!'], [['bl', NAMES.a]])];
-		await expect(disassemble(graph).then((dis) => encodeStack(dis, HEIGHTS))).rejects.toThrow(
+		await expect(disassemble(linked(graph)).then((dis) => encodeStack(dis, HEIGHTS))).rejects.toThrow(
 			/no known caller and no napi callback leads to sittir_x::orphan/
 		);
 	});
 
 	it('lists the indirect calls on a measured path it cannot resolve', async () => {
 		const graph = GRAPH.flatMap((line) => (line.endsWith(`bl 0x0 <${NAMES.list}>`) ? [line, '    100a: \tblr x8'] : [line]));
-		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		const stack = encodeStack(await disassemble(linked(graph)), HEIGHTS);
 		expect(stack.unresolved).toEqual([{ fn: NAMES.a, offset: 0xa, ins: 'blr x8' }]);
 	});
 
@@ -262,7 +310,7 @@ describe('encodeStack', () => {
 			...fn(0x2000, panic, ['stp x29, x30, [sp, #-16]!', 'blr x8'], []),
 			...fn(0x2100, leaf, ['stp x29, x30, [sp, #-16]!', 'blr x9'], [])
 		];
-		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		const stack = encodeStack(await disassemble(linked(graph)), HEIGHTS);
 		expect(stack.unresolved).toEqual([]);
 		expect(stack.reached).toEqual([
 			{ fn: leaf, offset: 4, ins: 'blr x9', class: undefined },
@@ -277,16 +325,16 @@ describe('encodeStack', () => {
 			...GRAPH.flatMap((line) => (line.endsWith(`<${NAMES.b}>:`) ? [line, `    1208: \tbl 0x0 <${drop}>`] : [line])),
 			...fn(0x2000, drop, ['stp x29, x30, [sp, #-16]!', 'blr x8'], [])
 		];
-		const kept = encodeStack(await disassemble(graph), HEIGHTS);
+		const kept = encodeStack(await disassemble(linked(graph)), HEIGHTS);
 		expect(kept.reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[1]]);
 		expect(kept.refuted).toEqual([]);
-		const refuted = encodeStack(await disassemble([...graph, ...fn(0x2100, setter, ['ret'], [])]), HEIGHTS);
+		const refuted = encodeStack(await disassemble(linked([...graph, ...fn(0x2100, setter, ['ret'], [])])), HEIGHTS);
 		expect(refuted.reached.map((call) => call.class)).toEqual([undefined]);
 		expect(refuted.refuted).toEqual([{ class: DYNAMIC_CLASSES[1], by: setter }]);
 	});
 
 	it('refuses a build whose names it cannot read', async () => {
-		await expect(disassemble(GRAPH).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
+		await expect(disassemble(linked(GRAPH)).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
 	});
 });
 
@@ -301,9 +349,9 @@ describe('disassemble on arm64', () => {
 		];
 		const relocated = gotSlots(['0000000000005220 R_AARCH64_TLSDESC        *ABS*']);
 		const read = await disassemble(listing, { ...relocated, int32: () => undefined, threadLocal: () => false });
-		expect(read.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		expect(named(read, 'sittir_x::f').unresolved).toEqual([]);
 		const unread = await disassemble(listing, image());
-		expect(unread.functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['blr x1']);
+		expect(named(unread, 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['blr x1']);
 	});
 
 	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
@@ -315,8 +363,8 @@ describe('disassemble on arm64', () => {
 			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'add x0, x0, #0xc8', 'ldr x8, [x0]', 'blr x8'], [])
 		];
 		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
-		expect((await disassemble(listing, tlv)).functions.get('sittir_x::f')!.unresolved).toEqual([]);
-		expect((await disassemble(listing, image())).functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['blr x8']);
+		expect(named(await disassemble(listing, tlv), 'sittir_x::f').unresolved).toEqual([]);
+		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['blr x8']);
 	});
 });
 
@@ -353,8 +401,8 @@ describe('arm64 registers', () => {
 			],
 			image()
 		);
-		const f = dis.functions.get('sittir_x::f')!;
-		expect([...f.calls]).toEqual([G]);
+		const f = named(dis, 'sittir_x::f');
+		expect(names(dis, f.calls)).toEqual([G]);
 		expect(f.unresolved.map((site) => site.ins)).toEqual(['blr x9', 'blraaz x10']);
 	});
 
@@ -384,8 +432,8 @@ describe('arm64 registers', () => {
 			],
 			image()
 		);
-		const lock = dis.functions.get(LOCK)!;
-		expect([...lock.calls].sort()).toEqual([G, READ_LOCK, WRITE_LOCK].sort());
+		const lock = named(dis, LOCK);
+		expect(names(dis, lock.calls).sort()).toEqual([G, READ_LOCK, WRITE_LOCK].sort());
 		expect(lock.unresolved).toEqual([]);
 		expect(lock.selected).toEqual([{ offset: 0x1c, ins: 'blr x22', targets: [WRITE_LOCK, READ_LOCK] }]);
 	});
@@ -399,7 +447,7 @@ describe('dynamic classes', () => {
 
 	it('takes the static unwinder for a class of its own', async () => {
 		const graph = below('unwind_phase2', fn(0x2000, 'unwind_phase2', ['stp x29, x30, [sp, #-16]!', 'blr x8'], []));
-		expect(encodeStack(await disassemble(graph), HEIGHTS).reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[2]]);
+		expect(encodeStack(await disassemble(linked(graph)), HEIGHTS).reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[2]]);
 	});
 
 	it('reads a call between two picked functions as a call to both, and lists it with their names', async () => {
@@ -413,7 +461,7 @@ describe('dynamic classes', () => {
 			...fn(0x2100, WRITE_LOCK, [], []),
 			...fn(0x2200, READ_LOCK, ['blr x8'], [])
 		]);
-		const stack = encodeStack(await disassemble(graph), HEIGHTS);
+		const stack = encodeStack(await disassemble(linked(graph)), HEIGHTS);
 		expect(stack.selected).toEqual([{ fn: LOCK, offset: 0x14, ins: 'blr x22', targets: [WRITE_LOCK, READ_LOCK] }]);
 		expect(stack.reached).toEqual([{ fn: READ_LOCK, offset: 0, ins: 'blr x8', class: undefined }]);
 	});
@@ -454,8 +502,8 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		const f = dis.functions.get('sittir_x::f')!;
-		expect([...f.calls].sort()).toEqual([STAR, G].sort());
+		const f = named(dis, 'sittir_x::f');
+		expect(names(dis, f.calls).sort()).toEqual([STAR, G].sort());
 		expect(f.unresolved.map((site) => site.offset)).toEqual([8]);
 	});
 
@@ -478,8 +526,8 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		const f = dis.functions.get('sittir_x::f')!;
-		expect([...f.calls]).toEqual([G]);
+		const f = named(dis, 'sittir_x::f');
+		expect(names(dis, f.calls)).toEqual([G]);
 		expect(f.unresolved.map((site) => site.offset)).toEqual([0x1c]);
 	});
 
@@ -507,11 +555,12 @@ describe('disassemble on x86-64', () => {
 			[0x5000, 0x4020 - 0x5000],
 			[0x5004, 0x4028 - 0x5000]
 		]);
-		const read = (await disassemble(listing, image(table))).functions.get('sittir_x::t')!;
-		expect([...read.calls]).toEqual([G]);
+		const tabled = await disassemble(listing, image(table));
+		const read = named(tabled, 'sittir_x::t');
+		expect(names(tabled, read.calls)).toEqual([G]);
 		expect(read.unresolved).toEqual([]);
 		expect(read.jumps.map((site) => site.ins)).toEqual(['jmpq *%rax']);
-		const unread = (await disassemble(listing, image())).functions.get('sittir_x::t')!;
+		const unread = named(await disassemble(listing, image()), 'sittir_x::t');
 		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
 	});
 
@@ -530,8 +579,8 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		expect([...dis.functions.get('sittir_x::f')!.calls]).toEqual([G]);
-		expect(dis.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		expect(names(dis, named(dis, 'sittir_x::f').calls)).toEqual([G]);
+		expect(named(dis, 'sittir_x::f').unresolved).toEqual([]);
 	});
 
 	it('reads no code past a jump table the function holds inline', async () => {
@@ -549,14 +598,14 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		expect(dis.functions.get('sittir_x::t')!.unresolved).toEqual([]);
+		expect(named(dis, 'sittir_x::t').unresolved).toEqual([]);
 	});
 
 	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
 		const listing = [...ELF, ...x86(0x2000, 'sittir_x::f', ['leaq 0x10(%rip), %rdi ## 0x50c8 <x>', 'callq *(%rdi)', 'retq'])];
 		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
-		expect((await disassemble(listing, tlv)).functions.get('sittir_x::f')!.unresolved).toEqual([]);
-		expect((await disassemble(listing, image())).functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['callq *(%rdi)']);
+		expect(named(await disassemble(listing, tlv), 'sittir_x::f').unresolved).toEqual([]);
+		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['callq *(%rdi)']);
 	});
 
 	it('calls both functions a cmov picks between', async () => {
@@ -576,9 +625,73 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		const lock = dis.functions.get(LOCK)!;
-		expect([...lock.calls].sort()).toEqual([READ_LOCK, WRITE_LOCK].sort());
+		const lock = named(dis, LOCK);
+		expect(names(dis, lock.calls).sort()).toEqual([READ_LOCK, WRITE_LOCK].sort());
 		expect(lock.selected).toEqual([{ offset: 0x10, ins: 'callq *%r13', targets: [WRITE_LOCK, READ_LOCK] }]);
+	});
+
+	it('follows a call through memory at an address a register holds, or at the pointer the slot it holds was relocated to', async () => {
+		const stub = 'napi_sys::functions::napi1::NAPI::napi_get_boolean';
+		const table: Image = {
+			internal: new Map([
+				[0x3000, 0x2100],
+				[0x3010, 0x4000],
+				[0x4008, 0x2300],
+				[0x4010, 0x2100]
+			]),
+			symbols: new Map([[0x3008, 'memcpy']]),
+			tls: new Set(),
+			int32: () => undefined,
+			threadLocal: () => false
+		};
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', [
+					'leaq 0x10(%rip), %rax # 0x3000 <x>',
+					'callq *(%rax)',
+					'leaq 0x10(%rip), %rax # 0x3000 <x>',
+					'callq *0x8(%rax)',
+					'movq 0x10(%rip), %r9 # 0x3010 <x>',
+					'callq *0x8(%r9)',
+					'movq 0x10(%rip), %r9 # 0x3010 <x>',
+					'callq *0x10(%r9)',
+					'callq *0x18(%rdx)',
+					'retq'
+				]),
+				...x86(0x2100, G, ['retq']),
+				...x86(0x2300, stub, ['retq'])
+			],
+			table
+		);
+		const f = named(dis, 'sittir_x::f');
+		expect(names(dis, f.calls)).toEqual([G]);
+		expect(f.unresolved.map((site) => site.ins)).toEqual(['callq *0x18(%rdx)']);
+	});
+
+	it('keeps a slot in a register the Microsoft x64 convention preserves across a call, in a COFF listing only', async () => {
+		const listing = (format: string): string[] => [
+			`x.node:\tfile format ${format}`,
+			'',
+			'Disassembly of section .text:',
+			'',
+			...x86(0x2000, 'sittir_x::f', ['movq 0x10(%rip), %rdi # 0x3000 <x>', `callq 0x2200 <${STAR}>`, 'callq *%rdi', 'retq']),
+			...x86(0x2100, G, ['retq']),
+			...x86(0x2200, STAR, ['retq'])
+		];
+		const coff = await disassemble(listing('coff-x86-64'), image());
+		expect(names(coff, named(coff, 'sittir_x::f').calls).sort()).toEqual([G, STAR].sort());
+		expect(named(coff, 'sittir_x::f').unresolved).toEqual([]);
+		const elf = await disassemble(listing('elf64-x86-64'), image());
+		expect(named(elf, 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['callq *%rdi']);
+	});
+
+	it('takes each frame from the unwind info the image carries, and a function it has no entry for as a leaf', async () => {
+		const dis = await disassemble(
+			[...ELF, ...x86(0x2000, 'sittir_x::f', ['pushq %rbx', 'subq $0x20, %rsp', `callq 0x2100 <${G}>`, 'retq']), ...x86(0x2100, G, ['retq'])],
+			{ ...image(), frames: new Map([[0x2000, 0x50]]) }
+		);
+		expect([named(dis, 'sittir_x::f').frame, named(dis, G).frame]).toEqual([0x50, 8]);
 	});
 
 	it('takes a PLT stub for the external function it binds', async () => {
@@ -594,8 +707,8 @@ describe('disassemble on x86-64', () => {
 			],
 			image()
 		);
-		expect([...dis.functions.keys()]).toEqual(['sittir_x::f']);
-		expect(dis.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		expect([...dis.functions.values()].map((f) => f.name)).toEqual(['sittir_x::f']);
+		expect(named(dis, 'sittir_x::f').unresolved).toEqual([]);
 	});
 });
 
@@ -641,6 +754,113 @@ describe('imageOf', () => {
 		const read = imageOf(bytes);
 		expect([read.int32(0x1004), read.int32(0x1008)]).toEqual([-12, undefined]);
 		expect([read.threadLocal(0x2008), read.threadLocal(0x1004), read.threadLocal(0x2018)]).toEqual([true, false, false]);
+	});
+});
+
+const PE_BASE = 0x180000000;
+const PE_SECTION = 0x1000;
+const PE_RAW = 0x200;
+
+function peImage(): Buffer {
+	const bytes = Buffer.alloc(PE_RAW + 0x600);
+	const at = (rva: number): number => PE_RAW + rva - PE_SECTION;
+	bytes.writeUInt16LE(0x5a4d, 0);
+	bytes.writeUInt32LE(0x40, 0x3c);
+	bytes.writeUInt32LE(0x4550, 0x40);
+	const coff = 0x44;
+	bytes.writeUInt16LE(0x8664, coff);
+	bytes.writeUInt16LE(1, coff + 2);
+	bytes.writeUInt16LE(240, coff + 16);
+	const optional = coff + 20;
+	bytes.writeUInt16LE(0x20b, optional);
+	bytes.writeBigUInt64LE(BigInt(PE_BASE), optional + 24);
+	bytes.writeUInt32LE(16, optional + 108);
+	for (const [index, rva, size] of [
+		[1, 0x1000, 40],
+		[3, 0x1400, 24],
+		[5, 0x1300, 16]
+	] as const) {
+		bytes.writeUInt32LE(rva, optional + 112 + 8 * index);
+		bytes.writeUInt32LE(size, optional + 116 + 8 * index);
+	}
+	const header = optional + 240;
+	bytes.write('.data', header, 'latin1');
+	bytes.writeUInt32LE(0x600, header + 8);
+	bytes.writeUInt32LE(PE_SECTION, header + 12);
+	bytes.writeUInt32LE(0x600, header + 16);
+	bytes.writeUInt32LE(PE_RAW, header + 20);
+	bytes.writeUInt32LE(0x1100, at(0x1000));
+	bytes.writeUInt32LE(0x1200, at(0x1000) + 12);
+	bytes.writeUInt32LE(0x1180, at(0x1000) + 16);
+	for (const table of [0x1100, 0x1180]) {
+		bytes.writeBigUInt64LE(0x1220n, at(table));
+		bytes.writeBigUInt64LE((1n << 63n) | 7n, at(table) + 8);
+	}
+	bytes.write('KERNEL32.dll\0', at(0x1200), 'latin1');
+	bytes.write('WriteFile\0', at(0x1222), 'latin1');
+	bytes.writeUInt32LE(0x1000, at(0x1300));
+	bytes.writeUInt32LE(16, at(0x1300) + 4);
+	[0xa180, 0xa388, 0xa390, 0].forEach((entry, n) => bytes.writeUInt16LE(entry, at(0x1300) + 8 + 2 * n));
+	bytes.writeBigUInt64LE(BigInt(PE_BASE + 0x5000), at(0x1388));
+	bytes.writeBigUInt64LE(BigInt(PE_BASE + 0x1500), at(0x1390));
+	for (const [n, begin, info] of [
+		[0, 0x5000, 0x1440],
+		[1, 0x5100, 0x1480]
+	] as const) {
+		bytes.writeUInt32LE(begin, at(0x1400) + 12 * n);
+		bytes.writeUInt32LE(begin + 0x80, at(0x1400) + 12 * n + 4);
+		bytes.writeUInt32LE(info, at(0x1400) + 12 * n + 8);
+	}
+	Buffer.from([0x01, 0x10, 5, 0, 0x0c, 0x68, 2, 0, 0x08, 0x42, 0x04, 0x30, 0x02, 0x50]).copy(bytes, at(0x1440));
+	Buffer.from([0x21, 0x10, 3, 0, 0x10, 0x11, 0x00, 0x20, 0, 0, 0, 0]).copy(bytes, at(0x1480));
+	bytes.writeUInt32LE(0x5000, at(0x148c));
+	bytes.writeUInt32LE(0x5080, at(0x1490));
+	bytes.writeUInt32LE(0x1440, at(0x1494));
+	return bytes;
+}
+
+describe('PE images', () => {
+	it('names each import slot and takes every other relocated slot for the pointer it holds', () => {
+		const slots = peSlots(peImage());
+		expect([...slots.symbols]).toEqual([
+			[PE_BASE + 0x1180, 'WriteFile'],
+			[PE_BASE + 0x1188, 'KERNEL32.dll#7']
+		]);
+		expect([...slots.internal]).toEqual([
+			[PE_BASE + 0x1388, PE_BASE + 0x5000],
+			[PE_BASE + 0x1390, PE_BASE + 0x1500]
+		]);
+	});
+
+	it('sums each function frame from its unwind codes, following a chained entry', () => {
+		const { frames, int32 } = imageOf(peImage());
+		expect([...frames!]).toEqual([
+			[PE_BASE + 0x5000, 8 + 8 + 8 + 40],
+			[PE_BASE + 0x5100, 8 + 0x2000 + 8 + 8 + 40]
+		]);
+		expect([int32(PE_BASE + 0x1304), int32(PE_BASE + 0x1600)]).toEqual([16, undefined]);
+	});
+
+	it('appends a symbol table of the functions the linker map names', () => {
+		const bytes = peImage();
+		const long = '_RNvCs1_6sittir12long_name_fn';
+		const map = [
+			' 0000:00000000       ___safe_se_handler_count   0000000000000000     <absolute>',
+			` 0001:00000010       ${long} 0000000180001010 f   sittir.o`,
+			' 0001:00000020       short                      0000000180001020 f i sittir.o',
+			' 0002:00000000       _RNvCs1_6sittir4DATA       0000000180002000     sittir.o'
+		].join('\r\n');
+		const named = namedCopy(bytes, map);
+		const coff = 0x44;
+		expect([named.readUInt32LE(coff + 8), named.readUInt32LE(coff + 12)]).toEqual([bytes.length, 2]);
+		const record = (n: number) => named.subarray(bytes.length + 18 * n, bytes.length + 18 * (n + 1));
+		const [first, second] = [record(0), record(1)];
+		expect([first.readUInt32LE(0), first.readUInt32LE(4), first.readUInt32LE(8), first.readInt16LE(12), first.readUInt16LE(14), first[16]]).toEqual([0, 4, 0x10, 1, 0x20, 2]);
+		expect([second.toString('latin1', 0, 8), second.readUInt32LE(8)]).toEqual(['short\0\0\0', 0x20]);
+		const strings = bytes.length + 36;
+		expect(named.readUInt32LE(strings)).toBe(4 + long.length + 1);
+		expect(named.toString('latin1', strings + 4, strings + 4 + long.length)).toBe(long);
+		expect(named.subarray(0, bytes.length).equals(Buffer.concat([bytes.subarray(0, coff + 8), named.subarray(coff + 8, coff + 16), bytes.subarray(coff + 16)]))).toBe(true);
 	});
 });
 

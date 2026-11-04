@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { createInterface } from 'node:readline';
 import {
@@ -33,9 +34,10 @@ export interface Selected extends Unresolved {
 }
 
 export interface Disassembled {
-	readonly prologue: readonly string[];
-	readonly calls: ReadonlySet<string>;
-	readonly tails: ReadonlySet<string>;
+	readonly name: string;
+	readonly frame: number;
+	readonly calls: ReadonlySet<number>;
+	readonly tails: ReadonlySet<number>;
 	readonly unresolved: readonly Unresolved[];
 	readonly selected: readonly Selected[];
 	readonly jumps: readonly Unresolved[];
@@ -50,13 +52,14 @@ export interface Slots {
 export interface BinaryImage {
 	readonly int32: (address: number) => number | undefined;
 	readonly threadLocal: (address: number) => boolean;
+	readonly frames?: ReadonlyMap<number, number>;
 }
 
 export interface Image extends Slots, BinaryImage {}
 
 export interface Disassembly {
 	readonly arch: Arch;
-	readonly functions: ReadonlyMap<string, Disassembled>;
+	readonly functions: ReadonlyMap<number, Disassembled>;
 }
 
 export interface StackStep {
@@ -134,7 +137,6 @@ const PROBE = /chkstk|probestack/;
 const CALL_OPS = new Set(['bl', 'call', 'callq']);
 const TAIL_OPS = /^(?:b|b\.\w+|cbn?z|tbn?z|jmpq?|j[a-z]{1,3})$/;
 const UNCONDITIONAL = new Set(['b', 'jmp', 'jmpq', 'ret', 'retq']);
-const OFFSET = /\+0x[0-9a-f]+$/;
 const NUMBER = String.raw`(-?(?:0x[0-9a-f]+|\d+))`;
 const PAGE = 4096;
 
@@ -257,6 +259,8 @@ const PREFIX = /^(?:notrack|bnd) /;
 const RIP_BRANCH = /^(callq?|jmpq?) \*-?0x[0-9a-f]+\(%rip\) ##? 0x([0-9a-f]+)\b/;
 const RIP_LOAD = /^movq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
 const REG_BRANCH = /^(callq?|jmpq?) \*%(\w+)$/;
+const MEMORY_BRANCH = /^(callq?|jmpq?) \*(-?0x[0-9a-f]+)?\(%(\w+)\)$/;
+const HOST_STUB = /^napi_sys::functions::\w+::NAPI::(\w+)$/;
 const OTHER_BRANCH = /^(callq?|jmpq?|blr(?:aa|ab)?z?|br(?:aa|ab)?z?) /;
 const LAST_REGISTER = /(?:^\S+|,) %(\w+)$/;
 const COPY = /^movq %(\w+), %(\w+)$/;
@@ -298,6 +302,8 @@ const ENDS = /^(?:retq?|ud[12]|int3|hlt)$/;
 const BRANCH = /^(?:j[a-z]+|loop\w*)$/;
 const ADDRESS = /0x([0-9a-f]+)$/;
 const CALLER_SAVED = ['rax', 'rcx', 'rdx', 'rsi', 'rdi', 'r8', 'r9', 'r10', 'r11'];
+const MICROSOFT_CALLER_SAVED = ['rax', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11'];
+const COFF_FORMAT = /^coff-/;
 const LEGACY: Readonly<Record<string, string>> = Object.fromEntries(
 	(['a', 'b', 'c', 'd'] as const).flatMap((r) => [`e${r}x`, `${r}x`, `${r}l`, `${r}h`].map((name) => [name, `r${r}x`])).concat(
 		['si', 'di', 'bp', 'sp'].flatMap((r) => [`e${r}`, r, `${r}l`].map((name) => [name, `r${r}`]))
@@ -324,7 +330,7 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 		reason:
 			'runs once, at the frame that faults or formats, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
 		within:
-			/^(?:<&?)?(?:std::panicking::|core::fmt::write\b|std::sys::sync::once::|std::alloc::rust_oom\b|std::thread::current::|__rustc::__rust_start_panic\b|core::ptr::drop_glue::<panic_unwind::|std::io::stdio::|std::sys::thread_local::destructors::)/
+			/^(?:<&?)?(?:std::panicking::|core::fmt::write\b|std::sys::sync::once::|std::alloc::rust_oom\b|std::thread::current::|__rustc::__rust_start_panic\b|core::ptr::drop_glue::<panic_unwind::|std::io::stdio::|std::sys::stdio::|std::sys::thread_local::destructors::)/
 	},
 	{
 		name: 'napi typed-array external-data finalizer (never set: no caller of with_external_data)',
@@ -347,6 +353,19 @@ const TABLE_REACH = 12;
 const TABLE_ROUNDS = 8;
 const ELF_MAGIC = 0x464c457f;
 const SHT_PROGBITS = 1;
+const MZ_MAGIC = 0x5a4d;
+const PE_MAGIC = 0x4550;
+const PE32_PLUS = 0x20b;
+const IMPORT_DIRECTORY = 1;
+const EXCEPTION_DIRECTORY = 3;
+const BASE_RELOCATION_DIRECTORY = 5;
+const IMAGE_REL_BASED_DIR64 = 10;
+const ORDINAL_IMPORT = 1n << 63n;
+const UNW_FLAG_CHAININFO = 4;
+const RETURN_ADDRESS = 8;
+const MAP_FUNCTION = /^ ([0-9a-f]{4}):([0-9a-f]{8})\s+(\S+)\s+[0-9a-f]{16}\s+f\s/;
+const COFF_FUNCTION = 0x20;
+const COFF_EXTERNAL = 2;
 
 function wide(reg: string): string {
 	const numbered = /^r(\d+)[dwb]?$/.exec(reg);
@@ -395,21 +414,179 @@ function machoSections(bytes: Buffer): Section[] {
 	return sections;
 }
 
+interface Pe {
+	readonly base: number;
+	readonly coff: number;
+	readonly sections: readonly Section[];
+	readonly directory: (index: number) => { readonly rva: number; readonly size: number };
+}
+
+function peOf(bytes: Buffer): Pe | undefined {
+	if (bytes.length < 0x40 || bytes.readUInt16LE(0) !== MZ_MAGIC) return undefined;
+	const signature = bytes.readUInt32LE(0x3c);
+	if (signature + 24 > bytes.length || bytes.readUInt32LE(signature) !== PE_MAGIC) return undefined;
+	const coff = signature + 4;
+	const optional = coff + 20;
+	if (bytes.readUInt16LE(optional) !== PE32_PLUS) return undefined;
+	const base = Number(bytes.readBigUInt64LE(optional + 24));
+	const directories = bytes.readUInt32LE(optional + 108);
+	const headers = optional + bytes.readUInt16LE(coff + 16);
+	const sections = Array.from({ length: bytes.readUInt16LE(coff + 2) }, (_, at) => {
+		const header = headers + 40 * at;
+		const name = bytes.subarray(header, header + 8);
+		const end = name.indexOf(0);
+		return {
+			name: name.toString('latin1', 0, end < 0 ? name.length : end),
+			address: base + bytes.readUInt32LE(header + 12),
+			size: Math.min(bytes.readUInt32LE(header + 8), bytes.readUInt32LE(header + 16)),
+			offset: bytes.readUInt32LE(header + 20)
+		};
+	});
+	return {
+		base,
+		coff,
+		sections,
+		directory: (index) =>
+			index < directories
+				? { rva: bytes.readUInt32LE(optional + 112 + 8 * index), size: bytes.readUInt32LE(optional + 116 + 8 * index) }
+				: { rva: 0, size: 0 }
+	};
+}
+
+function fileOffset(sections: readonly Section[], address: number, width: number): number | undefined {
+	const section = sections.find((held) => address >= held.address && address + width <= held.address + held.size);
+	return section?.offset ? section.offset + address - section.address : undefined;
+}
+
+function unwoundBytes(bytes: Buffer, pe: Pe, info: number): number {
+	let total = 0;
+	for (let rva: number | undefined = info; rva !== undefined; ) {
+		const at = fileOffset(pe.sections, pe.base + rva, 4);
+		if (at === undefined) throw new Error(`the unwind info at ${hexOf(pe.base + rva)} is outside the image`);
+		const flags = bytes[at]! >> 3;
+		const count = bytes[at + 2]!;
+		for (let slot = 0; slot < count; ) {
+			const op = bytes[at + 5 + 2 * slot]! & 0xf;
+			const info = bytes[at + 5 + 2 * slot]! >> 4;
+			const next = at + 4 + 2 * (slot + 1);
+			if (op === 0) total += 8;
+			else if (op === 1) total += info === 0 ? bytes.readUInt16LE(next) * 8 : bytes.readUInt32LE(next);
+			else if (op === 2) total += info * 8 + 8;
+			else if (op === 10) total += info ? 48 : 40;
+			else if (![3, 4, 5, 6, 8, 9].includes(op)) throw new Error(`unknown unwind code ${op} at ${hexOf(pe.base + rva)}`);
+			slot += op === 1 ? (info === 0 ? 2 : 3) : op === 4 || op === 8 ? 2 : op === 5 || op === 9 ? 3 : 1;
+		}
+		rva = flags & UNW_FLAG_CHAININFO ? bytes.readUInt32LE(at + 4 + 2 * (count + (count & 1)) + 8) : undefined;
+	}
+	return total;
+}
+
+function peFrames(bytes: Buffer, pe: Pe): Map<number, number> {
+	const frames = new Map<number, number>();
+	const { rva, size } = pe.directory(EXCEPTION_DIRECTORY);
+	for (let entry = 0; entry + 12 <= size; entry += 12) {
+		const at = fileOffset(pe.sections, pe.base + rva + entry, 12);
+		if (at === undefined) break;
+		frames.set(pe.base + bytes.readUInt32LE(at), RETURN_ADDRESS + unwoundBytes(bytes, pe, bytes.readUInt32LE(at + 8)));
+	}
+	return frames;
+}
+
+const hexOf = (address: number): string => `0x${address.toString(16)}`;
+
 export function imageOf(bytes: Buffer): BinaryImage {
+	const pe = peOf(bytes);
 	const elf = bytes.length >= 0x40 && bytes.readUInt32LE(0) === ELF_MAGIC && bytes[4] === 2 && bytes[5] === 1;
 	const macho = bytes.length >= 32 && bytes.readUInt32LE(0) === MACHO_MAGIC;
-	if (!elf && !macho) return NO_BINARY;
-	const sections = elf ? elfSections(bytes) : machoSections(bytes);
-	const holding = (address: number, width: number) =>
-		sections.find((section) => address >= section.address && address + width <= section.address + section.size);
+	if (!pe && !elf && !macho) return NO_BINARY;
+	const sections = pe?.sections ?? (elf ? elfSections(bytes) : machoSections(bytes));
 	const variables = sections.filter((section) => section.name === THREAD_VARIABLES);
 	return {
 		int32: (address) => {
-			const section = holding(address, 4);
-			return section?.offset ? bytes.readInt32LE(section.offset + address - section.address) : undefined;
+			const at = fileOffset(sections, address, 4);
+			return at === undefined ? undefined : bytes.readInt32LE(at);
 		},
-		threadLocal: (address) => variables.some((section) => address >= section.address && address < section.address + section.size)
+		threadLocal: (address) => variables.some((section) => address >= section.address && address < section.address + section.size),
+		...(pe ? { frames: peFrames(bytes, pe) } : {})
 	};
+}
+
+export function peSlots(bytes: Buffer): Slots {
+	const internal = new Map<number, number>();
+	const symbols = new Map<number, string>();
+	const pe = peOf(bytes);
+	if (!pe) return { internal, symbols, tls: new Set() };
+	const at = (address: number, width: number): number => {
+		const offset = fileOffset(pe.sections, address, width);
+		if (offset === undefined) throw new Error(`${hexOf(address)} is outside the image's sections`);
+		return offset;
+	};
+	const text = (address: number): string => {
+		const start = at(address, 1);
+		return bytes.toString('latin1', start, bytes.indexOf(0, start));
+	};
+	const imports = pe.directory(IMPORT_DIRECTORY);
+	for (let descriptor = imports.rva; imports.size; descriptor += 20) {
+		const entry = at(pe.base + descriptor, 20);
+		const lookup = bytes.readUInt32LE(entry);
+		const name = bytes.readUInt32LE(entry + 12);
+		const table = bytes.readUInt32LE(entry + 16);
+		if (!lookup && !name && !table) break;
+		const library = text(pe.base + name);
+		for (let slot = 0; ; slot++) {
+			const thunk = bytes.readBigUInt64LE(at(pe.base + (lookup || table) + 8 * slot, 8));
+			if (thunk === 0n) break;
+			symbols.set(
+				pe.base + table + 8 * slot,
+				thunk & ORDINAL_IMPORT ? `${library}#${Number(thunk & 0xffffn)}` : text(pe.base + Number(thunk & 0x7fffffffn) + 2)
+			);
+		}
+	}
+	const relocations = pe.directory(BASE_RELOCATION_DIRECTORY);
+	for (let block = relocations.rva; block < relocations.rva + relocations.size; ) {
+		const header = at(pe.base + block, 8);
+		const page = bytes.readUInt32LE(header);
+		const size = bytes.readUInt32LE(header + 4);
+		if (size < 8) break;
+		for (let entry = 8; entry + 2 <= size; entry += 2) {
+			const field = bytes.readUInt16LE(header + entry);
+			const slot = pe.base + page + (field & 0xfff);
+			if (field >> 12 === IMAGE_REL_BASED_DIR64 && !symbols.has(slot)) internal.set(slot, Number(bytes.readBigUInt64LE(at(slot, 8))));
+		}
+		block += size;
+	}
+	return { internal, symbols, tls: new Set() };
+}
+
+export function namedCopy(bytes: Buffer, map: string): Buffer {
+	const pe = peOf(bytes);
+	if (!pe) throw new Error('only a PE image is named from a linker map');
+	const records: Buffer[] = [];
+	const names: Buffer[] = [];
+	let strings = 4;
+	for (const line of map.split(/\r?\n/)) {
+		const row = MAP_FUNCTION.exec(line);
+		if (!row || row[1] === '0000') continue;
+		const name = Buffer.from(row[3]!, 'latin1');
+		const record = Buffer.alloc(18);
+		if (name.length <= 8) name.copy(record);
+		else {
+			record.writeUInt32LE(strings, 4);
+			names.push(name, Buffer.alloc(1));
+			strings += name.length + 1;
+		}
+		record.writeUInt32LE(Number.parseInt(row[2]!, 16), 8);
+		record.writeInt16LE(Number.parseInt(row[1]!, 16), 12);
+		record.writeUInt16LE(COFF_FUNCTION, 14);
+		record[16] = COFF_EXTERNAL;
+		records.push(record);
+	}
+	const size = Buffer.alloc(4);
+	size.writeUInt32LE(strings);
+	const named = Buffer.concat([bytes, ...records, size, ...names]);
+	named.writeUInt32LE(bytes.length, pe.coff + 8);
+	named.writeUInt32LE(records.length, pe.coff + 12);
+	return named;
 }
 
 export function gotSlots(lines: Iterable<string>): Slots {
@@ -428,9 +605,10 @@ export function gotSlots(lines: Iterable<string>): Slots {
 }
 
 interface Collected {
+	readonly name: string;
 	readonly start: number;
 	readonly prologue: string[];
-	readonly targets: (readonly [string, string])[];
+	readonly targets: (readonly [string, number])[];
 	readonly slots: (readonly [string, number, Unresolved])[];
 	readonly addresses: (readonly [string, number, Unresolved])[];
 	readonly descriptors: (readonly [number, Unresolved])[];
@@ -464,13 +642,18 @@ interface TableJump {
 
 type Tables = ReadonlyMap<number, readonly number[]>;
 
+interface Branch {
+	readonly call: boolean;
+	readonly register: string;
+	readonly displacement?: number;
+}
+
 interface Isa {
 	readonly wide: (reg: string) => string;
 	readonly written: (ins: string) => readonly string[];
 	readonly sets: (state: Held, ins: string) => readonly (readonly [string, Value])[];
 	readonly flow: (ins: string, at: number, index: ReadonlyMap<number, number>) => DirectFlow;
-	readonly called: (ins: string) => string | undefined;
-	readonly jumped: (ins: string) => string | undefined;
+	readonly branch: (ins: string) => Branch | undefined;
 	readonly table: (body: readonly Instruction[], jump: number) => TableJump | undefined;
 }
 
@@ -491,9 +674,9 @@ const single = (value: Value | undefined, kind: Value['kind']): number | undefin
 const either = (a: number | undefined, b: number | undefined): Value | undefined =>
 	a === undefined || b === undefined ? undefined : { kind: 'address', at: [...new Set([a, b])].sort((x, y) => x - y) };
 
-function x86Written(ins: string): readonly string[] {
+function x86Written(ins: string, callerSaved: readonly string[]): readonly string[] {
 	const op = mnemonic(ins);
-	if (CALL_OPS.has(op)) return CALLER_SAVED;
+	if (CALL_OPS.has(op)) return callerSaved;
 	const text = ins.replace(COMMENT, '');
 	const implicit = IMPLICIT.find(([pattern]) => pattern.test(op))?.[1] ?? [];
 	if (EXCHANGES.test(op)) return [...implicit, ...[...text.matchAll(OPERAND)].map((m) => wide(m[1]!))];
@@ -525,7 +708,7 @@ function x86Flow(ins: string, at: number, index: ReadonlyMap<number, number>): D
 	return { next: op === 'jmp' || op === 'jmpq' ? taken : [...taken, at + 1], jump: false };
 }
 
-function x86Table(body: readonly Instruction[], jump: number): TableJump | undefined {
+function x86Table(body: readonly Instruction[], jump: number, written: Isa['written']): TableJump | undefined {
 	const target = REG_BRANCH.exec(body[jump]!.ins);
 	if (!target) return undefined;
 	const jumped = wide(target[2]!);
@@ -536,27 +719,31 @@ function x86Table(body: readonly Instruction[], jump: number): TableJump | undef
 		const entry = base === undefined ? undefined : TABLE_ENTRY.exec(ins);
 		if (add && wide(add[2]!) === jumped) base = wide(add[1]!);
 		else if (entry && wide(entry[1]!) === base && wide(entry[2]!) === jumped) return { jump, entry: back, base };
-		else if (BRANCH.test(mnemonic(ins)) || ENDS.test(mnemonic(ins)) || x86Written(ins).some((reg) => reg === jumped || reg === base))
+		else if (BRANCH.test(mnemonic(ins)) || ENDS.test(mnemonic(ins)) || written(ins).some((reg) => reg === jumped || reg === base))
 			return undefined;
 	}
 	return undefined;
 }
 
-const X86: Isa = {
-	wide,
-	written: x86Written,
-	sets: x86Sets,
-	flow: x86Flow,
-	called: (ins) => {
-		const reg = REG_BRANCH.exec(ins);
-		return reg && CALL_OPS.has(reg[1]!) ? reg[2] : undefined;
-	},
-	jumped: (ins) => {
-		const reg = REG_BRANCH.exec(ins);
-		return reg && !CALL_OPS.has(reg[1]!) ? reg[2] : undefined;
-	},
-	table: x86Table
-};
+function x86Isa(callerSaved: readonly string[]): Isa {
+	const written = (ins: string): readonly string[] => x86Written(ins, callerSaved);
+	return {
+		wide,
+		written,
+		sets: x86Sets,
+		flow: x86Flow,
+		branch: (ins) => {
+			const reg = REG_BRANCH.exec(ins);
+			if (reg) return { call: CALL_OPS.has(reg[1]!), register: reg[2]! };
+			const memory = MEMORY_BRANCH.exec(ins);
+			return memory ? { call: CALL_OPS.has(memory[1]!), register: memory[3]!, displacement: imm(memory[2] ?? '0') } : undefined;
+		},
+		table: (body, jump) => x86Table(body, jump, written)
+	};
+}
+
+const X86 = x86Isa(CALLER_SAVED);
+const X86_MICROSOFT = x86Isa(MICROSOFT_CALLER_SAVED);
 
 const armWide = (reg: string): string => (reg === 'fp' ? 'x29' : reg === 'lr' ? 'x30' : reg.replace(/^w/, 'x'));
 
@@ -606,8 +793,11 @@ const ARM64: Isa = {
 	written: armWritten,
 	sets: armSets,
 	flow: armFlow,
-	called: (ins) => ARM_CALL_REGISTER.exec(ins)?.[1],
-	jumped: (ins) => ARM_JUMP_REGISTER.exec(ins)?.[1],
+	branch: (ins) => {
+		const call = ARM_CALL_REGISTER.exec(ins)?.[1];
+		const jump = call ?? ARM_JUMP_REGISTER.exec(ins)?.[1];
+		return jump === undefined ? undefined : { call: call !== undefined, register: jump };
+	},
 	table: () => undefined
 };
 
@@ -677,7 +867,7 @@ function solve(
 }
 
 function heldStates(isa: Isa, body: readonly Instruction[], image: Image): readonly Held[] {
-	if (!body.some(({ ins }) => isa.called(ins) !== undefined)) return [];
+	if (!body.some(({ ins }) => isa.branch(ins)?.call)) return [];
 	const index = new Map(body.map(({ address }, at) => [address, at] as const));
 	const direct = body.map(({ ins }, at) => isa.flow(ins, at, index));
 	const jumps = direct.flatMap(({ jump }, at) => (jump ? [at] : []));
@@ -744,6 +934,13 @@ function codeOf(body: readonly Instruction[]): readonly Instruction[] {
 	return body.filter(({ address }) => address < data);
 }
 
+function targetOf(branch: Branch, value: Value | undefined, internal: ReadonlyMap<number, number>): Value | undefined {
+	if (branch.displacement === undefined) return value;
+	const slot = single(value, 'slot');
+	const base = single(value, 'address') ?? (slot === undefined ? undefined : internal.get(slot));
+	return base === undefined ? undefined : { kind: 'slot', at: [base + branch.displacement] };
+}
+
 function readBody(fn: Collected, listed: readonly Instruction[], image: Image, isa: Isa): void {
 	const body = codeOf(listed);
 	const holding = heldStates(isa, body, image);
@@ -752,24 +949,23 @@ function readBody(fn: Collected, listed: readonly Instruction[], image: Image, i
 		const site: Unresolved = { offset: address - fn.start, ins };
 		const op = ins.split(' ', 1)[0]!;
 		const rip = RIP_BRANCH.exec(ins);
-		const call = isa.called(ins);
-		const register = call ?? isa.jumped(ins);
-		const via = call ? 'call' : 'jmp';
+		const branch = isa.branch(ins);
 		const descriptor = tlsDescriptor(body, at);
 		if (descriptor !== undefined) fn.descriptors.push([descriptor, site]);
 		else if (rip) fn.slots.push([rip[1]!, hex(rip[2]!), site]);
-		else if (register) {
-			const value = holding[at]?.get(isa.wide(register));
-			if (value?.kind === 'slot') fn.slots.push([via, value.at[0]!, site]);
-			else if (value?.kind === 'address') {
-				for (const target of value.at) fn.addresses.push([via, target, site]);
-				if (value.at.length > 1) fn.selections.push([value.at, site]);
-			} else (call ? fn.unresolved : fn.jumps).push(site);
+		else if (branch) {
+			const via = branch.call ? 'call' : 'jmp';
+			const target = targetOf(branch, holding[at]?.get(isa.wide(branch.register)), image.internal);
+			if (target?.kind === 'slot') fn.slots.push([via, target.at[0]!, site]);
+			else if (target?.kind === 'address') {
+				for (const to of target.at) fn.addresses.push([via, to, site]);
+				if (target.at.length > 1) fn.selections.push([target.at, site]);
+			} else (branch.call ? fn.unresolved : fn.jumps).push(site);
 		} else if (OTHER_BRANCH.test(ins) && (ARM_CALLS.test(op) || ARM_JUMPS.test(op) || operands(ins).includes('*'))) {
 			(ARM_CALLS.test(op) || CALL_OPS.has(op) ? fn.unresolved : fn.jumps).push(site);
 		} else {
-			const target = ins.indexOf(' <');
-			if (target > 0 && ins.endsWith('>')) fn.targets.push([op, ins.slice(target + 2, -1)]);
+			const to = ins.endsWith('>') ? ADDRESS.exec(operands(ins)) : null;
+			if (to) fn.targets.push([op, hex(to[1]!)]);
 		}
 	}
 }
@@ -785,13 +981,14 @@ export async function disassemble(
 	image: Image = NO_IMAGE
 ): Promise<Disassembly> {
 	let arch: Arch | undefined;
-	const collected = new Map<string, Collected>();
-	const byAddress = new Map<number, string>();
+	let isa = X86;
+	const collected = new Map<number, Collected>();
+	const starts = new Map<string, number[]>();
 	let current: Collected | undefined;
 	let stubs = false;
 	let body: Instruction[] = [];
 	const flush = (): void => {
-		if (current) readBody(current, body, image, arch === 'arm64' ? ARM64 : X86);
+		if (current) readBody(current, body, image, isa);
 		body = [];
 	};
 	for await (const line of lines) {
@@ -807,14 +1004,19 @@ export async function disassemble(
 		if (header) {
 			flush();
 			const start = Number.parseInt(header[1]!, 16);
-			byAddress.set(start, header[2]!);
-			current = collected.get(header[2]!) ?? { start, prologue: [], targets: [], slots: [], addresses: [], descriptors: [], selections: [], unresolved: [], jumps: [] };
-			collected.set(header[2]!, current);
+			const name = header[2]!;
+			current = collected.get(start);
+			if (!current) {
+				current = { name, start, prologue: [], targets: [], slots: [], addresses: [], descriptors: [], selections: [], unresolved: [], jumps: [] };
+				collected.set(start, current);
+				starts.set(name, [...(starts.get(name) ?? []), start]);
+			}
 			continue;
 		}
 		const format = FORMAT.exec(line);
 		if (format) {
 			arch = archOf(format[1]!);
+			isa = arch === 'arm64' ? ARM64 : COFF_FORMAT.test(format[1]!) ? X86_MICROSOFT : X86;
 			continue;
 		}
 		const colon = line.indexOf(':');
@@ -828,60 +1030,67 @@ export async function disassemble(
 	}
 	flush();
 	if (!arch) throw new Error('the disassembly names no x86-64 or arm64 file format');
-	const functions = new Map<string, Disassembled>();
-	for (const [name, { prologue, targets, slots: through, addresses, descriptors, selections, unresolved, jumps }] of collected) {
-		const calls = new Set<string>();
-		const tails = new Set<string>();
+	const functions = new Map<number, Disassembled>();
+	for (const [start, { name, prologue, targets, slots: through, addresses, descriptors, selections, unresolved, jumps }] of collected) {
+		const calls = new Set<number>();
+		const tails = new Set<number>();
 		const unread = [...unresolved];
-		const edge = (op: string, callee: string): void => {
-			if (callee === name || OFFSET.test(callee) || !collected.has(callee)) return;
+		const edge = (op: string, callee: number): void => {
+			if (callee === start || !collected.has(callee)) return;
 			if (CALL_OPS.has(op)) calls.add(callee);
 			else if (TAIL_OPS.test(op)) tails.add(callee);
 		};
 		for (const [op, callee] of targets) edge(op, callee);
 		for (const [op, slot, at] of through) {
 			const target = image.internal.get(slot);
-			const callee = target === undefined ? image.symbols.get(slot) : byAddress.get(target);
-			if (callee !== undefined && collected.has(callee)) edge(op, callee);
-			else if (target !== undefined || callee === undefined) unread.push(at);
+			const held = target === undefined ? undefined : collected.get(target);
+			const symbol = target === undefined ? image.symbols.get(slot) : held && HOST_STUB.exec(held.name)?.[1];
+			if (symbol !== undefined) for (const callee of starts.get(symbol) ?? []) edge(op, callee);
+			else if (held) edge(op, held.start);
+			else unread.push(at);
 		}
 		for (const [op, address, at] of addresses) {
-			const callee = byAddress.get(address);
-			if (callee !== undefined) edge(op, callee);
+			if (collected.has(address)) edge(op, address);
 			else unread.push(at);
 		}
 		for (const [slot, at] of descriptors) if (!image.tls.has(slot) && !image.threadLocal(slot)) unread.push(at);
 		const selected = selections.flatMap(([at, site]) => {
-			const named = at.flatMap((address) => byAddress.get(address) ?? []);
+			const named = at.flatMap((address) => collected.get(address)?.name ?? []);
 			return named.length === at.length ? [{ ...site, targets: named }] : [];
 		});
-		functions.set(name, { prologue, calls, tails, unresolved: unread.sort((a, b) => a.offset - b.offset), selected, jumps });
+		functions.set(start, {
+			name,
+			frame: image.frames ? (image.frames.get(start) ?? RETURN_ADDRESS) : frameBytes(prologue, arch),
+			calls,
+			tails,
+			unresolved: unread.sort((a, b) => a.offset - b.offset),
+			selected,
+			jumps
+		});
 	}
 	return { arch, functions };
 }
 
 interface Option {
 	readonly bytes: number;
-	readonly callee: string;
+	readonly callee: number;
 	readonly tail: boolean;
 }
 
 class Costs {
-	readonly cycles = new Set<string>();
-	private readonly memo = new Map<string, number>();
-	private readonly open = new Set<string>();
+	readonly cycles = new Set<number>();
+	private readonly memo = new Map<number, number>();
+	private readonly open = new Set<number>();
 
 	constructor(
 		private readonly dis: Disassembly,
-		private readonly frame: (fn: string) => number,
-		private readonly lead: ReadonlySet<string>,
-		private readonly ends: (fn: string) => boolean,
-		private readonly endCost: ((fn: string) => number) | undefined
+		private readonly lead: ReadonlySet<number>,
+		private readonly ends: (fn: number) => boolean,
+		private readonly endCost: ((fn: number) => number) | undefined
 	) {}
 
-	private options(fn: string): { readonly own: number; readonly options: readonly Option[] } {
-		const own = this.frame(fn);
-		const { calls, tails } = this.dis.functions.get(fn)!;
+	private options(fn: number): { readonly own: number; readonly options: readonly Option[] } {
+		const { frame: own, calls, tails } = this.dis.functions.get(fn)!;
 		const options: Option[] = [];
 		for (const [tail, callees] of [
 			[false, calls],
@@ -898,7 +1107,7 @@ class Costs {
 		return { own, options };
 	}
 
-	cost(fn: string): number {
+	cost(fn: number): number {
 		const known = this.memo.get(fn);
 		if (known !== undefined) return known;
 		if (this.open.has(fn)) {
@@ -913,34 +1122,35 @@ class Costs {
 		return bytes;
 	}
 
-	path(from: string): StackPath {
+	path(from: number): StackPath {
+		const name = (fn: number): string => this.dis.functions.get(fn)!.name;
 		const steps: StackStep[] = [];
-		const seen = new Set<string>();
+		const seen = new Set<number>();
 		let to: string | undefined;
-		for (let fn: string | undefined = from; fn !== undefined && !seen.has(fn); ) {
+		for (let fn: number | undefined = from; fn !== undefined && !seen.has(fn); ) {
 			seen.add(fn);
 			const { own, options } = this.options(fn);
 			const best = options.reduce<Option | undefined>(
 				(top, option) => (top && top.bytes >= option.bytes ? top : option),
 				undefined
 			);
-			steps.push({ fn, bytes: own, tail: best?.tail ?? false });
+			steps.push({ fn: name(fn), bytes: own, tail: best?.tail ?? false });
 			fn = undefined;
 			if (!best) break;
 			if (!this.ends(best.callee)) fn = best.callee;
-			else if (this.endCost) steps.push({ fn: best.callee, bytes: this.endCost(best.callee), tail: false });
-			else to = best.callee;
+			else if (this.endCost) steps.push({ fn: name(best.callee), bytes: this.endCost(best.callee), tail: false });
+			else to = name(best.callee);
 		}
 		return { bytes: this.cost(from), steps, to };
 	}
 }
 
 function leadingTo(
-	callers: ReadonlyMap<string, ReadonlySet<string>>,
-	targets: Iterable<string>,
-	passes: (fn: string) => boolean
-): Set<string> {
-	const seen = new Set<string>();
+	callers: ReadonlyMap<number, ReadonlySet<number>>,
+	targets: Iterable<number>,
+	passes: (fn: number) => boolean
+): Set<number> {
+	const seen = new Set<number>();
 	const todo = [...targets];
 	for (let target = todo.pop(); target !== undefined; target = todo.pop()) {
 		for (const fn of callers.get(target) ?? []) {
@@ -953,7 +1163,7 @@ function leadingTo(
 	return seen;
 }
 
-function reached(dis: Disassembly, starts: Iterable<string>, through: (fn: string) => boolean): Set<string> {
+function reached(dis: Disassembly, starts: Iterable<number>, through: (fn: number) => boolean): Set<number> {
 	const seen = new Set(starts);
 	const todo = [...seen];
 	for (let fn = todo.pop(); fn !== undefined; fn = todo.pop()) {
@@ -968,8 +1178,8 @@ function reached(dis: Disassembly, starts: Iterable<string>, through: (fn: strin
 	return seen;
 }
 
-function costliest(costs: Costs, starts: readonly string[]): StackPath {
-	const from = starts.reduce<string | undefined>(
+function costliest(costs: Costs, starts: readonly number[]): StackPath {
+	const from = starts.reduce<number | undefined>(
 		(top, fn) => (top !== undefined && costs.cost(top) >= costs.cost(fn) ? top : fn),
 		undefined
 	);
@@ -977,55 +1187,50 @@ function costliest(costs: Costs, starts: readonly string[]): StackPath {
 }
 
 export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): EncodeStack {
-	const frames = new Map<string, number>();
-	const frame = (fn: string): number => {
-		const known = frames.get(fn);
-		if (known !== undefined) return known;
-		const bytes = frameBytes(dis.functions.get(fn)!.prologue, dis.arch);
-		frames.set(fn, bytes);
-		return bytes;
-	};
-	const callers = new Map<string, Set<string>>();
+	const name = (fn: number): string => dis.functions.get(fn)!.name;
+	const frame = (fn: number): number => dis.functions.get(fn)!.frame;
+	const byName = (a: number, b: number): number => (name(a) < name(b) ? -1 : name(a) > name(b) ? 1 : a - b);
+	const callers = new Map<number, Set<number>>();
 	for (const [fn, { calls, tails }] of dis.functions) {
 		for (const callee of [...calls, ...tails]) {
-			const set = callers.get(callee) ?? new Set<string>();
+			const set = callers.get(callee) ?? new Set<number>();
 			set.add(fn);
 			callers.set(callee, set);
 		}
 	}
-	const names = [...dis.functions.keys()];
-	const opens = (fn: string): boolean => heights.has(WHOLE.exec(fn)?.[1] ?? '');
-	const fresh = (fn: string): boolean => LOOP.test(fn);
-	const trivia = (fn: string): boolean => TRIVIA.test(fn);
-	const entries = names.filter(opens);
-	const loops = names.filter(fresh);
-	const encoders = names.filter(trivia);
+	const starts = [...dis.functions.keys()];
+	const opens = (fn: number): boolean => heights.has(WHOLE.exec(name(fn))?.[1] ?? '');
+	const fresh = (fn: number): boolean => LOOP.test(name(fn));
+	const trivia = (fn: number): boolean => TRIVIA.test(name(fn));
+	const entries = starts.filter(opens);
+	const loops = starts.filter(fresh);
+	const encoders = starts.filter(trivia);
 	if (!entries.length || !loops.length || !encoders.length) {
 		throw new Error(
 			`the build names ${entries.length} whole encodes of a struct with a height, ${loops.length} encode loops and ${encoders.length} trivia encoders; it must name each`
 		);
 	}
-	const cut = (fn: string): boolean => !fresh(fn) && !trivia(fn);
+	const cut = (fn: number): boolean => !fresh(fn) && !trivia(fn);
 	const lead = leadingTo(callers, entries, cut);
-	const levels = new Costs(dis, frame, lead, opens, undefined);
+	const levels = new Costs(dis, lead, opens, undefined);
 	const level = costliest(levels, entries);
 	if (levels.cycles.size)
-		throw new Error(`calls cycle between levels through no struct with a height: ${[...levels.cycles].join(', ')}`);
-	const below = new Costs(dis, frame, lead, opens, frame);
+		throw new Error(`calls cycle between levels through no struct with a height: ${[...levels.cycles].map(name).join(', ')}`);
+	const below = new Costs(dis, lead, opens, frame);
 	const tripLead = leadingTo(callers, encoders, (fn) => cut(fn) && !opens(fn));
-	const trips = new Costs(dis, frame, tripLead, trivia, (fn) => below.cost(fn));
+	const trips = new Costs(dis, tripLead, trivia, (fn) => below.cost(fn));
 	const tripStarts = entries.filter((fn) => {
 		const { calls, tails } = dis.functions.get(fn)!;
 		return [...calls, ...tails].some((callee) => tripLead.has(callee) || trivia(callee));
 	});
 	const toWhole = leadingTo(callers, entries, (fn) => !opens(fn) && !trivia(fn));
 	const roots = [...toWhole].filter((fn) => !callers.get(fn)?.size);
-	const unknown = roots.filter((fn) => !CALLBACK.test(fn));
-	if (unknown.length) throw new Error(`no known caller and no napi callback leads to ${unknown.join(', ')}`);
-	const aboveCosts = new Costs(dis, frame, toWhole, opens, undefined);
+	const unknown = roots.filter((fn) => !CALLBACK.test(name(fn)));
+	if (unknown.length) throw new Error(`no known caller and no napi callback leads to ${unknown.map(name).join(', ')}`);
+	const aboveCosts = new Costs(dis, toWhole, opens, undefined);
 	const above = costliest(aboveCosts, roots);
 	if (aboveCosts.cycles.size)
-		throw new Error(`calls cycle above the first whole encode: ${[...aboveCosts.cycles].join(', ')}`);
+		throw new Error(`calls cycle above the first whole encode: ${[...aboveCosts.cycles].map(name).join(', ')}`);
 	const trip = costliest(trips, tripStarts);
 	const measured = new Set([
 		...reached(dis, entries, (fn) => lead.has(fn) || opens(fn)),
@@ -1033,27 +1238,29 @@ export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): Enc
 		...reached(dis, roots, (fn) => toWhole.has(fn) || opens(fn))
 	]);
 	const unresolved = [...measured]
-		.sort()
-		.flatMap((fn) => dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at })));
+		.sort(byName)
+		.flatMap((fn) => dis.functions.get(fn)!.unresolved.map((at) => ({ fn: name(fn), ...at })));
 	const extent = reached(
 		dis,
 		[...measured].filter((fn) => !roots.includes(fn)),
 		() => true
 	);
 	const refuted = DYNAMIC_CLASSES.flatMap((known) => {
-		const by = known.refutedBy && names.find((fn) => known.refutedBy!.test(fn));
+		const by = known.refutedBy && [...dis.functions.values()].find((fn) => known.refutedBy!.test(fn.name))?.name;
 		return by ? [{ class: known, by }] : [];
 	});
 	const holding = DYNAMIC_CLASSES.filter((known) => !refuted.some((r) => r.class === known));
 	const outside = [...extent]
 		.filter((fn) => !measured.has(fn))
-		.sort()
+		.sort(byName)
 		.flatMap((fn) =>
-			dis.functions.get(fn)!.unresolved.map((at) => ({ fn, ...at, class: holding.find((c) => c.within.test(fn)) }))
+			dis.functions
+				.get(fn)!
+				.unresolved.map((at) => ({ fn: name(fn), ...at, class: holding.find((c) => c.within.test(name(fn))) }))
 		);
 	const selected = [...new Set([...measured, ...extent])]
-		.sort()
-		.flatMap((fn) => dis.functions.get(fn)!.selected.map((at) => ({ fn, ...at })));
+		.sort(byName)
+		.flatMap((fn) => dis.functions.get(fn)!.selected.map((at) => ({ fn: name(fn), ...at })));
 	return { level, above, trivia: trip, oneTime: above.bytes + trip.bytes, unresolved, reached: outside, selected, refuted };
 }
 
@@ -1092,16 +1299,33 @@ function objdumpOf(objdump: string, args: readonly string[]) {
 	return { lines: createInterface({ input: child.stdout, crlfDelay: Infinity }), exited };
 }
 
-async function disassembleAddon(objdump: string, addon: string): Promise<Disassembly> {
+async function listed(objdump: string, file: string, image: Image): Promise<Disassembly> {
+	const listing = objdumpOf(objdump, ['-d', '-C', '--no-show-raw-insn', file]);
+	const dis = await disassemble(listing.lines, image);
+	const code = await listing.exited;
+	if (code !== 0) throw new Error(`${objdump} exited ${code} disassembling ${file}`);
+	return dis;
+}
+
+async function disassembleAddon(objdump: string, addon: string, map: string): Promise<Disassembly> {
+	const bytes = readFileSync(addon);
+	if (imageOf(bytes).frames) {
+		if (!existsSync(map))
+			throw new Error(`${addon} is a PE image, named by its linker map, and ${map} is missing: build it with scripts/build-native.mts --release`);
+		const scratch = mkdtempSync(join(tmpdir(), 'encode-stack-'));
+		try {
+			const named = join(scratch, basename(addon));
+			writeFileSync(named, namedCopy(bytes, readFileSync(map, 'latin1')));
+			return await listed(objdump, named, { ...peSlots(bytes), ...imageOf(bytes) });
+		} finally {
+			rmSync(scratch, { recursive: true, force: true });
+		}
+	}
 	const relocations = objdumpOf(objdump, ['-R', '-C', addon]);
 	const relocated: string[] = [];
 	for await (const line of relocations.lines) relocated.push(line);
 	await relocations.exited;
-	const listing = objdumpOf(objdump, ['-d', '-C', '--no-show-raw-insn', addon]);
-	const dis = await disassemble(listing.lines, { ...gotSlots(relocated), ...imageOf(readFileSync(addon)) });
-	const code = await listing.exited;
-	if (code !== 0) throw new Error(`${objdump} exited ${code} disassembling ${addon}`);
-	return dis;
+	return listed(objdump, addon, { ...gotSlots(relocated), ...imageOf(bytes) });
 }
 
 function grammarOfAddon(addon: string): GrammarName {
@@ -1151,7 +1375,7 @@ export async function run(opts: EncodeStackOptions = {}): Promise<number> {
 	for (const addon of addons) {
 		const grammar = grammarOfAddon(addon);
 		const heights = heightKinds(readFileSync(join(nativeCrateDir(grammar), 'src/render/node.rs'), 'utf8'));
-		const stack = encodeStack(await disassembleAddon(objdump, addon), heights);
+		const stack = encodeStack(await disassembleAddon(objdump, addon, native.linkerMapOf(addon)), heights);
 		const largest = largestLimit(stack, bounds.budget);
 		reports.push({ grammar, addon, stack, largestLimit: largest, fits: bounds.limit <= largest });
 	}
