@@ -394,6 +394,10 @@ macro_rules! refuse_napi_codec {
                 unsafe fn encoded(_: $crate::__napi::sys::napi_env, wait: Self::EncodeWait, _: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::EncodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<$crate::__napi::sys::napi_value, Self::EncodeWait>> {
                     match wait {}
                 }
+                unsafe fn encode_whole(self, env: $crate::__napi::sys::napi_env) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
+                    // SAFETY: this fn requires a live `env`.
+                    unsafe { <Self as $crate::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, self) }
+                }
             }
         }
     };

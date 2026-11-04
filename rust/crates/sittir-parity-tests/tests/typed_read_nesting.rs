@@ -1,3 +1,4 @@
+use sittir_core::codec::{Height, RECURSION_LIMIT};
 use sittir_core::read::{Depth, ReadCtx, ReadRoot};
 use sittir_rust::render::RenderRoot;
 use std::process::Command;
@@ -114,6 +115,45 @@ fn release(root: RenderRoot) {
 #[test]
 fn a_nesting_of_100000_levels_reads_and_is_released_on_four_mib() {
     assert!(read_on_thread(Probe::Nested(100_000), FOUR_MIB, release) > 0);
+}
+
+/// The height a read stamps on the root of `probe`.
+fn root_height(probe: Probe) -> Option<u16> {
+    let source = probe.source();
+    std::thread::Builder::new()
+        .stack_size(FOUR_MIB)
+        .spawn(move || {
+            let tree = parse(&source);
+            let mut ctx = ReadCtx::new(&source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
+            let root = RenderRoot::read_root(&mut tree.walk(), &mut ctx, Depth::All).unwrap();
+            let height = Height::tallest(&root);
+            release(root);
+            height
+        })
+        .unwrap()
+        .join()
+        .unwrap_or_else(|_| panic!("the typed read failed"))
+}
+
+/// The root of `fn f() { 1; }` stands this high above its literal; each
+/// parenthesis around the literal stamps the root one higher.
+const ROOT_ABOVE_NESTING: u16 = 5;
+
+/// The deepest nesting deep-trees.test.ts reads whole by the same source,
+/// every nesting below it too.
+const WHOLE_READ_CHAINS: u16 = 300;
+
+/// The nestings whose root stands just under, at and just over the codec's
+/// recursion limit, each within the chains deep-trees.test.ts reads whole.
+#[test]
+fn a_read_stamps_the_root_one_higher_for_each_level_and_saturates() {
+    assert_eq!(root_height(Probe::Nested(0)), Some(ROOT_ABOVE_NESTING));
+    let boundary = [RECURSION_LIMIT - 1, RECURSION_LIMIT, RECURSION_LIMIT + 1].map(|height| height - ROOT_ABOVE_NESTING);
+    assert!(boundary.iter().all(|&levels| levels <= WHOLE_READ_CHAINS), "the whole-read chains reach past the recursion limit");
+    for levels in [1, 10].into_iter().chain(boundary) {
+        assert_eq!(root_height(Probe::Nested(usize::from(levels))), Some(ROOT_ABOVE_NESTING + levels));
+    }
+    assert_eq!(root_height(Probe::Nested(100_000)), Some(u16::MAX), "a nesting past u16::MAX levels saturates");
 }
 
 /// A child of the depth test: reads `STACK_PROBE` on a thread of `STACK_KIB`

@@ -17,6 +17,76 @@
 use crate::non_empty::NonEmptyVec;
 use crate::slot::SlotValue;
 
+/// The height of what a value holds. A node's height is the number of
+/// levels below it: 0 for a node that holds none, else one more than its
+/// tallest. A node with a child slot keeps its height, stamped where it is
+/// built; one without is 0 by its kind.
+pub trait Height {
+    /// The height of the tallest node this value holds; `None` when it
+    /// holds none.
+    fn tallest(&self) -> Option<u16>;
+}
+
+/// The height of a node whose tallest node held is `tallest`, saturating at
+/// `u16::MAX`.
+#[must_use]
+pub fn height_over(tallest: Option<u16>) -> u16 {
+    tallest.map_or(0, |height| height.saturating_add(1))
+}
+
+/// The stack, in bytes, one encode may take from the napi entry. In each
+/// grammar's release build, `RECURSION_LIMIT` levels of its costliest height
+/// level, with its one-time cost (the frames down to the loop, the loop's
+/// entry to the first whole level, and the trip into a node's trivia), fit
+/// within it.
+pub const ENCODE_STACK_BUDGET: usize = 64 * 1024;
+
+/// The heights below which a node is encoded by straight recursion rather
+/// than by a frame of the loop: its descent is bounded by its height, so it
+/// stays within `ENCODE_STACK_BUDGET`.
+pub const RECURSION_LIMIT: u16 = 24;
+
+const _: () = assert!(RECURSION_LIMIT < u16::MAX, "a saturated height must never read as under the recursion limit");
+
+impl<T: Height> Height for Box<T> {
+    fn tallest(&self) -> Option<u16> {
+        (**self).tallest()
+    }
+}
+
+impl<T: Height> Height for Option<T> {
+    fn tallest(&self) -> Option<u16> {
+        self.as_ref().and_then(Height::tallest)
+    }
+}
+
+impl<T: Height> Height for [T] {
+    fn tallest(&self) -> Option<u16> {
+        self.iter().filter_map(Height::tallest).max()
+    }
+}
+
+impl<T: Height> Height for Vec<T> {
+    fn tallest(&self) -> Option<u16> {
+        self.as_slice().tallest()
+    }
+}
+
+impl<T: Height> Height for NonEmptyVec<T> {
+    fn tallest(&self) -> Option<u16> {
+        (**self).tallest()
+    }
+}
+
+impl<T: Height, const ADJACENT: bool> Height for SlotValue<T, ADJACENT> {
+    fn tallest(&self) -> Option<u16> {
+        match self {
+            SlotValue::Node(node) => node.tallest(),
+            SlotValue::Coord(_) => None,
+        }
+    }
+}
+
 /// A grammar's node set, which `grammar_nodes!` states once on the
 /// grammar's trivia type.
 pub trait Nodes: Sized + 'static {
@@ -163,6 +233,10 @@ macro_rules! nodeless_codec {
                     unsafe fn encoded(_: $crate::__napi::sys::napi_env, wait: Self::EncodeWait, _: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<W::EncodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<$crate::__napi::sys::napi_value, Self::EncodeWait>> {
                         match wait {}
                     }
+                    unsafe fn encode_whole(self, env: $crate::__napi::sys::napi_env) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
+                        // SAFETY: this fn requires a live `env`.
+                        unsafe { <Self as $crate::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, self) }
+                    }
                 }
             }
         )*
@@ -170,6 +244,18 @@ macro_rules! nodeless_codec {
 }
 
 nodeless_codec!(crate::verbatim::VerbatimNode, crate::trivia::TriviaText);
+
+impl Height for crate::verbatim::VerbatimNode {
+    fn tallest(&self) -> Option<u16> {
+        Some(0)
+    }
+}
+
+impl Height for crate::trivia::TriviaText {
+    fn tallest(&self) -> Option<u16> {
+        Some(0)
+    }
+}
 
 /// The steps of a node with no frame: one with no child slot, decoded and
 /// encoded whole where it is held.
@@ -444,6 +530,13 @@ mod wire {
         /// # Safety
         /// `env` must be live, and every value `wait` holds live in it.
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>>;
+        /// Encodes the value by straight recursion, with no frame. Only a
+        /// value whose nodes are all below `RECURSION_LIMIT` is encoded
+        /// this way, so its descent is bounded by that limit.
+        ///
+        /// # Safety
+        /// `env` must be live.
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value>;
     }
 
     fn written<F>(above: &mut Option<F>) -> F {
@@ -579,6 +672,21 @@ mod wire {
             // SAFETY: this fn's caller keeps `wait` live in `env`.
             unsafe { T::encoded(env, wait, child, above) }
         }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            // SAFETY: this fn requires a live `env`.
+            unsafe { (*self).encode_whole(env) }
+        }
+    }
+
+    /// `null`, the value `None` encodes as.
+    unsafe fn null(env: napi_env) -> Result<napi_value> {
+        let mut null = ::std::ptr::null_mut();
+        ::napi::check_status!(
+            // SAFETY: this fn's caller passes a live `env`.
+            unsafe { ::napi::sys::napi_get_null(env, &raw mut null) },
+            "Failed to convert rust type `Option<T>` into napi value",
+        )?;
+        Ok(null)
     }
 
     /// napi's `Option`: `undefined` and `null` decode as `None`, which
@@ -604,22 +712,24 @@ mod wire {
             Ok(unsafe { T::decoded(env, wait, child, above)? }.map(Some))
         }
         unsafe fn encode(self, env: napi_env, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
-            if let Some(value) = self {
+            match self {
                 // SAFETY: this fn requires a live `env`.
-                unsafe { value.encode(env, above) }
-            } else {
-                let mut null = ::std::ptr::null_mut();
-                ::napi::check_status!(
-                    // SAFETY: this fn requires a live `env`.
-                    unsafe { ::napi::sys::napi_get_null(env, &raw mut null) },
-                    "Failed to convert rust type `Option<T>` into napi value",
-                )?;
-                Ok(Begun::Whole(null))
+                Some(value) => unsafe { value.encode(env, above) },
+                // SAFETY: as above.
+                None => unsafe { null(env) }.map(Begun::Whole),
             }
         }
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             // SAFETY: this fn's caller keeps `wait` live in `env`.
             unsafe { T::encoded(env, wait, child, above) }
+        }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            match self {
+                // SAFETY: this fn requires a live `env`.
+                Some(value) => unsafe { value.encode_whole(env) },
+                // SAFETY: as above.
+                None => unsafe { null(env) },
+            }
         }
     }
 
@@ -793,6 +903,15 @@ mod wire {
                 Begun::Waits(wait) => Ok(Begun::Waits(ListEncoding { array, rest, index, wait })),
             }
         }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            // SAFETY: this fn requires a live `env`.
+            let array = unsafe { new_array(env, self.len(), "Failed to create napi Array")? };
+            for (index, item) in (0..).zip(self) {
+                // SAFETY: `array` was just created in `env`, and the item's value is created in it.
+                unsafe { set_item(env, array, index, item.encode_whole(env)?)? };
+            }
+            Ok(array)
+        }
     }
 
     fn non_empty<T>(items: Vec<T>) -> Result<NonEmptyVec<T>> {
@@ -824,6 +943,10 @@ mod wire {
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             // SAFETY: this fn's caller keeps `wait` live in `env`.
             unsafe { Vec::<T>::encoded(env, wait, child, above) }
+        }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            // SAFETY: this fn requires a live `env`.
+            unsafe { Vec::from(self).encode_whole(env) }
         }
     }
 
@@ -861,6 +984,14 @@ mod wire {
             // SAFETY: this fn's caller keeps `wait` live in `env`.
             unsafe { T::encoded(env, wait, child, above) }
         }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            match self {
+                // SAFETY: this fn requires a live `env`.
+                Self::Node(node) => unsafe { node.encode_whole(env) },
+                // SAFETY: as above.
+                Self::Coord(coord) => unsafe { crate::slot::coordinate_to_napi(env, &coord) },
+            }
+        }
     }
 
     impl<W: Frames, T: Codec<W>> Codec<W> for Holes<T> {
@@ -894,6 +1025,21 @@ mod wire {
                 }
                 Begun::Waits(wait) => Ok(Begun::Waits(HoleEncoding { array, rest, index, wait })),
             }
+        }
+        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
+            // SAFETY: this fn requires a live `env`.
+            let array = unsafe { new_array(env, self.0.len(), "failed to create a list")? };
+            for (index, item) in (0..).zip(self.0) {
+                let value = match item {
+                    // SAFETY: as above.
+                    Some(item) => unsafe { item.encode_whole(env)? },
+                    // SAFETY: as above.
+                    None => unsafe { undefined(env)? },
+                };
+                // SAFETY: `array` and `value` were created in `env`.
+                unsafe { set_hole(env, array, index, value)? };
+            }
+            Ok(array)
         }
     }
 
@@ -938,17 +1084,23 @@ mod wire {
 
     /// `item` encoded, or `undefined` when it is absent.
     unsafe fn hole<W: Frames, T: Codec<W>>(env: napi_env, item: Option<T>, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, T::EncodeWait>> {
-        let Some(item) = item else {
-            let mut undefined = ::std::ptr::null_mut();
-            ::napi::check_status!(
-                // SAFETY: this fn's caller passes a live `env`.
-                unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
-                "failed to get undefined"
-            )?;
-            return Ok(Begun::Whole(undefined));
-        };
-        // SAFETY: as above.
-        unsafe { item.encode(env, above) }
+        match item {
+            // SAFETY: this fn's caller passes a live `env`.
+            Some(item) => unsafe { item.encode(env, above) },
+            // SAFETY: as above.
+            None => unsafe { undefined(env) }.map(Begun::Whole),
+        }
+    }
+
+    /// `undefined`, an absent item of a list with holes.
+    unsafe fn undefined(env: napi_env) -> Result<napi_value> {
+        let mut undefined = ::std::ptr::null_mut();
+        ::napi::check_status!(
+            // SAFETY: this fn's caller passes a live `env`.
+            unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
+            "failed to get undefined"
+        )?;
+        Ok(undefined)
     }
 
     unsafe fn set_hole(env: napi_env, array: napi_value, index: u32, value: napi_value) -> Result<()> {

@@ -1,7 +1,10 @@
-// Run with `node --import tsx <object|arena> <render|read|decode|refuse>
+// Run with `node --import tsx <object|arena> <render|read|chains|decode|refuse>
 // <levels> <main|worker>`: builds and renders a rust expression nested
 // <levels> parentheses deep (render), reads a type nesting tuple types
-// <levels> deep at depth Infinity and renders it (read), or hands the native
+// <levels> deep at depth Infinity and renders it (read), reads and renders
+// `fn f() { 1; }` with its literal in every nesting of parentheses from none
+// to <levels> deep, the source typed_read_nesting.rs stamps heights on
+// (chains), or hands the native
 // render a wire value with no JS walk in front: one nested <levels> deep,
 // which the addon decodes and releases (decode), or a tuple whose first item
 // is nested <levels> deep and whose second is malformed, which the addon
@@ -17,7 +20,7 @@ import rust from '../../../rust/src/index.ts';
 
 interface Case {
 	storage: 'object' | 'arena';
-	side: 'render' | 'read' | 'decode' | 'refuse';
+	side: 'render' | 'read' | 'chains' | 'decode' | 'refuse';
 	levels: number;
 }
 
@@ -73,6 +76,11 @@ async function run({ storage, side, levels }: Case): Promise<Outcome> {
 		} else if (side === 'read') {
 			const source = `type T = ${'('.repeat(levels)}u8${',)'.repeat(levels)};\n`;
 			expect(rs.render(rs.parse(source, { depth: Infinity })).toString(), source);
+		} else if (side === 'chains') {
+			for (let at = 0; at <= levels; at += 1) {
+				const source = `fn f() { ${'('.repeat(at)}1${')'.repeat(at)}; }`;
+				expect(rs.render(rs.parse(source, { depth: Infinity })).toString(), source);
+			}
 		} else if (side === 'decode') {
 			const [engine, shell] = wireOf(() => rs.render(rs.build.parenthesizedExpression(rs.build.integerLiteral('1'))).toString());
 			expect(render(engine, nest(shell, levels)), parens);

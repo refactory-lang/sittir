@@ -29,6 +29,7 @@ const POINTER: Layout = { size: 8, align: 8, niche: { offset: 0, width: 8, avail
 
 const LEAVES: ReadonlyMap<string, Layout> = new Map([
 	['bool', { size: 1, align: 1, niche: { offset: 0, width: 1, available: 254n } }],
+	['u16', { size: 2, align: 2, niche: undefined }],
 	['Box', POINTER],
 	['Vec', BUFFER],
 	['NonEmptyVec', BUFFER],
@@ -179,7 +180,7 @@ function declarationsOf(nodeRs: string): ReadonlyMap<string, Declaration> {
 		declarations.set(
 			name!,
 			tag === 'struct'
-				? { tag: 'struct', fields: lines.flatMap((line) => /^ {4}pub \w+: (.+),$/.exec(line)?.slice(1, 2) ?? []).map(parseType) }
+				? { tag: 'struct', fields: lines.flatMap((line) => /^ {4}(?:pub )?\w+: (.+),$/.exec(line)?.slice(1, 2) ?? []).map(parseType) }
 				: {
 						tag: 'enum',
 						variants: lines.flatMap((line) => {

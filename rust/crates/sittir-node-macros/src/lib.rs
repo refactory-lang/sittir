@@ -17,7 +17,7 @@ mod record;
 mod views;
 mod write;
 
-#[proc_macro_derive(Node, attributes(node, slot, kind, flank, separator_kind, space, layout, text, wire))]
+#[proc_macro_derive(Node, attributes(node, slot, kind, flank, separator_kind, space, layout, text, wire, height))]
 pub fn derive_node(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
     expand::derive(&input).unwrap_or_else(syn::Error::into_compile_error).into()

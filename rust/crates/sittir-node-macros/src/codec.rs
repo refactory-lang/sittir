@@ -135,14 +135,35 @@ fn loop_entries(ident: &Ident) -> TokenStream {
 }
 
 /// A node no frame is needed for: decoded and encoded whole by its napi
-/// codec, dropped in place, with no steps of its own.
+/// codec, dropped in place, with no steps of its own, and height 0.
 fn nodeless(ident: &Ident) -> TokenStream {
     let w = grammar(ident);
+    let height = leaf_height(ident);
     quote! {
+        #height
         ::sittir_core::nodeless_codec!(#ident);
         ::sittir_core::napi_codec! {
             ::sittir_core::nodeless_steps!(#ident; #w);
         }
+    }
+}
+
+/// The height of a node with no child slot: 0, by its kind.
+fn leaf_height(ident: &Ident) -> TokenStream {
+    quote! {
+        impl ::sittir_core::codec::Height for #ident {
+            fn tallest(&self) -> ::core::option::Option<u16> {
+                ::core::option::Option::Some(0)
+            }
+        }
+    }
+}
+
+/// A node with no child slot keeps no height: it is 0 by its kind.
+fn no_height(height: Option<&Ident>) -> syn::Result<()> {
+    match height {
+        Some(height) => Err(syn::Error::new_spanned(height, "a node with no child slot is height 0 by its kind, so it keeps no `#[height]`")),
+        None => Ok(()),
     }
 }
 
@@ -232,10 +253,12 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
 
 /// A struct: decoded from an object field by field, encoded as one. One
 /// with a child slot does both in a frame of its own; one without, whole.
-pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+pub fn structure(ident: &Ident, fields: &[WireField<'_>], height: Option<&Ident>) -> syn::Result<TokenStream> {
     if fields.iter().any(WireField::holds_nodes) {
-        return framed(ident, fields);
+        let height = height.ok_or_else(|| syn::Error::new_spanned(ident, "a node with a child slot keeps its height: `#[height] height: u16`"))?;
+        return framed(ident, fields, height);
     }
+    no_height(height)?;
     let napi = napi();
     let reads = field_reads(&ident.to_string(), &fields.iter().collect::<Vec<_>>())?;
     let encode = struct_encode(ident, fields)?;
@@ -261,7 +284,7 @@ fn usize_lit(n: usize) -> Literal {
 /// A struct with a child slot: its frames, which read and write it field by
 /// field in declaration order, a child slot by the loop. A child's refusal is
 /// decorated with the field that holds it, as napi's object derive does.
-fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
+fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Result<TokenStream> {
     let (napi, w) = (napi(), grammar(ident));
     let owner = ident.to_string();
     let codec = quote!(::sittir_core::codec);
@@ -270,11 +293,14 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let offset = usize::from(kind.is_some());
     let entry_count = usize_lit(fields.len() + offset);
     let kind_first = kind.map(|entry| quote!(entries[0] = #entry;));
+    let names: Vec<&Ident> = fields.iter().map(|field| field.ident).collect();
+    let tys: Vec<&Type> = fields.iter().map(|field| field.ty).collect();
     let (mut decode_waits, mut encode_waits) = (Vec::new(), Vec::new());
     let (mut reads, mut resumes, mut refusals) = (Vec::new(), Vec::new(), Vec::new());
     let (mut writes, mut rewrites, mut parts) = (Vec::new(), Vec::new(), Vec::new());
     let (mut decode_releases, mut encode_releases) = (Vec::new(), Vec::new());
     let (mut decode_drops, mut encode_drops) = (Vec::new(), Vec::new());
+    let (mut whole_writes, mut held) = (Vec::new(), Vec::new());
     for (index, field) in fields.iter().enumerate() {
         let (name, ty) = (field.ident, field.ty);
         let (at, slot) = (usize_lit(index), usize_lit(index + offset));
@@ -303,6 +329,10 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 frame.read = #at + 1;
                 frame.entries[#slot] = #entry;
             }));
+            whole_writes.push(quote!({
+                let value = #name;
+                entries[#slot] = #entry;
+            }));
             decode_drops.push(quote!(if #at < self.written {
                 ::core::mem::drop(#written_field);
             }));
@@ -312,6 +342,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             continue;
         }
         parts.push(quote!(#codec::Dismantle::<#w>::dismantle(self.#name, out);));
+        held.push(quote!(#codec::Height::tallest(&self.#name)));
         decode_drops.push(quote!(if #at < self.written {
             #codec::Dismantle::<#w>::dismantle(#written_field, out);
         }));
@@ -376,6 +407,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 }
             }
         };
+        let whole = quote!(entries[#slot] = ::core::option::Option::Some((#key, unsafe { <#written as #codec::Codec<#w>>::encode_whole(#value, env)? })));
         writes.push(if optional {
             quote!(#at => {
                 let value = #take;
@@ -391,6 +423,16 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 frame.read = #at + 1;
                 let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
                 #write_on
+            })
+        });
+        whole_writes.push(if optional {
+            quote!(if let ::core::option::Option::Some(value) = #name {
+                #whole;
+            })
+        } else {
+            quote!({
+                let value = #name;
+                #whole;
             })
         });
         rewrites.push(quote!(__EncodeWait::#name(wait) => {
@@ -411,6 +453,27 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
         impl #codec::Parts<#w> for #ident {
             fn parts(self, out: &mut ::std::vec::Vec<#whole>) {
                 #(#parts)*
+            }
+        }
+        impl #codec::Height for #ident {
+            fn tallest(&self) -> ::core::option::Option<u16> {
+                ::core::option::Option::Some(self.#height)
+            }
+        }
+        impl #ident {
+            /// The node of these fields, its height stamped from the nodes
+            /// they hold.
+            #[must_use]
+            #[inline]
+            #[allow(clippy::too_many_arguments, reason = "one argument per field of the node")]
+            pub fn new(#(#names: #tys),*) -> Self {
+                Self { #(#names,)* #height: 0 }.__stamped()
+            }
+            /// The node with its height stamped from the nodes it holds,
+            /// as every build of it ends.
+            fn __stamped(mut self) -> Self {
+                self.#height = #codec::height_over([#(#held),*].into_iter().flatten().max());
+                self
             }
         }
     };
@@ -491,10 +554,15 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                     match frame.at {
                         #(#reads)*
                         _ => {
+                            // SAFETY: the height is no wire field, so no step writes it: it is
+                            // written here, once, before the node is read whole and stamped.
+                            unsafe { ::core::ptr::addr_of_mut!((*frame.node.as_mut_ptr()).#height).write(0) };
                             frame.written = 0;
-                            // SAFETY: the loop is past the last field, so every field is written, and
-                            // `written` is zero, so a release of this frame drops none of them again.
-                            return ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::whole(unsafe { frame.node.assume_init_read() })));
+                            // SAFETY: the loop is past the last field and the height is written, so
+                            // every field is, and `written` is zero, so a release of this frame drops
+                            // none of them again.
+                            let node = unsafe { frame.node.assume_init_read() };
+                            return ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::whole(node.__stamped())));
                         }
                     }
                     frame.at += 1;
@@ -545,6 +613,9 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
                 ::core::result::Result::Ok(#begun::Whole(<Self as #codec::Listed<#w>>::of(child)))
             }
             unsafe fn encode(self, env: #napi::sys::napi_env, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
+                if self.#height < #codec::RECURSION_LIMIT {
+                    return unsafe { <Self as #codec::Codec<#w>>::encode_whole(self, env) }.map(#begun::Whole);
+                }
                 let mut entries = [::core::option::Option::None; #entry_count];
                 #kind_first
                 *above = ::core::option::Option::Some(<Self as #codec::Framed<#w>>::encoding(__Encoding {
@@ -558,6 +629,13 @@ fn framed(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
             }
             unsafe fn encoded(_: #napi::sys::napi_env, (): (), child: #napi::sys::napi_value, _: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, ()>> {
                 ::core::result::Result::Ok(#begun::Whole(child))
+            }
+            unsafe fn encode_whole(self, env: #napi::sys::napi_env) -> #napi::Result<#napi::sys::napi_value> {
+                let Self { #(#names,)* .. } = self;
+                let mut entries = [::core::option::Option::None; #entry_count];
+                #kind_first
+                #(#whole_writes)*
+                unsafe { ::sittir_core::boundary::object_with_present(env, &entries) }
             }
         }
     });
@@ -584,7 +662,8 @@ fn kind_module(ident: &Ident, kind: Option<&Path>) -> syn::Result<Path> {
 /// from an object; encoded as a struct, so a leaf in a choice keeps its `$type`.
 /// A leaf with no fixed text refuses a bare kind id, naming that id's kind
 /// through `kind_name_from_id` in the module its `kind` constant lives in.
-pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>, kind: Option<&Path>) -> syn::Result<TokenStream> {
+pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>, kind: Option<&Path>, height: Option<&Ident>) -> syn::Result<TokenStream> {
+    no_height(height)?;
     let napi = napi();
     let owner = ident.to_string();
     let text_key = fields
@@ -669,6 +748,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         })
     };
     let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut whole_encodes, mut heights) = (Vec::new(), Vec::new());
     let (mut indices, mut claimed) = (Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
     let (mut decode_waits, mut encode_waits, mut resumes, mut rewrites, mut dismantles) = (Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new());
@@ -730,26 +810,25 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         } else {
             dismantles.push(quote!(Self::#name => {}));
         }
-        let unit = |id: TokenStream| quote!(unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #id) }.map(#begun::Whole));
-        encodes.push(match (variant.payload, variant.blank, &variant.first) {
-            (Some(ty), _, _) => quote!(Self::#name(payload) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::encode(payload, env, above)? } {
+        let unit = |id: TokenStream| quote!(unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #id) });
+        if let Some(ty) = variant.payload {
+            encodes.push(quote!(Self::#name(payload) => ::core::result::Result::Ok(match unsafe { <#ty as #codec::Codec<#w>>::encode(payload, env, above)? } {
                 #begun::Whole(value) => #begun::Whole(value),
                 #begun::Waits(wait) => #begun::Waits(__EncodeWait::#name(wait)),
-            }),),
-            (None, true, _) => {
-                let id = unit(quote!(::sittir_core::types::KindId::BLANK));
-                quote!(Self::#name => #id,)
-            }
-            (None, false, Some(first)) if variant.edged => {
-                let id = unit(quote!(#first));
-                quote!(Self::#name(_) => #id,)
-            }
-            (None, false, Some(first)) => {
-                let id = unit(quote!(#first));
-                quote!(Self::#name => #id,)
-            }
-            (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
-        });
+            }),));
+            whole_encodes.push(quote!(Self::#name(payload) => unsafe { <#ty as #codec::Codec<#w>>::encode_whole(payload, env) },));
+            heights.push(quote!(Self::#name(payload) => #codec::Height::tallest(payload),));
+            continue;
+        }
+        let (arm, id) = match (variant.blank, &variant.first) {
+            (true, _) => (quote!(Self::#name), unit(quote!(::sittir_core::types::KindId::BLANK))),
+            (false, Some(first)) if variant.edged => (quote!(Self::#name(_)), unit(quote!(#first))),
+            (false, Some(first)) => (quote!(Self::#name), unit(quote!(#first))),
+            (false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
+        };
+        encodes.push(quote!(#arm => #id.map(#begun::Whole),));
+        whole_encodes.push(quote!(#arm => #id,));
+        heights.push(quote!(#arm => ::core::option::Option::Some(0),));
     }
     let expected = if string_arm.is_empty() {
         format!("{owner}: expected u16 kind_id or object with $type")
@@ -782,6 +861,13 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         impl #codec::Parts<#w> for #ident {
             fn parts(self, out: &mut ::std::vec::Vec<#whole>) {
                 #codec::Dismantle::<#w>::dismantle(self, out);
+            }
+        }
+        impl #codec::Height for #ident {
+            fn tallest(&self) -> ::core::option::Option<u16> {
+                match self {
+                    #(#heights)*
+                }
             }
         }
     };
@@ -869,6 +955,11 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                     #(#rewrites)*
                 }
             }
+            unsafe fn encode_whole(self, env: #napi::sys::napi_env) -> #napi::Result<#napi::sys::napi_value> {
+                match self {
+                    #(#whole_encodes)*
+                }
+            }
         }
         #entries
     });
@@ -918,6 +1009,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
                 pub pattern: SlotValue<PatternNode>,
@@ -947,6 +1040,53 @@ mod tests {
         assert!(has(&out, "::sittir_core::codec::decode::<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia, Self>(env, napi_val)"));
         assert!(has(&out, "out.push(<Self as ::sittir_core::codec::Listed<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::whole(self));"));
         assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationNode>"));
+        assert!(has(
+            &out,
+            "self.height = ::sittir_core::codec::height_over([::sittir_core::codec::Height::tallest(&self.pattern), ::sittir_core::codec::Height::tallest(&self.value)].into_iter().flatten().max());"
+        ));
+        assert!(has(&out, "unsafe { ::core::ptr::addr_of_mut!((*frame.node.as_mut_ptr()).height).write(0) };"));
+        assert!(has(&out, "whole(node.__stamped())"));
+        assert!(has(
+            &out,
+            "if self.height < ::sittir_core::codec::RECURSION_LIMIT { return unsafe { <Self as ::sittir_core::codec::Codec<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::encode_whole(self, env) }.map(::sittir_core::codec::Begun::Whole); }"
+        ));
+        assert!(has(&out, "let Self { layout, pattern, value, .. } = self;"));
+        assert!(has(&out, r#"{ let value = layout; entries[1] = ::sittir_core::boundary::present(env, c"$_layout", value)?; }"#));
+        assert!(has(
+            &out,
+            r#"if let ::core::option::Option::Some(value) = value { entries[3] = ::core::option::Option::Some((c"_value", unsafe { <SlotValue<ExpressionNode> as ::sittir_core::codec::Codec<<LetDeclarationNode as ::sittir_core::trivia::HasTrivia>::Trivia>>::encode_whole(value, env)? })); }"#
+        ));
+    }
+
+    #[test]
+    fn a_node_keeps_a_height_exactly_when_it_has_a_child_slot() {
+        let refusal = |input: &syn::DeriveInput| crate::expand::derive(input).expect_err("refused").to_string();
+        let unstamped = refusal(&parse_quote! {
+            #[node(kind = kind::LET_DECLARATION)]
+            pub struct LetDeclarationNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[wire(key = "_pattern")]
+                #[slot(field = field::PATTERN)]
+                pub pattern: SlotValue<PatternNode>,
+            }
+        });
+        assert!(unstamped.contains("a node with a child slot keeps its height"), "{unstamped}");
+        let leaf = refusal(&parse_quote! {
+            #[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$")]
+            pub struct CommentNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_content")]
+                #[slot(capture = "content")]
+                pub content: String,
+            }
+        });
+        assert!(leaf.contains("a node with no child slot is height 0 by its kind"), "{leaf}");
     }
 
     #[test]
@@ -1112,6 +1252,7 @@ mod tests {
         assert!(has(&out, r#"content: unsafe { ::sittir_core::boundary::required(env, obj, c"_content", "CommentNode")? },"#));
         assert!(has(&out, "::sittir_core::nodeless_codec!(CommentNode);"));
         assert!(has(&out, "::sittir_core::nodeless_steps!(CommentNode; <CommentNode as ::sittir_core::trivia::HasTrivia>::Trivia);"));
+        assert!(has(&out, "impl ::sittir_core::codec::Height for CommentNode { fn tallest(&self) -> ::core::option::Option<u16> { ::core::option::Option::Some(0) } }"));
         assert!(!has(&out, "pub struct __Decoding"));
     }
 

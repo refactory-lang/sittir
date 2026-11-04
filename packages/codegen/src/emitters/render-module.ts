@@ -3663,6 +3663,7 @@ function renderNodeDataStruct(
 	if (displayIds.length > 0) lines.push(...renderKindField());
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
+		if (printedSlots.some(({ slot }) => slotHoldsNodes(slot, nodeMap))) lines.push(...renderHeightField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
 			const field = rustFieldIdent(slot.storageName);
 			const place = placeOf.get(field);
@@ -3931,6 +3932,15 @@ function spaceAttr(
 
 function renderLayoutField(): string[] {
 	return [wireKeyAttr(LAYOUT_FIELD.wireKey), '    #[layout]', `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
+}
+
+function renderHeightField(): string[] {
+	return ['    #[height]', '    height: u16,'];
+}
+
+function slotHoldsNodes(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	const { tag } = nodeSlotShapeOf(slot, nodeMap);
+	return tag !== 'presence' && tag !== 'text';
 }
 
 function renderLeafTextField(): string[] {

@@ -33,6 +33,10 @@ describe('the payload byte rule', () => {
 		expect(nodeSizesOf(nodeRs)).toEqual(new Map([['Choice', 32], ['Holder', 40]]));
 	});
 
+	it('counts a field the struct keeps private', () => {
+		expect(nodeSizesOf('pub struct Framed {\n    pub layout: Option<Box<NodeLayout>>,\n    height: u16,\n}\n')).toEqual(new Map([['Framed', 16]]));
+	});
+
 	it('refuses a type it has no layout for', () => {
 		expect(() => boxedPayloadsOf(struct('Holder', ['Mystery']), new Set(['Holder']))).toThrow('Mystery is no type the payload byte rule knows');
 	});
