@@ -345,7 +345,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.enum_member': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 			readonly name: G['identifier'] | G['literal'] | string;
 			readonly value:
 				| V.Declaration.Module<G>
@@ -355,7 +355,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.struct': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -363,7 +363,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.tuple': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -588,10 +588,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.struct': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 		};
 		readonly 'declaration.struct.tuple': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 		};
 		readonly 'declaration.type_alias': {
 			readonly value:
@@ -618,7 +618,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.union': {
-			readonly body: V.Declaration.Field.Any<G>;
+			readonly body: V.Declaration.Field<G> | V.Declaration.Field.Private<G> | V.Declaration.Field.Public.Any<G>;
 		};
 		readonly 'declaration.variable': {
 			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
@@ -1133,7 +1133,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| V.Pattern.Rest<G>
 				| G['statement'];
-			readonly property: G['identifier'] | V.Literal.Number.Integer.Any<G>;
+			readonly property:
+				| G['identifier']
+				| V.Literal.Number.Integer<G>
+				| V.Literal.Number.Integer.Binary<G>
+				| V.Literal.Number.Integer.Hex<G>
+				| V.Literal.Number.Integer.Octal<G>;
 		};
 		readonly 'expression.parenthesized': {
 			readonly expression:
@@ -1470,7 +1475,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 		};
 		readonly 'statement.exec': {
-			readonly code: G['identifier'] | V.Literal.String.Any<G>;
+			readonly code:
+				| G['identifier']
+				| V.Literal.String<G>
+				| V.Literal.String.Multiline<G>
+				| V.Literal.String.Raw.Any<G>
+				| V.Literal.String.Bytes.Any<G>
+				| V.Literal.String.Interpolated.Any<G>;
 			readonly inClauses:
 				| G['expression']
 				| G['identifier']

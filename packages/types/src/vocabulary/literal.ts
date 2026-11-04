@@ -139,7 +139,13 @@ export namespace Literal {
 		export interface Concatenated<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
 			readonly $kind: 'literal.string.concatenated';
-			readonly strings: V.Literal.String.Any<G>[];
+			readonly strings: (
+				| V.Literal.String<G>
+				| V.Literal.String.Multiline<G>
+				| V.Literal.String.Raw.Any<G>
+				| V.Literal.String.Bytes.Any<G>
+				| V.Literal.String.Interpolated.Any<G>
+			)[];
 		}
 		export interface Escape<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by prt
