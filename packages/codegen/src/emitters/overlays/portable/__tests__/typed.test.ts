@@ -67,6 +67,13 @@ describe('emitPortableTyped', () => {
 		expect(input).not.toContain('V.Element.Macro.TokenTree.Delimited<Ctx>');
 	});
 
+	it('builds a role from the paths its kinds read as, never a path claimed only by a supertype or shadowed by a refinement', () => {
+		const element = /\treadonly element:((?:\n\t\t\|[^\n]*)+|[^\n]*);/.exec(typed.source.slice(typed.source.indexOf('export interface Ctx')))?.[1];
+		expect(element).toContain('V.Element.Macro.TokenTree.Delimited.Paren<Ctx>');
+		expect(element).not.toContain('V.Element.Macro.TokenTree.Delimited<Ctx>');
+		expect(element).not.toContain('V.Element.Macro.TokenTree<Ctx>');
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);

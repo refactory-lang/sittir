@@ -211,7 +211,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const concrete = [...model.values()].filter((n) => n.subtypes.length === 0 && idOf(n.kind) !== undefined);
 	const typed = new Set(concrete.map((n) => n.kind));
 	const readPathsOf = (list: readonly ReadEntry[]): string[] => [...new Set(readableEntries(list.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => path))];
-	const readPaths = new Set(concrete.flatMap((n) => readPathsOf(entriesFor(n.kind) ?? [])));
+	const readPaths = new Set(entries.flatMap(([kind, list]) => ((nodeOf(kind)?.subtypes.length ?? 0) > 0 ? [] : readPathsOf(list))));
 	const refsOf = (kinds: readonly string[], terminals: readonly string[] = []): string => {
 		const parts = new Set<string>(terminals.map(q));
 		for (const k of kinds) for (const c of concreteKinds(model, [k])) if (typed.has(c)) parts.add(aliasOf(c));
@@ -292,7 +292,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, readPaths) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, readPaths: [...readPaths].sort(), roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, readPaths) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
@@ -481,14 +481,14 @@ interface ContextInput {
 	readonly grammar: string;
 	readonly own: Derivation;
 	readonly vocabulary: Vocabulary;
-	readonly claimedPaths: readonly string[];
+	readonly readPaths: readonly string[];
 	readonly roleArmsOf: (path: string) => readonly string[];
 	readonly textPaths: readonly string[];
 	readonly unmapped: ReadonlyMap<string, ReadonlyMap<string, ReadonlySet<string>>>;
 	readonly slotArm: (kind: string) => string;
 }
 
-function contextOf({ grammar, own, vocabulary, claimedPaths, roleArmsOf, textPaths, unmapped, slotArm }: ContextInput): string[] {
+function contextOf({ grammar, own, vocabulary, readPaths, roleArmsOf, textPaths, unmapped, slotArm }: ContextInput): string[] {
 	const roleText = new Map<string, Set<string>>();
 	for (const path of levelsWithMembers(own))
 		for (const facts of levelMembers(own, path).values()) {
@@ -533,7 +533,7 @@ function contextOf({ grammar, own, vocabulary, claimedPaths, roleArmsOf, textPat
 		'\treadonly texts: { readonly [P in keyof Texts]: P extends keyof PortableTexts ? PortableTexts[P] : never };'
 	];
 	for (const ns of namespaces) {
-		const paths = claimedPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
+		const paths = readPaths.filter((p) => p === ns || p.startsWith(`${ns}.`));
 		const text = [...new Set([...(roleText.get(ns) ?? [])].map(slotArm))].sort();
 		if (text.length > 0) roles.push(`type Role${roles.length} = Fit<${text.join(' | ')}, V.GrammarContext<Ctx>[${q(ns)}]>;`);
 		const arms = paths.flatMap(roleArmsOf);
