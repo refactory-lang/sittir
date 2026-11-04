@@ -317,8 +317,6 @@ export namespace Expression {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by prt
 			readonly $kind: 'expression.collection.list';
-			readonly attributes?: G['attribute'][];
-			// r only
 			readonly elements?: G['slots']['expression.collection.list']['elements'][];
 		}
 		export namespace List {

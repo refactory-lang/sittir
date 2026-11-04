@@ -2185,6 +2185,9 @@ declare module './expression.ts' {
 			>;
 		}
 		namespace Collection {
+			interface List<G extends GrammarContext<G>> {
+				readonly attributes?: gate.In<G, features.Attributes, attributes.Expression.Collection.List<G>['attributes']>;
+			}
 			namespace List {
 				type Any<G extends GrammarContext<G>> =
 					| V.Expression.Collection.List<G>
