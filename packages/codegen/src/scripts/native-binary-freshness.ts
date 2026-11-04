@@ -14,6 +14,7 @@ export interface NativeBuildStamp {
 	readonly profile: NativeProfile;
 	readonly binarySha256: string;
 	readonly unstripped?: { readonly path: string; readonly sha256: string };
+	readonly linkerMap?: { readonly path: string; readonly sha256: string };
 	readonly toolchain: string;
 	readonly config: Readonly<Record<string, string>>;
 	readonly inputs: Readonly<Record<string, string>>;
@@ -160,6 +161,10 @@ export function unstrippedBinaryPath(repoRoot: string, grammar: string, binary: 
 	return join(repoRoot, STAMP_DIR, grammar, binary);
 }
 
+export function linkerMapOf(copy: string): string {
+	return `${copy}.map`;
+}
+
 export function nativeBuildStamp(repoRoot: string, grammar: string, binary: string = hostBinaryName(grammar)): NativeBuildStamp | undefined {
 	const path = stampPath(repoRoot, grammar, binary);
 	return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as NativeBuildStamp) : undefined;
@@ -173,11 +178,12 @@ export function nativeBuildFingerprint(repoRoot: string, grammar: string, settin
 	};
 }
 
-export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint, unstripped?: string): void {
+export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint, unstripped?: string, linkerMap?: string): void {
 	const stamp: NativeBuildStamp = {
 		profile,
 		binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)),
 		...(unstripped === undefined ? {} : { unstripped: { path: checkoutPath(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
+		...(linkerMap === undefined ? {} : { linkerMap: { path: checkoutPath(repoRoot, linkerMap), sha256: sha256File(linkerMap) } }),
 		...built
 	};
 	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');
@@ -203,6 +209,9 @@ export function unstrippedReleaseBinary(repoRoot: string, grammar: string, binar
 	if (copy === undefined) throw new Error(`${binary}: its build kept no unstripped copy`);
 	const path = join(repoRoot, copy.path);
 	if (!existsSync(path) || sha256File(path) !== copy.sha256) throw new Error(`${binary}: ${copy.path} is not the unstripped copy its build kept`);
+	const map = stamp!.linkerMap;
+	if (map !== undefined && (!existsSync(join(repoRoot, map.path)) || sha256File(join(repoRoot, map.path)) !== map.sha256))
+		throw new Error(`${binary}: ${map.path} is not the linker map its build kept`);
 	return path;
 }
 

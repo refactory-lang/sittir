@@ -18,12 +18,15 @@
 // ad hoc, since stripping invalidates the linker's signature and arm64 macOS
 // will not load unsigned code. Every other target is stripped with the
 // pinned toolchain's `llvm-strip`, which reads every target's format, so a
-// cross-compiled binary is stripped by the same tool.
+// cross-compiled binary is stripped by the same tool. An MSVC image carries
+// no symbol table, so its release link also writes a linker map (`/MAP`)
+// beside the copy, which the stamp records: the map names the code, and it
+// changes no allocated byte of the image.
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
-import { type NativeProfile, llvmTool, nativeBuildFingerprint, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
+import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
@@ -36,26 +39,31 @@ const target = flags[flags.indexOf('--target') + 1];
 const suffix = flags.includes('--target') && target !== undefined ? targetSuffix(target) : platformSuffix(hostPlatform());
 const apple = suffix.startsWith('darwin-');
 
-function run(command: string, args: readonly string[], cwd: string, shell = false): void {
-	const result = spawnSync(command, args, { cwd, stdio: 'inherit', shell });
+function run(command: string, args: readonly string[], cwd: string, shell = false, env: NodeJS.ProcessEnv = process.env): void {
+	const result = spawnSync(command, args, { cwd, stdio: 'inherit', shell, env });
 	if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
 const outDir = nativeBindingDir(grammar);
+const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
+const copy = unstrippedBinaryPath(REPO_ROOT, grammar, binary);
+const linkerMap = release && suffix.endsWith('-msvc') ? linkerMapOf(copy) : undefined;
+if (linkerMap !== undefined && /\s/.test(linkerMap)) throw new Error(`the linker map's path ${linkerMap} holds a space, which RUSTFLAGS can't carry`);
+mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
 	'pnpm',
 	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	nativeCrateDir(grammar),
-	process.platform === 'win32'
+	process.platform === 'win32',
+	linkerMap === undefined ? process.env : { ...process.env, RUSTFLAGS: [process.env.RUSTFLAGS, `-C link-arg=/MAP:${linkerMap}`].filter(Boolean).join(' ') }
 );
+if (linkerMap !== undefined && !existsSync(linkerMap)) throw new Error(`the release link wrote no linker map at ${linkerMap}`);
 
-const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
 const shipped = join(outDir, binary);
 let unstripped: string | undefined;
 if (release) {
-	unstripped = unstrippedBinaryPath(REPO_ROOT, grammar, binary);
-	mkdirSync(dirname(unstripped), { recursive: true });
+	unstripped = copy;
 	copyFileSync(shipped, unstripped);
 	if (!apple) run(llvmTool('llvm-strip'), ['--strip-all', shipped], outDir);
 	else if (process.platform === 'darwin') {
@@ -63,4 +71,4 @@ if (release) {
 		run('codesign', ['--force', '--sign', '-', shipped], outDir);
 	}
 }
-writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, built, unstripped);
+writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, built, unstripped, linkerMap);

@@ -8,6 +8,7 @@ import {
 	checkoutPath,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
+	linkerMapOf,
 	llvmTool,
 	nativeBuildFingerprint,
 	nativeBuildFreshness,
@@ -269,6 +270,19 @@ describe('a stripped release binary', () => {
 		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('is not the unstripped copy its build kept');
 		write('rust/crates/sittir-rust/src/lib.rs', 'pub fn changed() {}\n');
 		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow('changed since the build');
+	});
+
+	it('records the linker map its build wrote beside the copy, and names no copy once the map changed', () => {
+		const copy = unstrippedBinaryPath(root, 'rust', BINARY);
+		const map = linkerMapOf(copy);
+		expect(map).toBe(`${copy}.map`);
+		write(relative(root, copy), 'binary v1 with its symbols');
+		write(relative(root, map), ' 0001:00000010       f 0000000180001010 f   x.o\n');
+		writeNativeBuildStamp(root, 'rust', 'release', BINARY, nativeBuildFingerprint(root, 'rust', current), copy, map);
+		expect(nativeBuildStamp(root, 'rust', BINARY)?.linkerMap).toEqual({ path: `node_modules/.cache/sittir/native-build/rust/${BINARY}.map`, sha256: expect.stringMatching(/^[0-9a-f]{64}$/) });
+		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
+		write(relative(root, map), 'another map');
+		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow(`${BINARY}.map is not the linker map its build kept`);
 	});
 
 	it('strips with the llvm tool its variable names, when one is named', () => {
