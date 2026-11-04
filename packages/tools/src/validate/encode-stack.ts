@@ -42,9 +42,12 @@ export interface Slots {
 	readonly tls: ReadonlySet<number>;
 }
 
-export interface Image extends Slots {
+export interface BinaryImage {
 	readonly int32: (address: number) => number | undefined;
+	readonly threadLocal: (address: number) => boolean;
 }
+
+export interface Image extends Slots, BinaryImage {}
 
 export interface Disassembly {
 	readonly arch: Arch;
@@ -241,13 +244,14 @@ const FORMAT = /file format (.+)$/;
 const SECTION = /^Disassembly of section (\S+):$/;
 const STUBS = /^\.plt/;
 const PREFIX = /^(?:notrack|bnd) /;
-const RIP_BRANCH = /^(callq?|jmpq?) \*-?0x[0-9a-f]+\(%rip\) # 0x([0-9a-f]+)\b/;
-const RIP_LOAD = /^movq? -?0x[0-9a-f]+\(%rip\), %(\w+) # 0x([0-9a-f]+)\b/;
+const RIP_BRANCH = /^(callq?|jmpq?) \*-?0x[0-9a-f]+\(%rip\) ##? 0x([0-9a-f]+)\b/;
+const RIP_LOAD = /^movq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
 const REG_BRANCH = /^(callq?|jmpq?) \*%(\w+)$/;
 const OTHER_BRANCH = /^(callq?|jmpq?|blr|br) /;
 const LAST_REGISTER = /(?:^\S+|,) %(\w+)$/;
+const COPY = /^movq %(\w+), %(\w+)$/;
 const OPERAND = /%(\w+)/g;
-const COMMENT = / # .*$/;
+const COMMENT = / ##? .*$/;
 const PREFIXES = /^(?:(?:lock|rep\w*|data16) )+/;
 const PADDING = /^nop[wlq]?$/;
 const READS_ONLY = /^(?:cmp[bwlq]?|test[bwlq]?|bt[bwlq]?|push[wq]?|v?u?comis[sd]|v?ptest|nop[wlq]?)$/;
@@ -272,11 +276,18 @@ const LEGACY: Readonly<Record<string, string>> = Object.fromEntries(
 );
 const RELATIVE = /^([0-9a-f]+) R_\w+_RELATIVE\s+\*ABS\*\+0x([0-9a-f]+)$/;
 const SYMBOL_SLOT = /^([0-9a-f]+) R_\w+_(?:GLOB_DAT|JUMP_SLOT)\s+(.+?)$/;
-const NO_IMAGE: Image = { internal: new Map(), symbols: new Map(), tls: new Set(), int32: () => undefined };
+const NO_BINARY: BinaryImage = { int32: () => undefined, threadLocal: () => false };
+const NO_IMAGE: Image = { internal: new Map(), symbols: new Map(), tls: new Set(), ...NO_BINARY };
+const MACHO_MAGIC = 0xfeedfacf;
+const LC_SEGMENT_64 = 0x19;
+const THREAD_VARIABLES = '__thread_vars';
+const TLV_LOAD = /^ldr (x\d+), \[x0\]$/;
+const TLV_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %rdi ##? 0x([0-9a-f]+)\b/;
 const TLS_SLOT = /^([0-9a-f]+) R_\w+_TLSDESC\b/;
 const TLS_PAGE = /^adrp (x\d+), 0x([0-9a-f]+)\b/;
 const TLS_LOAD = /^ldr x1, \[(x\d+), #0x([0-9a-f]+)\]$/;
 const TLS_ARGUMENT = /^add x0, (x\d+), #0x([0-9a-f]+)$/;
+const TABLE_BASE_USE = /^movslq \(%(\w+),%\w+,4\)/;
 
 export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 	{
@@ -294,7 +305,7 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 		refutedBy: /::with_external_data\b/
 	}
 ];
-const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) # 0x([0-9a-f]+)\b/;
+const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
 const TABLE_ENTRY = /^movslq \(%(\w+),%\w+,4\), %(\w+)$/;
 const TABLE_ADD = /^addq %(\w+), %(\w+)$/;
 const TABLE_REACH = 12;
@@ -307,20 +318,60 @@ function wide(reg: string): string {
 	return numbered ? `r${numbered[1]}` : (LEGACY[reg] ?? reg);
 }
 
-export function elfInt32(bytes: Buffer): (address: number) => number | undefined {
-	if (bytes.length < 0x40 || bytes.readUInt32LE(0) !== ELF_MAGIC || bytes[4] !== 2 || bytes[5] !== 1) return () => undefined;
-	const sections: { readonly address: number; readonly offset: number; readonly size: number }[] = [];
+interface Section {
+	readonly name: string;
+	readonly address: number;
+	readonly offset: number;
+	readonly size: number;
+}
+
+function elfSections(bytes: Buffer): Section[] {
+	const sections: Section[] = [];
 	const table = Number(bytes.readBigUInt64LE(0x28));
 	const entry = bytes.readUInt16LE(0x3a);
 	for (let at = 0; at < bytes.readUInt16LE(0x3c); at++) {
 		const header = table + at * entry;
 		const address = Number(bytes.readBigUInt64LE(header + 0x10));
 		if (bytes.readUInt32LE(header + 4) !== SHT_PROGBITS || !address) continue;
-		sections.push({ address, offset: Number(bytes.readBigUInt64LE(header + 0x18)), size: Number(bytes.readBigUInt64LE(header + 0x20)) });
+		sections.push({ name: '', address, offset: Number(bytes.readBigUInt64LE(header + 0x18)), size: Number(bytes.readBigUInt64LE(header + 0x20)) });
 	}
-	return (address) => {
-		const section = sections.find((candidate) => address >= candidate.address && address + 4 <= candidate.address + candidate.size);
-		return section && bytes.readInt32LE(section.offset + address - section.address);
+	return sections;
+}
+
+function machoSections(bytes: Buffer): Section[] {
+	const sections: Section[] = [];
+	let command = 32;
+	for (let n = 0; n < bytes.readUInt32LE(16); n++) {
+		if (bytes.readUInt32LE(command) === LC_SEGMENT_64) {
+			for (let at = 0; at < bytes.readUInt32LE(command + 64); at++) {
+				const header = command + 72 + at * 80;
+				sections.push({
+					name: bytes.toString('latin1', header, header + 16).replace(/\0.*$/s, ''),
+					address: Number(bytes.readBigUInt64LE(header + 32)),
+					size: Number(bytes.readBigUInt64LE(header + 40)),
+					offset: bytes.readUInt32LE(header + 48)
+				});
+			}
+		}
+		command += bytes.readUInt32LE(command + 4);
+	}
+	return sections;
+}
+
+export function imageOf(bytes: Buffer): BinaryImage {
+	const elf = bytes.length >= 0x40 && bytes.readUInt32LE(0) === ELF_MAGIC && bytes[4] === 2 && bytes[5] === 1;
+	const macho = bytes.length >= 32 && bytes.readUInt32LE(0) === MACHO_MAGIC;
+	if (!elf && !macho) return NO_BINARY;
+	const sections = elf ? elfSections(bytes) : machoSections(bytes);
+	const holding = (address: number, width: number) =>
+		sections.find((section) => address >= section.address && address + width <= section.address + section.size);
+	const variables = sections.filter((section) => section.name === THREAD_VARIABLES);
+	return {
+		int32: (address) => {
+			const section = holding(address, 4);
+			return section?.offset ? bytes.readInt32LE(section.offset + address - section.address) : undefined;
+		},
+		threadLocal: (address) => variables.some((section) => address >= section.address && address < section.address + section.size)
 	};
 }
 
@@ -398,12 +449,15 @@ function written(ins: string): readonly string[] {
 function held(state: Held, ins: string): Held {
 	const load = RIP_LOAD.exec(ins);
 	const address = RIP_ADDRESS.exec(ins);
+	const copy = COPY.exec(ins);
+	const copied = copy ? state.get(wide(copy[1]!)) : undefined;
 	const clobbered = written(ins);
-	if (!load && !address && !clobbered.some((reg) => state.has(reg))) return state;
+	if (!load && !address && !copied && !clobbered.some((reg) => state.has(reg))) return state;
 	const out = new Map(state);
 	for (const reg of clobbered) out.delete(reg);
 	if (load) out.set(wide(load[1]!), { kind: 'slot', at: Number.parseInt(load[2]!, 16) });
 	if (address) out.set(wide(address[1]!), { kind: 'address', at: Number.parseInt(address[2]!, 16) });
+	if (copy && copied) out.set(wide(copy[2]!), copied);
 	return out;
 }
 
@@ -523,15 +577,41 @@ function heldStates(body: readonly Instruction[], image: Image): readonly Held[]
 }
 
 function tlsDescriptor(body: readonly Instruction[], at: number): number | undefined {
-	if (body[at]!.ins !== 'blr x1' || at < 3) return undefined;
-	const argument = TLS_ARGUMENT.exec(body[at - 1]!.ins);
-	const load = TLS_LOAD.exec(body[at - 2]!.ins);
-	const page = TLS_PAGE.exec(body[at - 3]!.ins);
-	if (!argument || !load || !page || argument[1] !== page[1] || load[1] !== page[1] || argument[2] !== load[2]) return undefined;
-	return Number.parseInt(page[2]!, 16) + Number.parseInt(load[2]!, 16);
+	const ins = body[at]!.ins;
+	const before = (back: number): string => body[at - back]?.ins ?? '';
+	if (ins === 'callq *(%rdi)') {
+		const address = TLV_ADDRESS.exec(before(1));
+		return address ? Number.parseInt(address[1]!, 16) : undefined;
+	}
+	const called = /^blr (x\d+)$/.exec(ins)?.[1];
+	const page = TLS_PAGE.exec(before(3));
+	if (!called || !page || page[1] !== 'x0') return undefined;
+	const descriptor = TLS_LOAD.exec(before(2));
+	const argument = TLS_ARGUMENT.exec(descriptor ? before(1) : before(2));
+	const thunk = descriptor ? undefined : TLV_LOAD.exec(before(1));
+	if (!argument || argument[1] !== 'x0') return undefined;
+	if (descriptor && called === 'x1' && descriptor[1] === 'x0' && descriptor[2] === argument[2])
+		return Number.parseInt(page[2]!, 16) + Number.parseInt(argument[2]!, 16);
+	if (thunk && thunk[1] === called) return Number.parseInt(page[2]!, 16) + Number.parseInt(argument[2]!, 16);
+	return undefined;
 }
 
-function readBody(fn: Collected, body: readonly Instruction[], image: Image): void {
+function codeOf(body: readonly Instruction[]): readonly Instruction[] {
+	const first = body[0]?.address ?? 0;
+	const last = body.at(-1)?.address ?? 0;
+	const bases = new Set(body.flatMap(({ ins }) => TABLE_BASE_USE.exec(ins)?.[1] ?? []).map(wide));
+	const tables = body.flatMap(({ ins }) => {
+		const base = RIP_ADDRESS.exec(ins);
+		const at = base && bases.has(wide(base[1]!)) ? Number.parseInt(base[2]!, 16) : 0;
+		return at > first && at <= last ? [at] : [];
+	});
+	if (!tables.length) return body;
+	const data = Math.min(...tables);
+	return body.filter(({ address }) => address < data);
+}
+
+function readBody(fn: Collected, listed: readonly Instruction[], image: Image): void {
+	const body = codeOf(listed);
 	const holding = heldStates(body, image);
 	for (const [at, { address, ins }] of body.entries()) {
 		if (fn.prologue.length < PROLOGUE_LENGTH) fn.prologue.push(ins);
@@ -632,7 +712,7 @@ export async function disassemble(
 			if (callee !== undefined) edge(op, callee);
 			else unread.push(at);
 		}
-		for (const [slot, at] of descriptors) if (!image.tls.has(slot)) unread.push(at);
+		for (const [slot, at] of descriptors) if (!image.tls.has(slot) && !image.threadLocal(slot)) unread.push(at);
 		functions.set(name, { prologue, calls, tails, unresolved: unread.sort((a, b) => a.offset - b.offset), jumps });
 	}
 	return { arch, functions };
@@ -873,7 +953,7 @@ async function disassembleAddon(objdump: string, addon: string): Promise<Disasse
 	for await (const line of relocations.lines) relocated.push(line);
 	await relocations.exited;
 	const listing = objdumpOf(objdump, ['-d', '-C', '--no-show-raw-insn', addon]);
-	const dis = await disassemble(listing.lines, { ...gotSlots(relocated), int32: elfInt32(readFileSync(addon)) });
+	const dis = await disassemble(listing.lines, { ...gotSlots(relocated), ...imageOf(readFileSync(addon)) });
 	const code = await listing.exited;
 	if (code !== 0) throw new Error(`${objdump} exited ${code} disassembling ${addon}`);
 	return dis;

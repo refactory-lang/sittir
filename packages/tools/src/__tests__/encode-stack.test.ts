@@ -6,7 +6,7 @@ import {
 	codecBounds,
 	DYNAMIC_CLASSES,
 	disassemble,
-	elfInt32,
+	imageOf,
 	encodeStack,
 	frameBytes,
 	gotSlots,
@@ -282,10 +282,23 @@ describe('disassemble on arm64', () => {
 			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'ldr x1, [x0, #0x220]', 'add x0, x0, #0x220', 'blr x1'], [])
 		];
 		const relocated = gotSlots(['0000000000005220 R_AARCH64_TLSDESC        *ABS*']);
-		const read = await disassemble(listing, { ...relocated, int32: () => undefined });
+		const read = await disassemble(listing, { ...relocated, int32: () => undefined, threadLocal: () => false });
 		expect(read.functions.get('sittir_x::f')!.unresolved).toEqual([]);
 		const unread = await disassemble(listing, image());
 		expect(unread.functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['blr x1']);
+	});
+
+	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
+		const listing = [
+			'x.node:\tfile format mach-o arm64',
+			'',
+			'Disassembly of section __TEXT,__text:',
+			'',
+			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'add x0, x0, #0xc8', 'ldr x8, [x0]', 'blr x8'], [])
+		];
+		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
+		expect((await disassemble(listing, tlv)).functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		expect((await disassemble(listing, image())).functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['blr x8']);
 	});
 });
 
@@ -303,7 +316,7 @@ const SLOTS = gotSlots([
 	'0000000000003000 R_X86_64_RELATIVE        *ABS*+0x2100',
 	'0000000000003008 R_X86_64_GLOB_DAT        memcpy'
 ]);
-const image = (table: ReadonlyMap<number, number> = new Map()): Image => ({ ...SLOTS, int32: (address) => table.get(address) });
+const image = (table: ReadonlyMap<number, number> = new Map()): Image => ({ ...SLOTS, int32: (address) => table.get(address), threadLocal: () => false });
 const G = 'sittir_x::g';
 const STAR = 'core::ptr::drop_glue::<*mut u8>';
 
@@ -385,6 +398,50 @@ describe('disassemble on x86-64', () => {
 		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
 	});
 
+	it('follows a slot through a register copy, in a Mach-O listing too', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', [
+					'movq 0x10(%rip), %r15 ## 0x3000 <x>',
+					'movq %r15, %r12',
+					'movq (%rdi), %r15',
+					'callq *%r12',
+					'retq'
+				]),
+				...x86(0x2100, G, ['retq'])
+			],
+			image()
+		);
+		expect([...dis.functions.get('sittir_x::f')!.calls]).toEqual([G]);
+		expect(dis.functions.get('sittir_x::f')!.unresolved).toEqual([]);
+	});
+
+	it('reads no code past a jump table the function holds inline', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x4000, 'sittir_x::t', [
+					'leaq 0xc(%rip), %rcx ## 0x4014 <sittir_x::t+0x14>',
+					'movslq (%rcx,%rax,4), %rax',
+					'addq %rcx, %rax',
+					'jmpq *%rax',
+					'retq',
+					'callq *-0x1(%rdi)'
+				])
+			],
+			image()
+		);
+		expect(dis.functions.get('sittir_x::t')!.unresolved).toEqual([]);
+	});
+
+	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
+		const listing = [...ELF, ...x86(0x2000, 'sittir_x::f', ['leaq 0x10(%rip), %rdi ## 0x50c8 <x>', 'callq *(%rdi)', 'retq'])];
+		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
+		expect((await disassemble(listing, tlv)).functions.get('sittir_x::f')!.unresolved).toEqual([]);
+		expect((await disassemble(listing, image())).functions.get('sittir_x::f')!.unresolved.map((site) => site.ins)).toEqual(['callq *(%rdi)']);
+	});
+
 	it('takes a PLT stub for the external function it binds', async () => {
 		const dis = await disassemble(
 			[
@@ -403,7 +460,7 @@ describe('disassemble on x86-64', () => {
 	});
 });
 
-describe('elfInt32', () => {
+describe('imageOf', () => {
 	it('reads a signed word at an address inside a loaded section', () => {
 		const bytes = Buffer.alloc(0x100);
 		bytes.writeUInt32LE(0x464c457f, 0);
@@ -419,9 +476,32 @@ describe('elfInt32', () => {
 		bytes.writeBigUInt64LE(8n, section + 0x20);
 		bytes.writeInt32LE(-0xfe0, 0x40);
 		bytes.writeInt32LE(7, 0x44);
-		const int32 = elfInt32(bytes);
+		const { int32 } = imageOf(bytes);
 		expect([int32(0x1000), int32(0x1004), int32(0x1008), int32(0xfff)]).toEqual([-0xfe0, 7, undefined, undefined]);
-		expect(elfInt32(Buffer.from('MZ not an ELF image'))(0x1000)).toBeUndefined();
+		expect(imageOf(Buffer.from('MZ not an ELF image')).int32(0x1000)).toBeUndefined();
+	});
+
+	it('reads a Mach-O image by its segments, and knows its thread-local descriptors', () => {
+		const bytes = Buffer.alloc(0x400);
+		bytes.writeUInt32LE(0xfeedfacf, 0);
+		bytes.writeUInt32LE(1, 16);
+		const command = 32;
+		bytes.writeUInt32LE(0x19, command);
+		bytes.writeUInt32LE(72 + 2 * 80, command + 4);
+		bytes.writeUInt32LE(2, command + 64);
+		const section = (at: number, name: string, address: number, size: number, offset: number) => {
+			const header = command + 72 + at * 80;
+			bytes.write(name, header, 'latin1');
+			bytes.writeBigUInt64LE(BigInt(address), header + 32);
+			bytes.writeBigUInt64LE(BigInt(size), header + 40);
+			bytes.writeUInt32LE(offset, header + 48);
+		};
+		section(0, '__text', 0x1000, 8, 0x200);
+		section(1, '__thread_vars', 0x2000, 0x18, 0x300);
+		bytes.writeInt32LE(-12, 0x204);
+		const read = imageOf(bytes);
+		expect([read.int32(0x1004), read.int32(0x1008)]).toEqual([-12, undefined]);
+		expect([read.threadLocal(0x2008), read.threadLocal(0x1004), read.threadLocal(0x2018)]).toEqual([true, false, false]);
 	});
 });
 
