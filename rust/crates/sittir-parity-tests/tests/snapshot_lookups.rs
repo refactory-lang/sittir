@@ -73,3 +73,11 @@ fn a_snapshot_s_lookups_climb_the_same_levels_at_each_level_of_a_chain() {
     assert_eq!(four.cursor_climbs - two.cursor_climbs, 2 * (two.cursor_climbs - one.cursor_climbs), "climbs at 100, 200 and 400 levels: {}, {}, {}", one.cursor_climbs, two.cursor_climbs, four.cursor_climbs);
     assert_eq!(four.region_fallbacks, 0);
 }
+
+#[test]
+fn a_snapshot_s_depth_moves_walk_each_node_of_a_chain_once() {
+    for levels in [100, 200, 400] {
+        let nodes = sittir_core::read::descendant_count(&parsed(&chain(levels)).tree().root_node());
+        assert_eq!(chain_work(levels).depth_nodes, nodes, "{levels} levels");
+    }
+}

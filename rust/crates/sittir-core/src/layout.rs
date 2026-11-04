@@ -172,6 +172,9 @@ pub struct LayoutWork {
     /// the nodes they looked up (`read::goto_from`), which bound the levels
     /// they descended.
     pub cursor_climbs: u32,
+    /// The nodes the depth moves of the tree's slices walked, its depth
+    /// members found once for every move (`DepthMembers::of`).
+    pub depth_nodes: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -181,6 +184,7 @@ pub struct LayoutWorkCounter {
     sibling_items: std::sync::atomic::AtomicU64,
     region_fallbacks: std::sync::atomic::AtomicU64,
     cursor_climbs: std::sync::atomic::AtomicU64,
+    depth_nodes: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -200,9 +204,13 @@ impl LayoutWorkCounter {
         self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn depth_nodes(&self, n: u32) {
+        self.depth_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
     pub fn counts(&self) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes) }
     }
 }
 

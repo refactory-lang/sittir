@@ -457,6 +457,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     lines: std::sync::OnceLock<crate::points::LineTable>,
     /// The tree's trivia, assigned on the first read of a side.
     trivia: std::sync::OnceLock<TriviaTable>,
+    /// The tree's depth members, found on its first depth move
+    /// (`depth_move_from`).
+    depth_members: std::sync::OnceLock<crate::trivia_table::DepthMembers>,
     /// The options in effect when the tree was read: its inferred layer over
     /// the engine's. What its regions record under.
     read_options: ResolvedOptions,
@@ -686,6 +689,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             tree_id,
             lines,
             trivia,
+            depth_members,
             read_options,
             records,
             slots,
@@ -707,6 +711,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             + inferred.heap_bytes()
             + lines.get().map_or(0, HeapBytes::heap_bytes)
             + trivia.get().map_or(0, HeapBytes::heap_bytes)
+            + depth_members.get().map_or(0, HeapBytes::heap_bytes)
             + read_options.heap_bytes()
             + tables
             + cached.load(std::sync::atomic::Ordering::Relaxed)
@@ -1302,6 +1307,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
             slots: count(slots.0),
             separators: count(slots.1),
         }
+    }
+
+    /// The tree's depth members, found on first use.
+    fn depth_members(&self) -> &crate::trivia_table::DepthMembers {
+        self.depth_members.get_or_init(|| {
+            self.grew();
+            let members = crate::trivia_table::DepthMembers::of(&self.tree, self.grammar.surface_kinds());
+            self.work.depth_nodes(members.walked());
+            members
+        })
     }
 
     /// The tree's trivia table, assigned on first use.
@@ -2064,6 +2079,7 @@ impl<G: EngineGrammar> Engine<G> {
             tree_id,
             lines: std::sync::OnceLock::new(),
             trivia: std::sync::OnceLock::new(),
+            depth_members: std::sync::OnceLock::new(),
             read_options,
             records: std::sync::Mutex::default(),
             slots: std::sync::Mutex::default(),
@@ -2335,29 +2351,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// those it closes (`SourceTable::depth_move`), its node found through
     /// `nodes` only when the grammar has depth members.
     fn depth_move_from<'t>(&self, nodes: &mut impl Nodes<'t>, coord: &NodeCoordinate) -> i32 {
-        let surface = self.grammar.surface_kinds();
-        if !surface.has_depth_members() {
+        if !self.grammar.surface_kinds().has_depth_members() {
             return 0;
         }
         let Some(node) = nodes.node(coord.index).filter(|node| Span::of(node) == coord.span) else {
             return 0;
         };
-        let mut cursor = node.walk();
-        let mut net = 0;
-        loop {
-            let kind = crate::read::grammar_id(&cursor.node());
-            if surface.is_depth_member(kind) {
-                net += i32::from(kind == surface.indent) - i32::from(kind == surface.dedent);
-            }
-            if cursor.goto_first_child() {
-                continue;
-            }
-            while !cursor.goto_next_sibling() {
-                if !cursor.goto_parent() {
-                    return net;
-                }
-            }
-        }
+        self.depth_members().between(coord.index, coord.index + crate::read::descendant_count(&node))
     }
 }
 

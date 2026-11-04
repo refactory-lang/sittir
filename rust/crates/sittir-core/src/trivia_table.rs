@@ -150,6 +150,73 @@ impl SurfaceKinds {
     }
 }
 
+/// A tree's depth members (`SurfaceKinds::indent`, `dedent`) by descendant
+/// index, each with the levels the members up to it open net of those they
+/// close, so the members of any subtree are counted by two searches
+/// (`between`).
+#[derive(Debug, Default)]
+pub struct DepthMembers {
+    at: Vec<NodeIndex>,
+    net: Vec<i32>,
+    walked: u32,
+}
+
+impl DepthMembers {
+    /// The depth members of `tree`, found by one walk over every node, the
+    /// interiors of extras and `ERROR`s included; none where `kinds` has no
+    /// depth member.
+    #[must_use]
+    pub fn of(tree: &tree_sitter::Tree, kinds: SurfaceKinds) -> Self {
+        let mut members = Self::default();
+        if !kinds.has_depth_members() {
+            return members;
+        }
+        let mut cursor = tree.walk();
+        let mut net = 0;
+        loop {
+            members.walked += 1;
+            let kind = crate::read::grammar_id(&cursor.node());
+            if kinds.is_depth_member(kind) {
+                net += i32::from(kind == kinds.indent) - i32::from(kind == kinds.dedent);
+                members.at.push(crate::read::index_of(&cursor));
+                members.net.push(net);
+            }
+            if cursor.goto_first_child() {
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    return members;
+                }
+            }
+        }
+    }
+
+    /// The levels the members at the descendant indexes `from..to` open net
+    /// of those they close.
+    #[must_use]
+    pub fn between(&self, from: NodeIndex, to: NodeIndex) -> i32 {
+        self.before(to) - self.before(from)
+    }
+
+    fn before(&self, index: NodeIndex) -> i32 {
+        self.at.partition_point(|&at| at < index).checked_sub(1).map_or(0, |last| self.net[last])
+    }
+
+    /// The nodes the walk that found the members visited.
+    #[must_use]
+    pub fn walked(&self) -> u32 {
+        self.walked
+    }
+}
+
+impl HeapBytes for DepthMembers {
+    fn heap_bytes(&self) -> usize {
+        let Self { at, net, walked: _ } = self;
+        at.heap_bytes() + net.heap_bytes()
+    }
+}
+
 /// The nodes of a tree by descendant index, as far as the walk reads them.
 struct Nodes {
     kind: Vec<KindId>,
