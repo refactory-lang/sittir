@@ -115,13 +115,18 @@ not registered and not `===` the original.
 
 **What a point is measured from:** the start of the node whose bytes contain it.
 
-- a child's, from the node that holds it;
+- a child's, from the earlier of its holder's start and where the leading side of its holder's
+  first child begins: a list passes the extras at its edge to its first item, so that item's
+  leading side can begin before the list;
 - a trivia entry's, from its owner's holder, since a leading entry lies before its owner;
-- an inner-gap entry's, from the node that holds the gap.
+- an inner-gap entry's, from the node that holds the gap;
+- a snapshot's own node, from the byte its caller names, else from the earlier of its start and
+  where its leading side begins.
 
 The snapshot computes every point from tree-sitter's absolute positions while the tree is loaded, so
 no layer composes offsets through hoisted or flattened nodes. Offsets are never negative; each field
-is a `u32`.
+is a `u32`. No point precedes its base: a snapshot that would measure one refuses (`Unmeasured`),
+never wraps, as it refuses a caller's byte after the first byte it measures.
 
 **The column rule** (tree-sitter's `length_add`): a point with row offset 0 is on its base's start
 row, and its column is added to the base's column. A point with a row offset above 0 is on a later
