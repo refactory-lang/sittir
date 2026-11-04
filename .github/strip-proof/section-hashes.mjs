@@ -2,7 +2,9 @@
 //
 // Hashes every section of two builds of one binary and holds the allocated
 // ones (what the loader maps: ELF SHF_ALLOC, every Mach-O section, a COFF
-// section not marked discardable) to byte equality. Prints a markdown table of
+// section not marked discardable) to byte equality. A COFF section's content
+// is its VirtualSize bytes; its raw data past them is file-alignment padding,
+// listed as its own unallocated row. Prints a markdown table of
 // every section and exits 1 when an allocated section differs, is missing on
 // one side, or the formats differ. Sections nothing maps (symbol and string
 // tables, debug sections) are listed but may differ: stripping removes them.
@@ -51,7 +53,7 @@ function sections(file) {
 			continue;
 		}
 		if (line === '}') {
-			out.push(describe(kind, current, bytes));
+			out.push(...describe(kind, current, bytes));
 			current = undefined;
 			continue;
 		}
@@ -68,6 +70,7 @@ function describe(kind, { fields, flags }, bytes) {
 	let offset;
 	let size;
 	let data = true;
+	let padding = 0;
 	if (kind === 'elf') {
 		allocated = flags.includes('SHF_ALLOC');
 		offset = number(first(fields.Offset));
@@ -82,11 +85,14 @@ function describe(kind, { fields, flags }, bytes) {
 	} else if (kind === 'coff') {
 		allocated = !flags.includes('IMAGE_SCN_MEM_DISCARDABLE');
 		offset = number(first(fields.PointerToRawData));
-		size = number(first(fields.RawDataSize));
+		const raw = number(first(fields.RawDataSize));
+		size = Math.min(number(first(fields.VirtualSize)), raw);
+		padding = raw - size;
 		data = size > 0;
 	} else throw new Error(`unknown binary format ${kind}`);
-	const sha256 = data ? createHash('sha256').update(bytes.subarray(offset, offset + size)).digest('hex') : `no file data (${size} bytes)`;
-	return { name, allocated, size, sha256 };
+	const hash = (from, length) => createHash('sha256').update(bytes.subarray(from, from + length)).digest('hex');
+	const section = { name, allocated, size, sha256: data ? hash(offset, size) : `no file data (${size} bytes)` };
+	return padding > 0 ? [section, { name: `${name} file padding`, allocated: false, size: padding, sha256: hash(offset + size, padding) }] : [section];
 }
 
 const before = sections(oldFile);

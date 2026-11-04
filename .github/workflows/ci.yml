@@ -452,7 +452,7 @@ jobs:
       # itself has to be conditional — computed via fromJSON rather than
       # a plain `include:` list.
       matrix:
-        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-apple-darwin","host":"macos-13","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
+        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-apple-darwin","host":"macos-15-intel","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -503,6 +503,14 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # Each release addon just built, read from the unstripped copy its
+      # build keeps: the limit's count of its grammar's costliest whole-encode
+      # level, with the one-time frames, must fit ENCODE_STACK_BUDGET. Over
+      # it, the step fails with the costliest paths and the largest limit
+      # that fits. It only disassembles, so cross-compiled legs run it too.
+      - name: encode stack budget
+        shell: bash
+        run: npx tsx packages/cli/src/cli.ts tool encode-stack
       # `--no-default-features` is required for a bare `cargo test
       # --workspace`: sittir-{rust,typescript,python} default to
       # `napi-bindings` ON (needed for `napi build` above), and workspace
