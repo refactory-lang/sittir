@@ -115,7 +115,8 @@ export interface PortableContainer {
  * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), whether the holder
  * spells free text given there itself (`text`), the kind each
  * fixed-text token the seat admits has, keyed by its text (`tokens`), and the containers the build puts around it, outermost first. A seat that holds many (`many`) takes a list; of a list's seats, the `final` ones
- * hold its last element and only it.
+ * hold its last element and only it. `contents` keys, by kind, the content slot of each lexed kind only a flag builds: such a value reads
+ * there as the text of that slot, and the flag writes its affix.
  */
 export interface PortableSeat {
 	readonly at: readonly [holder: number, key: string];
@@ -129,6 +130,7 @@ export interface PortableSeat {
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;
 	readonly final?: true;
+	readonly contents?: Readonly<Record<number, string>>;
 }
 
 /**

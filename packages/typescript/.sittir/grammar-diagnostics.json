@@ -3152,14 +3152,5 @@
       "shape": "choice[3]",
       "ruleId": "rule:public_field_definition_plain:root"
     }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-kind-armless",
-    "severity": "warning",
-    "canProceed": true,
-    "ownerKind": "private_property_identifier",
-    "message": "identifier: private_property_identifier reads as a vocabulary path, but no arm builds it, so every read carries it"
   }
 ]

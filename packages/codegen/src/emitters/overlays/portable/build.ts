@@ -188,6 +188,18 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const flagOnly: ReadonlySet<string> = new Set(
 		[...routes.members.values()].flatMap((members) => members.flatMap((route) => (route.flag === true && route.route === 'kind' ? [storageName(route.kind)] : [])))
 	);
+	const flagContent = (kind: string): string | undefined => {
+		const node = nodeOf(kind);
+		return flagOnly.has(storageName(kind)) && node instanceof AssembledLexedPattern ? lexedContentSlot(node)?.propertyName : undefined;
+	};
+	const contentsOf = (kinds: ReadonlySet<string>): Readonly<Record<number, string>> | undefined => {
+		const entries = [...kinds].flatMap((kind) => {
+			const key = flagContent(kind);
+			const id = typeOf(kind);
+			return key === undefined || id === undefined ? [] : [[id, key] as const];
+		});
+		return entries.length === 0 ? undefined : Object.fromEntries(entries.sort(([a], [b]) => a - b));
+	};
 	const literals = valueTokensOf(routes, fixedText);
 	const declaredValues = new Map<string, boolean>();
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
@@ -371,6 +383,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const tokens = tokensOf(seat);
 		const interior = interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name);
 		const guard = leaf === undefined ? interior?.regex : leaf.pattern;
+		const contents = contentsOf(seat.kinds);
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
@@ -381,7 +394,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		...(guard === undefined ? {} : { pattern: { source: guard.source, flags: guard.flags } }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),
 		...(seat.many ? { many: true as const } : {}),
-		...(seat.final ? { final: true as const } : {})
+		...(seat.final ? { final: true as const } : {}),
+		...(contents === undefined ? {} : { contents })
 		};
 	};
 	const valueIds = (seats: readonly Seat[]): ReadonlySet<number> => {
@@ -920,7 +934,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const armlessDiagnostics = [...routes.readEntries]
 		.filter(([kind]) => {
 			const node = modelNode(model, kind);
-			return node !== undefined && node.modelType !== 'supertype' && typeOf(kind) !== undefined && !armed.has(kind);
+			return node !== undefined && node.modelType !== 'supertype' && typeOf(kind) !== undefined && !armed.has(kind) && flagContent(kind) === undefined;
 		})
 		.map(
 			([kind, entries]): PickDiagnostic => ({

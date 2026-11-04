@@ -4,7 +4,7 @@ import { runPortableRoundTrip } from '../portable-round-trip.ts';
 const CARRIED_CEILING = {
 	python: 37,
 	rust: 15,
-	typescript: 9
+	typescript: 8
 };
 
 const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
@@ -32,7 +32,7 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'token_repetition_pattern_text unclaimed',
 		'use_wildcard_group unclaimed'
 	],
-	typescript: ['extends_clause_single unclaimed', 'for_header_lhs unclaimed', 'private_property_identifier unclaimed']
+	typescript: ['extends_clause_single unclaimed', 'for_header_lhs unclaimed']
 };
 
 describe('the portable round trip', () => {

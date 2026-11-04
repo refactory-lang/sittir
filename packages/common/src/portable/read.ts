@@ -215,7 +215,11 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		if (kind === undefined) return value;
 		const path = classify(typeof value === 'number' ? value : (value as Node));
 		const claimed = path === undefined ? [] : armsAt(path, kind);
-		if (path === undefined || claimed.length === 0) return tokenText(kind, seats) ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
+		if (path === undefined || claimed.length === 0) {
+			const content = typeof value === 'number' ? undefined : seats?.find((seat) => seat.contents?.[kind] !== undefined)?.contents?.[kind];
+			const spelled = content === undefined ? undefined : textOf(accessed(value as object, content));
+			return tokenText(kind, seats) ?? spelled ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
+		}
 		const arms = typeof value === 'number' ? claimed : claimed.filter((arm) => !arm.presets.some((preset) => contradicts(value as Node, preset)));
 		if (arms.length === 0) return kept(value as Node, { reason: 'preset' }, carried);
 		const literal = arms.find((arm) => arm.literal !== undefined)?.literal;
