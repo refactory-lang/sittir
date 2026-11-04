@@ -35,7 +35,7 @@ on:
         type: string
         default: ''
       build-path:
-        description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with: a tree it applies to is patched, any other tree is built as it is, and every tree's stamps must agree. Empty builds each tree with its own.
+        description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with. A tree it applies to is patched, any other tree is built as it is, and every tree's stamps must agree. Empty builds each tree with its own.
         type: string
         default: ''
 
