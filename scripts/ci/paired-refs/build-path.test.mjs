@@ -26,8 +26,8 @@ function commit(repo, message, files) {
 	return git(repo, 'rev-parse', 'HEAD');
 }
 
-const driver = (strip, features) =>
-	`import { stamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';\n\nexport const features = ${features};\n\n\n\n\nexport const strip = '${strip}';\n`;
+const driver = (strip, features, note = '') =>
+	`import { stamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';\n\nexport const features = ${features};\n\n\n\n${note}\nexport const strip = '${strip}';\n`;
 
 function history(root) {
 	const repo = join(root, 'repo');
@@ -49,11 +49,15 @@ function history(root) {
 	commit(repo, 'an unrelated change', { 'other.txt': 'other\n' });
 	git(repo, 'cherry-pick', path);
 	const picked = git(repo, 'rev-parse', 'HEAD');
-	const pickedLater = commit(repo, 'a later edit beside the pick', { [DRIVER]: driver('after the build', '[]') });
 	git(repo, 'checkout', '-q', '--detach', base);
-	const conflicting = commit(repo, 'another strip', { [DRIVER]: driver('elsewhere', "['arena']") });
-	const ownFeatures = (git(repo, 'checkout', '-q', '--detach', base), commit(repo, 'its own features', { [DRIVER]: driver('at link', '[]') }));
-	return { repo, base, path, later, picked, pickedLater, conflicting, ownFeatures };
+	const ownContext = commit(repo, 'its own edit beside the strip', { [DRIVER]: driver('at link', '[]', '// its own') });
+	const reworked = commit(repo, 'the build path, reworked onto its own context', {
+		[DRIVER]: driver('after the build', '[]', '// its own'),
+		[FRESHNESS]: 'export const stamp = 1;\nexport const copy = true;\n'
+	});
+	git(repo, 'checkout', '-q', '--detach', base);
+	const ownFeatures = commit(repo, 'its own features', { [DRIVER]: driver('at link', '[]') });
+	return { repo, base, path, later, picked, ownContext, reworked, ownFeatures };
 }
 
 function tree(repo, root, name, at) {
@@ -68,7 +72,6 @@ test("the build path is its commit's change to the build driver's module closure
 		const { repo, path } = history(root);
 		const resolved = await resolveBuildPath({ repo, commit: path, ref: 'strip' });
 		assert.deepEqual(resolved.files, [FRESHNESS, DRIVER].sort());
-		assert.match(resolved.patchId, /^[0-9a-f]{40}$/);
 		assert.doesNotMatch(resolved.patch, /README/);
 		const outside = commit(repo, 'outside the driver', { 'README.md': 'only docs\n' });
 		await assert.rejects(resolveBuildPath({ repo, commit: outside }), /changes nothing in the module closure/);
@@ -77,27 +80,31 @@ test("the build path is its commit's change to the build driver's module closure
 	}
 });
 
-test('a tree carrying the build path is left as it is, a tree before it is patched, and a tree it cannot reach is refused', async () => {
+test('a tree descended from the build path is built as it is, a tree it applies to is patched, and any other tree is built as it is for its stamps to judge', async () => {
 	const root = mkdtempSync(join(tmpdir(), 'build-path-test-'));
 	try {
 		const refs = history(root);
 		const { patch, ...buildPath } = await resolveBuildPath({ repo: refs.repo, commit: refs.path, ref: 'strip' });
 		const place = (name) => placeBuildPath({ tree: tree(refs.repo, root, name, refs[name]), buildPath, patch });
+		const driverOf = (name) => readFileSync(join(root, name, DRIVER), 'utf8');
 
-		assert.deepEqual(place('path'), { commit: refs.path, how: 'contained', via: 'ancestor', files: buildPath.files });
-		assert.equal(place('later').via, 'ancestor');
-		assert.equal(place('picked').via, `patch-id of ${refs.picked.slice(0, 9)}`);
-		assert.equal(place('pickedLater').via, `patch-id of ${refs.picked.slice(0, 9)}`);
+		assert.deepEqual(place('path'), { commit: refs.path, how: 'ancestor', files: buildPath.files });
+		assert.equal(place('later').how, 'ancestor');
 
-		const before = place('base');
-		assert.equal(before.how, 'patched');
-		assert.equal(readFileSync(join(root, 'base', DRIVER), 'utf8'), driver('after the build', "['arena']"));
+		assert.equal(place('base').how, 'patched');
+		assert.equal(driverOf('base'), driver('after the build', "['arena']"));
 		assert.equal(readFileSync(join(root, 'base', 'README.md'), 'utf8'), 'base\n');
 		assert.equal(place('ownFeatures').how, 'patched');
-		assert.equal(readFileSync(join(root, 'ownFeatures', DRIVER), 'utf8'), driver('after the build', '[]'));
+		assert.equal(driverOf('ownFeatures'), driver('after the build', '[]'));
 
-		assert.throws(() => place('conflicting'), /neither carries .* nor takes its change .* cleanly/);
-		assert.equal(placeBuildPath({ tree: join(root, 'conflicting') }).how, 'own');
+		assert.equal(place('picked').how, 'as is');
+		assert.equal(driverOf('picked'), driver('after the build', "['arena']"));
+		assert.equal(place('reworked').how, 'as is');
+		assert.equal(driverOf('reworked'), driver('after the build', '[]', '// its own'));
+		assert.equal(place('ownContext').how, 'as is');
+		assert.equal(driverOf('ownContext'), driver('at link', '[]', '// its own'));
+
+		assert.equal(placeBuildPath({ tree: join(root, 'ownContext') }).how, 'own');
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
@@ -110,7 +117,7 @@ function built(root, name, stamps) {
 	return { name, dir };
 }
 
-test('every tree is held to one build path by what its stamps record', () => {
+test('the stamps hold every tree to one build path: a tree built as it is on the old path is refused, one on the new path agrees', () => {
 	const root = mkdtempSync(join(tmpdir(), 'build-path-test-'));
 	try {
 		const copy = { path: 'kept', sha256: 'kept' };
@@ -129,10 +136,10 @@ test('every tree is held to one build path by what its stamps record', () => {
 		assert.equal(
 			describeBuildPath({
 				buildPath: { ref: 'strip', commit: '7ee97efc7aaaa', files: ['scripts/build-native.mts'] },
-				placements: [{ tree: 'base', how: 'patched' }, { tree: 'feature', how: 'contained', via: 'ancestor' }],
+				placements: [{ tree: 'base', how: 'patched' }, { tree: 'master', how: 'as is' }, { tree: 'feature', how: 'ancestor' }],
 				fact
 			}),
-			"Build path: build-native at strip `7ee97efc7` (scripts/build-native.mts): base patched, feature contains it (ancestor). Every addon's stamp agrees: profile release, the unstripped copy kept, one build config."
+			"Build path: build-native at strip `7ee97efc7` (scripts/build-native.mts): base patched, master as is, feature contains it (ancestor). Every addon's stamp agrees: profile release, the unstripped copy kept, one build config."
 		);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
