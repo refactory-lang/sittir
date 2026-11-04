@@ -355,6 +355,8 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
 	liveTreeCount(): number;
+	/** What this language's live trees hold natively and what their reports have told V8, in bytes. Diagnostics only. */
+	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
 } & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**

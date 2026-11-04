@@ -8,6 +8,7 @@
 //! holding an extra, an `ERROR`, another slot's child or more than one
 //! separator, is no gap the slot spells.
 
+use crate::heap::HeapBytes;
 use crate::read::{Route, Routed};
 use std::collections::BTreeMap;
 
@@ -16,6 +17,14 @@ use std::collections::BTreeMap;
 pub enum SlotSide {
     Before,
     After,
+}
+
+impl HeapBytes for SlotSide {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Before | Self::After => 0,
+        }
+    }
 }
 
 /// A gap's separator: its grammar id and bytes.

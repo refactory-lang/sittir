@@ -29,7 +29,7 @@
 //! framed or sliced inside it by its index, with the breaks written around
 //! each (`Baseline::frame`).
 
-use std::collections::HashMap;
+use crate::heap::{CountedMap, HeapBytes};
 
 use crate::types::NodeIndex;
 
@@ -118,9 +118,46 @@ pub struct FrameItems {
 /// wrote around it, and each node's frame by its index.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Baseline {
-    opens: HashMap<u32, (Option<Tally>, Tally)>,
-    closes: HashMap<u32, (Tally, Tally)>,
-    frames: HashMap<NodeIndex, FrameItems>,
+    opens: CountedMap<u32, (Option<Tally>, Tally)>,
+    closes: CountedMap<u32, (Tally, Tally)>,
+    frames: CountedMap<NodeIndex, FrameItems>,
+}
+
+impl HeapBytes for Tally {
+    fn heap_bytes(&self) -> usize {
+        let Self { breaks: _, spaces: _, tabs: _ } = self;
+        0
+    }
+}
+
+impl HeapBytes for Written {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Text(text) => text.heap_bytes(),
+            Self::Node(index) => index.heap_bytes(),
+        }
+    }
+}
+
+impl HeapBytes for Item {
+    fn heap_bytes(&self) -> usize {
+        let Self { what, before, after } = self;
+        what.heap_bytes() + before.heap_bytes() + after.heap_bytes()
+    }
+}
+
+impl HeapBytes for FrameItems {
+    fn heap_bytes(&self) -> usize {
+        let Self { open, close, items } = self;
+        open.heap_bytes() + close.heap_bytes() + items.heap_bytes()
+    }
+}
+
+impl HeapBytes for Baseline {
+    fn heap_bytes(&self) -> usize {
+        let Self { opens, closes, frames } = self;
+        opens.heap_bytes() + closes.heap_bytes() + frames.heap_bytes()
+    }
 }
 
 impl Baseline {
@@ -286,7 +323,7 @@ impl<'a> Recorder<'a> {
         let (prev, now) = (self.last_end, self.written);
         let baseline = &mut *self.baseline;
         for start in self.opens.drain(..) {
-            baseline.opens.entry(start).or_insert((prev, now));
+            baseline.opens.get_or_insert(start, (prev, now));
         }
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, now));
@@ -370,7 +407,7 @@ impl<'a> Recorder<'a> {
             baseline.closes.insert(end, (at, base));
         }
         for (start, (prev, now)) in run.resolved_opens {
-            baseline.opens.entry(start).or_insert((prev.map(|prev| base.plus(prev)).or(before), base.plus(now)));
+            baseline.opens.get_or_insert(start, (prev.map(|prev| base.plus(prev)).or(before), base.plus(now)));
         }
         for (end, (at, now)) in run.resolved_closes {
             baseline.closes.insert(end, (base.plus(at), base.plus(now)));

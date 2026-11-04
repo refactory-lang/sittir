@@ -23,6 +23,12 @@ impl sittir_core::render::Render for NoTrivia {
 
 impl sittir_core::trivia::TriviaSeam for NoTrivia {}
 
+impl sittir_core::heap::HeapBytes for NoTrivia {
+    fn heap_bytes(&self) -> usize {
+        0
+    }
+}
+
 impl sittir_core::prepare::Prepare for NoTrivia {
     fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::CoordinateError> {
         Ok(())

@@ -9,12 +9,14 @@ use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Iden
 
 pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
-    match &input.data {
+    let node = match &input.data {
         Data::Struct(data) => structure(&input.ident, &attrs, data),
         Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a node is a struct or an enum")),
-    }
+    }?;
+    let heap = crate::heap::heap_bytes(input);
+    Ok(quote!(#node #heap))
 }
 
 fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<TokenStream> {

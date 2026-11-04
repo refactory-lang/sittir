@@ -7,7 +7,8 @@
 //! edits a node or a record. The store is outside every record, so a record
 //! that shares a child never sees another record's sides.
 
-use std::collections::BTreeMap;
+use crate::heap::HeapBytes;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::{Arc, PoisonError, RwLock};
 
 use crate::trivia::TriviaEntry;
@@ -61,6 +62,9 @@ type Sides<T> = BTreeMap<(Place, TriviaSide), Vec<TriviaEntry<T>>>;
 #[derive(Debug)]
 pub struct TriviaStore<T> {
     sides: Arc<RwLock<Sides<T>>>,
+    /// The bytes each tree's rows of `sides` take, its entries' heap
+    /// included, kept at every write (`insert`) and dropped with the tree.
+    tree_bytes: Arc<std::sync::Mutex<HashMap<TreeId, usize>>>,
     /// The chunks of the arena the engine's builders write, which a record
     /// entry this store answers renders from.
     #[cfg(feature = "arena")]
@@ -75,6 +79,7 @@ impl<T> Clone for TriviaStore<T> {
     fn clone(&self) -> Self {
         Self {
             sides: Arc::clone(&self.sides),
+            tree_bytes: Arc::clone(&self.tree_bytes),
             #[cfg(feature = "arena")]
             built: Arc::clone(&self.built),
             #[cfg(all(feature = "arena", feature = "napi-bindings"))]
@@ -110,6 +115,7 @@ impl<T> TriviaStore<T> {
     pub fn with_kind_bits(kind_bits: u32) -> Self {
         Self {
             sides: Arc::new(RwLock::new(BTreeMap::new())),
+            tree_bytes: Arc::default(),
             #[cfg(feature = "arena")]
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, no_shape))),
             #[cfg(all(feature = "arena", feature = "napi-bindings"))]
@@ -124,6 +130,7 @@ impl<T> TriviaStore<T> {
     pub fn for_records(kind_bits: u32, shape: crate::arena::ShapeOf) -> Self {
         Self {
             sides: Arc::new(RwLock::new(BTreeMap::new())),
+            tree_bytes: Arc::default(),
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))),
             #[cfg(feature = "napi-bindings")]
             buffers: Arc::default(),
@@ -253,7 +260,10 @@ impl<T: Clone> TriviaStore<T> {
     /// What holding or releasing a record refuses, before any side is
     /// written when a new side's record is refused.
     #[cfg(feature = "arena")]
-    pub fn write_units(&self, holder: crate::arena::Address, units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>) -> Result<(), crate::arena::ArenaError> {
+    pub fn write_units(&self, holder: crate::arena::Address, units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>) -> Result<(), crate::arena::ArenaError>
+    where
+        T: HeapBytes,
+    {
         for (_, _, trivia) in &units {
             for entries in [&trivia.leading, &trivia.trailing, &trivia.inner].into_iter().flatten() {
                 self.hold(entries)?;
@@ -320,11 +330,17 @@ impl<T: Clone> TriviaStore<T> {
     /// store, and this store answers it. The write takes no count of a
     /// record: the sides a render roots at, and those a record sink keeps,
     /// hold none (`write_held_side`).
-    pub fn write_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) {
+    pub fn write_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>)
+    where
+        T: HeapBytes,
+    {
         self.insert(place, side, entries);
     }
 
-    fn insert(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) -> Option<Vec<TriviaEntry<T>>> {
+    fn insert(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) -> Option<Vec<TriviaEntry<T>>>
+    where
+        T: HeapBytes,
+    {
         let entries = entries
             .into_iter()
             .map(|entry| match entry {
@@ -332,8 +348,28 @@ impl<T: Clone> TriviaStore<T> {
                 TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: None, ..record }),
                 entry @ TriviaEntry::Value(_) => entry,
             })
-            .collect();
-        self.write().insert((place, side), entries)
+            .collect::<Vec<_>>();
+        let tree = match place {
+            Place::Row { tree, row: _ } => tree,
+            #[cfg(feature = "arena")]
+            Place::Record(_) | Place::Unit(_) | Place::Leaf(_) => return self.write().insert((place, side), entries),
+        };
+        let row = |entries: &Vec<TriviaEntry<T>>| std::mem::size_of::<((Place, TriviaSide), Vec<TriviaEntry<T>>)>() + entries.heap_bytes();
+        let added = row(&entries);
+        let replaced = self.write().insert((place, side), entries);
+        let removed = replaced.as_ref().map_or(0, row);
+        let mut bytes = self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner);
+        let count = bytes.entry(tree).or_default();
+        *count = (*count + added).saturating_sub(removed);
+        replaced
+    }
+
+    /// The bytes `tree`'s rows of the store take (`tree_bytes`). A row is
+    /// written through its tree (`ParsedTree::write_trivia_side`), which
+    /// marks itself grown, so its next report counts them.
+    #[must_use]
+    pub fn tree_bytes(&self, tree: TreeId) -> usize {
+        self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner).get(&tree).copied().unwrap_or(0)
     }
 
     /// `side` of the node at `place` holds `entries`, as `write_side`, and
@@ -346,7 +382,10 @@ impl<T: Clone> TriviaStore<T> {
     /// What holding or releasing a record refuses, before the side is
     /// written when a new entry's record is refused.
     #[cfg(feature = "arena")]
-    pub fn write_held_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) -> Result<(), crate::arena::ArenaError> {
+    pub fn write_held_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) -> Result<(), crate::arena::ArenaError>
+    where
+        T: HeapBytes,
+    {
         #[cfg(debug_assertions)]
         if let Place::Record(holder) | Place::Unit(Site { holder, .. }) | Place::Leaf(Site { holder, .. }) = place {
             let built = self.built();
@@ -410,9 +449,13 @@ impl<T: Clone> TriviaStore<T> {
     /// renders from the arena this store holds.
     #[cfg(feature = "arena")]
     #[must_use]
-    pub fn root_leaf(&self, sides: Option<crate::trivia::NodeTrivia<T>>) -> Self {
+    pub fn root_leaf(&self, sides: Option<crate::trivia::NodeTrivia<T>>) -> Self
+    where
+        T: HeapBytes,
+    {
         let store = Self {
             sides: Arc::default(),
+            tree_bytes: Arc::default(),
             built: Arc::clone(&self.built),
             #[cfg(feature = "napi-bindings")]
             buffers: Arc::clone(&self.buffers),
@@ -447,6 +490,7 @@ impl<T: Clone> TriviaStore<T> {
             let keys: Vec<_> = sides.range(first..).take_while(|((place, _), _)| matches!(place, Place::Row { tree: t, .. } if *t == tree)).map(|(&key, _)| key).collect();
             keys.into_iter().filter_map(|key| sides.remove(&key)).collect()
         };
+        self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner).remove(&tree);
         #[cfg(feature = "arena")]
         {
             let records: Vec<_> = dropped.iter().flat_map(|entries| held_records(entries)).collect();

@@ -30,6 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
+use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 use std::collections::BTreeMap;
 
@@ -40,6 +41,14 @@ pub enum TriviaSide {
     Leading,
     Trailing,
     Inner,
+}
+
+impl HeapBytes for TriviaSide {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Leading | Self::Trailing | Self::Inner => 0,
+        }
+    }
 }
 
 /// One token of the walk, by its bytes and the node it is (a leaf) or belongs
@@ -80,6 +89,14 @@ pub enum Assigned {
     Layout { run: RunId, start: u32, end: u32, owner: NodeIndex, depth: i32 },
     Member(NodeIndex),
     Depth(i32),
+}
+
+impl HeapBytes for Assigned {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Extra(_) | Self::Error(_) | Self::Member(_) | Self::Depth(_) | Self::Layout { run: _, start: _, end: _, owner: _, depth: _ } => 0,
+        }
+    }
 }
 
 /// Where a template indents a node's children: after a literal child (the
@@ -418,6 +435,13 @@ pub struct LayoutRun {
     pub carries: bool,
 }
 
+impl HeapBytes for LayoutRun {
+    fn heap_bytes(&self) -> usize {
+        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _ } = self;
+        0
+    }
+}
+
 /// The trivia of a parsed tree, assigned once to its nodes' sides.
 #[derive(Debug, Default)]
 pub struct TriviaTable {
@@ -425,6 +449,22 @@ pub struct TriviaTable {
     edge_items: BTreeMap<(NodeIndex, TriviaSide), NodeIndex>,
     unowned: Vec<NodeIndex>,
     runs: Vec<LayoutRun>,
+    /// The heap the table holds, walked once it is assigned: an assigned
+    /// table never changes.
+    heap: usize,
+}
+
+impl TriviaTable {
+    fn walked(&self) -> usize {
+        let Self { sides, edge_items, unowned, runs, heap: _ } = self;
+        sides.heap_bytes() + edge_items.heap_bytes() + unowned.heap_bytes() + runs.heap_bytes()
+    }
+}
+
+impl HeapBytes for TriviaTable {
+    fn heap_bytes(&self) -> usize {
+        self.heap
+    }
 }
 
 impl TriviaTable {
@@ -541,6 +581,7 @@ impl TriviaTable {
         }
         parted.finish(&mut table.runs);
         excess.close_until(u32::MAX, &mut table);
+        table.heap = table.walked();
         table
     }
 

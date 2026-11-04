@@ -78,7 +78,7 @@ struct Built<T> {
     root: CellAt,
 }
 
-impl<T: Clone> Built<T> {
+impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
     fn of<G: RecordGrammar<Trivia = T>, N: ReadNode + WriteCell<T>>(tree: &ParsedTree<G>) -> Option<Self> {
         let node: N = tree.snapshot(NodeIndex::ROOT, None).ok()?;
         let mut arena = BuiltChunks::new(G::KIND_BITS, G::shape);
