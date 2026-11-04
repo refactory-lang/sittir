@@ -1,6 +1,6 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { type BindingFacts, type ClaimFact, type MemberFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
@@ -51,6 +51,54 @@ describe('readVocabulary', () => {
 		);
 		expect([...vocabulary.members('declaration').keys()]).toEqual(['name', 'parameters']);
 		expect([...vocabulary.members('declaration.bare').keys()]).toEqual(['name']);
+	});
+
+	it('drops a member the feature that owns it narrows to never at a refinement, in every composition', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+		const write = (file: string, lines: readonly string[]): void => {
+			mkdirSync(dirname(join(dir, file)), { recursive: true });
+			writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+		};
+		write('declaration.ts', [
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly name: string;',
+			'}',
+			'export namespace Declaration {',
+			'\texport interface Parameter<G> extends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: 'declaration.parameter';",
+			'\t}',
+			'\texport namespace Parameter {',
+			'\t\texport interface Rest<G> extends SubKindOf<V.Declaration.Parameter<G>> {',
+			"\t\t\treadonly $kind: 'declaration.parameter.rest';",
+			'\t\t}',
+			'\t}',
+			'}'
+		]);
+		write('features/bounded/index.ts', ["export type * from './declaration.ts';", 'export interface Bounded {', '\treadonly bounded: true;', '}']);
+		write('features/bounded/declaration.ts', [
+			'export namespace Declaration {',
+			'\texport interface Parameter<G> {',
+			'\t\treadonly bounds?: string[];',
+			'\t}',
+			'\texport namespace Parameter {',
+			'\t\texport interface Rest<G> {',
+			'\t\t\treadonly bounds?: never;',
+			'\t\t}',
+			'\t}',
+			'}'
+		]);
+		write('compositions.ts', ['export interface WithBounded extends Bounded {}', 'export interface WithoutBounded {}']);
+		try {
+			const vocabulary = await readVocabulary(dir);
+			for (const view of [vocabulary, vocabulary.composedAs('WithBounded')]) {
+				expect([...view.members('declaration.parameter').keys()]).toEqual(['bounds', 'name']);
+				expect([...view.members('declaration.parameter.rest').keys()]).toEqual(['name']);
+			}
+			expect([...vocabulary.composedAs('WithoutBounded').members('declaration.parameter.rest').keys()]).toEqual(['name']);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 
 	it('reads an interface or namespace however it is exported or declared', async () => {

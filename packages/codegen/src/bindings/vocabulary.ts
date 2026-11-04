@@ -246,7 +246,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 			for (const m of stub.members) {
 				const held = members.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
-				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }) });
+				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
 	const kinds = new Map<string, VocabularyKind>();
