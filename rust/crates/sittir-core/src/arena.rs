@@ -343,7 +343,7 @@ pub struct Arena {
     strings: Vec<Chunk<u8>>,
     /// The shared string chunk strings are appended to, once one is.
     open_strings: Option<u32>,
-    interned: HashMap<Box<str>, StringRef>,
+    interned: crate::heap::CountedMap<Box<str>, StringRef>,
     /// The bytes of every text `interned` keys: a key is never removed.
     interned_text: usize,
     kind_bits: u32,
@@ -352,7 +352,7 @@ pub struct Arena {
 impl HeapBytes for Arena {
     fn heap_bytes(&self) -> usize {
         let Self { chunks, open: _, strings, open_strings: _, interned, interned_text, kind_bits: _ } = self;
-        chunks.heap_bytes() + strings.heap_bytes() + crate::heap::table_bytes::<(Box<str>, StringRef)>(interned.capacity()) + interned_text
+        chunks.heap_bytes() + strings.heap_bytes() + interned.allocation() + interned_text
     }
 }
 
@@ -375,7 +375,7 @@ impl Arena {
     pub fn with_kind_bits(kind_bits: u32) -> Self {
         let mut first = Chunk::with_limit(FIRST_CHUNK_WORDS);
         first.extend(1);
-        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new(), interned_text: 0, kind_bits }
+        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: crate::heap::CountedMap::default(), interned_text: 0, kind_bits }
     }
 
     /// The bits the kind fields this arena writes take.

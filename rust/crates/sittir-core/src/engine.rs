@@ -461,13 +461,13 @@ pub struct ParsedTree<G: EngineGrammar> {
     read_options: ResolvedOptions,
     /// Each record of the tree, by its node's index and the depth it was
     /// read to (`recorded`).
-    records: std::sync::Mutex<HashMap<(NodeIndex, crate::read::Depth), Record>>,
+    records: std::sync::Mutex<crate::heap::CountedMap<(NodeIndex, crate::read::Depth), Record>>,
     /// Each node's list slots, by its index, measured on first use
     /// (`node_slots`).
-    slots: std::sync::Mutex<HashMap<NodeIndex, Arc<NodeSlots>>>,
+    slots: std::sync::Mutex<crate::heap::CountedMap<NodeIndex, Arc<NodeSlots>>>,
     /// Each node's routed children, by its index, measured on first use
     /// (`slot_items`).
-    items: std::sync::Mutex<HashMap<NodeIndex, Arc<Option<SlotItems>>>>,
+    items: std::sync::Mutex<crate::heap::CountedMap<NodeIndex, Arc<Option<SlotItems>>>>,
     /// The heap the values of `records`, `slots` and `items` hold, added as
     /// each is inserted (`count_cached`).
     cached: std::sync::atomic::AtomicUsize,
@@ -516,10 +516,10 @@ pub enum NodeRead<T> {
 #[derive(Debug, Default)]
 struct NodeSlots {
     layouts: Vec<crate::layout::SlotLayout>,
-    runs: HashMap<RunId, (usize, crate::list_slots::SlotSide)>,
+    runs: crate::heap::CountedMap<RunId, (usize, crate::list_slots::SlotSide)>,
     /// The separator before each item whose gap holds another than its
     /// slot's, by the item's index.
-    separators: HashMap<NodeIndex, KindId>,
+    separators: crate::heap::CountedMap<NodeIndex, KindId>,
 }
 
 /// A node's children as its read routes them (`read::Routed`), with each
@@ -527,7 +527,7 @@ struct NodeSlots {
 #[derive(Debug)]
 struct SlotItems {
     routed: crate::read::Routed,
-    at: HashMap<NodeIndex, usize>,
+    at: crate::heap::CountedMap<NodeIndex, usize>,
 }
 
 impl HeapBytes for NodeSlots {
@@ -696,9 +696,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             #[cfg(feature = "arena")]
             arena,
         } = self;
-        let tables = crate::heap::table_bytes::<((NodeIndex, crate::read::Depth), Record)>(owned(records).capacity())
-            + crate::heap::table_bytes::<(NodeIndex, Arc<NodeSlots>)>(owned(slots).capacity())
-            + crate::heap::table_bytes::<(NodeIndex, Arc<Option<SlotItems>>)>(owned(items).capacity());
+        let tables = owned(records).allocation() + owned(slots).allocation() + owned(items).allocation();
         #[cfg(feature = "arena")]
         let arena = arena.get_mut().map_or(0, |arena| owned(arena).heap_bytes());
         #[cfg(not(feature = "arena"))]
@@ -1577,16 +1575,18 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// Replace `side` of the node at `index` with `entries`, holding the
     /// built records among them (`TriviaStore::write_held_side`), and mark
-    /// the tree grown: its rows count in its native bytes.
+    /// the tree grown: its rows count in its native bytes. The tree is
+    /// marked even when the write is refused, since a refused release comes
+    /// after the side is written.
     ///
     /// # Errors
     ///
     /// What holding or releasing a built record refuses.
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
-        self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries).map_err(|e| e.to_string())?;
+        let written = self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
         self.grew();
-        Ok(())
+        written.map_err(|e| e.to_string())
     }
 
     /// Replace `side` of the node at `index` with `entries`, and mark the
@@ -1824,9 +1824,9 @@ impl<G: EngineGrammar> Engine<G> {
             lines: std::sync::OnceLock::new(),
             trivia: std::sync::OnceLock::new(),
             read_options,
-            records: std::sync::Mutex::new(HashMap::new()),
-            slots: std::sync::Mutex::new(HashMap::new()),
-            items: std::sync::Mutex::new(HashMap::new()),
+            records: std::sync::Mutex::default(),
+            slots: std::sync::Mutex::default(),
+            items: std::sync::Mutex::default(),
             cached: std::sync::atomic::AtomicUsize::new(0),
             grown: std::sync::atomic::AtomicBool::new(true),
             work: crate::layout::LayoutWorkCounter::default(),
@@ -2841,6 +2841,22 @@ mod tests {
         assert!(tree.release_sides(), "its side held a built record");
         assert!(!tree.made_arena(), "holding a record made no arena");
         assert!(!tree.release_sides(), "once released, none is left");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_side_write_refused_after_its_row_changed_still_marks_its_tree_grown() {
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
+        let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let place = Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT };
+        let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
+        tree.written().write_side(place, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        let _ = tree.take_grown();
+        let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+        assert!(tree.write_trivia_side(NodeIndex::ROOT, TriviaSide::Leading, vec![note]).is_err(), "the record the side named holds no count to release");
+        let written = tree.written().side(place, TriviaSide::Leading).expect("a written side");
+        assert!(matches!(written.as_slice(), [TriviaEntry::Value(_)]), "the new side was written before the release was refused");
+        assert!(tree.take_grown(), "so its tree grew");
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
