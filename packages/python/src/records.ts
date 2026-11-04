@@ -91,7 +91,12 @@ export const records = {
 	GlobalStatementNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
 	NonlocalStatementNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
 	ExecStatementNode: { words: 9, code: { word: 2, width: 5 }, in_clause: { word: 7, width: 2, run: 5 } },
-	TypeAliasStatementNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
+	TypeAliasStatementNode: {
+		words: 17,
+		name: { word: 2, width: 5 },
+		type_parameters: { word: 7, width: 5 },
+		value: { word: 12, width: 5 }
+	},
 	ClassDefinitionNode: {
 		words: 22,
 		name: { word: 2, width: 5 },
@@ -229,6 +234,8 @@ export const records = {
 	DictionaryElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	SliceGroupNode: { words: 7, expression: { word: 2, width: 5 } },
 	FormatSpecifierTextNode: { words: 2 },
+	TypeParamsNode: { words: 7, items: { word: 2, width: 5 } },
+	TypeParamsItemsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	TuplePatternElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	CasePatternListNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	TupleElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
@@ -306,6 +313,9 @@ export const records = {
 		primary_expression: { word: 7, width: 5 }
 	},
 	YieldFromClauseNode: { words: 7, expression: { word: 2, width: 5 } },
+	TypeParamTypeVarNode: { words: 12, name: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
+	TypeParamTypeVarTupleNode: { words: 7, name: { word: 2, width: 5 } },
+	TypeParamParamSpecNode: { words: 7, name: { word: 2, width: 5 } },
 	StringStartNode: { words: 2 },
 	StringFragmentNode: { words: 2 },
 	EscapeInterpolationNode: { words: 2 },

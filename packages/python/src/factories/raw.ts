@@ -1333,8 +1333,8 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildFunctionDefinition({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildFunctionDefinition({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -1644,27 +1644,43 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 }
 
 export function buildTypeAliasStatement<
-	LeftSlot extends T.TypeAliasStatement.Config['left'],
-	RightSlot extends T.TypeAliasStatement.Config['right']
+	NameSlot extends T.TypeAliasStatement.Config['name'],
+	TypeParametersSlot extends T.TypeAliasStatement.Config['typeParameters'],
+	ValueSlot extends T.TypeAliasStatement.Config['value']
 >(
-	config: RefusingConfig<T.TypeAliasStatement.Config, { left: LeftSlot; right: RightSlot }>
+	config: RefusingConfig<
+		T.TypeAliasStatement.Config,
+		{ name: NameSlot; typeParameters: TypeParametersSlot; value: ValueSlot }
+	>
 ): T.TypeAliasStatement.Bound;
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.TypeAliasStatement.Bound {
 	currentHandle()?.admit(TSKindId.TypeAliasStatement, [config]);
-	const _left = config.left;
-	const _right = config.right;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _value = config.value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeAliasStatement as const,
 		$named: true as const,
-		_left,
-		_right,
+		_name,
+		_type_parameters,
+		_value,
 		$with: {
-			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value })),
-			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value }))
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildTypeAliasStatement({ ...config, typeParameters: value })
+					)
+				),
+			value: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, value: value }))
 		},
-		left: () => hydrateStoredSlot(node, '_left'),
-		right: () => hydrateStoredSlot(node, '_right'),
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1709,8 +1725,8 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildClassDefinition({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildClassDefinition({ ...config, typeParameters: value })
 					)
 				),
 			bases: (...args: unknown[]) =>
@@ -5401,6 +5417,134 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	return stampBuilt(node) as unknown as T.FormatSpecifierText.Bound;
 }
 
+export function buildTypeParams<V extends Admit<T.TypeParamsItems>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParamsItems as const);
+	return prebuilt
+		? _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0])
+		: _buildTypeParams(
+				(buildTypeParamsItems as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeParams>[0]
+			);
+}
+function _buildTypeParams(value: Admit<T.TypeParamsItems>): T.TypeParams.Bound {
+	const _items = hydrateStored(value);
+	const listView = ownerView(_items, '_item');
+	if (listView.stored === undefined) refuseReadStub('_items');
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParams as const,
+		$named: true as const,
+		_items,
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParamsItems as const, optional: false, make: buildTypeParamsItems },
+						(value: Admit<T.TypeParamsItems>) => _buildTypeParams(value)
+					)
+				)
+		},
+		items: () => hydrateStoredSlot(node, '_items'),
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listView.stored?.length ?? 0);
+	return stampBuilt(node) as unknown as T.TypeParams.Bound;
+}
+
+export function buildTypeParamsItems<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParamsItems>;
+export function buildTypeParamsItems<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParamsItems>;
+export function buildTypeParamsItems(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.TypeParam>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.TypeParam>>;
+	return _buildTypeParamsItems(elements, options);
+}
+function _buildTypeParamsItems(
+	elements: NonEmptyArray<Admit<T.TypeParam>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TypeParamsItems.Bound {
+	currentHandle()?.admit(TSKindId.TypeParamsItems, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamsItems as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.TypeParam>>) =>
+				rebuilt(node, handle, () => buildTypeParamsItems(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypeParamsItems({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => hydrateStoredSlots(node, '_item'),
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return stampBuilt(node) as unknown as T.TypeParamsItems.Bound;
+}
+
 export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTuplePatternElements>;
@@ -7601,6 +7745,92 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 	return stampBuilt(node) as unknown as T.YieldFromClause.Bound;
 }
 
+export function buildTypeParamTypeVar<
+	NameSlot extends T.TypeParamTypeVar.Config['name'],
+	BoundsSlot extends T.TypeParamTypeVar.Config['bounds']
+>(config: RefusingConfig<T.TypeParamTypeVar.Config, { name: NameSlot; bounds: BoundsSlot }>): T.TypeParamTypeVar.Bound;
+export function buildTypeParamTypeVar(config: T.TypeParamTypeVar.Config): T.TypeParamTypeVar.Bound {
+	currentHandle()?.admit(TSKindId.TypeParamTypeVar, [config]);
+	const _name = config.name;
+	const _bounds = config.bounds;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamTypeVar as const,
+		$named: true as const,
+		_name,
+		_bounds,
+		$with: {
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildTypeParamTypeVar({ ...config, name: value })),
+			bounds: (value?: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildTypeParamTypeVar({ ...config, bounds: value }))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		bounds: () => hydrateStoredSlot(node, '_bounds'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamTypeVar.Bound;
+}
+
+export function buildTypeParamTypeVarTuple<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>
+): T.TypeParamTypeVarTuple.Bound;
+export function buildTypeParamTypeVarTuple(value: Admit<T.Identifier>): T.TypeParamTypeVarTuple.Bound {
+	const _name = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamTypeVarTuple as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeParamTypeVarTuple(value))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamTypeVarTuple.Bound;
+}
+
+export function buildTypeParamParamSpec<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>
+): T.TypeParamParamSpec.Bound;
+export function buildTypeParamParamSpec(value: Admit<T.Identifier>): T.TypeParamParamSpec.Bound {
+	const _name = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamParamSpec as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeParamParamSpec(value))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamParamSpec.Bound;
+}
+
 export function buildStringStart(text: string): T.StringStart.Bound {
 	if (typeof text !== 'string') throw new Error(`string_start: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
@@ -7739,8 +7969,8 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildConstructorDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -8083,8 +8313,8 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildMethodDeclaration({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildMethodDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -8252,6 +8482,8 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	type_params: T.TypeParams.Bound;
+	type_params_items: T.TypeParamsItems.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	case_pattern_list: T.CasePatternList.Bound;
 	tuple_elements: T.TupleElements.Bound;
@@ -8299,6 +8531,9 @@ export type FluentKindMap = {
 	suite_empty: T.SuiteEmpty.Bound;
 	comparison_operator_comparator: T.ComparisonOperatorComparator.Bound;
 	yield_from_clause: T.YieldFromClause.Bound;
+	type_param_type_var: T.TypeParamTypeVar.Bound;
+	type_param_type_var_tuple: T.TypeParamTypeVarTuple.Bound;
+	type_param_param_spec: T.TypeParamParamSpec.Bound;
 	string_start: T.StringStart;
 	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
@@ -8456,6 +8691,8 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	type_params: buildTypeParams,
+	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,
 	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
@@ -8503,6 +8740,9 @@ export const _factoryMap = {
 	suite_empty: buildSuiteEmpty,
 	comparison_operator_comparator: buildComparisonOperatorComparator,
 	yield_from_clause: buildYieldFromClause,
+	type_param_type_var: buildTypeParamTypeVar,
+	type_param_type_var_tuple: buildTypeParamTypeVarTuple,
+	type_param_param_spec: buildTypeParamParamSpec,
 	string_start: buildStringStart,
 	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,

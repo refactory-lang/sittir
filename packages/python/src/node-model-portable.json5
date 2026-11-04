@@ -166,7 +166,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "289": 0
+                  "293": 0
                 }
               }
             },
@@ -179,7 +179,7 @@
                   1
                 ],
                 "slots": {
-                  "289": 0
+                  "293": 0
                 }
               }
             }
@@ -234,7 +234,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "290": 0
+                  "294": 0
                 }
               }
             },
@@ -247,7 +247,7 @@
                   1
                 ],
                 "slots": {
-                  "290": 0
+                  "294": 0
                 }
               }
             }
@@ -302,7 +302,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "291": 0
+                  "295": 0
                 }
               }
             },
@@ -315,7 +315,7 @@
                   1
                 ],
                 "slots": {
-                  "291": 0
+                  "295": 0
                 }
               }
             }
@@ -1638,17 +1638,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "class_definition",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "bases",
           "route": "slot",
           "slot": "bases",
@@ -1667,6 +1656,31 @@
             {
               "owner": "class_definition",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -1836,7 +1850,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1862,7 +1876,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1888,7 +1902,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1914,7 +1928,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1940,7 +1954,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1966,7 +1980,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -1992,7 +2006,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2018,7 +2032,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2044,7 +2058,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2070,7 +2084,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2096,7 +2110,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2123,7 +2137,7 @@
                 "of": {
                   "op": "is",
                   "types": [
-                    298
+                    302
                   ],
                   "self": true
                 }
@@ -2220,7 +2234,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2245,7 +2259,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2270,7 +2284,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2295,7 +2309,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2320,7 +2334,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2345,7 +2359,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2370,7 +2384,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2395,7 +2409,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2420,7 +2434,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2445,7 +2459,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -2470,7 +2484,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "298": 0
+                  "302": 0
                 }
               }
             }
@@ -3783,7 +3797,7 @@
                     "op": "count",
                     "min": 2,
                     "slots": {
-                      "292": 0
+                      "296": 0
                     }
                   },
                   {
@@ -4304,17 +4318,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "function_definition",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -4344,6 +4347,31 @@
             {
               "owner": "function_definition",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_definition",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -4510,13 +4538,27 @@
           ]
         },
         {
-          "name": "typeParameter",
-          "route": "slot",
-          "slot": "type_parameter",
+          "name": "typeArguments",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "type_parameter",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_parameter",
+          "slot": "types",
+          "multiple": false,
           "path": [
             {
               "owner": "generic_type",
               "slot": "type_parameter"
+            },
+            {
+              "owner": "type_parameter",
+              "slot": "types"
             }
           ]
         }
@@ -5411,7 +5453,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "344": 1
+                  "352": 1
                 }
               }
             }
@@ -5430,7 +5472,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "344": 1
+                  "352": 1
                 }
               }
             }
@@ -5480,17 +5522,6 @@
           ]
         },
         {
-          "name": "typeParameters",
-          "route": "slot",
-          "slot": "type_parameters",
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "type_parameters"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -5520,6 +5551,31 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -7299,24 +7355,49 @@
       ],
       "members": [
         {
-          "name": "left",
+          "name": "name",
           "route": "slot",
-          "slot": "left",
+          "slot": "name",
           "path": [
             {
               "owner": "type_alias_statement",
-              "slot": "left"
+              "slot": "name"
             }
           ]
         },
         {
-          "name": "right",
+          "name": "value",
           "route": "slot",
-          "slot": "right",
+          "slot": "value",
           "path": [
             {
               "owner": "type_alias_statement",
-              "slot": "right"
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_alias_statement",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         }
@@ -7335,7 +7416,40 @@
       ],
       "members": []
     },
-    "type_parameter": {
+    "type_param_param_spec": {
+      "vocab": "declaration.type_parameter.parameters",
+      "read": [
+        {
+          "vocab": "declaration.type_parameter.parameters",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "type_param_param_spec",
+              "slot": "name"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "name",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_param_type_var": {
       "vocab": "declaration.type_parameter",
       "read": [
         {
@@ -7348,17 +7462,63 @@
       ],
       "members": [
         {
-          "name": "types",
+          "name": "name",
           "route": "slot",
-          "slot": "types",
+          "slot": "name",
           "path": [
             {
-              "owner": "type_parameter",
-              "slot": "types"
+              "owner": "type_param_type_var",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "slot",
+          "slot": "bounds",
+          "path": [
+            {
+              "owner": "type_param_type_var",
+              "slot": "bounds"
+            }
+          ]
+        }
+      ]
+    },
+    "type_param_type_var_tuple": {
+      "vocab": "declaration.type_parameter.variadic",
+      "read": [
+        {
+          "vocab": "declaration.type_parameter.variadic",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "type_param_type_var_tuple",
+              "slot": "name"
             }
           ]
         }
       ],
+      "container": {
+        "slot": "name",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_parameter": {
       "container": {
         "slot": "types",
         "kinds": [
@@ -7366,6 +7526,26 @@
         ],
         "terminals": [],
         "list": false
+      }
+    },
+    "type_params": {
+      "container": {
+        "slot": "items",
+        "kinds": [
+          "type_params_items"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_params_items": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "type_param"
+        ],
+        "terminals": [],
+        "list": true
       }
     },
     "typed_default_parameter": {
@@ -7941,7 +8121,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  299
+                  303
                 ],
                 "slots": {
                   "220": 0
@@ -8025,9 +8205,9 @@
       },
       {
         "depth": 3,
-        "paths": 63,
-        "kinds": 58,
-        "refinements": 41
+        "paths": 65,
+        "kinds": 60,
+        "refinements": 43
       },
       {
         "depth": 4,

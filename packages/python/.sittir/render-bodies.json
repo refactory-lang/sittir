@@ -4457,7 +4457,21 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -4473,11 +4487,105 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "value"
 		},
 		{
 			"kind": "seam",
 			"field": "type_alias_statement_after"
+		}
+	],
+	"type_param_param_spec": [
+		{
+			"kind": "seam",
+			"field": "type_param_param_spec_before"
+		},
+		{
+			"kind": "text",
+			"text": "**"
+		},
+		{
+			"kind": "seam",
+			"field": "star_star_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "type_param_param_spec_after"
+		}
+	],
+	"type_param_type_var": [
+		{
+			"kind": "seam",
+			"field": "type_param_type_var_before"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "bounds",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "colon_before"
+						},
+						{
+							"kind": "text",
+							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "bounds",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "bounds"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "type_param_type_var_after"
+		}
+	],
+	"type_param_type_var_tuple": [
+		{
+			"kind": "seam",
+			"field": "type_param_type_var_tuple_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "type_param_type_var_tuple_after"
 		}
 	],
 	"type_parameter": [
@@ -4508,6 +4616,42 @@
 		{
 			"kind": "seam",
 			"field": "type_parameter_after"
+		}
+	],
+	"type_params": [
+		{
+			"kind": "seam",
+			"field": "type_params_before"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "slot",
+			"name": "items"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "type_params_after"
+		}
+	],
+	"type_params_items": [
+		{
+			"kind": "slot",
+			"name": "item"
 		}
 	],
 	"typed_default_parameter": [

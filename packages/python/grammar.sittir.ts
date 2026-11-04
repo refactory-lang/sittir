@@ -44,6 +44,41 @@ const MATCH_BLOCK_WITNESSES = [
 	}
 ] as const;
 
+const TYPE_PARAM_PRODUCTION = 'CPython type_params: "[" ",".type_param+ [","] "]"; type_param: NAME [type_param_bound] | "*" NAME | "**" NAME';
+
+const FUNCTION_TYPE_PARAMS_WITNESSES = [
+	{
+		text: 'def f[1](): pass\n',
+		form: ['def', { symbol: 'identifier' }, { symbol: 'type_parameter' }, { symbol: 'parameters' }, ':', { symbol: '_suite' }],
+		kind: 'function_definition',
+		production: TYPE_PARAM_PRODUCTION
+	},
+	{
+		text: 'def f[int[str]](): pass\n',
+		form: ['def', { symbol: 'identifier' }, { symbol: 'type_parameter' }, { symbol: 'parameters' }, ':', { symbol: '_suite' }],
+		kind: 'function_definition',
+		production: TYPE_PARAM_PRODUCTION
+	}
+] as const;
+
+const CLASS_TYPE_PARAMS_WITNESSES = [
+	{
+		text: 'class C[a.b]: pass\n',
+		form: ['class', { symbol: 'identifier' }, { symbol: 'type_parameter' }, ':', { symbol: '_suite' }],
+		kind: 'class_definition',
+		production: TYPE_PARAM_PRODUCTION
+	}
+] as const;
+
+const TYPE_ALIAS_WITNESSES = [
+	{
+		text: 'type a.b = int\n',
+		form: ['type', { symbol: 'type' }, '=', { symbol: 'type' }],
+		kind: 'type_alias_statement',
+		production: 'CPython type_alias: "type" NAME [type_params] "=" expression'
+	}
+] as const;
+
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'python',
@@ -167,6 +202,8 @@ export default grammar(enrich(base), wire({
 		dictionary_splat: { '"**"/after': preference('tight') },
 		dictionary_splat_pattern: { '"**"/after': preference('tight') },
 		splat_type: { 'operator:/after': preference('tight') },
+		type_param_type_var_tuple: { '"*"/after': preference('tight') },
+		type_param_param_spec: { '"**"/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
 		interpolation: {
 			before: preference('tight'),
@@ -422,6 +459,27 @@ export default grammar(enrich(base), wire({
 	},
 	rules: {
 		_match_block: reauthored('accepts-invalid-syntax', MATCH_BLOCK_WITNESSES, ($, original) => original.members[0]),
+		function_definition: reauthored('accepts-invalid-syntax', FUNCTION_TYPE_PARAMS_WITNESSES, ($, original) =>
+			edit(original, { 3: field('type_parameters', optional($.type_params)) })
+		),
+		class_definition: reauthored('accepts-invalid-syntax', CLASS_TYPE_PARAMS_WITNESSES, ($, original) =>
+			edit(original, { 2: field('type_parameters', optional($.type_params)) })
+		),
+		type_param: vocabulary(($) =>
+			choice(
+				variant('type_var', seq(field('name', $.identifier), optional($._type_param_optional1))),
+				variant('type_var_tuple', seq('*', field('name', $.identifier))),
+				variant('param_spec', seq('**', field('name', $.identifier)))
+			)
+		),
+		_type_param_optional1: vocabulary(($) => seq(':', $.type)),
+		type_params: vocabulary(($) => seq('[', field('items', $.type_params_items), ']')),
+		type_params_items: vocabulary(($) =>
+			seq(field('item', $.type_param), repeat(seq(',', field('item', $.type_param))), optional(','))
+		),
+		type_alias_statement: reauthored('accepts-invalid-syntax', TYPE_ALIAS_WITNESSES, ($) =>
+			prec.dynamic(1, seq('type', field('name', $.identifier), optional(field('type_parameters', $.type_params)), '=', field('value', $.type)))
+		),
 		_tuple_pattern_elements: vocabulary(($) => tupleElements(field('item', $.pattern))),
 		tuple_pattern: reauthored(
 			'semantic-gap',

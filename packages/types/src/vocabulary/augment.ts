@@ -1421,6 +1421,8 @@ declare module './declaration.ts' {
 					attributes.Declaration.TypeParameter.Lifetime<G>['attributes']
 				>;
 			}
+			interface Parameters<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter
+				.Parameters<G> {}
 			interface Value<G extends GrammarContext<G>> extends constGenerics.Declaration.TypeParameter.Value<G> {
 				readonly attributes?: gate.In<
 					G,
@@ -1428,10 +1430,14 @@ declare module './declaration.ts' {
 					attributes.Declaration.TypeParameter.Value<G>['attributes']
 				>;
 			}
+			interface Variadic<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter
+				.Variadic<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>
-				| V.Declaration.TypeParameter.Value<G>;
+				| V.Declaration.TypeParameter.Parameters<G>
+				| V.Declaration.TypeParameter.Value<G>
+				| V.Declaration.TypeParameter.Variadic<G>;
 		}
 		interface Union<G extends GrammarContext<G>> extends untaggedUnions.Declaration.Union<G> {
 			readonly typeParameters?: gate.In<
@@ -1679,7 +1685,9 @@ declare module './declaration.ts' {
 			| V.Declaration.TypeAlias.Public.Restricted<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Parameters<G>
 			| V.Declaration.TypeParameter.Value<G>
+			| V.Declaration.TypeParameter.Variadic<G>
 			| V.Declaration.Union<G>
 			| V.Declaration.Union.Private<G>
 			| V.Declaration.Union.Public<G>

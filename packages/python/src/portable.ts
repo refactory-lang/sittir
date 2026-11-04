@@ -55,7 +55,9 @@ export interface PortableIds {
 		| TSKindId.FunctionDefinition
 		| TSKindId.MethodDeclaration
 		| TSKindId.TypeAliasStatement
-		| TSKindId.TypeParameter
+		| TSKindId.TypeParamParamSpec
+		| TSKindId.TypeParamTypeVar
+		| TSKindId.TypeParamTypeVarTuple
 		| TSKindId.TypedDefaultParameter
 		| TSKindId.TypedParameter;
 	'declaration.class': TSKindId.ClassDefinition;
@@ -69,7 +71,12 @@ export interface PortableIds {
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
 	'declaration.type_alias': TSKindId.TypeAliasStatement;
-	'declaration.type_parameter': TSKindId.TypeParameter;
+	'declaration.type_parameter':
+		| TSKindId.TypeParamParamSpec
+		| TSKindId.TypeParamTypeVar
+		| TSKindId.TypeParamTypeVarTuple;
+	'declaration.type_parameter.parameters': TSKindId.TypeParamParamSpec;
+	'declaration.type_parameter.variadic': TSKindId.TypeParamTypeVarTuple;
 	'declaration.variable': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
 	element:
 		| TSKindId.ComparisonOperatorComparator
@@ -458,6 +465,8 @@ export interface PortableTexts {
 	'declaration.parameter.typed_default': never;
 	'declaration.type_alias': never;
 	'declaration.type_parameter': never;
+	'declaration.type_parameter.parameters': never;
+	'declaration.type_parameter.variadic': never;
 	'declaration.variable': never;
 	element: never;
 	'element.comparator': never;
@@ -719,7 +728,13 @@ export interface PortableKindsAt {
 	'declaration.parameter.typed': { readonly $path: 'declaration.parameter.typed' };
 	'declaration.parameter.typed_default': { readonly $path: 'declaration.parameter.typed_default' };
 	'declaration.type_alias': { readonly $path: 'declaration.type_alias' };
-	'declaration.type_parameter': { readonly $path: 'declaration.type_parameter' };
+	'declaration.type_parameter': {
+		readonly $path: 'declaration.type_parameter';
+		readonly parameters: PortableKindsAt['declaration.type_parameter.parameters'];
+		readonly variadic: PortableKindsAt['declaration.type_parameter.variadic'];
+	};
+	'declaration.type_parameter.parameters': { readonly $path: 'declaration.type_parameter.parameters' };
+	'declaration.type_parameter.variadic': { readonly $path: 'declaration.type_parameter.variadic' };
 	'declaration.variable': { readonly $path: 'declaration.variable' };
 	element: {
 		readonly $path: 'element';
@@ -1360,6 +1375,21 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['declaration.type_parameter']
+	> & {
+		readonly parameters: PortableIsAt['declaration.type_parameter.parameters'];
+		readonly variadic: PortableIsAt['declaration.type_parameter.variadic'];
+	};
+	'declaration.type_parameter.parameters': PortableGuard<
+		PortableIds['declaration.type_parameter.parameters'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.type_parameter.parameters']
+	> & {};
+	'declaration.type_parameter.variadic': PortableGuard<
+		PortableIds['declaration.type_parameter.variadic'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.type_parameter.variadic']
 	> & {};
 	'declaration.variable': PortableGuard<
 		PortableIds['declaration.variable'],
@@ -2650,7 +2680,9 @@ const table: PortableTable = {
 				TSKindId.FunctionDefinition,
 				TSKindId.MethodDeclaration,
 				TSKindId.TypeAliasStatement,
-				TSKindId.TypeParameter,
+				TSKindId.TypeParamParamSpec,
+				TSKindId.TypeParamTypeVar,
+				TSKindId.TypeParamTypeVarTuple,
 				TSKindId.TypedDefaultParameter,
 				TSKindId.TypedParameter
 			],
@@ -2673,7 +2705,12 @@ const table: PortableTable = {
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
 		'declaration.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
-		'declaration.type_parameter': { ids: [TSKindId.TypeParameter], exact: true },
+		'declaration.type_parameter': {
+			ids: [TSKindId.TypeParamParamSpec, TSKindId.TypeParamTypeVar, TSKindId.TypeParamTypeVarTuple],
+			exact: true
+		},
+		'declaration.type_parameter.parameters': { ids: [TSKindId.TypeParamParamSpec], exact: true },
+		'declaration.type_parameter.variadic': { ids: [TSKindId.TypeParamTypeVarTuple], exact: true },
 		'declaration.variable': {
 			ids: [TSKindId.AssignmentEq, TSKindId.AssignmentType, TSKindId.AssignmentTyped],
 			exact: false
@@ -3107,8 +3144,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '289': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '289': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '293': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3118,8 +3155,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '290': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '290': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '294': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3129,8 +3166,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '291': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '295': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '295': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3310,56 +3347,56 @@ const table: PortableTable = {
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal.legacy',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '302': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '302': 0 } } }
 				]
 			},
 			{
@@ -3369,7 +3406,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'not in', slots: { '298': 0 } }
+						plan: { op: 'eq', text: 'not in', slots: { '302': 0 } }
 					}
 				]
 			},
@@ -3377,7 +3414,7 @@ const table: PortableTable = {
 				path: 'expression.binary.identity.is',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '302': 0 } } }
 				]
 			},
 			{
@@ -3387,7 +3424,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'is not', slots: { '298': 0 } }
+						plan: { op: 'eq', text: 'is not', slots: { '302': 0 } }
 					}
 				]
 			},
@@ -3398,7 +3435,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'not', of: { op: 'is', types: [298], self: true } }
+						plan: { op: 'not', of: { op: 'is', types: [302], self: true } }
 					}
 				]
 			},
@@ -3408,57 +3445,57 @@ const table: PortableTable = {
 			{
 				path: 'element.comparator.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal.legacy',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.not_in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '302': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '302': 0 } } }]
 			},
 			{ path: 'element.comparator', within: [], test: [] }
 		],
@@ -3517,7 +3554,7 @@ const table: PortableTable = {
 						plan: {
 							op: 'or',
 							of: [
-								{ op: 'count', min: 2, slots: { '292': 0 } },
+								{ op: 'count', min: 2, slots: { '296': 0 } },
 								{ op: 'delimiter', delimiter: 2 }
 							]
 						}
@@ -3567,12 +3604,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '352': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '352': 1 } } }]
 			}
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
@@ -3733,7 +3770,9 @@ const table: PortableTable = {
 		[TSKindId.Type]: [{ path: 'type', within: [], test: [] }],
 		[TSKindId.TypeAliasStatement]: [{ path: 'declaration.type_alias', within: [], test: [] }],
 		[TSKindId.TypeConversion]: [{ path: 'expression.interpolation.conversion', within: [], test: [] }],
-		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
+		[TSKindId.TypeParamParamSpec]: [{ path: 'declaration.type_parameter.parameters', within: [], test: [] }],
+		[TSKindId.TypeParamTypeVar]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
+		[TSKindId.TypeParamTypeVarTuple]: [{ path: 'declaration.type_parameter.variadic', within: [], test: [] }],
 		[TSKindId.TypedDefaultParameter]: [{ path: 'declaration.parameter.typed_default', within: [], test: [] }],
 		[TSKindId.TypedParameter]: [{ path: 'declaration.parameter.typed', within: [], test: [] }],
 		[TSKindId.UnaryOperator]: [
@@ -3768,7 +3807,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [299], slots: { '220': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [303], slots: { '220': 0 } } }]
 			},
 			{ path: 'expression.yield', within: [], test: [] }
 		]
@@ -3891,11 +3930,11 @@ export const queryFlags: QueryFlags = Object.freeze({
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '271': 0 } }
+				{ op: 'count', min: 2, slots: { '275': 0 } }
 			]
 		}
 	},
-	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '300': 0 } } },
+	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '307': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
 	[TSKindId.ExpressionList]: {
 		trailingComma: {
@@ -3911,7 +3950,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '292': 0 } }
+				{ op: 'count', min: 2, slots: { '296': 0 } }
 			]
 		}
 	},
@@ -3922,7 +3961,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '344': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '352': 0 } } },
 	[TSKindId.PatternList]: {
 		trailingComma: {
 			op: 'and',
@@ -3933,10 +3972,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 		}
 	},
 	[TSKindId.PrintStatementChevron]: {
-		trailingComma: { op: 'child', slots: { '278': 1 }, of: { op: 'delimiter', delimiter: 2 } }
+		trailingComma: { op: 'child', slots: { '282': 1 }, of: { op: 'delimiter', delimiter: 2 } }
 	},
 	[TSKindId.PrintStatementPlain]: {
-		trailingComma: { op: 'child', slots: { '279': 0 }, of: { op: 'delimiter', delimiter: 2 } }
+		trailingComma: { op: 'child', slots: { '283': 0 }, of: { op: 'delimiter', delimiter: 2 } }
 	},
 	[TSKindId.Subjects]: {
 		trailingComma: {
@@ -3963,8 +4002,8 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
-	139: { content: { trailingComma: { types: [], kinds: [278, 279] } } },
-	142: { content: { trailingComma: { types: [], kinds: [292] } } },
+	139: { content: { trailingComma: { types: [], kinds: [282, 283] } } },
+	142: { content: { trailingComma: { types: [], kinds: [296] } } },
 	145: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	146: { expressions: { trailingComma: { types: [], kinds: [181] } } },
 	147: { expressions: { trailingComma: { types: [], kinds: [181] } } },
@@ -3978,12 +4017,12 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	222: { index: { trailingComma: { types: [], kinds: [267] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	250: { expression: { trailingComma: { types: [], kinds: [181] } } },
-	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
-	289: { value: { trailingComma: { types: [], kinds: [181] } } },
-	291: { value: { trailingComma: { types: [], kinds: [181] } } },
-	302: { statements: { async: { types: [], kinds: [157, 162, 300, 344] } } },
-	304: { definition: { async: { types: [], kinds: [300, 344] } } },
-	343: { expression: { trailingComma: { types: [], kinds: [181] } } }
+	286: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
+	293: { value: { trailingComma: { types: [], kinds: [181] } } },
+	295: { value: { trailingComma: { types: [], kinds: [181] } } },
+	309: { statements: { async: { types: [], kinds: [157, 162, 307, 352] } } },
+	311: { definition: { async: { types: [], kinds: [307, 352] } } },
+	351: { expression: { trailingComma: { types: [], kinds: [181] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

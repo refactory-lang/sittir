@@ -133,6 +133,7 @@ export interface KindMembers {
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain;
 	[TSKindId.Float]: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific;
+	[TSKindId.TypeParam]: TSKindId.TypeParamTypeVar | TSKindId.TypeParamTypeVarTuple | TSKindId.TypeParamParamSpec;
 	[TSKindId.IntegerDecimal]:
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
@@ -593,6 +594,12 @@ export interface IsGuards {
 	sliceGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SliceGroup };
+	typeParams<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParams };
+	typeParamsItems<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamsItems };
 	tuplePatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePatternElements };
@@ -716,6 +723,15 @@ export interface IsGuards {
 	yieldFromClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
+	typeParamTypeVar<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVar };
+	typeParamTypeVarTuple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVarTuple };
+	typeParamParamSpec<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
 	constructorDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructorDeclaration };
@@ -1125,6 +1141,18 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
 		nul<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.LineContinuationNul>;
 	};
+	readonly typeParam: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.TypeParam]>;
+		typeVar<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVar };
+		typeVarTuple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamTypeVarTuple };
+		paramSpec<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
+	};
 	readonly integerDecimal: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerDecimal]>;
 		long<T extends { readonly $type: number } | number>(
@@ -1191,9 +1219,9 @@ const _supertype_simpleStatement_ids = new Set<number>([
 	134, 131, 135, 139, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([151, 157, 158, 159, 162, 165, 174, 178, 154]);
-const _supertype_withClause_ids = new Set<number>([293, 294]);
-const _supertype_suite_ids = new Set<number>([295, 296, 297]);
-const _supertype_splatPattern_ids = new Set<number>([201, 202, 287, 288]);
+const _supertype_withClause_ids = new Set<number>([297, 298]);
+const _supertype_suite_ids = new Set<number>([299, 300, 301]);
+const _supertype_splatPattern_ids = new Set<number>([201, 202, 291, 292]);
 const _supertype_parameter_ids = new Set<number>([201, 202, 1, 225, 199, 200, 197, 259, 258]);
 const _supertype_pattern_ids = new Set<number>([201, 1, 222, 221, 197, 198]);
 const _supertype_expression_ids = new Set<number>([
@@ -1204,20 +1232,21 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224, 233, 238, 236, 239,
 	234, 240, 235, 242, 241, 63
 ]);
-const _supertype_assignment_ids = new Set<number>([289, 290, 291]);
+const _supertype_assignment_ids = new Set<number>([293, 294, 295]);
 const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
+const _supertype_typeParam_ids = new Set<number>([304, 305, 306]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	344, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	352, 151, 157, 158, 159, 162, 307, 174, 311, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 344, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	130, 352, 151, 157, 158, 159, 162, 307, 174, 311, 154
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([295, 303, 297]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([299, 310, 301]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1231,6 +1260,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.Integer, _supertype_integer_ids],
 	[TSKindId.Float, _supertype_float_ids],
+	[TSKindId.TypeParam, _supertype_typeParam_ids],
 	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids],
 	[TSKindId.StatementClassDefinition, _supertype_statementClassDefinition_ids]
 ]);
@@ -1374,6 +1404,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FloatScientific_guard = _g(TSKindId.FloatScientific);
 	const _kind_LineContinuationNewline_guard = _g(TSKindId.LineContinuationNewline);
 	const _kind_LineContinuationNul_guard = _mg(TSKindId.LineContinuationNul);
+	const _kind_TypeParamTypeVar_guard = _g(TSKindId.TypeParamTypeVar);
+	const _kind_TypeParamTypeVarTuple_guard = _g(TSKindId.TypeParamTypeVarTuple);
+	const _kind_TypeParamParamSpec_guard = _g(TSKindId.TypeParamParamSpec);
 	const _kind_IntegerDecimalLong_guard = _g(TSKindId.IntegerDecimalLong);
 	const _kind_IntegerDecimalImaginary_guard = _g(TSKindId.IntegerDecimalImaginary);
 	const _kind_IntegerDecimalPlain_guard = _g(TSKindId.IntegerDecimalPlain);
@@ -1447,6 +1480,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Subscripts_guard = _g(TSKindId.Subscripts);
 	const _kind_DictionaryElements_guard = _g(TSKindId.DictionaryElements);
 	const _kind_SliceGroup_guard = _g(TSKindId.SliceGroup);
+	const _kind_TypeParams_guard = _g(TSKindId.TypeParams);
+	const _kind_TypeParamsItems_guard = _g(TSKindId.TypeParamsItems);
 	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
 	const _kind_CasePatternList_guard = _g(TSKindId.CasePatternList);
 	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
@@ -1639,7 +1674,12 @@ export function guardsWith(test: KindTest): IsGuards {
 		newline: _kind_LineContinuationNewline_guard,
 		nul: _kind_LineContinuationNul_guard
 	});
-	const _supertype_integerDecimal_guard = _vg(_mg(283), {
+	const _supertype_typeParam_guard = _vg(_mg(270), {
+		typeVar: _kind_TypeParamTypeVar_guard,
+		typeVarTuple: _kind_TypeParamTypeVarTuple_guard,
+		paramSpec: _kind_TypeParamParamSpec_guard
+	});
+	const _supertype_integerDecimal_guard = _vg(_mg(287), {
 		long: _kind_IntegerDecimalLong_guard,
 		imaginary: _kind_IntegerDecimalImaginary_guard,
 		plain: _kind_IntegerDecimalPlain_guard
@@ -1807,6 +1847,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		subscripts: _kind_Subscripts_guard,
 		dictionaryElements: _kind_DictionaryElements_guard,
 		sliceGroup: _kind_SliceGroup_guard,
+		typeParams: _kind_TypeParams_guard,
+		typeParamsItems: _kind_TypeParamsItems_guard,
 		tuplePatternElements: _kind_TuplePatternElements_guard,
 		casePatternList: _kind_CasePatternList_guard,
 		tupleElements: _kind_TupleElements_guard,
@@ -1848,6 +1890,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		suiteEmpty: _kind_SuiteEmpty_guard,
 		comparisonOperatorComparator: _kind_ComparisonOperatorComparator_guard,
 		yieldFromClause: _kind_YieldFromClause_guard,
+		typeParamTypeVar: _kind_TypeParamTypeVar_guard,
+		typeParamTypeVarTuple: _kind_TypeParamTypeVarTuple_guard,
+		typeParamParamSpec: _kind_TypeParamParamSpec_guard,
 		constructorDeclaration: _kind_ConstructorDeclaration_guard,
 		blockClassDeclaration: _kind_BlockClassDeclaration_guard,
 		suiteBlockClassDeclaration: _kind_SuiteBlockClassDeclaration_guard,
@@ -1872,6 +1917,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		integer: _supertype_integer_guard,
 		float: _supertype_float_guard,
 		lineContinuation: _supertype_lineContinuation_guard,
+		typeParam: _supertype_typeParam_guard,
 		integerDecimal: _supertype_integerDecimal_guard,
 		layout: _sg(_supertype_layout_ids),
 		importPrefix: _kind_ImportPrefix_guard,

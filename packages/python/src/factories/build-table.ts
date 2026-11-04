@@ -219,6 +219,11 @@ export interface Routes<Table extends AnyTable> {
 		readonly newline: typeof F.buildLineContinuationNewline;
 		readonly nul: typeof F.buildLineContinuationNul;
 	};
+	readonly typeParam: {
+		readonly typeVar: Table['buildTypeParamTypeVar'];
+		readonly typeVarTuple: Table['buildTypeParamTypeVarTuple'];
+		readonly paramSpec: Table['buildTypeParamParamSpec'];
+	};
 	readonly integerDecimal: typeof F.buildIntegerDecimalPlain & {
 		readonly long: typeof F.buildIntegerDecimalLong;
 		readonly imaginary: typeof F.buildIntegerDecimalImaginary;
@@ -3069,6 +3074,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly dictPatternElements: Table['buildDictPatternElements'];
 	readonly subscripts: Table['buildSubscripts'];
 	readonly dictionaryElements: Table['buildDictionaryElements'];
+	readonly typeParams: Table['buildTypeParams'];
+	readonly typeParamsItems: Table['buildTypeParamsItems'];
 	readonly tuplePatternElements: Table['buildTuplePatternElements'];
 	readonly casePatternList: Table['buildCasePatternList'];
 	readonly tupleElements: Table['buildTupleElements'];
@@ -3097,6 +3104,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly suiteInline: Table['buildSuiteInline'];
 	readonly suiteBlock: Table['buildSuiteBlock'];
 	readonly suiteEmpty: Table['buildSuiteEmpty'];
+	readonly typeParamTypeVar: Table['buildTypeParamTypeVar'];
+	readonly typeParamTypeVarTuple: Table['buildTypeParamTypeVarTuple'];
+	readonly typeParamParamSpec: Table['buildTypeParamParamSpec'];
 	readonly constructorDeclaration: Table['buildConstructorDeclaration'];
 	readonly blockClassDeclaration: Table['buildBlockClassDeclaration'];
 	readonly suiteBlockClassDeclaration: Table['buildSuiteBlockClassDeclaration'];
@@ -3115,6 +3125,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly escapeSequence: Routes<Table>['escapeSequence'];
 	readonly float: Routes<Table>['float'];
 	readonly lineContinuation: Routes<Table>['lineContinuation'];
+	readonly typeParam: Routes<Table>['typeParam'];
 	readonly integerDecimal: Routes<Table>['integerDecimal'];
 	readonly integer: Routes<Table>['integer'];
 	readonly primaryExpression: Routes<Table>['primaryExpression'];
@@ -3330,6 +3341,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			nul: F.buildLineContinuationNul
 		} as const)
 	);
+	const typeParam: Routes<Table>['typeParam'] = Object.freeze({
+		typeVar: $at('buildTypeParamTypeVar'),
+		typeVarTuple: $at('buildTypeParamTypeVarTuple'),
+		paramSpec: $at('buildTypeParamParamSpec')
+	} as const);
 	const integerDecimal: Routes<Table>['integerDecimal'] = Object.freeze(
 		Object.assign(delegate(F.buildIntegerDecimalPlain), {
 			long: F.buildIntegerDecimalLong,
@@ -5361,6 +5377,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		dictPatternElements: $at('buildDictPatternElements'),
 		subscripts: $at('buildSubscripts'),
 		dictionaryElements: $at('buildDictionaryElements'),
+		typeParams: $at('buildTypeParams'),
+		typeParamsItems: $at('buildTypeParamsItems'),
 		tuplePatternElements: $at('buildTuplePatternElements'),
 		casePatternList: $at('buildCasePatternList'),
 		tupleElements: $at('buildTupleElements'),
@@ -5389,6 +5407,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		suiteInline: $at('buildSuiteInline'),
 		suiteBlock: $at('buildSuiteBlock'),
 		suiteEmpty: $at('buildSuiteEmpty'),
+		typeParamTypeVar: $at('buildTypeParamTypeVar'),
+		typeParamTypeVarTuple: $at('buildTypeParamTypeVarTuple'),
+		typeParamParamSpec: $at('buildTypeParamParamSpec'),
 		constructorDeclaration: $at('buildConstructorDeclaration'),
 		blockClassDeclaration: $at('buildBlockClassDeclaration'),
 		suiteBlockClassDeclaration: $at('buildSuiteBlockClassDeclaration'),
@@ -5407,6 +5428,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		escapeSequence: escapeSequence,
 		float: float,
 		lineContinuation: lineContinuation,
+		typeParam: typeParam,
 		integerDecimal: integerDecimal,
 		integer: integer,
 		primaryExpression: primaryExpression,

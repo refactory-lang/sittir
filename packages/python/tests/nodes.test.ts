@@ -1869,13 +1869,8 @@ describe('exec_statement', () => {
 describe('type_alias_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeAliasStatement({
-			left: stampBuilt({
-				$type: TSKindId.Type,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			right: stampBuilt({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -1887,13 +1882,8 @@ describe('type_alias_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.typeAliasStatement({
-			left: stampBuilt({
-				$type: TSKindId.Type,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			right: stampBuilt({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -5567,6 +5557,78 @@ describe('format_specifier_text', () => {
 	});
 });
 
+describe('type_params', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParams(
+			stampBuilt({
+				$type: TSKindId.TypeParamsItems,
+				$text: 'test',
+				$named: true,
+				_item: [
+					stampBuilt({
+						$type: TSKindId.TypeParamTypeVar,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+					}) as any
+				]
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.TypeParams);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParams(
+			stampBuilt({
+				$type: TSKindId.TypeParamsItems,
+				$text: 'test',
+				$named: true,
+				_item: [
+					stampBuilt({
+						$type: TSKindId.TypeParamTypeVar,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+					}) as any
+				]
+			}) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('type_params_items', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamsItems(
+			...[
+				stampBuilt({
+					$type: TSKindId.TypeParamTypeVar,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$type).toBe(TSKindId.TypeParamsItems);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamsItems(
+			...[
+				stampBuilt({
+					$type: TSKindId.TypeParamTypeVar,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('tuple_pattern_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tuplePatternElements(
@@ -6222,6 +6284,55 @@ describe('suite_empty', () => {
 	it('render does not throw on minimal config', () => {
 		const node = ir.suiteEmpty(stampBuilt({ $type: TSKindId.Newline, $text: '\n', $named: true }) as any);
 		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('type_param_type_var', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamTypeVar({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.TypeParamTypeVar);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamTypeVar({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('type_param_type_var_tuple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamTypeVarTuple(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.TypeParamTypeVarTuple);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamTypeVarTuple(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('type_param_param_spec', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamParamSpec(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.TypeParamParamSpec);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamParamSpec(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 

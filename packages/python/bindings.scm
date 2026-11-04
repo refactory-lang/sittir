@@ -7,8 +7,10 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
+(function_definition type_parameters: (type_params (_) @typeParameters))
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
+(class_definition type_parameters: (type_params (_) @typeParameters))
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
@@ -19,7 +21,10 @@
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
-(type_parameter) @declaration.type_parameter
+(type_param_type_var) @declaration.type_parameter
+(type_param_type_var (type) @bounds)
+(type_param_type_var_tuple) @declaration.type_parameter.variadic
+(type_param_param_spec) @declaration.type_parameter.parameters
 (assignment_eq left: (_) @name right: (_) @value) @declaration.variable
 (assignment_typed left: (_) @name right: (_) @value) @declaration.variable
 (assignment_type left: (_) @name) @declaration.variable
@@ -27,6 +32,7 @@
 ((assignment_typed left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_type left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 (type_alias_statement) @declaration.type_alias
+(type_alias_statement type_parameters: (type_params (_) @typeParameters))
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
@@ -230,6 +236,7 @@
 ; ── type ───────────────────────────────────────────────────────────────────────
 (type) @type
 (generic_type) @type.generic
+(generic_type (type_parameter (_) @typeArguments))
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @identifier.qualified

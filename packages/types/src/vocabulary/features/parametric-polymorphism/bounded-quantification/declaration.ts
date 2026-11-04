@@ -51,7 +51,6 @@ export namespace Declaration {
 	}
 	export interface TypeParameter<G extends GrammarContext<G>> {
 		readonly bounds?: G['slots']['clause.bounds']['bounds'][];
-		// rt only
 	}
 	export interface Union<G extends GrammarContext<G>> {
 		readonly whereClause?: V.Clause.Where<G>;

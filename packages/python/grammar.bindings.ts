@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "4d535d00db27bed2cdceff357b19ba25c2628a4d9024f5ee964df361b4279b6b";
+export const hash = "2848477e5f2a2537fedd9bd3497abef4c731ddf7056b462e81d251d3304dc7e7";
 
 export const renames = {
 	module: "file",
@@ -12,7 +12,9 @@ export const renames = {
 	typed_parameter: "typed_parameter_declaration",
 	default_parameter: "default_parameter_declaration",
 	typed_default_parameter: "typed_default_parameter_declaration",
-	type_parameter: "type_parameter_declaration",
+	type_param_type_var: "type_parameter_declaration",
+	type_param_type_var_tuple: "variadic_type_parameter_declaration",
+	type_param_param_spec: "parameters_type_parameter_declaration",
 	assignment_eq: "variable_declaration",
 	type_alias_statement: "type_alias_declaration",
 	block: "block_statement",
@@ -100,6 +102,7 @@ export default grammar(
 			_left_hand_side: { "-1": alias("bare_tuple_pattern") },
 			_right_hand_side: { "-2": alias("bare_tuple_pattern") },
 			_simple_pattern: { "-2": alias("qualified_identifier") },
+			_type_param_optional1: { "1": field("bounds") },
 			aliased_import: { "0/0": alias("qualified_identifier") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
@@ -140,7 +143,6 @@ export default grammar(
 			subscript: { "0": field("object"), "2": field("index"), "2/0": field("elements"), "2/1/0/1": field("elements") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 			type: { "-1": alias("qualified_identifier") },
-			type_parameter: { "1": field("types") },
 			typed_default_parameter: { "4": field("default") },
 			typed_parameter: { "0/0/1": alias("rest_pattern"), "0/0/2": alias("map_rest_pattern") },
 			with_clause_bare: { "0": field("items"), "1/0/1": field("items") },

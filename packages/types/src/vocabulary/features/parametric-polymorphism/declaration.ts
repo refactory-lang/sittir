@@ -3,7 +3,7 @@ import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Class<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter<G> | V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: V.Declaration.TypeParameter.Any<G> | V.Declaration.TypeParameter.Any<G>[];
 	}
 	export interface Constructor<G extends GrammarContext<G>> {
 		readonly typeParameters?:
@@ -70,7 +70,6 @@ export namespace Declaration {
 	}
 	export interface TypeAlias<G extends GrammarContext<G>> {
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
-		// rt only
 	}
 	export namespace TypeAlias {
 		export interface Associated<G extends GrammarContext<G>> {
@@ -85,9 +84,18 @@ export namespace Declaration {
 		readonly default?: G['slots']['declaration.type_parameter']['default'];
 		// rt only
 		readonly name?: G['identifier'];
-		// rt only
-		readonly types?: G['type'][];
-		// p only
+	}
+	export namespace TypeParameter {
+		export interface Parameters<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+			// claimed by p
+			readonly $kind: 'declaration.type_parameter.parameters';
+			readonly name: G['identifier'];
+		}
+		export interface Variadic<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+			// claimed by p
+			readonly $kind: 'declaration.type_parameter.variadic';
+			readonly name: G['identifier'];
+		}
 	}
 	export interface Union<G extends GrammarContext<G>> {
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];

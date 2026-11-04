@@ -13,6 +13,7 @@ export interface DeclarationSynonyms {
 	readonly index: 'indexer';
 	readonly internal: 'crate';
 	readonly module: 'mod';
+	readonly parameters: 'param_spec';
 	readonly receiver: 'self' | 'this';
 	readonly special: 'dunder' | 'magic';
 	readonly struct: 'record';

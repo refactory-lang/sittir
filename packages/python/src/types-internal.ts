@@ -184,6 +184,9 @@ export interface SubBuilderRowKind {
 	'suite.block': TSKindId.SuiteBlock;
 	'suite.empty': TSKindId.SuiteEmpty;
 	'suite.inline': TSKindId.SuiteInline;
+	'typeParam.paramSpec': TSKindId.TypeParamParamSpec;
+	'typeParam.typeVar': TSKindId.TypeParamTypeVar;
+	'typeParam.typeVarTuple': TSKindId.TypeParamTypeVarTuple;
 	withClause: TSKindId.WithClauseBare;
 	'withClause.bare': TSKindId.WithClauseBare;
 	'withClause.paren': TSKindId.WithClauseParen;

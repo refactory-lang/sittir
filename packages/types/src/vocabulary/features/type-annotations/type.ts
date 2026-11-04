@@ -74,9 +74,6 @@ export namespace Type {
 		readonly type?: G['slots']['type.generic']['type'];
 		// r only
 		readonly typeArguments?: G['slots']['type.generic']['typeArguments'][];
-		// rt only
-		readonly typeParameter?: V.Declaration.TypeParameter<G>;
-		// p only
 	}
 	export namespace Generic {
 		export interface Turbofish<G extends GrammarContext<G>> extends SubKindOf<V.Type.Generic<G>> {
