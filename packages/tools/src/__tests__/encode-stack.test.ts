@@ -333,38 +333,56 @@ describe('encodeStack', () => {
 		expect(refuted.refuted).toEqual([{ class: DYNAMIC_CLASSES[1], by: setter }]);
 	});
 
+	it('counts an indirect tail call on a measured path as unread, and leaves a jump-table dispatch out', async () => {
+		const graph = GRAPH.flatMap((line) =>
+			line === '    1204: \tsub sp, sp, #0x10'
+				? [
+						line,
+						'    1290: \tadr x11, 0x12a0 <x>',
+						'    1294: \tldrb w10, [x9, x8]',
+						'    1298: \tadd x10, x11, x10, lsl #2',
+						'    129a: \tbr x10',
+						'    129b: \tldr x8, [x0, #0x18]',
+						'    129c: \tbr x8'
+					]
+				: [line]
+		);
+		const stack = encodeStack(await disassemble(linked(graph)), HEIGHTS);
+		expect(stack.unresolved).toEqual([{ fn: NAMES.b, offset: 0x9c, ins: 'br x8' }]);
+	});
+
 	it('refuses a build whose names it cannot read', async () => {
 		await expect(disassemble(linked(GRAPH)).then((dis) => encodeStack(dis, new Set()))).rejects.toThrow(/must name each/);
 	});
 });
 
 describe('disassemble on arm64', () => {
-	it('takes a TLS descriptor call for the dynamic linker its relocation names', async () => {
+	it.each(['blr', 'br'])('takes a TLS descriptor access through %s for the dynamic linker its relocation names', async (op) => {
 		const listing = [
 			'x.node:\tfile format elf64-littleaarch64',
 			'',
 			'Disassembly of section .text:',
 			'',
-			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'ldr x1, [x0, #0x220]', 'add x0, x0, #0x220', 'blr x1'], [])
+			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'ldr x1, [x0, #0x220]', 'add x0, x0, #0x220', `${op} x1`], [])
 		];
 		const relocated = gotSlots(['0000000000005220 R_AARCH64_TLSDESC        *ABS*']);
 		const read = await disassemble(listing, { ...relocated, int32: () => undefined, threadLocal: () => false });
 		expect(named(read, 'sittir_x::f').unresolved).toEqual([]);
 		const unread = await disassemble(listing, image());
-		expect(named(unread, 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['blr x1']);
+		expect(named(unread, 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual([`${op} x1`]);
 	});
 
-	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
+	it.each(['blr', 'br'])('takes a Mach-O thread-local access through %s for the thunk its descriptor holds', async (op) => {
 		const listing = [
 			'x.node:\tfile format mach-o arm64',
 			'',
 			'Disassembly of section __TEXT,__text:',
 			'',
-			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'add x0, x0, #0xc8', 'ldr x8, [x0]', 'blr x8'], [])
+			...fn(0x1000, 'sittir_x::f', ['adrp x0, 0x5000 <x>', 'add x0, x0, #0xc8', 'ldr x8, [x0]', `${op} x8`], [])
 		];
 		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
 		expect(named(await disassemble(listing, tlv), 'sittir_x::f').unresolved).toEqual([]);
-		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['blr x8']);
+		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual([`${op} x8`]);
 	});
 });
 
@@ -448,6 +466,35 @@ describe('dynamic classes', () => {
 	it('takes the static unwinder for a class of its own', async () => {
 		const graph = below('unwind_phase2', fn(0x2000, 'unwind_phase2', ['stp x29, x30, [sp, #-16]!', 'blr x8'], []));
 		expect(encodeStack(await disassemble(linked(graph)), HEIGHTS).reached.map((call) => call.class)).toEqual([DYNAMIC_CLASSES[2]]);
+	});
+
+	it("takes a custom io::Error's payload drop for a class, and nothing else in its module", async () => {
+		const owner = '<core::io::error::CustomOwner as core::ops::drop::Drop>::drop';
+		const repr = '<core::io::error::repr_bitpacked::Repr as core::ops::drop::Drop>::drop';
+		const graph = below(owner, [
+			...fn(0x2000, owner, ['stp x29, x30, [sp, #-16]!', 'blr x8', `bl 0x2100 <${repr}>`], []),
+			...fn(0x2100, repr, ['blr x9'], [])
+		]);
+		expect(encodeStack(await disassemble(linked(graph)), HEIGHTS).reached.map((call) => [call.fn, call.ins, call.class?.name])).toEqual([
+			[owner, 'blr x8', "a custom io::Error's payload drop"],
+			[repr, 'blr x9', undefined]
+		]);
+	});
+
+	it('takes an outlined fragment for the class every function entering it falls in, and leaves it unread when they differ', async () => {
+		const panic = 'std::panicking::begin_panic_handler';
+		const fragment = '_OUTLINED_FUNCTION_7';
+		const graph = below(panic, [
+			...fn(0x2000, panic, ['stp x29, x30, [sp, #-16]!', `bl 0x2100 <${fragment}>`], []),
+			...fn(0x2100, fragment, ['mov x0, x21', 'br x8'], [])
+		]);
+		expect(encodeStack(await disassemble(linked(graph)), HEIGHTS).reached).toEqual([
+			{ fn: fragment, offset: 4, ins: 'br x8', class: DYNAMIC_CLASSES[0] }
+		]);
+		const shared = [...graph, ...fn(0x2200, 'sittir_x::leaf', [`bl 0x2100 <${fragment}>`], [])];
+		expect(encodeStack(await disassemble(linked(shared)), HEIGHTS).reached).toEqual([
+			{ fn: fragment, offset: 4, ins: 'br x8', class: undefined }
+		]);
 	});
 
 	it('reads a call between two picked functions as a call to both, and lists it with their names', async () => {
@@ -601,11 +648,25 @@ describe('disassemble on x86-64', () => {
 		expect(named(dis, 'sittir_x::t').unresolved).toEqual([]);
 	});
 
-	it('takes a Mach-O thread-local access for the thunk its descriptor holds', async () => {
-		const listing = [...ELF, ...x86(0x2000, 'sittir_x::f', ['leaq 0x10(%rip), %rdi ## 0x50c8 <x>', 'callq *(%rdi)', 'retq'])];
+	it.each(['callq', 'jmpq'])('takes a Mach-O thread-local access through %s for the thunk its descriptor holds', async (op) => {
+		const listing = [...ELF, ...x86(0x2000, 'sittir_x::f', ['leaq 0x10(%rip), %rdi ## 0x50c8 <x>', `${op} *(%rdi)`, 'retq'])];
 		const tlv = { ...image(), threadLocal: (address: number) => address === 0x50c8 };
 		expect(named(await disassemble(listing, tlv), 'sittir_x::f').unresolved).toEqual([]);
-		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual(['callq *(%rdi)']);
+		expect(named(await disassemble(listing, image()), 'sittir_x::f').unresolved.map((site) => site.ins)).toEqual([`${op} *(%rdi)`]);
+	});
+
+	it('reads an indirect tail call like a call: through a slot a register holds, or unread', async () => {
+		const dis = await disassemble(
+			[
+				...ELF,
+				...x86(0x2000, 'sittir_x::f', ['leaq 0x10(%rip), %rax # 0x3000 <x>', 'testl %esi, %esi', 'je @4', 'jmpq *(%rax)', 'jmpq *0x18(%rdx)']),
+				...x86(0x2100, G, ['retq'])
+			],
+			image()
+		);
+		const f = named(dis, 'sittir_x::f');
+		expect(names(dis, f.tails)).toEqual([G]);
+		expect(f.unresolved.map((site) => site.ins)).toEqual(['jmpq *0x18(%rdx)']);
 	});
 
 	it('calls both functions a cmov picks between', async () => {

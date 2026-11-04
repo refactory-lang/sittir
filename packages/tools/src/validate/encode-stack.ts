@@ -283,6 +283,8 @@ const ARM_SELECT = /^csel (x\d+), (x\d+), (x\d+), \w+$/;
 const ARM_ENDS = /^(?:ret\w*|brk|udf|hlt)$/;
 const ARM_CALL_REGISTER = /^blr (x\d+)$/;
 const ARM_JUMP_REGISTER = /^br (x\d+)$/;
+const ARM_TABLE_ADD = /^add (x\d+), (x\d+), (x\d+)(?:, (?:lsl|sxtw|uxtw) #2)?$/;
+const ARM_TABLE_ENTRY = /^ldr(?:b|h|sw)? ([wx]\d+), \[x\d+, x\d+(?:, (?:lsl|sxtw|uxtw) #\d)?\]$/;
 const OPERAND = /%(\w+)/g;
 const COMMENT = / ##? .*$/;
 const PREFIXES = /^(?:(?:lock|rep\w*|data16) )+/;
@@ -318,6 +320,8 @@ const LC_SEGMENT_64 = 0x19;
 const THREAD_VARIABLES = '__thread_vars';
 const TLV_LOAD = /^ldr (x\d+), \[x0\]$/;
 const TLV_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %rdi ##? 0x([0-9a-f]+)\b/;
+const TLV_BRANCH = /^(?:callq|jmpq) \*\(%rdi\)$/;
+const TLS_BRANCH = /^(?:blr|br) (x\d+)$/;
 const TLS_SLOT = /^([0-9a-f]+) R_\w+_TLSDESC\b/;
 const TLS_PAGE = /^adrp (x\d+), 0x([0-9a-f]+)\b/;
 const TLS_LOAD = /^ldr x1, \[(x\d+), #0x([0-9a-f]+)\]$/;
@@ -344,8 +348,15 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 		reason:
 			'runs only while a panic unwinds, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
 		within: /^(?:_Unwind_|_?_?unw_|unwind_phase2|libunwind::)/
+	},
+	{
+		name: "a custom io::Error's payload drop",
+		reason:
+			'std code that runs once, where a custom io::Error drops, and its stack does not grow with depth, so the stack past ENCODE_STACK_BUDGET covers it',
+		within: /^<core::io::error::CustomOwner as core::ops::drop::Drop>::drop$/
 	}
 ];
+const OUTLINED = /^_?OUTLINED_FUNCTION_\d+$/;
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
 const TABLE_ENTRY = /^movslq \(%(\w+),%\w+,4\), %(\w+)$/;
 const TABLE_ADD = /^addq %(\w+), %(\w+)$/;
@@ -655,6 +666,7 @@ interface Isa {
 	readonly flow: (ins: string, at: number, index: ReadonlyMap<number, number>) => DirectFlow;
 	readonly branch: (ins: string) => Branch | undefined;
 	readonly table: (body: readonly Instruction[], jump: number) => TableJump | undefined;
+	readonly dispatches: (body: readonly Instruction[], jump: number) => boolean;
 }
 
 const NOTHING_HELD: Held = new Map();
@@ -738,7 +750,8 @@ function x86Isa(callerSaved: readonly string[]): Isa {
 			const memory = MEMORY_BRANCH.exec(ins);
 			return memory ? { call: CALL_OPS.has(memory[1]!), register: memory[3]!, displacement: imm(memory[2] ?? '0') } : undefined;
 		},
-		table: (body, jump) => x86Table(body, jump, written)
+		table: (body, jump) => x86Table(body, jump, written),
+		dispatches: (body, jump) => x86Table(body, jump, written) !== undefined
 	};
 }
 
@@ -788,6 +801,27 @@ function armFlow(ins: string, at: number, index: ReadonlyMap<number, number>): D
 	return { next: op === 'b' ? taken : [...taken, at + 1], jump: false };
 }
 
+function armDispatch(body: readonly Instruction[], jump: number): boolean {
+	const target = ARM_JUMP_REGISTER.exec(body[jump]!.ins)?.[1];
+	let entry: string | undefined;
+	for (let back = jump - 1; target !== undefined && back >= Math.max(0, jump - TABLE_REACH); back--) {
+		const ins = body[back]!.ins;
+		if (TAIL_OPS.test(mnemonic(ins)) || ARM_CALLS.test(mnemonic(ins)) || ARM_ENDS.test(mnemonic(ins))) return false;
+		const text = operands(ins).replace(ARM_COMMENT, '');
+		const written = armWritten(ins);
+		if (entry === undefined) {
+			if (!written.includes(target)) continue;
+			const add = ARM_TABLE_ADD.exec(text);
+			if (add?.[1] !== target) return false;
+			entry = add[3]!;
+		} else if (written.includes(entry)) {
+			const load = ARM_TABLE_ENTRY.exec(text);
+			return load !== null && armWide(load[1]!) === entry;
+		}
+	}
+	return false;
+}
+
 const ARM64: Isa = {
 	wide: armWide,
 	written: armWritten,
@@ -798,7 +832,8 @@ const ARM64: Isa = {
 		const jump = call ?? ARM_JUMP_REGISTER.exec(ins)?.[1];
 		return jump === undefined ? undefined : { call: call !== undefined, register: jump };
 	},
-	table: () => undefined
+	table: () => undefined,
+	dispatches: armDispatch
 };
 
 function held(isa: Isa, state: Held, ins: string): Held {
@@ -867,7 +902,7 @@ function solve(
 }
 
 function heldStates(isa: Isa, body: readonly Instruction[], image: Image): readonly Held[] {
-	if (!body.some(({ ins }) => isa.branch(ins)?.call)) return [];
+	if (!body.some(({ ins }) => isa.branch(ins) !== undefined)) return [];
 	const index = new Map(body.map(({ address }, at) => [address, at] as const));
 	const direct = body.map(({ ins }, at) => isa.flow(ins, at, index));
 	const jumps = direct.flatMap(({ jump }, at) => (jump ? [at] : []));
@@ -903,11 +938,11 @@ function heldStates(isa: Isa, body: readonly Instruction[], image: Image): reado
 function tlsDescriptor(body: readonly Instruction[], at: number): number | undefined {
 	const ins = body[at]!.ins;
 	const before = (back: number): string => body[at - back]?.ins ?? '';
-	if (ins === 'callq *(%rdi)') {
+	if (TLV_BRANCH.test(ins)) {
 		const address = TLV_ADDRESS.exec(before(1));
 		return address ? Number.parseInt(address[1]!, 16) : undefined;
 	}
-	const called = /^blr (x\d+)$/.exec(ins)?.[1];
+	const called = TLS_BRANCH.exec(ins)?.[1];
 	const page = TLS_PAGE.exec(before(3));
 	if (!called || !page || page[1] !== 'x0') return undefined;
 	const descriptor = TLS_LOAD.exec(before(2));
@@ -960,9 +995,9 @@ function readBody(fn: Collected, listed: readonly Instruction[], image: Image, i
 			else if (target?.kind === 'address') {
 				for (const to of target.at) fn.addresses.push([via, to, site]);
 				if (target.at.length > 1) fn.selections.push([target.at, site]);
-			} else (branch.call ? fn.unresolved : fn.jumps).push(site);
+			} else (branch.call || !isa.dispatches(body, at) ? fn.unresolved : fn.jumps).push(site);
 		} else if (OTHER_BRANCH.test(ins) && (ARM_CALLS.test(op) || ARM_JUMPS.test(op) || operands(ins).includes('*'))) {
-			(ARM_CALLS.test(op) || CALL_OPS.has(op) ? fn.unresolved : fn.jumps).push(site);
+			fn.unresolved.push(site);
 		} else {
 			const to = ins.endsWith('>') ? ADDRESS.exec(operands(ins)) : null;
 			if (to) fn.targets.push([op, hex(to[1]!)]);
@@ -1250,14 +1285,20 @@ export function encodeStack(dis: Disassembly, heights: ReadonlySet<string>): Enc
 		return by ? [{ class: known, by }] : [];
 	});
 	const holding = DYNAMIC_CLASSES.filter((known) => !refuted.some((r) => r.class === known));
+	const classOf = (fn: number, entering: ReadonlySet<number> = new Set()): DynamicClass | undefined => {
+		if (!OUTLINED.test(name(fn))) return holding.find((c) => c.within.test(name(fn)));
+		if (entering.has(fn)) return undefined;
+		const within = new Set([...entering, fn]);
+		const classes = [...(callers.get(fn) ?? [])].map((caller) => classOf(caller, within));
+		return classes.length && classes.every((c) => c !== undefined && c === classes[0]) ? classes[0] : undefined;
+	};
 	const outside = [...extent]
 		.filter((fn) => !measured.has(fn))
 		.sort(byName)
-		.flatMap((fn) =>
-			dis.functions
-				.get(fn)!
-				.unresolved.map((at) => ({ fn: name(fn), ...at, class: holding.find((c) => c.within.test(name(fn))) }))
-		);
+		.flatMap((fn) => {
+			const known = classOf(fn);
+			return dis.functions.get(fn)!.unresolved.map((at) => ({ fn: name(fn), ...at, class: known }));
+		});
 	const selected = [...new Set([...measured, ...extent])]
 		.sort(byName)
 		.flatMap((fn) => dis.functions.get(fn)!.selected.map((at) => ({ fn: name(fn), ...at })));
