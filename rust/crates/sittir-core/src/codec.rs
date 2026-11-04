@@ -36,9 +36,15 @@ pub fn height_over(tallest: Option<u16>) -> u16 {
 
 /// The stack, in bytes, one encode may take from the napi entry. In each
 /// grammar's release build, `RECURSION_LIMIT` levels of its costliest height
-/// level, with its one-time cost (the frames down to the loop, the loop's
-/// entry to the first whole level, and the trip into a node's trivia), fit
-/// within it.
+/// level, with its one-time cost (the frames from the napi callback to the
+/// first whole level, through the encode loop or not, and the trip into a
+/// node's trivia), fit within it.
+///
+/// The budget covers sittir's own frames. The calls below the deepest level
+/// whose stack doesn't grow with depth run past it: napi into V8 (a garbage
+/// collection included), the allocator, `memcpy`, and std's panic and
+/// formatting code. Node's default V8 stack limit on the main thread is
+/// 984 KiB, which leaves them about 920 KiB.
 pub const ENCODE_STACK_BUDGET: usize = 64 * 1024;
 
 /// The heights below which a node is encoded by straight recursion rather
