@@ -35,7 +35,7 @@ for index in range(ROUNDS):
                         sys.stderr.write(run.stderr)
                         raise SystemExit(run.returncode)
                     results.setdefault((grammar, hold, name, held), []).append(json.loads((out / f'{label}.json').read_text()))
-lines = []
+lines = [(out.parent / 'build-path.md').read_text().strip(), '']
 for grammar in grammars:
     cpu = next(iter(results.values()))[0]['cpu']
     lines += [f'### {grammar} ({cpu})', '', '| held grammar | version | ' + ' | '.join(f'{h:,} held' for h in HELD) + ' |', '|---|---|' + '---|' * len(HELD)]
