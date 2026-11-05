@@ -2,6 +2,12 @@
 
 Status: proposal, for review. Nothing in it is applied yet.
 
+Decided so far:
+- **V:** PythonFeatures drops Visibility and adds Encapsulation, and `__x` claims privateName.
+- **A:** PythonFeatures drops AbstractClasses.
+- **N:** the five members no grammar holds stay as they are. The guard exempts them and lists them.
+- **Granularity:** the tree in section 1 (about 148 new features) is too fine. Section 4 gives the options to choose from. Section 1 stays as the inventory those options merge.
+
 This note proposes the content moves the portable grammar map needs, so that each grammar's claims equal its composition:
 
 1. the feature tree: the sub-features split out of today's features, and the core content that moves into new features;
@@ -357,4 +363,53 @@ Each claim follows the existing content claims (`declaration.constant`'s `#match
   Both options remove nothing a grammar reads.
 - **C. Core content is in scope.** The plan's first task named the feature clusters. The spec also moves the 88 core kinds and the 45 or so core members above. Recommended: the same tasks move them, since the guard can't pass without it.
 - **M. Item visibility extends the features that add its bases** (Structs, Enumerations, AlgebraicDataTypes, Traits, ModuleDeclarations, UntaggedUnions, ImportTrees). That keeps every held set sound, but only a grammar with all of them can hold ItemVisibility. The alternative splits it per base, for example struct visibility extending ItemVisibility and Structs. That's finer, and it only pays when a grammar has item visibility without one of those features. Recommended: one piece until such a grammar exists.
-- **S. Splitting by meaning within one holder set** (TypeAnnotations' typescript pieces, the Classes pieces) is optional. Recommended as proposed: names a reader can find, at no cost to any held set.
+- **S. Splitting by meaning within one holder set** (TypeAnnotations' typescript pieces, the Classes pieces) is optional. Recommended as proposed: names a reader can find, at no cost to any held set. *Superseded by section 4.*
+
+## 4. Granularity options
+
+The constraint is fixed: a grammar that has a feature holds all of its content. So pieces merge only within one holder set.
+- **Split features:** the floor is one sub-feature per (parent feature, holder set) cell. After rulings V and A and the claims to write, that's **58** cells, including the new StructPatterns. Python holds 23 of them, rust 20 and typescript 28. 45 of them have a single holder.
+- **Core content:** the floor is one feature per holder set, which is 6 (`p`, `r`, `t`, `pt`, `rt`, `pr`).
+
+Section 1's tree has about 148 new features: about 95 sub-features and about 53 core features.
+
+### Option 1: the floor everywhere (64 features)
+
+- **Shape:** 58 sub-features plus 6 core features. Each one is named for what it adds.
+- **Examples:**
+  - AsyncAwait's four pieces become AsyncLambdas (`rt`), AsyncIteration (`pt`), AsyncFunctionExpressions (`t`) and AsyncContexts (`p`).
+  - TypeAnnotations' 35 typescript items become one `TypeAlgebra` (`t`), and its 19 rust items one `SystemsTypes` (`r`).
+  - Visibility becomes two pieces: `ModuleVisibility` (`r`: the item kinds and the scoped levels, rust's module-based visibility) and `ClassVisibility` (`t`: protected and the class-member kinds).
+- **The core features** are the residue of each holder set: one python feature holding chained comparisons, identity, floor division, matrix multiplication, `<>`, map and set literals, `...`, implicit concatenation, triple-quoted strings, `del`, `elif`, loop `else` and docstrings. One typescript feature holds `++`, `??`, `>>>`, `typeof`, `void`, `delete`, sequences, function expressions, `new.target`, object literals, `const`, `let` and `var`, and HTML comments. Rust's holds block expressions, `[x; n]`, `mut`, `let … else`, literal suffixes and inner doc comments. Plus three for the shared sets.
+- **Held sets:** python 23 + 3, rust 20 + 3, typescript 28 + 3.
+- **What agnostic code loses:**
+  - A core feature can only be named after the grammars that hold it. It's a language feature kept in the shared vocabulary, so a contract can't ask for "exponentiation" without also taking unary `+`, `in` and bitwise `~`.
+  - A fourth grammar that holds part of a cell splits it again, which changes what every contract naming that cell means.
+
+### Option 2: the floor for features, coarse meaning groups for core content (86 features) — recommended
+
+- **Shape:** 58 sub-features, as in option 1. The core content is grouped by area (operators, literals, expressions, declarations, statements, comments, attributes, patterns), and each area is split only by holder set. That gives **28** core features.
+- **Examples:**
+  - Operators: `p` (comparison chains and comparators, identity, `not in`, floor division, matrix multiplication, `<>`), `pt` (`**`, `in`, unary `+`, `~`) and `t` (`??`, the logical assignments, `>>>`, `instanceof`, `typeof`, `void`, `delete`, `++` and `--`).
+  - Literals: `p` (`...`, implicit concatenation, triple-quoted strings), `pt` (`null`, the float and radix facets), `r` (literal suffixes) and `t` (`undefined`).
+  - Comments: `rt` (block and doc comments), `r` (inner doc comments) and `t` (HTML comments).
+  - Small cells merge where the area has one item: rust's `pattern.mutable` goes with its declarations (`mut`), and the two attribute cells go with declarations. That leaves 25.
+- **Held sets** (before the merges): python 23 + 10, rust 20 + 14, typescript 28 + 14.
+- **What agnostic code loses:**
+  - Within an area, a contract takes the whole cell. Code that wants `**` also gets unary `+`.
+  - The lost precision stays inside one area, and every name says what the content is, so a diagnostic like "requires PythonOperators" points somewhere a reader can find.
+  - A fourth grammar re-splits only the cells of the areas it touches.
+- **Why it's recommended:** it's the coarsest level where every feature still names a part of a language instead of a set of grammars. The 58 feature cells are already at the floor, and their parents give them meaning (AsyncContexts, TypeAlgebra).
+
+### Option 3: single-grammar tiny constructs become language features (needs the user's word)
+
+- **Shape:** take option 2, and move each single-grammar core cell (18 of the 28) into that grammar's generated language features. That leaves 58 + 10 = **68** vocabulary features, plus about 6 language features per grammar.
+- **Candidates:** python's `...`, docstrings, `<>`, implicit concatenation and `del`; typescript's HTML comments, `undefined`, `new.target`/`import.meta` and `void`; rust's `[x; n]`, literal suffixes and `let … else`. UnaryPlus, the example given, is held by python and typescript both, so it stays in the vocabulary under any option.
+- **What agnostic code loses:**
+  - Language features aren't in the shared vocabulary, so agnostic code can't name them at all. Under a contract they read as their nearest ancestor, or as opaque.
+  - A fourth grammar with the same construct (C's `++`, Ruby's `**`) has to move it back into the vocabulary first.
+  - It also revises the ruling that content already in the vocabulary stays there, which is why it needs the user's word.
+
+### Recommendation
+
+**Option 2**, at 86 features (83 after the one-item merges), against about 148 today. If that's still too many, the next step is option 3 for the 18 single-grammar core cells only, with the user's word. Splitting the 58 feature cells further by meaning should wait for a grammar that holds part of one.
