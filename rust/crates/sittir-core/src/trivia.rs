@@ -228,16 +228,22 @@ pub struct TriviaText {
     pub span: Option<crate::points::PointSpan>,
     /// The in-line adjacency of an entry the source fixes in place (an
     /// `ERROR` region, a line continuation): the source's whitespace right
-    /// before and right after it, up to the tokens beside it on its line.
-    /// The entry writes it verbatim around itself, in place of any seam. A
+    /// before and right after it, up to the tokens beside it on its line,
+    /// empty where it touches them, and `None` on a side where a line break
+    /// or the file's edge lies between (`trivia_table::Adjacency`). The
+    /// entry writes it verbatim around itself, in place of any seam. A
     /// comment has none.
     pub before: Option<String>,
     pub after: Option<String>,
+    /// Read from a live tree, the bytes of its source the entry spans: a
+    /// recording render anchors its text there, as it anchors a slice. A
+    /// snapshot's entry has its `span` instead, and a written one neither.
+    pub bytes: Option<crate::types::Span>,
 }
 
 impl HeapBytes for TriviaText {
     fn heap_bytes(&self) -> usize {
-        let Self { kind: _, text, span, before, after } = self;
+        let Self { kind: _, text, span, before, after, bytes: _ } = self;
         text.heap_bytes() + span.heap_bytes() + before.heap_bytes() + after.heap_bytes()
     }
 }
@@ -247,7 +253,7 @@ impl TriviaText {
     /// snapshot and no adjacency.
     #[must_use]
     pub fn of(kind: KindId, text: &str) -> Self {
-        Self { kind, text: text.to_owned(), span: None, before: None, after: None }
+        Self { kind, text: text.to_owned(), span: None, before: None, after: None, bytes: None }
     }
 
     /// Whether the entry writes itself verbatim with its adjacency, in place
@@ -259,22 +265,21 @@ impl TriviaText {
     }
 
     /// The entry of `kind` spanning `span` of `source`, with the in-line runs
-    /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
-    /// snapshot places it.
+    /// `adjacent` names before and after it, and `at` where a snapshot
+    /// places it; an entry no snapshot places is a live read's, and keeps
+    /// the bytes it spans.
     #[must_use]
-    pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
-        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.range()].to_owned());
-        let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
-        Self { kind, text: source[span.range()].to_owned(), span: at, before, after }
+    pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<crate::trivia_table::Adjacency>, at: Option<crate::points::PointSpan>) -> Self {
+        let slice = |run: Option<crate::types::Span>| run.map(|run| source[run.range()].to_owned());
+        let (before, after) = adjacent.map_or((None, None), |adjacent| (slice(adjacent.before), slice(adjacent.after)));
+        Self { kind, text: source[span.range()].to_owned(), span: at, before, after, bytes: at.is_none().then_some(span) }
     }
 }
 
 impl Render for TriviaText {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         if self.verbatim() {
-            let before = self.before.as_deref().unwrap_or_default();
-            let after = self.after.as_deref().unwrap_or_default();
-            return w.verbatim(before, &self.text, after);
+            return w.verbatim(self.before.as_deref(), &self.text, self.after.as_deref(), self.bytes);
         }
         w.edge(self.kind, Side::Before, None);
         w.text(&self.text)?;
@@ -523,16 +528,21 @@ impl Clone for Box<dyn FramedTrivia> {
     }
 }
 
-/// A join written between trivia entries, or between an entry and its owner.
-/// It is a fact of the source layout, so it holds its gap at trivia strength,
-/// but it never takes away a line break the entry before it left pending: a
-/// line-terminated entry's after edge breaks the line, and whatever follows
-/// a line comment on its row would be swallowed by it. Where the output
-/// already stands at a line start (an entry whose span includes its
-/// terminator), the join is already made.
+/// A join written between trivia entries, or between an entry and its owner
+/// (`RenderSink::trivia_join`). It is a fact of the source layout, so it
+/// holds its gap at trivia strength, but it never takes away a line break the
+/// entry before it left pending: a line-terminated entry's after edge breaks
+/// the line, and whatever follows a line comment on its row would be
+/// swallowed by it. Where the output already stands at a line start (an
+/// entry whose span includes its terminator), the join is already made.
 fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
-    if !w.ends_line() {
-        whitespace(gap, None, true, w);
+    if w.ends_line() {
+        return;
+    }
+    if keeps_break(gap, true, w) {
+        w.trivia_seam(LayoutKinds::NEWLINE, None);
+    } else {
+        w.trivia_join(gap);
     }
 }
 
@@ -540,12 +550,17 @@ fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
 /// after an entry (`after_entry`) it is kept to at least the line break that
 /// entry left pending; anywhere else it replaces the gap's seam outright.
 fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut dyn RenderSink) {
-    let keeps_break = after_entry && w.pending_break() && !gap.breaks();
-    if keeps_break {
+    if keeps_break(gap, after_entry, w) {
         w.trivia_seam(LayoutKinds::NEWLINE, None);
     } else {
         w.trivia_seam(gap, text);
     }
+}
+
+/// Whether a gap right after an entry (`after_entry`) keeps the line break
+/// that entry left pending, where `gap` breaks no line.
+fn keeps_break(gap: LayoutKinds, after_entry: bool, w: &dyn RenderSink) -> bool {
+    after_entry && w.pending_break() && !gap.breaks()
 }
 
 /// Render `entries` joined by `between`, a whitespace entry taking the
@@ -760,6 +775,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             after: unsafe { crate::boundary::property(env, obj, c"$after")? },
+            bytes: None,
         })
     }
 }

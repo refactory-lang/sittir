@@ -157,13 +157,36 @@ pub struct StoredLayout {
 
 /// The work a parsed tree's layout reads have done so far, counted where it
 /// is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
-/// compares counts, never times.
+/// compares counts, never times. The addon's `layoutWork` answers every
+/// count.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "napi-bindings", napi_derive::napi(object))]
 pub struct LayoutWork {
     /// The nodes the region-depth walks entered (`ParsedTree::region_depth`).
     pub region_nodes: u32,
     /// The items the sibling lookups visited (`ParsedTree::siblings`).
     pub sibling_items: u32,
+    /// The nodes a region's render looked up outside the region, each found
+    /// from the tree's root (`Region::node`).
+    pub region_fallbacks: u32,
+    /// The levels the lookup cursors of the tree's calls climbed to reach
+    /// the nodes they looked up (`read::goto_from`), which bound the levels
+    /// they descended.
+    pub cursor_climbs: u32,
+    /// The nodes the depth moves of the tree's slices walked, its depth
+    /// members found once for every move (`DepthMembers::of`).
+    pub depth_nodes: u32,
+    /// The nodes the renders of the tree's layout records entered, region
+    /// records and full-depth ones alike: each node a render framed and
+    /// each source slice it wrote (`baseline::Baseline::entered`).
+    pub record_nodes: u32,
+    /// The layout records rendered (`ParsedTree::records_rendered`).
+    pub records_rendered: u32,
+    /// The steps the gaps no anchor measures took through their frames: the
+    /// children visited and items compared building each frame's source
+    /// items and aligning them to what the frame wrote, once a frame
+    /// (`Lookups::aligned`), and one for each gap measured from them.
+    pub gap_items: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -171,6 +194,11 @@ pub struct LayoutWork {
 pub struct LayoutWorkCounter {
     region_nodes: std::sync::atomic::AtomicU64,
     sibling_items: std::sync::atomic::AtomicU64,
+    region_fallbacks: std::sync::atomic::AtomicU64,
+    cursor_climbs: std::sync::atomic::AtomicU64,
+    depth_nodes: std::sync::atomic::AtomicU64,
+    record_nodes: std::sync::atomic::AtomicU64,
+    gap_items: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -182,9 +210,30 @@ impl LayoutWorkCounter {
         self.sibling_items.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
     }
 
-    pub fn counts(&self) -> LayoutWork {
+    pub fn region_fallbacks(&self, n: usize) {
+        self.region_fallbacks.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn cursor_climbs(&self, n: u32) {
+        self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn depth_nodes(&self, n: u32) {
+        self.depth_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn record_nodes(&self, n: u32) {
+        self.record_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn gap_items(&self, n: u64) {
+        self.gap_items.fetch_add(n, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    /// The counts so far, with the tree's `records_rendered`.
+    pub fn counts(&self, records_rendered: u32) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
     }
 }
 
@@ -750,21 +799,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
                 present(env, c"before", val.before)?,
                 present(env, c"after", val.after)?,
                 present(env, c"separator", val.separator)?,
-            ])
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LayoutWork {
-    /// `{ regionNodes, siblingItems }`.
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with_present, present};
-        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-        unsafe {
-            object_with_present(env, &[
-                present(env, c"regionNodes", Some(val.region_nodes))?,
-                present(env, c"siblingItems", Some(val.sibling_items))?,
             ])
         }
     }

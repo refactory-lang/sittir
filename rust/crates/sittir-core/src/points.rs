@@ -28,14 +28,15 @@ impl Point {
         }
     }
 
-    /// The offset of `self` from `base`, which must not lie after `self`;
-    /// `base.then(self.offset_from(base)) == self`.
+    /// The offset of `self` from `base`, so that
+    /// `base.then(self.offset_from(base)?) == self`; `None` when `base` lies
+    /// after `self`, which no offset names.
     #[must_use]
-    pub fn offset_from(self, base: Point) -> Point {
+    pub fn offset_from(self, base: Point) -> Option<Point> {
         if self.row == base.row {
-            Point { row: 0, column: self.column - base.column }
+            Some(Point { row: 0, column: self.column.checked_sub(base.column)? })
         } else {
-            Point { row: self.row - base.row, column: self.column }
+            Some(Point { row: self.row.checked_sub(base.row)?, column: self.column })
         }
     }
 }
@@ -182,8 +183,14 @@ mod tests {
     #[test]
     fn offset_from_inverts_then() {
         for (base, abs) in [(p(3, 4), p(3, 9)), (p(3, 4), p(6, 1)), (p(0, 0), p(0, 0)), (p(2, 0), p(2, 0))] {
-            assert_eq!(base.then(abs.offset_from(base)), abs);
+            assert_eq!(abs.offset_from(base).map(|offset| base.then(offset)), Some(abs));
         }
+    }
+
+    #[test]
+    fn no_offset_names_a_point_before_its_base() {
+        assert_eq!(p(2, 9).offset_from(p(3, 0)), None);
+        assert_eq!(p(3, 1).offset_from(p(3, 4)), None);
     }
 
     #[test]

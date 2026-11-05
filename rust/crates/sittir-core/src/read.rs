@@ -209,8 +209,8 @@ pub struct UnitRead<T> {
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
     /// An extra or an `ERROR` of the source: its kind, the bytes it spans and,
-    /// for an `ERROR`, the in-line runs before and after it it carries.
-    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<(Span, Span)> },
+    /// for an entry the source fixes in place, its adjacency.
+    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<crate::trivia_table::Adjacency> },
     /// A layout run of the source.
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
@@ -251,6 +251,14 @@ pub trait SideLookup {
         let _ = index;
         None
     }
+    /// The first byte of the extras and `ERROR`s the leading side of the node
+    /// at `index` holds as its source has them, which lie before the node:
+    /// the points a snapshot measures on that side. None where the side holds
+    /// none, a write replaced it, or the lookup measures none.
+    fn leading_start(&self, index: NodeIndex) -> Option<u32> {
+        let _ = index;
+        None
+    }
 }
 
 /// What a snapshot read measures with: the source's lines, the descendant
@@ -264,6 +272,9 @@ pub struct SnapshotCtx<'s> {
     root: NodeIndex,
     holder: crate::points::Point,
     replaced: Vec<crate::points::Point>,
+    /// The first byte the read measured that lies before the holder it was
+    /// measured from, which no offset names (`unmeasured`).
+    before_holder: std::cell::Cell<Option<u32>>,
 }
 
 impl<'s> SnapshotCtx<'s> {
@@ -272,10 +283,13 @@ impl<'s> SnapshotCtx<'s> {
     #[must_use]
     pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: NodeIndex) -> Self {
         let holder = holder.and_then(|byte| lines.point(byte)).unwrap_or(crate::points::Point::ZERO);
-        Self { lines, root, holder, replaced: Vec::new() }
+        Self { lines, root, holder, replaced: Vec::new(), before_holder: std::cell::Cell::new(None) }
     }
 
-    /// `span`'s two ends as points measured from the holder's start.
+    /// `span`'s two ends as points measured from the holder's start. A byte
+    /// before the holder has no offset: the read notes the first such byte
+    /// (`unmeasured`), which refuses the snapshot, and writes the zero
+    /// point in its place.
     ///
     /// # Panics
     ///
@@ -284,8 +298,21 @@ impl<'s> SnapshotCtx<'s> {
     #[must_use]
     pub fn span_of(&self, span: Span) -> crate::points::PointSpan {
         let holder = self.holder;
-        let point = |byte: u32| self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
+        let point = |byte: u32| {
+            let measured = self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
+            if measured.is_none() && self.before_holder.get().is_none() {
+                self.before_holder.set(Some(byte));
+            }
+            measured.unwrap_or(crate::points::Point::ZERO)
+        };
         crate::points::PointSpan { start: point(span.start), end: point(span.end) }
+    }
+
+    /// The first byte the read measured before the holder it was measured
+    /// from, or `None` when every point it wrote names its offset.
+    #[must_use]
+    pub fn unmeasured(&self) -> Option<u32> {
+        self.before_holder.get()
     }
 }
 
@@ -508,7 +535,10 @@ impl<'s> ReadCtx<'s> {
 
     /// In a snapshot, makes the start of the node the cursor is on the
     /// holder its slots are measured from, keeping the holder it replaces for
-    /// the node's layout to restore (`Placement::into_layout`).
+    /// the node's layout to restore (`Placement::into_layout`). Where the
+    /// leading side of its first child begins before it (the extras a list
+    /// passes to the item at its edge), the holder is where that side begins,
+    /// so every point measured from it lies at or after it.
     /// Elsewhere nothing moves. A read that fails leaves the holder where it
     /// was moved: the snapshot is not read further.
     pub fn hold(&mut self, cursor: &TreeCursor<'_>) {
@@ -522,10 +552,36 @@ impl<'s> ReadCtx<'s> {
     #[inline(never)]
     fn hold_in(&mut self, cursor: &TreeCursor<'_>) {
         let start = self.coordinate(&cursor.node(), index_of(cursor)).span.start;
+        let held = self.first_child_leading(cursor).map_or(start, |leading| leading.min(start));
         if let Some(snapshot) = &mut self.snapshot {
-            let own = snapshot.lines.point(start).expect("a node's start lies in its source");
+            let own = snapshot.lines.point(held).expect("a node's start lies in its source");
             snapshot.replaced.push(std::mem::replace(&mut snapshot.holder, own));
         }
+    }
+
+    /// Where the leading side of the first child of the node the cursor is
+    /// on begins (`SideLookup::leading_start`), its extras and `ERROR`s passed
+    /// over: no other child's leading side can begin before its holder.
+    fn first_child_leading(&self, cursor: &TreeCursor<'_>) -> Option<u32> {
+        let lookup = self.sides?;
+        let mut child = cursor.node().walk();
+        if !child.goto_first_child() {
+            return None;
+        }
+        while child.node().is_extra() || child.node().is_error() {
+            if !child.goto_next_sibling() {
+                return None;
+            }
+        }
+        lookup.leading_start(index_of(cursor) + offset_of(&child))
+    }
+
+    /// The first byte a snapshot read measured before the holder it was
+    /// measured from (`SnapshotCtx::unmeasured`); `None` on a read that is
+    /// no snapshot.
+    #[must_use]
+    pub fn unmeasured(&self) -> Option<u32> {
+        self.snapshot.as_ref()?.unmeasured()
     }
 
     /// Restores the holder the last `hold` replaced.
@@ -624,11 +680,34 @@ pub fn descendant_count(node: &Node<'_>) -> u32 {
     crate::types::narrow(node.descendant_count())
 }
 
-/// Moves a cursor created at the tree's root to the node at `index`. The one
-/// call of `TreeCursor::goto_descendant`.
+/// Moves a cursor created at the tree's root to the node at `index`, and
+/// answers the levels it climbed (`goto_from`).
+pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
+    goto_from(cursor, NodeIndex::ROOT, index)
+}
+
+/// Moves a cursor created at the node at descendant `from` to the node at
+/// `index`, which lies in that node's subtree: each is numbered from the
+/// node the cursor was created at. From where the cursor is, the move climbs
+/// to the nearest node holding `index` and descends from there, so it costs
+/// the path between the two nodes, not the path from the root. Answers the
+/// levels it climbed: over a run of moves, a cursor descends as many levels
+/// as it climbs, plus the depth it ends at. The one call of
+/// `TreeCursor::goto_descendant`; it never asks the cursor its depth, which
+/// counts the levels above it.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
-pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) {
-    cursor.goto_descendant(index.index());
+pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+    let goal = index.index() - from.index();
+    let holds = |cursor: &TreeCursor<'_>| {
+        let at = offset_of(cursor) as usize;
+        (at..at + descendant_count(&cursor.node()) as usize).contains(&goal)
+    };
+    let mut climbed = 0;
+    while !holds(cursor) && cursor.goto_parent() {
+        climbed += 1;
+    }
+    cursor.goto_descendant(goal);
+    climbed
 }
 
 /// What the first pass learns about one child.
@@ -765,6 +844,9 @@ pub enum ReadError {
     Interior { kind: KindId, index: NodeIndex },
     /// An enum kind whose spelling tokens display none of its members' ids.
     Unspelled { kind: KindId, index: NodeIndex },
+    /// A snapshot of the node at `index` that would measure the byte `byte`
+    /// from a holder after it, which no offset names.
+    Unmeasured { index: NodeIndex, byte: u32 },
 }
 
 impl ReadError {
@@ -793,6 +875,7 @@ impl ReadError {
             ReadError::Unspelled { kind, index } => {
                 format!("{} (kind {}) at index {index}: its tokens display none of its members' ids", name(kind), kind.0)
             }
+            ReadError::Unmeasured { index, byte } => format!("a snapshot of the node at index {index} would measure byte {byte} from a holder after it"),
         }
     }
 }
@@ -917,13 +1000,6 @@ impl HeapBytes for Routed {
         let Self { children, routes, keys } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
-}
-
-/// The routes of the node at `index` read as `T` (`ReadNode::routes`).
-/// The cursor was created at the tree's root.
-pub fn routes_at<T: ReadNode>(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> Option<Routed> {
-    goto(cursor, index);
-    T::routes(cursor)
 }
 
 impl<T: ReadNode> ReadNode for Box<T> {
@@ -1457,9 +1533,16 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
 }
 
 /// Read the node at `index` into `T`, a read of its own that starts there
-/// (`ReadCtx::begin_read`). The cursor was created at the tree's root.
+/// (`read_from`). The cursor was created at the tree's root.
 pub fn read_at<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth) -> Result<T, ReadError> {
     goto(cursor, index);
+    read_from(cursor, ctx, depth)
+}
+
+/// Read the node the cursor is on into `T`, a read of its own that starts
+/// there (`ReadCtx::begin_read`). The cursor was created at the tree's root
+/// and ends where it started.
+pub fn read_from<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<T, ReadError> {
     ctx.begin_read();
     T::read(cursor, ctx, depth)
 }
@@ -1513,7 +1596,7 @@ mod tests {
 
     impl SideLookup for OneOfEach {
         fn side(&self, _: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
                     SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
@@ -1532,7 +1615,7 @@ mod tests {
 
     impl SideLookup for EdgeRun {
         fn side(&self, _: NodeIndex, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
                 _ => Vec::new(),
@@ -1568,9 +1651,9 @@ mod tests {
         let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value().and_then(SlotValue::node).cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
-            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None, bytes: None },
         ]);
     }
 

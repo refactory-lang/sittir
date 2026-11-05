@@ -88,10 +88,16 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
-/** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`). */
+/** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
 export interface LayoutWork {
 	readonly regionNodes: number;
 	readonly siblingItems: number;
+	readonly regionFallbacks: number;
+	readonly cursorClimbs: number;
+	readonly depthNodes: number;
+	readonly recordNodes: number;
+	readonly recordsRendered: number;
+	readonly gapItems: number;
 }
 
 export interface BaselineRun {
@@ -126,9 +132,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
 	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
 	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
-	 * byte `holderByte`, or from its own start when absent.
+	 * byte `holderByte`, or, when absent, from where it or its leading side begins, whichever is first.
 	 *
-	 * @throws as {@link read} does.
+	 * @throws as {@link read} does, and when `holderByte` lies after the first byte the snapshot measures.
 	 */
 	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
 	/**
@@ -265,8 +271,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	storedLayout(treeId: number): StoredLayout;
 	/**
-	 * The work tree `treeId`'s layout reads have done so far: the nodes the region-depth walks entered
-	 * and the items the sibling lookups visited. A diagnostic, so a growth test compares counts, not times.
+	 * The work tree `treeId`'s layout reads have done so far: the nodes its region-depth walks entered, the
+	 * items its sibling lookups visited, the nodes its region renders found outside their regions, the levels
+	 * its lookup cursors climbed, the nodes its depth moves walked, the nodes its layout records' renders
+	 * entered, and the records rendered. A diagnostic, so a growth test compares counts, not times.
 	 *
 	 * @throws when the tree is not live.
 	 */

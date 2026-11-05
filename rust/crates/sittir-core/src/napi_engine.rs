@@ -392,8 +392,10 @@ macro_rules! napi_engine {
         /// node read at every depth into plain data with no tree, each
         /// node with its span (`$_layout.span`) from the native node that
         /// holds it and each placed extra with its text, the node itself
-        /// measured from the byte `holderByte`, or from its own start when
-        /// absent. Refuses as `read` does.
+        /// measured from the byte `holderByte`, or, when absent, from where
+        /// it or its leading side begins, whichever is first. Refuses as
+        /// `read` does, and a `holderByte` after the first byte the snapshot
+        /// measures.
         #[::napi_derive::napi(ts_return_type = "object")]
         pub fn snapshot(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
             let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
@@ -519,9 +521,9 @@ macro_rules! napi_engine {
         }
 
         /// The work the live tree `treeId`'s layout reads have done so far
-        /// (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
-        /// diagnostic. Refuses a tree that is not live.
-        #[::napi_derive::napi(ts_return_type = "{ regionNodes: number; siblingItems: number }")]
+        /// (`ParsedTree::layout_work`). A diagnostic. Refuses a tree that is
+        /// not live.
+        #[::napi_derive::napi]
         pub fn layout_work(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::LayoutWork> {
             with_live_node(&env, tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
         }

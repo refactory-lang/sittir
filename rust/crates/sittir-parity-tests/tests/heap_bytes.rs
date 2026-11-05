@@ -21,7 +21,7 @@ fn a_comment_counts_its_content_and_its_layout() {
 
 #[test]
 fn a_text_entry_counts_each_string_it_holds() {
-    let text = TriviaText { kind: kind::COMMENT, text: String::with_capacity(10), span: None, before: Some(String::with_capacity(3)), after: None };
+    let text = TriviaText { kind: kind::COMMENT, text: String::with_capacity(10), span: None, before: Some(String::with_capacity(3)), after: None, bytes: None };
     assert_eq!(TriviaNode::Text(text).heap_bytes(), 13);
     assert_eq!(TriviaNode::Newline.heap_bytes(), 0, "a unit holds nothing");
 }
