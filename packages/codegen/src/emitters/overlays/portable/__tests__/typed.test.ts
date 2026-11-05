@@ -82,6 +82,11 @@ describe('emitPortableTyped', () => {
 		expect(elements).not.toContain('V.Literal.String.Bytes');
 	});
 
+	it('types a slot holding a kind by the paths that kind reads as, never by the other kinds read under its claim path', () => {
+		const right = /\treadonly ["']clause\.macro\.rule["']: \{\n\t\treadonly left: [^\n]*;\n\t\treadonly right: ([^\n]*);/.exec(typed.source)?.[1];
+		expect(right?.split(' | ').sort()).toEqual(['V.Element.Macro.TokenTree.Brace<Ctx>', 'V.Element.Macro.TokenTree.Bracket<Ctx>', 'V.Element.Macro.TokenTree.Paren<Ctx>']);
+	});
+
 	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
 		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
@@ -159,5 +164,21 @@ describe('emitPortableTyped, python', () => {
 		const type = new RegExp(`type ${alias} = (.*);`).exec(python.source)?.[1];
 		expect(type?.startsWith('VocabViews["expression.collection.tuple.bare"] | ')).toBe(true);
 		expect(type).not.toContain('readonly');
+	});
+});
+
+describe('emitPortableTyped over python', () => {
+	let python: PortableTypedOutput;
+
+	beforeAll(async () => {
+		const generated = await generate({ grammar: 'python', outputDir: '/tmp/sittir-portable-typed-python/src' });
+		if (generated.portableTyped === undefined) throw new Error('python emitted no typed module');
+		python = generated.portableTyped;
+	}, 120_000);
+
+	it('types a slot holding a token claimed as a path by the text it reads as, not by the path\'s view', () => {
+		const content = /\treadonly ["']statement\.import\.from["']: \{\n\t\treadonly content: ([^\n]*);/.exec(python.source)?.[1];
+		expect(content).toContain(`Ctx['texts']["clause.import.wildcard"]`);
+		expect(content).not.toContain('V.Clause.Import.Wildcard<Ctx>');
 	});
 });

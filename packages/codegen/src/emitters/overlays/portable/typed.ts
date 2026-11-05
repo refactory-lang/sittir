@@ -211,7 +211,14 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 	const concrete = [...model.values()].filter((n) => n.subtypes.length === 0 && idOf(n.kind) !== undefined);
 	const typed = new Set(concrete.map((n) => n.kind));
 	const readPathsOf = (list: readonly ReadEntry[]): string[] => [...new Set(readableEntries(list.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => path))];
-	const readPaths = new Set(entries.flatMap(([kind, list]) => ((nodeOf(kind)?.subtypes.length ?? 0) > 0 ? [] : readPathsOf(list))));
+	const readable = entries.filter(([kind]) => (nodeOf(kind)?.subtypes.length ?? 0) === 0);
+	const readPaths = new Set(readable.flatMap(([, list]) => readPathsOf(list)));
+	const readsByClaim = new Map<string, Set<string>>();
+	for (const [, list] of readable) {
+		const reads = readPathsOf(list);
+		for (const { vocab } of list)
+			for (const path of reads.filter((read) => read === vocab || read.startsWith(`${vocab}.`))) (readsByClaim.get(vocab) ?? readsByClaim.set(vocab, new Set()).get(vocab)!).add(path);
+	}
 	const refsOf = (kinds: readonly string[], terminals: readonly string[] = []): string => {
 		const parts = new Set<string>(terminals.map(q));
 		for (const k of kinds) for (const c of concreteKinds(model, [k])) if (typed.has(c)) parts.add(aliasOf(c));
@@ -292,7 +299,7 @@ export function emitPortableTyped({ routes, input, nodeMap, kindEntries, readTes
 		''
 	);
 
-	emit(...contextOf({ grammar: input.grammar, own, vocabulary, readPaths: [...readPaths].sort(), roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, readPaths) }), '');
+	emit(...contextOf({ grammar: input.grammar, own, vocabulary, readPaths: [...readPaths].sort(), roleArmsOf, textPaths, unmapped, slotArm: slotArmOf(own, vocabulary, model, tokenTypeOf, formsAt, roleArmsOf, readPaths, readsByClaim) }), '');
 	emit(...PRELUDE, '');
 
 	emit('export interface VocabViews {');
@@ -559,7 +566,9 @@ function slotArmOf(
 	model: GrammarInput['model'],
 	tokenTypeOf: (kind: string) => string | undefined,
 	formsAt: (path: string, base: string) => readonly string[],
-	read: ReadonlySet<string>
+	armsAt: (path: string) => readonly string[],
+	read: ReadonlySet<string>,
+	readsByClaim: ReadonlyMap<string, ReadonlySet<string>>
 ): (kind: string) => string {
 	const patterns = new Set([...model.values()].flatMap((n) => (n.pattern === null ? [] : [n.pattern])));
 	const qname = (path: string): string => vocabulary.kinds.get(path)?.name ?? path;
@@ -578,7 +587,9 @@ function slotArmOf(
 			case 'unmapped':
 				return `V.Unmapped<'${k.slice(1, -1)}'>`;
 			case 'ref':
-				return k.startsWith('set:') ? setOf(k.slice(4)) : read.has(k) ? formsAt(k, `V.${qname(k)}<Ctx>`).join(' | ') : setOf(k);
+				if (k.startsWith('set:')) return setOf(k.slice(4));
+				if (read.has(k)) return armsAt(k).join(' | ');
+				return readsByClaim.has(k) ? [...readsByClaim.get(k)!].sort().flatMap(armsAt).join(' | ') : setOf(k);
 			case 'text': {
 				if (k.startsWith('literal:')) return tokenTypeOf(k.slice(8)) ?? 'string';
 				return patterns.has(k.slice(5)) ? 'string' : q(k.slice(5));
