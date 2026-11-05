@@ -492,5 +492,9 @@ The **targeted family cut: 104 features**, against 83 for option 2 cut by three 
 - **Every name is a family line,** not a set of grammars.
 
 Two findings go with it:
-- ConcurrencySyntax and DeferredExecution, today marker-only, are where Go's (and later Swift's) concurrency and `defer` belong.
-- The bootstrap template is behind the package layout. Fixing it (`base.ts`, an `indent` option, the chain outside `--all`) is a small tooling task that every future bootstrap pays for otherwise.
+- **ConcurrencySyntax and DeferredExecution** are marker-only today. They're the future home of Go's channels, `go`, `select`, send and receive, and `defer` (and later Swift's `defer` and actors). Their content waits until Go is bootstrapped. Until then they stay trivially held markers.
+- The core defects the bootstrap found are filed as issues:
+  - #1091: the bootstrap template (`base.ts`, an `indent` option, the chain outside `--all`);
+  - #1092: Go's render-module `chan<-`;
+  - #1093: Java's display name;
+  - #1094: C#'s enrich fixpoint and template `PATTERN`.
