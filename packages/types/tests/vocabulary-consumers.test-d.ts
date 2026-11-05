@@ -15,15 +15,19 @@ import type {
 	Accessors,
 	BoundedQuantification,
 	Clause,
+	Comment,
 	Declaration,
+	Elisions,
 	Expression,
 	File,
 	GrammarContext,
 	Identifier,
 	OptionalMembers,
+	Pattern,
 	ScopedVisibility,
 	Statement,
-	Type
+	Type,
+	Unmapped
 } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
@@ -210,9 +214,11 @@ export function handlerException<G extends GrammarContext<G>>(c: Clause.Catch<G>
 	return c.exception;
 }
 
-// Roles read through the namespace map, which types each by its permissive fill.
+// Roles read through the namespace map, which types each by its permissive fill: a kind, or the text of a token the role
+// admits, told apart by `typeof`.
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
-	return f.name.$kind;
+	const name: GrammarContext<G>['identifier'] = f.name;
+	return typeof name === 'string' ? name : name.$kind;
 }
 
 // A level is whole: it holds the kinds a feature adds, for every context.
@@ -236,7 +242,31 @@ export const base = fn<Narrowed>({ $kind: 'identifier.super' });
 // @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
 export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
 
-// Typescript's `any` is the unchecked primitive, since `Any` names each namespace's union of its kinds, and the union holds it.
-export function unchecked<G extends GrammarContext<G>>(): Type.Primitive.Any<G> {
-	return { $kind: 'type.primitive.unchecked' };
+// Typescript's `any` is the unchecked primitive, a token typed as the text the grammar's text table gives it; `Any` names each
+// namespace's union of its kinds, and the union holds it.
+export function unchecked<G extends GrammarContext<G>>(any: G['texts']['type.primitive.unchecked']): Type.Primitive.Any<G> {
+	return any;
 }
+
+// A hole in a list literal or list pattern is null, and only a context composing elisions admits one.
+interface Elided extends GrammarContext<Elided>, Elisions {}
+export function elided(x: Elided['expression'], p: Elided['pattern']): readonly [Expression.Collection.List<Elided>, Pattern.List<Elided>] {
+	return [
+		{ $kind: 'expression.collection.list', elements: [x, null, x] },
+		{ $kind: 'pattern.list', elements: [p, null, p] }
+	];
+}
+export function unelided(x: Bare['expression']): Expression.Collection.List<Bare> {
+	// @ts-expect-error a context without elisions has no holes
+	return { $kind: 'expression.collection.list', elements: [x, null, x] };
+}
+
+// A context's unmapped table adds the unclaimed kinds its grammar reads in a member to that member, and a refinement
+// narrowing the member reads its parent's entry; a context without the table admits none.
+interface Unclaimed extends GrammarContext<Unclaimed> {
+	readonly unmapped: { readonly comment: { readonly content: Unmapped<'g:doc_text'> } };
+}
+export const unclaimedContent: Comment.Line<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
+export const unclaimedDocContent: Comment.Line.Doc.Inner<Unclaimed>['content'] = { $unmapped: 'g:doc_text' };
+// @ts-expect-error the bare context admits no unclaimed kind
+export const bareContent: Comment.Line<Bare>['content'] = { $unmapped: 'g:doc_text' };

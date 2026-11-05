@@ -39,6 +39,7 @@ export interface Split {
 	readonly owner: string;
 	readonly path: readonly SplitStep[];
 	readonly as: string;
+	readonly copies?: string;
 	readonly literal?: LiteralSplit;
 }
 
@@ -237,7 +238,8 @@ export interface SitedName {
 
 export function boundNameAt(
 	nameOf: (name: string) => string,
-	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = []
+	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = [],
+	lifts: ReadonlySet<string> = new Set()
 ): (name: string, scope: string | undefined, own?: string) => SitedName {
 	const sited = new Map<string, Map<string, Set<string>>>();
 	for (const { from, to, scope } of aliases) {
@@ -246,6 +248,7 @@ export function boundNameAt(
 		names.set(from, (names.get(from) ?? new Set()).add(to));
 	}
 	return (name, scope, own) => {
+		if (scope !== undefined && lifts.has(name)) return { name: nameOf(name), scope };
 		const names = [...((scope === undefined ? undefined : sited.get(scope)?.get(name)) ?? [])];
 		if (names.length > 1 && (own === undefined || !names.includes(own)))
 			throw new Error(`bindings: ${name} shows as ${names.join(' and ')} in ${scope}; a claim placed there must name one of them by its own path`);

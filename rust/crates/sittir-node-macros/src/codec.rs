@@ -70,22 +70,6 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
-/// The item type of a list whose items may each be absent: `X` of
-/// `Vec<Option<X>>` or `NonEmptyVec<Option<X>>`, encoded through
-/// `boundary::holes` or, in a frame, `codec::Holes`.
-fn absent_item(ty: &Type) -> Option<&Type> {
-    let Type::Path(path) = ty else { return None };
-    let list = path.path.segments.last()?;
-    if list.ident != "Vec" && list.ident != "NonEmptyVec" {
-        return None;
-    }
-    let syn::PathArguments::AngleBracketed(args) = &list.arguments else { return None };
-    match args.args.first() {
-        Some(syn::GenericArgument::Type(item)) => crate::expand::inner_of(item, "Option"),
-        _ => None,
-    }
-}
-
 pub(crate) fn is_kind_key(key: &LitStr) -> bool {
     key.value() == "$type"
 }
@@ -208,8 +192,6 @@ fn field_entry(field: &WireField<'_>, value: &TokenStream) -> syn::Result<TokenS
     let (napi, key) = (napi(), c_key(field.key)?);
     Ok(if is_option(field.ty) {
         quote!(::sittir_core::boundary::present(env, #key, #value)?)
-    } else if absent_item(field.ty).is_some() {
-        quote!(::core::option::Option::Some((#key, ::sittir_core::boundary::holes(env, ::std::vec::Vec::from(#value))?)))
     } else {
         quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #value)?)))
     })
@@ -392,11 +374,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
             #read_on
             frame.at = #at + 1;
         }));
-        let (written, value) = match absent_item(ty) {
-            Some(item) if !optional => (quote!(#codec::Holes<#item>), quote!(#codec::Holes(::std::vec::Vec::from(value)))),
-            _ => (quote!(#inner), quote!(value)),
-        };
-        encode_waits.push(quote!(#name(<#written as #codec::Codec<#w>>::EncodeWait)));
+        encode_waits.push(quote!(#name(<#inner as #codec::Codec<#w>>::EncodeWait)));
         encode_releases.push(quote!(__EncodeWait::#name(wait) => #codec::Dismantle::<#w>::dismantle(wait, out),));
         let write_on = quote! {
             match __begun? {
@@ -407,13 +385,13 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
                 }
             }
         };
-        let whole = quote!(entries[#slot] = ::core::option::Option::Some((#key, unsafe { <#written as #codec::Codec<#w>>::encode_whole(#value, env)? })));
+        let whole = quote!(entries[#slot] = ::core::option::Option::Some((#key, unsafe { <#inner as #codec::Codec<#w>>::encode_whole(value, env)? })));
         writes.push(if optional {
             quote!(#at => {
                 let value = #take;
                 frame.read = #at + 1;
                 if let ::core::option::Option::Some(value) = value {
-                    let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
+                    let __begun = unsafe { <#inner as #codec::Codec<#w>>::encode(value, env, above) };
                     #write_on
                 }
             })
@@ -421,7 +399,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
             quote!(#at => {
                 let value = #take;
                 frame.read = #at + 1;
-                let __begun = unsafe { <#written as #codec::Codec<#w>>::encode(#value, env, above) };
+                let __begun = unsafe { <#inner as #codec::Codec<#w>>::encode(value, env, above) };
                 #write_on
             })
         });
@@ -436,7 +414,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
             })
         });
         rewrites.push(quote!(__EncodeWait::#name(wait) => {
-            let __begun = unsafe { <#written as #codec::Codec<#w>>::encoded(env, wait, child, above) };
+            let __begun = unsafe { <#inner as #codec::Codec<#w>>::encoded(env, wait, child, above) };
             #write_on
             frame.at = #at + 1;
         }));

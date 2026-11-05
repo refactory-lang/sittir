@@ -1,4 +1,4 @@
-import { GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT } from '@sittir/codegen/grammars';
+import { GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT, PORTABLE_TYPE_TESTS } from '@sittir/codegen/grammars';
 
 export interface GrammarTemplateVars {
 	readonly name: string;
@@ -64,7 +64,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				extends: '../../tsconfig.json',
 				compilerOptions: { types: ['node'] },
 				include: ['src', 'tests'],
-				exclude: ['node_modules', 'dist']
+				exclude: ['node_modules', 'dist', PORTABLE_TYPE_TESTS]
 			})
 		},
 		{

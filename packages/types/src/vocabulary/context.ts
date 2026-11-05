@@ -1,8 +1,12 @@
 import type * as V from './index.ts';
+import type * as gate from './utils.ts';
+import type * as features from './features/index.ts';
 /**
- * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, and the
+ * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, the
  * slot table, each slot holding its permissive fill over `G`: roles and refs where its arms are kinds, `string` where
- * they are text. A grammar's context extends the map over itself and narrows each key to what the grammar realizes.
+ * they are text, plus the unclaimed kinds the grammar can read there, the text table, holding for each path a token
+ * may claim the texts it reads as, and the unmapped table, holding for each namespace member the unclaimed kinds the
+ * grammar can read there. A grammar's context extends the map over itself and narrows each key to what the grammar realizes.
  */
 export interface GrammarContext<G extends GrammarContext<G>> {
 	readonly argument: V.Argument.Any<G>;
@@ -19,20 +23,65 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 	readonly pattern: V.Pattern.Any<G>;
 	readonly statement: V.Statement.Any<G>;
 	readonly type: V.Type.Any<G>;
-	readonly slots: {
+	readonly texts: {
+		readonly 'clause.import.wildcard': string;
+		readonly 'element.macro.fragment': string;
+		readonly 'expression.call.import': string;
+		readonly 'expression.meta': string;
+		readonly 'expression.unit': string;
+		readonly identifier: string;
+		readonly 'identifier.receiver': string;
+		readonly 'identifier.super': string;
+		readonly 'modifier.visibility': string;
+		readonly 'modifier.visibility.private': string;
+		readonly 'modifier.visibility.protected': string;
+		readonly 'modifier.visibility.public': string;
+		readonly 'modifier.visibility.public.internal': string;
+		readonly 'pattern.struct.rest': string;
+		readonly 'pattern.wildcard': string;
+		readonly 'statement.break': string;
+		readonly 'statement.continue': string;
+		readonly 'statement.empty': string;
+		readonly 'type.existential': string;
+		readonly 'type.primitive': string;
+		readonly 'type.primitive.boolean': string;
+		readonly 'type.primitive.character': string;
+		readonly 'type.primitive.floating': string;
+		readonly 'type.primitive.floating.float32': string;
+		readonly 'type.primitive.floating.float64': string;
+		readonly 'type.primitive.integral': string;
+		readonly 'type.primitive.integral.int128': string;
+		readonly 'type.primitive.integral.int16': string;
+		readonly 'type.primitive.integral.int32': string;
+		readonly 'type.primitive.integral.int64': string;
+		readonly 'type.primitive.integral.int8': string;
+		readonly 'type.primitive.integral.size': string;
+		readonly 'type.primitive.never': string;
+		readonly 'type.primitive.object': string;
+		readonly 'type.primitive.string': string;
+		readonly 'type.primitive.symbol': string;
+		readonly 'type.primitive.unchecked': string;
+		readonly 'type.primitive.unknown': string;
+		readonly 'type.primitive.void': string;
+		readonly 'type.receiver': string;
+		readonly 'type.unit': string;
+	};
+	readonly slots: Seated<G, {
 		readonly argument: {
 			readonly value:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern'];
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'argument.named': {
 			readonly value:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern'];
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly attribute: {
 			readonly content:
@@ -281,7 +330,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.class': {
 			readonly bases:
-				| V.Argument.Named<G>
+				| G['argument']
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -833,7 +882,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call': {
 			readonly arguments:
-				| V.Argument.Named<G>
+				| G['argument']
 				| V.Declaration.Module<G>
 				| G['element']
 				| G['expression']
@@ -863,7 +912,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call.member': {
 			readonly arguments:
-				| V.Argument.Named<G>
+				| G['argument']
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
@@ -882,6 +931,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.call.qualified': {
 			readonly arguments:
+				| G['argument']
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -952,7 +1002,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['modifier']
 				| G['pattern']
 				| G['statement']
-				| V.Type.Primitive<G>;
+				| V.Type.Primitive<G>
+				| gate.In<G, features.Elisions, null>;
 		};
 		readonly 'expression.collection.list.repeat': {
 			readonly element:
@@ -1048,12 +1099,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'expression.instantiation': {
-			readonly expression:
+			readonly function:
 				| V.Declaration.Module<G>
+				| V.Expression.Member<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly function: V.Expression.Member<G> | G['identifier'];
 			readonly typeArguments: V.Element.TypeArgument<G> | G['identifier'] | G['type'];
 		};
 		readonly 'expression.interpolation': {
@@ -1313,7 +1364,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| V.Literal.Null.Undefined<G>
-				| G['pattern'];
+				| G['pattern']
+				| gate.In<G, features.Elisions, null>;
 		};
 		readonly 'pattern.map': {
 			readonly elements: unknown | V.Pattern.Rest<G>;
@@ -1754,7 +1806,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly left: G['identifier'] | G['type'];
 			readonly right: G['identifier'] | G['type'];
 		};
-	};
+	}>;
+	readonly unmapped: object;
 }
 
 /** A grammar kind a member admits that no binding claims yet; the name says which. */
@@ -1762,3 +1815,9 @@ export interface Unmapped<K extends string> {
 	readonly $unmapped: K;
 }
 
+/** The top-level namespace of path `P`. */
+export type NamespaceOf<P> = P extends `${infer Namespace}.${string}` ? Namespace : P;
+
+type UnmappedAt<G extends GrammarContext<G>, N, M> = N extends keyof G['unmapped'] ? (M extends keyof G['unmapped'][N] ? G['unmapped'][N][M] : never) : never;
+
+type Seated<G extends GrammarContext<G>, S> = { readonly [P in keyof S]: { readonly [M in keyof S[P]]: S[P][M] | UnmappedAt<G, NamespaceOf<P>, M> } };

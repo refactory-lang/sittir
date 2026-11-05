@@ -11,10 +11,36 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	const visibilities = [
+		['pub(super)', 'public.parent', undefined],
+		['pub(in super)', 'public.restricted', 'super'],
+		['pub(in super::a)', 'public.restricted', { $path: 'identifier.qualified', qualifier: 'super', name: 'a' }],
+		['pub(crate)', 'public.internal', undefined],
+		['pub(in crate)', 'public.restricted', 'crate'],
+		['pub(self)', 'private', undefined],
+		['pub(in self)', 'public.restricted', 'self'],
+		['pub', 'public', undefined]
+	] as const;
+	const holders = [
+		['declaration.function', (v: string) => `${v} fn f() {}`],
+		['declaration.field', (v: string) => `struct S {\n    ${v} a: u8,\n}`],
+		['statement.import', (v: string) => `${v} use a::b;`]
+	] as const;
+	it.each(holders.flatMap(([path, source]) => visibilities.map(([v, refinement, scope]) => [source(v), `${path}.${refinement}`, scope] as const)))(
+		'reads the visibility of %j as %s, and builds it back as written',
+		(source, path, scope) => {
+			const read = (runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[];
+			const holder = path.startsWith('declaration.field') ? ((read[0]!.body as readonly Read[])[0] as Read) : read[0]!;
+			expect(holder.$path).toBe(path);
+			expect(holder.scope).toEqual(scope);
+			expect(roundTrip(source)).toBe(`${source}\n`);
+		}
+	);
+
 	it('reads a function as its most specific path, the flags that hold, its name and one parameter structure', () => {
 		const fn = readFirst('pub async fn f(a: u8) {}');
 		expect(fn).toMatchObject({ $path: 'declaration.function.public', $flags: ['async'], name: 'f' });
-		expect(fn.parameters).toEqual([{ $path: 'declaration.parameter', name: 'a', type: rust.kinds.U8Keyword }]);
+		expect(fn.parameters).toEqual([{ $path: 'declaration.parameter', name: 'a', type: 'u8' }]);
 	});
 
 	it.each([
@@ -36,9 +62,17 @@ describe('the portable read', () => {
 	});
 
 	it('reads an empty list as an empty list, so its form builds back', () => {
-		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.struct', name: 'S', body: [] });
+		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.struct', name: 'S', body: [], typeParameters: [] });
 		expect(roundTrip('struct S {}')).toBe('struct S {}\n');
 		expect(roundTrip('f();')).toBe('f();\n');
+	});
+
+	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } });
+		const built = runtime.build(readFirst('fn f() {}')) as { readonly $type: number };
+		expect((runtime.read(built) as Read).parameters).toEqual([]);
+		expect(roundTrip('fn f() {}')).toBe('fn f() {}\n');
+		expect(readFirst('fn f(&self, a: u8) {}')).toMatchObject({ parameters: [{ $path: 'declaration.parameter', name: 'a' }], receiver: { $path: 'declaration.parameter.receiver' } });
 	});
 
 	it('reads a receiver and the parameters after it, and a scope through the containers its mount stands in for', () => {
@@ -93,5 +127,54 @@ describe('the portable read', () => {
 		expect(valueOf('let s = b"x";')).toMatchObject({ $path: 'literal.string.bytes' });
 		expect(valueOf('let s = c"x";')).toMatchObject({ $path: 'literal.string.c' });
 		for (const source of ['let s = "";', 'let s = "x\\n";', 'let s = b"x";', 'let s = c"x";']) expect(roundTrip(`fn f() {\n    ${source}\n}\n`)).toBe(`fn f() {\n    ${source}\n}\n`);
+	});
+
+	it('reads a call argument with attributes as an argument, one without as its expression, and builds both back', () => {
+		const call = readFirst('f(#[cfg(x)] a, b);').content as Read;
+		expect(call.arguments).toEqual([
+			{ $path: 'argument', attributes: [expect.objectContaining({ $path: 'attribute' })], value: 'a' },
+			'b'
+		]);
+		expect(roundTrip('f(#[cfg(x)] a, b);')).toBe('f(#[cfg(x)] a, b);\n');
+		expect(roundTrip('f(a, b);')).toBe('f(a, b);\n');
+	});
+
+	it('reads one extern as one value and builds it back, refuses to build a list of them, and keeps a function stating two whole', () => {
+		const fn = readFirst('extern "C" fn f() {}');
+		expect(fn.extern).toEqual({ $path: 'modifier.extern', abi: { $path: 'literal.string', elements: ['C'] } });
+		expect(roundTrip('extern "C" fn f() {}')).toBe('extern "C" fn f() {}\n');
+		expect(roundTrip('type F = extern "C" fn();')).toBe('type F = extern "C" fn();\n');
+		for (const extern of [[fn.extern, fn.extern], [fn.extern]])
+			expect(() => runtime.build({ ...fn, extern } as Read)).toThrow("declaration.function's extern holds one value, not a list");
+		const carries: unknown[] = [];
+		runtime.read(runtime.engine.parse('extern "C" extern "C" fn f() {}'), (_, carry) => carries.push(carry));
+		expect(carries).toEqual([{ reason: 'unread', slot: 'modifiers' }]);
+		expect(roundTrip('extern "C" extern "C" fn f() {}')).toBe('extern "C" extern "C" fn f() {}');
+	});
+
+	it.each([
+		['fn f<T: A + B>() {}', 'typeParameters', ['A', 'B']],
+		['fn f<T: A>() {}', 'typeParameters', ['A']],
+		['fn f() where T: A + B {}', 'whereClause', ['A', 'B']],
+		['trait T: A + B {}', 'extends', ['A', 'B']],
+		['trait T: A {}', 'extends', ['A']]
+	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, member, bounds) => {
+		const read = readFirst(source);
+		const listed = member === 'extends' ? read.extends : member === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
+		expect(listed).toEqual(bounds);
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it("reads an interpreter line as the file's shebang text, and builds it back", () => {
+		const source = '#!/usr/bin/env run-cargo-script\nfn main() {}\n';
+		expect(runtime.read(runtime.engine.parse(source))).toMatchObject({ $path: 'file', shebang: '/usr/bin/env run-cargo-script' });
+		expect(roundTrip(source)).toBe(source);
+	});
+
+	it('builds a trait impl through the clause its implemented trait sits in, and refuses a method call given no callee', () => {
+		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
+		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');
+		expect(roundTrip('fn g() { a.b.c(); }')).toBe('fn g() {\n    a.b.c();\n}\n');
+		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (members arguments)');
 	});
 });

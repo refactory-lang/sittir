@@ -5,4 +5,6 @@ export namespace Type {
 		readonly receiver?: V.Declaration.Parameter.Receiver<G>;
 		// t only
 	}
+	// claimed by t
+	export type Receiver<G extends GrammarContext<G>> = G['texts']['type.receiver'];
 }

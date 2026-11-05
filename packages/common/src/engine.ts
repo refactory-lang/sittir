@@ -25,6 +25,8 @@ import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
+export const ARENA_FEATURE_REFUSED = 'arena node storage needs an addon built with the `arena` feature';
+
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
@@ -355,6 +357,8 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
 	liveTreeCount(): number;
+	/** What this language's live trees hold natively and what their reports have told V8, in bytes. Diagnostics only. */
+	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
 } & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**
@@ -493,7 +497,7 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
 	const { readRecord, readRecordStub, readCell, chunk, renderRecord, coordinate } = engine;
 	if (readRecord === undefined || readRecordStub === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
-		throw new Error('arena node storage needs an addon built with the `arena` feature');
+		throw new Error(ARENA_FEATURE_REFUSED);
 	}
 	const chunks: ChunkWords[] = [];
 	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
@@ -570,16 +574,16 @@ export function createNativeEngine<
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
-	const { nodeStorage } = nodeStorageOf(options);
+	const nodeStorage = nodeStorageOf(options);
 	const cellFormat = nodeStorage === 'arena' ? cellFormatOf(status.native) : undefined;
 	if (nodeStorage === 'arena' && cellFormat === undefined) {
-		return { engine: null, reason: 'arena node storage needs an addon built with the `arena` feature' };
+		return { engine: null, reason: ARENA_FEATURE_REFUSED };
 	}
 
 	try {
 		const engine = nativeEngineOf(status.native, options?.options === undefined ? undefined : { options: options.options });
 		if (nodeStorage === 'arena') {
-			if (engine.externalBuffers === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+			if (engine.externalBuffers === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 			engine.externalBuffers();
 		}
 		const kindView: KindView = {
@@ -663,7 +667,7 @@ export function createNativeEngine<
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
 				const { renderBuilt, renderBuiltLeaf } = engine;
-				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 				const at = built.at;
 				if (at !== undefined) {
 					return createRenderHandle(() => {
@@ -684,7 +688,7 @@ export function createNativeEngine<
 					throw new Error('a record view renders through the tree it was read from, which is gone');
 				const renderRecord = engine.renderRecord;
 				if (renderRecord === undefined)
-					throw new Error('arena node storage needs an addon built with the `arena` feature');
+					throw new Error(ARENA_FEATURE_REFUSED);
 				return createRenderHandle(() => {
 					holdsTrees();
 					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
@@ -763,7 +767,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		builtWords === undefined ||
 		builtBytes === undefined
 	)
-		throw new Error('arena node storage needs an addon built with the `arena` feature');
+		throw new Error(ARENA_FEATURE_REFUSED);
 	return {
 		format,
 		owner: engine.handle,

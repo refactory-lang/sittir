@@ -28,12 +28,14 @@ import type {
 	DefaultArguments,
 	Destructuring,
 	DynamicScope,
+	Elisions,
 	Encapsulation,
 	Enumerations,
 	ErrorPropagation,
 	Exceptions,
 	ExecStatements,
 	ExplicitOverrides,
+	ExplicitReceivers,
 	ForeignFunctionInterface,
 	Generators,
 	HigherRankPolymorphism,
@@ -107,7 +109,8 @@ export interface JavaScriptFeatures
 		ConditionalExpressions,
 		OptionalChaining,
 		DynamicScope,
-		DebuggerStatements {}
+		DebuggerStatements,
+		Elisions {}
 
 /** Python's features, those it spells by content included: visibility, accessors and operators by naming convention. */
 export interface PythonFeatures
@@ -150,6 +153,7 @@ export interface RustFeatures
 	extends AsyncBlocks,
 		Coroutines,
 		Methods,
+		ExplicitReceivers,
 		Structs,
 		UntaggedUnions,
 		Interfaces,
@@ -184,6 +188,7 @@ export interface RustFeatures
 export interface TypeScriptFeatures
 	extends JavaScriptFeatures,
 		TypeAnnotations,
+		ExplicitReceivers,
 		NonNullAssertions,
 		OptionalMembers,
 		ReadonlyMembers,

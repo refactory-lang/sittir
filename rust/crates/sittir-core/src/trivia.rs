@@ -6,6 +6,7 @@
 //! entries are its line layout: an entry with no breaking layout entry
 //! between it and its owner shares the owner's line.
 
+use crate::heap::HeapBytes;
 use crate::layout_kinds::LayoutKinds;
 use crate::options::Side;
 use crate::render::{Render, RenderResult, RenderSink};
@@ -20,6 +21,16 @@ pub enum TriviaEntry<T> {
     Value(SlotValue<T>),
     #[cfg(feature = "arena")]
     Record(RecordEntry<T>),
+}
+
+impl<T: HeapBytes> HeapBytes for TriviaEntry<T> {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Value(value) => value.heap_bytes(),
+            #[cfg(feature = "arena")]
+            Self::Record(entry) => entry.heap_bytes(),
+        }
+    }
 }
 
 impl<T> TriviaEntry<T> {
@@ -56,6 +67,14 @@ pub struct BuiltEntry {
     pub at: crate::arena::Address,
 }
 
+#[cfg(feature = "arena")]
+impl HeapBytes for BuiltEntry {
+    fn heap_bytes(&self) -> usize {
+        let Self { kind: _, at: _ } = self;
+        0
+    }
+}
+
 /// A built record a side holds. Read from a store, it holds that store,
 /// which holds the record's own sides and reaches the arena that wrote it.
 #[cfg(feature = "arena")]
@@ -63,6 +82,16 @@ pub struct BuiltEntry {
 pub struct RecordEntry<T> {
     pub record: BuiltEntry,
     pub store: Option<crate::trivia_store::TriviaStore<T>>,
+}
+
+/// The store a record entry holds is a handle on its engine's store, whose
+/// rows are counted where they are written.
+#[cfg(feature = "arena")]
+impl<T> HeapBytes for RecordEntry<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { record, store: _ } = self;
+        record.heap_bytes()
+    }
 }
 
 impl<T: Render + 'static> Render for TriviaEntry<T> {
@@ -206,6 +235,13 @@ pub struct TriviaText {
     pub after: Option<String>,
 }
 
+impl HeapBytes for TriviaText {
+    fn heap_bytes(&self) -> usize {
+        let Self { kind: _, text, span, before, after } = self;
+        text.heap_bytes() + span.heap_bytes() + before.heap_bytes() + after.heap_bytes()
+    }
+}
+
 impl TriviaText {
     /// The entry of `kind` with `text` and nothing else: no place in a
     /// snapshot and no adjacency.
@@ -265,6 +301,13 @@ pub struct NodeTrivia<T> {
     pub leading: Option<Vec<TriviaEntry<T>>>,
     pub trailing: Option<Vec<TriviaEntry<T>>>,
     pub inner: Option<Vec<TriviaEntry<T>>>,
+}
+
+impl<T: HeapBytes> HeapBytes for NodeTrivia<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self { leading, trailing, inner } = self;
+        leading.heap_bytes() + trailing.heap_bytes() + inner.heap_bytes()
+    }
 }
 
 impl<T> Default for NodeTrivia<T> {
@@ -332,21 +375,21 @@ impl<T: FromTriviaText> FromTriviaText for Box<T> {
 }
 
 /// What a grammar's trivia type provides to frame a coordinate: its render,
-/// its prepare walk and, with the bindings, its wire decode.
+/// its prepare walk, its heap count and, with the bindings, its wire decode.
 #[cfg(not(feature = "napi-bindings"))]
-pub trait TriviaItem: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes {}
+pub trait TriviaItem: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes {}
 
 #[cfg(not(feature = "napi-bindings"))]
-impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes> TriviaItem for T {}
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes> TriviaItem for T {}
 
 #[cfg(feature = "napi-bindings")]
 pub trait TriviaItem:
-    Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames
+    Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames
 {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames>
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames>
     TriviaItem for T
 {
 }

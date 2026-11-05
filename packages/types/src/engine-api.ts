@@ -193,13 +193,11 @@ export interface Language<API extends LanguageAPI> {
 	): Promise<Engine<API, M>>;
 }
 
-/** The paired node backend: arena views with record construction, or objects for both parsed and built nodes (`EngineOptions.nodeStorage`). */
+/** An engine's node backend: record views of parsed nodes and records for built ones, or objects for both (`EngineOptions.nodeStorage`). */
 export type NodeStorage = 'arena' | 'object';
 
-/** How an engine's builders store a built node: as an immutable record in the engine's built arena, or as an object (`EngineOptions.nodeConstruction`). */
-export type NodeConstruction = 'record' | 'object';
-
-interface NodeStorageKeys {
+/** How an engine stores the nodes it reads and builds. */
+export interface NodeStorageOptions {
 	/**
 	 * The parsed and built node backend. `'arena'` (the default) reads parsed nodes as record views and builds immutable
 	 * records in the engine's arena. `'object'` reads and builds object nodes. Accessors, kinds and text use the language's
@@ -208,18 +206,7 @@ interface NodeStorageKeys {
 	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
 	 */
 	readonly nodeStorage?: NodeStorage;
-	/**
-	 * A legacy assertion of the selected backend's construction: `'record'` for arena storage and `'object'` for object
-	 * storage. A conflicting value is refused rather than selecting a hybrid backend.
-	 * @deprecated Select `nodeStorage` alone; it determines how both parsed and built nodes are represented.
-	 */
-	readonly nodeConstruction?: NodeConstruction;
 }
-
-/** An engine's paired backend. Arena storage builds records; object storage builds objects. Conflicting construction assertions do not compile. */
-export type NodeStorageOptions =
-	| (NodeStorageKeys & { readonly nodeStorage?: 'arena'; readonly nodeConstruction?: 'record' })
-	| (NodeStorageKeys & { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' });
 
 export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = { readonly options?: O } & NodeStorageOptions;
 

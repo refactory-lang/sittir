@@ -12,6 +12,7 @@
 //! node by its tree's id and its descendant index, re-resolved through a
 //! cursor on each access — no lifetime-erasure needed.
 
+use crate::heap::HeapBytes;
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate, QueryItem};
 use crate::read::SideEntry;
@@ -460,13 +461,19 @@ pub struct ParsedTree<G: EngineGrammar> {
     read_options: ResolvedOptions,
     /// Each record of the tree, by its node's index and the depth it was
     /// read to (`recorded`).
-    records: std::sync::Mutex<HashMap<(NodeIndex, crate::read::Depth), Record>>,
+    records: std::sync::Mutex<crate::heap::CountedMap<(NodeIndex, crate::read::Depth), Record>>,
     /// Each node's list slots, by its index, measured on first use
     /// (`node_slots`).
-    slots: std::sync::Mutex<HashMap<NodeIndex, Arc<NodeSlots>>>,
+    slots: std::sync::Mutex<crate::heap::CountedMap<NodeIndex, Arc<NodeSlots>>>,
     /// Each node's routed children, by its index, measured on first use
     /// (`slot_items`).
-    items: std::sync::Mutex<HashMap<NodeIndex, Arc<Option<SlotItems>>>>,
+    items: std::sync::Mutex<crate::heap::CountedMap<NodeIndex, Arc<Option<SlotItems>>>>,
+    /// The heap the values of `records`, `slots` and `items` hold, added as
+    /// each is inserted (`count_cached`).
+    cached: std::sync::atomic::AtomicUsize,
+    /// Whether a table the tree counts grew since the last `take_grown`;
+    /// its arena keeps its own.
+    grown: std::sync::atomic::AtomicBool,
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write set, in the store of the engine that parsed the tree.
@@ -489,6 +496,12 @@ impl<G: EngineGrammar> Drop for ParsedTree<G> {
 /// answers, or the error its read or render refused with.
 type Record = Arc<Result<crate::baseline::Baseline, String>>;
 
+/// What `mutex` holds, reached through sole access without a lock,
+/// whether or not a holder panicked.
+fn owned<T>(mutex: &mut std::sync::Mutex<T>) -> &mut T {
+    mutex.get_mut().unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
 /// What a read of a node by its index answers (`ParsedTree::read_node`):
 /// the node, or, when an `ERROR` holds it, that `ERROR`.
 #[derive(Debug, Clone, PartialEq)]
@@ -503,10 +516,10 @@ pub enum NodeRead<T> {
 #[derive(Debug, Default)]
 struct NodeSlots {
     layouts: Vec<crate::layout::SlotLayout>,
-    runs: HashMap<RunId, (usize, crate::list_slots::SlotSide)>,
+    runs: crate::heap::CountedMap<RunId, (usize, crate::list_slots::SlotSide)>,
     /// The separator before each item whose gap holds another than its
     /// slot's, by the item's index.
-    separators: HashMap<NodeIndex, KindId>,
+    separators: crate::heap::CountedMap<NodeIndex, KindId>,
 }
 
 /// A node's children as its read routes them (`read::Routed`), with each
@@ -514,7 +527,21 @@ struct NodeSlots {
 #[derive(Debug)]
 struct SlotItems {
     routed: crate::read::Routed,
-    at: HashMap<NodeIndex, usize>,
+    at: crate::heap::CountedMap<NodeIndex, usize>,
+}
+
+impl HeapBytes for NodeSlots {
+    fn heap_bytes(&self) -> usize {
+        let Self { layouts, runs, separators } = self;
+        layouts.heap_bytes() + runs.heap_bytes() + separators.heap_bytes()
+    }
+}
+
+impl HeapBytes for SlotItems {
+    fn heap_bytes(&self) -> usize {
+        let Self { routed, at } = self;
+        routed.heap_bytes() + at.heap_bytes()
+    }
 }
 
 /// Bits of a handle given over to the node index; the rest carry the tree id.
@@ -615,6 +642,95 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The grammar the tree was parsed with.
     pub fn grammar(&self) -> G {
         self.grammar
+    }
+
+    /// Whether a table the tree counts grew since the last call, and so
+    /// holds other than its last report (`native_bytes`). A new tree has
+    /// grown.
+    pub fn take_grown(&mut self) -> bool {
+        let own = std::mem::take(self.grown.get_mut());
+        #[cfg(feature = "arena")]
+        let own = self.arena.get_mut().is_some_and(|arena| owned(arena).take_grown()) | own;
+        own
+    }
+
+    /// Marks a table the tree counts grown (`take_grown`).
+    fn grew(&self) {
+        self.grown.store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    /// The bytes the tree holds natively: its own size and every table's
+    /// heap, each counted by its capacity. tree-sitter's tree is left out,
+    /// and so is a B-tree's node slack (`heap`).
+    ///
+    /// The count takes the tree mutably, so it reads every table without a
+    /// lock, and nothing can hold one of them while it counts. A count is
+    /// refused while anything borrows the tree:
+    ///
+    /// ```compile_fail,E0502
+    /// fn count<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::ParsedTree<G>) -> usize {
+    ///     let source = tree.source();
+    ///     let bytes = tree.native_bytes();
+    ///     source.len() + bytes
+    /// }
+    /// ```
+    #[must_use]
+    pub fn native_bytes(&mut self) -> usize {
+        let Self {
+            grammar: _,
+            tree: _,
+            source,
+            inferred,
+            level_width: _,
+            tree_id,
+            lines,
+            trivia,
+            read_options,
+            records,
+            slots,
+            items,
+            cached,
+            grown: _,
+            work: _,
+            written,
+            #[cfg(feature = "arena")]
+            arena,
+        } = self;
+        let tables = owned(records).allocation() + owned(slots).allocation() + owned(items).allocation();
+        #[cfg(feature = "arena")]
+        let arena = arena.get_mut().map_or(0, |arena| owned(arena).heap_bytes());
+        #[cfg(not(feature = "arena"))]
+        let arena = 0;
+        std::mem::size_of::<Self>()
+            + source.heap_bytes()
+            + inferred.heap_bytes()
+            + lines.get().map_or(0, HeapBytes::heap_bytes)
+            + trivia.get().map_or(0, HeapBytes::heap_bytes)
+            + read_options.heap_bytes()
+            + tables
+            + cached.load(std::sync::atomic::Ordering::Relaxed)
+            + written.tree_bytes(*tree_id)
+            + arena
+    }
+
+    /// What a walk of the read caches finds their values hold: the count
+    /// `count_cached` keeps.
+    #[cfg(test)]
+    fn cached_by_walk(&mut self) -> usize {
+        owned(&mut self.records).values().map(HeapBytes::heap_bytes).sum::<usize>()
+            + owned(&mut self.slots).values().map(HeapBytes::heap_bytes).sum::<usize>()
+            + owned(&mut self.items).values().map(HeapBytes::heap_bytes).sum::<usize>()
+    }
+
+    /// Adds the heap of `value`, inserted into a read cache, to the tree's
+    /// count, less what the value it replaced held, and marks the tree grown.
+    fn count_cached<V: HeapBytes>(&self, value: &V, replaced: Option<&V>) {
+        use std::sync::atomic::Ordering::Relaxed;
+        self.cached.fetch_add(value.heap_bytes(), Relaxed);
+        if let Some(replaced) = replaced {
+            self.cached.fetch_sub(replaced.heap_bytes(), Relaxed);
+        }
+        self.grew();
     }
 
     /// The tree's records, held while the guard lives, the arena made on the
@@ -748,7 +864,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The source's row starts (`LineTable`), built on first use.
     pub fn lines(&self) -> &crate::points::LineTable {
-        self.lines.get_or_init(|| crate::points::LineTable::new(&self.source))
+        self.lines.get_or_init(|| {
+            self.grew();
+            crate::points::LineTable::new(&self.source)
+        })
     }
 
     /// What a snapshot of the node at `index` measures with: from the byte
@@ -991,7 +1110,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let at = routed.children.iter().enumerate().map(|(at, child)| (child.index, at)).collect();
             SlotItems { routed, at }
         }));
-        self.items.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&items));
+        let replaced = self.items.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&items));
+        self.count_cached(&items, replaced.as_ref());
         items
     }
 
@@ -1130,7 +1250,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             measured.layouts.push(crate::layout::SlotLayout { slot: (*key).to_string(), before, after, separator, tokens: Vec::new() });
         }
         let measured = Arc::new(measured);
-        self.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&measured));
+        let replaced = self.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&measured));
+        self.count_cached(&measured, replaced.as_ref());
         measured
     }
 
@@ -1203,7 +1324,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let render = crate::prepare::RenderContext { options: &self.read_options, sources: &sides };
         let rendered = self.grammar.render_read(&self.tree, index, depth, &mut ctx, &render, &mut recorded);
         let record = Arc::new(rendered.map(|_| recorded));
-        records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
+        let replaced = records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
+        self.count_cached(&record, replaced.as_ref());
         record
     }
 
@@ -1338,7 +1460,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The tree's trivia table, assigned on first use.
     pub fn trivia_table(&self) -> &TriviaTable {
-        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width))
+        self.trivia.get_or_init(|| {
+            self.grew();
+            TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width)
+        })
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1449,17 +1574,23 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Replace `side` of the node at `index` with `entries`, holding the
-    /// built records among them (`TriviaStore::write_held_side`).
+    /// built records among them (`TriviaStore::write_held_side`), and mark
+    /// the tree grown: its rows count in its native bytes. The tree is
+    /// marked even when the write is refused, since a refused release comes
+    /// after the side is written.
     ///
     /// # Errors
     ///
     /// What holding or releasing a built record refuses.
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
-        self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries).map_err(|e| e.to_string())
+        let written = self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+        self.grew();
+        written.map_err(|e| e.to_string())
     }
 
-    /// Replace `side` of the node at `index` with `entries`.
+    /// Replace `side` of the node at `index` with `entries`, and mark the
+    /// tree grown: its rows count in its native bytes.
     ///
     /// # Errors
     ///
@@ -1467,6 +1598,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(not(feature = "arena"))]
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
         self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+        self.grew();
         Ok(())
     }
 
@@ -1692,9 +1824,11 @@ impl<G: EngineGrammar> Engine<G> {
             lines: std::sync::OnceLock::new(),
             trivia: std::sync::OnceLock::new(),
             read_options,
-            records: std::sync::Mutex::new(HashMap::new()),
-            slots: std::sync::Mutex::new(HashMap::new()),
-            items: std::sync::Mutex::new(HashMap::new()),
+            records: std::sync::Mutex::default(),
+            slots: std::sync::Mutex::default(),
+            items: std::sync::Mutex::default(),
+            cached: std::sync::atomic::AtomicUsize::new(0),
+            grown: std::sync::atomic::AtomicBool::new(true),
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
             #[cfg(feature = "arena")]
@@ -1977,69 +2111,102 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 }
 
-/// The engine's live trees as the render context's source table: a handle's
-/// tag names the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate::types::TreeId, ParsedTree<G>, H> {
+/// The live trees one call renders through, each tree a lookup hands out
+/// noted, so the call can report the trees it read (`ReadTrees::read`): a
+/// tree grows during a render only through a lookup of it.
+pub struct ReadTrees<'t, G: EngineGrammar, H = std::collections::hash_map::RandomState> {
+    trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>,
+    read: std::cell::RefCell<Vec<crate::types::TreeId>>,
+}
+
+impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
+    /// The live `trees`, none read yet.
+    #[must_use]
+    pub fn new(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>) -> Self {
+        Self { trees, read: std::cell::RefCell::default() }
+    }
+
+    /// The live tree `tree`, noted as read, or `None` when it is not live.
+    #[must_use]
+    pub fn get(&self, tree: crate::types::TreeId) -> Option<&'t ParsedTree<G>> {
+        let found = self.trees.get(&tree)?;
+        let mut read = self.read.borrow_mut();
+        if !read.contains(&tree) {
+            read.push(tree);
+        }
+        Some(found)
+    }
+
+    /// Each live tree a lookup handed out, once, in the order first read.
+    #[must_use]
+    pub fn read(self) -> Vec<crate::types::TreeId> {
+        self.read.into_inner()
+    }
+}
+
+/// The live trees as the render context's source table: a handle's tag names
+/// the tree, and the tree owns the source its spans index into.
+impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-        self.get(&tree_id)?.source_of(tree_id)
+        self.get(tree_id)?.source_of(tree_id)
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        self.get(&coord.tree)?.kind_of(coord)
+        self.get(coord.tree)?.kind_of(coord)
     }
 
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
-        self.get(&coord.tree).map_or_else(Vec::new, |tree| tree.line_starts_inside_tokens(coord))
+        self.get(coord.tree).map_or_else(Vec::new, |tree| tree.line_starts_inside_tokens(coord))
     }
 
     fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        self.get(&tree)?.last_list_child_kind(tree, span, kind)
+        self.get(tree)?.last_list_child_kind(tree, span, kind)
     }
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.get(&coord.tree)?.sides(coord)
+        self.get(coord.tree)?.sides(coord)
     }
 
     fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
-        self.get(&coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
+        self.get(coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
     }
 
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        self.get(&coord.tree).map_or_else(Vec::new, |tree| SourceTable::slot_layouts(tree, coord))
+        self.get(coord.tree).map_or_else(Vec::new, |tree| SourceTable::slot_layouts(tree, coord))
     }
 
     fn separator_before(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        SourceTable::separator_before(self.get(&coord.tree)?, coord)
+        SourceTable::separator_before(self.get(coord.tree)?, coord)
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
-        self.get(&coord.tree).map_or(coord.span, |tree| tree.framed_span(coord))
+        self.get(coord.tree).map_or(coord.span, |tree| tree.framed_span(coord))
     }
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
-        self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
+        self.get(coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
     }
 
     fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
-        self.get(&coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
+        self.get(coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
     }
 
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
-        self.get(&coord.tree)?.seat_through(coord, wrappers, seat)
+        self.get(coord.tree)?.seat_through(coord, wrappers, seat)
     }
 
     fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        SourceTable::read_ctx(self.get(&tree)?, tree)
+        SourceTable::read_ctx(self.get(tree)?, tree)
     }
 
     fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
-        if let Some(tree) = self.get(&coord.tree) {
+        if let Some(tree) = self.get(coord.tree) {
             tree.for_each_edge_level(coord, side, f);
         }
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
-        self.get(&coord.tree).map_or(0, |tree| tree.depth_move(coord))
+        self.get(coord.tree).map_or(0, |tree| tree.depth_move(coord))
     }
 }
 
@@ -2208,6 +2375,15 @@ mod tests {
             match self {
                 TestTrivia::Text(text) => w.text(&text.text),
                 TestTrivia::Newline => Ok(()),
+            }
+        }
+    }
+
+    impl HeapBytes for TestTrivia {
+        fn heap_bytes(&self) -> usize {
+            match self {
+                TestTrivia::Text(text) => text.heap_bytes(),
+                TestTrivia::Newline => 0,
             }
         }
     }
@@ -2628,6 +2804,33 @@ mod tests {
         assert!(second.edited_within(NodeIndex::ROOT, false));
     }
 
+    #[test]
+    fn a_tree_counts_what_its_read_caches_and_its_written_rows_hold() {
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
+        let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let id = tree.tree_id();
+        assert!(tree.take_grown(), "a new tree has grown");
+        assert!(!tree.take_grown(), "until its growth is taken");
+        let parsed = tree.native_bytes();
+        assert!(parsed >= std::mem::size_of::<ParsedTree<TestGrammar>>() + "fn f() {}\n".len(), "the tree and its source");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let _ = tree.slot_layouts(f);
+        assert!(tree.take_grown(), "a read that fills a cache marks its tree grown");
+        let read = tree.native_bytes();
+        assert!(read > parsed, "the read's caches add to the count");
+        assert_eq!(tree.cached.load(std::sync::atomic::Ordering::Relaxed), tree.cached_by_walk(), "the count kept at each insert is what a walk of the caches finds");
+        let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+        tree.write_trivia_side(f, TriviaSide::Leading, vec![note]).expect("a side write");
+        assert!(tree.take_grown(), "a write to a row marks its tree grown");
+        let row = std::mem::size_of::<((Place, TriviaSide), Vec<TriviaEntry<TestTrivia>>)>();
+        let entry = std::mem::size_of::<TriviaEntry<TestTrivia>>() + "// a note".len();
+        assert_eq!(tree.native_bytes(), read + row + entry, "the row and its entry");
+        tree.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
+        assert_eq!(tree.native_bytes(), read + row, "a write replaces what the row held");
+        drop(tree);
+        assert_eq!(engine.written.tree_bytes(id), 0, "a dropped tree's rows leave the count");
+    }
+
     #[cfg(feature = "arena")]
     #[test]
     fn a_tree_that_never_made_its_arena_answers_that_its_sides_held_a_built_record() {
@@ -2639,6 +2842,22 @@ mod tests {
         assert!(tree.release_sides(), "its side held a built record");
         assert!(!tree.made_arena(), "holding a record made no arena");
         assert!(!tree.release_sides(), "once released, none is left");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_side_write_refused_after_its_row_changed_still_marks_its_tree_grown() {
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
+        let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let place = Place::Row { tree: tree.tree_id(), row: NodeIndex::ROOT };
+        let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
+        tree.written().write_side(place, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        let _ = tree.take_grown();
+        let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+        assert!(tree.write_trivia_side(NodeIndex::ROOT, TriviaSide::Leading, vec![note]).is_err(), "the record the side named holds no count to release");
+        let written = tree.written().side(place, TriviaSide::Leading).expect("a written side");
+        assert!(matches!(written.as_slice(), [TriviaEntry::Value(_)]), "the new side was written before the release was refused");
+        assert!(tree.take_grown(), "so its tree grew");
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
@@ -2656,7 +2875,8 @@ mod tests {
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let leading = tree.trivia_side(f.index, TriviaSide::Leading);
         let trailing = tree.trivia_side(f.index, TriviaSide::Trailing);
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let sides = sources.sides(&f).expect("the function has sides");
         let sides = sides.as_any().downcast_ref::<crate::trivia::NodeTrivia<TestTrivia>>().expect("the grammar's trivia");
         assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
@@ -2666,7 +2886,7 @@ mod tests {
     fn a_coordinate_with_no_side_has_no_frame() {
         let (tree, _) = parsed("fn f() { a(); }\n");
         let a = coordinate(&tree, index_of_kind(&tree, "call_expression", 0));
-        assert!(table(tree).sides(&a).is_none());
+        assert!(ReadTrees::new(&table(tree)).sides(&a).is_none());
     }
 
     #[test]
@@ -2675,7 +2895,8 @@ mod tests {
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
         tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new()).expect("a side write");
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         assert!(sources.edited_within(&f));
         assert!(!sources.edited_within(&g));
     }
@@ -2684,7 +2905,8 @@ mod tests {
     fn the_tree_table_hands_out_a_tree_and_its_read_context() {
         let (tree, _) = parsed("fn f() {}\n");
         let id = tree.tree_id();
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let (tree, ctx) = sources.read_ctx(id).expect("the tree is live");
         assert_eq!(tree.root_node().kind(), "source_file");
         assert_eq!(ctx.text(&tree.root_node()), "fn f() {}\n");
@@ -2692,10 +2914,25 @@ mod tests {
     }
 
     #[test]
+    fn the_tree_table_notes_each_live_tree_a_lookup_hands_out_once() {
+        let (first, _) = parsed("fn f() {}\n");
+        let (second, _) = parsed("fn g() {}\n");
+        let (a, b) = (first.tree_id(), second.tree_id());
+        let trees = HashMap::from([(a, first), (b, second)]);
+        let sources = ReadTrees::new(&trees);
+        assert!(sources.read_ctx(TreeId(a.0.max(b.0) + 1)).is_none());
+        assert!(sources.read_ctx(b).is_some());
+        assert!(sources.source_of(a).is_some());
+        assert!(sources.source_of(b).is_some());
+        assert_eq!(sources.read(), vec![b, a], "each once, in the order first read, and none that is not live");
+    }
+
+    #[test]
     fn a_value_with_no_read_reads_no_coordinate() {
         let (tree, _) = parsed("fn f() {}\n");
         let id = tree.tree_id();
-        let sources = table(tree);
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
         let (tree, mut ctx) = sources.read_ctx(id).expect("the tree is live");
         assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &mut ctx, NodeIndex::ROOT).is_none());
     }

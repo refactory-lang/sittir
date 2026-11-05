@@ -17,9 +17,7 @@ export namespace Pattern {
 			readonly name: G['identifier'];
 			readonly pattern?: G['slots']['pattern.struct.field']['pattern'];
 		}
-		export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {
-			// claimed by r
-			readonly $kind: 'pattern.struct.rest';
-		}
+		// claimed by r
+		export type Rest<G extends GrammarContext<G>> = G['texts']['pattern.struct.rest'];
 	}
 }

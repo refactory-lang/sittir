@@ -104,6 +104,13 @@ pub struct Flanks {
     pub after: LayoutKinds,
 }
 
+impl crate::heap::HeapBytes for Flanks {
+    fn heap_bytes(&self) -> usize {
+        let Self { before: _, after: _ } = self;
+        0
+    }
+}
+
 impl Flanks {
     /// Whether neither flank is stamped.
     #[must_use]

@@ -9,6 +9,7 @@
 //! fact lives here: each one reaches the reader through a generated
 //! attribute.
 
+use crate::heap::HeapBytes;
 use crate::layout::NodeLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
 use crate::trivia::{NodeTrivia, TriviaEntry};
@@ -100,6 +101,14 @@ pub fn kind_named(language: &Language, name: &str, named: bool) -> KindId {
 pub enum Depth {
     Levels(NonZeroU32),
     All,
+}
+
+impl HeapBytes for Depth {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Levels(_) | Self::All => 0,
+        }
+    }
 }
 
 impl Depth {
@@ -639,6 +648,13 @@ pub struct Child {
     pub descendants: u32,
 }
 
+impl HeapBytes for Child {
+    fn heap_bytes(&self) -> usize {
+        let Self { index: _, grammar: _, display: _, field: _, named: _, trivia: _, start: _, end: _, descendants: _ } = self;
+        0
+    }
+}
+
 impl Child {
     /// The child the cursor is on, its index numbered from the cursor's
     /// root.
@@ -724,6 +740,14 @@ pub enum Route {
     Separator { slot: crate::types::SlotId, tagged: bool },
     /// A token the kind's own template writes: skipped.
     Layout,
+}
+
+impl HeapBytes for Route {
+    fn heap_bytes(&self) -> usize {
+        match self {
+            Self::Trivia | Self::Layout | Self::Slot { slot: _, scalar: _ } | Self::Separator { slot: _, tagged: _ } => 0,
+        }
+    }
 }
 
 /// Why a read failed. Each names the node's kind and its index.
@@ -886,6 +910,13 @@ pub struct Routed {
     pub children: Vec<Child>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
+}
+
+impl HeapBytes for Routed {
+    fn heap_bytes(&self) -> usize {
+        let Self { children, routes, keys } = self;
+        children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
+    }
 }
 
 /// The routes of the node at `index` read as `T` (`ReadNode::routes`).

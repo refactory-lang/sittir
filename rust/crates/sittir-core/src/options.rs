@@ -1,6 +1,7 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
+use crate::heap::HeapBytes;
 use crate::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 /// The seams a kind wraps around itself: the spacing site on each side, or
@@ -88,6 +89,22 @@ pub struct ResolvedOptions {
     pub separator_sites: &'static [Option<SiteId>],
 }
 
+impl HeapBytes for ResolvedOptions {
+    fn heap_bytes(&self) -> usize {
+        let Self { spacing, delimiter, indent, newline, edges, edge_rows, sites, kind_flags, seat_wrappers, separator_sites } = self;
+        spacing.heap_bytes()
+            + delimiter.heap_bytes()
+            + indent.heap_bytes()
+            + newline.heap_bytes()
+            + edges.heap_bytes()
+            + edge_rows.heap_bytes()
+            + sites.heap_bytes()
+            + kind_flags.heap_bytes()
+            + seat_wrappers.heap_bytes()
+            + separator_sites.heap_bytes()
+    }
+}
+
 /// How a wrapper's seat reaches the node it holds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SeatPath {
@@ -152,6 +169,13 @@ pub struct EdgeArm {
     pub strength: Option<crate::spacing::SeamStrength>,
 }
 
+impl HeapBytes for EdgeArm {
+    fn heap_bytes(&self) -> usize {
+        let Self { arm: _, strength: _ } = self;
+        0
+    }
+}
+
 impl From<crate::slot::SeamArm> for EdgeArm {
     fn from(seam: crate::slot::SeamArm) -> Self {
         EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
@@ -164,6 +188,13 @@ impl From<crate::slot::SeamArm> for EdgeArm {
 pub struct Edges {
     pub before: Option<EdgeArm>,
     pub after: Option<EdgeArm>,
+}
+
+impl HeapBytes for Edges {
+    fn heap_bytes(&self) -> usize {
+        let Self { before, after } = self;
+        before.heap_bytes() + after.heap_bytes()
+    }
 }
 
 impl Edges {
@@ -657,6 +688,13 @@ pub fn indent_unit(source: &str) -> Option<String> {
 pub struct InferredOptions {
     pub indent: Option<String>,
     pub edges: Vec<(SiteId, KindId)>,
+}
+
+impl HeapBytes for InferredOptions {
+    fn heap_bytes(&self) -> usize {
+        let Self { indent, edges } = self;
+        indent.heap_bytes() + edges.heap_bytes()
+    }
 }
 
 impl InferredOptions {

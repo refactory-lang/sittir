@@ -12,10 +12,6 @@ export const benchStorage: CommandModule = {
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
 			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
 			.option('--validation', 'Profile deep read, factory and IR render/parse validators under both paired backends')
-			.option(
-				'--construction <construction>',
-				'Deprecated: validation profiles pair object storage/builders with arena storage/record builders; only record is accepted'
-			)
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
@@ -28,12 +24,11 @@ export const benchStorage: CommandModule = {
 						limit?: string;
 						nativeDepth: string;
 						validation?: boolean;
-						construction?: string;
 						idleGate?: string;
 						output?: string;
 					}
 				) => {
-					const { benchStorage: run, parseConstruction } = await import('@sittir/tools');
+					const { benchStorage: run } = await import('@sittir/tools');
 					process.exitCode = await run({
 						grammars,
 						rounds: Number(opts.rounds),
@@ -42,7 +37,6 @@ export const benchStorage: CommandModule = {
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
 						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						validation: opts.validation,
-						construction: opts.construction === undefined ? undefined : parseConstruction(opts.construction),
 						idleGate: opts.idleGate,
 						output: opts.output
 					});

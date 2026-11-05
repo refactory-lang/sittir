@@ -9,7 +9,7 @@ export const records = {
 	ProgramNode: {
 		words: 7,
 		builtWords: 4,
-		hash_bang_line: { word: 2, width: 4, inline: 4, forms: 8, built: 2 },
+		shebang: { word: 2, width: 4, inline: 4, forms: 8, built: 2 },
 		statements: { word: 6, width: 1, run: 4, forms: 3, built: 3 }
 	},
 	HashBangLineNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
@@ -425,7 +425,7 @@ export const records = {
 	InstantiationExpressionNode: {
 		words: 11,
 		builtWords: 4,
-		expression: { word: 2, width: 4, forms: 3, built: 2 },
+		function: { word: 2, width: 4, forms: 3, built: 2 },
 		type_arguments: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
 	},
 	ImportRequireClauseNode: {

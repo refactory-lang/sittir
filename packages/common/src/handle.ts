@@ -25,6 +25,12 @@ export interface LeafHandle {
 
 export type LeafMaker = (tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined) => object;
 
+export const RECEIVER: unique symbol = Symbol('receiver');
+
+export interface Received<T> {
+	readonly [RECEIVER]: T;
+}
+
 export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$entry', '$site']);
 
 export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?: number }): void {

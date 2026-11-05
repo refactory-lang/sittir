@@ -116,7 +116,7 @@ It carries `fileTypes`, the file types the grammar declares upstream (an empty l
 
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
-The options a language's native engine is created with: the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+The options a language's native engine is created with: the render options under `options`, and the engine's `nodeStorage`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 

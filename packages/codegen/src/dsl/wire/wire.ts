@@ -1,4 +1,4 @@
-import type { AliasSite, CopyEffect, Lead, RecordedBindingEffect } from '../verbs/effects.ts';
+import type { AliasSite, CopyEffect, Lead, RecordedAlias, RecordedBindingEffect } from '../verbs/effects.ts';
 import { copyNameOf, VerbRefusal } from '../verbs/copy.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
@@ -29,6 +29,8 @@ import {
 import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
+import { divergeSharedLifts } from './shared-lifts.ts';
+import { foldedDisplays } from './hidden-displays.ts';
 import { keywordRuleName, resolveKeywordNames, spelledKeywordRuleName } from './keyword-names.ts';
 import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
@@ -110,6 +112,7 @@ export interface WireContext {
 	readonly baseSupertypeNames: ReadonlySet<string>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 	readonly liftClaims: Map<string, Set<string>>;
+	readonly liftEditors: Map<string, Set<string>>;
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	activeEntryPath: string | null;
@@ -173,6 +176,7 @@ export const WIRE_ENTRY_ROLES = {
 	baseSupertypeNames: 'outside',
 	liftBodies: 'undone',
 	liftClaims: 'undone',
+	liftEditors: 'undone',
 	elementSupertypes: 'outside',
 	activePatchSites: 'scoped',
 	activeEntryPath: 'scoped',
@@ -316,6 +320,18 @@ export function wireRecordPatchSite(site: PatchSite): void {
 
 export function wireRecordBindingEffect(effect: RecordedBindingEffect): void {
 	currentContext?.bindingEffects.push(effect);
+}
+
+export function wireBindingEffectCount(): number {
+	return currentContext?.bindingEffects.length ?? 0;
+}
+
+export function wireRecordSiteAlias(since: number, alias: RecordedAlias): void {
+	const effects = currentContext?.bindingEffects;
+	if (effects === undefined) return;
+	const recorded = effects.slice(since);
+	const kept = recorded.filter((effect) => effect.kind !== 'alias' || effect.to !== alias.to);
+	if (kept.length < recorded.length) effects.splice(since, recorded.length, ...kept, alias);
 }
 
 export function wireInPathEdit(): boolean {
@@ -710,7 +726,10 @@ export function wireWithLiftScope<T>(liftName: string, fn: () => T): T {
 
 export function wireSetLiftBody(name: string, body: RuntimeRule): void {
 	recordLiftClaim(name);
-	currentContext?.liftBodies.set(name, body);
+	const context = currentContext;
+	if (!context) return;
+	context.liftBodies.set(name, body);
+	if (context.currentRuleKind !== null) (context.liftEditors.get(name) ?? context.liftEditors.set(name, new Set()).get(name)!).add(context.currentRuleKind);
 }
 
 function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, RuntimeRule>> {
@@ -791,6 +810,7 @@ export function withWireContext<T>(
 		baseSupertypeNames: baseSupertypeNamesOf(base as BaseArg | undefined),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		liftEditors: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
@@ -1025,6 +1045,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		baseSupertypeNames: baseSupertypeNamesOf(baseArg),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		liftEditors: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
@@ -1068,8 +1089,10 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	}
 	recordAliasTargets(outRules, context);
 	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
+		(bodies) => divergeSharedLifts(bodies, context.liftEditors, context.baseRuleBodies, context.symbols(), (name) => (outRules[name] = evaluatedRuleOf(name, context))),
 		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals),
-		(bodies) => resolveKeywordNames(bodies, context)
+		(bodies) => resolveKeywordNames(bodies, context),
+		(bodies) => refuseFoldedDisplays(bodies, context)
 	]);
 	returnEvaluatedBodies(outRules, context);
 
@@ -1098,6 +1121,16 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		configurable: true
 	});
 	return wired;
+}
+
+function refuseFoldedDisplays(bodies: ReadonlyMap<string, unknown>, context: WireContext): void {
+	for (const [rule, displays] of foldedDisplays(bodies))
+		recordRefusal(context, context.layer?.name ?? '', {
+			code: 'hidden-display-fold',
+			ownerKind: rule,
+			message: `'${rule}' is shown as ${displays.map((display) => `'${display}'`).join(' and ')}: a hidden rule takes one display, and a site that shows it as another shows a copy of it`,
+			details: { kind: rule, displays }
+		});
 }
 
 export function protectedWireRuleNames(context: WireContext): string[] {
@@ -1218,12 +1251,19 @@ export function wireRefuse(refusal: WireRefusal): void {
 	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
 }
 
-export function wireAliasTargetIssue(from: string, to: string): string | undefined {
+function aboveFirstLayer(context: WireContext | null): context is WireContext {
+	return context?.layer !== undefined && context.layer.depth !== 1;
+}
+
+export function wireAliasTargetIssue(to: string): string | undefined {
 	const context = currentContext;
-	if (context?.layer === undefined || context.layer.depth === 1) return undefined;
-	if (isParserHiddenName(from) !== isParserHiddenName(to)) return 'flips hiddenness';
-	if (Object.hasOwn(context.baseRuleBodies, to)) return 'the grammar already names the target';
-	return undefined;
+	if (!aboveFirstLayer(context)) return undefined;
+	return Object.hasOwn(context.baseRuleBodies, to) ? 'the grammar already names the target' : undefined;
+}
+
+export function wireSiteFlipIssue(before: string, after: string): string | undefined {
+	if (!aboveFirstLayer(currentContext)) return undefined;
+	return isParserHiddenName(before) !== isParserHiddenName(after) ? 'flips hiddenness' : undefined;
 }
 
 export function wireQueueLead(entry: LeadPlaceholder): void {
@@ -1281,19 +1321,21 @@ export function namedSymbols(names: unknown): unknown[] {
 }
 
 function returnEvaluatedBodies(rules: Record<string, RuleFn>, context: WireContext): void {
-	for (const name of Object.keys(rules)) {
-		rules[name] = function evaluatedRule(_$, previous) {
-			if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
-				throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
-			}
-			if (context.evaluatedBodies === undefined) {
-				throw new Error(
-					`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
-				);
-			}
-			return context.evaluatedBodies.get(name);
-		};
-	}
+	for (const name of Object.keys(rules)) rules[name] = evaluatedRuleOf(name, context);
+}
+
+function evaluatedRuleOf(name: string, context: WireContext): RuleFn {
+	return function evaluatedRule(_$, previous) {
+		if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
+			throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
+		}
+		if (context.evaluatedBodies === undefined) {
+			throw new Error(
+				`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
+			);
+		}
+		return context.evaluatedBodies.get(name);
+	};
 }
 
 function renamingCallback<F extends (...args: never[]) => unknown>(

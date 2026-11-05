@@ -49,7 +49,7 @@ describe('a layout run carries its excess indentation as depth members', () => {
 		const args = call.arguments();
 		if (!ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b] = args.elements();
-		if (a === undefined || b === undefined) throw new Error('expected two arguments');
+		if (a == null || b == null) throw new Error('expected two arguments');
 		const body = fn.body();
 		const edited = root.$with.statements(
 			statement.$with.expression(call.$with.arguments(args.$with.elements(a))),

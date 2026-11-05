@@ -85,6 +85,21 @@ describe('the live tree table of a language', () => {
 	}, 60_000);
 });
 
+describe('the native memory the live trees report to V8', () => {
+	it('is what the trees hold while they are read, rendered and edited, and is given back by every release', () => {
+		// A collection can only be forced under `--expose-gc`, so the case runs
+		// in a child process that reports both storages.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/tree-memory-balance.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		const balanced = { grew: true, agrees: true, disposeTree: true, engineDispose: true, back: true };
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ object: balanced, record: balanced, final: { trees: 0, counted: 0, reported: 0 } });
+	}, 60_000);
+});
+
 describe('rendering parts parsed by other engines of the language', () => {
 	type Named = { name(): never; $with: { name(value: unknown): never }; $render(): string };
 	const itemOf = (engine: { parse(source: string): { statements(): readonly unknown[] } }, source: string) =>

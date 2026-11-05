@@ -161,7 +161,7 @@ impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for Vec<T> {
 
 impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for NonEmptyVec<T> {
     fn dismantle(self, out: &mut Vec<W::Whole>) {
-        Vec::from(self).dismantle(out);
+        self.into_vec().dismantle(out);
     }
 }
 
@@ -195,17 +195,6 @@ impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for std::vec::IntoIter<T> {
         for item in self {
             item.dismantle(out);
         }
-    }
-}
-
-/// A list whose items may each be absent, encoded as a JavaScript array
-/// whose absent items are `undefined` (`boundary::holes`); it decodes as the
-/// `Vec` it wraps.
-pub struct Holes<T>(pub Vec<Option<T>>);
-
-impl<W: Nodes, T: Dismantle<W>> Dismantle<W> for Holes<T> {
-    fn dismantle(self, out: &mut Vec<W::Whole>) {
-        self.0.dismantle(out);
     }
 }
 
@@ -423,7 +412,7 @@ pub use wire::*;
 
 #[cfg(feature = "napi-bindings")]
 mod wire {
-    use super::{release, Dismantle, Holes, Nodes};
+    use super::{release, Dismantle, Nodes};
     use crate::non_empty::NonEmptyVec;
     use crate::slot::SlotValue;
     use ::napi::sys::{napi_env, napi_value};
@@ -945,7 +934,7 @@ mod wire {
         }
         unsafe fn encode(self, env: napi_env, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             // SAFETY: this fn requires a live `env`.
-            unsafe { Vec::from(self).encode(env, above) }
+            unsafe { self.into_vec().encode(env, above) }
         }
         unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
             // SAFETY: this fn's caller keeps `wait` live in `env`.
@@ -953,7 +942,7 @@ mod wire {
         }
         unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
             // SAFETY: this fn requires a live `env`.
-            unsafe { Vec::from(self).encode_whole(env) }
+            unsafe { self.into_vec().encode_whole(env) }
         }
     }
 
@@ -999,122 +988,5 @@ mod wire {
                 Self::Coord(coord) => unsafe { crate::slot::coordinate_to_napi(env, &coord) },
             }
         }
-    }
-
-    impl<W: Frames, T: Codec<W>> Codec<W> for Holes<T> {
-        type DecodeWait = ListDecoding<Option<T>, T::DecodeWait>;
-        type EncodeWait = HoleEncoding<T, T::EncodeWait>;
-        unsafe fn decode(env: napi_env, value: napi_value, above: &mut Option<W::DecodeFrame>) -> Result<Begun<Self, Self::DecodeWait>> {
-            // SAFETY: this fn requires `value` to be live in `env`.
-            Ok(unsafe { Vec::<Option<T>>::decode(env, value, above)? }.map(Holes))
-        }
-        unsafe fn decoded(env: napi_env, wait: Self::DecodeWait, child: W::Whole, above: &mut Option<W::DecodeFrame>) -> Result<Begun<Self, Self::DecodeWait>> {
-            // SAFETY: this fn's caller keeps `wait` live in `env`.
-            Ok(unsafe { Vec::<Option<T>>::decoded(env, wait, child, above)? }.map(Holes))
-        }
-        unsafe fn encode(self, env: napi_env, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
-            let len = self.0.len();
-            // SAFETY: this fn requires a live `env`.
-            let (array, items) = or_release::<W, _, _>(unsafe { new_array(env, len, "failed to create a list") }, self.0)?;
-            // SAFETY: `array` was just created in `env`.
-            unsafe { write_holes(env, array, items.into_iter(), 0, above) }
-        }
-        unsafe fn encoded(env: napi_env, wait: Self::EncodeWait, child: napi_value, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, Self::EncodeWait>> {
-            let HoleEncoding { array, rest, index, wait } = wait;
-            // SAFETY: this fn's caller keeps `wait` live in `env`.
-            let (begun, rest) = or_release::<W, _, _>(unsafe { T::encoded(env, wait, child, above) }, rest)?;
-            match begun {
-                Begun::Whole(value) => {
-                    // SAFETY: `array` and `value` were created in `env`.
-                    let ((), rest) = or_release::<W, _, _>(unsafe { set_hole(env, array, index, value) }, rest)?;
-                    // SAFETY: as above.
-                    unsafe { write_holes(env, array, rest, index + 1, above) }
-                }
-                Begun::Waits(wait) => Ok(Begun::Waits(HoleEncoding { array, rest, index, wait })),
-            }
-        }
-        unsafe fn encode_whole(self, env: napi_env) -> Result<napi_value> {
-            // SAFETY: this fn requires a live `env`.
-            let array = unsafe { new_array(env, self.0.len(), "failed to create a list")? };
-            for (index, item) in (0..).zip(self.0) {
-                let value = match item {
-                    // SAFETY: as above.
-                    Some(item) => unsafe { item.encode_whole(env)? },
-                    // SAFETY: as above.
-                    None => unsafe { undefined(env)? },
-                };
-                // SAFETY: `array` and `value` were created in `env`.
-                unsafe { set_hole(env, array, index, value)? };
-            }
-            Ok(array)
-        }
-    }
-
-    /// A list with absent items partly encoded (`ListEncoding`).
-    pub struct HoleEncoding<T, P> {
-        array: napi_value,
-        rest: ::std::vec::IntoIter<Option<T>>,
-        index: u32,
-        wait: P,
-    }
-
-    impl<W: Nodes, T: Dismantle<W>, P: Dismantle<W>> Dismantle<W> for HoleEncoding<T, P> {
-        fn dismantle(self, out: &mut Vec<W::Whole>) {
-            self.rest.dismantle(out);
-            self.wait.dismantle(out);
-        }
-    }
-
-    /// The items of `rest` written to `array` from `index` on, as
-    /// `boundary::holes` writes them.
-    unsafe fn write_holes<W: Frames, T: Codec<W>>(
-        env: napi_env,
-        array: napi_value,
-        mut rest: ::std::vec::IntoIter<Option<T>>,
-        mut index: u32,
-        above: &mut Option<W::EncodeFrame>,
-    ) -> Result<Begun<napi_value, HoleEncoding<T, T::EncodeWait>>> {
-        while let Some(item) = rest.next() {
-            let begun;
-            // SAFETY: this fn's caller passes a live `env`.
-            (begun, rest) = or_release::<W, _, _>(unsafe { hole(env, item, above) }, rest)?;
-            let value = match begun {
-                Begun::Whole(value) => value,
-                Begun::Waits(wait) => return Ok(Begun::Waits(HoleEncoding { array, rest, index, wait })),
-            };
-            // SAFETY: `array` and `value` were created in `env`.
-            ((), rest) = or_release::<W, _, _>(unsafe { set_hole(env, array, index, value) }, rest)?;
-            index += 1;
-        }
-        Ok(Begun::Whole(array))
-    }
-
-    /// `item` encoded, or `undefined` when it is absent.
-    unsafe fn hole<W: Frames, T: Codec<W>>(env: napi_env, item: Option<T>, above: &mut Option<W::EncodeFrame>) -> Result<Begun<napi_value, T::EncodeWait>> {
-        match item {
-            // SAFETY: this fn's caller passes a live `env`.
-            Some(item) => unsafe { item.encode(env, above) },
-            // SAFETY: as above.
-            None => unsafe { undefined(env) }.map(Begun::Whole),
-        }
-    }
-
-    /// `undefined`, an absent item of a list with holes.
-    unsafe fn undefined(env: napi_env) -> Result<napi_value> {
-        let mut undefined = ::std::ptr::null_mut();
-        ::napi::check_status!(
-            // SAFETY: this fn's caller passes a live `env`.
-            unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
-            "failed to get undefined"
-        )?;
-        Ok(undefined)
-    }
-
-    unsafe fn set_hole(env: napi_env, array: napi_value, index: u32, value: napi_value) -> Result<()> {
-        ::napi::check_status!(
-            // SAFETY: this fn's caller passes `array` and `value` live in `env`.
-            unsafe { ::napi::sys::napi_set_element(env, array, index, value) },
-            "failed to set a list item"
-        )
     }
 }

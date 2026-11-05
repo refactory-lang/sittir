@@ -2,6 +2,7 @@
 //! whose emptiness is refused where the list is made rather than where it is
 //! read.
 
+use crate::heap::HeapBytes;
 use std::ops::{Deref, DerefMut};
 
 /// A list that holds at least one item: a `repeat1` slot's storage.
@@ -18,6 +19,13 @@ impl std::fmt::Display for EmptyList {
     }
 }
 
+impl<T: HeapBytes> HeapBytes for NonEmptyVec<T> {
+    fn heap_bytes(&self) -> usize {
+        let Self(items) = self;
+        items.heap_bytes()
+    }
+}
+
 impl<T> TryFrom<Vec<T>> for NonEmptyVec<T> {
     type Error = EmptyList;
     fn try_from(items: Vec<T>) -> Result<Self, EmptyList> {
@@ -30,12 +38,6 @@ impl<T> NonEmptyVec<T> {
     #[must_use]
     pub fn into_vec(self) -> Vec<T> {
         self.0
-    }
-}
-
-impl<T> From<NonEmptyVec<T>> for Vec<T> {
-    fn from(items: NonEmptyVec<T>) -> Self {
-        items.0
     }
 }
 

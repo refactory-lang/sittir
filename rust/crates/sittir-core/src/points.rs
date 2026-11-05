@@ -4,6 +4,7 @@
 //! relative only on its base's own row. A tree-backed node holds bytes, and
 //! the line table turns them into points.
 
+use crate::heap::HeapBytes;
 use serde::{Deserialize, Serialize};
 
 /// A row and a byte column within it. Rows are counted by `\n` only.
@@ -45,6 +46,13 @@ impl Point {
 pub struct PointSpan {
     pub start: Point,
     pub end: Point,
+}
+
+impl HeapBytes for PointSpan {
+    fn heap_bytes(&self) -> usize {
+        let Self { start: _, end: _ } = self;
+        0
+    }
 }
 
 impl PointSpan {
@@ -116,6 +124,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
 pub struct LineTable {
     starts: Vec<u32>,
     len: u32,
+}
+
+impl HeapBytes for LineTable {
+    fn heap_bytes(&self) -> usize {
+        let Self { starts, len } = self;
+        starts.heap_bytes() + len.heap_bytes()
+    }
 }
 
 impl LineTable {

@@ -88,8 +88,13 @@ export function listStorage<T = unknown>(
 	holes = false
 ): T {
 	if (!Array.isArray(value)) return item(value) as T;
-	if (holes) return value.map((entry) => (entry === undefined || entry === null ? undefined : item(entry))) as T;
+	if (holes) return value.map((entry) => (entry === undefined || entry === null ? entry : item(entry))) as T;
 	return value.map(item).filter((stored) => stored !== undefined) as T;
+}
+
+export function admitHoles<T>(items: T, where: string): T {
+	if (Array.isArray(items) && items.includes(undefined)) throw new Error(`${where}: a hole is null, never undefined`);
+	return items;
 }
 
 export function kindIdStorage<T = unknown>(value: unknown): T {

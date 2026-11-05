@@ -1,5 +1,5 @@
 import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
 	export interface Comprehension<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
@@ -11,7 +11,7 @@ export namespace Clause {
 		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Comprehension<G>> {
 			// claimed by p
 			readonly $kind: 'clause.comprehension.for';
-			readonly trailingComma?: boolean;
+			readonly trailingComma?: Flag;
 			readonly left: G['slots']['clause.comprehension.for']['left'];
 			readonly rights: G['slots']['clause.comprehension.for']['rights'][];
 		}

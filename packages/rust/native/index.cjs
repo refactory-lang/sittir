@@ -915,6 +915,7 @@ module.exports.slotSeparator = nativeBinding.slotSeparator
 module.exports.snapshot = nativeBinding.snapshot
 module.exports.storedLayout = nativeBinding.storedLayout
 module.exports.text = nativeBinding.text
+module.exports.treeMemory = nativeBinding.treeMemory
 module.exports.triviaSide = nativeBinding.triviaSide
 module.exports.unitSides = nativeBinding.unitSides
 module.exports.writeBuiltLeafSide = nativeBinding.writeBuiltLeafSide

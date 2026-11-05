@@ -15,8 +15,6 @@ export namespace Expression {
 			}
 		}
 	}
-	export interface Unit<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by r
-		readonly $kind: 'expression.unit';
-	}
+	// claimed by r
+	export type Unit<G extends GrammarContext<G>> = G['texts']['expression.unit'];
 }

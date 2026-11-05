@@ -2755,7 +2755,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.argumentsElements(
 				...[
 					{
-						$type: TSKindId.AttributedArgument,
+						$type: TSKindId.Argument,
 						attributeItems: [],
 						expression: { $type: TSKindId.Identifier, text: 'test' } as never
 					} as never
@@ -2768,7 +2768,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.argumentsElements(
 				...[
 					{
-						$type: TSKindId.AttributedArgument,
+						$type: TSKindId.Argument,
 						attributeItems: [],
 						expression: { $type: TSKindId.Identifier, text: 'test' } as never
 					} as never
@@ -3934,6 +3934,34 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render does not throw on minimal config', () => {
 			const node = ir.extensionDeclarationBody();
 			expect(() => node.$render!()).not.toThrow();
+		});
+	});
+
+	describe('array_expression_list_elements', () => {
+		it('factory produces correct type', () => {
+			const node = ir.arrayExpressionListElements(
+				...[
+					{
+						$type: TSKindId.AttributedArgument,
+						attributeItems: [],
+						expression: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			);
+			expect(node.$type).toBe(TSKindId.ArrayExpressionListElements);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.arrayExpressionListElements(
+				...[
+					{
+						$type: TSKindId.AttributedArgument,
+						attributeItems: [],
+						expression: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			);
+			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
