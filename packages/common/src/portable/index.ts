@@ -42,8 +42,8 @@ const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, La
  * among the path's kinds and the node reads as the path or a path holding all of its facts. It answers false for a value no
  * engine stamped and for a node of a grammar without bindings.
  *
- * It answers false for a bare kind id, since a number names no language. A keyword leaf (rust's `u8`, typescript's `this`,
- * python's `True`) is a kind id, so it is read through a language's own guards instead ({@link portableGuardsOf}, the
+ * It answers false for a bare kind id or a token's text, since neither names a language. A keyword leaf (rust's `u8`, typescript's
+ * `this`, python's `pass`) reads as its text, so it is tested through a language's own guards instead ({@link portableGuardsOf}, the
  * descriptor's `is.portable`).
  *
  * Until placement-dependent readings are restated as kinds of their own, a node reads by its first entry that does not depend
@@ -53,17 +53,19 @@ const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, La
 export const portable = portableTrees(vocabularyPaths, guardOf);
 
 /**
- * A language's portable guards: the shared tree's paths, each guard reading a node of the language or a bare kind id of it.
+ * A language's portable guards: the shared tree's paths, each guard reading a node of the language, a bare kind id of it, or a
+ * token's text.
  *
  * A node of the language reads as the shared guard reads it; a node of another language, or one no engine of this language
  * stamped, answers false. A kind id reads through the language's rows, by its kind and its fixed text, so a keyword leaf
- * (rust's `u8`, typescript's `this`, python's `True`) classifies. The same view is returned for the same language object.
+ * (rust's `u8`, typescript's `this`, python's `pass`) classifies. A text holds where it is the fixed text of a kind that reads
+ * as the path, so `is.type.primitive.unchecked('any')` holds for typescript. The same view is returned for the same language object.
  *
  * The language's generated types admit only its own nodes and kind ids, but a value typed as a plain `number` still compiles.
  *
  * @param language - The descriptor the guards belong to; a copy of a descriptor gets its own view and finds the same rows.
  * @returns The guard tree, with the same keys as `portable.is`.
- * @throws When a guard is given a kind id before an engine of the language has loaded its rows.
+ * @throws When a guard is given a kind id or a text before an engine of the language has loaded its rows.
  */
 export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<VocabularyPath, LanguageGuard> {
 	let view = views.get(language);

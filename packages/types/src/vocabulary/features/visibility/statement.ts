@@ -17,6 +17,10 @@ export namespace Statement {
 					// claimed by r
 					readonly $kind: 'statement.import.package.public.internal';
 				}
+				export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $kind: 'statement.import.package.public.parent';
+				}
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $kind: 'statement.import.package.public.restricted';
@@ -35,6 +39,10 @@ export namespace Statement {
 			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
 				readonly $kind: 'statement.import.public.internal';
+			}
+			export interface Parent<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Public<G>, V.Modifier.Visibility.Public.Parent<G>> {
+				// claimed by r
+				readonly $kind: 'statement.import.public.parent';
 			}
 			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r

@@ -12,6 +12,7 @@ export interface PortableSurfaceConfig {
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly kindIdOf: (kind: string) => string;
 	readonly fixedText: readonly (readonly [kindId: string, text: string])[];
+	readonly literals: readonly string[];
 	readonly flags: readonly (readonly [kindId: string, plans: ReadonlyMap<string, QueryPlan | null>])[];
 	readonly flagTypes: readonly (readonly [typeName: string, flags: readonly string[]])[];
 	readonly slotFlags: readonly (readonly [kindId: number, slots: ReadonlyMap<string, ReadonlyMap<string, SlotFlag>>])[];
@@ -19,7 +20,7 @@ export interface PortableSurfaceConfig {
 }
 
 
-export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixedText, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
+export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixedText, literals, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
@@ -39,6 +40,11 @@ export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixe
 		return `{ path: ${q(entry.vocab)}, within: [${within.join(', ')}], test: ${JSON.stringify(readTest(entry))} }`;
 	};
 	const idsOf = (kinds: readonly string[]): string[] => [...new Set(kinds.map(kindIdOf))];
+	const textById = new Map(fixedText.filter(([id]) => !literals.includes(id)));
+	const textsOf = (kinds: readonly string[]): string => {
+		const texts = [...new Set(idsOf(kinds).flatMap((id) => textById.get(id) ?? []))].sort();
+		return texts.length > 0 ? texts.map(q).join(' | ') : 'never';
+	};
 	const recordsById = new Map<string, string[]>();
 	for (const [kind, read] of entries) {
 		const id = kindIdOf(kind);
@@ -57,12 +63,16 @@ export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixe
 		...nodes.map((n) => `\t${q(n.path)}: ${idsOf(n.kinds).join(' | ')};`),
 		'}',
 		'',
+		'export interface PortableTexts {',
+		...nodes.map((n) => `\t${q(n.path)}: ${textsOf(n.kinds)};`),
+		'}',
+		'',
 		'export interface PortableKindsAt {',
 		...nodes.map((n) => `\t${q(n.path)}: ${braces([`readonly $path: ${q(n.path)}`, ...members(n.path, 'PortableKindsAt')])};`),
 		'}',
 		'',
 		'export interface PortableIsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}], ${nodeType}, TSKindId> & ${braces(members(n.path, 'PortableIsAt'))};`),
+		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}], ${nodeType}, TSKindId, PortableTexts[${q(n.path)}]> & ${braces(members(n.path, 'PortableIsAt'))};`),
 		'}',
 		'',
 		`export interface PortableKinds ${braces(members('', 'PortableKindsAt'))}`,
@@ -77,6 +87,7 @@ export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixe
 		...[...recordsById].map(([id, records]) => `\t\t[${id}]: [${records.join(', ')}],`),
 		'\t},',
 		`\tfixedText: { ${fixedText.map(([id, text]) => `[${id}]: ${q(text)}`).join(', ')} },`,
+		`\tliterals: [${literals.join(', ')}],`,
 		'};',
 		'',
 		'export const queryFlags: QueryFlags = Object.freeze({',

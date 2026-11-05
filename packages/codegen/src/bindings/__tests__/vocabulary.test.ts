@@ -56,6 +56,29 @@ describe('readVocabulary', () => {
 		]);
 	});
 
+	it('reads a token alias as a kind: its path from the text table key, its parent from its namespace, its flags from Flagged', async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Type<G> { readonly $kind: 'type'; }",
+			'export namespace Type {',
+			"\texport type Primitive<G extends GrammarContext<G>> = Flagged<G['texts']['type.primitive'], 'unsigned' | 'wide'>;",
+			'\texport namespace Primitive {',
+			"\t\texport type Unchecked<G extends GrammarContext<G>> = G['texts']['type.primitive.unchecked'];",
+			'\t}',
+			"\texport type Other<G extends GrammarContext<G>> = G['slots']['type']['other'];",
+			'}'
+		);
+		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name, kind.parent])).toEqual([
+			['type', 'Type', undefined],
+			['type.primitive', 'Type.Primitive', 'type'],
+			['type.primitive.unchecked', 'Type.Primitive.Unchecked', 'type.primitive']
+		]);
+		expect([...vocabulary.members('type.primitive')].map(([name, facts]) => [name, facts.flag])).toEqual([
+			['unsigned', true],
+			['wide', true]
+		]);
+		expect(flagSegment(vocabulary, 'type.primitive.unchecked.unsigned')).toEqual({ parent: 'type.primitive.unchecked', flag: 'unsigned' });
+	});
+
 	it('refuses a name spelled with an escape, which a syntactic reader would read as a different name', async () => {
 		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly accessor?: Fla\\u0067;', '}')).rejects.toThrow(
 			/Fla\\u0067.*escape/
@@ -78,6 +101,21 @@ describe('readVocabulary', () => {
 
 	it('refuses a file that does not parse cleanly rather than reading what the parser recovered', async () => {
 		await expect(vocabularyIn("interface Declaration<G> { $kind: 'declaration'; abstract?: Flag; accessor?: Flag; }")).rejects.toThrow(/declaration\.ts: .*parse/is);
+	});
+
+	it('stamps the arity of a member from its type: a list where it is an array, either where a union holds an array arm, and one value otherwise', async () => {
+		const vocabulary = await vocabularyIn(
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly extern?: V.Modifier.Extern<G>;',
+			"\treadonly name: G['slots']['declaration']['name'];",
+			'\treadonly bounds?: V.Type.Any<G>[];',
+			'\treadonly extends?: readonly (V.Type<G> | V.Clause<G>)[];',
+			'\treadonly arguments: V.Expression<G> | V.Expression<G>[];',
+			'}'
+		);
+		const members = vocabulary.members('declaration');
+		expect(Object.fromEntries([...members].map(([name, member]) => [name, member.arity ?? 'one']))).toEqual({ extern: 'one', name: 'one', bounds: 'list', extends: 'list', arguments: 'either' });
 	});
 
 	it('reads a member named by a keyword like any other', async () => {
@@ -340,7 +378,7 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
 			unclaimed: []
 		};
-		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, shownAs: [] };
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
 		const model = new Map([['parameter', parameter]]);
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);

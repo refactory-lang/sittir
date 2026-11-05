@@ -13,6 +13,7 @@ export type NativeProfile = 'release' | 'gate' | 'dev';
 export interface NativeBuildStamp {
 	readonly profile: NativeProfile;
 	readonly binarySha256: string;
+	readonly unstripped?: { readonly path: string; readonly sha256: string };
 	readonly toolchain: string;
 	readonly config: Readonly<Record<string, string>>;
 	readonly inputs: Readonly<Record<string, string>>;
@@ -55,6 +56,19 @@ function rustToolchain(repoRoot: string): string {
 	const toolchain = execFileSync('rustc', ['-vV'], { cwd: repoRoot, encoding: 'utf8' }).trim();
 	toolchains.set(repoRoot, toolchain);
 	return toolchain;
+}
+
+export type LlvmTool = 'llvm-strip' | 'llvm-objdump';
+
+export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
+	const variable = name.toUpperCase().replace('-', '_');
+	const named = process.env[variable];
+	if (named) return named;
+	const host = /^host: (.+)$/m.exec(rustToolchain(repoRoot))?.[1];
+	const sysroot = execFileSync('rustc', ['--print', 'sysroot'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+	const tool = join(sysroot, 'lib', 'rustlib', host ?? '', 'bin', process.platform === 'win32' ? `${name}.exe` : name);
+	if (host !== undefined && existsSync(tool)) return tool;
+	throw new Error(`${name} is not in the Rust toolchain: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`);
 }
 
 function walk(path: string, out: string[]): void {
@@ -138,6 +152,10 @@ function stampPath(repoRoot: string, grammar: string, binary: string): string {
 	return join(repoRoot, STAMP_DIR, grammar, `${binary}.json`);
 }
 
+export function unstrippedBinaryPath(repoRoot: string, grammar: string, binary: string): string {
+	return join(repoRoot, STAMP_DIR, grammar, binary);
+}
+
 export function nativeBuildStamp(repoRoot: string, grammar: string, binary: string = hostBinaryName(grammar)): NativeBuildStamp | undefined {
 	const path = stampPath(repoRoot, grammar, binary);
 	return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as NativeBuildStamp) : undefined;
@@ -151,8 +169,13 @@ export function nativeBuildFingerprint(repoRoot: string, grammar: string, settin
 	};
 }
 
-export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint): void {
-	const stamp: NativeBuildStamp = { profile, binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)), ...built };
+export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint, unstripped?: string): void {
+	const stamp: NativeBuildStamp = {
+		profile,
+		binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)),
+		...(unstripped === undefined ? {} : { unstripped: { path: relative(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
+		...built
+	};
 	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');
 }
 

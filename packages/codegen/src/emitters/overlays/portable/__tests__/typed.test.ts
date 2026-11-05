@@ -41,7 +41,82 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain(`function ${name}$name(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(this[low].name());\n}`);
 	});
 
-	it('reports what it skipped with the reason', () => {
-		expect(typed.unemitted).toContainEqual({ kind: 'let_chain', vocab: 'clause.let.chain', reason: 'no typed surface' });
+	it('types a container whose slot holds only a list as that list, since an empty one reads as []', () => {
+		expect(typed.source).toContain('type VK_EnumVariantList = VK_EnumVariantListElements;');
+		expect(typed.source).toContain('type VK_Arguments = VK_ArgumentsElements;');
+		expect(typed.source).toContain('type VK_BlockCommentDocInner = VK_BlockCommentContent | undefined;');
+	});
+
+	it("reads a member through each of its routes in the route table's order, and an absent list as []", () => {
+		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
+		expect(typed.source).toContain(
+			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].parameters().elements(), TSKindId.ParametersElements)) ?? read(of(this[low].parameters().elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup()?.elements()) ?? [];\n}`
+		);
+	});
+
+	it('reads a list slot without a fallback, since its accessor always returns a list', () => {
+		expect(typed.source).not.toMatch(/read\(this\[low\]\.attributes\(\)\) \?\? \[\]/);
+		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
+	});
+
+	it("types an entry's node by what its claim tests present, and reads through that guarantee", () => {
+		const held = /type (ConstItemAsDeclarationConstantPublicRestricted\d+)\$Held = /.exec(typed.source)?.[1];
+		expect(typed.source).toContain(
+			`type ${held}$Held = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, { readonly content: [TSKindId.VisibilityModifierPubScopeInPath, {}]; }]; }]; }]; }>;`
+		);
+		expect(typed.source).toContain(`function ${held}(n: ${held}$Held, set = 0)`);
+		expect(typed.source).toContain(
+			`function ${held}$scope(this: Held<${held}$Held>) {\n\treturn read(of(of(this[low].visibilityModifier().content(), TSKindId.VisibilityModifierPub).visibilityModifierPubScope().content(), TSKindId.VisibilityModifierPubScopeInPath).path());`
+		);
+	});
+
+	it('writes no route through a kind the claim rules out: a restricted scope reads through the in-path form only', () => {
+		expect(typed.source).toMatch(
+			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted\1\$Held>\) \{\n\treturn read\(of\(this\[low\]\.visibilityModifierPubScope\(\)\.content\(\), TSKindId\.VisibilityModifierPubScopeInPath\)\.path\(\)\);\n\}/
+		);
+	});
+
+	it('reads text and a boolean as themselves, since only a kind id or a node reads as a view', () => {
+		expect(typed.source).toContain('\t\t\t\t: N extends string | boolean\n\t\t\t\t\t? N\n\t\t\t\t\t: unknown;');
+		expect(typed.source).toContain('return read(this[low].suffix());');
+	});
+
+	it('reads an absent value and a hole as themselves', () => {
+		expect(typed.source).toContain('export type ViewOf<N> = N extends undefined | null\n\t? N\n');
+	});
+
+	it('skips no read: every read entry has a typed surface and every member a path', () => {
+		expect(typed.unemitted).toEqual([]);
+	});
+
+	it("reads rust's implements through the positive clause only: a negative clause says the type does not implement the trait", () => {
+		const body = /function ImplItemBodyAsDeclarationExtensionConformance\d*\$implements\([^)]*\) \{([\s\S]*?)\n\}/.exec(typed.source)?.[1];
+		expect(body).toContain('TSKindId.ImplItemPositiveClause');
+		expect(body).not.toContain('TSKindId.ImplItemNegativeClause');
+	});
+
+	it('types a kind by the entries its node can read as: a receiver, never the parameter its own test refines', () => {
+		expect(typed.source).toContain('type VK_ReceiverParameterDeclaration = VocabViews["declaration.parameter.receiver"];');
+	});
+
+	it('fills the unmapped table with the unclaimed kinds each read seat holds, keyed by namespace and member', () => {
+		const table = /\treadonly unmapped: \{\n([\s\S]*?)\n\t\};/.exec(typed.source)?.[1];
+		expect(table?.split('\n')).toEqual([
+			'\t\treadonly "clause": {',
+			"\t\t\treadonly useWildcardGroup: V.Unmapped<'rust:use_wildcard_group'>;",
+			'\t\t};',
+			'\t\treadonly "declaration": {',
+			"\t\t\treadonly traitClause: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>;",
+			'\t\t};',
+			'\t\treadonly "statement": {',
+			"\t\t\treadonly body: V.Unmapped<'rust:match_block_arms'>;",
+			'\t\t};'
+		]);
+		expect(typed.source).toContain('type UnmappedKeys = Fit<"clause" | "declaration" | "statement", V.NamespaceOf<keyof Slots>>;');
+	});
+
+	it('reads a claim on a name the parser shows once, as the kind it shows', () => {
+		expect(typed.unemitted.filter((u) => u.kind === 'let_chain')).toEqual([]);
+		expect(typed.source.match(/function LetChainAsClauseLetChain\d*\(/g)).toHaveLength(1);
 	});
 });

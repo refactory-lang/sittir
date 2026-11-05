@@ -244,6 +244,10 @@ function listOf(holder: RecordPosition, word: number, built: number): { readonly
 	return { records: runs, ...decodeListCell(runs, words[start + at]!) };
 }
 
+function itemData(holder: RecordPosition, cell: RecordCell, word: number, item: number): unknown {
+	return cell.form === 'absent' ? null : cellData(holder, cell, word, item);
+}
+
 /** The items of the list slot whose parsed cell is at `word`, each item's cell `run` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, each as read data. */
 export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, hydrate?: (value: unknown) => unknown): readonly unknown[] {
 	const mapped = (value: unknown): unknown => hydrate === undefined ? value : hydrate(value);
@@ -256,10 +260,10 @@ export function recordSlots(holder: RecordPosition, word: number, width: number,
 	if (list.len === 0) return [];
 	if (arena !== undefined) {
 		const items = wordsAt(arena, list.run, list.len);
-		return Array.from({ length: list.len }, (_, n) => mapped(cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n)));
+		return Array.from({ length: list.len }, (_, n) => mapped(itemData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n)));
 	}
 	const items = wordsAt(list.records, list.run, list.len * run);
-	return Array.from({ length: list.len }, (_, n) => mapped(cellData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n)));
+	return Array.from({ length: list.len }, (_, n) => mapped(itemData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n)));
 }
 
 /** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */

@@ -5,11 +5,15 @@ import type {
 	ExpressionStatement,
 	ExportStatementDefaultFrom,
 	ExtendsTypeClause,
+	GenericType,
 	InterfaceDeclaration,
-	PropertySignature
+	LookupType,
+	PropertySignature,
+	TypeAliasDeclaration,
+	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, type Member, REFINED_BY } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, TEXTS } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -96,7 +100,56 @@ function collect(statements: readonly Statement[], scope: readonly string[], out
 			continue;
 		}
 		if (node.$type === K.InterfaceDeclaration) declare(node, scope, out, source);
+		if (node.$type === K.TypeAliasDeclaration) declareText(node, scope, out, source);
 	}
+}
+
+type AliasType =
+	| ReturnType<LookupType.Parsed['indexType']>
+	| ReturnType<TypeAliasDeclaration.Parsed['value']>
+	| ReturnType<NonNullable<ReturnType<GenericType.Parsed['typeArguments']>>['types']>[number]
+	| ReturnType<UnionType.Parsed['right']>;
+
+function stringIndex(index: AliasType | undefined, source: Source): string | undefined {
+	const { K, text } = source;
+	if (!isNode(index) || index.$type !== K.LiteralType) return undefined;
+	const literal = index.content();
+	return isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble) ? text(literal).slice(1, -1) : undefined;
+}
+
+function textsPath(type: AliasType | undefined, source: Source): string | undefined {
+	const { K } = source;
+	if (!isNode(type) || type.$type !== K.LookupType) return undefined;
+	const table = type.type();
+	if (!isNode(table) || table.$type !== K.LookupType || stringIndex(table.indexType(), source) !== TEXTS) return undefined;
+	return stringIndex(type.indexType(), source);
+}
+
+function flagNames(type: AliasType | undefined, source: Source): string[] {
+	const { K } = source;
+	if (isNode(type) && type.$type === K.UnionType) return [...flagNames(type.left(), source), ...flagNames(type.right(), source)];
+	const name = stringIndex(type, source);
+	if (name === undefined) throw new Error(`vocabulary: ${FLAGGED} names its flags as a union of string literals`);
+	return [name];
+}
+
+function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
+	const { K, text } = source;
+	const value = declaration.value();
+	const flagged = isNode(value) && value.$type === K.GenericType && text(value.name()) === FLAGGED ? value : undefined;
+	const [looked, named] = flagged === undefined ? [value, undefined] : (flagged.typeArguments()?.types() ?? []);
+	const path = textsPath(looked, source);
+	if (path === undefined) return;
+	const flags = flagged === undefined ? [] : flagNames(named, source).sort();
+	out.push({
+		qname: [...scope, text(declaration.name())].join('.'),
+		path,
+		parent: scope.length === 0 ? undefined : scope.join('.'),
+		refines: undefined,
+		heritage: [],
+		members: flags.map((name) => ({ name, optional: true, type: FLAG, flag: true, references: [], literals: [] })),
+		text: true
+	});
 }
 
 function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
@@ -117,9 +170,11 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			name,
 			optional: member.optional(),
 			type: annotation === undefined ? 'any' : text(annotation),
+			...arityOf(annotation, source),
 			flag: isNode(annotation) && annotation.$type === K.TypeIdentifier && text(annotation) === FLAG,
 			references: typed === undefined ? [] : references(typed, source),
-			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? [])
+			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? []),
+			...(isNode(annotation) && annotation.$type === K.ObjectType ? { keys: (annotation.members() ?? []).flatMap((key) => (key.$type === K.PropertySignature ? [propertyName(key, source)] : [])) } : {})
 		});
 	}
 	const heritage = declaration.extendsTypeClause();
@@ -130,8 +185,15 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		path,
 		parent,
 		refines,
+		heritage: heritageNames(heritage, source),
 		members
 	});
+}
+
+function propertyName(member: PropertySignature.Parsed, source: Source): string {
+	const { K, text } = source;
+	const name = member.name();
+	return typeof name !== 'number' && (name.$type === K.StringSingle || name.$type === K.StringDouble) ? text(name).slice(1, -1) : text(name);
 }
 
 function vocabularyReference(heritage: ExtendsTypeClause.Parsed, source: Source, within?: Span): string | undefined {
@@ -148,6 +210,24 @@ function vocabularyReference(heritage: ExtendsTypeClause.Parsed, source: Source,
 type PropertySignatureType = NonNullable<ReturnType<PropertySignature.Parsed['type']>>;
 
 type Annotation = ReturnType<PropertySignatureType['type']>;
+
+function arrayType(type: Annotation | undefined, source: Source): boolean {
+	const { K } = source;
+	if (!isNode(type)) return false;
+	if (type.$type === K.ArrayType) return true;
+	return type.$type === K.ReadonlyType && arrayType(type.type(), source);
+}
+
+function hasArrayArm(type: Annotation | undefined, source: Source): boolean {
+	const { K } = source;
+	if (!isNode(type) || type.$type !== K.UnionType) return arrayType(type, source);
+	const left = type.left();
+	return (left !== undefined && hasArrayArm(left, source)) || hasArrayArm(type.right(), source);
+}
+
+function arityOf(type: Annotation | undefined, source: Source): { readonly arity?: MemberArity } {
+	return arrayType(type, source) ? { arity: 'list' } : hasArrayArm(type, source) ? { arity: 'either' } : {};
+}
 
 function stringLiterals(type: Annotation, source: Source): string[] | undefined {
 	const { K, text } = source;

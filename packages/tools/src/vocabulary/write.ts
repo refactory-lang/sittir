@@ -1,4 +1,4 @@
-import { type Owned, type Plan, stubAlias } from './plan.ts';
+import { type Owned, type Plan, stubAlias, under } from './plan.ts';
 import { AUGMENTATION, FEATURES, type Feature, type VocabularySource, byCodepoint } from '@sittir/codegen/bindings';
 
 export const FEATURES_INDEX = `${FEATURES}/index.ts`;
@@ -60,6 +60,10 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 	};
 	let gated = false;
 	for (const kind of p.kinds.values()) {
+		if (kind.text) {
+			if (kind.feature !== undefined) add(kind.qname, [`type ${lastSegment(kind.qname)}<G extends GrammarContext<G>> = ${alias(kind.feature)}.${kind.qname}<G>;`]);
+			continue;
+		}
 		const members = [...(p.owned.get(kind.path) ?? new Map<string, Owned>())].sort(([a], [b]) => byCodepoint(a, b));
 		if (kind.feature === undefined && members.length === 0) continue;
 		gated ||= members.length > 0;
@@ -70,7 +74,13 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		);
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
-	for (const [ns, arms] of p.levels) add(`${ns}.Any`, [`type Any<G extends GrammarContext<G>> = ${arms.map((q) => `V.${q}<G>`).join(' | ')};`]);
+	const pathOf = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind.path]));
+	const mixed = source.texts.filter((key) => p.kinds.get(key)?.text !== true);
+	for (const [ns, arms] of p.levels) {
+		const path = pathOf.get(ns);
+		const texts = path === undefined ? [] : mixed.filter((key) => under(key, path)).map((key) => `G['texts']['${key}']`);
+		add(`${ns}.Any`, [`type Any<G extends GrammarContext<G>> = ${[...arms.map((q) => `V.${q}<G>`), ...texts].join(' | ')};`]);
+	}
 	return [
 		HEADER,
 		"import type { GrammarContext } from './context.ts';",

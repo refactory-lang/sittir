@@ -12,6 +12,7 @@ import {
 	RECEIVER,
 	describeValue,
 	restItems,
+	admitHoles,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -101,7 +102,7 @@ export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
 ): T.Alternation.Bound;
 export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
-	const _terms = children;
+	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'alternation', { terms: _terms });
 	const arena = builtArenaOf(handle);
@@ -116,7 +117,7 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 
 function buildAlternation$patch(source: object, ...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
-	const _terms = children;
+	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'alternation', { terms: _terms });
 	const arena = builtArenaOf(handle);

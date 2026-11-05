@@ -150,6 +150,7 @@ export default grammar(enrich(base), wire({
 		default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		keyword_pattern: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
+		except_clause: { 'group:/before': preference('tight'), 'group:/after': preference('space') },
 		splat_pattern_list: { '"*"/after': preference('tight') },
 		splat_pattern_dictionary: { '"**"/after': preference('tight') },
 		list_splat: { '"*"/after': preference('tight') },

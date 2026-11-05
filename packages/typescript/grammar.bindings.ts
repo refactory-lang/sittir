@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "2ab30fc69f6649a0af4b2d61af1a42327889b78e20473246b82ca0784f478ce1";
+export const hash = "44da801c65fe2b22082be485bbaffe1663fef5e36028cf485c6d99c1f6a7cc13";
 
 export const renames = {
 	program: "file",
@@ -144,6 +144,7 @@ export default grammar(
 			generic_type: { "0/0/1": alias("qualified_identifier") },
 			import_alias: { "3/0/1": alias("qualified_identifier") },
 			index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
+			instantiation_expression: { "0": field("function") },
 			method_definition_plain: { "5/0": field("generator") },
 			method_signature_plain: { "5/0": field("generator") },
 			nested_identifier: [{ "0": field("qualifier"), "2": field("name") }, { "0/0/1": alias("qualified_identifier") }],
@@ -152,6 +153,7 @@ export default grammar(
 			optional_parameter: { "1": field("optional") },
 			parenthesized_expression_typed: { "1/0": field("expression") },
 			primary_type: { "-17": alias("qualified_identifier") },
+			program: { "0/0": field("shebang") },
 			satisfies_expression: { "2": field("type") },
 			try_statement: { "2/0": field("handlers") },
 			tuple_type: { "1/0": field("tuple_type_members") },

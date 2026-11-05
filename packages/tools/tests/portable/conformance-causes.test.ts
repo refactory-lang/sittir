@@ -39,6 +39,21 @@ describe('portable conformance causes', () => {
 		).toBe('unmapped');
 	});
 
+	it('counts a vocabulary path read where the member admits another as kind, and a token read as its text as token text', () => {
+		expect(
+			causeOf(
+				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => VK_Module' is not assignable to type '() => ViewForm<Function<Ctx>>'.`,
+				`  Type '"declaration.module"' is not assignable to type '"expression.function"'.`
+			)
+		).toBe('kind');
+		expect(
+			causeOf(
+				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => VK_ThisType' is not assignable to type '() => ViewForm<Function<Ctx>>'.`,
+				`  Type '"this"' is not assignable to type 'ViewForm<Function<Ctx>>'.`
+			)
+		).toBe('token text');
+	});
+
 	it('counts a required member the literal lacks as a missing member', () => {
 		expect(
 			causeOf(

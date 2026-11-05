@@ -218,6 +218,22 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		expect(JSON.stringify(raw.rules.call)).not.toContain('callee');
 	}, 120_000);
 
+	it('keeps the other holders of a shared group lift on a copy of it when an edit changes the lift', async () => {
+		const shared = join(dir, 'shared-lift.mjs');
+		writeFileSync(
+			shared,
+			`export default grammar({ name: 'bindtest', rules: { source_file: $ => repeat(choice($.call, $.array)), call: $ => seq($.identifier, '(', optional(seq($._arg, repeat(seq(',', $._arg)))), ')'), array: $ => seq('[', optional(seq($._arg, repeat(seq(',', $._arg)))), ']'), _arg: $ => choice($.identifier, $.number), number: _ => /[0-9]+/, identifier: _ => /[a-z]+/ } });`
+		);
+		const unbound = await evaluateSittirGrammar(shared, 'bindtest');
+		const bound = await evaluateSittirGrammar(shared, 'bindtest', '', undefined, { bindings: "edits: { call: { '2/0/0': field('first') } }" });
+		expect(JSON.stringify(unbound.rules.array)).toContain('"name":"_call_optional1"');
+		expect(JSON.stringify(bound.rules.call)).toContain('"name":"_call_optional1"');
+		expect(JSON.stringify(bound.rules._call_optional1)).toContain('"name":"first"');
+		expect(JSON.stringify(bound.rules.array)).toContain('"name":"array_group1"');
+		expect(JSON.stringify(bound.rules.array_group1)).not.toContain('"name":"first"');
+		expect(JSON.stringify(bound.rules.array_group1).replaceAll(/"id":"[^"]*"/g, '')).toBe(JSON.stringify(unbound.rules._call_optional1).replaceAll(/"id":"[^"]*"/g, ''));
+	}, 120_000);
+
 	it('refuses an alias whose target its base already names, as a blocking diagnostic of the layer', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { call: { '0/0': alias('type') } }" });
 		expect(raw.layerDiagnostics).toContainEqual(
@@ -232,6 +248,47 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		const first = await evaluateSittirGrammar(baseModule, 'bindtest', flip);
 		expect(first.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
 		expect(JSON.stringify(first.rules.call)).toContain('"value":"_callee"');
+	}, 120_000);
+
+	it('lets an alias above the first layer change the display of a member a lower layer already shows, and refuses one that shows a member that sat bare', async () => {
+		const shown = "edits: { source_file: { '0/0': alias('item') } }";
+		const display = { bindings: "edits: { source_file: { '0/0': ($) => alias(copy('_item'), $.entry) } }" };
+		const redisplayed = await evaluateSittirGrammar(baseModule, 'bindtest', shown, undefined, display);
+		expect(redisplayed.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
+		expect(JSON.stringify(redisplayed.rules.source_file)).toContain('"value":"entry"');
+		const elided = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, display);
+		expect(elided.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'alias-target-invalid', ownerKind: 'source_file', message: expect.stringMatching(/alias '_item' → 'entry': flips hiddenness/) })
+		);
+	}, 120_000);
+
+	it('records an alias edit as the display its site showed before and the display after, not the source it copies', async () => {
+		const shown = "edits: { source_file: { '0/0': alias('item') } }";
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', shown, undefined, { bindings: "edits: { source_file: { '0/0': ($) => alias(copy('_item'), $.entry) } }" });
+		const aliases = (raw.bindingEffects ?? []).filter((effect) => effect.kind === 'alias');
+		expect(aliases).toContainEqual(expect.objectContaining({ from: 'item', to: 'entry' }));
+		expect(aliases).not.toContainEqual(expect.objectContaining({ from: '_item' }));
+	}, 120_000);
+
+	it('reads a literal shown under an alias in place of a member as a replacement, not an alias edit of the member', async () => {
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { source_file: { '0/0': ($) => alias('main', $.identifier) } }" });
+		expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
+		expect(JSON.stringify(raw.rules.source_file)).toContain('"value":"identifier"');
+	}, 120_000);
+
+	it('refuses a hidden rule shown under two displays, and passes a site that shows a copy of it instead', async () => {
+		const twoSites = join(dir, 'two-sites.mjs');
+		writeFileSync(
+			twoSites,
+			`export default grammar({ name: 'bindtest', rules: { source_file: $ => seq(repeat($._item), $.block), block: $ => seq('{', $._item, '}'), _item: $ => choice($.call, $.identifier), call: $ => seq($.identifier, '(', ')'), identifier: _ => /[a-z]+/ } });`
+		);
+		const shown = "edits: { source_file: { '0/0/0': alias('item') }, block: { 1: alias('item') } }";
+		const folded = await evaluateSittirGrammar(twoSites, 'bindtest', shown, undefined, { bindings: "edits: { block: { 1: alias('entry') } }" });
+		expect(folded.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'hidden-display-fold', canProceed: false, ownerKind: '_item', details: { kind: '_item', displays: ['entry', 'item'] } })
+		);
+		const copied = await evaluateSittirGrammar(twoSites, 'bindtest', shown, undefined, { bindings: "edits: { block: { 1: ($) => alias(copy('_item'), $.entry) } }" });
+		expect(copied.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'hidden-display-fold' }));
 	}, 120_000);
 
 	it('derives the base conflicts from the grammar without its grammar bindings', () => {

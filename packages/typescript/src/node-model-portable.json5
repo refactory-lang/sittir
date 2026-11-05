@@ -888,17 +888,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "abstract_method_signature_setter",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -948,66 +937,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "abstract_method_signature_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]
@@ -1429,6 +1363,31 @@
             {
               "owner": "call_signature",
               "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "call_signature",
+          "slot": "return_type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "content"
+            },
+            {
+              "owner": "call_signature",
+              "slot": "return_type"
             }
           ]
         }
@@ -2047,6 +2006,13 @@
     "binary_expression": {
       "vocab": "expression.binary",
       "read": [
+        {
+          "vocab": "expression.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
         {
           "vocab": "expression.binary.membership.in",
           "toplevel": true,
@@ -2667,13 +2633,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "expression.binary",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -3942,6 +3901,13 @@
           "test": []
         },
         {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "declaration.constructor.private",
           "toplevel": true,
           "within": [],
@@ -4045,13 +4011,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "declaration.constructor",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -4514,6 +4473,19 @@
           ]
         }
       ]
+    },
+    "default_keyword": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "default_type": {
       "vocab": "clause.default",
@@ -7283,6 +7255,13 @@
       "vocab": "statement.import",
       "read": [
         {
+          "vocab": "statement.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "statement.import.typeof",
           "toplevel": true,
           "within": [],
@@ -7306,13 +7285,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "statement.import",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -7543,6 +7515,17 @@
           ]
         },
         {
+          "name": "mappedTypeClause",
+          "route": "slot",
+          "slot": "mapped_type_clause",
+          "path": [
+            {
+              "owner": "index_signature_mapped_type_clause",
+              "slot": "mapped_type_clause"
+            }
+          ]
+        },
+        {
           "name": "type",
           "route": "slot",
           "slot": "type",
@@ -7637,13 +7620,13 @@
       ],
       "members": [
         {
-          "name": "expression",
+          "name": "function",
           "route": "slot",
-          "slot": "expression",
+          "slot": "function",
           "path": [
             {
               "owner": "instantiation_expression",
-              "slot": "expression"
+              "slot": "function"
             }
           ]
         },
@@ -7661,14 +7644,49 @@
       ]
     },
     "interface_declaration": {
-      "vocab": "declaration.interface",
+      "vocab": "declaration",
       "read": [
         {
           "vocab": "declaration.interface",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "319": 3
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "{",
+                "slots": {
+                  "497": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "319": 3
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "}",
+                "slots": {
+                  "497": 2
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -7695,17 +7713,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "interface_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "extends",
           "route": "nested",
           "via": [
@@ -7727,6 +7734,41 @@
             {
               "owner": "extends_type_clause",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "object_type_content",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "interface_body",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "object_type_content",
+          "slot": "item",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "interface_body",
+              "slot": "members"
+            },
+            {
+              "owner": "object_type_content",
+              "slot": "item"
             }
           ]
         }
@@ -8920,17 +8962,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_definition_setter",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -8991,66 +9022,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "method_definition_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]
@@ -9773,17 +9749,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_signature_setter",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -9833,66 +9798,11 @@
               "slot": "parameters"
             },
             {
-              "owner": "formal_parameters",
+              "owner": "_formal_parameters_set_accessor_signature",
               "slot": "elements"
             },
             {
-              "owner": "formal_parameters_elements",
-              "slot": "item"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "elements",
-              "kind": "formal_parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver_group",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "formal_parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "formal_parameters_elements",
-          "slot": "item",
-          "multiple": true,
-          "path": [
-            {
-              "owner": "method_signature_setter",
-              "slot": "parameters"
-            },
-            {
-              "owner": "formal_parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver",
-              "slot": "formal_parameters_elements_receiver_group"
-            },
-            {
-              "owner": "formal_parameters_elements_receiver_group",
-              "slot": "elements"
-            },
-            {
-              "owner": "formal_parameters_elements",
+              "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
             }
           ]
@@ -10268,6 +10178,17 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_bigint_binary",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -10290,6 +10211,17 @@
         }
       ],
       "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_bigint_decimal",
+              "slot": "content"
+            }
+          ]
+        },
         {
           "name": "content",
           "route": "slot",
@@ -10332,6 +10264,17 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_bigint_hex",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -10364,6 +10307,17 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_bigint_octal",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -10386,6 +10340,28 @@
         }
       ],
       "members": [
+        {
+          "name": "radixPrefix",
+          "route": "slot",
+          "slot": "radix_prefix",
+          "path": [
+            {
+              "owner": "number_binary",
+              "slot": "radix_prefix"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_binary",
+              "slot": "content"
+            }
+          ]
+        },
         {
           "name": "radixPrefix",
           "route": "slot",
@@ -10449,6 +10425,50 @@
         }
       ],
       "members": [
+        {
+          "name": "fraction",
+          "route": "slot",
+          "slot": "fraction",
+          "path": [
+            {
+              "owner": "number_float_leading_point",
+              "slot": "fraction"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "route": "slot",
+          "slot": "marker",
+          "path": [
+            {
+              "owner": "number_float_leading_point",
+              "slot": "marker"
+            }
+          ]
+        },
+        {
+          "name": "exponentSign",
+          "route": "slot",
+          "slot": "exponent_sign",
+          "path": [
+            {
+              "owner": "number_float_leading_point",
+              "slot": "exponent_sign"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "route": "slot",
+          "slot": "exponent",
+          "path": [
+            {
+              "owner": "number_float_leading_point",
+              "slot": "exponent"
+            }
+          ]
+        },
         {
           "name": "fraction",
           "route": "slot",
@@ -10568,6 +10588,61 @@
               "slot": "exponent"
             }
           ]
+        },
+        {
+          "name": "integer",
+          "route": "slot",
+          "slot": "integer",
+          "path": [
+            {
+              "owner": "number_float_point",
+              "slot": "integer"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "route": "slot",
+          "slot": "fraction",
+          "path": [
+            {
+              "owner": "number_float_point",
+              "slot": "fraction"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "route": "slot",
+          "slot": "marker",
+          "path": [
+            {
+              "owner": "number_float_point",
+              "slot": "marker"
+            }
+          ]
+        },
+        {
+          "name": "exponentSign",
+          "route": "slot",
+          "slot": "exponent_sign",
+          "path": [
+            {
+              "owner": "number_float_point",
+              "slot": "exponent_sign"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "route": "slot",
+          "slot": "exponent",
+          "path": [
+            {
+              "owner": "number_float_point",
+              "slot": "exponent"
+            }
+          ]
         }
       ]
     },
@@ -10590,6 +10665,50 @@
         }
       ],
       "members": [
+        {
+          "name": "integer",
+          "route": "slot",
+          "slot": "integer",
+          "path": [
+            {
+              "owner": "number_float_scientific",
+              "slot": "integer"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "route": "slot",
+          "slot": "marker",
+          "path": [
+            {
+              "owner": "number_float_scientific",
+              "slot": "marker"
+            }
+          ]
+        },
+        {
+          "name": "exponentSign",
+          "route": "slot",
+          "slot": "exponent_sign",
+          "path": [
+            {
+              "owner": "number_float_scientific",
+              "slot": "exponent_sign"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "route": "slot",
+          "slot": "exponent",
+          "path": [
+            {
+              "owner": "number_float_scientific",
+              "slot": "exponent"
+            }
+          ]
+        },
         {
           "name": "integer",
           "route": "slot",
@@ -10676,6 +10795,28 @@
               "slot": "content"
             }
           ]
+        },
+        {
+          "name": "radixPrefix",
+          "route": "slot",
+          "slot": "radix_prefix",
+          "path": [
+            {
+              "owner": "number_hex",
+              "slot": "radix_prefix"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_hex",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -10718,6 +10859,28 @@
         }
       ],
       "members": [
+        {
+          "name": "radixPrefix",
+          "route": "slot",
+          "slot": "radix_prefix",
+          "path": [
+            {
+              "owner": "number_octal",
+              "slot": "radix_prefix"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "number_octal",
+              "slot": "content"
+            }
+          ]
+        },
         {
           "name": "radixPrefix",
           "route": "slot",
@@ -11473,6 +11636,21 @@
         }
       ],
       "members": [
+        {
+          "name": "shebang",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "program",
+              "slot": "shebang"
+            },
+            {
+              "owner": "hash_bang_line",
+              "slot": "content"
+            }
+          ]
+        },
         {
           "name": "statements",
           "route": "slot",
@@ -12279,26 +12457,6 @@
       ],
       "members": []
     },
-    "qualified_identifier": {
-      "vocab": "identifier.qualified",
-      "read": [
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "identifier.qualified",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "readonly_type": {
       "vocab": "type.readonly",
       "read": [
@@ -12335,6 +12493,13 @@
     "receiver_parameter_declaration": {
       "vocab": "declaration.parameter",
       "read": [
+        {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
         {
           "vocab": "declaration.parameter.private",
           "toplevel": true,
@@ -12442,13 +12607,6 @@
         },
         {
           "vocab": "declaration.parameter",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.parameter.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13295,19 +13453,6 @@
         "list": true
       }
     },
-    "string_fragment": {
-      "vocab": "literal.string.text",
-      "read": [
-        {
-          "vocab": "literal.string.text",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "string_keyword": {
       "vocab": "type.primitive",
       "read": [
@@ -13730,6 +13875,19 @@
       "read": [
         {
           "vocab": "identifier.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "this_type": {
+      "vocab": "type.receiver",
+      "read": [
+        {
+          "vocab": "type.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -14208,6 +14366,304 @@
         }
       ]
     },
+    "type_query_call_expression": {
+      "vocab": "type",
+      "read": [
+        {
+          "vocab": "type.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  196
+                ],
+                "slots": {
+                  "355": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "355": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "283": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  423,
+                  424
+                ],
+                "self": true
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": "arguments",
+              "kind": "arguments",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "arguments",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_query_call_expression",
+              "slot": "arguments"
+            },
+            {
+              "owner": "arguments",
+              "slot": "elements",
+              "anchor": "only"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_call_expression_in_type_annotation": {
+      "vocab": "type",
+      "read": [
+        {
+          "vocab": "type.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  196
+                ],
+                "slots": {
+                  "335": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "335": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "283": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  423,
+                  424
+                ],
+                "self": true
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": "arguments",
+              "kind": "arguments",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "arguments",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_query_call_expression_in_type_annotation",
+              "slot": "arguments"
+            },
+            {
+              "owner": "arguments",
+              "slot": "elements",
+              "anchor": "only"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_instantiation_expression": {
+      "vocab": "expression",
+      "read": [
+        {
+          "vocab": "expression.instantiation",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1,
+                  353,
+                  354
+                ],
+                "slots": {
+                  "356": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "function",
+          "route": "slot",
+          "slot": "function",
+          "path": [
+            {
+              "owner": "type_query_instantiation_expression",
+              "slot": "function"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "slot",
+          "slot": "type_arguments",
+          "path": [
+            {
+              "owner": "type_query_instantiation_expression",
+              "slot": "type_arguments"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_member_expression": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "."
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ".",
+                "slots": {
+                  "353": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "name": "qualifier",
+          "route": "slot",
+          "slot": "object",
+          "path": [
+            {
+              "owner": "type_query_member_expression",
+              "slot": "object"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "property",
+          "path": [
+            {
+              "owner": "type_query_member_expression",
+              "slot": "property"
+            }
+          ]
+        }
+      ]
+    },
+    "type_query_member_expression_in_type_annotation": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "qualifier",
+          "route": "slot",
+          "slot": "object",
+          "path": [
+            {
+              "owner": "type_query_member_expression_in_type_annotation",
+              "slot": "object"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "property",
+          "path": [
+            {
+              "owner": "type_query_member_expression_in_type_annotation",
+              "slot": "property"
+            }
+          ]
+        }
+      ]
+    },
     "types": {
       "container": {
         "slot": "item",
@@ -14221,6 +14677,13 @@
     "unary_expression": {
       "vocab": "expression.unary",
       "read": [
+        {
+          "vocab": "expression.unary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
         {
           "vocab": "expression.unary.negation",
           "toplevel": true,
@@ -14395,13 +14858,6 @@
               }
             }
           ]
-        },
-        {
-          "vocab": "expression.unary",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -14987,19 +15443,19 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 7,
+        "kinds": 8,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 109,
-        "kinds": 146,
+        "paths": 111,
+        "kinds": 151,
         "refinements": 4
       },
       {
         "depth": 3,
         "paths": 108,
-        "kinds": 93,
+        "kinds": 92,
         "refinements": 82
       },
       {

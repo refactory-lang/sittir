@@ -318,7 +318,6 @@ export interface PortableIds {
 	'literal.string.raw.multiline': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
 	pattern:
-		| TSKindId.PatternList
 		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
 		| TSKindId.CasePatternList
@@ -330,10 +329,12 @@ export interface PortableIds {
 		| TSKindId.KeywordPattern
 		| TSKindId.ListPattern
 		| TSKindId.ListSplatPattern
+		| TSKindId.PatternList
 		| TSKindId.SplatPatternDictionary
 		| TSKindId.SplatPatternList
 		| TSKindId.TuplePattern
-		| TSKindId.UnionPattern;
+		| TSKindId.UnionPattern
+		| TSKindId.WildcardPattern;
 	'pattern.as': TSKindId.CaseAsPattern;
 	'pattern.complex': TSKindId.ComplexPattern;
 	'pattern.complex.add': TSKindId.ComplexPattern;
@@ -349,8 +350,9 @@ export interface PortableIds {
 	'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
 	'pattern.struct': TSKindId.ClassPattern | TSKindId.KeywordPattern;
 	'pattern.struct.field': TSKindId.KeywordPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
-	'pattern.tuple.bare': TSKindId.PatternList | TSKindId.CasePatternList;
+	'pattern.tuple': TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
+	'pattern.tuple.bare': TSKindId.CasePatternList | TSKindId.PatternList;
+	'pattern.wildcard': TSKindId.WildcardPattern;
 	statement:
 		| TSKindId.AssertStatement
 		| TSKindId.Block
@@ -407,6 +409,230 @@ export interface PortableIds {
 	'type.rest': TSKindId.SplatType;
 	'type.rest.map': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
+}
+
+export interface PortableTexts {
+	argument: never;
+	'argument.named': never;
+	attribute: never;
+	'attribute.decorator': never;
+	clause: '*';
+	'clause.case': never;
+	'clause.case.match': never;
+	'clause.catch': never;
+	'clause.comprehension': never;
+	'clause.comprehension.for': never;
+	'clause.comprehension.if': never;
+	'clause.else': never;
+	'clause.else_if': never;
+	'clause.finally': never;
+	'clause.import': '*';
+	'clause.import.alias': never;
+	'clause.import.relative': never;
+	'clause.import.relative.prefix': never;
+	'clause.import.wildcard': '*';
+	'clause.print': never;
+	'clause.print.chevron': never;
+	'clause.resource': never;
+	'clause.resource.item': never;
+	comment: never;
+	'comment.line': never;
+	declaration: never;
+	'declaration.class': never;
+	'declaration.constant': never;
+	'declaration.constructor': never;
+	'declaration.function': never;
+	'declaration.method': never;
+	'declaration.method.special': never;
+	'declaration.parameter': never;
+	'declaration.parameter.default': never;
+	'declaration.parameter.typed': never;
+	'declaration.parameter.typed_default': never;
+	'declaration.type_alias': never;
+	'declaration.type_parameter': never;
+	'declaration.variable': never;
+	element: never;
+	'element.comparator': never;
+	'element.comparator.comparison': never;
+	'element.comparator.comparison.equal': never;
+	'element.comparator.comparison.greater': never;
+	'element.comparator.comparison.greater_equal': never;
+	'element.comparator.comparison.less': never;
+	'element.comparator.comparison.less_equal': never;
+	'element.comparator.comparison.not_equal': never;
+	'element.comparator.comparison.not_equal.legacy': never;
+	'element.comparator.identity': never;
+	'element.comparator.identity.is': never;
+	'element.comparator.identity.is_not': never;
+	'element.comparator.membership': never;
+	'element.comparator.membership.in': never;
+	'element.comparator.membership.not_in': never;
+	'element.pair': never;
+	'element.spread': never;
+	'element.spread.map': never;
+	'element.spread.parenthesized': never;
+	expression: never;
+	'expression.assignment': never;
+	'expression.assignment.compound': never;
+	'expression.assignment.compound.add': never;
+	'expression.assignment.compound.bitwise_and': never;
+	'expression.assignment.compound.bitwise_or': never;
+	'expression.assignment.compound.bitwise_xor': never;
+	'expression.assignment.compound.divide': never;
+	'expression.assignment.compound.exponent': never;
+	'expression.assignment.compound.floor_divide': never;
+	'expression.assignment.compound.matrix_multiply': never;
+	'expression.assignment.compound.modulo': never;
+	'expression.assignment.compound.multiply': never;
+	'expression.assignment.compound.shift_left': never;
+	'expression.assignment.compound.shift_right': never;
+	'expression.assignment.compound.subtract': never;
+	'expression.await': never;
+	'expression.binary': never;
+	'expression.binary.arithmetic': never;
+	'expression.binary.arithmetic.add': never;
+	'expression.binary.arithmetic.divide': never;
+	'expression.binary.arithmetic.exponent': never;
+	'expression.binary.arithmetic.floor_divide': never;
+	'expression.binary.arithmetic.modulo': never;
+	'expression.binary.arithmetic.multiply': never;
+	'expression.binary.arithmetic.subtract': never;
+	'expression.binary.bitwise': never;
+	'expression.binary.bitwise.and': never;
+	'expression.binary.bitwise.or': never;
+	'expression.binary.bitwise.xor': never;
+	'expression.binary.comparison': never;
+	'expression.binary.comparison.chain': never;
+	'expression.binary.comparison.equal': never;
+	'expression.binary.comparison.greater': never;
+	'expression.binary.comparison.greater_equal': never;
+	'expression.binary.comparison.less': never;
+	'expression.binary.comparison.less_equal': never;
+	'expression.binary.comparison.not_equal': never;
+	'expression.binary.comparison.not_equal.legacy': never;
+	'expression.binary.identity': never;
+	'expression.binary.identity.is': never;
+	'expression.binary.identity.is_not': never;
+	'expression.binary.logical': never;
+	'expression.binary.logical.and': never;
+	'expression.binary.logical.or': never;
+	'expression.binary.matrix_multiply': never;
+	'expression.binary.membership': never;
+	'expression.binary.membership.in': never;
+	'expression.binary.membership.not_in': never;
+	'expression.binary.shift': never;
+	'expression.binary.shift.left': never;
+	'expression.binary.shift.right': never;
+	'expression.call': never;
+	'expression.call.member': never;
+	'expression.collection': never;
+	'expression.collection.list': never;
+	'expression.collection.map': never;
+	'expression.collection.set': never;
+	'expression.collection.tuple': never;
+	'expression.collection.tuple.bare': never;
+	'expression.comprehension': never;
+	'expression.comprehension.generator': never;
+	'expression.comprehension.list': never;
+	'expression.comprehension.map': never;
+	'expression.comprehension.set': never;
+	'expression.conditional': never;
+	'expression.interpolation': never;
+	'expression.interpolation.conversion': never;
+	'expression.interpolation.format': never;
+	'expression.lambda': never;
+	'expression.member': never;
+	'expression.parenthesized': never;
+	'expression.slice': never;
+	'expression.subscript': never;
+	'expression.unary': never;
+	'expression.unary.bitwise_not': never;
+	'expression.unary.negation': never;
+	'expression.unary.not': never;
+	'expression.unary.plus': never;
+	'expression.yield': never;
+	'expression.yield.delegate': never;
+	file: never;
+	identifier: never;
+	'identifier.qualified': never;
+	literal: never;
+	'literal.boolean': never;
+	'literal.boolean.false': never;
+	'literal.boolean.true': never;
+	'literal.ellipsis': never;
+	'literal.null': never;
+	'literal.number': never;
+	'literal.number.float': never;
+	'literal.number.float.leading_point': never;
+	'literal.number.float.scientific': never;
+	'literal.number.integer': never;
+	'literal.number.integer.big': never;
+	'literal.number.integer.binary': never;
+	'literal.number.integer.hex': never;
+	'literal.number.integer.imaginary': never;
+	'literal.number.integer.octal': never;
+	'literal.number.negative': never;
+	'literal.string': never;
+	'literal.string.bytes': never;
+	'literal.string.bytes.multiline': never;
+	'literal.string.bytes.raw': never;
+	'literal.string.bytes.raw.multiline': never;
+	'literal.string.concatenated': never;
+	'literal.string.escape': never;
+	'literal.string.interpolated': never;
+	'literal.string.interpolated.multiline': never;
+	'literal.string.interpolated.raw': never;
+	'literal.string.interpolated.raw.multiline': never;
+	'literal.string.multiline': never;
+	'literal.string.raw': never;
+	'literal.string.raw.multiline': never;
+	'literal.string.text': never;
+	pattern: '_';
+	'pattern.as': never;
+	'pattern.complex': never;
+	'pattern.complex.add': never;
+	'pattern.complex.subtract': never;
+	'pattern.list': never;
+	'pattern.map': never;
+	'pattern.or': never;
+	'pattern.rest': never;
+	'pattern.rest.map': never;
+	'pattern.struct': never;
+	'pattern.struct.field': never;
+	'pattern.tuple': never;
+	'pattern.tuple.bare': never;
+	'pattern.wildcard': '_';
+	statement: 'break' | 'continue' | 'pass';
+	'statement.assert': never;
+	'statement.block': never;
+	'statement.break': 'break';
+	'statement.continue': 'continue';
+	'statement.delete': never;
+	'statement.empty': 'pass';
+	'statement.exec': never;
+	'statement.expression': never;
+	'statement.global': never;
+	'statement.if': never;
+	'statement.import': never;
+	'statement.import.from': never;
+	'statement.import.future': never;
+	'statement.loop': never;
+	'statement.loop.for_each': never;
+	'statement.loop.while': never;
+	'statement.match': never;
+	'statement.nonlocal': never;
+	'statement.print': never;
+	'statement.print.chevron': never;
+	'statement.resource': never;
+	'statement.return': never;
+	'statement.throw': never;
+	'statement.try': never;
+	type: never;
+	'type.constrained': never;
+	'type.generic': never;
+	'type.rest': never;
+	'type.rest.map': never;
+	'type.union': never;
 }
 
 export interface PortableKindsAt {
@@ -842,6 +1068,7 @@ export interface PortableKindsAt {
 		readonly rest: PortableKindsAt['pattern.rest'];
 		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
+		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
 	'pattern.as': { readonly $path: 'pattern.as' };
 	'pattern.complex': {
@@ -860,6 +1087,7 @@ export interface PortableKindsAt {
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly bare: PortableKindsAt['pattern.tuple.bare'] };
 	'pattern.tuple.bare': { readonly $path: 'pattern.tuple.bare' };
+	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
 		readonly assert: PortableKindsAt['statement.assert'];
@@ -932,15 +1160,25 @@ export interface PortableKindsAt {
 }
 
 export interface PortableIsAt {
-	argument: PortableGuard<PortableIds['argument'], PythonNode, TSKindId> & {
+	argument: PortableGuard<PortableIds['argument'], PythonNode, TSKindId, PortableTexts['argument']> & {
 		readonly named: PortableIsAt['argument.named'];
 	};
-	'argument.named': PortableGuard<PortableIds['argument.named'], PythonNode, TSKindId> & {};
-	attribute: PortableGuard<PortableIds['attribute'], PythonNode, TSKindId> & {
+	'argument.named': PortableGuard<
+		PortableIds['argument.named'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['argument.named']
+	> & {};
+	attribute: PortableGuard<PortableIds['attribute'], PythonNode, TSKindId, PortableTexts['attribute']> & {
 		readonly decorator: PortableIsAt['attribute.decorator'];
 	};
-	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator'], PythonNode, TSKindId> & {};
-	clause: PortableGuard<PortableIds['clause'], PythonNode, TSKindId> & {
+	'attribute.decorator': PortableGuard<
+		PortableIds['attribute.decorator'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['attribute.decorator']
+	> & {};
+	clause: PortableGuard<PortableIds['clause'], PythonNode, TSKindId, PortableTexts['clause']> & {
 		readonly case: PortableIsAt['clause.case'];
 		readonly catch: PortableIsAt['clause.catch'];
 		readonly comprehension: PortableIsAt['clause.comprehension'];
@@ -951,48 +1189,102 @@ export interface PortableIsAt {
 		readonly print: PortableIsAt['clause.print'];
 		readonly resource: PortableIsAt['clause.resource'];
 	};
-	'clause.case': PortableGuard<PortableIds['clause.case'], PythonNode, TSKindId> & {
+	'clause.case': PortableGuard<PortableIds['clause.case'], PythonNode, TSKindId, PortableTexts['clause.case']> & {
 		readonly match: PortableIsAt['clause.case.match'];
 	};
-	'clause.case.match': PortableGuard<PortableIds['clause.case.match'], PythonNode, TSKindId> & {};
-	'clause.catch': PortableGuard<PortableIds['clause.catch'], PythonNode, TSKindId> & {};
-	'clause.comprehension': PortableGuard<PortableIds['clause.comprehension'], PythonNode, TSKindId> & {
-		readonly for: PortableIsAt['clause.comprehension.for'];
-		readonly if: PortableIsAt['clause.comprehension.if'];
-	};
-	'clause.comprehension.for': PortableGuard<PortableIds['clause.comprehension.for'], PythonNode, TSKindId> & {};
-	'clause.comprehension.if': PortableGuard<PortableIds['clause.comprehension.if'], PythonNode, TSKindId> & {};
-	'clause.else': PortableGuard<PortableIds['clause.else'], PythonNode, TSKindId> & {};
-	'clause.else_if': PortableGuard<PortableIds['clause.else_if'], PythonNode, TSKindId> & {};
-	'clause.finally': PortableGuard<PortableIds['clause.finally'], PythonNode, TSKindId> & {};
-	'clause.import': PortableGuard<PortableIds['clause.import'], PythonNode, TSKindId> & {
+	'clause.case.match': PortableGuard<
+		PortableIds['clause.case.match'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.case.match']
+	> & {};
+	'clause.catch': PortableGuard<PortableIds['clause.catch'], PythonNode, TSKindId, PortableTexts['clause.catch']> & {};
+	'clause.comprehension': PortableGuard<
+		PortableIds['clause.comprehension'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.comprehension']
+	> & { readonly for: PortableIsAt['clause.comprehension.for']; readonly if: PortableIsAt['clause.comprehension.if'] };
+	'clause.comprehension.for': PortableGuard<
+		PortableIds['clause.comprehension.for'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.comprehension.for']
+	> & {};
+	'clause.comprehension.if': PortableGuard<
+		PortableIds['clause.comprehension.if'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.comprehension.if']
+	> & {};
+	'clause.else': PortableGuard<PortableIds['clause.else'], PythonNode, TSKindId, PortableTexts['clause.else']> & {};
+	'clause.else_if': PortableGuard<
+		PortableIds['clause.else_if'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.else_if']
+	> & {};
+	'clause.finally': PortableGuard<
+		PortableIds['clause.finally'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.finally']
+	> & {};
+	'clause.import': PortableGuard<PortableIds['clause.import'], PythonNode, TSKindId, PortableTexts['clause.import']> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly relative: PortableIsAt['clause.import.relative'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias'], PythonNode, TSKindId> & {};
-	'clause.import.relative': PortableGuard<PortableIds['clause.import.relative'], PythonNode, TSKindId> & {
-		readonly prefix: PortableIsAt['clause.import.relative.prefix'];
-	};
+	'clause.import.alias': PortableGuard<
+		PortableIds['clause.import.alias'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.import.alias']
+	> & {};
+	'clause.import.relative': PortableGuard<
+		PortableIds['clause.import.relative'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.import.relative']
+	> & { readonly prefix: PortableIsAt['clause.import.relative.prefix'] };
 	'clause.import.relative.prefix': PortableGuard<
 		PortableIds['clause.import.relative.prefix'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['clause.import.relative.prefix']
 	> & {};
-	'clause.import.wildcard': PortableGuard<PortableIds['clause.import.wildcard'], PythonNode, TSKindId> & {};
-	'clause.print': PortableGuard<PortableIds['clause.print'], PythonNode, TSKindId> & {
+	'clause.import.wildcard': PortableGuard<
+		PortableIds['clause.import.wildcard'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.import.wildcard']
+	> & {};
+	'clause.print': PortableGuard<PortableIds['clause.print'], PythonNode, TSKindId, PortableTexts['clause.print']> & {
 		readonly chevron: PortableIsAt['clause.print.chevron'];
 	};
-	'clause.print.chevron': PortableGuard<PortableIds['clause.print.chevron'], PythonNode, TSKindId> & {};
-	'clause.resource': PortableGuard<PortableIds['clause.resource'], PythonNode, TSKindId> & {
-		readonly item: PortableIsAt['clause.resource.item'];
-	};
-	'clause.resource.item': PortableGuard<PortableIds['clause.resource.item'], PythonNode, TSKindId> & {};
-	comment: PortableGuard<PortableIds['comment'], PythonNode, TSKindId> & {
+	'clause.print.chevron': PortableGuard<
+		PortableIds['clause.print.chevron'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.print.chevron']
+	> & {};
+	'clause.resource': PortableGuard<
+		PortableIds['clause.resource'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.resource']
+	> & { readonly item: PortableIsAt['clause.resource.item'] };
+	'clause.resource.item': PortableGuard<
+		PortableIds['clause.resource.item'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['clause.resource.item']
+	> & {};
+	comment: PortableGuard<PortableIds['comment'], PythonNode, TSKindId, PortableTexts['comment']> & {
 		readonly line: PortableIsAt['comment.line'];
 	};
-	'comment.line': PortableGuard<PortableIds['comment.line'], PythonNode, TSKindId> & {};
-	declaration: PortableGuard<PortableIds['declaration'], PythonNode, TSKindId> & {
+	'comment.line': PortableGuard<PortableIds['comment.line'], PythonNode, TSKindId, PortableTexts['comment.line']> & {};
+	declaration: PortableGuard<PortableIds['declaration'], PythonNode, TSKindId, PortableTexts['declaration']> & {
 		readonly class: PortableIsAt['declaration.class'];
 		readonly constant: PortableIsAt['declaration.constant'];
 		readonly constructor: PortableIsAt['declaration.constructor'];
@@ -1003,15 +1295,48 @@ export interface PortableIsAt {
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.class': PortableGuard<PortableIds['declaration.class'], PythonNode, TSKindId> & {};
-	'declaration.constant': PortableGuard<PortableIds['declaration.constant'], PythonNode, TSKindId> & {};
-	'declaration.constructor': PortableGuard<PortableIds['declaration.constructor'], PythonNode, TSKindId> & {};
-	'declaration.function': PortableGuard<PortableIds['declaration.function'], PythonNode, TSKindId> & {};
-	'declaration.method': PortableGuard<PortableIds['declaration.method'], PythonNode, TSKindId> & {
-		readonly special: PortableIsAt['declaration.method.special'];
-	};
-	'declaration.method.special': PortableGuard<PortableIds['declaration.method.special'], PythonNode, TSKindId> & {};
-	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter'], PythonNode, TSKindId> & {
+	'declaration.class': PortableGuard<
+		PortableIds['declaration.class'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.class']
+	> & {};
+	'declaration.constant': PortableGuard<
+		PortableIds['declaration.constant'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.constant']
+	> & {};
+	'declaration.constructor': PortableGuard<
+		PortableIds['declaration.constructor'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.constructor']
+	> & {};
+	'declaration.function': PortableGuard<
+		PortableIds['declaration.function'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.function']
+	> & {};
+	'declaration.method': PortableGuard<
+		PortableIds['declaration.method'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.method']
+	> & { readonly special: PortableIsAt['declaration.method.special'] };
+	'declaration.method.special': PortableGuard<
+		PortableIds['declaration.method.special'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.method.special']
+	> & {};
+	'declaration.parameter': PortableGuard<
+		PortableIds['declaration.parameter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.parameter']
+	> & {
 		readonly default: PortableIsAt['declaration.parameter.default'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
@@ -1019,28 +1344,60 @@ export interface PortableIsAt {
 	'declaration.parameter.default': PortableGuard<
 		PortableIds['declaration.parameter.default'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.parameter.default']
 	> & {};
-	'declaration.parameter.typed': PortableGuard<PortableIds['declaration.parameter.typed'], PythonNode, TSKindId> & {};
+	'declaration.parameter.typed': PortableGuard<
+		PortableIds['declaration.parameter.typed'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.parameter.typed']
+	> & {};
 	'declaration.parameter.typed_default': PortableGuard<
 		PortableIds['declaration.parameter.typed_default'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.parameter.typed_default']
 	> & {};
-	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias'], PythonNode, TSKindId> & {};
-	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter'], PythonNode, TSKindId> & {};
-	'declaration.variable': PortableGuard<PortableIds['declaration.variable'], PythonNode, TSKindId> & {};
-	element: PortableGuard<PortableIds['element'], PythonNode, TSKindId> & {
+	'declaration.type_alias': PortableGuard<
+		PortableIds['declaration.type_alias'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.type_alias']
+	> & {};
+	'declaration.type_parameter': PortableGuard<
+		PortableIds['declaration.type_parameter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.type_parameter']
+	> & {};
+	'declaration.variable': PortableGuard<
+		PortableIds['declaration.variable'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.variable']
+	> & {};
+	element: PortableGuard<PortableIds['element'], PythonNode, TSKindId, PortableTexts['element']> & {
 		readonly comparator: PortableIsAt['element.comparator'];
 		readonly pair: PortableIsAt['element.pair'];
 		readonly spread: PortableIsAt['element.spread'];
 	};
-	'element.comparator': PortableGuard<PortableIds['element.comparator'], PythonNode, TSKindId> & {
+	'element.comparator': PortableGuard<
+		PortableIds['element.comparator'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.comparator']
+	> & {
 		readonly comparison: PortableIsAt['element.comparator.comparison'];
 		readonly identity: PortableIsAt['element.comparator.identity'];
 		readonly membership: PortableIsAt['element.comparator.membership'];
 	};
-	'element.comparator.comparison': PortableGuard<PortableIds['element.comparator.comparison'], PythonNode, TSKindId> & {
+	'element.comparator.comparison': PortableGuard<
+		PortableIds['element.comparator.comparison'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.comparator.comparison']
+	> & {
 		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
 		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
 		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
@@ -1051,74 +1408,110 @@ export interface PortableIsAt {
 	'element.comparator.comparison.equal': PortableGuard<
 		PortableIds['element.comparator.comparison.equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.equal']
 	> & {};
 	'element.comparator.comparison.greater': PortableGuard<
 		PortableIds['element.comparator.comparison.greater'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.greater']
 	> & {};
 	'element.comparator.comparison.greater_equal': PortableGuard<
 		PortableIds['element.comparator.comparison.greater_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.greater_equal']
 	> & {};
 	'element.comparator.comparison.less': PortableGuard<
 		PortableIds['element.comparator.comparison.less'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.less']
 	> & {};
 	'element.comparator.comparison.less_equal': PortableGuard<
 		PortableIds['element.comparator.comparison.less_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.less_equal']
 	> & {};
 	'element.comparator.comparison.not_equal': PortableGuard<
 		PortableIds['element.comparator.comparison.not_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.not_equal']
 	> & { readonly legacy: PortableIsAt['element.comparator.comparison.not_equal.legacy'] };
 	'element.comparator.comparison.not_equal.legacy': PortableGuard<
 		PortableIds['element.comparator.comparison.not_equal.legacy'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.comparison.not_equal.legacy']
 	> & {};
-	'element.comparator.identity': PortableGuard<PortableIds['element.comparator.identity'], PythonNode, TSKindId> & {
+	'element.comparator.identity': PortableGuard<
+		PortableIds['element.comparator.identity'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.comparator.identity']
+	> & {
 		readonly is: PortableIsAt['element.comparator.identity.is'];
 		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
 	};
 	'element.comparator.identity.is': PortableGuard<
 		PortableIds['element.comparator.identity.is'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.identity.is']
 	> & {};
 	'element.comparator.identity.is_not': PortableGuard<
 		PortableIds['element.comparator.identity.is_not'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.identity.is_not']
 	> & {};
-	'element.comparator.membership': PortableGuard<PortableIds['element.comparator.membership'], PythonNode, TSKindId> & {
+	'element.comparator.membership': PortableGuard<
+		PortableIds['element.comparator.membership'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.comparator.membership']
+	> & {
 		readonly in: PortableIsAt['element.comparator.membership.in'];
 		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
 	};
 	'element.comparator.membership.in': PortableGuard<
 		PortableIds['element.comparator.membership.in'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.membership.in']
 	> & {};
 	'element.comparator.membership.not_in': PortableGuard<
 		PortableIds['element.comparator.membership.not_in'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.comparator.membership.not_in']
 	> & {};
-	'element.pair': PortableGuard<PortableIds['element.pair'], PythonNode, TSKindId> & {};
-	'element.spread': PortableGuard<PortableIds['element.spread'], PythonNode, TSKindId> & {
+	'element.pair': PortableGuard<PortableIds['element.pair'], PythonNode, TSKindId, PortableTexts['element.pair']> & {};
+	'element.spread': PortableGuard<
+		PortableIds['element.spread'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.spread']
+	> & {
 		readonly map: PortableIsAt['element.spread.map'];
 		readonly parenthesized: PortableIsAt['element.spread.parenthesized'];
 	};
-	'element.spread.map': PortableGuard<PortableIds['element.spread.map'], PythonNode, TSKindId> & {};
-	'element.spread.parenthesized': PortableGuard<PortableIds['element.spread.parenthesized'], PythonNode, TSKindId> & {};
-	expression: PortableGuard<PortableIds['expression'], PythonNode, TSKindId> & {
+	'element.spread.map': PortableGuard<
+		PortableIds['element.spread.map'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.spread.map']
+	> & {};
+	'element.spread.parenthesized': PortableGuard<
+		PortableIds['element.spread.parenthesized'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['element.spread.parenthesized']
+	> & {};
+	expression: PortableGuard<PortableIds['expression'], PythonNode, TSKindId, PortableTexts['expression']> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly await: PortableIsAt['expression.await'];
 		readonly binary: PortableIsAt['expression.binary'];
@@ -1135,13 +1528,17 @@ export interface PortableIsAt {
 		readonly unary: PortableIsAt['expression.unary'];
 		readonly yield: PortableIsAt['expression.yield'];
 	};
-	'expression.assignment': PortableGuard<PortableIds['expression.assignment'], PythonNode, TSKindId> & {
-		readonly compound: PortableIsAt['expression.assignment.compound'];
-	};
+	'expression.assignment': PortableGuard<
+		PortableIds['expression.assignment'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.assignment']
+	> & { readonly compound: PortableIsAt['expression.assignment.compound'] };
 	'expression.assignment.compound': PortableGuard<
 		PortableIds['expression.assignment.compound'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound']
 	> & {
 		readonly add: PortableIsAt['expression.assignment.compound.add'];
 		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
@@ -1160,70 +1557,93 @@ export interface PortableIsAt {
 	'expression.assignment.compound.add': PortableGuard<
 		PortableIds['expression.assignment.compound.add'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.add']
 	> & {};
 	'expression.assignment.compound.bitwise_and': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_and'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_and']
 	> & {};
 	'expression.assignment.compound.bitwise_or': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_or'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_or']
 	> & {};
 	'expression.assignment.compound.bitwise_xor': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_xor'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_xor']
 	> & {};
 	'expression.assignment.compound.divide': PortableGuard<
 		PortableIds['expression.assignment.compound.divide'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.divide']
 	> & {};
 	'expression.assignment.compound.exponent': PortableGuard<
 		PortableIds['expression.assignment.compound.exponent'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.exponent']
 	> & {};
 	'expression.assignment.compound.floor_divide': PortableGuard<
 		PortableIds['expression.assignment.compound.floor_divide'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.floor_divide']
 	> & {};
 	'expression.assignment.compound.matrix_multiply': PortableGuard<
 		PortableIds['expression.assignment.compound.matrix_multiply'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.matrix_multiply']
 	> & {};
 	'expression.assignment.compound.modulo': PortableGuard<
 		PortableIds['expression.assignment.compound.modulo'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.modulo']
 	> & {};
 	'expression.assignment.compound.multiply': PortableGuard<
 		PortableIds['expression.assignment.compound.multiply'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.multiply']
 	> & {};
 	'expression.assignment.compound.shift_left': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_left'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.shift_left']
 	> & {};
 	'expression.assignment.compound.shift_right': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_right'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.shift_right']
 	> & {};
 	'expression.assignment.compound.subtract': PortableGuard<
 		PortableIds['expression.assignment.compound.subtract'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.subtract']
 	> & {};
-	'expression.await': PortableGuard<PortableIds['expression.await'], PythonNode, TSKindId> & {};
-	'expression.binary': PortableGuard<PortableIds['expression.binary'], PythonNode, TSKindId> & {
+	'expression.await': PortableGuard<
+		PortableIds['expression.await'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.await']
+	> & {};
+	'expression.binary': PortableGuard<
+		PortableIds['expression.binary'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary']
+	> & {
 		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
@@ -1233,7 +1653,12 @@ export interface PortableIsAt {
 		readonly membership: PortableIsAt['expression.binary.membership'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 	};
-	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic'], PythonNode, TSKindId> & {
+	'expression.binary.arithmetic': PortableGuard<
+		PortableIds['expression.binary.arithmetic'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic']
+	> & {
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
 		readonly exponent: PortableIsAt['expression.binary.arithmetic.exponent'];
@@ -1245,39 +1670,51 @@ export interface PortableIsAt {
 	'expression.binary.arithmetic.add': PortableGuard<
 		PortableIds['expression.binary.arithmetic.add'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.add']
 	> & {};
 	'expression.binary.arithmetic.divide': PortableGuard<
 		PortableIds['expression.binary.arithmetic.divide'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.divide']
 	> & {};
 	'expression.binary.arithmetic.exponent': PortableGuard<
 		PortableIds['expression.binary.arithmetic.exponent'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.exponent']
 	> & {};
 	'expression.binary.arithmetic.floor_divide': PortableGuard<
 		PortableIds['expression.binary.arithmetic.floor_divide'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.floor_divide']
 	> & {};
 	'expression.binary.arithmetic.modulo': PortableGuard<
 		PortableIds['expression.binary.arithmetic.modulo'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.modulo']
 	> & {};
 	'expression.binary.arithmetic.multiply': PortableGuard<
 		PortableIds['expression.binary.arithmetic.multiply'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.multiply']
 	> & {};
 	'expression.binary.arithmetic.subtract': PortableGuard<
 		PortableIds['expression.binary.arithmetic.subtract'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.subtract']
 	> & {};
-	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise'], PythonNode, TSKindId> & {
+	'expression.binary.bitwise': PortableGuard<
+		PortableIds['expression.binary.bitwise'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise']
+	> & {
 		readonly and: PortableIsAt['expression.binary.bitwise.and'];
 		readonly or: PortableIsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
@@ -1285,15 +1722,27 @@ export interface PortableIsAt {
 	'expression.binary.bitwise.and': PortableGuard<
 		PortableIds['expression.binary.bitwise.and'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.and']
 	> & {};
-	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or'], PythonNode, TSKindId> & {};
+	'expression.binary.bitwise.or': PortableGuard<
+		PortableIds['expression.binary.bitwise.or'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.or']
+	> & {};
 	'expression.binary.bitwise.xor': PortableGuard<
 		PortableIds['expression.binary.bitwise.xor'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.xor']
 	> & {};
-	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison'], PythonNode, TSKindId> & {
+	'expression.binary.comparison': PortableGuard<
+		PortableIds['expression.binary.comparison'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.comparison']
+	> & {
 		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
@@ -1305,118 +1754,200 @@ export interface PortableIsAt {
 	'expression.binary.comparison.chain': PortableGuard<
 		PortableIds['expression.binary.comparison.chain'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.chain']
 	> & {};
 	'expression.binary.comparison.equal': PortableGuard<
 		PortableIds['expression.binary.comparison.equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.equal']
 	> & {};
 	'expression.binary.comparison.greater': PortableGuard<
 		PortableIds['expression.binary.comparison.greater'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.greater']
 	> & {};
 	'expression.binary.comparison.greater_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.greater_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.greater_equal']
 	> & {};
 	'expression.binary.comparison.less': PortableGuard<
 		PortableIds['expression.binary.comparison.less'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.less']
 	> & {};
 	'expression.binary.comparison.less_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.less_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.less_equal']
 	> & {};
 	'expression.binary.comparison.not_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.not_equal'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.not_equal']
 	> & { readonly legacy: PortableIsAt['expression.binary.comparison.not_equal.legacy'] };
 	'expression.binary.comparison.not_equal.legacy': PortableGuard<
 		PortableIds['expression.binary.comparison.not_equal.legacy'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.not_equal.legacy']
 	> & {};
-	'expression.binary.identity': PortableGuard<PortableIds['expression.binary.identity'], PythonNode, TSKindId> & {
+	'expression.binary.identity': PortableGuard<
+		PortableIds['expression.binary.identity'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.identity']
+	> & {
 		readonly is: PortableIsAt['expression.binary.identity.is'];
 		readonly is_not: PortableIsAt['expression.binary.identity.is_not'];
 	};
 	'expression.binary.identity.is': PortableGuard<
 		PortableIds['expression.binary.identity.is'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.identity.is']
 	> & {};
 	'expression.binary.identity.is_not': PortableGuard<
 		PortableIds['expression.binary.identity.is_not'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.identity.is_not']
 	> & {};
-	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical'], PythonNode, TSKindId> & {
+	'expression.binary.logical': PortableGuard<
+		PortableIds['expression.binary.logical'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.logical']
+	> & {
 		readonly and: PortableIsAt['expression.binary.logical.and'];
 		readonly or: PortableIsAt['expression.binary.logical.or'];
 	};
 	'expression.binary.logical.and': PortableGuard<
 		PortableIds['expression.binary.logical.and'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.logical.and']
 	> & {};
-	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or'], PythonNode, TSKindId> & {};
+	'expression.binary.logical.or': PortableGuard<
+		PortableIds['expression.binary.logical.or'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.logical.or']
+	> & {};
 	'expression.binary.matrix_multiply': PortableGuard<
 		PortableIds['expression.binary.matrix_multiply'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.matrix_multiply']
 	> & {};
-	'expression.binary.membership': PortableGuard<PortableIds['expression.binary.membership'], PythonNode, TSKindId> & {
+	'expression.binary.membership': PortableGuard<
+		PortableIds['expression.binary.membership'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.membership']
+	> & {
 		readonly in: PortableIsAt['expression.binary.membership.in'];
 		readonly not_in: PortableIsAt['expression.binary.membership.not_in'];
 	};
 	'expression.binary.membership.in': PortableGuard<
 		PortableIds['expression.binary.membership.in'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.membership.in']
 	> & {};
 	'expression.binary.membership.not_in': PortableGuard<
 		PortableIds['expression.binary.membership.not_in'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.membership.not_in']
 	> & {};
-	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift'], PythonNode, TSKindId> & {
+	'expression.binary.shift': PortableGuard<
+		PortableIds['expression.binary.shift'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.shift']
+	> & {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 	};
-	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left'], PythonNode, TSKindId> & {};
+	'expression.binary.shift.left': PortableGuard<
+		PortableIds['expression.binary.shift.left'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.binary.shift.left']
+	> & {};
 	'expression.binary.shift.right': PortableGuard<
 		PortableIds['expression.binary.shift.right'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.shift.right']
 	> & {};
-	'expression.call': PortableGuard<PortableIds['expression.call'], PythonNode, TSKindId> & {
-		readonly member: PortableIsAt['expression.call.member'];
-	};
-	'expression.call.member': PortableGuard<PortableIds['expression.call.member'], PythonNode, TSKindId> & {};
-	'expression.collection': PortableGuard<PortableIds['expression.collection'], PythonNode, TSKindId> & {
+	'expression.call': PortableGuard<
+		PortableIds['expression.call'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.call']
+	> & { readonly member: PortableIsAt['expression.call.member'] };
+	'expression.call.member': PortableGuard<
+		PortableIds['expression.call.member'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.call.member']
+	> & {};
+	'expression.collection': PortableGuard<
+		PortableIds['expression.collection'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.collection']
+	> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly map: PortableIsAt['expression.collection.map'];
 		readonly set: PortableIsAt['expression.collection.set'];
 		readonly tuple: PortableIsAt['expression.collection.tuple'];
 	};
-	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list'], PythonNode, TSKindId> & {};
-	'expression.collection.map': PortableGuard<PortableIds['expression.collection.map'], PythonNode, TSKindId> & {};
-	'expression.collection.set': PortableGuard<PortableIds['expression.collection.set'], PythonNode, TSKindId> & {};
-	'expression.collection.tuple': PortableGuard<PortableIds['expression.collection.tuple'], PythonNode, TSKindId> & {
-		readonly bare: PortableIsAt['expression.collection.tuple.bare'];
-	};
+	'expression.collection.list': PortableGuard<
+		PortableIds['expression.collection.list'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.collection.list']
+	> & {};
+	'expression.collection.map': PortableGuard<
+		PortableIds['expression.collection.map'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.collection.map']
+	> & {};
+	'expression.collection.set': PortableGuard<
+		PortableIds['expression.collection.set'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.collection.set']
+	> & {};
+	'expression.collection.tuple': PortableGuard<
+		PortableIds['expression.collection.tuple'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.collection.tuple']
+	> & { readonly bare: PortableIsAt['expression.collection.tuple.bare'] };
 	'expression.collection.tuple.bare': PortableGuard<
 		PortableIds['expression.collection.tuple.bare'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.collection.tuple.bare']
 	> & {};
-	'expression.comprehension': PortableGuard<PortableIds['expression.comprehension'], PythonNode, TSKindId> & {
+	'expression.comprehension': PortableGuard<
+		PortableIds['expression.comprehension'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.comprehension']
+	> & {
 		readonly generator: PortableIsAt['expression.comprehension.generator'];
 		readonly list: PortableIsAt['expression.comprehension.list'];
 		readonly map: PortableIsAt['expression.comprehension.map'];
@@ -1425,110 +1956,258 @@ export interface PortableIsAt {
 	'expression.comprehension.generator': PortableGuard<
 		PortableIds['expression.comprehension.generator'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.comprehension.generator']
 	> & {};
 	'expression.comprehension.list': PortableGuard<
 		PortableIds['expression.comprehension.list'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.comprehension.list']
 	> & {};
-	'expression.comprehension.map': PortableGuard<PortableIds['expression.comprehension.map'], PythonNode, TSKindId> & {};
-	'expression.comprehension.set': PortableGuard<PortableIds['expression.comprehension.set'], PythonNode, TSKindId> & {};
-	'expression.conditional': PortableGuard<PortableIds['expression.conditional'], PythonNode, TSKindId> & {};
-	'expression.interpolation': PortableGuard<PortableIds['expression.interpolation'], PythonNode, TSKindId> & {
+	'expression.comprehension.map': PortableGuard<
+		PortableIds['expression.comprehension.map'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.comprehension.map']
+	> & {};
+	'expression.comprehension.set': PortableGuard<
+		PortableIds['expression.comprehension.set'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.comprehension.set']
+	> & {};
+	'expression.conditional': PortableGuard<
+		PortableIds['expression.conditional'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.conditional']
+	> & {};
+	'expression.interpolation': PortableGuard<
+		PortableIds['expression.interpolation'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.interpolation']
+	> & {
 		readonly conversion: PortableIsAt['expression.interpolation.conversion'];
 		readonly format: PortableIsAt['expression.interpolation.format'];
 	};
 	'expression.interpolation.conversion': PortableGuard<
 		PortableIds['expression.interpolation.conversion'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.interpolation.conversion']
 	> & {};
 	'expression.interpolation.format': PortableGuard<
 		PortableIds['expression.interpolation.format'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.interpolation.format']
 	> & {};
-	'expression.lambda': PortableGuard<PortableIds['expression.lambda'], PythonNode, TSKindId> & {};
-	'expression.member': PortableGuard<PortableIds['expression.member'], PythonNode, TSKindId> & {};
-	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized'], PythonNode, TSKindId> & {};
-	'expression.slice': PortableGuard<PortableIds['expression.slice'], PythonNode, TSKindId> & {};
-	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], PythonNode, TSKindId> & {};
-	'expression.unary': PortableGuard<PortableIds['expression.unary'], PythonNode, TSKindId> & {
+	'expression.lambda': PortableGuard<
+		PortableIds['expression.lambda'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.lambda']
+	> & {};
+	'expression.member': PortableGuard<
+		PortableIds['expression.member'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.member']
+	> & {};
+	'expression.parenthesized': PortableGuard<
+		PortableIds['expression.parenthesized'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.parenthesized']
+	> & {};
+	'expression.slice': PortableGuard<
+		PortableIds['expression.slice'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.slice']
+	> & {};
+	'expression.subscript': PortableGuard<
+		PortableIds['expression.subscript'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.subscript']
+	> & {};
+	'expression.unary': PortableGuard<
+		PortableIds['expression.unary'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.unary']
+	> & {
 		readonly bitwise_not: PortableIsAt['expression.unary.bitwise_not'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
 		readonly not: PortableIsAt['expression.unary.not'];
 		readonly plus: PortableIsAt['expression.unary.plus'];
 	};
-	'expression.unary.bitwise_not': PortableGuard<PortableIds['expression.unary.bitwise_not'], PythonNode, TSKindId> & {};
-	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation'], PythonNode, TSKindId> & {};
-	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not'], PythonNode, TSKindId> & {};
-	'expression.unary.plus': PortableGuard<PortableIds['expression.unary.plus'], PythonNode, TSKindId> & {};
-	'expression.yield': PortableGuard<PortableIds['expression.yield'], PythonNode, TSKindId> & {
-		readonly delegate: PortableIsAt['expression.yield.delegate'];
-	};
-	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate'], PythonNode, TSKindId> & {};
-	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId> & {};
-	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId> & {
+	'expression.unary.bitwise_not': PortableGuard<
+		PortableIds['expression.unary.bitwise_not'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.unary.bitwise_not']
+	> & {};
+	'expression.unary.negation': PortableGuard<
+		PortableIds['expression.unary.negation'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.unary.negation']
+	> & {};
+	'expression.unary.not': PortableGuard<
+		PortableIds['expression.unary.not'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.unary.not']
+	> & {};
+	'expression.unary.plus': PortableGuard<
+		PortableIds['expression.unary.plus'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.unary.plus']
+	> & {};
+	'expression.yield': PortableGuard<
+		PortableIds['expression.yield'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.yield']
+	> & { readonly delegate: PortableIsAt['expression.yield.delegate'] };
+	'expression.yield.delegate': PortableGuard<
+		PortableIds['expression.yield.delegate'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['expression.yield.delegate']
+	> & {};
+	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId, PortableTexts['file']> & {};
+	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId, PortableTexts['identifier']> & {
 		readonly qualified: PortableIsAt['identifier.qualified'];
 	};
-	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], PythonNode, TSKindId> & {};
-	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId> & {
+	'identifier.qualified': PortableGuard<
+		PortableIds['identifier.qualified'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['identifier.qualified']
+	> & {};
+	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId, PortableTexts['literal']> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly ellipsis: PortableIsAt['literal.ellipsis'];
 		readonly null: PortableIsAt['literal.null'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly string: PortableIsAt['literal.string'];
 	};
-	'literal.boolean': PortableGuard<PortableIds['literal.boolean'], PythonNode, TSKindId> & {
-		readonly false: PortableIsAt['literal.boolean.false'];
-		readonly true: PortableIsAt['literal.boolean.true'];
-	};
-	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false'], PythonNode, TSKindId> & {};
-	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true'], PythonNode, TSKindId> & {};
-	'literal.ellipsis': PortableGuard<PortableIds['literal.ellipsis'], PythonNode, TSKindId> & {};
-	'literal.null': PortableGuard<PortableIds['literal.null'], PythonNode, TSKindId> & {};
-	'literal.number': PortableGuard<PortableIds['literal.number'], PythonNode, TSKindId> & {
+	'literal.boolean': PortableGuard<
+		PortableIds['literal.boolean'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.boolean']
+	> & { readonly false: PortableIsAt['literal.boolean.false']; readonly true: PortableIsAt['literal.boolean.true'] };
+	'literal.boolean.false': PortableGuard<
+		PortableIds['literal.boolean.false'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.boolean.false']
+	> & {};
+	'literal.boolean.true': PortableGuard<
+		PortableIds['literal.boolean.true'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.boolean.true']
+	> & {};
+	'literal.ellipsis': PortableGuard<
+		PortableIds['literal.ellipsis'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.ellipsis']
+	> & {};
+	'literal.null': PortableGuard<PortableIds['literal.null'], PythonNode, TSKindId, PortableTexts['literal.null']> & {};
+	'literal.number': PortableGuard<
+		PortableIds['literal.number'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number']
+	> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
 		readonly negative: PortableIsAt['literal.number.negative'];
 	};
-	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], PythonNode, TSKindId> & {
+	'literal.number.float': PortableGuard<
+		PortableIds['literal.number.float'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.float']
+	> & {
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
 	};
 	'literal.number.float.leading_point': PortableGuard<
 		PortableIds['literal.number.float.leading_point'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.number.float.leading_point']
 	> & {};
 	'literal.number.float.scientific': PortableGuard<
 		PortableIds['literal.number.float.scientific'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.number.float.scientific']
 	> & {};
-	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer'], PythonNode, TSKindId> & {
+	'literal.number.integer': PortableGuard<
+		PortableIds['literal.number.integer'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.integer']
+	> & {
 		readonly big: PortableIsAt['literal.number.integer.big'];
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly hex: PortableIsAt['literal.number.integer.hex'];
 		readonly imaginary: PortableIsAt['literal.number.integer.imaginary'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 	};
-	'literal.number.integer.big': PortableGuard<PortableIds['literal.number.integer.big'], PythonNode, TSKindId> & {};
+	'literal.number.integer.big': PortableGuard<
+		PortableIds['literal.number.integer.big'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.big']
+	> & {};
 	'literal.number.integer.binary': PortableGuard<
 		PortableIds['literal.number.integer.binary'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.number.integer.binary']
 	> & {};
-	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex'], PythonNode, TSKindId> & {};
+	'literal.number.integer.hex': PortableGuard<
+		PortableIds['literal.number.integer.hex'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.hex']
+	> & {};
 	'literal.number.integer.imaginary': PortableGuard<
 		PortableIds['literal.number.integer.imaginary'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.number.integer.imaginary']
 	> & {};
-	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], PythonNode, TSKindId> & {};
-	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], PythonNode, TSKindId> & {};
-	'literal.string': PortableGuard<PortableIds['literal.string'], PythonNode, TSKindId> & {
+	'literal.number.integer.octal': PortableGuard<
+		PortableIds['literal.number.integer.octal'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.octal']
+	> & {};
+	'literal.number.negative': PortableGuard<
+		PortableIds['literal.number.negative'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.number.negative']
+	> & {};
+	'literal.string': PortableGuard<
+		PortableIds['literal.string'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string']
+	> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
 		readonly escape: PortableIsAt['literal.string.escape'];
@@ -1537,51 +2216,97 @@ export interface PortableIsAt {
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
-	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes'], PythonNode, TSKindId> & {
+	'literal.string.bytes': PortableGuard<
+		PortableIds['literal.string.bytes'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.bytes']
+	> & {
 		readonly multiline: PortableIsAt['literal.string.bytes.multiline'];
 		readonly raw: PortableIsAt['literal.string.bytes.raw'];
 	};
 	'literal.string.bytes.multiline': PortableGuard<
 		PortableIds['literal.string.bytes.multiline'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.string.bytes.multiline']
 	> & {};
-	'literal.string.bytes.raw': PortableGuard<PortableIds['literal.string.bytes.raw'], PythonNode, TSKindId> & {
-		readonly multiline: PortableIsAt['literal.string.bytes.raw.multiline'];
-	};
+	'literal.string.bytes.raw': PortableGuard<
+		PortableIds['literal.string.bytes.raw'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.bytes.raw']
+	> & { readonly multiline: PortableIsAt['literal.string.bytes.raw.multiline'] };
 	'literal.string.bytes.raw.multiline': PortableGuard<
 		PortableIds['literal.string.bytes.raw.multiline'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.string.bytes.raw.multiline']
 	> & {};
-	'literal.string.concatenated': PortableGuard<PortableIds['literal.string.concatenated'], PythonNode, TSKindId> & {};
-	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], PythonNode, TSKindId> & {};
-	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated'], PythonNode, TSKindId> & {
+	'literal.string.concatenated': PortableGuard<
+		PortableIds['literal.string.concatenated'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.concatenated']
+	> & {};
+	'literal.string.escape': PortableGuard<
+		PortableIds['literal.string.escape'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.escape']
+	> & {};
+	'literal.string.interpolated': PortableGuard<
+		PortableIds['literal.string.interpolated'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.interpolated']
+	> & {
 		readonly multiline: PortableIsAt['literal.string.interpolated.multiline'];
 		readonly raw: PortableIsAt['literal.string.interpolated.raw'];
 	};
 	'literal.string.interpolated.multiline': PortableGuard<
 		PortableIds['literal.string.interpolated.multiline'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.string.interpolated.multiline']
 	> & {};
 	'literal.string.interpolated.raw': PortableGuard<
 		PortableIds['literal.string.interpolated.raw'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.string.interpolated.raw']
 	> & { readonly multiline: PortableIsAt['literal.string.interpolated.raw.multiline'] };
 	'literal.string.interpolated.raw.multiline': PortableGuard<
 		PortableIds['literal.string.interpolated.raw.multiline'],
 		PythonNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['literal.string.interpolated.raw.multiline']
 	> & {};
-	'literal.string.multiline': PortableGuard<PortableIds['literal.string.multiline'], PythonNode, TSKindId> & {};
-	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw'], PythonNode, TSKindId> & {
-		readonly multiline: PortableIsAt['literal.string.raw.multiline'];
-	};
-	'literal.string.raw.multiline': PortableGuard<PortableIds['literal.string.raw.multiline'], PythonNode, TSKindId> & {};
-	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], PythonNode, TSKindId> & {};
-	pattern: PortableGuard<PortableIds['pattern'], PythonNode, TSKindId> & {
+	'literal.string.multiline': PortableGuard<
+		PortableIds['literal.string.multiline'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.multiline']
+	> & {};
+	'literal.string.raw': PortableGuard<
+		PortableIds['literal.string.raw'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.raw']
+	> & { readonly multiline: PortableIsAt['literal.string.raw.multiline'] };
+	'literal.string.raw.multiline': PortableGuard<
+		PortableIds['literal.string.raw.multiline'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.raw.multiline']
+	> & {};
+	'literal.string.text': PortableGuard<
+		PortableIds['literal.string.text'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['literal.string.text']
+	> & {};
+	pattern: PortableGuard<PortableIds['pattern'], PythonNode, TSKindId, PortableTexts['pattern']> & {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly complex: PortableIsAt['pattern.complex'];
 		readonly list: PortableIsAt['pattern.list'];
@@ -1590,30 +2315,70 @@ export interface PortableIsAt {
 		readonly rest: PortableIsAt['pattern.rest'];
 		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
+		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
-	'pattern.as': PortableGuard<PortableIds['pattern.as'], PythonNode, TSKindId> & {};
-	'pattern.complex': PortableGuard<PortableIds['pattern.complex'], PythonNode, TSKindId> & {
+	'pattern.as': PortableGuard<PortableIds['pattern.as'], PythonNode, TSKindId, PortableTexts['pattern.as']> & {};
+	'pattern.complex': PortableGuard<
+		PortableIds['pattern.complex'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.complex']
+	> & {
 		readonly add: PortableIsAt['pattern.complex.add'];
 		readonly subtract: PortableIsAt['pattern.complex.subtract'];
 	};
-	'pattern.complex.add': PortableGuard<PortableIds['pattern.complex.add'], PythonNode, TSKindId> & {};
-	'pattern.complex.subtract': PortableGuard<PortableIds['pattern.complex.subtract'], PythonNode, TSKindId> & {};
-	'pattern.list': PortableGuard<PortableIds['pattern.list'], PythonNode, TSKindId> & {};
-	'pattern.map': PortableGuard<PortableIds['pattern.map'], PythonNode, TSKindId> & {};
-	'pattern.or': PortableGuard<PortableIds['pattern.or'], PythonNode, TSKindId> & {};
-	'pattern.rest': PortableGuard<PortableIds['pattern.rest'], PythonNode, TSKindId> & {
+	'pattern.complex.add': PortableGuard<
+		PortableIds['pattern.complex.add'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.complex.add']
+	> & {};
+	'pattern.complex.subtract': PortableGuard<
+		PortableIds['pattern.complex.subtract'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.complex.subtract']
+	> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list'], PythonNode, TSKindId, PortableTexts['pattern.list']> & {};
+	'pattern.map': PortableGuard<PortableIds['pattern.map'], PythonNode, TSKindId, PortableTexts['pattern.map']> & {};
+	'pattern.or': PortableGuard<PortableIds['pattern.or'], PythonNode, TSKindId, PortableTexts['pattern.or']> & {};
+	'pattern.rest': PortableGuard<PortableIds['pattern.rest'], PythonNode, TSKindId, PortableTexts['pattern.rest']> & {
 		readonly map: PortableIsAt['pattern.rest.map'];
 	};
-	'pattern.rest.map': PortableGuard<PortableIds['pattern.rest.map'], PythonNode, TSKindId> & {};
-	'pattern.struct': PortableGuard<PortableIds['pattern.struct'], PythonNode, TSKindId> & {
-		readonly field: PortableIsAt['pattern.struct.field'];
-	};
-	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], PythonNode, TSKindId> & {};
-	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], PythonNode, TSKindId> & {
+	'pattern.rest.map': PortableGuard<
+		PortableIds['pattern.rest.map'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.rest.map']
+	> & {};
+	'pattern.struct': PortableGuard<
+		PortableIds['pattern.struct'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.struct']
+	> & { readonly field: PortableIsAt['pattern.struct.field'] };
+	'pattern.struct.field': PortableGuard<
+		PortableIds['pattern.struct.field'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.struct.field']
+	> & {};
+	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], PythonNode, TSKindId, PortableTexts['pattern.tuple']> & {
 		readonly bare: PortableIsAt['pattern.tuple.bare'];
 	};
-	'pattern.tuple.bare': PortableGuard<PortableIds['pattern.tuple.bare'], PythonNode, TSKindId> & {};
-	statement: PortableGuard<PortableIds['statement'], PythonNode, TSKindId> & {
+	'pattern.tuple.bare': PortableGuard<
+		PortableIds['pattern.tuple.bare'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.tuple.bare']
+	> & {};
+	'pattern.wildcard': PortableGuard<
+		PortableIds['pattern.wildcard'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['pattern.wildcard']
+	> & {};
+	statement: PortableGuard<PortableIds['statement'], PythonNode, TSKindId, PortableTexts['statement']> & {
 		readonly assert: PortableIsAt['statement.assert'];
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
@@ -1634,51 +2399,174 @@ export interface PortableIsAt {
 		readonly throw: PortableIsAt['statement.throw'];
 		readonly try: PortableIsAt['statement.try'];
 	};
-	'statement.assert': PortableGuard<PortableIds['statement.assert'], PythonNode, TSKindId> & {};
-	'statement.block': PortableGuard<PortableIds['statement.block'], PythonNode, TSKindId> & {};
-	'statement.break': PortableGuard<PortableIds['statement.break'], PythonNode, TSKindId> & {};
-	'statement.continue': PortableGuard<PortableIds['statement.continue'], PythonNode, TSKindId> & {};
-	'statement.delete': PortableGuard<PortableIds['statement.delete'], PythonNode, TSKindId> & {};
-	'statement.empty': PortableGuard<PortableIds['statement.empty'], PythonNode, TSKindId> & {};
-	'statement.exec': PortableGuard<PortableIds['statement.exec'], PythonNode, TSKindId> & {};
-	'statement.expression': PortableGuard<PortableIds['statement.expression'], PythonNode, TSKindId> & {};
-	'statement.global': PortableGuard<PortableIds['statement.global'], PythonNode, TSKindId> & {};
-	'statement.if': PortableGuard<PortableIds['statement.if'], PythonNode, TSKindId> & {};
-	'statement.import': PortableGuard<PortableIds['statement.import'], PythonNode, TSKindId> & {
+	'statement.assert': PortableGuard<
+		PortableIds['statement.assert'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.assert']
+	> & {};
+	'statement.block': PortableGuard<
+		PortableIds['statement.block'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.block']
+	> & {};
+	'statement.break': PortableGuard<
+		PortableIds['statement.break'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.break']
+	> & {};
+	'statement.continue': PortableGuard<
+		PortableIds['statement.continue'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.continue']
+	> & {};
+	'statement.delete': PortableGuard<
+		PortableIds['statement.delete'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.delete']
+	> & {};
+	'statement.empty': PortableGuard<
+		PortableIds['statement.empty'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.empty']
+	> & {};
+	'statement.exec': PortableGuard<
+		PortableIds['statement.exec'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.exec']
+	> & {};
+	'statement.expression': PortableGuard<
+		PortableIds['statement.expression'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.expression']
+	> & {};
+	'statement.global': PortableGuard<
+		PortableIds['statement.global'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.global']
+	> & {};
+	'statement.if': PortableGuard<PortableIds['statement.if'], PythonNode, TSKindId, PortableTexts['statement.if']> & {};
+	'statement.import': PortableGuard<
+		PortableIds['statement.import'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.import']
+	> & {
 		readonly from: PortableIsAt['statement.import.from'];
 		readonly future: PortableIsAt['statement.import.future'];
 	};
-	'statement.import.from': PortableGuard<PortableIds['statement.import.from'], PythonNode, TSKindId> & {};
-	'statement.import.future': PortableGuard<PortableIds['statement.import.future'], PythonNode, TSKindId> & {};
-	'statement.loop': PortableGuard<PortableIds['statement.loop'], PythonNode, TSKindId> & {
+	'statement.import.from': PortableGuard<
+		PortableIds['statement.import.from'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.import.from']
+	> & {};
+	'statement.import.future': PortableGuard<
+		PortableIds['statement.import.future'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.import.future']
+	> & {};
+	'statement.loop': PortableGuard<
+		PortableIds['statement.loop'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.loop']
+	> & {
 		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
-	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each'], PythonNode, TSKindId> & {};
-	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while'], PythonNode, TSKindId> & {};
-	'statement.match': PortableGuard<PortableIds['statement.match'], PythonNode, TSKindId> & {};
-	'statement.nonlocal': PortableGuard<PortableIds['statement.nonlocal'], PythonNode, TSKindId> & {};
-	'statement.print': PortableGuard<PortableIds['statement.print'], PythonNode, TSKindId> & {
-		readonly chevron: PortableIsAt['statement.print.chevron'];
-	};
-	'statement.print.chevron': PortableGuard<PortableIds['statement.print.chevron'], PythonNode, TSKindId> & {};
-	'statement.resource': PortableGuard<PortableIds['statement.resource'], PythonNode, TSKindId> & {};
-	'statement.return': PortableGuard<PortableIds['statement.return'], PythonNode, TSKindId> & {};
-	'statement.throw': PortableGuard<PortableIds['statement.throw'], PythonNode, TSKindId> & {};
-	'statement.try': PortableGuard<PortableIds['statement.try'], PythonNode, TSKindId> & {};
-	type: PortableGuard<PortableIds['type'], PythonNode, TSKindId> & {
+	'statement.loop.for_each': PortableGuard<
+		PortableIds['statement.loop.for_each'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.loop.for_each']
+	> & {};
+	'statement.loop.while': PortableGuard<
+		PortableIds['statement.loop.while'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.loop.while']
+	> & {};
+	'statement.match': PortableGuard<
+		PortableIds['statement.match'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.match']
+	> & {};
+	'statement.nonlocal': PortableGuard<
+		PortableIds['statement.nonlocal'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.nonlocal']
+	> & {};
+	'statement.print': PortableGuard<
+		PortableIds['statement.print'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.print']
+	> & { readonly chevron: PortableIsAt['statement.print.chevron'] };
+	'statement.print.chevron': PortableGuard<
+		PortableIds['statement.print.chevron'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.print.chevron']
+	> & {};
+	'statement.resource': PortableGuard<
+		PortableIds['statement.resource'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.resource']
+	> & {};
+	'statement.return': PortableGuard<
+		PortableIds['statement.return'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.return']
+	> & {};
+	'statement.throw': PortableGuard<
+		PortableIds['statement.throw'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.throw']
+	> & {};
+	'statement.try': PortableGuard<
+		PortableIds['statement.try'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['statement.try']
+	> & {};
+	type: PortableGuard<PortableIds['type'], PythonNode, TSKindId, PortableTexts['type']> & {
 		readonly constrained: PortableIsAt['type.constrained'];
 		readonly generic: PortableIsAt['type.generic'];
 		readonly rest: PortableIsAt['type.rest'];
 		readonly union: PortableIsAt['type.union'];
 	};
-	'type.constrained': PortableGuard<PortableIds['type.constrained'], PythonNode, TSKindId> & {};
-	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId> & {};
-	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId> & {
+	'type.constrained': PortableGuard<
+		PortableIds['type.constrained'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['type.constrained']
+	> & {};
+	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId, PortableTexts['type.generic']> & {};
+	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId, PortableTexts['type.rest']> & {
 		readonly map: PortableIsAt['type.rest.map'];
 	};
-	'type.rest.map': PortableGuard<PortableIds['type.rest.map'], PythonNode, TSKindId> & {};
-	'type.union': PortableGuard<PortableIds['type.union'], PythonNode, TSKindId> & {};
+	'type.rest.map': PortableGuard<
+		PortableIds['type.rest.map'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['type.rest.map']
+	> & {};
+	'type.union': PortableGuard<PortableIds['type.union'], PythonNode, TSKindId, PortableTexts['type.union']> & {};
 }
 
 export interface PortableKinds {
@@ -1794,7 +2682,7 @@ const table: PortableTable = {
 		},
 		'declaration.constructor': { ids: [TSKindId.ConstructorDeclaration, TSKindId.MethodDeclaration], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: true },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: true },
 		'declaration.method.special': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.parameter': {
 			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
@@ -2096,7 +2984,6 @@ const table: PortableTable = {
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		pattern: {
 			ids: [
-				TSKindId.PatternList,
 				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
 				TSKindId.CasePatternList,
@@ -2108,10 +2995,12 @@ const table: PortableTable = {
 				TSKindId.KeywordPattern,
 				TSKindId.ListPattern,
 				TSKindId.ListSplatPattern,
+				TSKindId.PatternList,
 				TSKindId.SplatPatternDictionary,
 				TSKindId.SplatPatternList,
 				TSKindId.TuplePattern,
-				TSKindId.UnionPattern
+				TSKindId.UnionPattern,
+				TSKindId.WildcardPattern
 			],
 			exact: true
 		},
@@ -2135,10 +3024,11 @@ const table: PortableTable = {
 		'pattern.struct': { ids: [TSKindId.ClassPattern, TSKindId.KeywordPattern], exact: true },
 		'pattern.struct.field': { ids: [TSKindId.KeywordPattern], exact: true },
 		'pattern.tuple': {
-			ids: [TSKindId.PatternList, TSKindId.CasePatternList, TSKindId.CaseTuplePattern, TSKindId.TuplePattern],
+			ids: [TSKindId.CasePatternList, TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern],
 			exact: true
 		},
-		'pattern.tuple.bare': { ids: [TSKindId.PatternList, TSKindId.CasePatternList], exact: true },
+		'pattern.tuple.bare': { ids: [TSKindId.CasePatternList, TSKindId.PatternList], exact: true },
+		'pattern.wildcard': { ids: [TSKindId.WildcardPattern], exact: true },
 		statement: {
 			ids: [
 				TSKindId.AssertStatement,
@@ -2315,7 +3205,6 @@ const table: PortableTable = {
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
 		[TSKindId.Await]: [{ path: 'expression.await', within: [], test: [] }],
-		[TSKindId.PatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.BinaryOperator]: [
 			{
 				path: 'expression.binary.arithmetic.add',
@@ -2575,6 +3464,7 @@ const table: PortableTable = {
 			{ path: 'element.comparator', within: [], test: [] }
 		],
 		[TSKindId.ComplexPattern]: [
+			{ path: 'pattern.complex', within: [], test: [] },
 			{
 				path: 'pattern.complex.add',
 				within: [],
@@ -2584,8 +3474,7 @@ const table: PortableTable = {
 				path: 'pattern.complex.subtract',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '192': 2 } } }]
-			},
-			{ path: 'pattern.complex', within: [], test: [] }
+			}
 		],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],
 		[TSKindId.ConcatenatedString]: [{ path: 'literal.string.concatenated', within: [], test: [] }],
@@ -2656,6 +3545,7 @@ const table: PortableTable = {
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
 		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
+			{ path: 'declaration.method', within: [], test: [] },
 			{
 				path: 'declaration.constructor',
 				within: [],
@@ -2665,8 +3555,7 @@ const table: PortableTable = {
 				path: 'declaration.method.special',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '345': 1 } } }]
-			},
-			{ path: 'declaration.method', within: [], test: [] }
+			}
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.NamedExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
@@ -2677,6 +3566,7 @@ const table: PortableTable = {
 		[TSKindId.ParenthesizedExpression]: [{ path: 'expression.parenthesized', within: [], test: [] }],
 		[TSKindId.ParenthesizedListSplat]: [{ path: 'element.spread.parenthesized', within: [], test: [] }],
 		[TSKindId.PassStatement]: [{ path: 'statement.empty', within: [], test: [] }],
+		[TSKindId.PatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.PrintStatement]: [{ path: 'statement.print', within: [], test: [] }],
 		[TSKindId.PrintStatementChevron]: [{ path: 'statement.print.chevron', within: [], test: [] }],
 		[TSKindId.PrintStatementPlain]: [{ path: 'statement.print', within: [], test: [] }],
@@ -2812,6 +3702,7 @@ const table: PortableTable = {
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WildcardImport]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
+		[TSKindId.WildcardPattern]: [{ path: 'pattern.wildcard', within: [], test: [] }],
 		[TSKindId.WithClause]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseBare]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseParen]: [{ path: 'clause.resource', within: [], test: [] }],
@@ -2928,13 +3819,17 @@ const table: PortableTable = {
 		[TSKindId.IsKeyword]: 'is',
 		[TSKindId.IsNot]: 'is not',
 		[TSKindId.InitUKeyword]: '__init__'
-	}
+	},
+	literals: [TSKindId.Ellipsis, TSKindId.False, TSKindId.None, TSKindId.True]
 };
 
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
-	[TSKindId.ForInClause]: { async: { op: 'present', slots: { '244': 0 } } },
+	[TSKindId.ForInClause]: {
+		async: { op: 'present', slots: { '244': 0 } },
+		trailingComma: { op: 'present', slots: { '244': 3 } }
+	},
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
@@ -2950,7 +3845,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	178: { definition: { async: { types: [], kinds: [165] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
-	282: { contents: { async: { types: [], kinds: [244] } } },
+	282: { contents: { async: { types: [], kinds: [244] }, trailingComma: { types: [], kinds: [244] } } },
 	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
 	306: { definition: { async: { types: [], kinds: [302, 345] } } }
 } satisfies QuerySlotFlags);
@@ -2964,7 +3859,7 @@ declare module './types.js' {
 		readonly __flags__?: 'group';
 	}
 	interface ForInClause {
-		readonly __flags__?: 'async';
+		readonly __flags__?: 'async' | 'trailingComma';
 	}
 	interface ForStatement {
 		readonly __flags__?: 'async';
@@ -2997,7 +3892,7 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly contents: 'debug' };
 	}
 	interface ComprehensionClauses {
-		readonly __slotFlags__?: { readonly contents: 'async' };
+		readonly __slotFlags__?: { readonly contents: 'async' | 'trailingComma' };
 	}
 	interface BlockClassDeclaration {
 		readonly __slotFlags__?: { readonly statements: 'async' };

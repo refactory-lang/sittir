@@ -2,60 +2,72 @@
     "backend": "native",
     "baselineCounterChange": {
         "grammars": {
-            "python": {
+            "rust": {
                 "builtRenderParse": {
                     "cases": {
-                        "simple_pattern_negative": {
-                            "from": 5,
-                            "to": 1
+                        "arguments_elements": {
+                            "from": 42,
+                            "to": 36
+                        },
+                        "attributed_argument": {
+                            "from": 21,
+                            "to": 4
                         }
                     },
                     "from": {
-                        "pass": 2675,
-                        "total": 2675
+                        "pass": 3084,
+                        "total": 3084
                     },
                     "to": {
-                        "pass": 2671,
-                        "total": 2671
+                        "pass": 3089,
+                        "total": 3089
                     }
                 },
                 "factoryStorage": {
                     "cases": {
-                        "simple_pattern_negative": {
-                            "from": 5,
-                            "to": 1
+                        "arguments_elements": {
+                            "from": 21,
+                            "to": 18
+                        },
+                        "attributed_argument": {
+                            "from": 21,
+                            "to": 4
                         }
                     },
                     "from": {
-                        "pass": 1392,
-                        "total": 1392
+                        "pass": 1694,
+                        "total": 1694
                     },
                     "to": {
-                        "pass": 1388,
-                        "total": 1388
+                        "pass": 1698,
+                        "total": 1698
                     }
                 },
                 "parityFixtures": {
                     "cases": {
-                        "simple_pattern_negative": {
-                            "from": 30,
-                            "to": 2
+                        "arguments_elements": {
+                            "from": 38,
+                            "to": 32
+                        },
+                        "attributed_argument": {
+                            "from": 54,
+                            "to": 17
                         }
                     },
                     "from": {
-                        "pass": 3814,
-                        "total": 3814
+                        "pass": 3805,
+                        "total": 3805
                     },
                     "to": {
-                        "pass": 3789,
-                        "total": 3789
+                        "pass": 3808,
+                        "total": 3808
                     }
                 }
             }
         },
-        "reason": "A python number in a case pattern is wrapped only when it is negative. simple_pattern_negative was the member seq(optional(-), choice(integer, float)), so every number in a pattern read as one; it is now seq(-, field(value, ...)) beside the bare integer and float arms. Four corpus entries hold only positive pattern numbers (If guards, Comma separated cases, Complex case patterns on classes, Complex case patterns on complex numbers) and lose their wrapper case, while Literals keeps its two negatives. In the parity fixtures the 30 wrapper sites become the 2 negatives. Each number is still built, rendered and compared as its own integer or float case, and those counts are unchanged. No node goes untested."
+        "reason": "A rust call argument reads as its own kind, argument, and arrays get their own element list. On master, call arguments and array elements shared one lift, arguments_elements, whose item was attributed_argument. The call side now holds argument, a copy of hidden _attributed_argument placed under call arguments, so the shared lift split: calls keep arguments_elements with argument items, and arrays keep attributed_argument under the new array_expression_list_elements. No node goes untested. The 21 corpus entries that held attributed_argument are the 18 that now hold argument and the 4 that still hold it, Attributes and Expressions holding both. The 21 that held arguments_elements are the 18 that still hold it and the 4 that hold array_expression_list_elements, again overlapping in Attributes and Expressions. built-render-parse counts two cases per entry for the lists (42 -> 36 + 8). The parity fixtures count each site, and there the move is exact: attributed_argument 54 -> 17 beside argument 37, and arguments_elements 38 -> 32 beside array_expression_list_elements 6."
     },
-    "commit": "e71f485",
+    "commit": "3101eca",
     "grammars": {
         "python": {
             "kinds": [
@@ -82,7 +94,7 @@
                 "case_clause",
                 "case_list_pattern",
                 "case_pattern",
-                "case_patterns",
+                "case_pattern_list",
                 "case_tuple_pattern",
                 "chevron",
                 "class_definition",
@@ -193,7 +205,8 @@
                 "simple_statements_elements",
                 "slice",
                 "slice_group",
-                "splat_pattern",
+                "splat_pattern_dictionary",
+                "splat_pattern_list",
                 "splat_type",
                 "string",
                 "string_content",
@@ -252,7 +265,7 @@
                     "case_clause": 56,
                     "case_list_pattern": 14,
                     "case_pattern": 144,
-                    "case_patterns": 56,
+                    "case_pattern_list": 6,
                     "case_tuple_pattern": 4,
                     "chevron": 2,
                     "class_definition": 7,
@@ -277,7 +290,7 @@
                     "dictionary_elements": 7,
                     "dictionary_splat": 7,
                     "dictionary_splat_pattern": 6,
-                    "dotted_name": 73,
+                    "dotted_name": 80,
                     "elif_clause": 1,
                     "else_clause": 7,
                     "except_clause": 7,
@@ -350,7 +363,7 @@
                     "simple_statements_elements": 441,
                     "slice": 4,
                     "slice_group": 1,
-                    "splat_pattern": 5,
+                    "splat_pattern_list": 5,
                     "splat_type": 9,
                     "string": 137,
                     "subjects": 19,
@@ -385,12 +398,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3789,
-                "total": 3789
+                "pass": 3746,
+                "total": 3746
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2671,
+                    "astMatchPass": 2643,
                     "casesByKind": {
                         "_simple_pattern": 38,
                         "_simple_statements": 230,
@@ -415,7 +428,7 @@
                         "case_clause": 38,
                         "case_list_pattern": 10,
                         "case_pattern": 38,
-                        "case_patterns": 38,
+                        "case_pattern_list": 10,
                         "case_tuple_pattern": 8,
                         "chevron": 2,
                         "class_definition": 6,
@@ -513,7 +526,7 @@
                         "simple_statements_elements": 230,
                         "slice": 2,
                         "slice_group": 1,
-                        "splat_pattern": 10,
+                        "splat_pattern_list": 10,
                         "splat_type": 4,
                         "string": 64,
                         "subjects": 38,
@@ -547,8 +560,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2671,
-                    "total": 2671
+                    "pass": 2643,
+                    "total": 2643
                 },
                 "coverage": {
                     "casesByKind": {
@@ -575,7 +588,7 @@
                         "case_clause": 1,
                         "case_list_pattern": 1,
                         "case_pattern": 1,
-                        "case_patterns": 1,
+                        "case_pattern_list": 1,
                         "case_tuple_pattern": 1,
                         "chevron": 1,
                         "class_definition": 1,
@@ -672,7 +685,8 @@
                         "simple_statements_elements": 1,
                         "slice": 1,
                         "slice_group": 1,
-                        "splat_pattern": 1,
+                        "splat_pattern_dictionary": 1,
+                        "splat_pattern_list": 1,
                         "splat_type": 1,
                         "string": 1,
                         "string_content": 1,
@@ -708,11 +722,11 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 153,
-                    "total": 153
+                    "pass": 154,
+                    "total": 154
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1388,
+                    "astMatchPass": 1374,
                     "casesByKind": {
                         "_simple_pattern": 19,
                         "_simple_statements": 115,
@@ -737,7 +751,7 @@
                         "case_clause": 19,
                         "case_list_pattern": 5,
                         "case_pattern": 19,
-                        "case_patterns": 19,
+                        "case_pattern_list": 5,
                         "case_tuple_pattern": 4,
                         "chevron": 1,
                         "class_definition": 3,
@@ -841,7 +855,7 @@
                         "simple_statements_elements": 115,
                         "slice": 1,
                         "slice_group": 1,
-                        "splat_pattern": 5,
+                        "splat_pattern_list": 5,
                         "splat_type": 2,
                         "string": 32,
                         "string_content": 32,
@@ -877,8 +891,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1388,
-                    "total": 1388
+                    "pass": 1374,
+                    "total": 1374
                 },
                 "from": {
                     "casesByKind": {
@@ -904,7 +918,7 @@
                         "case_clause": 1,
                         "case_list_pattern": 1,
                         "case_pattern": 1,
-                        "case_patterns": 1,
+                        "case_pattern_list": 1,
                         "case_tuple_pattern": 1,
                         "chevron": 1,
                         "class_definition": 1,
@@ -1025,7 +1039,7 @@
                         "simple_statements_elements": 1,
                         "slice": 1,
                         "slice_group": 1,
-                        "splat_pattern": 1,
+                        "splat_pattern_list": 1,
                         "splat_type": 1,
                         "string": 1,
                         "string_content": 1,
@@ -1334,9 +1348,11 @@
             "kinds": [
                 "_let_chain",
                 "abstract_type",
+                "argument",
                 "arguments",
                 "arguments_elements",
                 "array_expression_list",
+                "array_expression_list_elements",
                 "array_expression_semi",
                 "array_type",
                 "assignment_expression",
@@ -1371,6 +1387,7 @@
                 "char_literal_plain",
                 "closure_expression_block",
                 "closure_expression_expr",
+                "closure_parameter",
                 "closure_parameters",
                 "compound_assignment_expr",
                 "const_block",
@@ -1571,9 +1588,11 @@
                 "casesByKind": {
                     "_let_chain": 5,
                     "abstract_type": 10,
+                    "argument": 37,
                     "arguments": 55,
-                    "arguments_elements": 38,
+                    "arguments_elements": 32,
                     "array_expression_list": 7,
+                    "array_expression_list_elements": 6,
                     "array_expression_semi": 2,
                     "array_type": 11,
                     "assignment_expression": 2,
@@ -1582,7 +1601,7 @@
                     "attribute": 28,
                     "attribute_input": 18,
                     "attribute_item": 24,
-                    "attributed_argument": 54,
+                    "attributed_argument": 17,
                     "attributed_enum_variant": 8,
                     "attributed_field_declaration": 15,
                     "attributed_ordered_field": 9,
@@ -1604,6 +1623,7 @@
                     "char_literal_plain": 4,
                     "closure_expression_block": 1,
                     "closure_expression_expr": 9,
+                    "closure_parameter": 3,
                     "closure_parameters": 10,
                     "compound_assignment_expr": 3,
                     "const_block": 4,
@@ -1794,18 +1814,20 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3805,
-                "total": 3805
+                "pass": 3808,
+                "total": 3808
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 3084,
+                    "astMatchPass": 3089,
                     "casesByKind": {
                         "_let_chain": 6,
                         "abstract_type": 14,
+                        "argument": 18,
                         "arguments": 56,
-                        "arguments_elements": 42,
+                        "arguments_elements": 36,
                         "array_expression_list": 8,
+                        "array_expression_list_elements": 8,
                         "array_expression_semi": 4,
                         "array_type": 14,
                         "assignment_expression": 4,
@@ -1814,7 +1836,7 @@
                         "attribute": 26,
                         "attribute_input": 8,
                         "attribute_item": 22,
-                        "attributed_argument": 21,
+                        "attributed_argument": 4,
                         "attributed_enum_variant": 3,
                         "attributed_field_declaration": 5,
                         "attributed_ordered_field": 5,
@@ -1836,6 +1858,7 @@
                         "char_literal_plain": 4,
                         "closure_expression_block": 2,
                         "closure_expression_expr": 14,
+                        "closure_parameter": 2,
                         "closure_parameters": 14,
                         "compound_assignment_expr": 4,
                         "const_block": 4,
@@ -2025,16 +2048,18 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 3084,
-                    "total": 3084
+                    "pass": 3089,
+                    "total": 3089
                 },
                 "coverage": {
                     "casesByKind": {
                         "_let_chain": 1,
                         "abstract_type": 1,
+                        "argument": 1,
                         "arguments": 1,
                         "arguments_elements": 1,
                         "array_expression_list": 1,
+                        "array_expression_list_elements": 1,
                         "array_expression_semi": 1,
                         "array_type": 1,
                         "assignment_expression": 1,
@@ -2064,6 +2089,7 @@
                         "captured_pattern": 1,
                         "closure_expression_block": 1,
                         "closure_expression_expr": 1,
+                        "closure_parameter": 1,
                         "closure_parameters": 1,
                         "compound_assignment_expr": 1,
                         "const_block": 1,
@@ -2248,17 +2274,19 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 215,
-                    "total": 215
+                    "pass": 218,
+                    "total": 218
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1694,
+                    "astMatchPass": 1698,
                     "casesByKind": {
                         "_let_chain": 3,
                         "abstract_type": 7,
+                        "argument": 18,
                         "arguments": 28,
-                        "arguments_elements": 21,
+                        "arguments_elements": 18,
                         "array_expression_list": 4,
+                        "array_expression_list_elements": 4,
                         "array_expression_semi": 2,
                         "array_type": 7,
                         "assignment_expression": 2,
@@ -2267,7 +2295,7 @@
                         "attribute": 13,
                         "attribute_input": 8,
                         "attribute_item": 11,
-                        "attributed_argument": 21,
+                        "attributed_argument": 4,
                         "attributed_enum_variant": 3,
                         "attributed_field_declaration": 5,
                         "attributed_ordered_field": 5,
@@ -2289,6 +2317,7 @@
                         "char_literal_plain": 2,
                         "closure_expression_block": 1,
                         "closure_expression_expr": 7,
+                        "closure_parameter": 2,
                         "closure_parameters": 7,
                         "compound_assignment_expr": 2,
                         "const_block": 2,
@@ -2478,15 +2507,17 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1694,
-                    "total": 1694
+                    "pass": 1698,
+                    "total": 1698
                 },
                 "from": {
                     "casesByKind": {
                         "abstract_type": 1,
+                        "argument": 1,
                         "arguments": 1,
                         "arguments_elements": 1,
                         "array_expression_list": 1,
+                        "array_expression_list_elements": 1,
                         "array_expression_semi": 1,
                         "array_type": 1,
                         "assignment_expression": 1,
@@ -2521,6 +2552,7 @@
                         "char_literal_plain": 1,
                         "closure_expression_block": 1,
                         "closure_expression_expr": 1,
+                        "closure_parameter": 1,
                         "closure_parameters": 1,
                         "compound_assignment_expr": 1,
                         "const_block": 1,
@@ -2666,6 +2698,7 @@
                         "scoped_type_identifier_in_expression_position": 1,
                         "scoped_use_list": 1,
                         "self": 1,
+                        "self_module": 1,
                         "self_parameter": 1,
                         "shebang": 1,
                         "shorthand_field_identifier": 1,
@@ -2740,8 +2773,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 254,
-                    "total": 254
+                    "pass": 258,
+                    "total": 258
                 },
                 "roundtrip": {
                     "astMatchPass": 149,
@@ -4210,7 +4243,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26887,
-        "total": 26889
+        "pass": 26822,
+        "total": 26824
     }
 }
