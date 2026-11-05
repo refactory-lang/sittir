@@ -38,7 +38,7 @@ const LEAVES: ReadonlyMap<string, Layout> = new Map([
 	['KindId', { size: 2, align: 2, niche: undefined }],
 	['Delimiter', { size: 1, align: 1, niche: undefined }],
 	['Edges', { size: 8, align: 2, niche: { offset: 6, width: 1, available: 249n } }],
-	['TriviaText', { size: 96, align: 8, niche: CAPACITY }],
+	['TriviaText', { size: 112, align: 8, niche: CAPACITY }],
 	['NodeCoordinate', { size: 40, align: 8, niche: { offset: 36, width: 2, available: 65534n } }]
 ]);
 
