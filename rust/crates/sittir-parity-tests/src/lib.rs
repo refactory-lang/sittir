@@ -237,6 +237,13 @@ pub fn wide_unit_blocks(levels: usize) -> String {
     format!("fn f(){{\n{}{}\nx\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
 }
 
+/// A rust tuple type of `members` `u8`s on one line: a flat list of unit
+/// kinds, which a record writes with no anchor of its own.
+#[must_use]
+pub fn flat_tuple(members: usize) -> String {
+    format!("type T = ({});\n", "u8, ".repeat(members))
+}
+
 /// What `f` answers, run on a thread whose 64 MiB stack every read these
 /// tests make of a deep tree fits on, a 64,000-level chain included.
 ///

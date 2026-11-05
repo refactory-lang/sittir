@@ -59,6 +59,13 @@ export interface LayoutWork {
   recordNodes: number
   /** The layout records rendered (`ParsedTree::records_rendered`). */
   recordsRendered: number
+  /**
+   * The steps the gaps no anchor measures took through their frames: the
+   * children visited and items compared building each frame's source
+   * items and aligning them to what the frame wrote, once a frame
+   * (`Lookups::aligned`), and one for each gap measured from them.
+   */
+  gapItems: number
 }
 
 /**

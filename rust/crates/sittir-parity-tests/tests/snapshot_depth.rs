@@ -4,14 +4,15 @@
 //! lines a run breaks to cost work of their own, and as nested blocks: a
 //! brace a line, each line indented a level deeper than the one before; all
 //! opened on one deeply indented line; and under an indentation unit as wide
-//! as the chain is deep. An unoptimized build checks each line's
-//! indentation a recording render counts against its text
-//! (`SpacingWriter::with_recording`), work that grows with the line's
-//! depth, so it times the blocks optimized alone. The test binary holds this
-//! one test, so no other test shares its process.
+//! as the chain is deep. A flat tuple of `u8`s grows in width instead, its
+//! gaps measured from its frame, since a record writes a unit kind with no
+//! anchor. An unoptimized build checks each line's indentation a recording
+//! render counts against its text (`SpacingWriter::with_recording`), work
+//! that grows with the line's depth, so it times the blocks optimized alone.
+//! The test binary holds this one test, so no other test shares its process.
 
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{block_chain, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, wide_unit_blocks};
+use sittir_parity_tests::{block_chain, flat_tuple, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, wide_unit_blocks};
 use sittir_rust::render::AnyNode;
 use std::time::{Duration, Instant};
 
@@ -23,9 +24,9 @@ const LEVELS: [usize; 2] = if cfg!(debug_assertions) { [4_000, 8_000] } else { [
 /// A chain the test times: its name, and its source at a depth.
 type Chain = (&'static str, fn(usize) -> String);
 
-/// The chains timed in every build: tuple types on one line, and with a
-/// line for each token.
-const CHAINS: [Chain; 2] = [("on one line", tuple_chain), ("a line for each token", multiline_tuple_chain)];
+/// The chains timed in every build: tuple types nested on one line and
+/// with a line for each token, and a flat tuple as many `u8`s wide.
+const CHAINS: [Chain; 3] = [("on one line", tuple_chain), ("a line for each token", multiline_tuple_chain), ("a flat tuple of u8s", flat_tuple)];
 
 /// The chains of nested blocks, timed in an optimized build alone.
 const BLOCKS: [Chain; 3] = [("nested blocks", block_chain), ("blocks opened on one indented line", indented_block_line), ("blocks under a wide indentation unit", wide_unit_blocks)];

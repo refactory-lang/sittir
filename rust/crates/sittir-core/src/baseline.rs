@@ -108,6 +108,15 @@ impl Written {
     pub fn text(text: &str) -> Self {
         Written::Text(text.chars().filter(|c| !c.is_whitespace()).collect())
     }
+
+    /// The node a node's item names; none for a text's.
+    #[must_use]
+    pub fn node(&self) -> Option<NodeIndex> {
+        match self {
+            Written::Node(index) => Some(*index),
+            Written::Text(_) => None,
+        }
+    }
 }
 
 /// What a node's frame wrote: the tally written before its first text and

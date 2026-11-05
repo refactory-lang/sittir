@@ -95,6 +95,7 @@ export interface LayoutWork {
 	readonly depthNodes: number;
 	readonly recordNodes: number;
 	readonly recordsRendered: number;
+	readonly gapItems: number;
 }
 
 export interface BaselineRun {

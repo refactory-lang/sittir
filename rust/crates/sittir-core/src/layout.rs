@@ -182,6 +182,11 @@ pub struct LayoutWork {
     pub record_nodes: u32,
     /// The layout records rendered (`ParsedTree::records_rendered`).
     pub records_rendered: u32,
+    /// The steps the gaps no anchor measures took through their frames: the
+    /// children visited and items compared building each frame's source
+    /// items and aligning them to what the frame wrote, once a frame
+    /// (`Lookups::aligned`), and one for each gap measured from them.
+    pub gap_items: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -193,6 +198,7 @@ pub struct LayoutWorkCounter {
     cursor_climbs: std::sync::atomic::AtomicU64,
     depth_nodes: std::sync::atomic::AtomicU64,
     record_nodes: std::sync::atomic::AtomicU64,
+    gap_items: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -220,10 +226,14 @@ impl LayoutWorkCounter {
         self.record_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn gap_items(&self, n: u64) {
+        self.gap_items.fetch_add(n, std::sync::atomic::Ordering::Relaxed);
+    }
+
     /// The counts so far, with the tree's `records_rendered`.
     pub fn counts(&self, records_rendered: u32) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
     }
 }
 

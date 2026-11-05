@@ -1153,7 +1153,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// One call's lookups in this tree, from a cursor at its root
     /// (`Lookups`).
     fn lookups(&self) -> Lookups<'_, G> {
-        Lookups { tree: self, cursor: self.tree.walk(), record: None }
+        Lookups { tree: self, cursor: self.tree.walk(), record: None, aligned: HashMap::new() }
     }
 
     /// The source of the run at `at` among the table's runs, measured as
@@ -1475,6 +1475,9 @@ struct Lookups<'t, G: EngineGrammar> {
     /// A region measures a run that record holds no frame for or cannot
     /// render (`measured_record`).
     record: Option<NodeIndex>,
+    /// Each frame a gap no anchor measures was read from, by its record and
+    /// its node, with the record it is a frame of (`aligned`).
+    aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>)>,
 }
 
 impl<'t, G: EngineGrammar> Nodes<'t> for Lookups<'t, G> {
@@ -1748,15 +1751,16 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
                 if let Some(gap) = baseline.between(run.start, run.end) {
                     return Ok(Some(gap));
                 }
-                let mut source = Vec::new();
-                source_items(&mut self.cursor, &tree.source, baseline, frame, &mut source);
-                let left = source.iter().rposition(|item| item.start < run.start || (item.start == run.start && item.end <= run.start));
-                let right = source.iter().position(|item| item.end > run.end || (item.end == run.end && item.start >= run.end));
+                let aligned = self.aligned(&record, at, baseline, frame);
+                tree.work.gap_items(1);
+                let source = &aligned.source;
+                let left = source.partition_point(|item| item.start < run.start || (item.start == run.start && item.end <= run.start)).checked_sub(1);
+                let right = Some(source.partition_point(|item| item.end < run.end || (item.end == run.end && item.start < run.end))).filter(|&right| right < source.len());
                 let node = self.cursor.node();
                 let inside = Span::of(&node).start < run.start || left.is_some();
                 let ends_after = Span::of(&node).end > run.end || right.is_some();
                 if inside && ends_after {
-                    let matched = align(&source, &frame.items);
+                    let matched = &aligned.matched;
                     let from = match left {
                         Some(left) => matched[left].map(|left| frame.items[left].after),
                         None => Some(frame.open),
@@ -1772,6 +1776,27 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
                 return Ok(None);
             }
         }
+    }
+
+    /// The source items of the frame `record` holds for the node at `at`, the
+    /// node the cursor is on, and where each meets what the frame wrote
+    /// (`source_items`, `align`): built once, for every gap that reads the
+    /// frame.
+    fn aligned(&mut self, record: &Record, at: NodeIndex, baseline: &crate::baseline::Baseline, frame: &crate::baseline::FrameItems) -> std::rc::Rc<Aligned> {
+        let key = (Arc::as_ptr(record) as usize, at);
+        if let Some((_, aligned)) = self.aligned.get(&key).filter(|(held, _)| Arc::ptr_eq(held, record)) {
+            return std::rc::Rc::clone(aligned);
+        }
+        let framed = frame.items.iter().filter_map(|item| item.what.node()).collect();
+        let mut steps = 0;
+        let mut source = Vec::new();
+        source_items(&mut self.cursor, &self.tree.source, baseline, &framed, &mut source, &mut steps);
+        debug_assert!(source.windows(2).all(|pair| pair[0].end <= pair[1].start), "a frame's source items lie apart, in source order");
+        let matched = align(&source, &frame.items, &mut steps);
+        self.tree.work.gap_items(steps);
+        let aligned = std::rc::Rc::new(Aligned { source, matched });
+        self.aligned.insert(key, (Arc::clone(record), std::rc::Rc::clone(&aligned)));
+        aligned
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave
@@ -2143,31 +2168,39 @@ struct SourceItem {
     end: u32,
 }
 
+/// A frame's source items and, for each, the item of what the frame wrote
+/// it meets (`Lookups::aligned`).
+struct Aligned {
+    source: Vec<SourceItem>,
+    matched: Vec<Option<usize>>,
+}
+
 /// The items of the node at `cursor`, whose frame is `frame`, in source
 /// order: each child that rendered in a frame of its own or as a slice of
 /// `frame`'s by its index, each token by its text unless it is empty or
 /// whitespace, which a render writes as layout, and the
 /// children of any other child in its place. Extras and `ERROR`s are
 /// trivia, no item. The cursor ends where it started.
-fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline: &crate::baseline::Baseline, frame: &crate::baseline::FrameItems, out: &mut Vec<SourceItem>) {
+fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline: &crate::baseline::Baseline, framed: &std::collections::HashSet<NodeIndex>, out: &mut Vec<SourceItem>, steps: &mut u64) {
     use crate::baseline::Written;
     if !cursor.goto_first_child() {
         return;
     }
     loop {
+        *steps += 1;
         let node = cursor.node();
         let index = crate::read::index_of(cursor);
         let span = Span::of(&node);
         let Span { start, end } = span;
         if node.is_extra() || node.is_error() {
-        } else if baseline.frame(index).is_some() || frame.items.iter().any(|item| item.what == Written::Node(index)) {
+        } else if baseline.frame(index).is_some() || framed.contains(&index) {
             out.push(SourceItem { what: Written::Node(index), start, end });
         } else if node.child_count() == 0 {
             if !source[span.range()].trim().is_empty() {
                 out.push(SourceItem { what: Written::text(&source[span.range()]), start, end });
             }
         } else {
-            source_items(cursor, source, baseline, frame, out);
+            source_items(cursor, source, baseline, framed, out, steps);
         }
         if !cursor.goto_next_sibling() {
             break;
@@ -2181,9 +2214,15 @@ fn source_items(cursor: &mut tree_sitter::TreeCursor<'_>, source: &str, baseline
 /// that the token and the tokens right after it spell exactly, all of them
 /// matching that text; an item matching none was not written. A written
 /// node no source item names (a sliced comment) is passed over.
-fn align(items: &[SourceItem], written: &[crate::baseline::Item]) -> Vec<Option<usize>> {
+fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u64) -> Vec<Option<usize>> {
     use crate::baseline::Written;
-    let named = |what: &Written| items.iter().any(|item| item.what == *what);
+    let named: std::collections::HashSet<NodeIndex> = items.iter().filter_map(|item| item.what.node()).collect();
+    let mut positions: HashMap<NodeIndex, Vec<usize>> = HashMap::new();
+    for (at, item) in written.iter().enumerate() {
+        if let Some(index) = item.what.node() {
+            positions.entry(index).or_default().push(at);
+        }
+    }
     let spelled = |tokens: &[SourceItem], text: &str| {
         let mut rest = text;
         for (count, token) in tokens.iter().enumerate() {
@@ -2198,10 +2237,11 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item]) -> Vec<Option<
     let mut matched = vec![None; items.len()];
     let (mut at, mut i) = (0, 0);
     while i < items.len() {
+        *steps += 1;
         let rest = written.get(at..).unwrap_or_default();
         let found = match items[i].what {
-            Written::Node(_) => rest.iter().position(|w| w.what == items[i].what).map(|found| (found, 1)),
-            Written::Text(_) => rest.iter().take_while(|w| matches!(w.what, Written::Text(_)) || !named(&w.what)).enumerate().find_map(|(found, w)| match &w.what {
+            Written::Node(index) => positions.get(&index).and_then(|found| found.get(found.partition_point(|&position| position < at))).map(|&found| (found - at, 1)),
+            Written::Text(_) => rest.iter().inspect(|_| *steps += 1).take_while(|w| w.what.node().is_none_or(|index| !named.contains(&index))).enumerate().find_map(|(found, w)| match &w.what {
                 Written::Text(text) => spelled(&items[i..], text).map(|count| (found, count)),
                 Written::Node(_) => None,
             }),
