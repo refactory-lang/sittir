@@ -4,8 +4,11 @@
 //! spans, not the frame's stretch across the `ERROR`. And a run the
 //! `ERROR`'s adjacency spells in-line is the adjacency's alone: it stores
 //! no deviation, and no break the templates or a list slot write beside
-//! the `ERROR` replaces it. Each source renders as it reads, from its
-//! snapshot and with every node edited in place.
+//! the `ERROR` replaces it. A line continuation whose in-line run the
+//! entry before it carries, as its `$after`, is still fixed in place by
+//! that run: one carrier holds it, and the continuation renders verbatim
+//! beside it. Each source renders as it reads, from its snapshot and with
+//! every node edited in place.
 
 use sittir_parity_tests::renders_as_read;
 
@@ -50,4 +53,18 @@ fn a_typescript_error_s_in_line_run_beats_the_break_the_templates_write_beside_i
 fn an_error_s_in_line_run_in_a_list_s_separator_gap_beats_the_slot_s_break() {
     renders_as_read!(sittir_rust, sittir_rust::RustGrammar, "fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n");
     renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "type T = {\n  a: 1;\n  b: 2; # c: 3;\n  d: 4;\n};\n");
+}
+
+#[test]
+fn a_line_continuation_beside_a_run_the_entry_before_it_carries_renders_as_it_reads() {
+    renders_as_read!(
+        sittir_python,
+        sittir_python::PythonGrammar,
+        "x = [1 \\\n \\\n]\n",
+        "x = [1 \\\n    \\\n]\n",
+        "x = [1 $ \\\n]\n",
+        "x = [1, $ \\\n]\n",
+        "f(a $ \\\n)\n",
+        "x = (1 $ \\\n)\n",
+    );
 }

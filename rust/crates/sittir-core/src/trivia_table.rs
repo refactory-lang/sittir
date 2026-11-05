@@ -599,9 +599,9 @@ pub struct Adjacency {
 }
 
 impl Adjacency {
-    /// The adjacency of the entry spanning `span` of `source`; `taken` when
-    /// the run before it is the entry's before it.
-    fn of(source: &str, span: Span, taken: bool) -> Self {
+    /// The adjacency of the entry spanning `span` of `source`, as the source
+    /// spells it.
+    fn of(source: &str, span: Span) -> Self {
         let bytes = source.as_bytes();
         let in_line = |byte: u8| byte == b' ' || byte == b'\t';
         let breaks = |byte: u8| matches!(byte, b'\n' | b'\r');
@@ -615,7 +615,7 @@ impl Adjacency {
             before -= 1;
         }
         Self {
-            before: (before > 0 && !breaks(bytes[before - 1]) && !taken).then(|| Span { start: crate::types::narrow(before), end: span.start }),
+            before: (before > 0 && !breaks(bytes[before - 1])).then(|| Span { start: crate::types::narrow(before), end: span.start }),
             after: (after < bytes.len() && !breaks(bytes[after])).then(|| Span { start: span.end, end: crate::types::narrow(after) }),
         }
     }
@@ -678,15 +678,16 @@ impl TriviaTable {
                 }
             }
         }
-        let mut taken = None;
+        let mut taken: Option<Span> = None;
         for &index in &entries {
             let at = local(index) as usize;
             let span = Span { start: nodes.start[at], end: nodes.end[at] };
-            let adjacency = Adjacency::of(source, span, taken == Some(span.start));
-            taken = None;
+            let carried = taken.take().filter(|run| run.end == span.start);
+            let spelled = Adjacency::of(source, span);
+            let adjacency = Adjacency { before: carried.or(spelled.before), ..spelled };
             if nodes.kind[at] == KindId::ERROR || (kinds.layout.contains(&nodes.kind[at]) && adjacency.holds_whitespace()) {
-                taken = adjacency.after.map(|run| run.end);
-                table.adjacency.insert(index, adjacency);
+                taken = adjacency.after;
+                table.adjacency.insert(index, if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
             }
         }
         let mut spelled: Vec<Span> = table.adjacency.values().flat_map(|adjacency| [adjacency.before, adjacency.after]).flatten().collect();
