@@ -3,7 +3,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1851,7 +1851,7 @@ function recordInputLines(held: readonly FactoryHeld[]): string[] {
 }
 
 function storedRead(hint: GroupSeatHint): string {
-	return `() => (node as unknown as Readonly<Record<string, object | undefined>>)[${JSON.stringify(hint.stored)}]`;
+	return `(node as unknown as Readonly<Record<string, object | undefined>>)[${JSON.stringify(hint.stored)}]`;
 }
 
 function builderHandleLines(kind: string, slots: readonly (readonly [name: string, storage: string])[]): string[] {
@@ -2008,8 +2008,7 @@ function fieldCarryingFactoryText(
 		}
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
-	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
-	lines.push(...(view?.prelude ?? []), ...(backend === 'records' ? [] : groups.prelude));
+	lines.push(...(view?.prelude ?? []));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(inSlotOrder(setters, node.slots), plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
@@ -2025,7 +2024,7 @@ function fieldCarryingFactoryText(
 		...(leadingOptions !== undefined || registered.length > 0 ? [{ local: 'options', type: optionsType, key: 'OPTIONS' as const, recorded: 'inputs.options' }] : [])
 	];
 	if (backend === 'records') {
-		const inputs = [...recordInputLines(held), ...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude];
+		const inputs = [...recordInputLines(held), ...groupSeatReaders(plan, (hint) => `inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`)];
 		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, check, result: builtName }, nodeMap, viewTable(views));
 		if (parts.patchTail !== undefined) after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
@@ -2037,9 +2036,9 @@ function fieldCarryingFactoryText(
 			lines.push(`    ${f.storageKey},`);
 		}
 		const members = nodeMemberParts({
-			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatParts(plan, storedRead).prelude },
+			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatReaders(plan, storedRead) },
 			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-			extra: [...(view?.members ?? []), ...groups.members],
+			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia
 		});

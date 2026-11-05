@@ -79,7 +79,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/objects.ts'), 'utf-8');
 			// The setter of a forwarding factory calls the direct builder with the value, so it stores the
 			// slot type only: neither the config-spread form nor the dispatcher that builds the target.
-			const labelMatch = content.match(/function buildLabel\(value[\s\S]*?\n\}/);
+			const labelMatch = content.match(/function buildLabel\$with\(node[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
 			expect(labelBody).toMatch(/=> buildLabel\(value\)/);

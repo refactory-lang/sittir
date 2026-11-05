@@ -2463,7 +2463,6 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 	currentHandle()?.admit(TSKindId.CatchClause, [config]);
 	const _catch_clause_group = config.catchClauseGroup;
 	const _body = orDefault(config.body, () => buildStatementBlock());
-	const readGroup_catchClauseGroup = () => _catch_clause_group;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'catch_clause', { catchClauseGroup: _catch_clause_group, body: _body });
@@ -2475,12 +2474,8 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		$with: undefined as unknown as object,
 		catchClauseGroup: () => hydrateStoredSlot(node, '_catch_clause_group'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		parameter:
-			_catch_clause_group === undefined
-				? undefined
-				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
-		type:
-			_catch_clause_group === undefined ? undefined : () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		parameter: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'parameter'),
+		type: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

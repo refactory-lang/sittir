@@ -4225,7 +4225,6 @@ export function buildUseWildcard(...args: unknown[]) {
 }
 function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bound {
 	const _use_wildcard_group = value;
-	const readGroup_useWildcardGroup = () => _use_wildcard_group;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'use_wildcard', { useWildcardGroup: _use_wildcard_group });
 	const node = {
@@ -4234,8 +4233,7 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		useWildcardGroup: () => hydrateStoredSlot(node, '_use_wildcard_group'),
-		path:
-			_use_wildcard_group === undefined ? undefined : () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		path: _use_wildcard_group === undefined ? undefined : () => groupField(_use_wildcard_group, 'path'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7684,7 +7682,6 @@ export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 ): T.MatchBlock.Bound;
 export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
-	const readGroup_matchBlockArms = () => _match_block_arms;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
 	const node = {
@@ -7693,9 +7690,8 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		matchBlockArms: () => hydrateStoredSlot(node, '_match_block_arms'),
-		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
-		lastArm:
-			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		arms: _match_block_arms === undefined ? undefined : () => groupField(_match_block_arms, 'arms'),
+		lastArm: _match_block_arms === undefined ? undefined : () => groupField(_match_block_arms, 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7797,7 +7793,6 @@ export function buildLastMatchArm(
 		blankArmStored(options?.trailingComma),
 		[[',', TSKindId.Comma] as const]
 	);
-	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'last_match_arm', {
@@ -7818,8 +7813,8 @@ export function buildLastMatchArm(
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		trailingComma: () => blankArmRead(_trailing_comma),
-		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
-		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15330,7 +15325,6 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
 	const _body = kindIdStorage<NonNullable<T.MatchArmWithComma['_body']>>(config.body);
-	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, body: _body });
@@ -15344,8 +15338,8 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
-		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15456,7 +15450,6 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
 	const _body = config.body;
-	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, body: _body });
@@ -15470,8 +15463,8 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
 		body: () => hydrateStoredSlot(node, '_body'),
-		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
-		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18345,7 +18338,6 @@ export function buildParametersElementsReceiver(
 	currentHandle()?.admit(TSKindId.ParametersElementsReceiver, [config]);
 	const _receiver = config.receiver;
 	const _parameters_elements_receiver_group = config.parametersElementsReceiverGroup;
-	const readGroup_receiver = () => _receiver;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'parameters_elements_receiver', {
@@ -18360,9 +18352,8 @@ export function buildParametersElementsReceiver(
 		$with: undefined as unknown as object,
 		receiver: () => hydrateStoredSlot(node, '_receiver'),
 		parametersElementsReceiverGroup: () => hydrateStoredSlot(node, '_parameters_elements_receiver_group'),
-		attributeItem:
-			_receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
-		content: _receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
+		attributeItem: _receiver === undefined ? undefined : () => groupField(_receiver, 'attributeItem'),
+		content: _receiver === undefined ? undefined : () => groupField(_receiver, 'content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

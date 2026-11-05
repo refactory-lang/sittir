@@ -5448,7 +5448,6 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 	const _start = kindIdStorage<NonNullable<T.Slice['_start']>>(config.start);
 	const _stop = kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop);
 	const _step = config.step;
-	const readGroup_step = () => _step;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'slice', { start: _start, stop: _stop, step: _step });
 	const node = {
@@ -5461,7 +5460,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		start: () => hydrateStoredSlot(node, '_start'),
 		stop: () => hydrateStoredSlot(node, '_stop'),
 		step: () => hydrateStoredSlot(node, '_step'),
-		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
+		expression: _step === undefined ? undefined : () => groupField(_step, 'expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

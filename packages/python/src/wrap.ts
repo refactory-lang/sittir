@@ -117,26 +117,6 @@ function viewSlots<T>(
 	return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];
 }
 
-function wrapModule$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Module;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'statements':
-			return applySetter(args, (...v: NonNullable<T.Module['_statements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapModule(
-						{ ...$edited(data), _statements: admitSlot(handle, 'module', 'statements', restItems('statements', v)) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`module has no $with.${setter}`);
-}
-function wrapModule$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapModule$with(receiverOf(this, '$with.statements'), 'statements', args);
-}
 export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -165,38 +145,29 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.Module.Parsed;
 }
-
-function wrapSimpleStatements$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapSimpleStatements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapModule$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SimpleStatements;
+	const data = node[INPUT] as T.Module;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.Module['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.SimpleStatementsElements as const,
-							optional: false,
-							make: RAW.buildSimpleStatementsElements
-						},
-						(v: NonNullable<T.SimpleStatements['_elements']>) =>
-							wrapSimpleStatements(
-								{ ...$edited(data), _elements: admitSlot(handle, '_simple_statements', 'elements', v) },
-								tree
-							)
+					wrapModule(
+						{ ...$edited(data), _statements: admitSlot(handle, 'module', 'statements', restItems('statements', v)) },
+						tree
 					)
 				)
 			);
 	}
-	throw new Error(`_simple_statements has no $with.${setter}`);
+	throw new Error(`module has no $with.${setter}`);
 }
-function wrapSimpleStatements$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimpleStatements$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapModule$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapModule$with(receiverOf(this, '$with.statements'), 'statements', args);
+}
+
+function wrapSimpleStatements$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle): T.SimpleStatements.Parsed {
 	const handle = currentHandle();
@@ -264,31 +235,38 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 	);
 	return node as unknown as T.SimpleStatements.Parsed;
 }
-
-function wrapImportStatement$listRead(this: { readonly names: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.names(), 'names'), undefined);
-}
-function wrapImportStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSimpleStatements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImportStatement;
+	const data = node[INPUT] as T.SimpleStatements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'names':
+		case 'elements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
-						(v: NonNullable<T.ImportStatement['_names']>) =>
-							wrapImportStatement({ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) }, tree)
+						{
+							kind: TSKindId.SimpleStatementsElements as const,
+							optional: false,
+							make: RAW.buildSimpleStatementsElements
+						},
+						(v: NonNullable<T.SimpleStatements['_elements']>) =>
+							wrapSimpleStatements(
+								{ ...$edited(data), _elements: admitSlot(handle, '_simple_statements', 'elements', v) },
+								tree
+							)
 					)
 				)
 			);
 	}
-	throw new Error(`import_statement has no $with.${setter}`);
+	throw new Error(`_simple_statements has no $with.${setter}`);
 }
-function wrapImportStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImportStatement$with(receiverOf(this, '$with.names'), 'names', args);
+function wrapSimpleStatements$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimpleStatements$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapImportStatement$listRead(this: { readonly names: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.names(), 'names'), undefined);
 }
 export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): T.ImportStatement.Parsed {
 	const handle = currentHandle();
@@ -356,33 +334,29 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 	);
 	return node as unknown as T.ImportStatement.Parsed;
 }
-
-function wrapRelativeImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImportStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RelativeImport;
+	const data = node[INPUT] as T.ImportStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (v: NonNullable<T.RelativeImport['_prefix']>) =>
+		case 'names':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapRelativeImport({ ...$edited(data), _prefix: admitSlot(handle, 'relative_import', 'prefix', v) }, tree)
-				)
-			);
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.RelativeImport['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapRelativeImport({ ...$edited(data), _name: admitSlot(handle, 'relative_import', 'name', v) }, tree)
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
+						(v: NonNullable<T.ImportStatement['_names']>) =>
+							wrapImportStatement({ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) }, tree)
+					)
 				)
 			);
 	}
-	throw new Error(`relative_import has no $with.${setter}`);
+	throw new Error(`import_statement has no $with.${setter}`);
 }
-function wrapRelativeImport$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRelativeImport$with(receiverOf(this, '$with.prefix'), 'prefix', args);
+function wrapImportStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImportStatement$with(receiverOf(this, '$with.names'), 'names', args);
 }
-function wrapRelativeImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRelativeImport$with(receiverOf(this, '$with.name'), 'name', args);
-}
+
 export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.RelativeImport.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -413,27 +387,33 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RelativeImport.Parsed;
 }
-
-function wrapFutureImportStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRelativeImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.FutureImportStatement;
+	const data = node[INPUT] as T.RelativeImport;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.FutureImportStatement['_content']>) =>
+		case 'prefix':
+			return applySetter(args, (v: NonNullable<T.RelativeImport['_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapFutureImportStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'future_import_statement', 'content', v) },
-						tree
-					)
+					wrapRelativeImport({ ...$edited(data), _prefix: admitSlot(handle, 'relative_import', 'prefix', v) }, tree)
+				)
+			);
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.RelativeImport['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapRelativeImport({ ...$edited(data), _name: admitSlot(handle, 'relative_import', 'name', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`future_import_statement has no $with.${setter}`);
+	throw new Error(`relative_import has no $with.${setter}`);
 }
-function wrapFutureImportStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapFutureImportStatement$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapRelativeImport$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRelativeImport$with(receiverOf(this, '$with.prefix'), 'prefix', args);
 }
+function wrapRelativeImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRelativeImport$with(receiverOf(this, '$with.name'), 'name', args);
+}
+
 export function wrapFutureImportStatement(
 	data: T.FutureImportStatement,
 	tree: TreeHandle
@@ -464,39 +444,27 @@ export function wrapFutureImportStatement(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FutureImportStatement.Parsed;
 }
-
-function wrapImportFromStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapFutureImportStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImportFromStatement;
+	const data = node[INPUT] as T.FutureImportStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'moduleName':
-			return applySetter(args, (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapImportFromStatement(
-						{ ...$edited(data), _module_name: admitSlot(handle, 'import_from_statement', 'moduleName', v) },
-						tree
-					)
-				)
-			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.ImportFromStatement['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.FutureImportStatement['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapImportFromStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'import_from_statement', 'content', v) },
+					wrapFutureImportStatement(
+						{ ...$edited(data), _content: admitSlot(handle, 'future_import_statement', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`import_from_statement has no $with.${setter}`);
+	throw new Error(`future_import_statement has no $with.${setter}`);
 }
-function wrapImportFromStatement$with$moduleName(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImportFromStatement$with(receiverOf(this, '$with.moduleName'), 'moduleName', args);
+function wrapFutureImportStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapFutureImportStatement$with(receiverOf(this, '$with.content'), 'content', args);
 }
-function wrapImportFromStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImportFromStatement$with(receiverOf(this, '$with.content'), 'content', args);
-}
+
 export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeHandle): T.ImportFromStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -531,36 +499,41 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ImportFromStatement.Parsed;
 }
-
-function wrapImportList$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'names'), undefined);
-}
-function wrapImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImportFromStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImportList;
+	const data = node[INPUT] as T.ImportFromStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'names':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ImportList['_name']>[number]>) =>
+		case 'moduleName':
+			return applySetter(args, (v: NonNullable<T.ImportFromStatement['_module_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapImportList(
-						{ ...$edited(data), _name: admitSlot(handle, 'import_list', 'names', restItems('names', v)) },
+					wrapImportFromStatement(
+						{ ...$edited(data), _module_name: admitSlot(handle, 'import_from_statement', 'moduleName', v) },
 						tree
 					)
 				)
 			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapImportList({ ...$edited(data), _delimiter: v }, tree))
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.ImportFromStatement['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapImportFromStatement(
+						{ ...$edited(data), _content: admitSlot(handle, 'import_from_statement', 'content', v) },
+						tree
+					)
+				)
 			);
 	}
-	throw new Error(`import_list has no $with.${setter}`);
+	throw new Error(`import_from_statement has no $with.${setter}`);
 }
-function wrapImportList$with$names(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImportList$with(receiverOf(this, '$with.names'), 'names', args);
+function wrapImportFromStatement$with$moduleName(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImportFromStatement$with(receiverOf(this, '$with.moduleName'), 'moduleName', args);
 }
-function wrapImportList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImportList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapImportFromStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImportFromStatement$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+function wrapImportList$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'names'), undefined);
 }
 export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportList.Parsed {
 	const handle = currentHandle();
@@ -624,33 +597,34 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 	holdReadItems(node, wrapImportList$listRead);
 	return node as unknown as T.ImportList.Parsed;
 }
-
-function wrapAliasedImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AliasedImport;
+	const data = node[INPUT] as T.ImportList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.AliasedImport['_name']>) =>
+		case 'names':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ImportList['_name']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapAliasedImport({ ...$edited(data), _name: admitSlot(handle, 'aliased_import', 'name', v) }, tree)
+					wrapImportList(
+						{ ...$edited(data), _name: admitSlot(handle, 'import_list', 'names', restItems('names', v)) },
+						tree
+					)
 				)
 			);
-		case 'alias':
-			return applySetter(args, (v: NonNullable<T.AliasedImport['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapAliasedImport({ ...$edited(data), _alias: admitSlot(handle, 'aliased_import', 'alias', v) }, tree)
-				)
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapImportList({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`aliased_import has no $with.${setter}`);
+	throw new Error(`import_list has no $with.${setter}`);
 }
-function wrapAliasedImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAliasedImport$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapImportList$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImportList$with(receiverOf(this, '$with.names'), 'names', args);
 }
-function wrapAliasedImport$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAliasedImport$with(receiverOf(this, '$with.alias'), 'alias', args);
+function wrapImportList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImportList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
+
 export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.AliasedImport.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -681,24 +655,33 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Parsed;
 }
-
-function wrapPrintStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAliasedImport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.PrintStatement;
+	const data = node[INPUT] as T.AliasedImport;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.PrintStatement['_content']>) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.AliasedImport['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapPrintStatement({ ...$edited(data), _content: admitSlot(handle, 'print_statement', 'content', v) }, tree)
+					wrapAliasedImport({ ...$edited(data), _name: admitSlot(handle, 'aliased_import', 'name', v) }, tree)
+				)
+			);
+		case 'alias':
+			return applySetter(args, (v: NonNullable<T.AliasedImport['_alias']>) =>
+				rebuilt(node, handle, () =>
+					wrapAliasedImport({ ...$edited(data), _alias: admitSlot(handle, 'aliased_import', 'alias', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`print_statement has no $with.${setter}`);
+	throw new Error(`aliased_import has no $with.${setter}`);
 }
-function wrapPrintStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintStatement$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapAliasedImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAliasedImport$with(receiverOf(this, '$with.name'), 'name', args);
 }
+function wrapAliasedImport$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAliasedImport$with(receiverOf(this, '$with.alias'), 'alias', args);
+}
+
 export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.PrintStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -726,24 +709,24 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PrintStatement.Parsed;
 }
-
-function wrapChevron$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapPrintStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Chevron;
+	const data = node[INPUT] as T.PrintStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.Chevron['_expression']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.PrintStatement['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapChevron({ ...$edited(data), _expression: admitSlot(handle, 'chevron', 'expression', v) }, tree)
+					wrapPrintStatement({ ...$edited(data), _content: admitSlot(handle, 'print_statement', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`chevron has no $with.${setter}`);
+	throw new Error(`print_statement has no $with.${setter}`);
 }
-function wrapChevron$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapChevron$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapPrintStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintStatement$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -771,30 +754,24 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Chevron.Parsed;
 }
-
-function wrapAssertStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapChevron$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AssertStatement;
+	const data = node[INPUT] as T.Chevron;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expressions':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.AssertStatement['_expression']>[number]>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Chevron['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssertStatement(
-						{
-							...$edited(data),
-							_expression: admitSlot(handle, 'assert_statement', 'expressions', restItems('expressions', v))
-						},
-						tree
-					)
+					wrapChevron({ ...$edited(data), _expression: admitSlot(handle, 'chevron', 'expression', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`assert_statement has no $with.${setter}`);
+	throw new Error(`chevron has no $with.${setter}`);
 }
-function wrapAssertStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssertStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+function wrapChevron$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapChevron$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+
 export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): T.AssertStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -822,27 +799,30 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatement.Parsed;
 }
-
-function wrapExpressionStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAssertStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExpressionStatement;
+	const data = node[INPUT] as T.AssertStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ExpressionStatement['_content']>) =>
+		case 'expressions':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.AssertStatement['_expression']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapExpressionStatement(
-						{ ...$edited(data), _content: admitSlot(handle, 'expression_statement', 'content', v) },
+					wrapAssertStatement(
+						{
+							...$edited(data),
+							_expression: admitSlot(handle, 'assert_statement', 'expressions', restItems('expressions', v))
+						},
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`expression_statement has no $with.${setter}`);
+	throw new Error(`assert_statement has no $with.${setter}`);
 }
-function wrapExpressionStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExpressionStatement$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapAssertStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssertStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
 }
+
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle): T.ExpressionStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -874,33 +854,27 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExpressionStatement.Parsed;
 }
-
-function wrapNamedExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExpressionStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.NamedExpression;
+	const data = node[INPUT] as T.ExpressionStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (v: NonNullable<T.NamedExpression['_left']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.ExpressionStatement['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapNamedExpression({ ...$edited(data), _left: admitSlot(handle, 'named_expression', 'left', v) }, tree)
-				)
-			);
-		case 'right':
-			return applySetter(args, (v: NonNullable<T.NamedExpression['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedExpression({ ...$edited(data), _right: admitSlot(handle, 'named_expression', 'right', v) }, tree)
+					wrapExpressionStatement(
+						{ ...$edited(data), _content: admitSlot(handle, 'expression_statement', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`named_expression has no $with.${setter}`);
+	throw new Error(`expression_statement has no $with.${setter}`);
 }
-function wrapNamedExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNamedExpression$with(receiverOf(this, '$with.left'), 'left', args);
+function wrapExpressionStatement$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExpressionStatement$with(receiverOf(this, '$with.content'), 'content', args);
 }
-function wrapNamedExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNamedExpression$with(receiverOf(this, '$with.right'), 'right', args);
-}
+
 export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): T.NamedExpression.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -931,27 +905,33 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpression.Parsed;
 }
-
-function wrapNamedExpressionLhs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapNamedExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.NamedExpressionLhs;
+	const data = node[INPUT] as T.NamedExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'identifier':
-			return applySetter(args, (v: NonNullable<T.NamedExpressionLhs['_identifier']>) =>
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.NamedExpression['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapNamedExpressionLhs(
-						{ ...$edited(data), _identifier: admitSlot(handle, '_named_expression_lhs', 'identifier', v) },
-						tree
-					)
+					wrapNamedExpression({ ...$edited(data), _left: admitSlot(handle, 'named_expression', 'left', v) }, tree)
+				)
+			);
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.NamedExpression['_right']>) =>
+				rebuilt(node, handle, () =>
+					wrapNamedExpression({ ...$edited(data), _right: admitSlot(handle, 'named_expression', 'right', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`_named_expression_lhs has no $with.${setter}`);
+	throw new Error(`named_expression has no $with.${setter}`);
 }
-function wrapNamedExpressionLhs$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNamedExpressionLhs$with(receiverOf(this, '$with.identifier'), 'identifier', args);
+function wrapNamedExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNamedExpression$with(receiverOf(this, '$with.left'), 'left', args);
 }
+function wrapNamedExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNamedExpression$with(receiverOf(this, '$with.right'), 'right', args);
+}
+
 export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHandle): T.NamedExpressionLhs.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -979,27 +959,27 @@ export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHan
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NamedExpressionLhs.Parsed;
 }
-
-function wrapReturnStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapNamedExpressionLhs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ReturnStatement;
+	const data = node[INPUT] as T.NamedExpressionLhs;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expressions':
-			return applySetter(args, (v: NonNullable<T.ReturnStatement['_expressions']>) =>
+		case 'identifier':
+			return applySetter(args, (v: NonNullable<T.NamedExpressionLhs['_identifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapReturnStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'return_statement', 'expressions', v) },
+					wrapNamedExpressionLhs(
+						{ ...$edited(data), _identifier: admitSlot(handle, '_named_expression_lhs', 'identifier', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`return_statement has no $with.${setter}`);
+	throw new Error(`_named_expression_lhs has no $with.${setter}`);
 }
-function wrapReturnStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapReturnStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+function wrapNamedExpressionLhs$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNamedExpressionLhs$with(receiverOf(this, '$with.identifier'), 'identifier', args);
 }
+
 export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): T.ReturnStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1027,27 +1007,27 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ReturnStatement.Parsed;
 }
-
-function wrapDeleteStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapReturnStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DeleteStatement;
+	const data = node[INPUT] as T.ReturnStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'expressions':
-			return applySetter(args, (v: NonNullable<T.DeleteStatement['_expressions']>) =>
+			return applySetter(args, (v: NonNullable<T.ReturnStatement['_expressions']>) =>
 				rebuilt(node, handle, () =>
-					wrapDeleteStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'delete_statement', 'expressions', v) },
+					wrapReturnStatement(
+						{ ...$edited(data), _expressions: admitSlot(handle, 'return_statement', 'expressions', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`delete_statement has no $with.${setter}`);
+	throw new Error(`return_statement has no $with.${setter}`);
 }
-function wrapDeleteStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDeleteStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+function wrapReturnStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapReturnStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
 }
+
 export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): T.DeleteStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1075,36 +1055,27 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DeleteStatement.Parsed;
 }
-
-function wrapRaiseStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDeleteStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RaiseStatement;
+	const data = node[INPUT] as T.DeleteStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'expressions':
-			return applySetter(args, (v: NonNullable<T.RaiseStatement['_expressions']>) =>
+			return applySetter(args, (v: NonNullable<T.DeleteStatement['_expressions']>) =>
 				rebuilt(node, handle, () =>
-					wrapRaiseStatement(
-						{ ...$edited(data), _expressions: admitSlot(handle, 'raise_statement', 'expressions', v) },
+					wrapDeleteStatement(
+						{ ...$edited(data), _expressions: admitSlot(handle, 'delete_statement', 'expressions', v) },
 						tree
 					)
 				)
 			);
-		case 'cause':
-			return applySetter(args, (v: NonNullable<T.RaiseStatement['_cause']>) =>
-				rebuilt(node, handle, () =>
-					wrapRaiseStatement({ ...$edited(data), _cause: admitSlot(handle, 'raise_statement', 'cause', v) }, tree)
-				)
-			);
 	}
-	throw new Error(`raise_statement has no $with.${setter}`);
+	throw new Error(`delete_statement has no $with.${setter}`);
 }
-function wrapRaiseStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRaiseStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+function wrapDeleteStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDeleteStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
 }
-function wrapRaiseStatement$with$cause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRaiseStatement$with(receiverOf(this, '$with.cause'), 'cause', args);
-}
+
 export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.RaiseStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1139,7 +1110,74 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RaiseStatement.Parsed;
 }
+function wrapRaiseStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.RaiseStatement;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'expressions':
+			return applySetter(args, (v: NonNullable<T.RaiseStatement['_expressions']>) =>
+				rebuilt(node, handle, () =>
+					wrapRaiseStatement(
+						{ ...$edited(data), _expressions: admitSlot(handle, 'raise_statement', 'expressions', v) },
+						tree
+					)
+				)
+			);
+		case 'cause':
+			return applySetter(args, (v: NonNullable<T.RaiseStatement['_cause']>) =>
+				rebuilt(node, handle, () =>
+					wrapRaiseStatement({ ...$edited(data), _cause: admitSlot(handle, 'raise_statement', 'cause', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`raise_statement has no $with.${setter}`);
+}
+function wrapRaiseStatement$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRaiseStatement$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+}
+function wrapRaiseStatement$with$cause(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRaiseStatement$with(receiverOf(this, '$with.cause'), 'cause', args);
+}
 
+export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStatement.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IfStatement as const,
+		condition() {
+			return hydrateSlot<T.Expression>(this, '_condition', tree);
+		},
+		consequence() {
+			return hydrateSlot<T.Suite>(this, '_consequence', tree);
+		},
+		alternatives() {
+			return hydrateSlots<T.ElifClause | T.ElseClause>(this, '_alternative', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		condition: wrapIfStatement$with$condition,
+		consequence: wrapIfStatement$with$consequence,
+		alternatives: wrapIfStatement$with$alternatives,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IfStatement.Parsed;
+}
 function wrapIfStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.IfStatement;
@@ -1181,71 +1219,7 @@ function wrapIfStatement$with$consequence(this: Received<Held>, ...args: unknown
 function wrapIfStatement$with$alternatives(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapIfStatement$with(receiverOf(this, '$with.alternatives'), 'alternatives', args);
 }
-export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStatement.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.IfStatement as const,
-		condition() {
-			return hydrateSlot<T.Expression>(this, '_condition', tree);
-		},
-		consequence() {
-			return hydrateSlot<T.Suite>(this, '_consequence', tree);
-		},
-		alternatives() {
-			return hydrateSlots<T.ElifClause | T.ElseClause>(this, '_alternative', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		condition: wrapIfStatement$with$condition,
-		consequence: wrapIfStatement$with$consequence,
-		alternatives: wrapIfStatement$with$alternatives,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IfStatement.Parsed;
-}
 
-function wrapElifClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ElifClause;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'condition':
-			return applySetter(args, (v: NonNullable<T.ElifClause['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapElifClause({ ...$edited(data), _condition: admitSlot(handle, 'elif_clause', 'condition', v) }, tree)
-				)
-			);
-		case 'consequence':
-			return applySetter(args, (v: NonNullable<T.ElifClause['_consequence']>) =>
-				rebuilt(node, handle, () =>
-					wrapElifClause({ ...$edited(data), _consequence: admitSlot(handle, 'elif_clause', 'consequence', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`elif_clause has no $with.${setter}`);
-}
-function wrapElifClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapElifClause$with(receiverOf(this, '$with.condition'), 'condition', args);
-}
-function wrapElifClause$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapElifClause$with(receiverOf(this, '$with.consequence'), 'consequence', args);
-}
 export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1280,24 +1254,33 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ElifClause.Parsed;
 }
-
-function wrapElseClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapElifClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ElseClause;
+	const data = node[INPUT] as T.ElifClause;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.ElseClause['_body']>) =>
+		case 'condition':
+			return applySetter(args, (v: NonNullable<T.ElifClause['_condition']>) =>
 				rebuilt(node, handle, () =>
-					wrapElseClause({ ...$edited(data), _body: admitSlot(handle, 'else_clause', 'body', v) }, tree)
+					wrapElifClause({ ...$edited(data), _condition: admitSlot(handle, 'elif_clause', 'condition', v) }, tree)
+				)
+			);
+		case 'consequence':
+			return applySetter(args, (v: NonNullable<T.ElifClause['_consequence']>) =>
+				rebuilt(node, handle, () =>
+					wrapElifClause({ ...$edited(data), _consequence: admitSlot(handle, 'elif_clause', 'consequence', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`else_clause has no $with.${setter}`);
+	throw new Error(`elif_clause has no $with.${setter}`);
 }
-function wrapElseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapElseClause$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapElifClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapElifClause$with(receiverOf(this, '$with.condition'), 'condition', args);
 }
+function wrapElifClause$with$consequence(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapElifClause$with(receiverOf(this, '$with.consequence'), 'consequence', args);
+}
+
 export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1325,7 +1308,54 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ElseClause.Parsed;
 }
+function wrapElseClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ElseClause;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.ElseClause['_body']>) =>
+				rebuilt(node, handle, () =>
+					wrapElseClause({ ...$edited(data), _body: admitSlot(handle, 'else_clause', 'body', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`else_clause has no $with.${setter}`);
+}
+function wrapElseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapElseClause$with(receiverOf(this, '$with.body'), 'body', args);
+}
 
+export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.MatchStatement.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.MatchStatement as const,
+		subjects() {
+			return hydrateSlot<T.Subjects>(this, '_subjects', tree);
+		},
+		body() {
+			return hydrateSlot<T.MatchBlock>(this, '_body', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { subjects: wrapMatchStatement$with$subjects, body: wrapMatchStatement$with$body, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.MatchStatement.Parsed;
+}
 function wrapMatchStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.MatchStatement;
@@ -1360,72 +1390,7 @@ function wrapMatchStatement$with$subjects(this: Received<Held>, ...args: unknown
 function wrapMatchStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMatchStatement$with(receiverOf(this, '$with.body'), 'body', args);
 }
-export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.MatchStatement.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.MatchStatement as const,
-		subjects() {
-			return hydrateSlot<T.Subjects>(this, '_subjects', tree);
-		},
-		body() {
-			return hydrateSlot<T.MatchBlock>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { subjects: wrapMatchStatement$with$subjects, body: wrapMatchStatement$with$body, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.MatchStatement.Parsed;
-}
 
-function wrapCaseClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CaseClause;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.CaseClause['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _pattern: admitSlot(handle, 'case_clause', 'pattern', v) }, tree)
-				)
-			);
-		case 'guard':
-			return applySetter(args, (v: NonNullable<T.CaseClause['_guard']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
-				)
-			);
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.CaseClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _body: admitSlot(handle, 'case_clause', 'body', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`case_clause has no $with.${setter}`);
-}
-function wrapCaseClause$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseClause$with(receiverOf(this, '$with.pattern'), 'pattern', args);
-}
-function wrapCaseClause$with$guard(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseClause$with(receiverOf(this, '$with.guard'), 'guard', args);
-}
-function wrapCaseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseClause$with(receiverOf(this, '$with.body'), 'body', args);
-}
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1464,7 +1429,88 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CaseClause.Parsed;
 }
+function wrapCaseClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.CaseClause;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'pattern':
+			return applySetter(args, (v: NonNullable<T.CaseClause['_pattern']>) =>
+				rebuilt(node, handle, () =>
+					wrapCaseClause({ ...$edited(data), _pattern: admitSlot(handle, 'case_clause', 'pattern', v) }, tree)
+				)
+			);
+		case 'guard':
+			return applySetter(args, (v: NonNullable<T.CaseClause['_guard']>) =>
+				rebuilt(node, handle, () =>
+					wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
+				)
+			);
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.CaseClause['_body']>) =>
+				rebuilt(node, handle, () =>
+					wrapCaseClause({ ...$edited(data), _body: admitSlot(handle, 'case_clause', 'body', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`case_clause has no $with.${setter}`);
+}
+function wrapCaseClause$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseClause$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+function wrapCaseClause$with$guard(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseClause$with(receiverOf(this, '$with.guard'), 'guard', args);
+}
+function wrapCaseClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseClause$with(receiverOf(this, '$with.body'), 'body', args);
+}
 
+export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForStatement.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForStatement as const,
+		async() {
+			return this._async;
+		},
+		left() {
+			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
+		},
+		right() {
+			return hydrateSlot<T.Expression | T.ExpressionList>(this, '_right', tree);
+		},
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
+		},
+		alternative() {
+			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: wrapForStatement$with$async,
+		left: wrapForStatement$with$left,
+		right: wrapForStatement$with$right,
+		body: wrapForStatement$with$body,
+		alternative: wrapForStatement$with$alternative,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForStatement.Parsed;
+}
 function wrapForStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ForStatement;
@@ -1521,19 +1567,14 @@ function wrapForStatement$with$body(this: Received<Held>, ...args: unknown[]): u
 function wrapForStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapForStatement$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
-export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForStatement.Parsed {
+
+export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.WhileStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ForStatement as const,
-		async() {
-			return this._async;
-		},
-		left() {
-			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
-		},
-		right() {
-			return hydrateSlot<T.Expression | T.ExpressionList>(this, '_right', tree);
+		$type: TSKindId.WhileStatement as const,
+		condition() {
+			return hydrateSlot<T.Expression>(this, '_condition', tree);
 		},
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
@@ -1557,17 +1598,14 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		async: wrapForStatement$with$async,
-		left: wrapForStatement$with$left,
-		right: wrapForStatement$with$right,
-		body: wrapForStatement$with$body,
-		alternative: wrapForStatement$with$alternative,
+		condition: wrapWhileStatement$with$condition,
+		body: wrapWhileStatement$with$body,
+		alternative: wrapWhileStatement$with$alternative,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ForStatement.Parsed;
+	return node as unknown as T.WhileStatement.Parsed;
 }
-
 function wrapWhileStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.WhileStatement;
@@ -1609,19 +1647,23 @@ function wrapWhileStatement$with$body(this: Received<Held>, ...args: unknown[]):
 function wrapWhileStatement$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapWhileStatement$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
-export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.WhileStatement.Parsed {
+
+export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.WhileStatement as const,
-		condition() {
-			return hydrateSlot<T.Expression>(this, '_condition', tree);
-		},
+		$type: TSKindId.TryStatement as const,
 		body() {
 			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
+		handlers() {
+			return hydrateSlots<T.ExceptClause>(this, '_handlers', tree);
+		},
 		alternative() {
 			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
+		},
+		finalizer() {
+			return hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1639,15 +1681,15 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		condition: wrapWhileStatement$with$condition,
-		body: wrapWhileStatement$with$body,
-		alternative: wrapWhileStatement$with$alternative,
+		body: wrapTryStatement$with$body,
+		handlers: wrapTryStatement$with$handlers,
+		alternative: wrapTryStatement$with$alternative,
+		finalizer: wrapTryStatement$with$finalizer,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.WhileStatement.Parsed;
+	return node as unknown as T.TryStatement.Parsed;
 }
-
 function wrapTryStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.TryStatement;
@@ -1698,84 +1740,7 @@ function wrapTryStatement$with$alternative(this: Received<Held>, ...args: unknow
 function wrapTryStatement$with$finalizer(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTryStatement$with(receiverOf(this, '$with.finalizer'), 'finalizer', args);
 }
-export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryStatement.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.TryStatement as const,
-		body() {
-			return hydrateSlot<T.Suite>(this, '_body', tree);
-		},
-		handlers() {
-			return hydrateSlots<T.ExceptClause>(this, '_handlers', tree);
-		},
-		alternative() {
-			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
-		},
-		finalizer() {
-			return hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		body: wrapTryStatement$with$body,
-		handlers: wrapTryStatement$with$handlers,
-		alternative: wrapTryStatement$with$alternative,
-		finalizer: wrapTryStatement$with$finalizer,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.TryStatement.Parsed;
-}
 
-function wrapExceptClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExceptClause;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'group':
-			return applySetter(args, (v: NonNullable<T.ExceptClause['_group']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _group: admitSlot(handle, 'except_clause', 'group', v) }, tree)
-				)
-			);
-		case 'exception':
-			return applySetter(args, (v: NonNullable<T.ExceptClause['_exception']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) }, tree)
-				)
-			);
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.ExceptClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClause({ ...$edited(data), _body: admitSlot(handle, 'except_clause', 'body', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`except_clause has no $with.${setter}`);
-}
-function wrapExceptClause$with$group(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClause$with(receiverOf(this, '$with.group'), 'group', args);
-}
-function wrapExceptClause$with$exception(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClause$with(receiverOf(this, '$with.exception'), 'exception', args);
-}
-function wrapExceptClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClause$with(receiverOf(this, '$with.body'), 'body', args);
-}
 export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.ExceptClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1814,24 +1779,42 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClause.Parsed;
 }
-
-function wrapFinallyClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExceptClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.FinallyClause;
+	const data = node[INPUT] as T.ExceptClause;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.FinallyClause['_body']>) =>
+		case 'group':
+			return applySetter(args, (v: NonNullable<T.ExceptClause['_group']>) =>
 				rebuilt(node, handle, () =>
-					wrapFinallyClause({ ...$edited(data), _body: admitSlot(handle, 'finally_clause', 'body', v) }, tree)
+					wrapExceptClause({ ...$edited(data), _group: admitSlot(handle, 'except_clause', 'group', v) }, tree)
+				)
+			);
+		case 'exception':
+			return applySetter(args, (v: NonNullable<T.ExceptClause['_exception']>) =>
+				rebuilt(node, handle, () =>
+					wrapExceptClause({ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) }, tree)
+				)
+			);
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.ExceptClause['_body']>) =>
+				rebuilt(node, handle, () =>
+					wrapExceptClause({ ...$edited(data), _body: admitSlot(handle, 'except_clause', 'body', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`finally_clause has no $with.${setter}`);
+	throw new Error(`except_clause has no $with.${setter}`);
 }
-function wrapFinallyClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapFinallyClause$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapExceptClause$with$group(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClause$with(receiverOf(this, '$with.group'), 'group', args);
 }
+function wrapExceptClause$with$exception(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClause$with(receiverOf(this, '$with.exception'), 'exception', args);
+}
+function wrapExceptClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClause$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
 export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.FinallyClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1859,45 +1842,24 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FinallyClause.Parsed;
 }
-
-function wrapWithStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapFinallyClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.WithStatement;
+	const data = node[INPUT] as T.FinallyClause;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'async':
-			return applySetter(args, (v: NonNullable<T.WithStatement['_async']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithStatement({ ...$edited(data), _async: admitSlot(handle, 'with_statement', 'async', v) }, tree)
-				)
-			);
-		case 'withClause':
-			return applySetter(args, (v: NonNullable<T.WithStatement['_with_clause']>) =>
-				rebuilt(node, handle, () =>
-					wrapWithStatement(
-						{ ...$edited(data), _with_clause: admitSlot(handle, 'with_statement', 'withClause', v) },
-						tree
-					)
-				)
-			);
 		case 'body':
-			return applySetter(args, (v: NonNullable<T.WithStatement['_body']>) =>
+			return applySetter(args, (v: NonNullable<T.FinallyClause['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapWithStatement({ ...$edited(data), _body: admitSlot(handle, 'with_statement', 'body', v) }, tree)
+					wrapFinallyClause({ ...$edited(data), _body: admitSlot(handle, 'finally_clause', 'body', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`with_statement has no $with.${setter}`);
+	throw new Error(`finally_clause has no $with.${setter}`);
 }
-function wrapWithStatement$with$async(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithStatement$with(receiverOf(this, '$with.async'), 'async', args);
+function wrapFinallyClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapFinallyClause$with(receiverOf(this, '$with.body'), 'body', args);
 }
-function wrapWithStatement$with$withClause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithStatement$with(receiverOf(this, '$with.withClause'), 'withClause', args);
-}
-function wrapWithStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithStatement$with(receiverOf(this, '$with.body'), 'body', args);
-}
+
 export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.WithStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1936,24 +1898,45 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WithStatement.Parsed;
 }
-
-function wrapWithItem$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapWithStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.WithItem;
+	const data = node[INPUT] as T.WithStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.WithItem['_value']>) =>
+		case 'async':
+			return applySetter(args, (v: NonNullable<T.WithStatement['_async']>) =>
 				rebuilt(node, handle, () =>
-					wrapWithItem({ ...$edited(data), _value: admitSlot(handle, 'with_item', 'value', v) }, tree)
+					wrapWithStatement({ ...$edited(data), _async: admitSlot(handle, 'with_statement', 'async', v) }, tree)
+				)
+			);
+		case 'withClause':
+			return applySetter(args, (v: NonNullable<T.WithStatement['_with_clause']>) =>
+				rebuilt(node, handle, () =>
+					wrapWithStatement(
+						{ ...$edited(data), _with_clause: admitSlot(handle, 'with_statement', 'withClause', v) },
+						tree
+					)
+				)
+			);
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.WithStatement['_body']>) =>
+				rebuilt(node, handle, () =>
+					wrapWithStatement({ ...$edited(data), _body: admitSlot(handle, 'with_statement', 'body', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`with_item has no $with.${setter}`);
+	throw new Error(`with_statement has no $with.${setter}`);
 }
-function wrapWithItem$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithItem$with(receiverOf(this, '$with.value'), 'value', args);
+function wrapWithStatement$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithStatement$with(receiverOf(this, '$with.async'), 'async', args);
 }
+function wrapWithStatement$with$withClause(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithStatement$with(receiverOf(this, '$with.withClause'), 'withClause', args);
+}
+function wrapWithStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithStatement$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
 export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1981,7 +1964,74 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.WithItem.Parsed;
 }
+function wrapWithItem$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.WithItem;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.WithItem['_value']>) =>
+				rebuilt(node, handle, () =>
+					wrapWithItem({ ...$edited(data), _value: admitSlot(handle, 'with_item', 'value', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`with_item has no $with.${setter}`);
+}
+function wrapWithItem$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithItem$with(receiverOf(this, '$with.value'), 'value', args);
+}
 
+export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHandle): T.FunctionDefinition.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.FunctionDefinition as const,
+		async() {
+			return this._async;
+		},
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
+		},
+		typeParameters() {
+			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
+		},
+		parameters() {
+			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+		},
+		returnType() {
+			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
+		},
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: wrapFunctionDefinition$with$async,
+		name: wrapFunctionDefinition$with$name,
+		typeParameters: wrapFunctionDefinition$with$typeParameters,
+		parameters: wrapFunctionDefinition$with$parameters,
+		returnType: wrapFunctionDefinition$with$returnType,
+		body: wrapFunctionDefinition$with$body,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.FunctionDefinition.Parsed;
+}
 function wrapFunctionDefinition$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.FunctionDefinition;
@@ -2066,81 +2116,9 @@ function wrapFunctionDefinition$with$returnType(this: Received<Held>, ...args: u
 function wrapFunctionDefinition$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFunctionDefinition$with(receiverOf(this, '$with.body'), 'body', args);
 }
-export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHandle): T.FunctionDefinition.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.FunctionDefinition as const,
-		async() {
-			return this._async;
-		},
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		typeParameters() {
-			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
-		},
-		parameters() {
-			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
-		},
-		returnType() {
-			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
-		},
-		body() {
-			return hydrateSlot<T.Suite>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		async: wrapFunctionDefinition$with$async,
-		name: wrapFunctionDefinition$with$name,
-		typeParameters: wrapFunctionDefinition$with$typeParameters,
-		parameters: wrapFunctionDefinition$with$parameters,
-		returnType: wrapFunctionDefinition$with$returnType,
-		body: wrapFunctionDefinition$with$body,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FunctionDefinition.Parsed;
-}
 
 function wrapParameters$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Parameters;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
-						(v: NonNullable<T.Parameters['_elements']>) =>
-							wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
-					)
-				)
-			);
-	}
-	throw new Error(`parameters has no $with.${setter}`);
-}
-function wrapParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Parameters.Parsed {
 	const handle = currentHandle();
@@ -2208,37 +2186,31 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 	);
 	return node as unknown as T.Parameters.Parsed;
 }
-
-function wrapLambdaParameters$listRead(this: { readonly parametersElements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.parametersElements(), 'items'), undefined);
-}
-function wrapLambdaParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.LambdaParameters;
+	const data = node[INPUT] as T.Parameters;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'parametersElements':
+		case 'elements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.ParametersElements as const, optional: false, make: RAW.buildParametersElements },
-						(v: NonNullable<T.LambdaParameters['_parameters_elements']>) =>
-							wrapLambdaParameters(
-								{
-									...$edited(data),
-									_parameters_elements: admitSlot(handle, 'lambda_parameters', 'parametersElements', v)
-								},
-								tree
-							)
+						{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
+						(v: NonNullable<T.Parameters['_elements']>) =>
+							wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`lambda_parameters has no $with.${setter}`);
+	throw new Error(`parameters has no $with.${setter}`);
 }
-function wrapLambdaParameters$with$parametersElements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapLambdaParameters$with(receiverOf(this, '$with.parametersElements'), 'parametersElements', args);
+function wrapParameters$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapLambdaParameters$listRead(this: { readonly parametersElements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.parametersElements(), 'items'), undefined);
 }
 export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle): T.LambdaParameters.Parsed {
 	const handle = currentHandle();
@@ -2306,24 +2278,35 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 	);
 	return node as unknown as T.LambdaParameters.Parsed;
 }
-
-function wrapListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapLambdaParameters$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ListSplat;
+	const data = node[INPUT] as T.LambdaParameters;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.ListSplat['_expression']>) =>
+		case 'parametersElements':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapListSplat({ ...$edited(data), _expression: admitSlot(handle, 'list_splat', 'expression', v) }, tree)
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ParametersElements as const, optional: false, make: RAW.buildParametersElements },
+						(v: NonNullable<T.LambdaParameters['_parameters_elements']>) =>
+							wrapLambdaParameters(
+								{
+									...$edited(data),
+									_parameters_elements: admitSlot(handle, 'lambda_parameters', 'parametersElements', v)
+								},
+								tree
+							)
+					)
 				)
 			);
 	}
-	throw new Error(`list_splat has no $with.${setter}`);
+	throw new Error(`lambda_parameters has no $with.${setter}`);
 }
-function wrapListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapLambdaParameters$with$parametersElements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapLambdaParameters$with(receiverOf(this, '$with.parametersElements'), 'parametersElements', args);
 }
+
 export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2351,27 +2334,24 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplat.Parsed;
 }
-
-function wrapDictionarySplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictionarySplat;
+	const data = node[INPUT] as T.ListSplat;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'expression':
-			return applySetter(args, (v: NonNullable<T.DictionarySplat['_expression']>) =>
+			return applySetter(args, (v: NonNullable<T.ListSplat['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapDictionarySplat(
-						{ ...$edited(data), _expression: admitSlot(handle, 'dictionary_splat', 'expression', v) },
-						tree
-					)
+					wrapListSplat({ ...$edited(data), _expression: admitSlot(handle, 'list_splat', 'expression', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`dictionary_splat has no $with.${setter}`);
+	throw new Error(`list_splat has no $with.${setter}`);
 }
-function wrapDictionarySplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionarySplat$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+
 export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): T.DictionarySplat.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2399,27 +2379,27 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplat.Parsed;
 }
-
-function wrapGlobalStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictionarySplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.GlobalStatement;
+	const data = node[INPUT] as T.DictionarySplat;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'names':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.GlobalStatement['_names']>[number]>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.DictionarySplat['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapGlobalStatement(
-						{ ...$edited(data), _names: admitSlot(handle, 'global_statement', 'names', restItems('names', v)) },
+					wrapDictionarySplat(
+						{ ...$edited(data), _expression: admitSlot(handle, 'dictionary_splat', 'expression', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`global_statement has no $with.${setter}`);
+	throw new Error(`dictionary_splat has no $with.${setter}`);
 }
-function wrapGlobalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapGlobalStatement$with(receiverOf(this, '$with.names'), 'names', args);
+function wrapDictionarySplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionarySplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+
 export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): T.GlobalStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2447,27 +2427,27 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GlobalStatement.Parsed;
 }
-
-function wrapNonlocalStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapGlobalStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.NonlocalStatement;
+	const data = node[INPUT] as T.GlobalStatement;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'names':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.NonlocalStatement['_names']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.GlobalStatement['_names']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapNonlocalStatement(
-						{ ...$edited(data), _names: admitSlot(handle, 'nonlocal_statement', 'names', restItems('names', v)) },
+					wrapGlobalStatement(
+						{ ...$edited(data), _names: admitSlot(handle, 'global_statement', 'names', restItems('names', v)) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`nonlocal_statement has no $with.${setter}`);
+	throw new Error(`global_statement has no $with.${setter}`);
 }
-function wrapNonlocalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNonlocalStatement$with(receiverOf(this, '$with.names'), 'names', args);
+function wrapGlobalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapGlobalStatement$with(receiverOf(this, '$with.names'), 'names', args);
 }
+
 export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandle): T.NonlocalStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2495,7 +2475,57 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NonlocalStatement.Parsed;
 }
+function wrapNonlocalStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.NonlocalStatement;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'names':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.NonlocalStatement['_names']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapNonlocalStatement(
+						{ ...$edited(data), _names: admitSlot(handle, 'nonlocal_statement', 'names', restItems('names', v)) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`nonlocal_statement has no $with.${setter}`);
+}
+function wrapNonlocalStatement$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNonlocalStatement$with(receiverOf(this, '$with.names'), 'names', args);
+}
 
+export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.ExecStatement.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ExecStatement as const,
+		code() {
+			return hydrateSlot<T.String | T.Identifier>(this, '_code', tree);
+		},
+		inClauses() {
+			return hydrateSlots<T.Expression>(this, '_in_clause', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { code: wrapExecStatement$with$code, inClauses: wrapExecStatement$with$inClauses, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExecStatement.Parsed;
+}
 function wrapExecStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ExecStatement;
@@ -2528,16 +2558,17 @@ function wrapExecStatement$with$code(this: Received<Held>, ...args: unknown[]): 
 function wrapExecStatement$with$inClauses(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExecStatement$with(receiverOf(this, '$with.inClauses'), 'inClauses', args);
 }
-export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.ExecStatement.Parsed {
+
+export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHandle): T.TypeAliasStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ExecStatement as const,
-		code() {
-			return hydrateSlot<T.String | T.Identifier>(this, '_code', tree);
+		$type: TSKindId.TypeAliasStatement as const,
+		left() {
+			return hydrateSlot<T.Type>(this, '_left', tree);
 		},
-		inClauses() {
-			return hydrateSlots<T.Expression>(this, '_in_clause', tree);
+		right() {
+			return hydrateSlot<T.Type>(this, '_right', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2554,11 +2585,10 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { code: wrapExecStatement$with$code, inClauses: wrapExecStatement$with$inClauses, [RECEIVER]: node };
+	node.$with = { left: wrapTypeAliasStatement$with$left, right: wrapTypeAliasStatement$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ExecStatement.Parsed;
+	return node as unknown as T.TypeAliasStatement.Parsed;
 }
-
 function wrapTypeAliasStatement$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.TypeAliasStatement;
@@ -2591,16 +2621,23 @@ function wrapTypeAliasStatement$with$left(this: Received<Held>, ...args: unknown
 function wrapTypeAliasStatement$with$right(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeAliasStatement$with(receiverOf(this, '$with.right'), 'right', args);
 }
-export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHandle): T.TypeAliasStatement.Parsed {
+
+export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): T.ClassDefinition.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.TypeAliasStatement as const,
-		left() {
-			return hydrateSlot<T.Type>(this, '_left', tree);
+		$type: TSKindId.ClassDefinition as const,
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		right() {
-			return hydrateSlot<T.Type>(this, '_right', tree);
+		typeParameters() {
+			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
+		},
+		bases() {
+			return hydrateSlot<T.ArgumentList | undefined>(this, '_bases', tree);
+		},
+		body() {
+			return hydrateSlot<T.SuiteClassDefinition>(this, '_body', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2617,11 +2654,16 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { left: wrapTypeAliasStatement$with$left, right: wrapTypeAliasStatement$with$right, [RECEIVER]: node };
+	node.$with = {
+		name: wrapClassDefinition$with$name,
+		typeParameters: wrapClassDefinition$with$typeParameters,
+		bases: wrapClassDefinition$with$bases,
+		body: wrapClassDefinition$with$body,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.TypeAliasStatement.Parsed;
+	return node as unknown as T.ClassDefinition.Parsed;
 }
-
 function wrapClassDefinition$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ClassDefinition;
@@ -2679,73 +2721,9 @@ function wrapClassDefinition$with$bases(this: Received<Held>, ...args: unknown[]
 function wrapClassDefinition$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapClassDefinition$with(receiverOf(this, '$with.body'), 'body', args);
 }
-export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): T.ClassDefinition.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ClassDefinition as const,
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		typeParameters() {
-			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
-		},
-		bases() {
-			return hydrateSlot<T.ArgumentList | undefined>(this, '_bases', tree);
-		},
-		body() {
-			return hydrateSlot<T.SuiteClassDefinition>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		name: wrapClassDefinition$with$name,
-		typeParameters: wrapClassDefinition$with$typeParameters,
-		bases: wrapClassDefinition$with$bases,
-		body: wrapClassDefinition$with$body,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ClassDefinition.Parsed;
-}
 
 function wrapTypeParameter$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
-}
-function wrapTypeParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.TypeParameter;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'types':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
-						(v: NonNullable<T.TypeParameter['_types']>) =>
-							wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
-					)
-				)
-			);
-	}
-	throw new Error(`type_parameter has no $with.${setter}`);
-}
-function wrapTypeParameter$with$types(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypeParameter$with(receiverOf(this, '$with.types'), 'types', args);
 }
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
 	const handle = currentHandle();
@@ -2813,27 +2791,29 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 	);
 	return node as unknown as T.TypeParameter.Parsed;
 }
-
-function wrapParenthesizedListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTypeParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ParenthesizedListSplat;
+	const data = node[INPUT] as T.TypeParameter;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+		case 'types':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapParenthesizedListSplat(
-						{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
+						(v: NonNullable<T.TypeParameter['_types']>) =>
+							wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
+	throw new Error(`type_parameter has no $with.${setter}`);
 }
-function wrapParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapTypeParameter$with$types(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypeParameter$with(receiverOf(this, '$with.types'), 'types', args);
 }
+
 export function wrapParenthesizedListSplat(
 	data: T.ParenthesizedListSplat,
 	tree: TreeHandle
@@ -2864,34 +2844,29 @@ export function wrapParenthesizedListSplat(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
-
-function wrapArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.arguments(), 'items'), undefined);
-}
-function wrapArgumentList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapParenthesizedListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ArgumentList;
+	const data = node[INPUT] as T.ParenthesizedListSplat;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'arguments':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
-						(v: NonNullable<T.ArgumentList['_arguments']>) =>
-							wrapArgumentList(
-								{ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) },
-								tree
-							)
+					wrapParenthesizedListSplat(
+						{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
+						tree
 					)
 				)
 			);
 	}
-	throw new Error(`argument_list has no $with.${setter}`);
+	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
 }
-function wrapArgumentList$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapArgumentList$with(receiverOf(this, '$with.arguments'), 'arguments', args);
+function wrapParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+function wrapArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.arguments(), 'items'), undefined);
 }
 export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.ArgumentList.Parsed {
 	const handle = currentHandle();
@@ -2959,7 +2934,66 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 	);
 	return node as unknown as T.ArgumentList.Parsed;
 }
+function wrapArgumentList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ArgumentList;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'arguments':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
+						(v: NonNullable<T.ArgumentList['_arguments']>) =>
+							wrapArgumentList(
+								{ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) },
+								tree
+							)
+					)
+				)
+			);
+	}
+	throw new Error(`argument_list has no $with.${setter}`);
+}
+function wrapArgumentList$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapArgumentList$with(receiverOf(this, '$with.arguments'), 'arguments', args);
+}
 
+export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeHandle): T.DecoratedDefinition.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.DecoratedDefinition as const,
+		decorators() {
+			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+		},
+		definition() {
+			return hydrateSlot<T.ClassDefinition | T.FunctionDefinition>(this, '_definition', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		decorators: wrapDecoratedDefinition$with$decorators,
+		definition: wrapDecoratedDefinition$with$definition,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.DecoratedDefinition.Parsed;
+}
 function wrapDecoratedDefinition$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.DecoratedDefinition;
@@ -2995,58 +3029,7 @@ function wrapDecoratedDefinition$with$decorators(this: Received<Held>, ...args: 
 function wrapDecoratedDefinition$with$definition(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapDecoratedDefinition$with(receiverOf(this, '$with.definition'), 'definition', args);
 }
-export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeHandle): T.DecoratedDefinition.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.DecoratedDefinition as const,
-		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
-		},
-		definition() {
-			return hydrateSlot<T.ClassDefinition | T.FunctionDefinition>(this, '_definition', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		decorators: wrapDecoratedDefinition$with$decorators,
-		definition: wrapDecoratedDefinition$with$definition,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.DecoratedDefinition.Parsed;
-}
 
-function wrapDecorator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Decorator;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.Decorator['_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`decorator has no $with.${setter}`);
-}
-function wrapDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
-}
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3074,27 +3057,24 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }
-
-function wrapBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDecorator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Block;
+	const data = node[INPUT] as T.Decorator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'statements':
-			return applySetter(args, (...v: NonNullable<T.Block['_statements']>[number][]) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Decorator['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapBlock(
-						{ ...$edited(data), _statements: admitSlot(handle, 'block', 'statements', restItems('statements', v)) },
-						tree
-					)
+					wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`block has no $with.${setter}`);
+	throw new Error(`decorator has no $with.${setter}`);
 }
-function wrapBlock$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBlock$with(receiverOf(this, '$with.statements'), 'statements', args);
+function wrapDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+
 export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3122,36 +3102,29 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Block.Parsed;
 }
-
-function wrapExpressionList$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapExpressionList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExpressionList;
+	const data = node[INPUT] as T.Block;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExpressionList['_item']>[number]>) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.Block['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapExpressionList(
-						{ ...$edited(data), _item: admitSlot(handle, 'expression_list', 'items', restItems('items', v)) },
+					wrapBlock(
+						{ ...$edited(data), _statements: admitSlot(handle, 'block', 'statements', restItems('statements', v)) },
 						tree
 					)
 				)
 			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapExpressionList({ ...$edited(data), _delimiter: v }, tree))
-			);
 	}
-	throw new Error(`expression_list has no $with.${setter}`);
+	throw new Error(`block has no $with.${setter}`);
 }
-function wrapExpressionList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExpressionList$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapBlock$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBlock$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
-function wrapExpressionList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExpressionList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+
+function wrapExpressionList$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.ExpressionList.Parsed {
 	const handle = currentHandle();
@@ -3215,33 +3188,34 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 	holdReadItems(node, wrapExpressionList$listRead);
 	return node as unknown as T.ExpressionList.Parsed;
 }
-
-function wrapDottedName$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExpressionList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DottedName;
+	const data = node[INPUT] as T.ExpressionList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'qualifier':
-			return applySetter(args, (v: NonNullable<T.DottedName['_qualifier']>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExpressionList['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapDottedName({ ...$edited(data), _qualifier: admitSlot(handle, 'dotted_name', 'qualifier', v) }, tree)
+					wrapExpressionList(
+						{ ...$edited(data), _item: admitSlot(handle, 'expression_list', 'items', restItems('items', v)) },
+						tree
+					)
 				)
 			);
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.DottedName['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapDottedName({ ...$edited(data), _name: admitSlot(handle, 'dotted_name', 'name', v) }, tree)
-				)
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapExpressionList({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`dotted_name has no $with.${setter}`);
+	throw new Error(`expression_list has no $with.${setter}`);
 }
-function wrapDottedName$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDottedName$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
+function wrapExpressionList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExpressionList$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapDottedName$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDottedName$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapExpressionList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExpressionList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
+
 export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedName.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3272,24 +3246,33 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DottedName.Parsed;
 }
-
-function wrapCasePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDottedName$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CasePattern;
+	const data = node[INPUT] as T.DottedName;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.CasePattern['_content']>) =>
+		case 'qualifier':
+			return applySetter(args, (v: NonNullable<T.DottedName['_qualifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapCasePattern({ ...$edited(data), _content: admitSlot(handle, 'case_pattern', 'content', v) }, tree)
+					wrapDottedName({ ...$edited(data), _qualifier: admitSlot(handle, 'dotted_name', 'qualifier', v) }, tree)
+				)
+			);
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.DottedName['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapDottedName({ ...$edited(data), _name: admitSlot(handle, 'dotted_name', 'name', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`case_pattern has no $with.${setter}`);
+	throw new Error(`dotted_name has no $with.${setter}`);
 }
-function wrapCasePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCasePattern$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapDottedName$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDottedName$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
 }
+function wrapDottedName$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDottedName$with(receiverOf(this, '$with.name'), 'name', args);
+}
+
 export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3317,24 +3300,24 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePa
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CasePattern.Parsed;
 }
-
-function wrapSimplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCasePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SimplePattern;
+	const data = node[INPUT] as T.CasePattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.SimplePattern['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.CasePattern['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapSimplePattern({ ...$edited(data), _content: admitSlot(handle, '_simple_pattern', 'content', v) }, tree)
+					wrapCasePattern({ ...$edited(data), _content: admitSlot(handle, 'case_pattern', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`_simple_pattern has no $with.${setter}`);
+	throw new Error(`case_pattern has no $with.${setter}`);
 }
-function wrapSimplePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimplePattern$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapCasePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCasePattern$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.SimplePattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3380,39 +3363,24 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SimplePattern.Parsed;
 }
-
-function wrapCaseAsPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSimplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CaseAsPattern;
+	const data = node[INPUT] as T.SimplePattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'casePattern':
-			return applySetter(args, (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.SimplePattern['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapCaseAsPattern(
-						{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
-						tree
-					)
-				)
-			);
-		case 'identifier':
-			return applySetter(args, (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
-				rebuilt(node, handle, () =>
-					wrapCaseAsPattern(
-						{ ...$edited(data), _identifier: admitSlot(handle, 'case_as_pattern', 'identifier', v) },
-						tree
-					)
+					wrapSimplePattern({ ...$edited(data), _content: admitSlot(handle, '_simple_pattern', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`case_as_pattern has no $with.${setter}`);
+	throw new Error(`_simple_pattern has no $with.${setter}`);
 }
-function wrapCaseAsPattern$with$casePattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseAsPattern$with(receiverOf(this, '$with.casePattern'), 'casePattern', args);
+function wrapSimplePattern$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimplePattern$with(receiverOf(this, '$with.content'), 'content', args);
 }
-function wrapCaseAsPattern$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseAsPattern$with(receiverOf(this, '$with.identifier'), 'identifier', args);
-}
+
 export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.CaseAsPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3447,55 +3415,39 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.Ca
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CaseAsPattern.Parsed;
 }
-
-function wrapUnionPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCaseAsPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.UnionPattern;
+	const data = node[INPUT] as T.CaseAsPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (v: NonNullable<T.UnionPattern['_left']> | Admit<T.SimplePattern>) =>
+		case 'casePattern':
+			return applySetter(args, (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
 				rebuilt(node, handle, () =>
-					wrapUnionPattern(
-						{
-							...$edited(data),
-							_left: admitSlot(
-								handle,
-								'union_pattern',
-								'left',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
-							)
-						},
+					wrapCaseAsPattern(
+						{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
 						tree
 					)
 				)
 			);
-		case 'right':
-			return applySetter(args, (v: NonNullable<T.UnionPattern['_right']> | Admit<T.SimplePattern>) =>
+		case 'identifier':
+			return applySetter(args, (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapUnionPattern(
-						{
-							...$edited(data),
-							_right: admitSlot(
-								handle,
-								'union_pattern',
-								'right',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.right')
-							)
-						},
+					wrapCaseAsPattern(
+						{ ...$edited(data), _identifier: admitSlot(handle, 'case_as_pattern', 'identifier', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`union_pattern has no $with.${setter}`);
+	throw new Error(`case_as_pattern has no $with.${setter}`);
 }
-function wrapUnionPattern$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnionPattern$with(receiverOf(this, '$with.left'), 'left', args);
+function wrapCaseAsPattern$with$casePattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseAsPattern$with(receiverOf(this, '$with.casePattern'), 'casePattern', args);
 }
-function wrapUnionPattern$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnionPattern$with(receiverOf(this, '$with.right'), 'right', args);
+function wrapCaseAsPattern$with$identifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseAsPattern$with(receiverOf(this, '$with.identifier'), 'identifier', args);
 }
+
 export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.UnionPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3562,31 +3514,57 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnionPattern.Parsed;
 }
-
-function wrapDictPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapDictPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapUnionPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictPattern;
+	const data = node[INPUT] as T.UnionPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.UnionPattern['_left']> | Admit<T.SimplePattern>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
-						(v: NonNullable<T.DictPattern['_elements']>) =>
-							wrapDictPattern({ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) }, tree)
+					wrapUnionPattern(
+						{
+							...$edited(data),
+							_left: admitSlot(
+								handle,
+								'union_pattern',
+								'left',
+								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
+							)
+						},
+						tree
+					)
+				)
+			);
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.UnionPattern['_right']> | Admit<T.SimplePattern>) =>
+				rebuilt(node, handle, () =>
+					wrapUnionPattern(
+						{
+							...$edited(data),
+							_right: admitSlot(
+								handle,
+								'union_pattern',
+								'right',
+								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.right')
+							)
+						},
+						tree
 					)
 				)
 			);
 	}
-	throw new Error(`dict_pattern has no $with.${setter}`);
+	throw new Error(`union_pattern has no $with.${setter}`);
 }
-function wrapDictPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapUnionPattern$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnionPattern$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function wrapUnionPattern$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnionPattern$with(receiverOf(this, '$with.right'), 'right', args);
+}
+
+function wrapDictPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPattern.Parsed {
 	const handle = currentHandle();
@@ -3654,44 +3632,29 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 	);
 	return node as unknown as T.DictPattern.Parsed;
 }
-
-function wrapKeyValuePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.KeyValuePattern;
+	const data = node[INPUT] as T.DictPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'key':
-			return applySetter(args, (v: NonNullable<T.KeyValuePattern['_key']> | Admit<T.SimplePattern>) =>
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapKeyValuePattern(
-						{
-							...$edited(data),
-							_key: admitSlot(
-								handle,
-								'key_value_pattern',
-								'key',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeyValuePattern.key')
-							)
-						},
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
+						(v: NonNullable<T.DictPattern['_elements']>) =>
+							wrapDictPattern({ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) }, tree)
 					)
 				)
 			);
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.KeyValuePattern['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapKeyValuePattern({ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) }, tree)
-				)
-			);
 	}
-	throw new Error(`key_value_pattern has no $with.${setter}`);
+	throw new Error(`dict_pattern has no $with.${setter}`);
 }
-function wrapKeyValuePattern$with$key(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeyValuePattern$with(receiverOf(this, '$with.key'), 'key', args);
+function wrapDictPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
-function wrapKeyValuePattern$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeyValuePattern$with(receiverOf(this, '$with.value'), 'value', args);
-}
+
 export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): T.KeyValuePattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3740,44 +3703,44 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeyValuePattern.Parsed;
 }
-
-function wrapKeywordPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapKeyValuePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.KeywordPattern;
+	const data = node[INPUT] as T.KeyValuePattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.KeywordPattern['_name']>) =>
+		case 'key':
+			return applySetter(args, (v: NonNullable<T.KeyValuePattern['_key']> | Admit<T.SimplePattern>) =>
 				rebuilt(node, handle, () =>
-					wrapKeywordPattern({ ...$edited(data), _name: admitSlot(handle, 'keyword_pattern', 'name', v) }, tree)
-				)
-			);
-		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
-				rebuilt(node, handle, () =>
-					wrapKeywordPattern(
+					wrapKeyValuePattern(
 						{
 							...$edited(data),
-							_pattern: admitSlot(
+							_key: admitSlot(
 								handle,
-								'keyword_pattern',
-								'pattern',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
+								'key_value_pattern',
+								'key',
+								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeyValuePattern.key')
 							)
 						},
 						tree
 					)
 				)
 			);
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.KeyValuePattern['_value']>) =>
+				rebuilt(node, handle, () =>
+					wrapKeyValuePattern({ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) }, tree)
+				)
+			);
 	}
-	throw new Error(`keyword_pattern has no $with.${setter}`);
+	throw new Error(`key_value_pattern has no $with.${setter}`);
 }
-function wrapKeywordPattern$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeywordPattern$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapKeyValuePattern$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeyValuePattern$with(receiverOf(this, '$with.key'), 'key', args);
 }
-function wrapKeywordPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeywordPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+function wrapKeyValuePattern$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeyValuePattern$with(receiverOf(this, '$with.value'), 'value', args);
 }
+
 export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.KeywordPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3826,7 +3789,74 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordPattern.Parsed;
 }
+function wrapKeywordPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.KeywordPattern;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.KeywordPattern['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapKeywordPattern({ ...$edited(data), _name: admitSlot(handle, 'keyword_pattern', 'name', v) }, tree)
+				)
+			);
+		case 'pattern':
+			return applySetter(args, (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
+				rebuilt(node, handle, () =>
+					wrapKeywordPattern(
+						{
+							...$edited(data),
+							_pattern: admitSlot(
+								handle,
+								'keyword_pattern',
+								'pattern',
+								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
+							)
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`keyword_pattern has no $with.${setter}`);
+}
+function wrapKeywordPattern$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeywordPattern$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapKeywordPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeywordPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
 
+export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.ClassPattern.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ClassPattern as const,
+		type() {
+			return hydrateSlot<T.DottedName>(this, '_type', tree);
+		},
+		fields() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_fields', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { type: wrapClassPattern$with$type, fields: wrapClassPattern$with$fields, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ClassPattern.Parsed;
+}
 function wrapClassPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ClassPattern;
@@ -3858,16 +3888,23 @@ function wrapClassPattern$with$type(this: Received<Held>, ...args: unknown[]): u
 function wrapClassPattern$with$fields(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapClassPattern$with(receiverOf(this, '$with.fields'), 'fields', args);
 }
-export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.ClassPattern.Parsed {
+
+export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.ComplexPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ClassPattern as const,
-		type() {
-			return hydrateSlot<T.DottedName>(this, '_type', tree);
+		$type: TSKindId.ComplexPattern as const,
+		sign() {
+			return this._sign;
 		},
-		fields() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_fields', tree);
+		real() {
+			return hydrateSlot<T.Integer | T.Float>(this, '_real', tree);
+		},
+		operator() {
+			return this._operator;
+		},
+		imaginary() {
+			return hydrateSlot<T.Integer | T.Float>(this, '_imaginary', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -3884,11 +3921,16 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.Clas
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { type: wrapClassPattern$with$type, fields: wrapClassPattern$with$fields, [RECEIVER]: node };
+	node.$with = {
+		sign: wrapComplexPattern$with$sign,
+		real: wrapComplexPattern$with$real,
+		operator: wrapComplexPattern$with$operator,
+		imaginary: wrapComplexPattern$with$imaginary,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ClassPattern.Parsed;
+	return node as unknown as T.ComplexPattern.Parsed;
 }
-
 function wrapComplexPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ComplexPattern;
@@ -3936,78 +3978,9 @@ function wrapComplexPattern$with$operator(this: Received<Held>, ...args: unknown
 function wrapComplexPattern$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapComplexPattern$with(receiverOf(this, '$with.imaginary'), 'imaginary', args);
 }
-export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.ComplexPattern.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ComplexPattern as const,
-		sign() {
-			return this._sign;
-		},
-		real() {
-			return hydrateSlot<T.Integer | T.Float>(this, '_real', tree);
-		},
-		operator() {
-			return this._operator;
-		},
-		imaginary() {
-			return hydrateSlot<T.Integer | T.Float>(this, '_imaginary', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		sign: wrapComplexPattern$with$sign,
-		real: wrapComplexPattern$with$real,
-		operator: wrapComplexPattern$with$operator,
-		imaginary: wrapComplexPattern$with$imaginary,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ComplexPattern.Parsed;
-}
 
 function wrapParametersElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapParametersElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ParametersElements;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ParametersElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapParametersElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'parameters_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapParametersElements({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`parameters_elements has no $with.${setter}`);
-}
-function wrapParametersElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParametersElements$with(receiverOf(this, '$with.items'), 'items', args);
-}
-function wrapParametersElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParametersElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapParametersElements(data: T.ParametersElements, tree: TreeHandle): T.ParametersElements.Parsed {
 	const handle = currentHandle();
@@ -4075,33 +4048,36 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 	holdReadItems(node, wrapParametersElements$listRead);
 	return node as unknown as T.ParametersElements.Parsed;
 }
-
-function wrapPatterns$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapPatterns$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapParametersElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Patterns;
+	const data = node[INPUT] as T.ParametersElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Patterns['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ParametersElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapPatterns({ ...$edited(data), _item: admitSlot(handle, 'patterns', 'items', restItems('items', v)) }, tree)
+					wrapParametersElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'parameters_elements', 'items', restItems('items', v)) },
+						tree
+					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPatterns({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapParametersElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`patterns has no $with.${setter}`);
+	throw new Error(`parameters_elements has no $with.${setter}`);
 }
-function wrapPatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPatterns$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapParametersElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParametersElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapPatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPatterns$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapParametersElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParametersElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapPatterns$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Parsed {
 	const handle = currentHandle();
@@ -4165,31 +4141,33 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 	holdReadItems(node, wrapPatterns$listRead);
 	return node as unknown as T.Patterns.Parsed;
 }
+function wrapPatterns$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.Patterns;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Patterns['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapPatterns({ ...$edited(data), _item: admitSlot(handle, 'patterns', 'items', restItems('items', v)) }, tree)
+				)
+			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapPatterns({ ...$edited(data), _delimiter: v }, tree))
+			);
+	}
+	throw new Error(`patterns has no $with.${setter}`);
+}
+function wrapPatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPatterns$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function wrapPatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPatterns$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
 
 function wrapTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapTuplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.TuplePattern;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
-						(v: NonNullable<T.TuplePattern['_elements']>) =>
-							wrapTuplePattern({ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) }, tree)
-					)
-				)
-			);
-	}
-	throw new Error(`tuple_pattern has no $with.${setter}`);
-}
-function wrapTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTuplePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.TuplePattern.Parsed {
 	const handle = currentHandle();
@@ -4257,13 +4235,9 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 	);
 	return node as unknown as T.TuplePattern.Parsed;
 }
-
-function wrapListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapListPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTuplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ListPattern;
+	const data = node[INPUT] as T.TuplePattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
@@ -4271,17 +4245,21 @@ function wrapListPattern$with(node: Held, setter: string, args: readonly unknown
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.ListPattern['_elements']>) =>
-							wrapListPattern({ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) }, tree)
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
+						(v: NonNullable<T.TuplePattern['_elements']>) =>
+							wrapTuplePattern({ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`list_pattern has no $with.${setter}`);
+	throw new Error(`tuple_pattern has no $with.${setter}`);
 }
-function wrapListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTuplePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPattern.Parsed {
 	const handle = currentHandle();
@@ -4349,36 +4327,29 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 	);
 	return node as unknown as T.ListPattern.Parsed;
 }
-
-function wrapDefaultParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapListPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DefaultParameter;
+	const data = node[INPUT] as T.ListPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.DefaultParameter['_name']>) =>
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapDefaultParameter({ ...$edited(data), _name: admitSlot(handle, 'default_parameter', 'name', v) }, tree)
-				)
-			);
-		case 'default':
-			return applySetter(args, (v: NonNullable<T.DefaultParameter['_default']>) =>
-				rebuilt(node, handle, () =>
-					wrapDefaultParameter(
-						{ ...$edited(data), _default: admitSlot(handle, 'default_parameter', 'default', v) },
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
+						(v: NonNullable<T.ListPattern['_elements']>) =>
+							wrapListPattern({ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`default_parameter has no $with.${setter}`);
+	throw new Error(`list_pattern has no $with.${setter}`);
 }
-function wrapDefaultParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDefaultParameter$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
-function wrapDefaultParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDefaultParameter$with(receiverOf(this, '$with.default'), 'default', args);
-}
+
 export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle): T.DefaultParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4409,7 +4380,77 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DefaultParameter.Parsed;
 }
+function wrapDefaultParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.DefaultParameter;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.DefaultParameter['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapDefaultParameter({ ...$edited(data), _name: admitSlot(handle, 'default_parameter', 'name', v) }, tree)
+				)
+			);
+		case 'default':
+			return applySetter(args, (v: NonNullable<T.DefaultParameter['_default']>) =>
+				rebuilt(node, handle, () =>
+					wrapDefaultParameter(
+						{ ...$edited(data), _default: admitSlot(handle, 'default_parameter', 'default', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`default_parameter has no $with.${setter}`);
+}
+function wrapDefaultParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDefaultParameter$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapDefaultParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDefaultParameter$with(receiverOf(this, '$with.default'), 'default', args);
+}
 
+export function wrapTypedDefaultParameter(
+	data: T.TypedDefaultParameter,
+	tree: TreeHandle
+): T.TypedDefaultParameter.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.TypedDefaultParameter as const,
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
+		},
+		type() {
+			return hydrateSlot<T.Type>(this, '_type', tree);
+		},
+		default() {
+			return hydrateSlot<T.Expression>(this, '_default', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: wrapTypedDefaultParameter$with$name,
+		type: wrapTypedDefaultParameter$with$type,
+		default: wrapTypedDefaultParameter$with$default,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.TypedDefaultParameter.Parsed;
+}
 function wrapTypedDefaultParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.TypedDefaultParameter;
@@ -4454,68 +4495,7 @@ function wrapTypedDefaultParameter$with$type(this: Received<Held>, ...args: unkn
 function wrapTypedDefaultParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypedDefaultParameter$with(receiverOf(this, '$with.default'), 'default', args);
 }
-export function wrapTypedDefaultParameter(
-	data: T.TypedDefaultParameter,
-	tree: TreeHandle
-): T.TypedDefaultParameter.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.TypedDefaultParameter as const,
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		type() {
-			return hydrateSlot<T.Type>(this, '_type', tree);
-		},
-		default() {
-			return hydrateSlot<T.Expression>(this, '_default', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		name: wrapTypedDefaultParameter$with$name,
-		type: wrapTypedDefaultParameter$with$type,
-		default: wrapTypedDefaultParameter$with$default,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.TypedDefaultParameter.Parsed;
-}
 
-function wrapListSplatPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ListSplatPattern;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.ListSplatPattern['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapListSplatPattern(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'list_splat_pattern', 'pattern', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`list_splat_pattern has no $with.${setter}`);
-}
-function wrapListSplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListSplatPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
-}
 export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle): T.ListSplatPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4543,27 +4523,27 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListSplatPattern.Parsed;
 }
-
-function wrapDictionarySplatPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapListSplatPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictionarySplatPattern;
+	const data = node[INPUT] as T.ListSplatPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.DictionarySplatPattern['_pattern']>) =>
+			return applySetter(args, (v: NonNullable<T.ListSplatPattern['_pattern']>) =>
 				rebuilt(node, handle, () =>
-					wrapDictionarySplatPattern(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'dictionary_splat_pattern', 'pattern', v) },
+					wrapListSplatPattern(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'list_splat_pattern', 'pattern', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`dictionary_splat_pattern has no $with.${setter}`);
+	throw new Error(`list_splat_pattern has no $with.${setter}`);
 }
-function wrapDictionarySplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionarySplatPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+function wrapListSplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListSplatPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
+
 export function wrapDictionarySplatPattern(
 	data: T.DictionarySplatPattern,
 	tree: TreeHandle
@@ -4594,33 +4574,27 @@ export function wrapDictionarySplatPattern(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionarySplatPattern.Parsed;
 }
-
-function wrapAsPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictionarySplatPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AsPattern;
+	const data = node[INPUT] as T.DictionarySplatPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.AsPattern['_expression']>) =>
+		case 'pattern':
+			return applySetter(args, (v: NonNullable<T.DictionarySplatPattern['_pattern']>) =>
 				rebuilt(node, handle, () =>
-					wrapAsPattern({ ...$edited(data), _expression: admitSlot(handle, 'as_pattern', 'expression', v) }, tree)
-				)
-			);
-		case 'alias':
-			return applySetter(args, (v: NonNullable<T.AsPattern['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapAsPattern({ ...$edited(data), _alias: admitSlot(handle, 'as_pattern', 'alias', v) }, tree)
+					wrapDictionarySplatPattern(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'dictionary_splat_pattern', 'pattern', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`as_pattern has no $with.${setter}`);
+	throw new Error(`dictionary_splat_pattern has no $with.${setter}`);
 }
-function wrapAsPattern$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAsPattern$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapDictionarySplatPattern$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionarySplatPattern$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
-function wrapAsPattern$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAsPattern$with(receiverOf(this, '$with.alias'), 'alias', args);
-}
+
 export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4651,24 +4625,33 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AsPattern.Parsed;
 }
-
-function wrapNotOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAsPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.NotOperator;
+	const data = node[INPUT] as T.AsPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'argument':
-			return applySetter(args, (v: NonNullable<T.NotOperator['_argument']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.AsPattern['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapNotOperator({ ...$edited(data), _argument: admitSlot(handle, 'not_operator', 'argument', v) }, tree)
+					wrapAsPattern({ ...$edited(data), _expression: admitSlot(handle, 'as_pattern', 'expression', v) }, tree)
+				)
+			);
+		case 'alias':
+			return applySetter(args, (v: NonNullable<T.AsPattern['_alias']>) =>
+				rebuilt(node, handle, () =>
+					wrapAsPattern({ ...$edited(data), _alias: admitSlot(handle, 'as_pattern', 'alias', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`not_operator has no $with.${setter}`);
+	throw new Error(`as_pattern has no $with.${setter}`);
 }
-function wrapNotOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNotOperator$with(receiverOf(this, '$with.argument'), 'argument', args);
+function wrapAsPattern$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAsPattern$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+function wrapAsPattern$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAsPattern$with(receiverOf(this, '$with.alias'), 'alias', args);
+}
+
 export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOperator.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4696,45 +4679,24 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOpe
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NotOperator.Parsed;
 }
-
-function wrapBooleanOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapNotOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.BooleanOperator;
+	const data = node[INPUT] as T.NotOperator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (v: NonNullable<T.BooleanOperator['_left']>) =>
+		case 'argument':
+			return applySetter(args, (v: NonNullable<T.NotOperator['_argument']>) =>
 				rebuilt(node, handle, () =>
-					wrapBooleanOperator({ ...$edited(data), _left: admitSlot(handle, 'boolean_operator', 'left', v) }, tree)
-				)
-			);
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.BooleanOperator['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapBooleanOperator(
-						{ ...$edited(data), _operator: admitSlot(handle, 'boolean_operator', 'operator', v) },
-						tree
-					)
-				)
-			);
-		case 'right':
-			return applySetter(args, (v: NonNullable<T.BooleanOperator['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapBooleanOperator({ ...$edited(data), _right: admitSlot(handle, 'boolean_operator', 'right', v) }, tree)
+					wrapNotOperator({ ...$edited(data), _argument: admitSlot(handle, 'not_operator', 'argument', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`boolean_operator has no $with.${setter}`);
+	throw new Error(`not_operator has no $with.${setter}`);
 }
-function wrapBooleanOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBooleanOperator$with(receiverOf(this, '$with.left'), 'left', args);
+function wrapNotOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNotOperator$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
-function wrapBooleanOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBooleanOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
-}
-function wrapBooleanOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBooleanOperator$with(receiverOf(this, '$with.right'), 'right', args);
-}
+
 export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): T.BooleanOperator.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4773,42 +4735,45 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BooleanOperator.Parsed;
 }
-
-function wrapBinaryOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapBooleanOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.BinaryOperator;
+	const data = node[INPUT] as T.BooleanOperator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'left':
-			return applySetter(args, (v: NonNullable<T.BinaryOperator['_left']>) =>
+			return applySetter(args, (v: NonNullable<T.BooleanOperator['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _left: admitSlot(handle, 'binary_operator', 'left', v) }, tree)
+					wrapBooleanOperator({ ...$edited(data), _left: admitSlot(handle, 'boolean_operator', 'left', v) }, tree)
 				)
 			);
 		case 'operator':
-			return applySetter(args, (v: NonNullable<T.BinaryOperator['_operator']>) =>
+			return applySetter(args, (v: NonNullable<T.BooleanOperator['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'binary_operator', 'operator', v) }, tree)
+					wrapBooleanOperator(
+						{ ...$edited(data), _operator: admitSlot(handle, 'boolean_operator', 'operator', v) },
+						tree
+					)
 				)
 			);
 		case 'right':
-			return applySetter(args, (v: NonNullable<T.BinaryOperator['_right']>) =>
+			return applySetter(args, (v: NonNullable<T.BooleanOperator['_right']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryOperator({ ...$edited(data), _right: admitSlot(handle, 'binary_operator', 'right', v) }, tree)
+					wrapBooleanOperator({ ...$edited(data), _right: admitSlot(handle, 'boolean_operator', 'right', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`binary_operator has no $with.${setter}`);
+	throw new Error(`boolean_operator has no $with.${setter}`);
 }
-function wrapBinaryOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryOperator$with(receiverOf(this, '$with.left'), 'left', args);
+function wrapBooleanOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBooleanOperator$with(receiverOf(this, '$with.left'), 'left', args);
 }
-function wrapBinaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapBooleanOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBooleanOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function wrapBinaryOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryOperator$with(receiverOf(this, '$with.right'), 'right', args);
+function wrapBooleanOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBooleanOperator$with(receiverOf(this, '$with.right'), 'right', args);
 }
+
 export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.BinaryOperator.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4847,33 +4812,42 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BinaryOperator.Parsed;
 }
-
-function wrapUnaryOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapBinaryOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.UnaryOperator;
+	const data = node[INPUT] as T.BinaryOperator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.UnaryOperator['_operator']>) =>
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.BinaryOperator['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapUnaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'unary_operator', 'operator', v) }, tree)
+					wrapBinaryOperator({ ...$edited(data), _left: admitSlot(handle, 'binary_operator', 'left', v) }, tree)
 				)
 			);
-		case 'argument':
-			return applySetter(args, (v: NonNullable<T.UnaryOperator['_argument']>) =>
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.BinaryOperator['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapUnaryOperator({ ...$edited(data), _argument: admitSlot(handle, 'unary_operator', 'argument', v) }, tree)
+					wrapBinaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'binary_operator', 'operator', v) }, tree)
+				)
+			);
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.BinaryOperator['_right']>) =>
+				rebuilt(node, handle, () =>
+					wrapBinaryOperator({ ...$edited(data), _right: admitSlot(handle, 'binary_operator', 'right', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`unary_operator has no $with.${setter}`);
+	throw new Error(`binary_operator has no $with.${setter}`);
 }
-function wrapUnaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnaryOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapBinaryOperator$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryOperator$with(receiverOf(this, '$with.left'), 'left', args);
 }
-function wrapUnaryOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnaryOperator$with(receiverOf(this, '$with.argument'), 'argument', args);
+function wrapBinaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
+function wrapBinaryOperator$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryOperator$with(receiverOf(this, '$with.right'), 'right', args);
+}
+
 export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.UnaryOperator.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4908,7 +4882,67 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnaryOperator.Parsed;
 }
+function wrapUnaryOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.UnaryOperator;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.UnaryOperator['_operator']>) =>
+				rebuilt(node, handle, () =>
+					wrapUnaryOperator({ ...$edited(data), _operator: admitSlot(handle, 'unary_operator', 'operator', v) }, tree)
+				)
+			);
+		case 'argument':
+			return applySetter(args, (v: NonNullable<T.UnaryOperator['_argument']>) =>
+				rebuilt(node, handle, () =>
+					wrapUnaryOperator({ ...$edited(data), _argument: admitSlot(handle, 'unary_operator', 'argument', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`unary_operator has no $with.${setter}`);
+}
+function wrapUnaryOperator$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnaryOperator$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function wrapUnaryOperator$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnaryOperator$with(receiverOf(this, '$with.argument'), 'argument', args);
+}
 
+export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHandle): T.ComparisonOperator.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ComparisonOperator as const,
+		left() {
+			return hydrateSlot<T.PrimaryExpression>(this, '_left', tree);
+		},
+		comparators() {
+			return hydrateSlots<T.ComparisonOperatorComparator>(this, '_comparators', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: wrapComparisonOperator$with$left,
+		comparators: wrapComparisonOperator$with$comparators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ComparisonOperator.Parsed;
+}
 function wrapComparisonOperator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ComparisonOperator;
@@ -4950,16 +4984,17 @@ function wrapComparisonOperator$with$left(this: Received<Held>, ...args: unknown
 function wrapComparisonOperator$with$comparators(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapComparisonOperator$with(receiverOf(this, '$with.comparators'), 'comparators', args);
 }
-export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHandle): T.ComparisonOperator.Parsed {
+
+export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ComparisonOperator as const,
-		left() {
-			return hydrateSlot<T.PrimaryExpression>(this, '_left', tree);
+		$type: TSKindId.Lambda as const,
+		parameters() {
+			return hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree);
 		},
-		comparators() {
-			return hydrateSlots<T.ComparisonOperatorComparator>(this, '_comparators', tree);
+		body() {
+			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -4976,15 +5011,10 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: wrapComparisonOperator$with$left,
-		comparators: wrapComparisonOperator$with$comparators,
-		[RECEIVER]: node
-	};
+	node.$with = { parameters: wrapLambda$with$parameters, body: wrapLambda$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ComparisonOperator.Parsed;
+	return node as unknown as T.Lambda.Parsed;
 }
-
 function wrapLambda$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.Lambda;
@@ -5016,74 +5046,7 @@ function wrapLambda$with$parameters(this: Received<Held>, ...args: unknown[]): u
 function wrapLambda$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLambda$with(receiverOf(this, '$with.body'), 'body', args);
 }
-export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.Lambda as const,
-		parameters() {
-			return hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree);
-		},
-		body() {
-			return hydrateSlot<T.Expression>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { parameters: wrapLambda$with$parameters, body: wrapLambda$with$body, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.Lambda.Parsed;
-}
 
-function wrapLambdaWithinForInClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.LambdaWithinForInClause;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'parameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
-						(v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
-							wrapLambdaWithinForInClause(
-								{ ...$edited(data), _parameters: admitSlot(handle, 'lambda_within_for_in_clause', 'parameters', v) },
-								tree
-							)
-					)
-				)
-			);
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapLambdaWithinForInClause(
-						{ ...$edited(data), _body: admitSlot(handle, 'lambda_within_for_in_clause', 'body', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`lambda_within_for_in_clause has no $with.${setter}`);
-}
-function wrapLambdaWithinForInClause$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapLambdaWithinForInClause$with(receiverOf(this, '$with.parameters'), 'parameters', args);
-}
-function wrapLambdaWithinForInClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapLambdaWithinForInClause$with(receiverOf(this, '$with.body'), 'body', args);
-}
 export function wrapLambdaWithinForInClause(
 	data: T.LambdaWithinForInClause,
 	tree: TreeHandle
@@ -5121,7 +5084,84 @@ export function wrapLambdaWithinForInClause(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.LambdaWithinForInClause.Parsed;
 }
+function wrapLambdaWithinForInClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.LambdaWithinForInClause;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'parameters':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.LambdaParameters as const, optional: true, make: RAW.buildLambdaParameters },
+						(v: NonNullable<T.LambdaWithinForInClause['_parameters']>) =>
+							wrapLambdaWithinForInClause(
+								{ ...$edited(data), _parameters: admitSlot(handle, 'lambda_within_for_in_clause', 'parameters', v) },
+								tree
+							)
+					)
+				)
+			);
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
+				rebuilt(node, handle, () =>
+					wrapLambdaWithinForInClause(
+						{ ...$edited(data), _body: admitSlot(handle, 'lambda_within_for_in_clause', 'body', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`lambda_within_for_in_clause has no $with.${setter}`);
+}
+function wrapLambdaWithinForInClause$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapLambdaWithinForInClause$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+function wrapLambdaWithinForInClause$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapLambdaWithinForInClause$with(receiverOf(this, '$with.body'), 'body', args);
+}
 
+export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeHandle): T.AugmentedAssignment.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.AugmentedAssignment as const,
+		left() {
+			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
+		},
+		operator() {
+			return this._operator;
+		},
+		right() {
+			return hydrateSlot<
+				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+			>(this, '_right', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: wrapAugmentedAssignment$with$left,
+		operator: wrapAugmentedAssignment$with$operator,
+		right: wrapAugmentedAssignment$with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.AugmentedAssignment.Parsed;
+}
 function wrapAugmentedAssignment$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.AugmentedAssignment;
@@ -5166,76 +5206,9 @@ function wrapAugmentedAssignment$with$operator(this: Received<Held>, ...args: un
 function wrapAugmentedAssignment$with$right(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAugmentedAssignment$with(receiverOf(this, '$with.right'), 'right', args);
 }
-export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeHandle): T.AugmentedAssignment.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.AugmentedAssignment as const,
-		left() {
-			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
-		},
-		operator() {
-			return this._operator;
-		},
-		right() {
-			return hydrateSlot<
-				T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-			>(this, '_right', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		left: wrapAugmentedAssignment$with$left,
-		operator: wrapAugmentedAssignment$with$operator,
-		right: wrapAugmentedAssignment$with$right,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.AugmentedAssignment.Parsed;
-}
 
 function wrapPatternList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapPatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.PatternList;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PatternList['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapPatternList(
-						{ ...$edited(data), _item: admitSlot(handle, 'pattern_list', 'items', restItems('items', v)) },
-						tree
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPatternList({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`pattern_list has no $with.${setter}`);
-}
-function wrapPatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPatternList$with(receiverOf(this, '$with.items'), 'items', args);
-}
-function wrapPatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPatternList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.PatternList.Parsed {
 	const handle = currentHandle();
@@ -5299,24 +5272,34 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 	holdReadItems(node, wrapPatternList$listRead);
 	return node as unknown as T.PatternList.Parsed;
 }
-
-function wrapYield$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapPatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Yield;
+	const data = node[INPUT] as T.PatternList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.Yield['_content']>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PatternList['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapYield({ ...$edited(data), _content: admitSlot(handle, 'yield', 'content', v) }, tree)
+					wrapPatternList(
+						{ ...$edited(data), _item: admitSlot(handle, 'pattern_list', 'items', restItems('items', v)) },
+						tree
+					)
 				)
 			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapPatternList({ ...$edited(data), _delimiter: v }, tree))
+			);
 	}
-	throw new Error(`yield has no $with.${setter}`);
+	throw new Error(`pattern_list has no $with.${setter}`);
 }
-function wrapYield$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapYield$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapPatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPatternList$with(receiverOf(this, '$with.items'), 'items', args);
 }
+function wrapPatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPatternList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
 export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5344,33 +5327,24 @@ export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Yield.Parsed;
 }
-
-function wrapAttribute$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapYield$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Attribute;
+	const data = node[INPUT] as T.Yield;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'object':
-			return applySetter(args, (v: NonNullable<T.Attribute['_object']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.Yield['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapAttribute({ ...$edited(data), _object: admitSlot(handle, 'attribute', 'object', v) }, tree)
-				)
-			);
-		case 'property':
-			return applySetter(args, (v: NonNullable<T.Attribute['_property']>) =>
-				rebuilt(node, handle, () =>
-					wrapAttribute({ ...$edited(data), _property: admitSlot(handle, 'attribute', 'property', v) }, tree)
+					wrapYield({ ...$edited(data), _content: admitSlot(handle, 'yield', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`attribute has no $with.${setter}`);
+	throw new Error(`yield has no $with.${setter}`);
 }
-function wrapAttribute$with$object(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAttribute$with(receiverOf(this, '$with.object'), 'object', args);
+function wrapYield$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapYield$with(receiverOf(this, '$with.content'), 'content', args);
 }
-function wrapAttribute$with$property(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAttribute$with(receiverOf(this, '$with.property'), 'property', args);
-}
+
 export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5401,7 +5375,63 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Attribute.Parsed;
 }
+function wrapAttribute$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.Attribute;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'object':
+			return applySetter(args, (v: NonNullable<T.Attribute['_object']>) =>
+				rebuilt(node, handle, () =>
+					wrapAttribute({ ...$edited(data), _object: admitSlot(handle, 'attribute', 'object', v) }, tree)
+				)
+			);
+		case 'property':
+			return applySetter(args, (v: NonNullable<T.Attribute['_property']>) =>
+				rebuilt(node, handle, () =>
+					wrapAttribute({ ...$edited(data), _property: admitSlot(handle, 'attribute', 'property', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`attribute has no $with.${setter}`);
+}
+function wrapAttribute$with$object(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAttribute$with(receiverOf(this, '$with.object'), 'object', args);
+}
+function wrapAttribute$with$property(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAttribute$with(receiverOf(this, '$with.property'), 'property', args);
+}
 
+export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Subscript as const,
+		object() {
+			return hydrateSlot<T.PrimaryExpression>(this, '_object', tree);
+		},
+		subscripts() {
+			return hydrateSlot<T.Subscripts>(this, '_subscripts', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { object: wrapSubscript$with$object, subscripts: wrapSubscript$with$subscripts, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Subscript.Parsed;
+}
 function wrapSubscript$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.Subscript;
@@ -5433,18 +5463,26 @@ function wrapSubscript$with$object(this: Received<Held>, ...args: unknown[]): un
 function wrapSubscript$with$subscripts(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSubscript$with(receiverOf(this, '$with.subscripts'), 'subscripts', args);
 }
-export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.Parsed {
+
+export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.Subscript as const,
-		object() {
-			return hydrateSlot<T.PrimaryExpression>(this, '_object', tree);
+		$type: TSKindId.Slice as const,
+		start() {
+			return hydrateSlot<T.Expression | undefined>(this, '_start', tree);
 		},
-		subscripts() {
-			return hydrateSlot<T.Subscripts>(this, '_subscripts', tree);
+		stop() {
+			return hydrateSlot<T.Expression | undefined>(this, '_stop', tree);
+		},
+		step() {
+			return hydrateSlot<T.SliceGroup | undefined>(this, '_step', tree);
 		},
 		$with: undefined as unknown as object,
+		expression:
+			data._step === undefined
+				? undefined
+				: () => groupField(hydrateSlot<T.SliceGroup | undefined>(node, '_step', tree), 'expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5459,11 +5497,16 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { object: wrapSubscript$with$object, subscripts: wrapSubscript$with$subscripts, [RECEIVER]: node };
+	node.$with = {
+		start: wrapSlice$with$start,
+		stop: wrapSlice$with$stop,
+		step: wrapSlice$with$step,
+		expression: wrapSlice$with$expression,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.Subscript.Parsed;
+	return node as unknown as T.Slice.Parsed;
 }
-
 function wrapSlice$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.Slice;
@@ -5512,74 +5555,7 @@ function wrapSlice$with$step(this: Received<Held>, ...args: unknown[]): unknown 
 function wrapSlice$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSlice$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
-export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
-	const handle = currentHandle();
-	const readGroup_step = () => hydrateSlot<T.SliceGroup | undefined>(node, '_step', tree);
-	const node = {
-		...data,
-		$type: TSKindId.Slice as const,
-		start() {
-			return hydrateSlot<T.Expression | undefined>(this, '_start', tree);
-		},
-		stop() {
-			return hydrateSlot<T.Expression | undefined>(this, '_stop', tree);
-		},
-		step() {
-			return hydrateSlot<T.SliceGroup | undefined>(this, '_step', tree);
-		},
-		$with: undefined as unknown as object,
-		expression: data._step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		start: wrapSlice$with$start,
-		stop: wrapSlice$with$stop,
-		step: wrapSlice$with$step,
-		expression: wrapSlice$with$expression,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.Slice.Parsed;
-}
 
-function wrapCall$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Call;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'function':
-			return applySetter(args, (v: NonNullable<T.Call['_function']>) =>
-				rebuilt(node, handle, () =>
-					wrapCall({ ...$edited(data), _function: admitSlot(handle, 'call', 'function', v) }, tree)
-				)
-			);
-		case 'arguments':
-			return applySetter(args, (v: NonNullable<T.Call['_arguments']>) =>
-				rebuilt(node, handle, () =>
-					wrapCall({ ...$edited(data), _arguments: admitSlot(handle, 'call', 'arguments', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`call has no $with.${setter}`);
-}
-function wrapCall$with$function(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCall$with(receiverOf(this, '$with.function'), 'function', args);
-}
-function wrapCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
-}
 export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5610,33 +5586,33 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Call.Parsed;
 }
-
-function wrapTypedParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCall$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.TypedParameter;
+	const data = node[INPUT] as T.Call;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.TypedParameter['_name']>) =>
+		case 'function':
+			return applySetter(args, (v: NonNullable<T.Call['_function']>) =>
 				rebuilt(node, handle, () =>
-					wrapTypedParameter({ ...$edited(data), _name: admitSlot(handle, 'typed_parameter', 'name', v) }, tree)
+					wrapCall({ ...$edited(data), _function: admitSlot(handle, 'call', 'function', v) }, tree)
 				)
 			);
-		case 'type':
-			return applySetter(args, (v: NonNullable<T.TypedParameter['_type']>) =>
+		case 'arguments':
+			return applySetter(args, (v: NonNullable<T.Call['_arguments']>) =>
 				rebuilt(node, handle, () =>
-					wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
+					wrapCall({ ...$edited(data), _arguments: admitSlot(handle, 'call', 'arguments', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`typed_parameter has no $with.${setter}`);
+	throw new Error(`call has no $with.${setter}`);
 }
-function wrapTypedParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypedParameter$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapCall$with$function(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCall$with(receiverOf(this, '$with.function'), 'function', args);
 }
-function wrapTypedParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypedParameter$with(receiverOf(this, '$with.type'), 'type', args);
+function wrapCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
+
 export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.TypedParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5667,24 +5643,33 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypedParameter.Parsed;
 }
-
-function wrapType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTypedParameter$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Type;
+	const data = node[INPUT] as T.TypedParameter;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.Type['_content']>) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.TypedParameter['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapType({ ...$edited(data), _content: admitSlot(handle, 'type', 'content', v) }, tree)
+					wrapTypedParameter({ ...$edited(data), _name: admitSlot(handle, 'typed_parameter', 'name', v) }, tree)
+				)
+			);
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.TypedParameter['_type']>) =>
+				rebuilt(node, handle, () =>
+					wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`type has no $with.${setter}`);
+	throw new Error(`typed_parameter has no $with.${setter}`);
 }
-function wrapType$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapType$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapTypedParameter$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypedParameter$with(receiverOf(this, '$with.name'), 'name', args);
 }
+function wrapTypedParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypedParameter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
 export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5716,33 +5701,24 @@ export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Type.Parsed;
 }
-
-function wrapSplatType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SplatType;
+	const data = node[INPUT] as T.Type;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.SplatType['_operator']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.Type['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapSplatType({ ...$edited(data), _operator: admitSlot(handle, 'splat_type', 'operator', v) }, tree)
-				)
-			);
-		case 'type':
-			return applySetter(args, (v: NonNullable<T.SplatType['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatType({ ...$edited(data), _type: admitSlot(handle, 'splat_type', 'type', v) }, tree)
+					wrapType({ ...$edited(data), _content: admitSlot(handle, 'type', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`splat_type has no $with.${setter}`);
+	throw new Error(`type has no $with.${setter}`);
 }
-function wrapSplatType$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSplatType$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapType$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapType$with(receiverOf(this, '$with.content'), 'content', args);
 }
-function wrapSplatType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSplatType$with(receiverOf(this, '$with.type'), 'type', args);
-}
+
 export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5773,7 +5749,63 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatType.Parsed;
 }
+function wrapSplatType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.SplatType;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.SplatType['_operator']>) =>
+				rebuilt(node, handle, () =>
+					wrapSplatType({ ...$edited(data), _operator: admitSlot(handle, 'splat_type', 'operator', v) }, tree)
+				)
+			);
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.SplatType['_type']>) =>
+				rebuilt(node, handle, () =>
+					wrapSplatType({ ...$edited(data), _type: admitSlot(handle, 'splat_type', 'type', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`splat_type has no $with.${setter}`);
+}
+function wrapSplatType$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSplatType$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function wrapSplatType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSplatType$with(receiverOf(this, '$with.type'), 'type', args);
+}
 
+export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.GenericType.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.GenericType as const,
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
+		},
+		typeParameter() {
+			return hydrateSlot<T.TypeParameter>(this, '_type_parameter', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { name: wrapGenericType$with$name, typeParameter: wrapGenericType$with$typeParameter, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.GenericType.Parsed;
+}
 function wrapGenericType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.GenericType;
@@ -5808,63 +5840,7 @@ function wrapGenericType$with$name(this: Received<Held>, ...args: unknown[]): un
 function wrapGenericType$with$typeParameter(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapGenericType$with(receiverOf(this, '$with.typeParameter'), 'typeParameter', args);
 }
-export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.GenericType.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.GenericType as const,
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		typeParameter() {
-			return hydrateSlot<T.TypeParameter>(this, '_type_parameter', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { name: wrapGenericType$with$name, typeParameter: wrapGenericType$with$typeParameter, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.GenericType.Parsed;
-}
 
-function wrapUnionType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.UnionType;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'left':
-			return applySetter(args, (v: NonNullable<T.UnionType['_left']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
-				)
-			);
-		case 'right':
-			return applySetter(args, (v: NonNullable<T.UnionType['_right']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`union_type has no $with.${setter}`);
-}
-function wrapUnionType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnionType$with(receiverOf(this, '$with.left'), 'left', args);
-}
-function wrapUnionType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUnionType$with(receiverOf(this, '$with.right'), 'right', args);
-}
 export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5895,39 +5871,33 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnionType.Parsed;
 }
-
-function wrapConstrainedType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapUnionType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ConstrainedType;
+	const data = node[INPUT] as T.UnionType;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'baseType':
-			return applySetter(args, (v: NonNullable<T.ConstrainedType['_base_type']>) =>
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.UnionType['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapConstrainedType(
-						{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
-						tree
-					)
+					wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
 				)
 			);
-		case 'constraint':
-			return applySetter(args, (v: NonNullable<T.ConstrainedType['_constraint']>) =>
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.UnionType['_right']>) =>
 				rebuilt(node, handle, () =>
-					wrapConstrainedType(
-						{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
-						tree
-					)
+					wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`constrained_type has no $with.${setter}`);
+	throw new Error(`union_type has no $with.${setter}`);
 }
-function wrapConstrainedType$with$baseType(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapConstrainedType$with(receiverOf(this, '$with.baseType'), 'baseType', args);
+function wrapUnionType$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnionType$with(receiverOf(this, '$with.left'), 'left', args);
 }
-function wrapConstrainedType$with$constraint(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapConstrainedType$with(receiverOf(this, '$with.constraint'), 'constraint', args);
+function wrapUnionType$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUnionType$with(receiverOf(this, '$with.right'), 'right', args);
 }
+
 export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): T.ConstrainedType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5962,33 +5932,39 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConstrainedType.Parsed;
 }
-
-function wrapMemberType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapConstrainedType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.MemberType;
+	const data = node[INPUT] as T.ConstrainedType;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'qualifier':
-			return applySetter(args, (v: NonNullable<T.MemberType['_qualifier']>) =>
+		case 'baseType':
+			return applySetter(args, (v: NonNullable<T.ConstrainedType['_base_type']>) =>
 				rebuilt(node, handle, () =>
-					wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
+					wrapConstrainedType(
+						{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
+						tree
+					)
 				)
 			);
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.MemberType['_name']>) =>
+		case 'constraint':
+			return applySetter(args, (v: NonNullable<T.ConstrainedType['_constraint']>) =>
 				rebuilt(node, handle, () =>
-					wrapMemberType({ ...$edited(data), _name: admitSlot(handle, 'member_type', 'name', v) }, tree)
+					wrapConstrainedType(
+						{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`member_type has no $with.${setter}`);
+	throw new Error(`constrained_type has no $with.${setter}`);
 }
-function wrapMemberType$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapMemberType$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
+function wrapConstrainedType$with$baseType(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapConstrainedType$with(receiverOf(this, '$with.baseType'), 'baseType', args);
 }
-function wrapMemberType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapMemberType$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapConstrainedType$with$constraint(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapConstrainedType$with(receiverOf(this, '$with.constraint'), 'constraint', args);
 }
+
 export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6019,33 +5995,33 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MemberType.Parsed;
 }
-
-function wrapKeywordArgument$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapMemberType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.KeywordArgument;
+	const data = node[INPUT] as T.MemberType;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.KeywordArgument['_name']>) =>
+		case 'qualifier':
+			return applySetter(args, (v: NonNullable<T.MemberType['_qualifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapKeywordArgument({ ...$edited(data), _name: admitSlot(handle, 'keyword_argument', 'name', v) }, tree)
+					wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
 				)
 			);
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.KeywordArgument['_value']>) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.MemberType['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapKeywordArgument({ ...$edited(data), _value: admitSlot(handle, 'keyword_argument', 'value', v) }, tree)
+					wrapMemberType({ ...$edited(data), _name: admitSlot(handle, 'member_type', 'name', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`keyword_argument has no $with.${setter}`);
+	throw new Error(`member_type has no $with.${setter}`);
 }
-function wrapKeywordArgument$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeywordArgument$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapMemberType$with$qualifier(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapMemberType$with(receiverOf(this, '$with.qualifier'), 'qualifier', args);
 }
-function wrapKeywordArgument$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapKeywordArgument$with(receiverOf(this, '$with.value'), 'value', args);
+function wrapMemberType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapMemberType$with(receiverOf(this, '$with.name'), 'name', args);
 }
+
 export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): T.KeywordArgument.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6076,31 +6052,35 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.KeywordArgument.Parsed;
 }
-
-function wrapList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapKeywordArgument$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.List;
+	const data = node[INPUT] as T.KeywordArgument;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.KeywordArgument['_name']>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
-						(v: NonNullable<T.List['_elements']>) =>
-							wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
-					)
+					wrapKeywordArgument({ ...$edited(data), _name: admitSlot(handle, 'keyword_argument', 'name', v) }, tree)
+				)
+			);
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.KeywordArgument['_value']>) =>
+				rebuilt(node, handle, () =>
+					wrapKeywordArgument({ ...$edited(data), _value: admitSlot(handle, 'keyword_argument', 'value', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`list has no $with.${setter}`);
+	throw new Error(`keyword_argument has no $with.${setter}`);
 }
-function wrapList$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapList$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapKeywordArgument$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeywordArgument$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapKeywordArgument$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapKeywordArgument$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 	const handle = currentHandle();
@@ -6168,13 +6148,9 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 	);
 	return node as unknown as T.List.Parsed;
 }
-
-function wrapSet$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapSet$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Set;
+	const data = node[INPUT] as T.List;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
@@ -6182,17 +6158,21 @@ function wrapSet$with(node: Held, setter: string, args: readonly unknown[]): unk
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
-						(v: NonNullable<T.Set['_elements']>) =>
-							wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
+						{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
+						(v: NonNullable<T.List['_elements']>) =>
+							wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`set has no $with.${setter}`);
+	throw new Error(`list has no $with.${setter}`);
 }
-function wrapSet$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSet$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapList$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapList$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapSet$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 	const handle = currentHandle();
@@ -6260,13 +6240,9 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 	);
 	return node as unknown as T.Set.Parsed;
 }
-
-function wrapTuple$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapTuple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSet$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Tuple;
+	const data = node[INPUT] as T.Set;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
@@ -6274,17 +6250,21 @@ function wrapTuple$with(node: Held, setter: string, args: readonly unknown[]): u
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
-						(v: NonNullable<T.Tuple['_elements']>) =>
-							wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
+						{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
+						(v: NonNullable<T.Set['_elements']>) =>
+							wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`tuple has no $with.${setter}`);
+	throw new Error(`set has no $with.${setter}`);
 }
-function wrapTuple$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTuple$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapSet$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSet$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapTuple$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 	const handle = currentHandle();
@@ -6352,13 +6332,9 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 	);
 	return node as unknown as T.Tuple.Parsed;
 }
-
-function wrapDictionary$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapDictionary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTuple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Dictionary;
+	const data = node[INPUT] as T.Tuple;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
@@ -6366,17 +6342,21 @@ function wrapDictionary$with(node: Held, setter: string, args: readonly unknown[
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
-						(v: NonNullable<T.Dictionary['_elements']>) =>
-							wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
+						{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
+						(v: NonNullable<T.Tuple['_elements']>) =>
+							wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
 					)
 				)
 			);
 	}
-	throw new Error(`dictionary has no $with.${setter}`);
+	throw new Error(`tuple has no $with.${setter}`);
 }
-function wrapDictionary$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionary$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapTuple$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTuple$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapDictionary$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictionary.Parsed {
 	const handle = currentHandle();
@@ -6444,29 +6424,29 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 	);
 	return node as unknown as T.Dictionary.Parsed;
 }
-
-function wrapPair$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictionary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Pair;
+	const data = node[INPUT] as T.Dictionary;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'key':
-			return applySetter(args, (v: NonNullable<T.Pair['_key']>) =>
-				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _key: admitSlot(handle, 'pair', 'key', v) }, tree))
-			);
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.Pair['_value']>) =>
-				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _value: admitSlot(handle, 'pair', 'value', v) }, tree))
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
+						(v: NonNullable<T.Dictionary['_elements']>) =>
+							wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
+					)
+				)
 			);
 	}
-	throw new Error(`pair has no $with.${setter}`);
+	throw new Error(`dictionary has no $with.${setter}`);
 }
-function wrapPair$with$key(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPair$with(receiverOf(this, '$with.key'), 'key', args);
+function wrapDictionary$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionary$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
-function wrapPair$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPair$with(receiverOf(this, '$with.value'), 'value', args);
-}
+
 export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6497,36 +6477,29 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Pair.Parsed;
 }
-
-function wrapListComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapPair$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ListComprehension;
+	const data = node[INPUT] as T.Pair;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'body':
-			return applySetter(args, (v: NonNullable<T.ListComprehension['_body']>) =>
-				rebuilt(node, handle, () =>
-					wrapListComprehension({ ...$edited(data), _body: admitSlot(handle, 'list_comprehension', 'body', v) }, tree)
-				)
+		case 'key':
+			return applySetter(args, (v: NonNullable<T.Pair['_key']>) =>
+				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _key: admitSlot(handle, 'pair', 'key', v) }, tree))
 			);
-		case 'clauses':
-			return applySetter(args, (v: NonNullable<T.ListComprehension['_clauses']>) =>
-				rebuilt(node, handle, () =>
-					wrapListComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
-						tree
-					)
-				)
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.Pair['_value']>) =>
+				rebuilt(node, handle, () => wrapPair({ ...$edited(data), _value: admitSlot(handle, 'pair', 'value', v) }, tree))
 			);
 	}
-	throw new Error(`list_comprehension has no $with.${setter}`);
+	throw new Error(`pair has no $with.${setter}`);
 }
-function wrapListComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListComprehension$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapPair$with$key(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPair$with(receiverOf(this, '$with.key'), 'key', args);
 }
-function wrapListComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
+function wrapPair$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPair$with(receiverOf(this, '$with.value'), 'value', args);
 }
+
 export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandle): T.ListComprehension.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6557,39 +6530,36 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ListComprehension.Parsed;
 }
-
-function wrapDictionaryComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapListComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictionaryComprehension;
+	const data = node[INPUT] as T.ListComprehension;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'body':
-			return applySetter(args, (v: NonNullable<T.DictionaryComprehension['_body']>) =>
+			return applySetter(args, (v: NonNullable<T.ListComprehension['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapDictionaryComprehension(
-						{ ...$edited(data), _body: admitSlot(handle, 'dictionary_comprehension', 'body', v) },
-						tree
-					)
+					wrapListComprehension({ ...$edited(data), _body: admitSlot(handle, 'list_comprehension', 'body', v) }, tree)
 				)
 			);
 		case 'clauses':
-			return applySetter(args, (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
+			return applySetter(args, (v: NonNullable<T.ListComprehension['_clauses']>) =>
 				rebuilt(node, handle, () =>
-					wrapDictionaryComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
+					wrapListComprehension(
+						{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`dictionary_comprehension has no $with.${setter}`);
+	throw new Error(`list_comprehension has no $with.${setter}`);
 }
-function wrapDictionaryComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionaryComprehension$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapListComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListComprehension$with(receiverOf(this, '$with.body'), 'body', args);
 }
-function wrapDictionaryComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionaryComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
+function wrapListComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
 }
+
 export function wrapDictionaryComprehension(
 	data: T.DictionaryComprehension,
 	tree: TreeHandle
@@ -6627,36 +6597,39 @@ export function wrapDictionaryComprehension(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DictionaryComprehension.Parsed;
 }
-
-function wrapSetComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictionaryComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SetComprehension;
+	const data = node[INPUT] as T.DictionaryComprehension;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'body':
-			return applySetter(args, (v: NonNullable<T.SetComprehension['_body']>) =>
+			return applySetter(args, (v: NonNullable<T.DictionaryComprehension['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapSetComprehension({ ...$edited(data), _body: admitSlot(handle, 'set_comprehension', 'body', v) }, tree)
+					wrapDictionaryComprehension(
+						{ ...$edited(data), _body: admitSlot(handle, 'dictionary_comprehension', 'body', v) },
+						tree
+					)
 				)
 			);
 		case 'clauses':
-			return applySetter(args, (v: NonNullable<T.SetComprehension['_clauses']>) =>
+			return applySetter(args, (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
 				rebuilt(node, handle, () =>
-					wrapSetComprehension(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) },
+					wrapDictionaryComprehension(
+						{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`set_comprehension has no $with.${setter}`);
+	throw new Error(`dictionary_comprehension has no $with.${setter}`);
 }
-function wrapSetComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSetComprehension$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapDictionaryComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionaryComprehension$with(receiverOf(this, '$with.body'), 'body', args);
 }
-function wrapSetComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSetComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
+function wrapDictionaryComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionaryComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
 }
+
 export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle): T.SetComprehension.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6687,39 +6660,36 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SetComprehension.Parsed;
 }
-
-function wrapGeneratorExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSetComprehension$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.GeneratorExpression;
+	const data = node[INPUT] as T.SetComprehension;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'body':
-			return applySetter(args, (v: NonNullable<T.GeneratorExpression['_body']>) =>
+			return applySetter(args, (v: NonNullable<T.SetComprehension['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapGeneratorExpression(
-						{ ...$edited(data), _body: admitSlot(handle, 'generator_expression', 'body', v) },
-						tree
-					)
+					wrapSetComprehension({ ...$edited(data), _body: admitSlot(handle, 'set_comprehension', 'body', v) }, tree)
 				)
 			);
 		case 'clauses':
-			return applySetter(args, (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+			return applySetter(args, (v: NonNullable<T.SetComprehension['_clauses']>) =>
 				rebuilt(node, handle, () =>
-					wrapGeneratorExpression(
-						{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
+					wrapSetComprehension(
+						{ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`generator_expression has no $with.${setter}`);
+	throw new Error(`set_comprehension has no $with.${setter}`);
 }
-function wrapGeneratorExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapGeneratorExpression$with(receiverOf(this, '$with.body'), 'body', args);
+function wrapSetComprehension$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSetComprehension$with(receiverOf(this, '$with.body'), 'body', args);
 }
-function wrapGeneratorExpression$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapGeneratorExpression$with(receiverOf(this, '$with.clauses'), 'clauses', args);
+function wrapSetComprehension$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSetComprehension$with(receiverOf(this, '$with.clauses'), 'clauses', args);
 }
+
 export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeHandle): T.GeneratorExpression.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6754,27 +6724,39 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GeneratorExpression.Parsed;
 }
-
-function wrapParenthesizedExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapGeneratorExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ParenthesizedExpression;
+	const data = node[INPUT] as T.GeneratorExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
+		case 'body':
+			return applySetter(args, (v: NonNullable<T.GeneratorExpression['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapParenthesizedExpression(
-						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_expression', 'expression', v) },
+					wrapGeneratorExpression(
+						{ ...$edited(data), _body: admitSlot(handle, 'generator_expression', 'body', v) },
+						tree
+					)
+				)
+			);
+		case 'clauses':
+			return applySetter(args, (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+				rebuilt(node, handle, () =>
+					wrapGeneratorExpression(
+						{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`parenthesized_expression has no $with.${setter}`);
+	throw new Error(`generator_expression has no $with.${setter}`);
 }
-function wrapParenthesizedExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapGeneratorExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapGeneratorExpression$with(receiverOf(this, '$with.body'), 'body', args);
 }
+function wrapGeneratorExpression$with$clauses(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapGeneratorExpression$with(receiverOf(this, '$with.clauses'), 'clauses', args);
+}
+
 export function wrapParenthesizedExpression(
 	data: T.ParenthesizedExpression,
 	tree: TreeHandle
@@ -6805,36 +6787,29 @@ export function wrapParenthesizedExpression(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpression.Parsed;
 }
-
-function wrapCollectionElements$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapCollectionElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapParenthesizedExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CollectionElements;
+	const data = node[INPUT] as T.ParenthesizedExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.CollectionElements['_item']>[number]>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapCollectionElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'collection_elements', 'items', restItems('items', v)) },
+					wrapParenthesizedExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_expression', 'expression', v) },
 						tree
 					)
 				)
 			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapCollectionElements({ ...$edited(data), _delimiter: v }, tree))
-			);
 	}
-	throw new Error(`collection_elements has no $with.${setter}`);
+	throw new Error(`parenthesized_expression has no $with.${setter}`);
 }
-function wrapCollectionElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCollectionElements$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapParenthesizedExpression$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedExpression$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
-function wrapCollectionElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCollectionElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+
+function wrapCollectionElements$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHandle): T.CollectionElements.Parsed {
 	const handle = currentHandle();
@@ -6902,7 +6877,76 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 	holdReadItems(node, wrapCollectionElements$listRead);
 	return node as unknown as T.CollectionElements.Parsed;
 }
+function wrapCollectionElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.CollectionElements;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.CollectionElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapCollectionElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'collection_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				)
+			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapCollectionElements({ ...$edited(data), _delimiter: v }, tree))
+			);
+	}
+	throw new Error(`collection_elements has no $with.${setter}`);
+}
+function wrapCollectionElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCollectionElements$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function wrapCollectionElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCollectionElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
 
+export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInClause.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForInClause as const,
+		async() {
+			return this._async;
+		},
+		left() {
+			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
+		},
+		rights() {
+			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
+		},
+		trailingComma() {
+			return blankArmRead(this._trailing_comma);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: wrapForInClause$with$async,
+		left: wrapForInClause$with$left,
+		rights: wrapForInClause$with$rights,
+		trailingComma: wrapForInClause$with$trailingComma,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInClause.Parsed;
+}
 function wrapForInClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ForInClause;
@@ -6956,66 +7000,7 @@ function wrapForInClause$with$rights(this: Received<Held>, ...args: unknown[]): 
 function wrapForInClause$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapForInClause$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
-export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInClause.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ForInClause as const,
-		async() {
-			return this._async;
-		},
-		left() {
-			return hydrateSlot<T.Pattern | T.PatternList>(this, '_left', tree);
-		},
-		rights() {
-			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
-		},
-		trailingComma() {
-			return blankArmRead(this._trailing_comma);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		async: wrapForInClause$with$async,
-		left: wrapForInClause$with$left,
-		rights: wrapForInClause$with$rights,
-		trailingComma: wrapForInClause$with$trailingComma,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ForInClause.Parsed;
-}
 
-function wrapIfClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IfClause;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'condition':
-			return applySetter(args, (v: NonNullable<T.IfClause['_condition']>) =>
-				rebuilt(node, handle, () =>
-					wrapIfClause({ ...$edited(data), _condition: admitSlot(handle, 'if_clause', 'condition', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`if_clause has no $with.${setter}`);
-}
-function wrapIfClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIfClause$with(receiverOf(this, '$with.condition'), 'condition', args);
-}
 export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7043,7 +7028,65 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Par
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IfClause.Parsed;
 }
+function wrapIfClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IfClause;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'condition':
+			return applySetter(args, (v: NonNullable<T.IfClause['_condition']>) =>
+				rebuilt(node, handle, () =>
+					wrapIfClause({ ...$edited(data), _condition: admitSlot(handle, 'if_clause', 'condition', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`if_clause has no $with.${setter}`);
+}
+function wrapIfClause$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIfClause$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
 
+export function wrapConditionalExpression(
+	data: T.ConditionalExpression,
+	tree: TreeHandle
+): T.ConditionalExpression.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ConditionalExpression as const,
+		consequence() {
+			return hydrateSlot<T.Expression>(this, '_consequence', tree);
+		},
+		condition() {
+			return hydrateSlot<T.Expression>(this, '_condition', tree);
+		},
+		alternative() {
+			return hydrateSlot<T.Expression>(this, '_alternative', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		consequence: wrapConditionalExpression$with$consequence,
+		condition: wrapConditionalExpression$with$condition,
+		alternative: wrapConditionalExpression$with$alternative,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ConditionalExpression.Parsed;
+}
 function wrapConditionalExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ConditionalExpression;
@@ -7088,68 +7131,7 @@ function wrapConditionalExpression$with$condition(this: Received<Held>, ...args:
 function wrapConditionalExpression$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConditionalExpression$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
-export function wrapConditionalExpression(
-	data: T.ConditionalExpression,
-	tree: TreeHandle
-): T.ConditionalExpression.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ConditionalExpression as const,
-		consequence() {
-			return hydrateSlot<T.Expression>(this, '_consequence', tree);
-		},
-		condition() {
-			return hydrateSlot<T.Expression>(this, '_condition', tree);
-		},
-		alternative() {
-			return hydrateSlot<T.Expression>(this, '_alternative', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		consequence: wrapConditionalExpression$with$consequence,
-		condition: wrapConditionalExpression$with$condition,
-		alternative: wrapConditionalExpression$with$alternative,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ConditionalExpression.Parsed;
-}
 
-function wrapConcatenatedString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ConcatenatedString;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'strings':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ConcatenatedString['_string']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapConcatenatedString(
-						{ ...$edited(data), _string: admitSlot(handle, 'concatenated_string', 'strings', restItems('strings', v)) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`concatenated_string has no $with.${setter}`);
-}
-function wrapConcatenatedString$with$strings(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapConcatenatedString$with(receiverOf(this, '$with.strings'), 'strings', args);
-}
 export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHandle): T.ConcatenatedString.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7177,7 +7159,65 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ConcatenatedString.Parsed;
 }
+function wrapConcatenatedString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ConcatenatedString;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'strings':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ConcatenatedString['_string']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapConcatenatedString(
+						{ ...$edited(data), _string: admitSlot(handle, 'concatenated_string', 'strings', restItems('strings', v)) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`concatenated_string has no $with.${setter}`);
+}
+function wrapConcatenatedString$with$strings(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapConcatenatedString$with(receiverOf(this, '$with.strings'), 'strings', args);
+}
 
+export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.String as const,
+		stringStart() {
+			return hydrateSlot<T.StringStart>(this, '_string_start', tree);
+		},
+		contents() {
+			return hydrateSlots<T.Interpolation | T.StringContent>(this, '_content', tree);
+		},
+		stringEnd() {
+			return hydrateSlot<T.StringEnd>(this, '_string_end', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		stringStart: wrapString$with$stringStart,
+		contents: wrapString$with$contents,
+		stringEnd: wrapString$with$stringEnd,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.String.Parsed;
+}
 function wrapString$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.String;
@@ -7249,65 +7289,7 @@ function wrapString$with$contents(this: Received<Held>, ...args: unknown[]): unk
 function wrapString$with$stringEnd(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapString$with(receiverOf(this, '$with.stringEnd'), 'stringEnd', args);
 }
-export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.String as const,
-		stringStart() {
-			return hydrateSlot<T.StringStart>(this, '_string_start', tree);
-		},
-		contents() {
-			return hydrateSlots<T.Interpolation | T.StringContent>(this, '_content', tree);
-		},
-		stringEnd() {
-			return hydrateSlot<T.StringEnd>(this, '_string_end', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		stringStart: wrapString$with$stringStart,
-		contents: wrapString$with$contents,
-		stringEnd: wrapString$with$stringEnd,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.String.Parsed;
-}
 
-function wrapStringContent$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.StringContent;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapStringContent(
-						{ ...$edited(data), _elements: admitSlot(handle, 'string_content', 'elements', restItems('elements', v)) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`string_content has no $with.${setter}`);
-}
-function wrapStringContent$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapStringContent$with(receiverOf(this, '$with.elements'), 'elements', args);
-}
 export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.StringContent.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7339,7 +7321,69 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringContent.Parsed;
 }
+function wrapStringContent$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.StringContent;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapStringContent(
+						{ ...$edited(data), _elements: admitSlot(handle, 'string_content', 'elements', restItems('elements', v)) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`string_content has no $with.${setter}`);
+}
+function wrapStringContent$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapStringContent$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
 
+export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.Interpolation.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Interpolation as const,
+		expression() {
+			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_expression', tree);
+		},
+		debug() {
+			return this._debug;
+		},
+		typeConversion() {
+			return hydrateSlot<T.TypeConversion | undefined>(this, '_type_conversion', tree);
+		},
+		formatSpecifier() {
+			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: wrapInterpolation$with$expression,
+		debug: wrapInterpolation$with$debug,
+		typeConversion: wrapInterpolation$with$typeConversion,
+		formatSpecifier: wrapInterpolation$with$formatSpecifier,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Interpolation.Parsed;
+}
 function wrapInterpolation$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.Interpolation;
@@ -7393,72 +7437,7 @@ function wrapInterpolation$with$typeConversion(this: Received<Held>, ...args: un
 function wrapInterpolation$with$formatSpecifier(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapInterpolation$with(receiverOf(this, '$with.formatSpecifier'), 'formatSpecifier', args);
 }
-export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.Interpolation.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.Interpolation as const,
-		expression() {
-			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_expression', tree);
-		},
-		debug() {
-			return this._debug;
-		},
-		typeConversion() {
-			return hydrateSlot<T.TypeConversion | undefined>(this, '_type_conversion', tree);
-		},
-		formatSpecifier() {
-			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		expression: wrapInterpolation$with$expression,
-		debug: wrapInterpolation$with$debug,
-		typeConversion: wrapInterpolation$with$typeConversion,
-		formatSpecifier: wrapInterpolation$with$formatSpecifier,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.Interpolation.Parsed;
-}
 
-function wrapFormatSpecifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.FormatSpecifier;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.FormatSpecifier['_elements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapFormatSpecifier(
-						{
-							...$edited(data),
-							_elements: admitSlot(handle, 'format_specifier', 'elements', restItems('elements', v))
-						},
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`format_specifier has no $with.${setter}`);
-}
-function wrapFormatSpecifier$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapFormatSpecifier$with(receiverOf(this, '$with.elements'), 'elements', args);
-}
 export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): T.FormatSpecifier.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7486,24 +7465,30 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormatSpecifier.Parsed;
 }
-
-function wrapAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapFormatSpecifier$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Await;
+	const data = node[INPUT] as T.FormatSpecifier;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.Await['_expression']>) =>
+		case 'elements':
+			return applySetter(args, (...v: NonNullable<T.FormatSpecifier['_elements']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAwait({ ...$edited(data), _expression: admitSlot(handle, 'await', 'expression', v) }, tree)
+					wrapFormatSpecifier(
+						{
+							...$edited(data),
+							_elements: admitSlot(handle, 'format_specifier', 'elements', restItems('elements', v))
+						},
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`await has no $with.${setter}`);
+	throw new Error(`format_specifier has no $with.${setter}`);
 }
-function wrapAwait$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAwait$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapFormatSpecifier$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapFormatSpecifier$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
+
 export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7531,24 +7516,24 @@ export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Await.Parsed;
 }
-
-function wrapComment$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Comment;
+	const data = node[INPUT] as T.Await;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.Comment['_content']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Await['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapComment({ ...$edited(data), _content: admitSlot(handle, 'comment', 'content', v) }, tree)
+					wrapAwait({ ...$edited(data), _expression: admitSlot(handle, 'await', 'expression', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`comment has no $with.${setter}`);
+	throw new Error(`await has no $with.${setter}`);
 }
-function wrapComment$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapComment$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapAwait$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAwait$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
+
 export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7574,39 +7559,26 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 	node.$with = { content: wrapComment$with$content, [RECEIVER]: node };
 	return node as unknown as T.Comment.Parsed;
 }
+function wrapComment$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.Comment;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.Comment['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapComment({ ...$edited(data), _content: admitSlot(handle, 'comment', 'content', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`comment has no $with.${setter}`);
+}
+function wrapComment$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapComment$with(receiverOf(this, '$with.content'), 'content', args);
+}
 
 function wrapSimpleStatementsElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapSimpleStatementsElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SimpleStatementsElements;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.SimpleStatementsElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapSimpleStatementsElements(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'simple_statements_elements', 'items', restItems('items', v))
-						},
-						tree
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSimpleStatementsElements({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`simple_statements_elements has no $with.${setter}`);
-}
-function wrapSimpleStatementsElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimpleStatementsElements$with(receiverOf(this, '$with.items'), 'items', args);
-}
-function wrapSimpleStatementsElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimpleStatementsElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapSimpleStatementsElements(
 	data: T.SimpleStatementsElements,
@@ -7677,36 +7649,39 @@ export function wrapSimpleStatementsElements(
 	holdReadItems(node, wrapSimpleStatementsElements$listRead);
 	return node as unknown as T.SimpleStatementsElements.Parsed;
 }
-
-function wrapSubjects$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'subjects'), undefined);
-}
-function wrapSubjects$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSimpleStatementsElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Subjects;
+	const data = node[INPUT] as T.SimpleStatementsElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'subjects':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Subjects['_subject']>[number]>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.SimpleStatementsElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapSubjects(
-						{ ...$edited(data), _subject: admitSlot(handle, 'subjects', 'subjects', restItems('subjects', v)) },
+					wrapSimpleStatementsElements(
+						{
+							...$edited(data),
+							_item: admitSlot(handle, 'simple_statements_elements', 'items', restItems('items', v))
+						},
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSubjects({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapSimpleStatementsElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`subjects has no $with.${setter}`);
+	throw new Error(`simple_statements_elements has no $with.${setter}`);
 }
-function wrapSubjects$with$subjects(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSubjects$with(receiverOf(this, '$with.subjects'), 'subjects', args);
+function wrapSimpleStatementsElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimpleStatementsElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapSubjects$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSubjects$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapSimpleStatementsElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimpleStatementsElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapSubjects$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'subjects'), undefined);
 }
 export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Parsed {
 	const handle = currentHandle();
@@ -7770,36 +7745,36 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 	holdReadItems(node, wrapSubjects$listRead);
 	return node as unknown as T.Subjects.Parsed;
 }
-
-function wrapWithClauseWithItems$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapWithClauseWithItems$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSubjects$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.WithClauseWithItems;
+	const data = node[INPUT] as T.Subjects;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
+		case 'subjects':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Subjects['_subject']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapWithClauseWithItems(
-						{ ...$edited(data), _item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v)) },
+					wrapSubjects(
+						{ ...$edited(data), _subject: admitSlot(handle, 'subjects', 'subjects', restItems('subjects', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapWithClauseWithItems({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapSubjects({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`with_clause_with_items has no $with.${setter}`);
+	throw new Error(`subjects has no $with.${setter}`);
 }
-function wrapWithClauseWithItems$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithClauseWithItems$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapSubjects$with$subjects(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSubjects$with(receiverOf(this, '$with.subjects'), 'subjects', args);
 }
-function wrapWithClauseWithItems$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithClauseWithItems$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapSubjects$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSubjects$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapWithClauseWithItems$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeHandle): T.WithClauseWithItems.Parsed {
 	const handle = currentHandle();
@@ -7867,33 +7842,36 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 	holdReadItems(node, wrapWithClauseWithItems$listRead);
 	return node as unknown as T.WithClauseWithItems.Parsed;
 }
-
-function wrapTypes$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapTypes$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapWithClauseWithItems$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Types;
+	const data = node[INPUT] as T.WithClauseWithItems;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
+					wrapWithClauseWithItems(
+						{ ...$edited(data), _item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v)) },
+						tree
+					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapWithClauseWithItems({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`types has no $with.${setter}`);
+	throw new Error(`with_clause_with_items has no $with.${setter}`);
 }
-function wrapTypes$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypes$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapWithClauseWithItems$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithClauseWithItems$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapTypes$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypes$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapWithClauseWithItems$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithClauseWithItems$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapTypes$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 	const handle = currentHandle();
@@ -7957,36 +7935,33 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 	holdReadItems(node, wrapTypes$listRead);
 	return node as unknown as T.Types.Parsed;
 }
-
-function wrapArgumentListElements$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapArgumentListElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTypes$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ArgumentListElements;
+	const data = node[INPUT] as T.Types;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ArgumentListElements['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapArgumentListElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'argument_list_elements', 'items', restItems('items', v)) },
-						tree
-					)
+					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapArgumentListElements({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`argument_list_elements has no $with.${setter}`);
+	throw new Error(`types has no $with.${setter}`);
 }
-function wrapArgumentListElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapArgumentListElements$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapTypes$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypes$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapArgumentListElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapArgumentListElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapTypes$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypes$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapArgumentListElements$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapArgumentListElements(
 	data: T.ArgumentListElements,
@@ -8059,39 +8034,36 @@ export function wrapArgumentListElements(
 	holdReadItems(node, wrapArgumentListElements$listRead);
 	return node as unknown as T.ArgumentListElements.Parsed;
 }
-
-function wrapListPatternCasePatterns$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapListPatternCasePatterns$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapArgumentListElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ListPatternCasePatterns;
+	const data = node[INPUT] as T.ArgumentListElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ArgumentListElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapListPatternCasePatterns(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v))
-						},
+					wrapArgumentListElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'argument_list_elements', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapListPatternCasePatterns({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapArgumentListElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`list_pattern_case_patterns has no $with.${setter}`);
+	throw new Error(`argument_list_elements has no $with.${setter}`);
 }
-function wrapListPatternCasePatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListPatternCasePatterns$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapArgumentListElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapArgumentListElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapListPatternCasePatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapListPatternCasePatterns$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapArgumentListElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapArgumentListElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapListPatternCasePatterns$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapListPatternCasePatterns(
 	data: T.ListPatternCasePatterns,
@@ -8162,36 +8134,39 @@ export function wrapListPatternCasePatterns(
 	holdReadItems(node, wrapListPatternCasePatterns$listRead);
 	return node as unknown as T.ListPatternCasePatterns.Parsed;
 }
-
-function wrapDictPatternElements$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapDictPatternElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapListPatternCasePatterns$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictPatternElements;
+	const data = node[INPUT] as T.ListPatternCasePatterns;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.DictPatternElements['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapDictPatternElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'dict_pattern_elements', 'items', restItems('items', v)) },
+					wrapListPatternCasePatterns(
+						{
+							...$edited(data),
+							_item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v))
+						},
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapDictPatternElements({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapListPatternCasePatterns({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`dict_pattern_elements has no $with.${setter}`);
+	throw new Error(`list_pattern_case_patterns has no $with.${setter}`);
 }
-function wrapDictPatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictPatternElements$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapListPatternCasePatterns$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListPatternCasePatterns$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapDictPatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictPatternElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapListPatternCasePatterns$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapListPatternCasePatterns$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapDictPatternElements$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeHandle): T.DictPatternElements.Parsed {
 	const handle = currentHandle();
@@ -8259,36 +8234,36 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 	holdReadItems(node, wrapDictPatternElements$listRead);
 	return node as unknown as T.DictPatternElements.Parsed;
 }
-
-function wrapSubscripts$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'subscripts'), undefined);
-}
-function wrapSubscripts$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictPatternElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Subscripts;
+	const data = node[INPUT] as T.DictPatternElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'subscripts':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Subscripts['_subscript']>[number]>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.DictPatternElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapSubscripts(
-						{ ...$edited(data), _subscript: admitSlot(handle, 'subscripts', 'subscripts', restItems('subscripts', v)) },
+					wrapDictPatternElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'dict_pattern_elements', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapSubscripts({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapDictPatternElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`subscripts has no $with.${setter}`);
+	throw new Error(`dict_pattern_elements has no $with.${setter}`);
 }
-function wrapSubscripts$with$subscripts(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSubscripts$with(receiverOf(this, '$with.subscripts'), 'subscripts', args);
+function wrapDictPatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictPatternElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapSubscripts$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSubscripts$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapDictPatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictPatternElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapSubscripts$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'subscripts'), undefined);
 }
 export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscripts.Parsed {
 	const handle = currentHandle();
@@ -8356,36 +8331,36 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 	holdReadItems(node, wrapSubscripts$listRead);
 	return node as unknown as T.Subscripts.Parsed;
 }
-
-function wrapDictionaryElements$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapDictionaryElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSubscripts$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.DictionaryElements;
+	const data = node[INPUT] as T.Subscripts;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.DictionaryElements['_item']>[number]>) =>
+		case 'subscripts':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Subscripts['_subscript']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapDictionaryElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'dictionary_elements', 'items', restItems('items', v)) },
+					wrapSubscripts(
+						{ ...$edited(data), _subscript: admitSlot(handle, 'subscripts', 'subscripts', restItems('subscripts', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapDictionaryElements({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapSubscripts({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`dictionary_elements has no $with.${setter}`);
+	throw new Error(`subscripts has no $with.${setter}`);
 }
-function wrapDictionaryElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionaryElements$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapSubscripts$with$subscripts(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSubscripts$with(receiverOf(this, '$with.subscripts'), 'subscripts', args);
 }
-function wrapDictionaryElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDictionaryElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapSubscripts$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSubscripts$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapDictionaryElements$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHandle): T.DictionaryElements.Parsed {
 	const handle = currentHandle();
@@ -8453,24 +8428,34 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 	holdReadItems(node, wrapDictionaryElements$listRead);
 	return node as unknown as T.DictionaryElements.Parsed;
 }
-
-function wrapSliceGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapDictionaryElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SliceGroup;
+	const data = node[INPUT] as T.DictionaryElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.SliceGroup['_expression']>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.DictionaryElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapSliceGroup({ ...$edited(data), _expression: admitSlot(handle, 'slice_group', 'expression', v) }, tree)
+					wrapDictionaryElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'dictionary_elements', 'items', restItems('items', v)) },
+						tree
+					)
 				)
 			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapDictionaryElements({ ...$edited(data), _delimiter: v }, tree))
+			);
 	}
-	throw new Error(`slice_group has no $with.${setter}`);
+	throw new Error(`dictionary_elements has no $with.${setter}`);
 }
-function wrapSliceGroup$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSliceGroup$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapDictionaryElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionaryElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
+function wrapDictionaryElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDictionaryElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
 export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGroup.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -8498,36 +8483,26 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SliceGroup.Parsed;
 }
+function wrapSliceGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.SliceGroup;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.SliceGroup['_expression']>) =>
+				rebuilt(node, handle, () =>
+					wrapSliceGroup({ ...$edited(data), _expression: admitSlot(handle, 'slice_group', 'expression', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`slice_group has no $with.${setter}`);
+}
+function wrapSliceGroup$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSliceGroup$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
 
 function wrapTuplePatternElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapTuplePatternElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.TuplePatternElements;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.TuplePatternElements['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapTuplePatternElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'tuple_pattern_elements', 'items', restItems('items', v)) },
-						tree
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTuplePatternElements({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`tuple_pattern_elements has no $with.${setter}`);
-}
-function wrapTuplePatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTuplePatternElements$with(receiverOf(this, '$with.items'), 'items', args);
-}
-function wrapTuplePatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTuplePatternElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapTuplePatternElements(
 	data: T.TuplePatternElements,
@@ -8598,36 +8573,36 @@ export function wrapTuplePatternElements(
 	holdReadItems(node, wrapTuplePatternElements$listRead);
 	return node as unknown as T.TuplePatternElements.Parsed;
 }
-
-function wrapCasePatternList$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapCasePatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTuplePatternElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CasePatternList;
+	const data = node[INPUT] as T.TuplePatternElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.CasePatternList['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.TuplePatternElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapCasePatternList(
-						{ ...$edited(data), _item: admitSlot(handle, 'case_pattern_list', 'items', restItems('items', v)) },
+					wrapTuplePatternElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'tuple_pattern_elements', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapCasePatternList({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapTuplePatternElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`case_pattern_list has no $with.${setter}`);
+	throw new Error(`tuple_pattern_elements has no $with.${setter}`);
 }
-function wrapCasePatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCasePatternList$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapTuplePatternElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTuplePatternElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapCasePatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCasePatternList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapTuplePatternElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTuplePatternElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapCasePatternList$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): T.CasePatternList.Parsed {
 	const handle = currentHandle();
@@ -8695,36 +8670,36 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 	holdReadItems(node, wrapCasePatternList$listRead);
 	return node as unknown as T.CasePatternList.Parsed;
 }
-
-function wrapTupleElements$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapTupleElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCasePatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.TupleElements;
+	const data = node[INPUT] as T.CasePatternList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.TupleElements['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.CasePatternList['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapTupleElements(
-						{ ...$edited(data), _item: admitSlot(handle, 'tuple_elements', 'items', restItems('items', v)) },
+					wrapCasePatternList(
+						{ ...$edited(data), _item: admitSlot(handle, 'case_pattern_list', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapTupleElements({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapCasePatternList({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`tuple_elements has no $with.${setter}`);
+	throw new Error(`case_pattern_list has no $with.${setter}`);
 }
-function wrapTupleElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTupleElements$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapCasePatternList$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCasePatternList$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapTupleElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTupleElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapCasePatternList$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCasePatternList$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapTupleElements$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.TupleElements.Parsed {
 	const handle = currentHandle();
@@ -8788,39 +8763,34 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 	holdReadItems(node, wrapTupleElements$listRead);
 	return node as unknown as T.TupleElements.Parsed;
 }
-
-function wrapExceptClauseExceptionAs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapTupleElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExceptClauseExceptionAs;
+	const data = node[INPUT] as T.TupleElements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.ExceptClauseExceptionAs['_value']>) =>
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.TupleElements['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionAs(
-						{ ...$edited(data), _value: admitSlot(handle, 'except_clause_exception_as', 'value', v) },
+					wrapTupleElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'tuple_elements', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
-		case 'alias':
-			return applySetter(args, (v: NonNullable<T.ExceptClauseExceptionAs['_alias']>) =>
-				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionAs(
-						{ ...$edited(data), _alias: admitSlot(handle, 'except_clause_exception_as', 'alias', v) },
-						tree
-					)
-				)
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTupleElements({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`except_clause_exception_as has no $with.${setter}`);
+	throw new Error(`tuple_elements has no $with.${setter}`);
 }
-function wrapExceptClauseExceptionAs$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClauseExceptionAs$with(receiverOf(this, '$with.value'), 'value', args);
+function wrapTupleElements$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTupleElements$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapExceptClauseExceptionAs$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClauseExceptionAs$with(receiverOf(this, '$with.alias'), 'alias', args);
+function wrapTupleElements$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTupleElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
+
 export function wrapExceptClauseExceptionAs(
 	data: T.ExceptClauseExceptionAs,
 	tree: TreeHandle
@@ -8858,34 +8828,41 @@ export function wrapExceptClauseExceptionAs(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionAs.Parsed;
 }
-
-function wrapCaseTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExceptClauseExceptionAs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CaseTuplePattern;
+	const data = node[INPUT] as T.ExceptClauseExceptionAs;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.ExceptClauseExceptionAs['_value']>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
-							wrapCaseTuplePattern(
-								{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
-								tree
-							)
+					wrapExceptClauseExceptionAs(
+						{ ...$edited(data), _value: admitSlot(handle, 'except_clause_exception_as', 'value', v) },
+						tree
+					)
+				)
+			);
+		case 'alias':
+			return applySetter(args, (v: NonNullable<T.ExceptClauseExceptionAs['_alias']>) =>
+				rebuilt(node, handle, () =>
+					wrapExceptClauseExceptionAs(
+						{ ...$edited(data), _alias: admitSlot(handle, 'except_clause_exception_as', 'alias', v) },
+						tree
 					)
 				)
 			);
 	}
-	throw new Error(`case_tuple_pattern has no $with.${setter}`);
+	throw new Error(`except_clause_exception_as has no $with.${setter}`);
 }
-function wrapCaseTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseTuplePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapExceptClauseExceptionAs$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClauseExceptionAs$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function wrapExceptClauseExceptionAs$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClauseExceptionAs$with(receiverOf(this, '$with.alias'), 'alias', args);
+}
+
+function wrapCaseTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle): T.CaseTuplePattern.Parsed {
 	const handle = currentHandle();
@@ -8953,13 +8930,9 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 	);
 	return node as unknown as T.CaseTuplePattern.Parsed;
 }
-
-function wrapCaseListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.CaseListPattern;
+	const data = node[INPUT] as T.CaseTuplePattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
@@ -8968,19 +8941,23 @@ function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unk
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseListPattern['_elements']>) =>
-							wrapCaseListPattern(
-								{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
+						(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
+							wrapCaseTuplePattern(
+								{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
 								tree
 							)
 					)
 				)
 			);
 	}
-	throw new Error(`case_list_pattern has no $with.${setter}`);
+	throw new Error(`case_tuple_pattern has no $with.${setter}`);
 }
-function wrapCaseListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapCaseListPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapCaseTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseTuplePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapCaseListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): T.CaseListPattern.Parsed {
 	const handle = currentHandle();
@@ -9048,36 +9025,34 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 	);
 	return node as unknown as T.CaseListPattern.Parsed;
 }
-
-function wrapPrintArguments$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapPrintArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.PrintArguments;
+	const data = node[INPUT] as T.CaseListPattern;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PrintArguments['_item']>[number]>) =>
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapPrintArguments(
-						{ ...$edited(data), _item: admitSlot(handle, 'print_arguments', 'items', restItems('items', v)) },
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
+						(v: NonNullable<T.CaseListPattern['_elements']>) =>
+							wrapCaseListPattern(
+								{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
+								tree
+							)
 					)
 				)
 			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPrintArguments({ ...$edited(data), _delimiter: v }, tree))
-			);
 	}
-	throw new Error(`print_arguments has no $with.${setter}`);
+	throw new Error(`case_list_pattern has no $with.${setter}`);
 }
-function wrapPrintArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintArguments$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapCaseListPattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapCaseListPattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
-function wrapPrintArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintArguments$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+
+function wrapPrintArguments$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.PrintArguments.Parsed {
 	const handle = currentHandle();
@@ -9141,36 +9116,36 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 	holdReadItems(node, wrapPrintArguments$listRead);
 	return node as unknown as T.PrintArguments.Parsed;
 }
-
-function wrapPrintChevronArguments$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapPrintChevronArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapPrintArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.PrintChevronArguments;
+	const data = node[INPUT] as T.PrintArguments;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_item']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PrintArguments['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapPrintChevronArguments(
-						{ ...$edited(data), _item: admitSlot(handle, 'print_chevron_arguments', 'items', restItems('items', v)) },
+					wrapPrintArguments(
+						{ ...$edited(data), _item: admitSlot(handle, 'print_arguments', 'items', restItems('items', v)) },
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapPrintChevronArguments({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapPrintArguments({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`print_chevron_arguments has no $with.${setter}`);
+	throw new Error(`print_arguments has no $with.${setter}`);
 }
-function wrapPrintChevronArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintChevronArguments$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapPrintArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintArguments$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapPrintChevronArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintChevronArguments$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapPrintArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintArguments$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapPrintChevronArguments$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapPrintChevronArguments(
 	data: T.PrintChevronArguments,
@@ -9241,7 +9216,71 @@ export function wrapPrintChevronArguments(
 	holdReadItems(node, wrapPrintChevronArguments$listRead);
 	return node as unknown as T.PrintChevronArguments.Parsed;
 }
+function wrapPrintChevronArguments$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.PrintChevronArguments;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.PrintChevronArguments['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapPrintChevronArguments(
+						{ ...$edited(data), _item: admitSlot(handle, 'print_chevron_arguments', 'items', restItems('items', v)) },
+						tree
+					)
+				)
+			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapPrintChevronArguments({ ...$edited(data), _delimiter: v }, tree))
+			);
+	}
+	throw new Error(`print_chevron_arguments has no $with.${setter}`);
+}
+function wrapPrintChevronArguments$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintChevronArguments$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function wrapPrintChevronArguments$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintChevronArguments$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
 
+export function wrapPrintStatementChevron(
+	data: T.PrintStatementChevron,
+	tree: TreeHandle
+): T.PrintStatementChevron.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.PrintStatementChevron as const,
+		chevron() {
+			return hydrateSlot<T.Chevron>(this, '_chevron', tree);
+		},
+		printChevronArguments() {
+			return hydrateSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, '_print_chevron_arguments', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		chevron: wrapPrintStatementChevron$with$chevron,
+		printChevronArguments: wrapPrintStatementChevron$with$printChevronArguments,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.PrintStatementChevron.Parsed;
+}
 function wrapPrintStatementChevron$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.PrintStatementChevron;
@@ -9282,71 +9321,9 @@ function wrapPrintStatementChevron$with$chevron(this: Received<Held>, ...args: u
 function wrapPrintStatementChevron$with$printChevronArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPrintStatementChevron$with(receiverOf(this, '$with.printChevronArguments'), 'printChevronArguments', args);
 }
-export function wrapPrintStatementChevron(
-	data: T.PrintStatementChevron,
-	tree: TreeHandle
-): T.PrintStatementChevron.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.PrintStatementChevron as const,
-		chevron() {
-			return hydrateSlot<T.Chevron>(this, '_chevron', tree);
-		},
-		printChevronArguments() {
-			return hydrateSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, '_print_chevron_arguments', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		chevron: wrapPrintStatementChevron$with$chevron,
-		printChevronArguments: wrapPrintStatementChevron$with$printChevronArguments,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.PrintStatementChevron.Parsed;
-}
 
 function wrapPrintStatementPlain$listRead(this: { readonly printArguments: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.printArguments(), 'items'), undefined);
-}
-function wrapPrintStatementPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.PrintStatementPlain;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'printArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
-						(v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
-							wrapPrintStatementPlain(
-								{ ...$edited(data), _print_arguments: admitSlot(handle, 'print_statement_plain', 'printArguments', v) },
-								tree
-							)
-					)
-				)
-			);
-	}
-	throw new Error(`print_statement_plain has no $with.${setter}`);
-}
-function wrapPrintStatementPlain$with$printArguments(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPrintStatementPlain$with(receiverOf(this, '$with.printArguments'), 'printArguments', args);
 }
 export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeHandle): T.PrintStatementPlain.Parsed {
 	const handle = currentHandle();
@@ -9414,34 +9391,34 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 	);
 	return node as unknown as T.PrintStatementPlain.Parsed;
 }
-
-function wrapParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.importList(), 'names'), undefined);
-}
-function wrapParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapPrintStatementPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ParenthesizedImportList;
+	const data = node[INPUT] as T.PrintStatementPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'importList':
+		case 'printArguments':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
-						(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
-							wrapParenthesizedImportList(
-								{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
+						{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
+						(v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
+							wrapPrintStatementPlain(
+								{ ...$edited(data), _print_arguments: admitSlot(handle, 'print_statement_plain', 'printArguments', v) },
 								tree
 							)
 					)
 				)
 			);
 	}
-	throw new Error(`parenthesized_import_list has no $with.${setter}`);
+	throw new Error(`print_statement_plain has no $with.${setter}`);
 }
-function wrapParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
+function wrapPrintStatementPlain$with$printArguments(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPrintStatementPlain$with(receiverOf(this, '$with.printArguments'), 'printArguments', args);
+}
+
+function wrapParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.importList(), 'names'), undefined);
 }
 export function wrapParenthesizedImportList(
 	data: T.ParenthesizedImportList,
@@ -9512,30 +9489,32 @@ export function wrapParenthesizedImportList(
 	);
 	return node as unknown as T.ParenthesizedImportList.Parsed;
 }
-
-function wrapComprehensionClauses$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ComprehensionClauses;
+	const data = node[INPUT] as T.ParenthesizedImportList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'contents':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
+		case 'importList':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapComprehensionClauses(
-						{
-							...$edited(data),
-							_content: admitSlot(handle, 'comprehension_clauses', 'contents', restItems('contents', v))
-						},
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
+						(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
+							wrapParenthesizedImportList(
+								{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
+								tree
+							)
 					)
 				)
 			);
 	}
-	throw new Error(`comprehension_clauses has no $with.${setter}`);
+	throw new Error(`parenthesized_import_list has no $with.${setter}`);
 }
-function wrapComprehensionClauses$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapComprehensionClauses$with(receiverOf(this, '$with.contents'), 'contents', args);
+function wrapParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
 }
+
 export function wrapComprehensionClauses(
 	data: T.ComprehensionClauses,
 	tree: TreeHandle
@@ -9566,33 +9545,30 @@ export function wrapComprehensionClauses(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
-
-function wrapIntegerHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapComprehensionClauses$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerHex;
+	const data = node[INPUT] as T.ComprehensionClauses;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
+		case 'contents':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ComprehensionClauses['_content']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
-				)
-			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
+					wrapComprehensionClauses(
+						{
+							...$edited(data),
+							_content: admitSlot(handle, 'comprehension_clauses', 'contents', restItems('contents', v))
+						},
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_hex has no $with.${setter}`);
+	throw new Error(`comprehension_clauses has no $with.${setter}`);
 }
-function wrapIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapComprehensionClauses$with$contents(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapComprehensionClauses$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
-function wrapIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.content'), 'content', args);
-}
+
 export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerHex.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9623,36 +9599,33 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerHex.Parsed;
 }
-
-function wrapIntegerOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerOctal;
+	const data = node[INPUT] as T.IntegerHex;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
-						tree
-					)
+					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHex['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
+					wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`integer_octal has no $with.${setter}`);
+	throw new Error(`integer_hex has no $with.${setter}`);
 }
-function wrapIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHex$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.IntegerOctal.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9687,36 +9660,36 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerOctal.Parsed;
 }
-
-function wrapIntegerBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerBinary;
+	const data = node[INPUT] as T.IntegerOctal;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+					wrapIntegerOctal(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
 						tree
 					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctal['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
+					wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`integer_binary has no $with.${setter}`);
+	throw new Error(`integer_octal has no $with.${setter}`);
 }
-function wrapIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctal$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.IntegerBinary.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9751,7 +9724,86 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerBinary.Parsed;
 }
+function wrapIntegerBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerBinary;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinary(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerBinary['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`integer_binary has no $with.${setter}`);
+}
+function wrapIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinary$with(receiverOf(this, '$with.content'), 'content', args);
+}
 
+export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoint.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.FloatPoint as const,
+		integer() {
+			return hydrateSlot<string>(this, '_integer', tree);
+		},
+		fraction() {
+			return hydrateSlot<string | undefined>(this, '_fraction', tree);
+		},
+		marker() {
+			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+		},
+		exponentSign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
+		},
+		exponent() {
+			return hydrateSlot<string | undefined>(this, '_exponent', tree);
+		},
+		imaginary() {
+			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		integer: wrapFloatPoint$with$integer,
+		fraction: wrapFloatPoint$with$fraction,
+		marker: wrapFloatPoint$with$marker,
+		exponentSign: wrapFloatPoint$with$exponentSign,
+		exponent: wrapFloatPoint$with$exponent,
+		imaginary: wrapFloatPoint$with$imaginary,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.FloatPoint.Parsed;
+}
 function wrapFloatPoint$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.FloatPoint;
@@ -9817,16 +9869,17 @@ function wrapFloatPoint$with$exponent(this: Received<Held>, ...args: unknown[]):
 function wrapFloatPoint$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFloatPoint$with(receiverOf(this, '$with.imaginary'), 'imaginary', args);
 }
-export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoint.Parsed {
+
+export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandle): T.FloatLeadingPoint.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.FloatPoint as const,
+		$type: TSKindId.FloatLeadingPoint as const,
 		integer() {
-			return hydrateSlot<string>(this, '_integer', tree);
+			return hydrateSlot<string | undefined>(this, '_integer', tree);
 		},
 		fraction() {
-			return hydrateSlot<string | undefined>(this, '_fraction', tree);
+			return hydrateSlot<string>(this, '_fraction', tree);
 		},
 		marker() {
 			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
@@ -9856,18 +9909,17 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: wrapFloatPoint$with$integer,
-		fraction: wrapFloatPoint$with$fraction,
-		marker: wrapFloatPoint$with$marker,
-		exponentSign: wrapFloatPoint$with$exponentSign,
-		exponent: wrapFloatPoint$with$exponent,
-		imaginary: wrapFloatPoint$with$imaginary,
+		integer: wrapFloatLeadingPoint$with$integer,
+		fraction: wrapFloatLeadingPoint$with$fraction,
+		marker: wrapFloatLeadingPoint$with$marker,
+		exponentSign: wrapFloatLeadingPoint$with$exponentSign,
+		exponent: wrapFloatLeadingPoint$with$exponent,
+		imaginary: wrapFloatLeadingPoint$with$imaginary,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FloatPoint.Parsed;
+	return node as unknown as T.FloatLeadingPoint.Parsed;
 }
-
 function wrapFloatLeadingPoint$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.FloatLeadingPoint;
@@ -9948,25 +10000,23 @@ function wrapFloatLeadingPoint$with$exponent(this: Received<Held>, ...args: unkn
 function wrapFloatLeadingPoint$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFloatLeadingPoint$with(receiverOf(this, '$with.imaginary'), 'imaginary', args);
 }
-export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandle): T.FloatLeadingPoint.Parsed {
+
+export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): T.FloatScientific.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.FloatLeadingPoint as const,
+		$type: TSKindId.FloatScientific as const,
 		integer() {
-			return hydrateSlot<string | undefined>(this, '_integer', tree);
-		},
-		fraction() {
-			return hydrateSlot<string>(this, '_fraction', tree);
+			return hydrateSlot<string>(this, '_integer', tree);
 		},
 		marker() {
-			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
 		},
 		exponentSign() {
 			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
 		},
 		exponent() {
-			return hydrateSlot<string | undefined>(this, '_exponent', tree);
+			return hydrateSlot<string>(this, '_exponent', tree);
 		},
 		imaginary() {
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
@@ -9987,18 +10037,16 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		integer: wrapFloatLeadingPoint$with$integer,
-		fraction: wrapFloatLeadingPoint$with$fraction,
-		marker: wrapFloatLeadingPoint$with$marker,
-		exponentSign: wrapFloatLeadingPoint$with$exponentSign,
-		exponent: wrapFloatLeadingPoint$with$exponent,
-		imaginary: wrapFloatLeadingPoint$with$imaginary,
+		integer: wrapFloatScientific$with$integer,
+		marker: wrapFloatScientific$with$marker,
+		exponentSign: wrapFloatScientific$with$exponentSign,
+		exponent: wrapFloatScientific$with$exponent,
+		imaginary: wrapFloatScientific$with$imaginary,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FloatLeadingPoint.Parsed;
+	return node as unknown as T.FloatScientific.Parsed;
 }
-
 function wrapFloatScientific$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.FloatScientific;
@@ -10061,73 +10109,7 @@ function wrapFloatScientific$with$exponent(this: Received<Held>, ...args: unknow
 function wrapFloatScientific$with$imaginary(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFloatScientific$with(receiverOf(this, '$with.imaginary'), 'imaginary', args);
 }
-export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): T.FloatScientific.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.FloatScientific as const,
-		integer() {
-			return hydrateSlot<string>(this, '_integer', tree);
-		},
-		marker() {
-			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
-		},
-		exponentSign() {
-			return hydrateSlot<'-' | '+' | undefined>(this, '_exponent_sign', tree);
-		},
-		exponent() {
-			return hydrateSlot<string>(this, '_exponent', tree);
-		},
-		imaginary() {
-			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		integer: wrapFloatScientific$with$integer,
-		marker: wrapFloatScientific$with$marker,
-		exponentSign: wrapFloatScientific$with$exponentSign,
-		exponent: wrapFloatScientific$with$exponent,
-		imaginary: wrapFloatScientific$with$imaginary,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FloatScientific.Parsed;
-}
 
-function wrapEscapeSequenceUnicodeFixed$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceUnicodeFixed;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceUnicodeFixed(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_fixed', 'content', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`escape_sequence_unicode_fixed has no $with.${setter}`);
-}
-function wrapEscapeSequenceUnicodeFixed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceUnicodeFixed$with(receiverOf(this, '$with.content'), 'content', args);
-}
 export function wrapEscapeSequenceUnicodeFixed(
 	data: T.EscapeSequenceUnicodeFixed,
 	tree: TreeHandle
@@ -10158,27 +10140,27 @@ export function wrapEscapeSequenceUnicodeFixed(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
-
-function wrapEscapeSequenceUnicodeWide$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceUnicodeFixed$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceUnicodeWide;
+	const data = node[INPUT] as T.EscapeSequenceUnicodeFixed;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceUnicodeWide['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceUnicodeWide(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_wide', 'content', v) },
+					wrapEscapeSequenceUnicodeFixed(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_fixed', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_unicode_wide has no $with.${setter}`);
+	throw new Error(`escape_sequence_unicode_fixed has no $with.${setter}`);
 }
-function wrapEscapeSequenceUnicodeWide$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceUnicodeWide$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceUnicodeFixed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceUnicodeFixed$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceUnicodeWide(
 	data: T.EscapeSequenceUnicodeWide,
 	tree: TreeHandle
@@ -10209,27 +10191,27 @@ export function wrapEscapeSequenceUnicodeWide(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceUnicodeWide.Parsed;
 }
-
-function wrapEscapeSequenceHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceUnicodeWide$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceHex;
+	const data = node[INPUT] as T.EscapeSequenceUnicodeWide;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceUnicodeWide['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceHex(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_hex', 'content', v) },
+					wrapEscapeSequenceUnicodeWide(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_wide', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_hex has no $with.${setter}`);
+	throw new Error(`escape_sequence_unicode_wide has no $with.${setter}`);
 }
-function wrapEscapeSequenceHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceHex$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceUnicodeWide$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceUnicodeWide$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandle): T.EscapeSequenceHex.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10257,27 +10239,27 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
-
-function wrapEscapeSequenceOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceOctal;
+	const data = node[INPUT] as T.EscapeSequenceHex;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceOctal['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceOctal(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_octal', 'content', v) },
+					wrapEscapeSequenceHex(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_hex', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_octal has no $with.${setter}`);
+	throw new Error(`escape_sequence_hex has no $with.${setter}`);
 }
-function wrapEscapeSequenceOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceOctal$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceHex$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeHandle): T.EscapeSequenceOctal.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10305,27 +10287,27 @@ export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceOctal.Parsed;
 }
-
-function wrapEscapeSequenceLineBreak$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceLineBreak;
+	const data = node[INPUT] as T.EscapeSequenceOctal;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceLineBreak['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceOctal['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceLineBreak(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_line_break', 'content', v) },
+					wrapEscapeSequenceOctal(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_octal', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_line_break has no $with.${setter}`);
+	throw new Error(`escape_sequence_octal has no $with.${setter}`);
 }
-function wrapEscapeSequenceLineBreak$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceLineBreak$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceOctal$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceLineBreak(
 	data: T.EscapeSequenceLineBreak,
 	tree: TreeHandle
@@ -10356,27 +10338,27 @@ export function wrapEscapeSequenceLineBreak(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceLineBreak.Parsed;
 }
-
-function wrapEscapeSequenceSimple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceLineBreak$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceSimple;
+	const data = node[INPUT] as T.EscapeSequenceLineBreak;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceLineBreak['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceSimple(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_simple', 'content', v) },
+					wrapEscapeSequenceLineBreak(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_line_break', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_simple has no $with.${setter}`);
+	throw new Error(`escape_sequence_line_break has no $with.${setter}`);
 }
-function wrapEscapeSequenceSimple$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceSimple$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceLineBreak$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceLineBreak$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceSimple(
 	data: T.EscapeSequenceSimple,
 	tree: TreeHandle
@@ -10407,27 +10389,27 @@ export function wrapEscapeSequenceSimple(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
-
-function wrapEscapeSequenceNamed$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceSimple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceNamed;
+	const data = node[INPUT] as T.EscapeSequenceSimple;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceNamed['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapEscapeSequenceNamed(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_named', 'content', v) },
+					wrapEscapeSequenceSimple(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_simple', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`escape_sequence_named has no $with.${setter}`);
+	throw new Error(`escape_sequence_simple has no $with.${setter}`);
 }
-function wrapEscapeSequenceNamed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceNamed$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapEscapeSequenceSimple$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceSimple$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeHandle): T.EscapeSequenceNamed.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10455,27 +10437,27 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.EscapeSequenceNamed.Parsed;
 }
-
-function wrapSimplePatternNegative$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapEscapeSequenceNamed$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SimplePatternNegative;
+	const data = node[INPUT] as T.EscapeSequenceNamed;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.SimplePatternNegative['_value']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceNamed['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapSimplePatternNegative(
-						{ ...$edited(data), _value: admitSlot(handle, 'simple_pattern_negative', 'value', v) },
+					wrapEscapeSequenceNamed(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_named', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`simple_pattern_negative has no $with.${setter}`);
+	throw new Error(`escape_sequence_named has no $with.${setter}`);
 }
-function wrapSimplePatternNegative$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimplePatternNegative$with(receiverOf(this, '$with.value'), 'value', args);
+function wrapEscapeSequenceNamed$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceNamed$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapSimplePatternNegative(
 	data: T.SimplePatternNegative,
 	tree: TreeHandle
@@ -10506,30 +10488,27 @@ export function wrapSimplePatternNegative(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SimplePatternNegative.Parsed;
 }
-
-function wrapExceptClauseExceptionList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSimplePatternNegative$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExceptClauseExceptionList;
+	const data = node[INPUT] as T.SimplePatternNegative;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'values':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExceptClauseExceptionList['_value']>[number]>) =>
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.SimplePatternNegative['_value']>) =>
 				rebuilt(node, handle, () =>
-					wrapExceptClauseExceptionList(
-						{
-							...$edited(data),
-							_value: admitSlot(handle, 'except_clause_exception_list', 'values', restItems('values', v))
-						},
+					wrapSimplePatternNegative(
+						{ ...$edited(data), _value: admitSlot(handle, 'simple_pattern_negative', 'value', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`except_clause_exception_list has no $with.${setter}`);
+	throw new Error(`simple_pattern_negative has no $with.${setter}`);
 }
-function wrapExceptClauseExceptionList$with$values(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClauseExceptionList$with(receiverOf(this, '$with.values'), 'values', args);
+function wrapSimplePatternNegative$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimplePatternNegative$with(receiverOf(this, '$with.value'), 'value', args);
 }
+
 export function wrapExceptClauseExceptionList(
 	data: T.ExceptClauseExceptionList,
 	tree: TreeHandle
@@ -10560,27 +10539,30 @@ export function wrapExceptClauseExceptionList(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseExceptionList.Parsed;
 }
-
-function wrapExceptClauseException$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExceptClauseExceptionList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExceptClauseException;
+	const data = node[INPUT] as T.ExceptClauseExceptionList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ExceptClauseException['_content']>) =>
+		case 'values':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExceptClauseExceptionList['_value']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapExceptClauseException(
-						{ ...$edited(data), _content: admitSlot(handle, 'except_clause_exception', 'content', v) },
+					wrapExceptClauseExceptionList(
+						{
+							...$edited(data),
+							_value: admitSlot(handle, 'except_clause_exception_list', 'values', restItems('values', v))
+						},
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`except_clause_exception has no $with.${setter}`);
+	throw new Error(`except_clause_exception_list has no $with.${setter}`);
 }
-function wrapExceptClauseException$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExceptClauseException$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapExceptClauseExceptionList$with$values(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClauseExceptionList$with(receiverOf(this, '$with.values'), 'values', args);
 }
+
 export function wrapExceptClauseException(
 	data: T.ExceptClauseException,
 	tree: TreeHandle
@@ -10611,27 +10593,27 @@ export function wrapExceptClauseException(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
-
-function wrapSplatPatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExceptClauseException$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SplatPatternList;
+	const data = node[INPUT] as T.ExceptClauseException;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.SplatPatternList['_pattern']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.ExceptClauseException['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapSplatPatternList(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_list', 'pattern', v) },
+					wrapExceptClauseException(
+						{ ...$edited(data), _content: admitSlot(handle, 'except_clause_exception', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`splat_pattern_list has no $with.${setter}`);
+	throw new Error(`except_clause_exception has no $with.${setter}`);
 }
-function wrapSplatPatternList$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSplatPatternList$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+function wrapExceptClauseException$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExceptClauseException$with(receiverOf(this, '$with.content'), 'content', args);
 }
+
 export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle): T.SplatPatternList.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10659,27 +10641,27 @@ export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle)
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternList.Parsed;
 }
-
-function wrapSplatPatternDictionary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSplatPatternList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SplatPatternDictionary;
+	const data = node[INPUT] as T.SplatPatternList;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
+			return applySetter(args, (v: NonNullable<T.SplatPatternList['_pattern']>) =>
 				rebuilt(node, handle, () =>
-					wrapSplatPatternDictionary(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_dictionary', 'pattern', v) },
+					wrapSplatPatternList(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_list', 'pattern', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`splat_pattern_dictionary has no $with.${setter}`);
+	throw new Error(`splat_pattern_list has no $with.${setter}`);
 }
-function wrapSplatPatternDictionary$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSplatPatternDictionary$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+function wrapSplatPatternList$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSplatPatternList$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
+
 export function wrapSplatPatternDictionary(
 	data: T.SplatPatternDictionary,
 	tree: TreeHandle
@@ -10710,33 +10692,27 @@ export function wrapSplatPatternDictionary(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SplatPatternDictionary.Parsed;
 }
-
-function wrapAssignmentEq$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSplatPatternDictionary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AssignmentEq;
+	const data = node[INPUT] as T.SplatPatternDictionary;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.AssignmentEq['_name']>) =>
+		case 'pattern':
+			return applySetter(args, (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssignmentEq({ ...$edited(data), _name: admitSlot(handle, 'assignment_eq', 'name', v) }, tree)
-				)
-			);
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.AssignmentEq['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentEq({ ...$edited(data), _value: admitSlot(handle, 'assignment_eq', 'value', v) }, tree)
+					wrapSplatPatternDictionary(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_dictionary', 'pattern', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`assignment_eq has no $with.${setter}`);
+	throw new Error(`splat_pattern_dictionary has no $with.${setter}`);
 }
-function wrapAssignmentEq$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentEq$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapSplatPatternDictionary$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSplatPatternDictionary$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
-function wrapAssignmentEq$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentEq$with(receiverOf(this, '$with.value'), 'value', args);
-}
+
 export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.AssignmentEq.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10769,33 +10745,33 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentEq.Parsed;
 }
-
-function wrapAssignmentType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAssignmentEq$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AssignmentType;
+	const data = node[INPUT] as T.AssignmentEq;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'name':
-			return applySetter(args, (v: NonNullable<T.AssignmentType['_name']>) =>
+			return applySetter(args, (v: NonNullable<T.AssignmentEq['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssignmentType({ ...$edited(data), _name: admitSlot(handle, 'assignment_type', 'name', v) }, tree)
+					wrapAssignmentEq({ ...$edited(data), _name: admitSlot(handle, 'assignment_eq', 'name', v) }, tree)
 				)
 			);
-		case 'type':
-			return applySetter(args, (v: NonNullable<T.AssignmentType['_type']>) =>
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.AssignmentEq['_value']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
+					wrapAssignmentEq({ ...$edited(data), _value: admitSlot(handle, 'assignment_eq', 'value', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`assignment_type has no $with.${setter}`);
+	throw new Error(`assignment_eq has no $with.${setter}`);
 }
-function wrapAssignmentType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentType$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapAssignmentEq$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentEq$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function wrapAssignmentType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentType$with(receiverOf(this, '$with.type'), 'type', args);
+function wrapAssignmentEq$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentEq$with(receiverOf(this, '$with.value'), 'value', args);
 }
+
 export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.AssignmentType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10826,42 +10802,33 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentType.Parsed;
 }
-
-function wrapAssignmentTyped$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapAssignmentType$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AssignmentTyped;
+	const data = node[INPUT] as T.AssignmentType;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'name':
-			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_name']>) =>
+			return applySetter(args, (v: NonNullable<T.AssignmentType['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _name: admitSlot(handle, 'assignment_typed', 'name', v) }, tree)
+					wrapAssignmentType({ ...$edited(data), _name: admitSlot(handle, 'assignment_type', 'name', v) }, tree)
 				)
 			);
 		case 'type':
-			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_type']>) =>
+			return applySetter(args, (v: NonNullable<T.AssignmentType['_type']>) =>
 				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
-				)
-			);
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentTyped({ ...$edited(data), _value: admitSlot(handle, 'assignment_typed', 'value', v) }, tree)
+					wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`assignment_typed has no $with.${setter}`);
+	throw new Error(`assignment_type has no $with.${setter}`);
 }
-function wrapAssignmentTyped$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentTyped$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapAssignmentType$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentType$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function wrapAssignmentTyped$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentTyped$with(receiverOf(this, '$with.type'), 'type', args);
+function wrapAssignmentType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentType$with(receiverOf(this, '$with.type'), 'type', args);
 }
-function wrapAssignmentTyped$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentTyped$with(receiverOf(this, '$with.value'), 'value', args);
-}
+
 export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): T.AssignmentTyped.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10902,39 +10869,44 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentTyped.Parsed;
 }
+function wrapAssignmentTyped$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.AssignmentTyped;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapAssignmentTyped({ ...$edited(data), _name: admitSlot(handle, 'assignment_typed', 'name', v) }, tree)
+				)
+			);
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_type']>) =>
+				rebuilt(node, handle, () =>
+					wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
+				)
+			);
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_value']>) =>
+				rebuilt(node, handle, () =>
+					wrapAssignmentTyped({ ...$edited(data), _value: admitSlot(handle, 'assignment_typed', 'value', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`assignment_typed has no $with.${setter}`);
+}
+function wrapAssignmentTyped$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentTyped$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapAssignmentTyped$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentTyped$with(receiverOf(this, '$with.type'), 'type', args);
+}
+function wrapAssignmentTyped$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssignmentTyped$with(receiverOf(this, '$with.value'), 'value', args);
+}
 
 function wrapExpressionStatementTuple$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapExpressionStatementTuple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExpressionStatementTuple;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapExpressionStatementTuple(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'expression_statement_tuple', 'items', restItems('items', v))
-						},
-						tree
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapExpressionStatementTuple({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`expression_statement_tuple has no $with.${setter}`);
-}
-function wrapExpressionStatementTuple$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExpressionStatementTuple$with(receiverOf(this, '$with.items'), 'items', args);
-}
-function wrapExpressionStatementTuple$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExpressionStatementTuple$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapExpressionStatementTuple(
 	data: T.ExpressionStatementTuple,
@@ -11005,36 +10977,39 @@ export function wrapExpressionStatementTuple(
 	holdReadItems(node, wrapExpressionStatementTuple$listRead);
 	return node as unknown as T.ExpressionStatementTuple.Parsed;
 }
-
-function wrapWithClauseBare$listRead(this: object): readonly unknown[] {
-	return listItems(ownerElements(this, 'items'), undefined);
-}
-function wrapWithClauseBare$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapExpressionStatementTuple$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.WithClauseBare;
+	const data = node[INPUT] as T.ExpressionStatementTuple;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_item']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapWithClauseBare(
-						{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
+					wrapExpressionStatementTuple(
+						{
+							...$edited(data),
+							_item: admitSlot(handle, 'expression_statement_tuple', 'items', restItems('items', v))
+						},
 						tree
 					)
 				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapWithClauseBare({ ...$edited(data), _delimiter: v }, tree))
+				rebuilt(node, handle, () => wrapExpressionStatementTuple({ ...$edited(data), _delimiter: v }, tree))
 			);
 	}
-	throw new Error(`with_clause_bare has no $with.${setter}`);
+	throw new Error(`expression_statement_tuple has no $with.${setter}`);
 }
-function wrapWithClauseBare$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithClauseBare$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapExpressionStatementTuple$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExpressionStatementTuple$with(receiverOf(this, '$with.items'), 'items', args);
 }
-function wrapWithClauseBare$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithClauseBare$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+function wrapExpressionStatementTuple$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExpressionStatementTuple$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapWithClauseBare$listRead(this: object): readonly unknown[] {
+	return listItems(ownerElements(this, 'items'), undefined);
 }
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.WithClauseBare.Parsed {
 	const handle = currentHandle();
@@ -11098,34 +11073,36 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 	holdReadItems(node, wrapWithClauseBare$listRead);
 	return node as unknown as T.WithClauseBare.Parsed;
 }
-
-function wrapWithClauseParen$listRead(this: { readonly items: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.items(), 'items'), undefined);
-}
-function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapWithClauseBare$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.WithClauseParen;
+	const data = node[INPUT] as T.WithClauseBare;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...args: unknown[]) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_items']>) =>
-							wrapWithClauseParen(
-								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
-								tree
-							)
+					wrapWithClauseBare(
+						{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
+						tree
 					)
 				)
 			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapWithClauseBare({ ...$edited(data), _delimiter: v }, tree))
+			);
 	}
-	throw new Error(`with_clause_paren has no $with.${setter}`);
+	throw new Error(`with_clause_bare has no $with.${setter}`);
 }
-function wrapWithClauseParen$with$items(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapWithClauseParen$with(receiverOf(this, '$with.items'), 'items', args);
+function wrapWithClauseBare$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithClauseBare$with(receiverOf(this, '$with.items'), 'items', args);
+}
+function wrapWithClauseBare$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithClauseBare$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
+function wrapWithClauseParen$listRead(this: { readonly items: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.items(), 'items'), undefined);
 }
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
 	const handle = currentHandle();
@@ -11193,30 +11170,32 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 	);
 	return node as unknown as T.WithClauseParen.Parsed;
 }
-
-function wrapMatchBlockBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.MatchBlockBlock;
+	const data = node[INPUT] as T.WithClauseParen;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'alternatives':
-			return applySetter(args, (...v: NonNullable<T.MatchBlockBlock['_alternative']>[number][]) =>
+		case 'items':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapMatchBlockBlock(
-						{
-							...$edited(data),
-							_alternative: admitSlot(handle, 'match_block_block', 'alternatives', restItems('alternatives', v))
-						},
-						tree
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
+						(v: NonNullable<T.WithClauseParen['_items']>) =>
+							wrapWithClauseParen(
+								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
+								tree
+							)
 					)
 				)
 			);
 	}
-	throw new Error(`match_block_block has no $with.${setter}`);
+	throw new Error(`with_clause_paren has no $with.${setter}`);
 }
-function wrapMatchBlockBlock$with$alternatives(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapMatchBlockBlock$with(receiverOf(this, '$with.alternatives'), 'alternatives', args);
+function wrapWithClauseParen$with$items(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapWithClauseParen$with(receiverOf(this, '$with.items'), 'items', args);
 }
+
 export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle): T.MatchBlockBlock.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11244,27 +11223,30 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockBlock.Parsed;
 }
-
-function wrapMatchBlockEmpty$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapMatchBlockBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.MatchBlockEmpty;
+	const data = node[INPUT] as T.MatchBlockBlock;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'newline':
-			return applySetter(args, (v: NonNullable<T.MatchBlockEmpty['_newline']>) =>
+		case 'alternatives':
+			return applySetter(args, (...v: NonNullable<T.MatchBlockBlock['_alternative']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapMatchBlockEmpty(
-						{ ...$edited(data), _newline: admitSlot(handle, 'match_block_empty', 'newline', v) },
+					wrapMatchBlockBlock(
+						{
+							...$edited(data),
+							_alternative: admitSlot(handle, 'match_block_block', 'alternatives', restItems('alternatives', v))
+						},
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`match_block_empty has no $with.${setter}`);
+	throw new Error(`match_block_block has no $with.${setter}`);
 }
-function wrapMatchBlockEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapMatchBlockEmpty$with(receiverOf(this, '$with.newline'), 'newline', args);
+function wrapMatchBlockBlock$with$alternatives(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapMatchBlockBlock$with(receiverOf(this, '$with.alternatives'), 'alternatives', args);
 }
+
 export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): T.MatchBlockEmpty.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11292,50 +11274,29 @@ export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.MatchBlockEmpty.Parsed;
 }
-
-function wrapSuiteInline$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
-}
-function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapMatchBlockEmpty$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SuiteInline;
+	const data = node[INPUT] as T.MatchBlockEmpty;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
+		case 'newline':
+			return applySetter(args, (v: NonNullable<T.MatchBlockEmpty['_newline']>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.SimpleStatementsElements as const,
-							optional: false,
-							make: RAW.buildSimpleStatementsElements
-						},
-						(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
-							wrapSuiteInline(
-								{
-									...$edited(data),
-									_elements: admitSlot(
-										handle,
-										'suite_inline',
-										'elements',
-										admitSplicedEnvelope(
-											v,
-											[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
-											'SuiteInline.elements'
-										)
-									)
-								},
-								tree
-							)
+					wrapMatchBlockEmpty(
+						{ ...$edited(data), _newline: admitSlot(handle, 'match_block_empty', 'newline', v) },
+						tree
 					)
 				)
 			);
 	}
-	throw new Error(`suite_inline has no $with.${setter}`);
+	throw new Error(`match_block_empty has no $with.${setter}`);
 }
-function wrapSuiteInline$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSuiteInline$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapMatchBlockEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapMatchBlockEmpty$with(receiverOf(this, '$with.newline'), 'newline', args);
+}
+
+function wrapSuiteInline$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
 export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteInline.Parsed {
 	const handle = currentHandle();
@@ -11403,24 +11364,48 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 	);
 	return node as unknown as T.SuiteInline.Parsed;
 }
-
-function wrapSuiteBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SuiteBlock;
+	const data = node[INPUT] as T.SuiteInline;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'block':
-			return applySetter(args, (v: NonNullable<T.SuiteBlock['_block']>) =>
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.SimpleStatementsElements as const,
+							optional: false,
+							make: RAW.buildSimpleStatementsElements
+						},
+						(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
+							wrapSuiteInline(
+								{
+									...$edited(data),
+									_elements: admitSlot(
+										handle,
+										'suite_inline',
+										'elements',
+										admitSplicedEnvelope(
+											v,
+											[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
+											'SuiteInline.elements'
+										)
+									)
+								},
+								tree
+							)
+					)
 				)
 			);
 	}
-	throw new Error(`suite_block has no $with.${setter}`);
+	throw new Error(`suite_inline has no $with.${setter}`);
 }
-function wrapSuiteBlock$with$block(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSuiteBlock$with(receiverOf(this, '$with.block'), 'block', args);
+function wrapSuiteInline$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSuiteInline$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
+
 export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlock.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11448,24 +11433,24 @@ export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlo
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlock.Parsed;
 }
-
-function wrapSuiteEmpty$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSuiteBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SuiteEmpty;
+	const data = node[INPUT] as T.SuiteBlock;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'newline':
-			return applySetter(args, (v: NonNullable<T.SuiteEmpty['_newline']>) =>
+		case 'block':
+			return applySetter(args, (v: NonNullable<T.SuiteBlock['_block']>) =>
 				rebuilt(node, handle, () =>
-					wrapSuiteEmpty({ ...$edited(data), _newline: admitSlot(handle, 'suite_empty', 'newline', v) }, tree)
+					wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`suite_empty has no $with.${setter}`);
+	throw new Error(`suite_block has no $with.${setter}`);
 }
-function wrapSuiteEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSuiteEmpty$with(receiverOf(this, '$with.newline'), 'newline', args);
+function wrapSuiteBlock$with$block(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSuiteBlock$with(receiverOf(this, '$with.block'), 'block', args);
 }
+
 export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmpty.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11493,42 +11478,24 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmp
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteEmpty.Parsed;
 }
-
-function wrapComparisonOperatorComparator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapSuiteEmpty$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ComparisonOperatorComparator;
+	const data = node[INPUT] as T.SuiteEmpty;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'operators':
-			return applySetter(args, (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) =>
+		case 'newline':
+			return applySetter(args, (v: NonNullable<T.SuiteEmpty['_newline']>) =>
 				rebuilt(node, handle, () =>
-					wrapComparisonOperatorComparator(
-						{ ...$edited(data), _operators: admitSlot(handle, 'comparison_operator_comparator', 'operators', v) },
-						tree
-					)
-				)
-			);
-		case 'primaryExpression':
-			return applySetter(args, (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) =>
-				rebuilt(node, handle, () =>
-					wrapComparisonOperatorComparator(
-						{
-							...$edited(data),
-							_primary_expression: admitSlot(handle, 'comparison_operator_comparator', 'primaryExpression', v)
-						},
-						tree
-					)
+					wrapSuiteEmpty({ ...$edited(data), _newline: admitSlot(handle, 'suite_empty', 'newline', v) }, tree)
 				)
 			);
 	}
-	throw new Error(`comparison_operator_comparator has no $with.${setter}`);
+	throw new Error(`suite_empty has no $with.${setter}`);
 }
-function wrapComparisonOperatorComparator$with$operators(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapComparisonOperatorComparator$with(receiverOf(this, '$with.operators'), 'operators', args);
+function wrapSuiteEmpty$with$newline(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSuiteEmpty$with(receiverOf(this, '$with.newline'), 'newline', args);
 }
-function wrapComparisonOperatorComparator$with$primaryExpression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapComparisonOperatorComparator$with(receiverOf(this, '$with.primaryExpression'), 'primaryExpression', args);
-}
+
 export function wrapComparisonOperatorComparator(
 	data: T.ComparisonOperatorComparator,
 	tree: TreeHandle
@@ -11566,27 +11533,42 @@ export function wrapComparisonOperatorComparator(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ComparisonOperatorComparator.Parsed;
 }
-
-function wrapYieldFromClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapComparisonOperatorComparator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.YieldFromClause;
+	const data = node[INPUT] as T.ComparisonOperatorComparator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.YieldFromClause['_expression']>) =>
+		case 'operators':
+			return applySetter(args, (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) =>
 				rebuilt(node, handle, () =>
-					wrapYieldFromClause(
-						{ ...$edited(data), _expression: admitSlot(handle, 'yield_from_clause', 'expression', v) },
+					wrapComparisonOperatorComparator(
+						{ ...$edited(data), _operators: admitSlot(handle, 'comparison_operator_comparator', 'operators', v) },
+						tree
+					)
+				)
+			);
+		case 'primaryExpression':
+			return applySetter(args, (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) =>
+				rebuilt(node, handle, () =>
+					wrapComparisonOperatorComparator(
+						{
+							...$edited(data),
+							_primary_expression: admitSlot(handle, 'comparison_operator_comparator', 'primaryExpression', v)
+						},
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`yield_from_clause has no $with.${setter}`);
+	throw new Error(`comparison_operator_comparator has no $with.${setter}`);
 }
-function wrapYieldFromClause$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapYieldFromClause$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapComparisonOperatorComparator$with$operators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapComparisonOperatorComparator$with(receiverOf(this, '$with.operators'), 'operators', args);
 }
+function wrapComparisonOperatorComparator$with$primaryExpression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapComparisonOperatorComparator$with(receiverOf(this, '$with.primaryExpression'), 'primaryExpression', args);
+}
+
 export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): T.YieldFromClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11614,7 +11596,76 @@ export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.YieldFromClause.Parsed;
 }
+function wrapYieldFromClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.YieldFromClause;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.YieldFromClause['_expression']>) =>
+				rebuilt(node, handle, () =>
+					wrapYieldFromClause(
+						{ ...$edited(data), _expression: admitSlot(handle, 'yield_from_clause', 'expression', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`yield_from_clause has no $with.${setter}`);
+}
+function wrapYieldFromClause$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapYieldFromClause$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
 
+export function wrapConstructorDeclaration(
+	data: T.ConstructorDeclaration,
+	tree: TreeHandle
+): T.ConstructorDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ConstructorDeclaration as const,
+		async() {
+			return this._async;
+		},
+		typeParameters() {
+			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
+		},
+		parameters() {
+			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+		},
+		returnType() {
+			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
+		},
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		async: wrapConstructorDeclaration$with$async,
+		typeParameters: wrapConstructorDeclaration$with$typeParameters,
+		parameters: wrapConstructorDeclaration$with$parameters,
+		returnType: wrapConstructorDeclaration$with$returnType,
+		body: wrapConstructorDeclaration$with$body,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ConstructorDeclaration.Parsed;
+}
 function wrapConstructorDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.ConstructorDeclaration;
@@ -11696,79 +11747,7 @@ function wrapConstructorDeclaration$with$returnType(this: Received<Held>, ...arg
 function wrapConstructorDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConstructorDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
-export function wrapConstructorDeclaration(
-	data: T.ConstructorDeclaration,
-	tree: TreeHandle
-): T.ConstructorDeclaration.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ConstructorDeclaration as const,
-		async() {
-			return this._async;
-		},
-		typeParameters() {
-			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
-		},
-		parameters() {
-			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
-		},
-		returnType() {
-			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
-		},
-		body() {
-			return hydrateSlot<T.Suite>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		async: wrapConstructorDeclaration$with$async,
-		typeParameters: wrapConstructorDeclaration$with$typeParameters,
-		parameters: wrapConstructorDeclaration$with$parameters,
-		returnType: wrapConstructorDeclaration$with$returnType,
-		body: wrapConstructorDeclaration$with$body,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ConstructorDeclaration.Parsed;
-}
 
-function wrapBlockClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.BlockClassDeclaration;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'statements':
-			return applySetter(args, (...v: NonNullable<T.BlockClassDeclaration['_statements']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapBlockClassDeclaration(
-						{
-							...$edited(data),
-							_statements: admitSlot(handle, 'block_class_declaration', 'statements', restItems('statements', v))
-						},
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`block_class_declaration has no $with.${setter}`);
-}
-function wrapBlockClassDeclaration$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBlockClassDeclaration$with(receiverOf(this, '$with.statements'), 'statements', args);
-}
 export function wrapBlockClassDeclaration(
 	data: T.BlockClassDeclaration,
 	tree: TreeHandle
@@ -11799,34 +11778,30 @@ export function wrapBlockClassDeclaration(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.BlockClassDeclaration.Parsed;
 }
-
-function wrapSuiteBlockClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapBlockClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.SuiteBlockClassDeclaration;
+	const data = node[INPUT] as T.BlockClassDeclaration;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'blockClassDeclaration':
-			return applySetter(args, (v: NonNullable<T.SuiteBlockClassDeclaration['_block_class_declaration']>) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.BlockClassDeclaration['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapSuiteBlockClassDeclaration(
+					wrapBlockClassDeclaration(
 						{
 							...$edited(data),
-							_block_class_declaration: admitSlot(handle, 'suite_block_class_declaration', 'blockClassDeclaration', v)
+							_statements: admitSlot(handle, 'block_class_declaration', 'statements', restItems('statements', v))
 						},
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`suite_block_class_declaration has no $with.${setter}`);
+	throw new Error(`block_class_declaration has no $with.${setter}`);
 }
-function wrapSuiteBlockClassDeclaration$with$blockClassDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSuiteBlockClassDeclaration$with(
-		receiverOf(this, '$with.blockClassDeclaration'),
-		'blockClassDeclaration',
-		args
-	);
+function wrapBlockClassDeclaration$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBlockClassDeclaration$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
+
 export function wrapSuiteBlockClassDeclaration(
 	data: T.SuiteBlockClassDeclaration,
 	tree: TreeHandle
@@ -11857,7 +11832,71 @@ export function wrapSuiteBlockClassDeclaration(
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SuiteBlockClassDeclaration.Parsed;
 }
+function wrapSuiteBlockClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.SuiteBlockClassDeclaration;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'blockClassDeclaration':
+			return applySetter(args, (v: NonNullable<T.SuiteBlockClassDeclaration['_block_class_declaration']>) =>
+				rebuilt(node, handle, () =>
+					wrapSuiteBlockClassDeclaration(
+						{
+							...$edited(data),
+							_block_class_declaration: admitSlot(handle, 'suite_block_class_declaration', 'blockClassDeclaration', v)
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`suite_block_class_declaration has no $with.${setter}`);
+}
+function wrapSuiteBlockClassDeclaration$with$blockClassDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSuiteBlockClassDeclaration$with(
+		receiverOf(this, '$with.blockClassDeclaration'),
+		'blockClassDeclaration',
+		args
+	);
+}
 
+export function wrapDecoratedDefinitionClassDeclaration(
+	data: T.DecoratedDefinitionClassDeclaration,
+	tree: TreeHandle
+): T.DecoratedDefinitionClassDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.DecoratedDefinitionClassDeclaration as const,
+		decorators() {
+			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+		},
+		definition() {
+			return hydrateSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, '_definition', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		decorators: wrapDecoratedDefinitionClassDeclaration$with$decorators,
+		definition: wrapDecoratedDefinitionClassDeclaration$with$definition,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.DecoratedDefinitionClassDeclaration.Parsed;
+}
 function wrapDecoratedDefinitionClassDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.DecoratedDefinitionClassDeclaration;
@@ -11903,70 +11942,9 @@ function wrapDecoratedDefinitionClassDeclaration$with$decorators(this: Received<
 function wrapDecoratedDefinitionClassDeclaration$with$definition(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapDecoratedDefinitionClassDeclaration$with(receiverOf(this, '$with.definition'), 'definition', args);
 }
-export function wrapDecoratedDefinitionClassDeclaration(
-	data: T.DecoratedDefinitionClassDeclaration,
-	tree: TreeHandle
-): T.DecoratedDefinitionClassDeclaration.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.DecoratedDefinitionClassDeclaration as const,
-		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
-		},
-		definition() {
-			return hydrateSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, '_definition', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		decorators: wrapDecoratedDefinitionClassDeclaration$with$decorators,
-		definition: wrapDecoratedDefinitionClassDeclaration$with$definition,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.DecoratedDefinitionClassDeclaration.Parsed;
-}
 
 function wrapNames$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'names'), undefined);
-}
-function wrapNames$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.Names;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'names':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Names['_name']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapNames({ ...$edited(data), _name: admitSlot(handle, 'names', 'names', restItems('names', v)) }, tree)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapNames({ ...$edited(data), _delimiter: v }, tree))
-			);
-	}
-	throw new Error(`names has no $with.${setter}`);
-}
-function wrapNames$with$names(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNames$with(receiverOf(this, '$with.names'), 'names', args);
-}
-function wrapNames$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapNames$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 	const handle = currentHandle();
@@ -12030,27 +12008,31 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 	holdReadItems(node, wrapNames$listRead);
 	return node as unknown as T.Names.Parsed;
 }
-
-function wrapAsPatternTarget$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapNames$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.AsPatternTarget;
+	const data = node[INPUT] as T.Names;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.AsPatternTarget['_content']>) =>
+		case 'names':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Names['_name']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapAsPatternTarget(
-						{ ...$edited(data), _content: admitSlot(handle, 'as_pattern_target', 'content', v) },
-						tree
-					)
+					wrapNames({ ...$edited(data), _name: admitSlot(handle, 'names', 'names', restItems('names', v)) }, tree)
 				)
 			);
+		case 'delimiter':
+			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapNames({ ...$edited(data), _delimiter: v }, tree))
+			);
 	}
-	throw new Error(`as_pattern_target has no $with.${setter}`);
+	throw new Error(`names has no $with.${setter}`);
 }
-function wrapAsPatternTarget$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAsPatternTarget$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapNames$with$names(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNames$with(receiverOf(this, '$with.names'), 'names', args);
 }
+function wrapNames$with$delimiter(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNames$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
+}
+
 export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): T.AsPatternTarget.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -12083,7 +12065,69 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AsPatternTarget.Parsed;
 }
+function wrapAsPatternTarget$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.AsPatternTarget;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.AsPatternTarget['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapAsPatternTarget(
+						{ ...$edited(data), _content: admitSlot(handle, 'as_pattern_target', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`as_pattern_target has no $with.${setter}`);
+}
+function wrapAsPatternTarget$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAsPatternTarget$with(receiverOf(this, '$with.content'), 'content', args);
+}
 
+export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle): T.FormatExpression.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.FormatExpression as const,
+		expression() {
+			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_expression', tree);
+		},
+		debug() {
+			return this._debug;
+		},
+		typeConversion() {
+			return hydrateSlot<T.TypeConversion | undefined>(this, '_type_conversion', tree);
+		},
+		formatSpecifier() {
+			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		expression: wrapFormatExpression$with$expression,
+		debug: wrapFormatExpression$with$debug,
+		typeConversion: wrapFormatExpression$with$typeConversion,
+		formatSpecifier: wrapFormatExpression$with$formatSpecifier,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.FormatExpression.Parsed;
+}
 function wrapFormatExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.FormatExpression;
@@ -12137,22 +12181,29 @@ function wrapFormatExpression$with$typeConversion(this: Received<Held>, ...args:
 function wrapFormatExpression$with$formatSpecifier(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFormatExpression$with(receiverOf(this, '$with.formatSpecifier'), 'formatSpecifier', args);
 }
-export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle): T.FormatExpression.Parsed {
+
+export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandle): T.MethodDeclaration.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.FormatExpression as const,
-		expression() {
-			return hydrateSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, '_expression', tree);
+		$type: TSKindId.MethodDeclaration as const,
+		async() {
+			return this._async;
 		},
-		debug() {
-			return this._debug;
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		typeConversion() {
-			return hydrateSlot<T.TypeConversion | undefined>(this, '_type_conversion', tree);
+		typeParameters() {
+			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
 		},
-		formatSpecifier() {
-			return hydrateSlot<T.FormatSpecifier | undefined>(this, '_format_specifier', tree);
+		parameters() {
+			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+		},
+		returnType() {
+			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
+		},
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -12170,16 +12221,17 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: wrapFormatExpression$with$expression,
-		debug: wrapFormatExpression$with$debug,
-		typeConversion: wrapFormatExpression$with$typeConversion,
-		formatSpecifier: wrapFormatExpression$with$formatSpecifier,
+		async: wrapMethodDeclaration$with$async,
+		name: wrapMethodDeclaration$with$name,
+		typeParameters: wrapMethodDeclaration$with$typeParameters,
+		parameters: wrapMethodDeclaration$with$parameters,
+		returnType: wrapMethodDeclaration$with$returnType,
+		body: wrapMethodDeclaration$with$body,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FormatExpression.Parsed;
+	return node as unknown as T.MethodDeclaration.Parsed;
 }
-
 function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const data = node[INPUT] as T.MethodDeclaration;
@@ -12260,56 +12312,6 @@ function wrapMethodDeclaration$with$returnType(this: Received<Held>, ...args: un
 }
 function wrapMethodDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMethodDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
-}
-export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandle): T.MethodDeclaration.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.MethodDeclaration as const,
-		async() {
-			return this._async;
-		},
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		typeParameters() {
-			return hydrateSlot<T.TypeParameter | undefined>(this, '_type_parameters', tree);
-		},
-		parameters() {
-			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
-		},
-		returnType() {
-			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
-		},
-		body() {
-			return hydrateSlot<T.Suite>(this, '_body', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		async: wrapMethodDeclaration$with$async,
-		name: wrapMethodDeclaration$with$name,
-		typeParameters: wrapMethodDeclaration$with$typeParameters,
-		parameters: wrapMethodDeclaration$with$parameters,
-		returnType: wrapMethodDeclaration$with$returnType,
-		body: wrapMethodDeclaration$with$body,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.MethodDeclaration.Parsed;
 }
 
 function viewModule$statements(this: RecordHandle) {

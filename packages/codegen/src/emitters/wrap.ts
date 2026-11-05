@@ -6,7 +6,7 @@ import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNont
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { groupSeatParts, LIST_SURFACE_LINES, LIST_SYMBOL_LINES, ROOT_ERRORS_LINE, triviaPositionsOf, listReadLines, listReadPostlude, listSelfViewParts, nodeMemberParts, ownerViewParts, receivedMembers, seatedSetters, triviaSides, type HeldLocal, type SetterEntry, type TriviaPositions } from './node-members.ts';
+import { groupSeatMembers, groupSeatReaders, LIST_SURFACE_LINES, LIST_SYMBOL_LINES, ROOT_ERRORS_LINE, triviaPositionsOf, listReadLines, listReadPostlude, listSelfViewParts, nodeMemberParts, ownerViewParts, receivedMembers, seatedSetters, triviaSides, type HeldLocal, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -25,7 +25,7 @@ import {
 	blankArmImports,
 	blankForRead
 } from './shared.ts';
-import { builtTypeSurfaceOf, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { builtTypeSurfaceOf, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf } from './record-construction.ts';
@@ -277,7 +277,6 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 	});
 	return [
 		...view.hoisted,
-		...members.hoisted,
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...view.prelude,
@@ -290,7 +289,8 @@ function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEn
 		...members.after,
 		...view.postlude,
 		`  return ${castToParsed('node', parsedType)};`,
-		'}'
+		'}',
+		...members.hoisted
 	].join('\n');
 }
 
@@ -299,15 +299,11 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
 	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, dataAccessExpr('data', owner.storage), owner.accessor, 'wrap', `wrap${node.typeName}`) : undefined;
-	const groups = groupSeatParts(
-		plan,
-		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
-		(stored) => `${dataAccessExpr('data', stored)} === undefined`
-	);
+	const groupRead = ({ stored, group }: GroupSeatHint): string => `hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`;
 	const members = nodeMemberParts({
-		setters: { kind: node.kind, prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node), readers: groups.prelude },
+		setters: { kind: node.kind, prefix: `wrap${node.typeName}`, entries: settersOf(node, nodeMap, kindEntries, plan), held: wrapHeld(node), readers: groupSeatReaders(plan, groupRead) },
 		accessors: [],
-		extra: [...(view?.members ?? []), ...groups.members],
+		extra: [...(view?.members ?? []), ...groupSeatMembers(plan, groupRead, (stored) => `${dataAccessExpr('data', stored)} === undefined`)],
 		tail: view?.tail,
 		trivia: triviaPositionsOf(node.kind, nodeMap),
 		parsed: true,
@@ -315,11 +311,9 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 	});
 	return [
 		...(view?.hoisted ?? []),
-		...members.hoisted,
 		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...(view?.prelude ?? []),
-		...groups.prelude,
 		'  const node = {',
 		'    ...data,',
 		...typeStampLines(node, kindEntries),
@@ -329,7 +323,8 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 		...members.after,
 		...(view?.postlude ?? []),
 		`  return ${castToParsed('node', parsedType)};`,
-		'}'
+		'}',
+		...members.hoisted
 	].join('\n');
 }
 

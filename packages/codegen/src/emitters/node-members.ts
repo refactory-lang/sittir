@@ -188,20 +188,14 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 	return [...seated, ...keyed];
 }
 
-export function groupSeatParts(
-	plan: SeatPlan,
-	readOf: (hint: GroupSeatHint) => string,
-	absentOf: (stored: string) => string = (stored) => `${stored} === undefined`
-): { readonly prelude: string[]; readonly members: string[] } {
-	if (plan.groups.length === 0) return { prelude: [], members: [] };
-	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
-	const members = plan.groups.flatMap(({ hint }) =>
-		hint.keys.map(
-			(key) =>
-				`    ${key.name}: ${absentOf(hint.stored)} ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
-		)
+export function groupSeatReaders(plan: SeatPlan, readOf: (hint: GroupSeatHint) => string): string[] {
+	return plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = () => ${readOf(hint)};`);
+}
+
+export function groupSeatMembers(plan: SeatPlan, readOf: (hint: GroupSeatHint) => string, absentOf: (stored: string) => string = (stored) => `${stored} === undefined`): string[] {
+	return plan.groups.flatMap(({ hint }) =>
+		hint.keys.map((key) => `    ${key.name}: ${absentOf(hint.stored)} ? undefined : () => groupField(${readOf(hint)}, ${JSON.stringify(key.field ?? key.name)}),`)
 	);
-	return { prelude, members };
 }
 
 export const LIST_SURFACE_LINES: readonly string[] = LIST_VIEW_MEMBERS.filter((name) => name !== 'length' && name !== 'toString').map((name) => `    ${name}: LIST_METHODS.${name},`);
