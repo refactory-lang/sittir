@@ -151,6 +151,8 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	return undefined;
 }
 
+const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {};
+
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
@@ -184,6 +186,8 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 }
 
 export function buildByKind(kind: string, ...input: unknown[]): unknown {
+	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
+		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
 	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
 	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
 	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);

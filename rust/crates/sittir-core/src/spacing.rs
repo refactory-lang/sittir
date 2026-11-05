@@ -230,6 +230,62 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The edge chain of the coordinate whose boundary is being placed
     /// (`RenderSink::boundary`), kept to reuse its allocation.
     edge_levels: Vec<crate::render::EdgeLevel>,
+    /// The free-text leaves whose built text is checked (`with_leaf_probe`).
+    probe: Option<LeafProbe<'a>>,
+    /// The kind of the leaf whose text comes next, while a probe is attached.
+    probe_kind: Option<crate::types::KindId>,
+    /// The first probed leaf whose text held a refused character, or the
+    /// first refused content arm.
+    probe_hit: Option<ProbeHit<'a>>,
+    /// Whether each kind entered while a probe is attached pauses it.
+    probe_frames: Vec<bool>,
+    /// How many entered kinds pause the probe.
+    probe_paused: usize,
+}
+
+/// The content a render checks: the free-text leaves whose text, built or
+/// read from source, may not hold `excluded`, and the content arms those
+/// characters open, which the render refuses or, when admitted, leaves to
+/// check themselves. The probe pauses inside a `nested` composite of its own
+/// kind, whose content checks itself.
+#[derive(Debug, Clone, Copy)]
+pub struct LeafProbe<'a> {
+    pub leaves: &'a [crate::delimiters::ContentKind],
+    pub excluded: &'a [(u32, u32)],
+    pub nested: crate::types::KindId,
+    pub arms: &'a [crate::delimiters::ContentKind],
+    pub refuses_arms: bool,
+}
+
+/// What a probe found: a leaf's text holding a refused character, or a
+/// refused content arm.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ProbeHit<'a> {
+    Text(&'a crate::delimiters::ContentKind, char),
+    Arm(&'a crate::delimiters::ContentKind),
+}
+
+enum ProbeStep<'a> {
+    Pause,
+    Hit(ProbeHit<'a>),
+    Leaf(&'a crate::delimiters::ContentKind),
+    Walk,
+}
+
+impl<'a> LeafProbe<'a> {
+    fn refused_char(&self, text: &str) -> Option<char> {
+        text.chars().find(|char| self.excluded.iter().any(|&(lo, hi)| (lo..=hi).contains(&u32::from(*char))))
+    }
+
+    fn step(&self, kind: crate::types::KindId) -> ProbeStep<'a> {
+        if kind == self.nested {
+            return ProbeStep::Pause;
+        }
+        if let Some(arm) = self.arms.iter().find(|arm| arm.kind == kind) {
+            return if self.refuses_arms { ProbeStep::Hit(ProbeHit::Arm(arm)) } else { ProbeStep::Pause };
+        }
+        self.leaves.iter().find(|leaf| leaf.kind == kind).map_or(ProbeStep::Walk, ProbeStep::Leaf)
+    }
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -321,7 +377,63 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             open_before: 0,
             recorder: None,
             edge_levels: Vec::new(),
+            probe: None,
+            probe_kind: None,
+            probe_hit: None,
+            probe_frames: Vec::new(),
+            probe_paused: 0,
         }
+    }
+
+    /// Check the built text of the probe's leaves as it is written.
+    #[must_use]
+    pub fn with_leaf_probe(mut self, probe: LeafProbe<'a>) -> Self {
+        self.probe = Some(probe);
+        self
+    }
+
+    /// What the probe found first, if anything.
+    #[must_use]
+    pub fn leaf_probe_hit(&self) -> Option<ProbeHit<'a>> {
+        self.probe_hit
+    }
+
+    fn probe_text(&mut self, text: &str) {
+        let (Some(probe), Some(kind)) = (self.probe, self.probe_kind.take()) else { return };
+        if self.probe_hit.is_some() || self.probe_paused > 0 {
+            return;
+        }
+        self.probe_hit = match probe.step(kind) {
+            ProbeStep::Hit(found) => Some(found),
+            ProbeStep::Leaf(leaf) => probe.refused_char(text).map(|char| ProbeHit::Text(leaf, char)),
+            ProbeStep::Pause | ProbeStep::Walk => None,
+        };
+    }
+
+    fn probe_slice(&mut self, coord: &crate::slot::NodeCoordinate) {
+        let (Some(probe), Some(sources)) = (self.probe, self.sources) else { return };
+        if self.probe_hit.is_some() || self.probe_paused > 0 {
+            return;
+        }
+        let mut hit = None;
+        sources.for_each_descendant(coord, &mut |kind, text| {
+            if hit.is_some() {
+                return false;
+            }
+            match probe.step(kind) {
+                ProbeStep::Pause => false,
+                ProbeStep::Hit(found) => {
+                    hit = Some(found);
+                    false
+                }
+                ProbeStep::Leaf(leaf) => {
+                    hit = probe.refused_char(text).map(|char| ProbeHit::Text(leaf, char));
+                    false
+                }
+                ProbeStep::Walk => true,
+            }
+        });
+        self.probe_hit = hit;
     }
 
     /// Records the line breaks the render writes at each gap into
@@ -934,6 +1046,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
+        self.probe_text(s);
         let s = crate::line_endings::to_internal(if self.swallow_cr { crate::line_endings::without_swallowed_cr(s) } else { s });
         let s = s.as_ref();
         self.write_chunk(s)?;
@@ -948,6 +1061,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn verbatim(&mut self, before: &str, text: &str, after: &str) -> crate::render::RenderResult {
+        self.probe_kind = None;
         let breaks = self.held_breaks();
         if !breaks {
             self.clear_payload();
@@ -972,7 +1086,29 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         Ok(())
     }
 
+    fn enter_kind(&mut self, kind: crate::types::KindId) {
+        let Some(probe) = self.probe else { return };
+        let step = if self.probe_paused == 0 { probe.step(kind) } else { ProbeStep::Pause };
+        let pauses = matches!(step, ProbeStep::Pause);
+        if let ProbeStep::Hit(found) = step {
+            self.probe_hit = self.probe_hit.or(Some(found));
+        }
+        self.probe_frames.push(pauses);
+        if pauses {
+            self.probe_paused += 1;
+        }
+    }
+
+    fn exit_kind(&mut self) {
+        if self.probe_frames.pop() == Some(true) {
+            self.probe_paused -= 1;
+        }
+    }
+
     fn leaf_kind(&mut self, kind: crate::types::KindId) {
+        if self.probe.is_some() {
+            self.probe_kind = Some(kind);
+        }
         if let Some((leading, trailing)) = self.table.and_then(|table| table.leaf_edges_of(kind)) {
             self.leaf_edges(leading, trailing);
         }
@@ -1074,7 +1210,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::CoordinateError> {
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::RenderError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
@@ -1150,6 +1286,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if let Some(kind) = crate::render::RenderSink::kind_of(self, coord) {
             crate::render::RenderSink::leaf_kind(self, kind);
         }
+        self.probe_slice(coord);
         let counting = self.recorder.as_mut().map(|recorder| {
             recorder.open(coord.span.start);
             recorder.count_texts(false)
@@ -1160,6 +1297,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.close(coord.span.end);
             recorder.wrote_slice(coord.index);
         }
+        self.probe_kind = None;
         self.end_leaf();
         Ok(())
     }

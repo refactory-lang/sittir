@@ -69,8 +69,6 @@ export const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
 export const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
 export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
-export const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
-export const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
 export const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
 export const _leafRe_buildBlockCommentContent = _leafRe_buildBlockCommentRegular;
 export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
@@ -93,13 +91,9 @@ export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
-const _delimited_buildRawStringLiteral: DelimitedSpec = {
-	kind: 'raw_string_literal',
-	id: TSKindId.RawStringLiteral as const,
-	excluded: /[\u{a}\u{d}\u{22}\u{2028}-\u{2029}]/u,
-	host: 'fn _f() { let _ = $r; }',
-	nodeKinds: []
-};
+export const _slotRe_buildRawStringLiteralStart_prefix = /^(?:br|cr|r)$/u;
+export const _slotRe_buildRawStringLiteralStart_hashes = /^(?:(?:#*))$/u;
+export const _slotRe_buildRawStringLiteralEnd_hashes = _slotRe_buildRawStringLiteralStart_hashes;
 const _delimited_buildBlockComment: DelimitedSpec = {
 	kind: 'block_comment',
 	id: TSKindId.BlockComment as const,
@@ -5060,58 +5054,36 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildMatchBlock>;
+export function buildMatchBlock(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.MatchBlockArms as const);
+	return prebuilt
+		? _buildMatchBlock(args[0] as Parameters<typeof _buildMatchBlock>[0])
+		: _buildMatchBlock(
+				(buildMatchBlockArms as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildMatchBlock>[0]
+			);
+}
+function _buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
-	const readGroup_matchBlockArms = () => _match_block_arms;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlock as const,
 		$named: true as const,
 		_match_block_arms,
 		$with: {
-			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => buildMatchBlock(value)),
-			arms: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'arms',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				),
-			lastArm: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'matchBlockArms',
-							stored: '_match_block_arms',
-							make: buildMatchBlockArms,
-							keys: [
-								{ name: 'arms', rest: true },
-								{ name: 'lastArm', rest: false, required: true }
-							]
-						},
-						'lastArm',
-						args,
-						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
-						() => readGroup_matchBlockArms.call(node)
-					)
-				)
+			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => _buildMatchBlock(value))
 		},
 		matchBlockArms: () => hydrateStoredSlot(node, '_match_block_arms'),
-		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
-		lastArm:
-			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -6332,7 +6304,8 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	currentHandle()?.admit(TSKindId.RawStringLiteral, [config]);
 	const _raw_string_literal_start = config.rawStringLiteralStart;
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
+	const readGroup_rawStringLiteralStart = () => _raw_string_literal_start;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteral as const,
@@ -6346,11 +6319,31 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 			stringContent: (value: Admit<T.RawStringLiteralContent>) =>
 				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, stringContent: value })),
 			rawStringLiteralEnd: (value: Admit<T.RawStringLiteralEnd>) =>
-				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralEnd: value }))
+				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralEnd: value })),
+			prefix: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'rawStringLiteralStart',
+							stored: '_raw_string_literal_start',
+							make: buildRawStringLiteralStart,
+							keys: [{ name: 'prefix', rest: false, required: true }]
+						},
+						'prefix',
+						args,
+						(value: Admit<T.RawStringLiteralStart>) =>
+							buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
+						() => readGroup_rawStringLiteralStart.call(node)
+					)
+				)
 		},
 		rawStringLiteralStart: () => hydrateStoredSlot(node, '_raw_string_literal_start'),
 		stringContent: () => hydrateStoredSlot(node, '_string_content'),
 		rawStringLiteralEnd: () => hydrateStoredSlot(node, '_raw_string_literal_end'),
+		prefix:
+			_raw_string_literal_start === undefined
+				? undefined
+				: () => groupField(readGroup_rawStringLiteralStart.call(node), 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -6360,14 +6353,6 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		},
 		$engine: handle && (() => handle.current)
 	};
-	checkDelimited(
-		handle,
-		node,
-		_delimited_buildRawStringLiteral,
-		[_string_content],
-		_raw_string_literal_start,
-		_raw_string_literal_end
-	);
 	return stampBuilt(node) as unknown as T.RawStringLiteral.Bound;
 }
 
@@ -7673,6 +7658,8 @@ function _buildExpressions(
 	currentHandle()?.admit(TSKindId.Expressions, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7682,7 +7669,12 @@ function _buildExpressions(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExpressions(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildExpressions(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressions({ ...options, delimiter: v }, ...elements))
 		},
@@ -11421,28 +11413,22 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 	return stampBuilt(node) as unknown as T.TypeArgument.Bound;
 }
 
-export function buildMatchBlockArms<
-	ArmsSlot extends T.MatchBlockArms.Config['arms'],
-	LastArmSlot extends T.MatchBlockArms.Config['lastArm']
->(config: RefusingConfig<T.MatchBlockArms.Config, { arms: ArmsSlot; lastArm: LastArmSlot }>): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockArms, [config]);
-	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
-	const _last_arm = config.lastArm;
+export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlockArms.Bound;
+export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
+	const _arms = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockArms as const,
 		$named: true as const,
 		_arms,
-		_last_arm,
 		$with: {
-			arms: (...values: Admit<T.MatchArm[]>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, arms: restItems('arms', values) })),
-			lastArm: (value: Admit<T.LastMatchArm>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, lastArm: value }))
+			arms: (...vs: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]) =>
+				rebuilt(node, handle, () => buildMatchBlockArms(...restItems('arms', vs)))
 		},
 		arms: () => hydrateStoredSlots(node, '_arms'),
-		lastArm: () => hydrateStoredSlot(node, '_last_arm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -11529,17 +11515,38 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
-export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_start: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralStart.test(text))
-		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
+export function buildRawStringLiteralStart<V extends Admit<'r' | 'br' | 'cr'>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound;
+export function buildRawStringLiteralStart(
+	value: Admit<'r' | 'br' | 'cr'>,
+	options?: T.RawStringLiteralStart.Options
+): T.RawStringLiteralStart.Bound {
+	const _prefix = value;
+	if (typeof _prefix !== 'string')
+		throw new Error(`raw_string_literal_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (!_slotRe_buildRawStringLiteralStart_prefix.test(_prefix))
+		throw new Error(`raw_string_literal_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_start.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralStart_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_start.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteralStart as const,
 		$named: true as const,
-		$text: () => text,
+		_prefix,
+		_hashes,
+		$with: {
+			prefix: (value: Admit<'r' | 'br' | 'cr'>) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart(value, options)),
+			hashes: (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralStart(value, { ...options, hashes: spelling }))
+		},
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		hashes: () => hydrateStoredSlot(node, '_hashes'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -11552,17 +11559,26 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	return stampBuilt(node) as unknown as T.RawStringLiteralStart.Bound;
 }
 
-export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`raw_string_literal_end: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
-	if (!_leafRe_buildRawStringLiteralEnd.test(text))
-		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
+export function buildRawStringLiteralEnd(
+	config: Partial<T.RawStringLiteralEnd.Config> = {},
+	options?: T.RawStringLiteralEnd.Options
+): T.RawStringLiteralEnd.Bound {
+	currentHandle()?.admit(TSKindId.RawStringLiteralEnd, [config]);
+	const _hashes = options?.hashes;
+	if (_hashes !== undefined && typeof _hashes !== 'string')
+		throw new Error(`raw_string_literal_end.hashes: text must be a string: ${describeValue(_hashes)}`);
+	if (_hashes !== undefined && !_slotRe_buildRawStringLiteralEnd_hashes.test(_hashes))
+		throw new Error(`raw_string_literal_end.hashes: text does not match pattern: ${describeValue(_hashes)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$named: true as const,
-		$text: () => text,
+		_hashes,
+		$with: {
+			hashes: (spelling: string) =>
+				rebuilt(node, handle, () => buildRawStringLiteralEnd(config, { ...options, hashes: spelling }))
+		},
+		hashes: () => hydrateStoredSlot(node, '_hashes'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -12655,8 +12671,8 @@ export type FluentKindMap = {
 	raw_string_literal_content: T.RawStringLiteralContent;
 	outer_doc_comment_marker: T.OuterDocCommentMarker;
 	inner_doc_comment_marker: T.InnerDocCommentMarker;
-	raw_string_literal_start: T.RawStringLiteralStart;
-	raw_string_literal_end: T.RawStringLiteralEnd;
+	raw_string_literal_start: T.RawStringLiteralStart.Bound;
+	raw_string_literal_end: T.RawStringLiteralEnd.Bound;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
 	_tight: T.Tight;

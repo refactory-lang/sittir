@@ -91,6 +91,7 @@ export interface WireContext {
 	readonly reparseHosts?: ReparseHostsConfig;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
+	currentLift: string | null;
 	currentDollar: unknown;
 	readonly inlineWrites: WeakMap<object, string>;
 	applyingEntries: boolean;
@@ -155,6 +156,7 @@ export const WIRE_ENTRY_ROLES = {
 	reparseHosts: 'outside',
 	options: 'outside',
 	currentRuleKind: 'scoped',
+	currentLift: 'scoped',
 	currentDollar: 'scoped',
 	inlineWrites: 'unreached',
 	applyingEntries: 'scoped',
@@ -660,6 +662,10 @@ export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
+export function wireGetFieldOwner(): string | null {
+	return currentContext?.currentLift ?? currentContext?.currentRuleKind ?? null;
+}
+
 export function wireGetCurrentDollar(): unknown {
 	return currentContext?.currentDollar;
 }
@@ -714,13 +720,16 @@ export function wireElementSlotOf(liftName: string): string | undefined {
 
 export function wireWithLiftScope<T>(liftName: string, fn: () => T): T {
 	const context = currentContext;
-	if (!context?.elementSupertypes.has(liftName)) return fn();
+	if (!context) return fn();
 	const owner = context.currentRuleKind;
-	context.currentRuleKind = liftName;
+	const lift = context.currentLift;
+	context.currentLift = liftName;
+	if (context.elementSupertypes.has(liftName)) context.currentRuleKind = liftName;
 	try {
 		return fn();
 	} finally {
 		context.currentRuleKind = owner;
+		context.currentLift = lift;
 	}
 }
 
@@ -790,6 +799,7 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		options: undefined,
 		currentRuleKind: ruleKind,
+		currentLift: null,
 		currentDollar: undefined,
 		inlineWrites: new WeakMap(),
 		applyingEntries: false,
@@ -1026,6 +1036,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		reparseHosts: cfg.reparseHosts,
 		options: cfg.options,
 		currentRuleKind: null,
+		currentLift: null,
 		currentDollar: undefined,
 		inlineWrites: new WeakMap(),
 		applyingEntries: false,
@@ -1640,14 +1651,17 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 	return function wiredRuleFn($, previous) {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
+		const prevLift = context.currentLift;
 		const prevDollar = context.currentDollar;
 		currentContext = context;
 		context.currentRuleKind = name;
+		context.currentLift = null;
 		context.currentDollar = $;
 		try {
 			return withDirectVariants(fn($, previous));
 		} finally {
 			context.currentRuleKind = prevKind;
+			context.currentLift = prevLift;
 			context.currentDollar = prevDollar;
 			currentContext = prevContext;
 		}

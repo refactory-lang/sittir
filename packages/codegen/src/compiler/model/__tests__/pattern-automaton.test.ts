@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { admitsInside, dfaAccepts, endsWithLineBreak, leadingChars, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { admitsInside, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -194,5 +194,21 @@ describe('leadingChars and shortestAccepted', () => {
 		expect(shortestAccepted(dfa('[bc]?r#*"'))).toBe('r"');
 		expect(shortestAccepted(dfa('"#*'))).toBe('"');
 		expect(shortestAccepted(dfa('[^]*'))).toBe('');
+	});
+});
+
+describe('includesNonEmpty', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('holds when every non-empty text the inner pattern accepts, the outer one accepts', () => {
+		expect(includesNonEmpty(dfa('(?:\\\\[\\s\\S])*'), dfa('[\\s\\S]+'))).toBe(true);
+		expect(includesNonEmpty(dfa('ab|ac'), dfa('a[bc]'))).toBe(true);
+		expect(includesNonEmpty(dfa('a*'), dfa('a+'))).toBe(true);
+	});
+
+	it('fails on a text the outer pattern refuses, however far in it is', () => {
+		expect(includesNonEmpty(dfa('(?:\\\\[\\s\\S])*'), dfa('\\\\[nt]'))).toBe(false);
+		expect(includesNonEmpty(dfa('a[bc]'), dfa('ab'))).toBe(false);
+		expect(includesNonEmpty(dfa('ab*c'), dfa('ab{0,3}c'))).toBe(false);
 	});
 });

@@ -2,7 +2,7 @@ import type { NodeMap } from '../types.ts';
 import { isTerminalRootRule, tokenBodyKey } from '../../dsl/rule-transforms.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import { AbstractAssembledCompound, AssembledSupertype, isNodeRef, isUnresolvedRef } from '../model/node-map.ts';
+import { AssembledLexedPattern, AssembledSupertype, isNodeRef, isUnresolvedRef } from '../model/node-map.ts';
 
 export interface CatalogCoverageSite {
 	readonly ownerKind: string;
@@ -22,7 +22,7 @@ export function catalogCoverage(nodeMap: NodeMap): CatalogCoverage {
 		into.set(`${site.ownerKind}\0${site.slot}\0${site.arm}`, site);
 	};
 	for (const [ownerKind, node] of nodeMap.nodes) {
-		if (node instanceof AbstractAssembledCompound && node.lexedInterior) continue;
+		if (node instanceof AssembledLexedPattern) continue;
 		for (const slot of node.slots) {
 			for (const value of slot.values) {
 				if (!isNodeRef(value)) {

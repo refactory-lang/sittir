@@ -15,6 +15,7 @@ import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { BindingEffect } from '../dsl/verbs/effects.ts';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
+import type { SpellingFields } from '../dsl/primitives/spellings.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 
 export type RulePathSegment =
@@ -129,6 +130,7 @@ export interface RawGrammar {
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly spellings?: SpellingFields;
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;

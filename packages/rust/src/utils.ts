@@ -113,6 +113,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	152: [['content', 0, undefined, '_content']],
 	153: [['content', 0, undefined, '_content']],
 	154: [['content', 0, undefined, '_content']],
+	159: [
+		['prefix', 0, undefined, '_prefix'],
+		['hashes', 1, undefined, '_hashes']
+	],
+	161: [['hashes', 0, undefined, '_hashes']],
 	176: [
 		['shebang', 0, undefined, '_shebang'],
 		['statements', 1, undefined, '_statements']
@@ -739,10 +744,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['content', 0, undefined, '_content'],
 		['traitBounds', 1, undefined, '_trait_bounds']
 	],
-	434: [
-		['arms', 0, undefined, '_arms'],
-		['lastArm', 1, undefined, '_last_arm']
-	],
+	434: [['arms', 0, undefined, '_arms']],
 	435: [['declarations', 0, undefined, '_declarations']],
 	436: [['declarations', 0, undefined, '_declarations']],
 	437: [
@@ -795,9 +797,9 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
 		195, 210, 216, 302, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 405,
-		406, 407, 408, 409, 410, 411, 412, 413, 435, 436, 438
+		406, 407, 408, 409, 410, 411, 412, 413, 434, 435, 436, 438
 	]),
-	leaves: new Set<number>([1, 132, 133, 146, 155, 157, 159, 160, 161, 162, 165, 166, 399, 404]),
+	leaves: new Set<number>([1, 132, 133, 146, 155, 157, 160, 162, 165, 166, 399, 404]),
 	textEnvelopes: new Map<number, number>([
 		[478, 1],
 		[482, 1],
@@ -811,7 +813,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		117, 118, 121, 122, 124, 125, 126, 128, 129, 130, 131, 136, 137, 138, 139, 140, 156, 158, 163, 164, 168, 169, 170,
 		171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426, 477, 481
 	]),
-	options: Object.freeze<NodeJSONFacts['options']>({ 295: ['trailingComma'] })
+	options: Object.freeze<NodeJSONFacts['options']>({ 159: ['hashes'], 161: ['hashes'], 295: ['trailingComma'] })
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -924,6 +926,12 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceHex.content']]
 	},
+	159: {
+		kind: 'raw_string_literal_start',
+		required: [['_prefix', 'prefix']],
+		texts: [['_prefix', 'RawStringLiteralStart.prefix', ['r', 'br', 'cr']]]
+	},
+	161: { kind: 'raw_string_literal_end', config: ['hashes'] },
 	176: {
 		kind: 'source_file',
 		single: [['_shebang', 'SourceFile.shebang']],
@@ -2422,9 +2430,9 @@ export const structure: StructureTable = Object.freeze({
 			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd']
 		],
 		nodeOnly: [
-			['_raw_string_literal_start', 'RawStringLiteral.rawStringLiteralStart', 'buildRawStringLiteralStart(…)', [159]],
+			['_raw_string_literal_start', 'RawStringLiteral.rawStringLiteralStart', 'a built RawStringLiteralStart', [159]],
 			['_string_content', 'RawStringLiteral.stringContent', 'buildRawStringLiteralContent(…)', [160]],
-			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd', 'buildRawStringLiteralEnd(…)', [161]]
+			['_raw_string_literal_end', 'RawStringLiteral.rawStringLiteralEnd', 'a built RawStringLiteralEnd', [161]]
 		],
 		config: ['rawStringLiteralStart', 'stringContent', 'rawStringLiteralEnd']
 	},
@@ -3326,14 +3334,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	434: {
 		kind: 'match_block_arms',
-		required: [['_last_arm', 'lastArm']],
-		single: [['_last_arm', 'MatchBlockArms.lastArm']],
-		nodeOnly: [
-			['_arms', 'MatchBlockArms.arms', 'a built MatchArm', [294]],
-			['_last_arm', 'MatchBlockArms.lastArm', 'a built LastMatchArm', [295]]
-		],
-		config: ['arms', 'lastArm'],
-		lists: [['arms', false, 'key']]
+		final: [['_arms', 'match_block_arms.children', [294], [295]]],
+		nodeOnly: [['_arms', 'MatchBlockArms.arms', 'a built MatchArm / LastMatchArm', [294, 295]]],
+		lists: [['arms', false, 0]]
 	},
 	435: {
 		kind: 'trait_interface_declaration_body',

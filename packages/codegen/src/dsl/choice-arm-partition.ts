@@ -1,4 +1,4 @@
-import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { isNonterminalRuleType, optionalContentOf } from './rule-patterns.ts';
@@ -7,6 +7,7 @@ export interface ArmStage {
 	fieldName(rule: AnyRule): string | undefined;
 	fieldBody(rule: AnyRule): AnyRule;
 	isSlotNode(rule: AnyRule): boolean;
+	isFieldedSlot(body: AnyRule): boolean;
 	unwrap(rule: AnyRule): AnyRule;
 }
 
@@ -17,6 +18,7 @@ export const simplifyArmStage: ArmStage = {
 		const stamped = (rule as SimplifiedRule).nonterminal;
 		return stamped !== undefined ? stamped : isNonterminalRuleType(rule);
 	},
+	isFieldedSlot: (body) => simplifyArmStage.isSlotNode(body),
 	unwrap: (rule) => rule
 };
 
@@ -37,6 +39,7 @@ export const dslArmStage: ArmStage = {
 	fieldName: (rule) => (rule.type === FIELD ? rule.name : undefined),
 	fieldBody: (rule) => (rule.type === FIELD ? unwrapPrecAndOptional(rule.content) : rule),
 	isSlotNode: (rule) => isNonterminalRuleType(rule),
+	isFieldedSlot: (body) => isNonterminalRuleType(body) || body.type === STRING,
 	unwrap: unwrapPrecAndOptional
 };
 
@@ -79,7 +82,7 @@ function isDegenerateFieldArm(rule: AnyRule, stage: ArmStage): boolean {
 	if (stage.fieldName(node) === undefined) return false;
 	const body = stage.fieldBody(node);
 	if (body.type === SEQ || body.type === CHOICE) return false;
-	return stage.isSlotNode(body);
+	return stage.isFieldedSlot(body);
 }
 
 export function degenerateArmFieldName(rule: AnyRule, stage: ArmStage): string | undefined {

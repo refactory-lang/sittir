@@ -16,7 +16,13 @@ export namespace Declaration {
 				// claimed by t
 				readonly $kind: 'declaration.method.signature.abstract';
 				readonly name: G['slots']['declaration.method.signature.abstract']['name'];
-				readonly parameters: V.Declaration.Parameter.Any<G>[];
+				readonly parameters: (
+					| V.Declaration.Parameter<G>
+					| V.Declaration.Parameter.Private<G>
+					| V.Declaration.Parameter.Protected<G>
+					| V.Declaration.Parameter.Public<G>
+					| V.Declaration.Parameter.Receiver<G>
+				)[];
 			}
 		}
 	}

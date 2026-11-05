@@ -14,10 +14,8 @@ import type {
 	RefusingConfig,
 	WidenSlots
 } from '@sittir/types';
-import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
-	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
 	LIST_READ,
@@ -46,6 +44,7 @@ import {
 	restItems,
 	blankArmRead,
 	blankArmStored,
+	spelledMember,
 	admitAliasContent,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
@@ -53,6 +52,7 @@ import {
 	listStorage,
 	numberText,
 	orDefault,
+	preferredFacet,
 	rejectKeywordText,
 	strictBooleanStorage,
 	unaffixed
@@ -103,10 +103,8 @@ export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-export const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["'`]+))$/u;
 export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-export const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
@@ -138,13 +136,11 @@ export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
-const _delimited_buildString: DelimitedSpec = {
-	kind: 'string',
-	id: TSKindId.String as const,
-	excluded: /[\u{a}\u{d}\u{22}\u{27}\u{5c}\u{60}\u{7b}\u{7d}\u{2028}-\u{2029}]/u,
-	host: '_ = ($r)',
-	nodeKinds: [TSKindId.Interpolation as const, TSKindId.EscapeSequence as const]
-};
+export const _slotRe_buildStringStart_prefix =
+	/^(?:rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)$/u;
+export const _slotRe_buildStringStart_quote = /^(?:"""|'''|"|'|`)$/u;
+export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\s\S])*))$/u;
+export const _slotRe_buildStringEnd_quote = _slotRe_buildStringStart_quote;
 
 export function buildModule(): T.EmptyModule;
 export function buildModule<A extends Admit<T.Statement[]>>(...children: A & RefuseUndeclared<A>): T.Module.Bound;
@@ -331,26 +327,26 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 }
 
 export function buildRelativeImport<
-	PrefixSlot extends T.RelativeImport.Config['prefix'],
+	DotsSlot extends T.RelativeImport.Config['dots'],
 	NameSlot extends T.RelativeImport.Config['name']
->(config: RefusingConfig<T.RelativeImport.Config, { prefix: PrefixSlot; name: NameSlot }>): T.RelativeImport.Bound;
+>(config: RefusingConfig<T.RelativeImport.Config, { dots: DotsSlot; name: NameSlot }>): T.RelativeImport.Bound;
 export function buildRelativeImport(config: T.RelativeImport.Config): T.RelativeImport.Bound {
 	currentHandle()?.admit(TSKindId.RelativeImport, [config]);
-	const _prefix = config.prefix;
+	const _dots = config.dots;
 	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RelativeImport as const,
 		$named: true as const,
-		_prefix,
+		_dots,
 		_name,
 		$with: {
-			prefix: (value: Admit<T.ImportPrefix>) =>
-				rebuilt(node, handle, () => buildRelativeImport({ ...config, prefix: value })),
+			dots: (value: Admit<T.ImportPrefix>) =>
+				rebuilt(node, handle, () => buildRelativeImport({ ...config, dots: value })),
 			name: (value?: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildRelativeImport({ ...config, name: value }))
 		},
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		dots: () => hydrateStoredSlot(node, '_dots'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -905,31 +901,31 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 }
 
 export function buildMatchStatement<
-	SubjectsSlot extends T.MatchStatement.Config['subjects'],
+	SubjectSlot extends T.MatchStatement.Config['subject'],
 	BodySlot extends T.MatchStatement.Config['body']
->(config: RefusingConfig<T.MatchStatement.Config, { subjects: SubjectsSlot; body: BodySlot }>): T.MatchStatement.Bound;
+>(config: RefusingConfig<T.MatchStatement.Config, { subject: SubjectSlot; body: BodySlot }>): T.MatchStatement.Bound;
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Bound {
 	currentHandle()?.admit(TSKindId.MatchStatement, [config]);
-	const _subjects = config.subjects;
-	const _body = config.body;
+	const _subject = config.subject;
+	const _body = orDefault(config.body, () => buildMatchBlock());
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchStatement as const,
 		$named: true as const,
-		_subjects,
+		_subject,
 		_body,
 		$with: {
-			subjects: (...args: unknown[]) =>
+			subject: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subjects as const, optional: false, make: buildSubjects },
-						(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subjects: value })
+						(value: Admit<T.Subjects>) => buildMatchStatement({ ...config, subject: value })
 					)
 				),
 			body: (value: Admit<T.MatchBlock>) => rebuilt(node, handle, () => buildMatchStatement({ ...config, body: value }))
 		},
-		subjects: () => hydrateStoredSlot(node, '_subjects'),
+		subject: () => hydrateStoredSlot(node, '_subject'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -941,6 +937,36 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
+}
+
+export function buildMatchBlock(): T.EmptyMatchBlock;
+export function buildMatchBlock<A extends Admit<T.CaseClause[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.MatchBlock.Bound;
+export function buildMatchBlock(...children: Admit<T.CaseClause[]>): T.MatchBlock.Bound {
+	currentHandle()?.admit(TSKindId.MatchBlock, children);
+	const _alternative = children;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchBlock as const,
+		$named: true as const,
+		_alternative,
+		$with: {
+			alternatives: (...vs: Admit<T.CaseClause>[]) =>
+				rebuilt(node, handle, () => buildMatchBlock(...restItems('alternatives', vs)))
+		},
+		alternatives: () => hydrateStoredSlots(node, '_alternative'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.MatchBlock.Bound;
 }
 
 export function buildCaseClause<
@@ -1303,8 +1329,8 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildFunctionDefinition({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildFunctionDefinition({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -1614,27 +1640,43 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 }
 
 export function buildTypeAliasStatement<
-	LeftSlot extends T.TypeAliasStatement.Config['left'],
-	RightSlot extends T.TypeAliasStatement.Config['right']
+	NameSlot extends T.TypeAliasStatement.Config['name'],
+	TypeParametersSlot extends T.TypeAliasStatement.Config['typeParameters'],
+	ValueSlot extends T.TypeAliasStatement.Config['value']
 >(
-	config: RefusingConfig<T.TypeAliasStatement.Config, { left: LeftSlot; right: RightSlot }>
+	config: RefusingConfig<
+		T.TypeAliasStatement.Config,
+		{ name: NameSlot; typeParameters: TypeParametersSlot; value: ValueSlot }
+	>
 ): T.TypeAliasStatement.Bound;
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.TypeAliasStatement.Bound {
 	currentHandle()?.admit(TSKindId.TypeAliasStatement, [config]);
-	const _left = config.left;
-	const _right = config.right;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _value = config.value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeAliasStatement as const,
 		$named: true as const,
-		_left,
-		_right,
+		_name,
+		_type_parameters,
+		_value,
 		$with: {
-			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value })),
-			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value }))
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildTypeAliasStatement({ ...config, typeParameters: value })
+					)
+				),
+			value: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, value: value }))
 		},
-		left: () => hydrateStoredSlot(node, '_left'),
-		right: () => hydrateStoredSlot(node, '_right'),
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1679,8 +1721,8 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildClassDefinition({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildClassDefinition({ ...config, typeParameters: value })
 					)
 				),
 			bases: (...args: unknown[]) =>
@@ -1992,25 +2034,34 @@ function _buildExpressionList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionList.Bound {
 	currentHandle()?.admit(TSKindId.ExpressionList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'expression_list: one element always spells its trailing separator, so its delimiter is never None'
+		);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+				rebuilt(node, handle, () =>
+					buildExpressionList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3266,24 +3317,32 @@ function _buildPatternList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PatternList.Bound {
 	currentHandle()?.admit(TSKindId.PatternList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('pattern_list: one element always spells its trailing separator, so its delimiter is never None');
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) => rebuilt(node, handle, () => buildPatternList(options, ...vs)),
+			elements: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
+				rebuilt(node, handle, () =>
+					buildPatternList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3365,32 +3424,32 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 
 export function buildSubscript<
 	ObjectSlot extends T.Subscript.Config['object'],
-	SubscriptsSlot extends T.Subscript.Config['subscripts']
->(config: RefusingConfig<T.Subscript.Config, { object: ObjectSlot; subscripts: SubscriptsSlot }>): T.Subscript.Bound;
+	IndexSlot extends T.Subscript.Config['index']
+>(config: RefusingConfig<T.Subscript.Config, { object: ObjectSlot; index: IndexSlot }>): T.Subscript.Bound;
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	currentHandle()?.admit(TSKindId.Subscript, [config]);
 	const _object = kindIdStorage<NonNullable<T.Subscript['_object']>>(config.object);
-	const _subscripts = config.subscripts;
+	const _index = config.index;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscript as const,
 		$named: true as const,
 		_object,
-		_subscripts,
+		_index,
 		$with: {
 			object: (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
 				rebuilt(node, handle, () => buildSubscript({ ...config, object: value })),
-			subscripts: (...args: unknown[]) =>
+			index: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Subscripts as const, optional: false, make: buildSubscripts },
-						(value: Admit<T.Subscripts>) => buildSubscript({ ...config, subscripts: value })
+						(value: Admit<T.Subscripts>) => buildSubscript({ ...config, index: value })
 					)
 				)
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
-		subscripts: () => hydrateStoredSlot(node, '_subscripts'),
+		index: () => hydrateStoredSlot(node, '_index'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3557,25 +3616,17 @@ export function buildType(
 	return stampBuilt(node) as unknown as T.Type.Bound;
 }
 
-export function buildSplatType<TypeSlot extends T.SplatType.Config['type']>(
-	config: RefusingConfig<T.SplatType.Config, { type: TypeSlot }>
-): T.SplatType.Bound;
-export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
-	currentHandle()?.admit(TSKindId.SplatType, [config]);
-	const _operator = kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator);
-	const _type = config.type;
+export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+	const _type = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatType as const,
 		$named: true as const,
-		_operator,
 		_type,
 		$with: {
-			operator: (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildSplatType({ ...config, operator: value })),
-			type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, type: value }))
+			type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType(value))
 		},
-		operator: () => _operator,
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4464,16 +4515,22 @@ export function buildString<
 	ContentsSlot extends T.String.Config['contents'],
 	StringEndSlot extends T.String.Config['stringEnd']
 >(
-	config: RefusingConfig<
-		T.String.Config,
+	config?: RefusingConfig<
+		Partial<T.String.Config>,
 		{ stringStart: StringStartSlot; contents: ContentsSlot; stringEnd: StringEndSlot }
-	>
+	>,
+	options?: T.String.Options
 ): T.String.Bound;
-export function buildString(config: T.String.Config): T.String.Bound {
+export function buildString(config: Partial<T.String.Config> = {}, options?: T.String.Options): T.String.Bound {
 	currentHandle()?.admit(TSKindId.String, [config]);
-	const _string_start = config.stringStart;
+	const _string_start = preferredFacet(
+		orDefault(config.stringStart, () => buildStringStart()),
+		'quote',
+		options?.quote
+	);
 	const _content = listStorage<NonNullable<T.String['_content']>>(config.contents ?? []);
-	const _string_end = config.stringEnd;
+	const _string_end = orDefault(config.stringEnd, () => buildStringEnd());
+	const readGroup_stringStart = () => _string_start;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.String as const,
@@ -4483,15 +4540,31 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		_string_end,
 		$with: {
 			stringStart: (value: Admit<T.StringStart>) =>
-				rebuilt(node, handle, () => buildString({ ...config, stringStart: value })),
+				rebuilt(node, handle, () => buildString({ ...config, stringStart: value }, options)),
 			contents: (...values: Admit<(T.Interpolation | T.StringContent)[]>) =>
-				rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) })),
+				rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) }, options)),
 			stringEnd: (value: Admit<T.StringEnd>) =>
-				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }))
+				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }, options)),
+			prefix: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'stringStart',
+							stored: '_string_start',
+							make: buildStringStart,
+							keys: [{ name: 'prefix', rest: false }]
+						},
+						'prefix',
+						args,
+						(value: Admit<T.StringStart>) => buildString({ ...config, stringStart: value }, options),
+						() => readGroup_stringStart.call(node)
+					)
+				)
 		},
 		stringStart: () => hydrateStoredSlot(node, '_string_start'),
 		contents: () => hydrateStoredSlots(node, '_content'),
 		stringEnd: () => hydrateStoredSlot(node, '_string_end'),
+		prefix: _string_start === undefined ? undefined : () => groupField(readGroup_stringStart.call(node), 'prefix'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4501,7 +4574,6 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
 	return stampBuilt(node) as unknown as T.String.Bound;
 }
 
@@ -4820,25 +4892,25 @@ function _buildSubjects(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subjects.Bound {
 	currentHandle()?.admit(TSKindId.Subjects, elements);
-	const _subject = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subject);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subjects as const,
 		$named: true as const,
-		_subject,
+		_elements,
 		_delimiter,
 		$with: {
-			subjects: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildSubjects(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
 		},
-		subjects: () => hydrateStoredSlots(node, '_subject'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subjects'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5207,25 +5279,25 @@ function _buildSubscripts(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subscripts.Bound {
 	currentHandle()?.admit(TSKindId.Subscripts, elements);
-	const _subscript = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subscript);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscripts as const,
 		$named: true as const,
-		_subscript,
+		_elements,
 		_delimiter,
 		$with: {
-			subscripts: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression | T.Slice>>) =>
 				rebuilt(node, handle, () => buildSubscripts(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
 		},
-		subscripts: () => hydrateStoredSlots(node, '_subscript'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'subscripts'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5354,6 +5426,134 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	return stampBuilt(node) as unknown as T.FormatSpecifierText.Bound;
 }
 
+export function buildTypeParams<V extends Admit<T.TypeParamsItems>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParams>;
+export function buildTypeParams(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParamsItems as const);
+	return prebuilt
+		? _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0])
+		: _buildTypeParams(
+				(buildTypeParamsItems as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeParams>[0]
+			);
+}
+function _buildTypeParams(value: Admit<T.TypeParamsItems>): T.TypeParams.Bound {
+	const _items = hydrateStored(value);
+	const listView = ownerView(_items, '_item');
+	if (listView.stored === undefined) refuseReadStub('_items');
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParams as const,
+		$named: true as const,
+		_items,
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParamsItems as const, optional: false, make: buildTypeParamsItems },
+						(value: Admit<T.TypeParamsItems>) => _buildTypeParams(value)
+					)
+				)
+		},
+		items: () => hydrateStoredSlot(node, '_items'),
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listView.stored?.length ?? 0);
+	return stampBuilt(node) as unknown as T.TypeParams.Bound;
+}
+
+export function buildTypeParamsItems<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParamsItems>;
+export function buildTypeParamsItems<A extends NonEmptyArray<Admit<T.TypeParam>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeParamsItems>;
+export function buildTypeParamsItems(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.TypeParam>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.TypeParam>>;
+	return _buildTypeParamsItems(elements, options);
+}
+function _buildTypeParamsItems(
+	elements: NonEmptyArray<Admit<T.TypeParam>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TypeParamsItems.Bound {
+	currentHandle()?.admit(TSKindId.TypeParamsItems, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamsItems as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.TypeParam>>) =>
+				rebuilt(node, handle, () => buildTypeParamsItems(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypeParamsItems({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => hydrateStoredSlots(node, '_item'),
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return stampBuilt(node) as unknown as T.TypeParamsItems.Bound;
+}
+
 export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTuplePatternElements>;
@@ -5381,6 +5581,10 @@ function _buildTuplePatternElements(
 	currentHandle()?.admit(TSKindId.TuplePatternElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'tuple_pattern_elements: one element always spells its trailing separator, so its delimiter is never None'
+		);
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -5390,7 +5594,12 @@ function _buildTuplePatternElements(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
-				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildTuplePatternElements(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
 		},
@@ -5441,25 +5650,34 @@ function _buildCasePatternList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CasePatternList.Bound {
 	currentHandle()?.admit(TSKindId.CasePatternList, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'case_pattern_list: one element always spells its trailing separator, so its delimiter is never None'
+		);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePatternList as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
+			elements: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+				rebuilt(node, handle, () =>
+					buildCasePatternList(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5512,6 +5730,8 @@ function _buildTupleElements(
 	currentHandle()?.admit(TSKindId.TupleElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error('tuple_elements: one element always spells its trailing separator, so its delimiter is never None');
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -5521,7 +5741,12 @@ function _buildTupleElements(
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>) =>
-				rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
+				rebuilt(node, handle, () =>
+					buildTupleElements(
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
+						...vs
+					)
+				),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
 		},
@@ -5851,40 +6076,34 @@ function _buildPrintChevronArguments(
 
 export function buildPrintStatementChevron<
 	ChevronSlot extends T.PrintStatementChevron.Config['chevron'],
-	PrintChevronArgumentsSlot extends T.PrintStatementChevron.Config['printChevronArguments']
+	ArgumentsSlot extends T.PrintStatementChevron.Config['arguments']
 >(
-	config: RefusingConfig<
-		T.PrintStatementChevron.Config,
-		{ chevron: ChevronSlot; printChevronArguments: PrintChevronArgumentsSlot }
-	>
+	config: RefusingConfig<T.PrintStatementChevron.Config, { chevron: ChevronSlot; arguments: ArgumentsSlot }>
 ): T.PrintStatementChevron.Bound;
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
 	currentHandle()?.admit(TSKindId.PrintStatementChevron, [config]);
 	const _chevron = config.chevron;
-	const _print_chevron_arguments = kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
-		config.printChevronArguments
-	);
+	const _arguments = config.arguments;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementChevron as const,
 		$named: true as const,
 		_chevron,
-		_print_chevron_arguments,
+		_arguments,
 		$with: {
 			chevron: (value: Admit<T.Chevron>) =>
 				rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value })),
-			printChevronArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: buildPrintChevronArguments },
-						(value?: Admit<NonNullable<T.PrintStatementChevron.Config>['printChevronArguments']>) =>
-							buildPrintStatementChevron({ ...config, printChevronArguments: value })
+						(value?: Admit<T.PrintChevronArguments>) => buildPrintStatementChevron({ ...config, arguments: value })
 					)
 				)
 		},
 		chevron: () => hydrateStoredSlot(node, '_chevron'),
-		printChevronArguments: () => hydrateStoredSlot(node, '_print_chevron_arguments'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5925,16 +6144,16 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 			);
 }
 function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintStatementPlain.Bound {
-	const _print_arguments = hydrateStored(value);
-	const listView = ownerView(_print_arguments, '_item');
-	if (listView.stored === undefined) refuseReadStub('_print_arguments');
+	const _arguments = hydrateStored(value);
+	const listView = ownerView(_arguments, '_item');
+	if (listView.stored === undefined) refuseReadStub('_arguments');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementPlain as const,
 		$named: true as const,
-		_print_arguments,
+		_arguments,
 		$with: {
-			printArguments: (...args: unknown[]) =>
+			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5943,10 +6162,10 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 					)
 				)
 		},
-		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.arguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7145,25 +7364,25 @@ function _buildExpressionStatementTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionStatementTuple.Bound {
 	currentHandle()?.admit(TSKindId.ExpressionStatementTuple, elements);
-	const _item = elements;
+	const _elements = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_elements);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatementTuple as const,
 		$named: true as const,
-		_item,
+		_elements,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			elements: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7310,79 +7529,6 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
 	return stampBuilt(node) as unknown as T.WithClauseParen.Bound;
-}
-
-export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
-export function buildMatchBlockBlock<A extends Admit<T.CaseClause[]>>(
-	...children: A & RefuseUndeclared<A>
-): T.MatchBlockBlock.Bound;
-export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound {
-	currentHandle()?.admit(TSKindId.MatchBlockBlock, children);
-	const _alternative = children;
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MatchBlockBlock as const,
-		$named: true as const,
-		_alternative,
-		$with: {
-			alternatives: (...vs: Admit<T.CaseClause>[]) =>
-				rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs)))
-		},
-		alternatives: () => hydrateStoredSlots(node, '_alternative'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.MatchBlockBlock.Bound;
-}
-
-export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
-export function buildMatchBlockEmpty<V extends Admit<TSKindId.Newline>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): ReturnType<typeof _buildMatchBlockEmpty>;
-export function buildMatchBlockEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildMatchBlockEmpty(args[0] as Parameters<typeof _buildMatchBlockEmpty>[0]);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
-	return prebuilt
-		? _buildMatchBlockEmpty(args[0] as Parameters<typeof _buildMatchBlockEmpty>[0])
-		: _buildMatchBlockEmpty(buildNewline as Parameters<typeof _buildMatchBlockEmpty>[0]);
-}
-function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmpty.Bound {
-	const _newline = kindIdStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(
-		orDefault(value, () => TSKindId.Newline as const)
-	);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MatchBlockEmpty as const,
-		$named: true as const,
-		_newline,
-		$with: {
-			newline: (value: Admit<NonNullable<TSKindId.Newline>>) =>
-				rebuilt(node, handle, () => _buildMatchBlockEmpty(value))
-		},
-		newline: () => _newline,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.MatchBlockEmpty.Bound;
 }
 
 export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>(
@@ -7608,16 +7754,154 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 	return stampBuilt(node) as unknown as T.YieldFromClause.Bound;
 }
 
-export function buildStringStart(text: string): T.StringStart.Bound {
-	if (typeof text !== 'string') throw new Error(`string_start: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
-	if (!_leafRe_buildStringStart.test(text))
-		throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
+export function buildTypeParamTypeVar<
+	NameSlot extends T.TypeParamTypeVar.Config['name'],
+	BoundsSlot extends T.TypeParamTypeVar.Config['bounds']
+>(config: RefusingConfig<T.TypeParamTypeVar.Config, { name: NameSlot; bounds: BoundsSlot }>): T.TypeParamTypeVar.Bound;
+export function buildTypeParamTypeVar(config: T.TypeParamTypeVar.Config): T.TypeParamTypeVar.Bound {
+	currentHandle()?.admit(TSKindId.TypeParamTypeVar, [config]);
+	const _name = config.name;
+	const _bounds = config.bounds;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamTypeVar as const,
+		$named: true as const,
+		_name,
+		_bounds,
+		$with: {
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildTypeParamTypeVar({ ...config, name: value })),
+			bounds: (value?: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildTypeParamTypeVar({ ...config, bounds: value }))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		bounds: () => hydrateStoredSlot(node, '_bounds'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamTypeVar.Bound;
+}
+
+export function buildTypeParamTypeVarTuple<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>
+): T.TypeParamTypeVarTuple.Bound;
+export function buildTypeParamTypeVarTuple(value: Admit<T.Identifier>): T.TypeParamTypeVarTuple.Bound {
+	const _name = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamTypeVarTuple as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeParamTypeVarTuple(value))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamTypeVarTuple.Bound;
+}
+
+export function buildTypeParamParamSpec<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>
+): T.TypeParamParamSpec.Bound;
+export function buildTypeParamParamSpec(value: Admit<T.Identifier>): T.TypeParamParamSpec.Bound {
+	const _name = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParamParamSpec as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeParamParamSpec(value))
+		},
+		name: () => hydrateStoredSlot(node, '_name'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TypeParamParamSpec.Bound;
+}
+
+export function buildStringStart<V extends Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>>(
+	...value: [value?: V, options?: T.StringStart.Options] & RefuseUndeclared<V>
+): T.StringStart.Bound;
+export function buildStringStart(
+	value?: Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>,
+	options?: T.StringStart.Options
+): T.StringStart.Bound {
+	const _prefix = value;
+	if (_prefix !== undefined && typeof _prefix !== 'string')
+		throw new Error(`string_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (_prefix !== undefined && !_slotRe_buildStringStart_prefix.test(_prefix))
+		throw new Error(`string_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+	const _quote = options?.quote;
+	if (_quote !== undefined && typeof _quote !== 'string')
+		throw new Error(`string_start.quote: text must be a string: ${describeValue(_quote)}`);
+	if (_quote !== undefined && !_slotRe_buildStringStart_quote.test(_quote))
+		throw new Error(`string_start.quote: text does not match pattern: ${describeValue(_quote)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringStart as const,
 		$named: true as const,
-		$text: () => text,
+		_prefix,
+		_quote,
+		$with: {
+			prefix: (value?: Admit<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt'>) =>
+				rebuilt(node, handle, () => buildStringStart(value, options)),
+			quote: (spelling: '"' | "'" | '"""' | "'''") =>
+				rebuilt(node, handle, () => buildStringStart(value, { ...options, quote: spelling }))
+		},
+		prefix: () =>
+			spelledMember(hydrateStoredSlot(node, '_prefix'), {
+				R: 'r',
+				B: 'b',
+				F: 'f',
+				T: 't',
+				U: 'u',
+				rB: 'rb',
+				Rb: 'rb',
+				RB: 'rb',
+				br: 'rb',
+				bR: 'rb',
+				Br: 'rb',
+				BR: 'rb',
+				rF: 'rf',
+				Rf: 'rf',
+				RF: 'rf',
+				fr: 'rf',
+				fR: 'rf',
+				Fr: 'rf',
+				FR: 'rf',
+				rT: 'rt',
+				Rt: 'rt',
+				RT: 'rt',
+				tr: 'rt',
+				tR: 'rt',
+				Tr: 'rt',
+				TR: 'rt',
+				uR: 'ur',
+				Ur: 'ur',
+				UR: 'ur'
+			}),
+		quote: () => hydrateStoredSlot(node, '_quote'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7674,16 +7958,35 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 	return stampBuilt(node) as unknown as T.EscapeInterpolation.Bound;
 }
 
-export function buildStringEnd(text: string): T.StringEnd.Bound {
-	if (typeof text !== 'string') throw new Error(`string_end: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
-	if (!_leafRe_buildStringEnd.test(text))
-		throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
+export function buildStringEnd(
+	config: Partial<T.StringEnd.Config> = {},
+	options?: T.StringEnd.Options
+): T.StringEnd.Bound {
+	currentHandle()?.admit(TSKindId.StringEnd, [config]);
+	const _content = options?.content;
+	if (_content !== undefined && typeof _content !== 'string')
+		throw new Error(`string_end.content: text must be a string: ${describeValue(_content)}`);
+	if (_content !== undefined && !_slotRe_buildStringEnd_content.test(_content))
+		throw new Error(`string_end.content: text does not match pattern: ${describeValue(_content)}`);
+	const _quote = options?.quote;
+	if (_quote !== undefined && typeof _quote !== 'string')
+		throw new Error(`string_end.quote: text must be a string: ${describeValue(_quote)}`);
+	if (_quote !== undefined && !_slotRe_buildStringEnd_quote.test(_quote))
+		throw new Error(`string_end.quote: text does not match pattern: ${describeValue(_quote)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringEnd as const,
 		$named: true as const,
-		$text: () => text,
+		_content,
+		_quote,
+		$with: {
+			content: (spelling: string) =>
+				rebuilt(node, handle, () => buildStringEnd(config, { ...options, content: spelling })),
+			quote: (spelling: '"' | "'" | '"""' | "'''") =>
+				rebuilt(node, handle, () => buildStringEnd(config, { ...options, quote: spelling }))
+		},
+		content: () => hydrateStoredSlot(node, '_content'),
+		quote: () => hydrateStoredSlot(node, '_quote'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7746,8 +8049,8 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildConstructorDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -8090,8 +8393,8 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
-						(value?: Admit<T.TypeParameter>) => buildMethodDeclaration({ ...config, typeParameters: value })
+						{ kind: TSKindId.TypeParams as const, optional: true, make: buildTypeParams },
+						(value?: Admit<T.TypeParams>) => buildMethodDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -8151,6 +8454,7 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Bound;
 	else_clause: T.ElseClause.Bound;
 	match_statement: T.MatchStatement.Bound;
+	match_block: T.MatchBlock.Bound;
 	case_clause: T.CaseClause.Bound;
 	for_statement: T.ForStatement.Bound;
 	while_statement: T.WhileStatement.Bound;
@@ -8258,6 +8562,8 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	type_params: T.TypeParams.Bound;
+	type_params_items: T.TypeParamsItems.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	case_pattern_list: T.CasePatternList.Bound;
 	tuple_elements: T.TupleElements.Bound;
@@ -8300,17 +8606,18 @@ export type FluentKindMap = {
 	expression_statement_tuple: T.ExpressionStatementTuple.Bound;
 	with_clause_bare: T.WithClauseBare.Bound;
 	with_clause_paren: T.WithClauseParen.Bound;
-	match_block_block: T.MatchBlockBlock.Bound;
-	match_block_empty: T.MatchBlockEmpty.Bound;
 	suite_inline: T.SuiteInline.Bound;
 	suite_block: T.SuiteBlock.Bound;
 	suite_empty: T.SuiteEmpty.Bound;
 	comparison_operator_comparator: T.ComparisonOperatorComparator.Bound;
 	yield_from_clause: T.YieldFromClause.Bound;
-	string_start: T.StringStart;
+	type_param_type_var: T.TypeParamTypeVar.Bound;
+	type_param_type_var_tuple: T.TypeParamTypeVarTuple.Bound;
+	type_param_param_spec: T.TypeParamParamSpec.Bound;
+	string_start: T.StringStart.Bound;
 	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
-	string_end: T.StringEnd;
+	string_end: T.StringEnd.Bound;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	_tight: T.Tight;
@@ -8356,6 +8663,7 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
+	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
@@ -8463,6 +8771,8 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	type_params: buildTypeParams,
+	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,
 	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
@@ -8505,13 +8815,14 @@ export const _factoryMap = {
 	expression_statement_tuple: buildExpressionStatementTuple,
 	with_clause_bare: buildWithClauseBare,
 	with_clause_paren: buildWithClauseParen,
-	match_block_block: buildMatchBlockBlock,
-	match_block_empty: buildMatchBlockEmpty,
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,
 	comparison_operator_comparator: buildComparisonOperatorComparator,
 	yield_from_clause: buildYieldFromClause,
+	type_param_type_var: buildTypeParamTypeVar,
+	type_param_type_var_tuple: buildTypeParamTypeVarTuple,
+	type_param_param_spec: buildTypeParamParamSpec,
 	string_start: buildStringStart,
 	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,

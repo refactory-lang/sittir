@@ -16,7 +16,7 @@ impl Render for VerbatimNode {
 }
 
 impl crate::prepare::Prepare for VerbatimNode {
-    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         Ok(())
     }
 }

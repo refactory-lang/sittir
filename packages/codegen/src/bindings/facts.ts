@@ -76,7 +76,7 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean };
+export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
 
 type MemberRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string } & SlotSelector)
@@ -87,6 +87,7 @@ type MemberRouteFact =
 			readonly name: string;
 			readonly token: string;
 			readonly via: readonly SlotSelector[];
+			readonly anchor?: Anchor;
 	  }
 	| {
 			readonly route: 'kind';
@@ -112,6 +113,7 @@ export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
 	readonly token: string | null;
 	readonly multiple: boolean;
+	readonly tested?: true;
 }
 
 export interface PatternOrigin {
@@ -185,8 +187,11 @@ export interface ModelNode {
 	readonly kind: string;
 	readonly modelType: string;
 	readonly unit: boolean;
+	readonly layout: boolean;
+	readonly seated: boolean;
 	readonly slots: readonly ModelSlot[];
 	readonly subtypes: readonly string[];
+	readonly defaultSubtype: string | null;
 	readonly elementKinds: readonly string[];
 	readonly enumMembers: readonly EnumMember[];
 	readonly text: string | null;
@@ -196,6 +201,15 @@ export interface ModelNode {
 	readonly aliasStorage: string | null;
 	readonly interiorPart: string | null;
 	readonly shownAs: readonly string[];
+	readonly list?: ModelList;
+}
+
+export type ListDelimiter = 'mandatory' | 'optional' | 'none';
+
+export interface ModelList {
+	readonly trailing: ListDelimiter;
+	readonly separator?: string;
+	readonly singleElementNeedsTrailing?: true;
 }
 
 export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>
@@ -244,6 +258,7 @@ export type RefinementKind = 'predicate' | 'field-literal' | 'token' | 'negated-
 export interface RefinedClaim extends ClaimFact {
 	readonly refines: string | null;
 	readonly refinement: RefinementKind | null;
+	readonly mountedIn: string | null;
 }
 
 const untested = (claim: ClaimFact): boolean =>
@@ -275,18 +290,44 @@ export function literalClaimOf(claim: ClaimFact): LiteralText | undefined {
 	return { field: step.field, leaf: step.kind, texts };
 }
 
-export function refineClaims(claims: readonly ClaimFact[], formsOf: (kind: string) => readonly string[]): RefinedClaim[] {
+export function refineClaims(
+	claims: readonly ClaimFact[],
+	formsOf: (kind: string) => readonly string[],
+	mountHoldersOf: (kind: string) => readonly string[]
+): RefinedClaim[] {
 	return claims.map((claim) => {
-		const unrefined = { ...claim, refines: null, refinement: null };
+		const unrefined = { ...claim, refines: null, refinement: null, mountedIn: null };
 		const kind = claim.kind;
 		if (kind === null || kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
-		const parent = claims
-			.filter((p) => p.kind !== null && p.kind !== WILDCARD && formsOf(p.kind).includes(kind) && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
-			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
+		const holders = [...new Set(mountHoldersOf(kind))];
+		const holderOf = (p: ClaimFact): string | undefined => {
+			if (p.kind === null || p.kind === WILDCARD) return undefined;
+			if (formsOf(p.kind).includes(kind)) return kind;
+			const [holder, other] = holders.filter((at) => formsOf(p.kind!).includes(at));
+			if (other !== undefined) throw new Error(`bindings: ${kind} is mounted by ${holder} and ${other}, both forms of ${p.kind}, so ${claim.vocab} reaches ${p.vocab} through two holders`);
+			return holder;
+		};
+		const deepestBy = new Map<string, ClaimFact>();
+		for (const p of claims) {
+			const holder = holderOf(p);
+			if (holder === undefined || p.within.join('/') !== placement || !claim.vocab.startsWith(`${p.vocab}.`)) continue;
+			const deepest = deepestBy.get(holder);
+			if (deepest === undefined || p.vocab.length > deepest.vocab.length) deepestBy.set(holder, p);
+		}
+		const parents = [...deepestBy];
+		const [first, rival] = parents.filter(([, p], i) => parents.findIndex(([, q]) => q.vocab === p.vocab) === i);
+		if (first !== undefined && rival !== undefined)
+			throw new Error(
+				`bindings: ${kind} is mounted by ${first[0]} and ${rival[0]}, and its claim ${claim.vocab} refines ${first[1].vocab} through one and ${rival[1].vocab} through the other`
+			);
 		const refinement = refinementKindOf(claim);
-		if (parent !== undefined) return { ...claim, refines: parent.vocab, refinement: parent.kind !== kind && untested(claim) ? null : refinement };
-		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement };
+		if (first !== undefined) {
+			const [holder, parent] = first;
+			if (holder !== kind) return { ...claim, refines: parent.vocab, refinement: refinement === 'child-pattern' ? null : refinement, mountedIn: holder };
+			return { ...claim, refines: parent.vocab, refinement: parent.kind !== kind && untested(claim) ? null : refinement, mountedIn: null };
+		}
+		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement, mountedIn: null };
 	});
 }
 

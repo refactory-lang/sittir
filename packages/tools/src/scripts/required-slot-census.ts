@@ -14,7 +14,7 @@ export const admittingSlots = async (
 	grammar: string,
 	includeLoose: boolean
 ): Promise<{ strict: string[]; loose: string[] }> => {
-	const { AbstractAssembledCompound, isRequired, slotFilledWhenOmitted } = await load('modelNodeMap');
+	const { AbstractAssembledCompound, AssembledLexedPattern, isRequired, slotFilledWhenOmitted } = await load('modelNodeMap');
 	const { lexedContentSlot } = await load('emittersShared');
 	const nodeMap = await compileNodeMap(grammar);
 	const configPath = resolve(root, `packages/${grammar}/tsconfig.json`);
@@ -69,7 +69,7 @@ export const admittingSlots = async (
 				hasUndefined(checker.getTypeOfSymbolAtLocation(property, param))
 			)
 				strict.push(label);
-			const affix = node.lexedInterior && slot !== lexedContentSlot(node);
+			const affix = node instanceof AssembledLexedPattern && slot !== lexedContentSlot(node);
 			if (!affix) {
 				probeIds.push(label);
 				probeLines.push(

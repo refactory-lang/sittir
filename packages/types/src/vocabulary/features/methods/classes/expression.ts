@@ -9,6 +9,13 @@ export namespace Expression {
 			readonly arguments?: G['slots']['expression.call.construct']['arguments'][];
 			readonly function: G['slots']['expression.call.construct']['function'];
 		}
+		export namespace Construct {
+			export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call.Construct<G>> {
+				// claimed by t
+				readonly $kind: 'expression.call.construct.bare';
+				readonly arguments?: never;
+			}
+		}
 	}
 	export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by t

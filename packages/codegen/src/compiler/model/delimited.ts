@@ -5,12 +5,15 @@ import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	isFixedTextLeaf,
+	isLexicalToken,
 	wordCharPredicate,
 	type AssembledNode,
 	type Delimited,
-	type DelimiterEnd
+	type DelimiterEnd,
+	type FreeText
 } from './node-map.ts';
-import { CharSet, LINE_TERMINATORS, admitsInside, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { CharSet, LINE_TERMINATORS, admitsInside, dfaAccepts, includesNonEmpty, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { delimiterOwners } from './delimiter-facets.ts';
 
 function firstChars(text: string): CharSet {
 	return text === '' ? CharSet.EMPTY : CharSet.chars(text[0]!);
@@ -132,8 +135,8 @@ function endOf(member: RenderRule, nodes: ReadonlyMap<string, AssembledNode>): D
 	if (member.type !== SYMBOL) return undefined;
 	const node = nodes.get(member.name);
 	if (node === undefined) return undefined;
-	if (node instanceof AssembledPattern) return { slot: member.fieldName ?? member.name };
-	return isFixedTextLeaf(node) ? { text: node.text } : undefined;
+	if (isFixedTextLeaf(node)) return { text: node.text };
+	return isLexicalToken(node) ? { slot: member.fieldName ?? member.name } : undefined;
 }
 
 const WORD_PROBE_LIMIT = 4096;
@@ -161,33 +164,95 @@ export interface DelimitedGrammarFacts {
 	readonly externals: ReadonlySet<string>;
 }
 
+interface ContentArms {
+	readonly open: DelimiterEnd;
+	readonly close: DelimiterEnd;
+	readonly closing: CharSet;
+	readonly arms: readonly RenderRule[];
+	readonly freeTextLeaves: readonly number[];
+}
+
+function contentArmsOf(node: AbstractAssembledCompound, facts: DelimitedFacts, nodes: ReadonlyMap<string, AssembledNode>): ContentArms | undefined {
+	const rule = node.renderRule;
+	if (rule.type !== SEQ || rule.members.length < 3) return undefined;
+	const open = endOf(rule.members[0]!, nodes);
+	const close = endOf(rule.members.at(-1)!, nodes);
+	if (open === undefined || close === undefined) return undefined;
+	const arms = rule.members.slice(1, -1).flatMap((member) => facts.alternatives(member));
+	const freeTextLeaves = arms.map((arm) => (facts.isText(arm) ? facts.variableLeaves(arm) : 0));
+	if (!freeTextLeaves.some((leaves) => leaves > 0)) return undefined;
+	return { open, close, closing: facts.leadersOfRule(rule.members.at(-1)!), arms, freeTextLeaves };
+}
+
+function hazardousArms(content: ContentArms, facts: DelimitedFacts): { readonly hazardous: readonly boolean[]; readonly otherLeaders: CharSet } {
+	const armLeaders = content.arms.map((arm) => facts.leadersOfRule(arm));
+	const hazardous = content.arms.map((_, i) => content.freeTextLeaves[i] === 1 && armLeaders[i]!.meets(content.closing));
+	return { hazardous, otherLeaders: armLeaders.reduce((all, leaders, i) => (hazardous[i] ? all : all.union(leaders)), CharSet.EMPTY) };
+}
+
 function delimitedVerdictOf(
 	node: AbstractAssembledCompound,
 	facts: DelimitedFacts,
 	nodes: ReadonlyMap<string, AssembledNode>,
 	isWordChar: (char: string) => boolean
 ): { readonly delimited?: Delimited; readonly skipped?: { readonly closer: string | undefined; readonly content: readonly RenderRule[] } } | undefined {
-	const rule = node.renderRule;
-	if (rule.type !== SEQ || rule.members.length < 3) return undefined;
-	const open = endOf(rule.members[0]!, nodes);
-	const close = endOf(rule.members.at(-1)!, nodes);
-	if (open === undefined || close === undefined) return undefined;
-	const closing = facts.leadersOfRule(rule.members.at(-1)!);
-	const content = rule.members.slice(1, -1);
-	const arms = content.flatMap((member) => facts.alternatives(member));
-	const freeTextLeaves = arms.map((arm) => (facts.isText(arm) ? facts.variableLeaves(arm) : 0));
-	if (!freeTextLeaves.some((leaves) => leaves > 0)) return undefined;
+	const content = contentArmsOf(node, facts, nodes);
+	if (content === undefined) return undefined;
+	const { open, close, closing, arms, freeTextLeaves } = content;
 	const skipped = { closer: close.text, content: arms.filter((_, i) => freeTextLeaves[i]! > 0) };
 	if (holdsWordChar(closing, isWordChar)) return { skipped };
-	const armLeaders = arms.map((arm) => facts.leadersOfRule(arm));
-	const hazardous = arms.map((_, i) => freeTextLeaves[i] === 1 && !armLeaders[i]!.minus(closing.complement()).isEmpty());
+	const { hazardous, otherLeaders } = hazardousArms(content, facts);
 	if (!hazardous.some(Boolean)) return { skipped };
-	const excluded = armLeaders.reduce(
-		(all, leaders, i) => (hazardous[i] ? all : all.union(leaders)),
-		closing.union(LINE_TERMINATORS)
-	);
+	const excluded = otherLeaders.union(closing).union(LINE_TERMINATORS);
 	const nodeKinds = arms.flatMap((arm) => (arm.type === SYMBOL && !facts.isText(arm) ? [arm.name] : []));
 	return { delimited: { open, close, excluded: excluded.ranges, nodeKinds, varying: open.slot !== undefined || close.slot !== undefined } };
+}
+
+function acceptsAlone(pattern: string | undefined, chars: CharSet): boolean {
+	const dfa = pattern === undefined ? undefined : patternDfa(pattern);
+	if (dfa === undefined || chars.size() > WORD_PROBE_LIMIT) return true;
+	return chars.ranges.some(([lo, hi]) => {
+		for (let code = lo; code <= hi; code++) if (dfaAccepts(dfa, String.fromCodePoint(code))) return true;
+		return false;
+	});
+}
+
+export function freeTextOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<string, AssembledNode>, escape: string | undefined): FreeText | undefined {
+	const facts = new DelimitedFacts(nodes);
+	const content = contentArmsOf(node, facts, nodes);
+	if (content === undefined) return undefined;
+	const { hazardous, otherLeaders: leaders } = hazardousArms(content, facts);
+	const otherLeaders = escape === undefined ? leaders : leaders.minus(CharSet.chars(escape));
+	if (otherLeaders.isEmpty()) return undefined;
+	const leaves = [
+		...new Set(
+			content.arms
+				.filter((_, i) => hazardous[i])
+				.flatMap((arm) => facts.textLeaves(arm))
+				.flatMap((leaf) => (leaf.name !== undefined && acceptsAlone(leaf.pattern, otherLeaders) ? [leaf.name] : []))
+		)
+	];
+	if (leaves.length === 0) return undefined;
+	const candidates = content.arms.flatMap((arm, i) =>
+		hazardous[i] ? facts.textLeaves(arm).flatMap((leaf) => (leaf.name === undefined ? [] : [leaf.name])) : arm.type === SYMBOL ? [arm.name] : []
+	);
+	const opened = [...new Set(candidates)].filter((kind) => !leaves.includes(kind) && facts.leadersOfKind(kind).meets(otherLeaders));
+	return { leaves, excluded: otherLeaders.ranges, opened };
+}
+
+export function contentLeavesOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<string, AssembledNode>, pattern: string): readonly string[] {
+	const facts = new DelimitedFacts(nodes);
+	const content = contentArmsOf(node, facts, nodes);
+	const facet = patternDfa(pattern);
+	if (content === undefined || facet === undefined) return [];
+	return [
+		...new Set(
+			content.arms.flatMap((arm) => facts.textLeaves(arm)).flatMap((leaf) => {
+				const dfa = leaf.name === undefined || leaf.pattern === undefined ? undefined : patternDfa(leaf.pattern);
+				return dfa !== undefined && includesNonEmpty(facet, dfa) ? [leaf.name!] : [];
+			})
+		)
+	];
 }
 
 function reservedTexts(reserved: ReservedWordsets | undefined, nodes: ReadonlyMap<string, AssembledNode>): ReadonlySet<string> {
@@ -221,8 +286,9 @@ function leafSafety(
 export function stampDelimited(nodes: ReadonlyMap<string, AssembledNode>, wordMatcher: RegExp | undefined): void {
 	const facts = new DelimitedFacts(nodes);
 	const isWordChar = wordCharPredicate(wordMatcher);
+	const derived = delimiterOwners(nodes);
 	for (const node of nodes.values()) {
-		if (node instanceof AbstractAssembledCompound) node.delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
+		if (node instanceof AbstractAssembledCompound && !derived.has(node.kind)) node.delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
 	}
 }
 
@@ -234,9 +300,10 @@ export function delimitedLeafVerdicts(
 	const facts = new DelimitedFacts(nodes);
 	const isWordChar = wordCharPredicate(wordMatcher);
 	const reserved = reservedTexts(grammar.reserved, nodes);
+	const derived = delimiterOwners(nodes);
 	const out: DelimitedLeafVerdict[] = [];
 	for (const [kind, node] of nodes) {
-		if (!(node instanceof AbstractAssembledCompound)) continue;
+		if (!(node instanceof AbstractAssembledCompound) || derived.has(kind)) continue;
 		const skipped = delimitedVerdictOf(node, facts, nodes, isWordChar)?.skipped;
 		if (skipped === undefined) continue;
 		const leaves = new Map(skipped.content.flatMap((arm) => facts.textLeaves(arm)).map((leaf) => [leaf.name ?? `/${leaf.pattern}/`, leaf]));

@@ -11,7 +11,7 @@
 
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
-use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
+use crate::render::{Render, RenderError, RenderResult, RenderSink};
 use crate::slot::NodeCoordinate;
 use crate::trivia::{Framing, NodeTrivia, TriviaSeam};
 use crate::types::KindId;
@@ -376,7 +376,14 @@ pub fn render_framed<F: Framing + ?Sized>(
     w.open_frame(origin);
     let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED));
     let outer = line_terminated.then(|| w.swallow_cr(true));
-    body(w)?;
+    if let Some(kind) = kind {
+        w.enter_kind(kind);
+    }
+    let written = body(w);
+    if kind.is_some() {
+        w.exit_kind();
+    }
+    written?;
     if let Some(outer) = outer {
         w.swallow_cr(outer);
     }
@@ -395,7 +402,7 @@ pub fn render_framed<F: Framing + ?Sized>(
 }
 
 impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         if let Some(source) = self.sides.as_ref().and_then(|coord| ctx.sources.sides(coord)) {
             if let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() {
                 let own = self.trivia.get_or_insert_with(Default::default);
@@ -635,7 +642,7 @@ mod tests {
     }
 
     impl crate::prepare::Prepare for MockTrivia {
-        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
             Ok(())
         }
     }

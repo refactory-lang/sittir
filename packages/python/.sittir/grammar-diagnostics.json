@@ -398,42 +398,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "python",
-    "message": "conflict between type_alias_statement, primary_expression on '*' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "type_alias_statement",
-          "primary_expression"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "type_alias_statement"
-        ],
-        [
-          "primary_expression"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'type'"
-        ],
-        "lookahead": "'*'",
-        "interpretations": [
-          "type_alias_statement",
-          "primary_expression"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "python",
     "message": "conflict between with_item, _tuple_elements on ',' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -500,6 +464,20 @@
     "details": {
       "symbols": [
         "print_statement",
+        "primary_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
+    "grammar": "python",
+    "message": "upstream declares the conflict type_alias_statement, primary_expression, which the reshaped grammar never reports",
+    "canProceed": true,
+    "details": {
+      "symbols": [
+        "type_alias_statement",
         "primary_expression"
       ]
     }

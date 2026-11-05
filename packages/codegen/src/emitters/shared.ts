@@ -12,6 +12,8 @@ import {
 	suppliesNoContent,
 	isBuilderlessPunctuationLeaf,
 	isHiddenPresenceMarker,
+	isDelimiterToken,
+	spelledReadOf,
 	storageKindIdByNameOf
 } from '../compiler/model/node-map.ts';
 import type {
@@ -43,7 +45,7 @@ import {
 	storageTargetOf,
 	isSurfaceHiddenIn,
 	surfaceHiddenOfRef,
-	AbstractAssembledCompound,
+	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledLeaf,
 	AssembledPattern,
 	AssembledList,
@@ -570,8 +572,7 @@ function classifyFieldStorageInfo(
 	});
 	const walked = enumArmsOf(field, nodeMap);
 	if (
-		owner instanceof AbstractAssembledCompound &&
-		owner.lexedInterior &&
+		owner instanceof AssembledLexedPattern &&
 		!walked.verbatim &&
 		!walked.sawNodeArm &&
 		walked.texts.length > 0
@@ -730,6 +731,38 @@ export function listOptionsParam(optionsType: string): string {
 	return `ListOptions<${optionsType}>`;
 }
 
+export function hasTopLevelUnion(type: string): boolean {
+	let depth = 0;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i]!;
+		if (ch === '<' || ch === '(' || ch === '{' || ch === '[') depth++;
+		else if (ch === '>' || ch === ')' || ch === '}' || ch === ']') depth--;
+		else if (depth === 0 && type.startsWith(' | ', i)) return true;
+	}
+	return false;
+}
+
+export function parenthesizeUnion(elemType: string): string {
+	return hasTopLevelUnion(elemType) ? `(${elemType})` : elemType;
+}
+
+export function arrayTypeOf(nonEmpty: boolean, element: string, form: 'readonly' | 'mutable'): string {
+	if (nonEmpty) return `NonEmptyArray<${element}>`;
+	return form === 'readonly' ? `readonly (${element})[]` : `${parenthesizeUnion(element)}[]`;
+}
+
+export function finalSeatOf(slot: AssembledNonterminal): { readonly rest: AssembledNonterminal; readonly last: AssembledNonterminal } | undefined {
+	const last = slot.values.filter((v) => v.final === true);
+	if (last.length === 0) return undefined;
+	return { rest: slot.with({ values: slot.values.filter((v) => v.final !== true) }), last: slot.with({ values: last }) };
+}
+
+export function slotListTypeOf(slot: AssembledNonterminal, element: (slot: AssembledNonterminal) => string, form: 'readonly' | 'mutable'): string {
+	const seat = finalSeatOf(slot);
+	if (seat === undefined) return arrayTypeOf(isNonEmpty(slot), element(slot), form);
+	return `${form === 'readonly' ? 'readonly ' : ''}[...${parenthesizeUnion(element(seat.rest))}[], ${element(seat.last)}]`;
+}
+
 export function listRestParamType(
 	nonEmpty: boolean,
 	element: string,
@@ -847,7 +880,7 @@ export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
 }
 
 export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {
-	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
+	if (!(node instanceof AssembledLexedPattern) || isDelimiterToken(node)) return undefined;
 	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
 }
@@ -1043,6 +1076,21 @@ export function blankForRead(blank: boolean, expr: string): string {
 	return blank ? `blankArmRead(${expr})` : expr;
 }
 
+export function spelledReadImports(nodeMap: NodeMap): readonly string[] {
+	return [...nodeMap.nodes.values()].some((node) => node.slots.some((slot) => spelledReadOf(slot) !== undefined)) ? ['spelledMember'] : [];
+}
+
+export function spelledReadExpr(slot: AssembledNonterminal, expr: string): string {
+	const spelled = spelledReadOf(slot);
+	return spelled === undefined ? expr : `spelledMember(${expr}, ${JSON.stringify(spelled.spellings)})`;
+}
+
+export function spelledReadType(slot: AssembledNonterminal): string | undefined {
+	return spelledReadOf(slot)
+		?.members.map((member) => JSON.stringify(member))
+		.join(' | ');
+}
+
 export interface LeadingOptions {
 	readonly type: string;
 	readonly keys: readonly string[];
@@ -1195,11 +1243,13 @@ export type FromEmission =
 	| 'emit'
 	| Exclude<ParserSymbolEmission, 'emit'>
 	| 'skip-hidden-kind'
+	| 'skip-delimiter-token'
 	| 'skip-no-raw-factory'
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
 	if (node.surfaceHidden && !node.userFacing) return 'skip-hidden-kind';
+	if (isDelimiterToken(node)) return 'skip-delimiter-token';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
@@ -1210,7 +1260,7 @@ export function emitsFieldResolvers(
 	kind: string,
 	node: AssembledNode,
 	context: FromDispatchContext
-): node is Extract<AssembledNode, { modelType: 'branch' }> {
+): node is Extract<AssembledNode, { modelType: 'branch' | 'lexedPattern' }> {
 	if (classifyFromEmission(kind, node, context) !== 'emit') return false;
 	if (!isAuthoredCompound(node)) return false;
 	return classifyChildFactorySurface(node, context.nodeMap) !== 'spread';
@@ -1541,7 +1591,7 @@ export function fieldTaggedLiterals(node: AssembledNode): ReadonlyMap<string, re
 				return;
 		}
 	};
-	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
+	if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledLexedPattern)) walk(node.renderRule, undefined);
 	return out;
 }
 

@@ -13,7 +13,7 @@
 #define ALIAS_COUNT 9
 #define TOKEN_COUNT 176
 #define EXTERNAL_TOKEN_COUNT 19
-#define FIELD_COUNT 93
+#define FIELD_COUNT 92
 #define MAX_ALIAS_SEQUENCE_LENGTH 10
 #define MAX_RESERVED_WORD_SET_SIZE 0
 #define PRODUCTION_ID_COUNT 459
@@ -3491,61 +3491,60 @@ enum ts_field_identifiers {
   field_input = 36,
   field_item = 37,
   field_label = 38,
-  field_last_arm = 39,
-  field_left = 40,
-  field_length = 41,
-  field_lifetime = 42,
-  field_lifetimes = 43,
-  field_list = 44,
-  field_match = 45,
-  field_modifier = 46,
-  field_move = 47,
-  field_mutable = 48,
-  field_mutable_specifier = 49,
-  field_name = 50,
-  field_object = 51,
-  field_operator = 52,
-  field_outer = 53,
-  field_parameters = 54,
-  field_path = 55,
-  field_pattern = 56,
-  field_property = 57,
-  field_qualifier = 58,
-  field_raw = 59,
-  field_raw_string_literal_end = 60,
-  field_raw_string_literal_start = 61,
-  field_receiver = 62,
-  field_reference = 63,
-  field_return_type = 64,
-  field_right = 65,
-  field_self = 66,
-  field_separator = 67,
-  field_shebang = 68,
-  field_start = 69,
-  field_statements = 70,
-  field_static = 71,
-  field_string_content = 72,
-  field_string_open = 73,
-  field_subject = 74,
-  field_token_patterns = 75,
-  field_tokens = 76,
-  field_trailing_comma = 77,
-  field_trailing_expression = 78,
-  field_trailing_where_clause = 79,
-  field_trait = 80,
-  field_trait_clause = 81,
-  field_type = 82,
-  field_type_arguments = 83,
-  field_type_parameters = 84,
-  field_types = 85,
-  field_unsafe = 86,
-  field_use_clauses = 87,
-  field_use_wildcard_group = 88,
-  field_value = 89,
-  field_visibility_modifier = 90,
-  field_where_clause = 91,
-  field_where_predicates = 92,
-  field_writable = 93,
+  field_left = 39,
+  field_length = 40,
+  field_lifetime = 41,
+  field_lifetimes = 42,
+  field_list = 43,
+  field_match = 44,
+  field_modifier = 45,
+  field_move = 46,
+  field_mutable = 47,
+  field_mutable_specifier = 48,
+  field_name = 49,
+  field_object = 50,
+  field_operator = 51,
+  field_outer = 52,
+  field_parameters = 53,
+  field_path = 54,
+  field_pattern = 55,
+  field_property = 56,
+  field_qualifier = 57,
+  field_raw = 58,
+  field_raw_string_literal_end = 59,
+  field_raw_string_literal_start = 60,
+  field_receiver = 61,
+  field_reference = 62,
+  field_return_type = 63,
+  field_right = 64,
+  field_self = 65,
+  field_separator = 66,
+  field_shebang = 67,
+  field_start = 68,
+  field_statements = 69,
+  field_static = 70,
+  field_string_content = 71,
+  field_string_open = 72,
+  field_subject = 73,
+  field_token_patterns = 74,
+  field_tokens = 75,
+  field_trailing_comma = 76,
+  field_trailing_expression = 77,
+  field_trailing_where_clause = 78,
+  field_trait = 79,
+  field_trait_clause = 80,
+  field_type = 81,
+  field_type_arguments = 82,
+  field_type_parameters = 83,
+  field_types = 84,
+  field_unsafe = 85,
+  field_use_clauses = 86,
+  field_use_wildcard_group = 87,
+  field_value = 88,
+  field_visibility_modifier = 89,
+  field_where_clause = 90,
+  field_where_predicates = 91,
+  field_writable = 92,
 };
 
 static const char * const ts_field_names[] = {
@@ -3588,7 +3587,6 @@ static const char * const ts_field_names[] = {
   [field_input] = "input",
   [field_item] = "item",
   [field_label] = "label",
-  [field_last_arm] = "last_arm",
   [field_left] = "left",
   [field_length] = "length",
   [field_lifetime] = "lifetime",
@@ -3884,219 +3882,219 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [243] = {.index = 398, .length = 5},
   [244] = {.index = 403, .length = 3},
   [245] = {.index = 406, .length = 2},
-  [246] = {.index = 408, .length = 2},
-  [247] = {.index = 410, .length = 2},
-  [248] = {.index = 412, .length = 5},
-  [249] = {.index = 417, .length = 5},
-  [250] = {.index = 422, .length = 5},
-  [251] = {.index = 427, .length = 4},
-  [252] = {.index = 431, .length = 2},
-  [253] = {.index = 431, .length = 2},
-  [254] = {.index = 433, .length = 5},
-  [255] = {.index = 438, .length = 3},
-  [256] = {.index = 441, .length = 4},
-  [257] = {.index = 445, .length = 4},
-  [258] = {.index = 449, .length = 3},
-  [259] = {.index = 452, .length = 3},
-  [260] = {.index = 455, .length = 3},
-  [261] = {.index = 458, .length = 4},
-  [262] = {.index = 462, .length = 4},
-  [263] = {.index = 466, .length = 4},
-  [264] = {.index = 470, .length = 3},
-  [265] = {.index = 473, .length = 3},
-  [266] = {.index = 476, .length = 4},
-  [267] = {.index = 480, .length = 5},
-  [268] = {.index = 485, .length = 5},
-  [269] = {.index = 490, .length = 5},
-  [270] = {.index = 495, .length = 5},
-  [271] = {.index = 500, .length = 3},
-  [272] = {.index = 503, .length = 2},
-  [273] = {.index = 505, .length = 2},
-  [274] = {.index = 507, .length = 3},
-  [275] = {.index = 510, .length = 3},
-  [276] = {.index = 513, .length = 5},
-  [277] = {.index = 518, .length = 3},
-  [278] = {.index = 521, .length = 5},
-  [279] = {.index = 526, .length = 3},
-  [280] = {.index = 529, .length = 5},
-  [281] = {.index = 534, .length = 3},
+  [246] = {.index = 408, .length = 1},
+  [247] = {.index = 409, .length = 2},
+  [248] = {.index = 411, .length = 5},
+  [249] = {.index = 416, .length = 5},
+  [250] = {.index = 421, .length = 5},
+  [251] = {.index = 426, .length = 4},
+  [252] = {.index = 430, .length = 2},
+  [253] = {.index = 430, .length = 2},
+  [254] = {.index = 432, .length = 5},
+  [255] = {.index = 437, .length = 3},
+  [256] = {.index = 440, .length = 4},
+  [257] = {.index = 444, .length = 4},
+  [258] = {.index = 448, .length = 3},
+  [259] = {.index = 451, .length = 3},
+  [260] = {.index = 454, .length = 3},
+  [261] = {.index = 457, .length = 4},
+  [262] = {.index = 461, .length = 4},
+  [263] = {.index = 465, .length = 4},
+  [264] = {.index = 469, .length = 3},
+  [265] = {.index = 472, .length = 3},
+  [266] = {.index = 475, .length = 4},
+  [267] = {.index = 479, .length = 5},
+  [268] = {.index = 484, .length = 5},
+  [269] = {.index = 489, .length = 5},
+  [270] = {.index = 494, .length = 5},
+  [271] = {.index = 499, .length = 3},
+  [272] = {.index = 502, .length = 2},
+  [273] = {.index = 504, .length = 2},
+  [274] = {.index = 506, .length = 3},
+  [275] = {.index = 509, .length = 3},
+  [276] = {.index = 512, .length = 5},
+  [277] = {.index = 517, .length = 3},
+  [278] = {.index = 520, .length = 5},
+  [279] = {.index = 525, .length = 3},
+  [280] = {.index = 528, .length = 5},
+  [281] = {.index = 533, .length = 3},
   [282] = {.index = 227, .length = 2},
-  [283] = {.index = 537, .length = 2},
-  [284] = {.index = 539, .length = 3},
-  [285] = {.index = 542, .length = 3},
-  [286] = {.index = 545, .length = 2},
-  [287] = {.index = 547, .length = 3},
-  [288] = {.index = 550, .length = 3},
-  [289] = {.index = 553, .length = 3},
-  [290] = {.index = 556, .length = 4},
-  [291] = {.index = 560, .length = 3},
-  [292] = {.index = 563, .length = 3},
-  [293] = {.index = 566, .length = 3},
-  [294] = {.index = 569, .length = 4},
-  [295] = {.index = 573, .length = 5},
-  [296] = {.index = 578, .length = 3},
-  [297] = {.index = 581, .length = 4},
-  [298] = {.index = 585, .length = 6},
+  [283] = {.index = 536, .length = 2},
+  [284] = {.index = 538, .length = 3},
+  [285] = {.index = 541, .length = 3},
+  [286] = {.index = 544, .length = 2},
+  [287] = {.index = 546, .length = 3},
+  [288] = {.index = 549, .length = 3},
+  [289] = {.index = 552, .length = 3},
+  [290] = {.index = 555, .length = 4},
+  [291] = {.index = 559, .length = 3},
+  [292] = {.index = 562, .length = 3},
+  [293] = {.index = 565, .length = 3},
+  [294] = {.index = 568, .length = 4},
+  [295] = {.index = 572, .length = 5},
+  [296] = {.index = 577, .length = 3},
+  [297] = {.index = 580, .length = 4},
+  [298] = {.index = 584, .length = 6},
   [299] = {.index = 227, .length = 2},
-  [300] = {.index = 591, .length = 3},
+  [300] = {.index = 590, .length = 3},
   [301] = {.index = 176, .length = 2},
   [302] = {.index = 128, .length = 1},
-  [303] = {.index = 594, .length = 3},
-  [304] = {.index = 597, .length = 3},
-  [305] = {.index = 600, .length = 3},
-  [306] = {.index = 603, .length = 3},
-  [307] = {.index = 606, .length = 3},
-  [308] = {.index = 609, .length = 4},
-  [309] = {.index = 613, .length = 6},
-  [310] = {.index = 619, .length = 2},
-  [311] = {.index = 621, .length = 2},
-  [312] = {.index = 623, .length = 6},
-  [313] = {.index = 629, .length = 6},
-  [314] = {.index = 635, .length = 6},
-  [315] = {.index = 641, .length = 5},
-  [316] = {.index = 646, .length = 3},
-  [317] = {.index = 646, .length = 3},
-  [318] = {.index = 649, .length = 4},
-  [319] = {.index = 653, .length = 5},
-  [320] = {.index = 658, .length = 4},
-  [321] = {.index = 662, .length = 5},
-  [322] = {.index = 667, .length = 2},
-  [323] = {.index = 669, .length = 4},
-  [324] = {.index = 673, .length = 1},
-  [325] = {.index = 674, .length = 4},
-  [326] = {.index = 678, .length = 5},
-  [327] = {.index = 683, .length = 4},
-  [328] = {.index = 687, .length = 5},
-  [329] = {.index = 692, .length = 5},
-  [330] = {.index = 697, .length = 3},
-  [331] = {.index = 700, .length = 3},
-  [332] = {.index = 703, .length = 4},
-  [333] = {.index = 707, .length = 5},
-  [334] = {.index = 712, .length = 4},
-  [335] = {.index = 716, .length = 5},
-  [336] = {.index = 721, .length = 6},
-  [337] = {.index = 727, .length = 6},
-  [338] = {.index = 733, .length = 6},
-  [339] = {.index = 739, .length = 6},
-  [340] = {.index = 745, .length = 6},
-  [341] = {.index = 751, .length = 6},
-  [342] = {.index = 757, .length = 4},
-  [343] = {.index = 761, .length = 4},
-  [344] = {.index = 765, .length = 4},
-  [345] = {.index = 769, .length = 5},
-  [346] = {.index = 774, .length = 3},
-  [347] = {.index = 777, .length = 4},
-  [348] = {.index = 781, .length = 6},
-  [349] = {.index = 787, .length = 4},
-  [350] = {.index = 791, .length = 6},
-  [351] = {.index = 797, .length = 4},
-  [352] = {.index = 801, .length = 6},
-  [353] = {.index = 807, .length = 3},
-  [354] = {.index = 810, .length = 3},
-  [355] = {.index = 813, .length = 3},
-  [356] = {.index = 816, .length = 3},
-  [357] = {.index = 819, .length = 4},
-  [358] = {.index = 823, .length = 4},
-  [359] = {.index = 827, .length = 4},
-  [360] = {.index = 831, .length = 4},
-  [361] = {.index = 835, .length = 2},
-  [362] = {.index = 837, .length = 4},
-  [363] = {.index = 841, .length = 5},
-  [364] = {.index = 846, .length = 4},
-  [365] = {.index = 850, .length = 5},
-  [366] = {.index = 855, .length = 3},
-  [367] = {.index = 858, .length = 3},
-  [368] = {.index = 861, .length = 3},
-  [369] = {.index = 864, .length = 3},
-  [370] = {.index = 867, .length = 3},
-  [371] = {.index = 870, .length = 3},
-  [372] = {.index = 873, .length = 3},
-  [373] = {.index = 876, .length = 7},
-  [374] = {.index = 883, .length = 6},
-  [375] = {.index = 889, .length = 5},
-  [376] = {.index = 894, .length = 4},
-  [377] = {.index = 898, .length = 2},
-  [378] = {.index = 900, .length = 5},
-  [379] = {.index = 905, .length = 6},
-  [380] = {.index = 911, .length = 4},
-  [381] = {.index = 915, .length = 5},
-  [382] = {.index = 920, .length = 4},
-  [383] = {.index = 924, .length = 4},
-  [384] = {.index = 928, .length = 4},
-  [385] = {.index = 932, .length = 4},
-  [386] = {.index = 936, .length = 5},
-  [387] = {.index = 941, .length = 6},
-  [388] = {.index = 947, .length = 4},
-  [389] = {.index = 951, .length = 5},
-  [390] = {.index = 956, .length = 7},
-  [391] = {.index = 963, .length = 7},
-  [392] = {.index = 970, .length = 7},
-  [393] = {.index = 977, .length = 7},
-  [394] = {.index = 984, .length = 5},
-  [395] = {.index = 989, .length = 5},
-  [396] = {.index = 994, .length = 5},
-  [397] = {.index = 999, .length = 5},
-  [398] = {.index = 1004, .length = 6},
-  [399] = {.index = 1010, .length = 5},
-  [400] = {.index = 1015, .length = 6},
-  [401] = {.index = 1021, .length = 4},
-  [402] = {.index = 1025, .length = 5},
-  [403] = {.index = 1030, .length = 7},
-  [404] = {.index = 1037, .length = 4},
-  [405] = {.index = 1041, .length = 5},
-  [406] = {.index = 1046, .length = 5},
-  [407] = {.index = 1051, .length = 6},
-  [408] = {.index = 1057, .length = 4},
-  [409] = {.index = 1061, .length = 4},
-  [410] = {.index = 1065, .length = 4},
-  [411] = {.index = 1069, .length = 4},
-  [412] = {.index = 1073, .length = 3},
-  [413] = {.index = 1076, .length = 4},
-  [414] = {.index = 1080, .length = 5},
-  [415] = {.index = 1085, .length = 5},
-  [416] = {.index = 1090, .length = 1},
-  [417] = {.index = 1091, .length = 1},
-  [418] = {.index = 1092, .length = 5},
-  [419] = {.index = 1097, .length = 6},
-  [420] = {.index = 1103, .length = 5},
-  [421] = {.index = 1108, .length = 6},
-  [422] = {.index = 1114, .length = 4},
-  [423] = {.index = 1118, .length = 5},
-  [424] = {.index = 1123, .length = 5},
-  [425] = {.index = 1128, .length = 5},
-  [426] = {.index = 1133, .length = 5},
-  [427] = {.index = 1138, .length = 6},
-  [428] = {.index = 1144, .length = 5},
-  [429] = {.index = 1149, .length = 6},
-  [430] = {.index = 1155, .length = 8},
-  [431] = {.index = 1163, .length = 6},
-  [432] = {.index = 1169, .length = 5},
-  [433] = {.index = 1174, .length = 6},
-  [434] = {.index = 1180, .length = 7},
-  [435] = {.index = 1187, .length = 5},
-  [436] = {.index = 1192, .length = 6},
-  [437] = {.index = 1198, .length = 4},
-  [438] = {.index = 1202, .length = 6},
-  [439] = {.index = 1208, .length = 2},
-  [440] = {.index = 1210, .length = 2},
-  [441] = {.index = 1212, .length = 6},
-  [442] = {.index = 1218, .length = 7},
-  [443] = {.index = 1225, .length = 6},
-  [444] = {.index = 1231, .length = 6},
-  [445] = {.index = 1237, .length = 7},
-  [446] = {.index = 1244, .length = 6},
-  [447] = {.index = 1250, .length = 6},
-  [448] = {.index = 1256, .length = 6},
-  [449] = {.index = 1262, .length = 7},
-  [450] = {.index = 1269, .length = 6},
-  [451] = {.index = 1275, .length = 7},
-  [452] = {.index = 1282, .length = 5},
-  [453] = {.index = 1287, .length = 3},
-  [454] = {.index = 1290, .length = 7},
-  [455] = {.index = 1297, .length = 7},
-  [456] = {.index = 1304, .length = 8},
-  [457] = {.index = 1312, .length = 2},
-  [458] = {.index = 1314, .length = 3},
+  [303] = {.index = 593, .length = 3},
+  [304] = {.index = 596, .length = 3},
+  [305] = {.index = 599, .length = 3},
+  [306] = {.index = 602, .length = 3},
+  [307] = {.index = 605, .length = 3},
+  [308] = {.index = 608, .length = 4},
+  [309] = {.index = 612, .length = 6},
+  [310] = {.index = 618, .length = 2},
+  [311] = {.index = 620, .length = 2},
+  [312] = {.index = 622, .length = 6},
+  [313] = {.index = 628, .length = 6},
+  [314] = {.index = 634, .length = 6},
+  [315] = {.index = 640, .length = 5},
+  [316] = {.index = 645, .length = 3},
+  [317] = {.index = 645, .length = 3},
+  [318] = {.index = 648, .length = 4},
+  [319] = {.index = 652, .length = 5},
+  [320] = {.index = 657, .length = 4},
+  [321] = {.index = 661, .length = 5},
+  [322] = {.index = 666, .length = 2},
+  [323] = {.index = 668, .length = 4},
+  [324] = {.index = 672, .length = 1},
+  [325] = {.index = 673, .length = 4},
+  [326] = {.index = 677, .length = 5},
+  [327] = {.index = 682, .length = 4},
+  [328] = {.index = 686, .length = 5},
+  [329] = {.index = 691, .length = 5},
+  [330] = {.index = 696, .length = 3},
+  [331] = {.index = 699, .length = 3},
+  [332] = {.index = 702, .length = 4},
+  [333] = {.index = 706, .length = 5},
+  [334] = {.index = 711, .length = 4},
+  [335] = {.index = 715, .length = 5},
+  [336] = {.index = 720, .length = 6},
+  [337] = {.index = 726, .length = 6},
+  [338] = {.index = 732, .length = 6},
+  [339] = {.index = 738, .length = 6},
+  [340] = {.index = 744, .length = 6},
+  [341] = {.index = 750, .length = 6},
+  [342] = {.index = 756, .length = 4},
+  [343] = {.index = 760, .length = 4},
+  [344] = {.index = 764, .length = 4},
+  [345] = {.index = 768, .length = 5},
+  [346] = {.index = 773, .length = 3},
+  [347] = {.index = 776, .length = 4},
+  [348] = {.index = 780, .length = 6},
+  [349] = {.index = 786, .length = 4},
+  [350] = {.index = 790, .length = 6},
+  [351] = {.index = 796, .length = 4},
+  [352] = {.index = 800, .length = 6},
+  [353] = {.index = 806, .length = 3},
+  [354] = {.index = 809, .length = 3},
+  [355] = {.index = 812, .length = 3},
+  [356] = {.index = 815, .length = 3},
+  [357] = {.index = 818, .length = 4},
+  [358] = {.index = 822, .length = 4},
+  [359] = {.index = 826, .length = 4},
+  [360] = {.index = 830, .length = 4},
+  [361] = {.index = 834, .length = 2},
+  [362] = {.index = 836, .length = 4},
+  [363] = {.index = 840, .length = 5},
+  [364] = {.index = 845, .length = 4},
+  [365] = {.index = 849, .length = 5},
+  [366] = {.index = 854, .length = 3},
+  [367] = {.index = 857, .length = 3},
+  [368] = {.index = 860, .length = 3},
+  [369] = {.index = 863, .length = 3},
+  [370] = {.index = 866, .length = 3},
+  [371] = {.index = 869, .length = 3},
+  [372] = {.index = 872, .length = 3},
+  [373] = {.index = 875, .length = 7},
+  [374] = {.index = 882, .length = 6},
+  [375] = {.index = 888, .length = 5},
+  [376] = {.index = 893, .length = 4},
+  [377] = {.index = 897, .length = 2},
+  [378] = {.index = 899, .length = 5},
+  [379] = {.index = 904, .length = 6},
+  [380] = {.index = 910, .length = 4},
+  [381] = {.index = 914, .length = 5},
+  [382] = {.index = 919, .length = 4},
+  [383] = {.index = 923, .length = 4},
+  [384] = {.index = 927, .length = 4},
+  [385] = {.index = 931, .length = 4},
+  [386] = {.index = 935, .length = 5},
+  [387] = {.index = 940, .length = 6},
+  [388] = {.index = 946, .length = 4},
+  [389] = {.index = 950, .length = 5},
+  [390] = {.index = 955, .length = 7},
+  [391] = {.index = 962, .length = 7},
+  [392] = {.index = 969, .length = 7},
+  [393] = {.index = 976, .length = 7},
+  [394] = {.index = 983, .length = 5},
+  [395] = {.index = 988, .length = 5},
+  [396] = {.index = 993, .length = 5},
+  [397] = {.index = 998, .length = 5},
+  [398] = {.index = 1003, .length = 6},
+  [399] = {.index = 1009, .length = 5},
+  [400] = {.index = 1014, .length = 6},
+  [401] = {.index = 1020, .length = 4},
+  [402] = {.index = 1024, .length = 5},
+  [403] = {.index = 1029, .length = 7},
+  [404] = {.index = 1036, .length = 4},
+  [405] = {.index = 1040, .length = 5},
+  [406] = {.index = 1045, .length = 5},
+  [407] = {.index = 1050, .length = 6},
+  [408] = {.index = 1056, .length = 4},
+  [409] = {.index = 1060, .length = 4},
+  [410] = {.index = 1064, .length = 4},
+  [411] = {.index = 1068, .length = 4},
+  [412] = {.index = 1072, .length = 3},
+  [413] = {.index = 1075, .length = 4},
+  [414] = {.index = 1079, .length = 5},
+  [415] = {.index = 1084, .length = 5},
+  [416] = {.index = 1089, .length = 1},
+  [417] = {.index = 1090, .length = 1},
+  [418] = {.index = 1091, .length = 5},
+  [419] = {.index = 1096, .length = 6},
+  [420] = {.index = 1102, .length = 5},
+  [421] = {.index = 1107, .length = 6},
+  [422] = {.index = 1113, .length = 4},
+  [423] = {.index = 1117, .length = 5},
+  [424] = {.index = 1122, .length = 5},
+  [425] = {.index = 1127, .length = 5},
+  [426] = {.index = 1132, .length = 5},
+  [427] = {.index = 1137, .length = 6},
+  [428] = {.index = 1143, .length = 5},
+  [429] = {.index = 1148, .length = 6},
+  [430] = {.index = 1154, .length = 8},
+  [431] = {.index = 1162, .length = 6},
+  [432] = {.index = 1168, .length = 5},
+  [433] = {.index = 1173, .length = 6},
+  [434] = {.index = 1179, .length = 7},
+  [435] = {.index = 1186, .length = 5},
+  [436] = {.index = 1191, .length = 6},
+  [437] = {.index = 1197, .length = 4},
+  [438] = {.index = 1201, .length = 6},
+  [439] = {.index = 1207, .length = 2},
+  [440] = {.index = 1209, .length = 2},
+  [441] = {.index = 1211, .length = 6},
+  [442] = {.index = 1217, .length = 7},
+  [443] = {.index = 1224, .length = 6},
+  [444] = {.index = 1230, .length = 6},
+  [445] = {.index = 1236, .length = 7},
+  [446] = {.index = 1243, .length = 6},
+  [447] = {.index = 1249, .length = 6},
+  [448] = {.index = 1255, .length = 6},
+  [449] = {.index = 1261, .length = 7},
+  [450] = {.index = 1268, .length = 6},
+  [451] = {.index = 1274, .length = 7},
+  [452] = {.index = 1281, .length = 5},
+  [453] = {.index = 1286, .length = 3},
+  [454] = {.index = 1289, .length = 7},
+  [455] = {.index = 1296, .length = 7},
+  [456] = {.index = 1303, .length = 8},
+  [457] = {.index = 1311, .length = 2},
+  [458] = {.index = 1313, .length = 3},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -4463,7 +4461,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_condition, 1},
     {field_consequence, 2},
   [236] =
-    {field_last_arm, 0},
+    {field_arms, 0},
   [237] =
     {field_pattern, 0},
   [238] =
@@ -4702,594 +4700,593 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_value, 3},
   [408] =
     {field_arms, 1, .inherited = true},
-    {field_last_arm, 1, .inherited = true},
-  [410] =
+  [409] =
     {field_arms, 0},
-    {field_last_arm, 1},
-  [412] =
+    {field_arms, 1},
+  [411] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_unsafe, 0},
     {field_where_clause, 3},
-  [417] =
+  [416] =
     {field_body, 4},
     {field_bounds, 3},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_unsafe, 0},
-  [422] =
+  [421] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_unsafe, 0},
-  [427] =
+  [426] =
     {field_async, 0},
     {field_body, 4},
     {field_parameters, 1},
     {field_return_type, 3},
-  [431] =
+  [430] =
     {field_field, 0},
     {field_value, 2},
-  [433] =
+  [432] =
     {field_async, 1},
     {field_body, 4},
     {field_move, 2},
     {field_parameters, 3},
     {field_static, 0},
-  [438] =
+  [437] =
     {field_name, 1},
     {field_static, 0},
     {field_type, 3},
-  [441] =
+  [440] =
     {field_body, 4},
     {field_parameters, 1},
     {field_return_type, 3},
     {field_static, 0},
-  [445] =
+  [444] =
     {field_body, 4},
     {field_move, 0},
     {field_parameters, 1},
     {field_return_type, 3},
-  [449] =
+  [448] =
     {field_item, 0},
     {field_item, 1, .inherited = true},
     {field_type, 0, .inherited = true},
-  [452] =
+  [451] =
     {field_body, 2},
     {field_name, 1},
     {field_where_clause, 3},
-  [455] =
+  [454] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
-  [458] =
+  [457] =
     {field_body, 4},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
-  [462] =
+  [461] =
     {field_body, 4},
     {field_name, 2},
     {field_visibility_modifier, 0},
     {field_where_clause, 3},
-  [466] =
+  [465] =
     {field_body, 4},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [470] =
+  [469] =
     {field_crate, 2},
     {field_name, 3},
     {field_visibility_modifier, 0},
-  [473] =
+  [472] =
     {field_name, 2},
     {field_parameters, 3},
     {field_visibility_modifier, 0},
-  [476] =
+  [475] =
     {field_body, 4},
     {field_name, 2},
     {field_parameters, 3},
     {field_visibility_modifier, 0},
-  [480] =
+  [479] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_visibility_modifier, 0},
     {field_where_clause, 3},
-  [485] =
+  [484] =
     {field_body, 4},
     {field_bounds, 3},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_visibility_modifier, 0},
-  [490] =
+  [489] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [495] =
+  [494] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_name, 3},
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
-  [500] =
+  [499] =
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [503] =
+  [502] =
     {field_label, 0},
     {field_trailing_expression, 3},
-  [505] =
+  [504] =
     {field_label, 0},
     {field_statements, 3},
-  [507] =
+  [506] =
     {field_body, 4},
     {field_condition, 3},
     {field_label, 0},
-  [510] =
+  [509] =
     {field_type, 3},
     {field_type_parameters, 2},
     {field_unsafe, 0},
-  [513] =
+  [512] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_type, 3},
     {field_type_parameters, 2},
     {field_unsafe, 0},
-  [518] =
+  [517] =
     {field_type, 2},
     {field_unsafe, 0},
     {field_where_clause, 3},
-  [521] =
+  [520] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_type, 2},
     {field_unsafe, 0},
     {field_where_clause, 3},
-  [526] =
+  [525] =
     {field_trait_clause, 2},
     {field_type, 3},
     {field_unsafe, 0},
-  [529] =
+  [528] =
     {field_body, 4},
     {field_declarations, 4, .inherited = true},
     {field_trait_clause, 2},
     {field_type, 3},
     {field_unsafe, 0},
-  [534] =
+  [533] =
     {field_attributes, 1},
     {field_element, 2},
     {field_length, 4},
-  [537] =
+  [536] =
     {field_name, 0},
     {field_value, 2},
-  [539] =
+  [538] =
     {field_body, 2},
     {field_name, 1},
     {field_visibility_modifier, 0},
-  [542] =
+  [541] =
     {field_alias, 4},
     {field_crate, 1},
     {field_name, 2},
-  [545] =
+  [544] =
     {field_bounds, 0, .inherited = true},
     {field_bounds, 1, .inherited = true},
-  [547] =
+  [546] =
     {field_name, 1},
     {field_trailing_where_clause, 4},
     {field_value, 3},
-  [550] =
+  [549] =
     {field_name, 1},
     {field_value, 4},
     {field_where_clause, 2},
-  [553] =
+  [552] =
     {field_name, 1},
     {field_type_parameters, 2},
     {field_value, 4},
-  [556] =
+  [555] =
     {field_bounds, 3},
     {field_name, 1},
     {field_type_parameters, 2},
     {field_where_clause, 4},
-  [560] =
+  [559] =
     {field_mutable, 1},
     {field_reference, 0},
     {field_self, 2},
-  [563] =
+  [562] =
     {field_lifetime, 1},
     {field_reference, 0},
     {field_self, 2},
-  [566] =
+  [565] =
     {field_lifetime, 0},
     {field_mutable, 1},
     {field_self, 2},
-  [569] =
+  [568] =
     {field_name, 1},
     {field_parameters, 3},
     {field_type_parameters, 2},
     {field_where_clause, 4},
-  [573] =
+  [572] =
     {field_body, 5},
     {field_name, 1},
     {field_parameters, 3},
     {field_type_parameters, 2},
     {field_where_clause, 4},
-  [578] =
+  [577] =
     {field_name, 1},
     {field_parameters, 2},
     {field_return_type, 4},
-  [581] =
+  [580] =
     {field_body, 5},
     {field_name, 1},
     {field_parameters, 2},
     {field_return_type, 4},
-  [585] =
+  [584] =
     {field_body, 5},
     {field_bounds, 3},
     {field_declarations, 5, .inherited = true},
     {field_name, 1},
     {field_type_parameters, 2},
     {field_where_clause, 4},
-  [591] =
+  [590] =
     {field_by_reference, 0},
     {field_mutable, 1},
     {field_name, 2},
-  [594] =
+  [593] =
     {field_for_lifetimes, 0},
     {field_parameters, 2},
     {field_return_type, 4},
-  [597] =
+  [596] =
     {field_mutable, 1},
     {field_name, 2},
     {field_type, 4},
-  [600] =
+  [599] =
     {field_mutable, 1},
     {field_name, 2},
     {field_value, 4},
-  [603] =
+  [602] =
     {field_alternative, 4},
     {field_mutable, 1},
     {field_name, 2},
-  [606] =
+  [605] =
     {field_bounds, 1},
     {field_default, 3},
     {field_name, 0},
-  [609] =
+  [608] =
     {field_trait_clause, 2},
     {field_type, 3},
     {field_type_parameters, 1},
     {field_where_clause, 4},
-  [613] =
+  [612] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_trait_clause, 2},
     {field_type, 3},
     {field_type_parameters, 1},
     {field_where_clause, 4},
-  [619] =
+  [618] =
     {field_body, 2},
     {field_match, 0},
-  [621] =
+  [620] =
     {field_condition, 2},
     {field_pattern, 0},
-  [623] =
+  [622] =
     {field_body, 5},
     {field_bounds, 3},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [629] =
+  [628] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [635] =
+  [634] =
     {field_body, 5},
     {field_bounds, 4},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_unsafe, 0},
-  [641] =
+  [640] =
     {field_async, 0},
     {field_body, 5},
     {field_move, 1},
     {field_parameters, 2},
     {field_return_type, 4},
-  [646] =
+  [645] =
     {field_attributes, 0},
     {field_field, 1},
     {field_value, 3},
-  [649] =
+  [648] =
     {field_mutable, 1},
     {field_name, 2},
     {field_static, 0},
     {field_type, 4},
-  [653] =
+  [652] =
     {field_async, 1},
     {field_body, 5},
     {field_parameters, 2},
     {field_return_type, 4},
     {field_static, 0},
-  [658] =
+  [657] =
     {field_by_reference, 1},
     {field_name, 2},
     {field_static, 0},
     {field_type, 4},
-  [662] =
+  [661] =
     {field_body, 5},
     {field_move, 1},
     {field_parameters, 2},
     {field_return_type, 4},
     {field_static, 0},
-  [667] =
+  [666] =
     {field_item, 1},
     {field_type, 1, .inherited = true},
-  [669] =
+  [668] =
     {field_body, 3},
     {field_name, 1},
     {field_type_parameters, 2},
     {field_where_clause, 4},
-  [673] =
+  [672] =
     {field_token_patterns, 1},
-  [674] =
+  [673] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
-  [678] =
+  [677] =
     {field_body, 5},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
-  [683] =
+  [682] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_where_clause, 4},
-  [687] =
+  [686] =
     {field_body, 5},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_where_clause, 4},
-  [692] =
+  [691] =
     {field_body, 5},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [697] =
+  [696] =
     {field_name, 2},
     {field_type, 4},
     {field_visibility_modifier, 0},
-  [700] =
+  [699] =
     {field_name, 2},
     {field_value, 4},
     {field_visibility_modifier, 0},
-  [703] =
+  [702] =
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [707] =
+  [706] =
     {field_body, 5},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [712] =
+  [711] =
     {field_name, 2},
     {field_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [716] =
+  [715] =
     {field_body, 5},
     {field_name, 2},
     {field_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [721] =
+  [720] =
     {field_body, 5},
     {field_bounds, 3},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [727] =
+  [726] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [733] =
+  [732] =
     {field_body, 5},
     {field_bounds, 4},
     {field_declarations, 5, .inherited = true},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [739] =
+  [738] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_name, 3},
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [745] =
+  [744] =
     {field_body, 5},
     {field_bounds, 4},
     {field_declarations, 5, .inherited = true},
     {field_name, 3},
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
-  [751] =
+  [750] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_name, 3},
     {field_type_parameters, 4},
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
-  [757] =
+  [756] =
     {field_name, 2},
     {field_static, 1},
     {field_type, 4},
     {field_visibility_modifier, 0},
-  [761] =
+  [760] =
     {field_body, 3},
     {field_name, 2},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [765] =
+  [764] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_visibility_modifier, 0},
-  [769] =
+  [768] =
     {field_body, 5},
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_visibility_modifier, 0},
-  [774] =
+  [773] =
     {field_label, 0},
     {field_statements, 3},
     {field_trailing_expression, 4},
-  [777] =
+  [776] =
     {field_type, 3},
     {field_type_parameters, 2},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [781] =
+  [780] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_type, 3},
     {field_type_parameters, 2},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [787] =
+  [786] =
     {field_trait_clause, 3},
     {field_type, 4},
     {field_type_parameters, 2},
     {field_unsafe, 0},
-  [791] =
+  [790] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_trait_clause, 3},
     {field_type, 4},
     {field_type_parameters, 2},
     {field_unsafe, 0},
-  [797] =
+  [796] =
     {field_trait_clause, 2},
     {field_type, 3},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [801] =
+  [800] =
     {field_body, 5},
     {field_declarations, 5, .inherited = true},
     {field_trait_clause, 2},
     {field_type, 3},
     {field_unsafe, 0},
     {field_where_clause, 4},
-  [807] =
+  [806] =
     {field_name, 1},
     {field_type, 3},
     {field_visibility_modifier, 0},
-  [810] =
+  [809] =
     {field_body, 1},
     {field_name, 0},
     {field_value, 3},
-  [813] =
+  [812] =
     {field_name, 1},
     {field_value, 3},
     {field_visibility_modifier, 0},
-  [816] =
+  [815] =
     {field_name, 1},
     {field_type, 3},
     {field_value, 5},
-  [819] =
+  [818] =
     {field_name, 1},
     {field_trailing_where_clause, 5},
     {field_value, 4},
     {field_where_clause, 2},
-  [823] =
+  [822] =
     {field_name, 1},
     {field_trailing_where_clause, 5},
     {field_type_parameters, 2},
     {field_value, 4},
-  [827] =
+  [826] =
     {field_name, 1},
     {field_type_parameters, 2},
     {field_value, 5},
     {field_where_clause, 3},
-  [831] =
+  [830] =
     {field_lifetime, 1},
     {field_mutable, 2},
     {field_reference, 0},
     {field_self, 3},
-  [835] =
+  [834] =
     {field_mutable, 0},
     {field_pattern, 1},
-  [837] =
+  [836] =
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
-  [841] =
+  [840] =
     {field_body, 6},
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
-  [846] =
+  [845] =
     {field_name, 1},
     {field_parameters, 2},
     {field_return_type, 4},
     {field_where_clause, 5},
-  [850] =
+  [849] =
     {field_body, 6},
     {field_name, 1},
     {field_parameters, 2},
     {field_return_type, 4},
     {field_where_clause, 5},
-  [855] =
+  [854] =
     {field_name, 0},
     {field_type, 3},
     {field_type_arguments, 1},
-  [858] =
+  [857] =
     {field_mutable, 0},
     {field_name, 1},
     {field_pattern, 3},
-  [861] =
+  [860] =
     {field_by_reference, 0},
     {field_name, 1},
     {field_pattern, 3},
-  [864] =
+  [863] =
     {field_alternative, 5},
     {field_name, 1},
     {field_type, 3},
-  [867] =
+  [866] =
     {field_alternative, 5},
     {field_name, 1},
     {field_value, 3},
-  [870] =
+  [869] =
     {field_body, 2},
     {field_match, 0},
     {field_trailing_comma, 3},
-  [873] =
+  [872] =
     {field_attributes, 0},
     {field_body, 3},
     {field_match, 1},
-  [876] =
+  [875] =
     {field_body, 6},
     {field_bounds, 4},
     {field_declarations, 6, .inherited = true},
@@ -5297,96 +5294,96 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 3},
     {field_unsafe, 0},
     {field_where_clause, 5},
-  [883] =
+  [882] =
     {field_async, 1},
     {field_body, 6},
     {field_move, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_static, 0},
-  [889] =
+  [888] =
     {field_by_reference, 1},
     {field_mutable, 2},
     {field_name, 3},
     {field_static, 0},
     {field_type, 5},
-  [894] =
+  [893] =
     {field_name, 1},
     {field_static, 0},
     {field_type, 3},
     {field_value, 5},
-  [898] =
+  [897] =
     {field_fragment, 2},
     {field_name, 0},
-  [900] =
+  [899] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_where_clause, 5},
-  [905] =
+  [904] =
     {field_body, 6},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_where_clause, 5},
-  [911] =
+  [910] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
-  [915] =
+  [914] =
     {field_body, 6},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
-  [920] =
+  [919] =
     {field_alias, 5},
     {field_crate, 2},
     {field_name, 3},
     {field_visibility_modifier, 0},
-  [924] =
+  [923] =
     {field_name, 2},
     {field_trailing_where_clause, 5},
     {field_value, 4},
     {field_visibility_modifier, 0},
-  [928] =
+  [927] =
     {field_name, 2},
     {field_value, 5},
     {field_visibility_modifier, 0},
     {field_where_clause, 3},
-  [932] =
+  [931] =
     {field_name, 2},
     {field_type_parameters, 3},
     {field_value, 5},
     {field_visibility_modifier, 0},
-  [936] =
+  [935] =
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [941] =
+  [940] =
     {field_body, 6},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [947] =
+  [946] =
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_visibility_modifier, 0},
-  [951] =
+  [950] =
     {field_body, 6},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_visibility_modifier, 0},
-  [956] =
+  [955] =
     {field_body, 6},
     {field_bounds, 4},
     {field_declarations, 6, .inherited = true},
@@ -5394,7 +5391,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [963] =
+  [962] =
     {field_body, 6},
     {field_bounds, 4},
     {field_declarations, 6, .inherited = true},
@@ -5402,7 +5399,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [970] =
+  [969] =
     {field_body, 6},
     {field_declarations, 6, .inherited = true},
     {field_name, 3},
@@ -5410,7 +5407,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [977] =
+  [976] =
     {field_body, 6},
     {field_bounds, 5},
     {field_declarations, 6, .inherited = true},
@@ -5418,62 +5415,62 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 4},
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
-  [984] =
+  [983] =
     {field_mutable, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 5},
     {field_visibility_modifier, 0},
-  [989] =
+  [988] =
     {field_by_reference, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 5},
     {field_visibility_modifier, 0},
-  [994] =
+  [993] =
     {field_body, 4},
     {field_name, 2},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [999] =
+  [998] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 5},
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
-  [1004] =
+  [1003] =
     {field_body, 6},
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 5},
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
-  [1010] =
+  [1009] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [1015] =
+  [1014] =
     {field_body, 6},
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
-  [1021] =
+  [1020] =
     {field_body, 6},
     {field_label, 0},
     {field_left, 3},
     {field_right, 5},
-  [1025] =
+  [1024] =
     {field_trait_clause, 3},
     {field_type, 4},
     {field_type_parameters, 2},
     {field_unsafe, 0},
     {field_where_clause, 5},
-  [1030] =
+  [1029] =
     {field_body, 6},
     {field_declarations, 6, .inherited = true},
     {field_trait_clause, 3},
@@ -5481,151 +5478,151 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 2},
     {field_unsafe, 0},
     {field_where_clause, 5},
-  [1037] =
+  [1036] =
     {field_body, 2},
     {field_name, 1},
     {field_value, 4},
     {field_visibility_modifier, 0},
-  [1041] =
+  [1040] =
     {field_name, 1},
     {field_trailing_where_clause, 6},
     {field_type_parameters, 2},
     {field_value, 5},
     {field_where_clause, 3},
-  [1046] =
+  [1045] =
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
     {field_where_clause, 6},
-  [1051] =
+  [1050] =
     {field_body, 7},
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
     {field_where_clause, 6},
-  [1057] =
+  [1056] =
     {field_by_reference, 0},
     {field_mutable, 1},
     {field_name, 2},
     {field_pattern, 4},
-  [1061] =
+  [1060] =
     {field_mutable, 1},
     {field_name, 2},
     {field_type, 4},
     {field_value, 6},
-  [1065] =
+  [1064] =
     {field_alternative, 6},
     {field_mutable, 1},
     {field_name, 2},
     {field_type, 4},
-  [1069] =
+  [1068] =
     {field_alternative, 6},
     {field_mutable, 1},
     {field_name, 2},
     {field_value, 4},
-  [1073] =
+  [1072] =
     {field_default, 5},
     {field_name, 1},
     {field_type, 3},
-  [1076] =
+  [1075] =
     {field_attributes, 0},
     {field_body, 3},
     {field_match, 1},
     {field_trailing_comma, 4},
-  [1080] =
+  [1079] =
     {field_mutable, 1},
     {field_name, 2},
     {field_static, 0},
     {field_type, 4},
     {field_value, 6},
-  [1085] =
+  [1084] =
     {field_by_reference, 1},
     {field_name, 2},
     {field_static, 0},
     {field_type, 4},
     {field_value, 6},
-  [1090] =
+  [1089] =
     {field_operator, 3},
-  [1091] =
+  [1090] =
     {field_tokens, 1},
-  [1092] =
+  [1091] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
-  [1097] =
+  [1096] =
     {field_body, 7},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
-  [1103] =
+  [1102] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_where_clause, 6},
-  [1108] =
+  [1107] =
     {field_body, 7},
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_where_clause, 6},
-  [1114] =
+  [1113] =
     {field_name, 2},
     {field_type, 4},
     {field_value, 6},
     {field_visibility_modifier, 0},
-  [1118] =
+  [1117] =
     {field_name, 2},
     {field_trailing_where_clause, 6},
     {field_value, 5},
     {field_visibility_modifier, 0},
     {field_where_clause, 3},
-  [1123] =
+  [1122] =
     {field_name, 2},
     {field_trailing_where_clause, 6},
     {field_type_parameters, 3},
     {field_value, 5},
     {field_visibility_modifier, 0},
-  [1128] =
+  [1127] =
     {field_name, 2},
     {field_type_parameters, 3},
     {field_value, 6},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [1133] =
+  [1132] =
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [1138] =
+  [1137] =
     {field_body, 7},
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
-  [1144] =
+  [1143] =
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
-  [1149] =
+  [1148] =
     {field_body, 7},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
-  [1155] =
+  [1154] =
     {field_body, 7},
     {field_bounds, 5},
     {field_declarations, 7, .inherited = true},
@@ -5634,27 +5631,27 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
-  [1163] =
+  [1162] =
     {field_by_reference, 2},
     {field_mutable, 3},
     {field_name, 4},
     {field_static, 1},
     {field_type, 6},
     {field_visibility_modifier, 0},
-  [1169] =
+  [1168] =
     {field_name, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 6},
     {field_visibility_modifier, 0},
-  [1174] =
+  [1173] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 5},
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
-  [1180] =
+  [1179] =
     {field_body, 7},
     {field_function_modifiers, 1},
     {field_name, 3},
@@ -5662,45 +5659,45 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
-  [1187] =
+  [1186] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_visibility_modifier, 0},
-  [1192] =
+  [1191] =
     {field_body, 7},
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_visibility_modifier, 0},
-  [1198] =
+  [1197] =
     {field_alternative, 7},
     {field_name, 1},
     {field_type, 3},
     {field_value, 5},
-  [1202] =
+  [1201] =
     {field_by_reference, 1},
     {field_mutable, 2},
     {field_name, 3},
     {field_static, 0},
     {field_type, 5},
     {field_value, 7},
-  [1208] =
+  [1207] =
     {field_operator, 4},
     {field_separator, 3},
-  [1210] =
+  [1209] =
     {field_operator, 4},
     {field_token_patterns, 2},
-  [1212] =
+  [1211] =
     {field_function_modifiers, 0},
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
     {field_where_clause, 7},
-  [1218] =
+  [1217] =
     {field_body, 8},
     {field_function_modifiers, 0},
     {field_name, 2},
@@ -5708,21 +5705,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6},
     {field_type_parameters, 3},
     {field_where_clause, 7},
-  [1225] =
+  [1224] =
     {field_name, 2},
     {field_trailing_where_clause, 7},
     {field_type_parameters, 3},
     {field_value, 6},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
-  [1231] =
+  [1230] =
     {field_name, 2},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 7},
-  [1237] =
+  [1236] =
     {field_body, 8},
     {field_name, 2},
     {field_parameters, 4},
@@ -5730,28 +5727,28 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 3},
     {field_visibility_modifier, 0},
     {field_where_clause, 7},
-  [1244] =
+  [1243] =
     {field_mutable, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 5},
     {field_value, 7},
     {field_visibility_modifier, 0},
-  [1250] =
+  [1249] =
     {field_by_reference, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 5},
     {field_value, 7},
     {field_visibility_modifier, 0},
-  [1256] =
+  [1255] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 5},
     {field_return_type, 7},
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
-  [1262] =
+  [1261] =
     {field_body, 8},
     {field_function_modifiers, 1},
     {field_name, 3},
@@ -5759,14 +5756,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7},
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
-  [1269] =
+  [1268] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 4},
     {field_return_type, 6},
     {field_visibility_modifier, 0},
     {field_where_clause, 7},
-  [1275] =
+  [1274] =
     {field_body, 8},
     {field_function_modifiers, 1},
     {field_name, 3},
@@ -5774,17 +5771,17 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6},
     {field_visibility_modifier, 0},
     {field_where_clause, 7},
-  [1282] =
+  [1281] =
     {field_alternative, 8},
     {field_mutable, 1},
     {field_name, 2},
     {field_type, 4},
     {field_value, 6},
-  [1287] =
+  [1286] =
     {field_operator, 5},
     {field_separator, 4},
     {field_token_patterns, 2},
-  [1290] =
+  [1289] =
     {field_by_reference, 2},
     {field_mutable, 3},
     {field_name, 4},
@@ -5792,7 +5789,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type, 6},
     {field_value, 8},
     {field_visibility_modifier, 0},
-  [1297] =
+  [1296] =
     {field_function_modifiers, 1},
     {field_name, 3},
     {field_parameters, 5},
@@ -5800,7 +5797,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 8},
-  [1304] =
+  [1303] =
     {field_body, 9},
     {field_function_modifiers, 1},
     {field_name, 3},
@@ -5809,10 +5806,10 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 4},
     {field_visibility_modifier, 0},
     {field_where_clause, 8},
-  [1312] =
+  [1311] =
     {field_operator, 4},
     {field_tokens, 2},
-  [1314] =
+  [1313] =
     {field_operator, 5},
     {field_separator, 4},
     {field_tokens, 2},

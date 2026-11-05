@@ -4,7 +4,7 @@ use std::sync::Arc;
 use sittir_core::engine::encode_handle;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::{Prepare, RenderContext};
-use sittir_core::render::{CoordinateError, SourceTable};
+use sittir_core::render::{CoordinateError, RenderError, SourceTable};
 use sittir_core::types::Span;
 use sittir_core::{NodeCoordinate, SlotValue};
 
@@ -17,7 +17,7 @@ impl SourceTable for Sources {
 
 struct Leaf;
 impl Prepare for Leaf {
-    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), RenderError> {
         Ok(())
     }
 }
@@ -27,7 +27,7 @@ struct List {
     items: Vec<SlotValue<Leaf>>,
 }
 impl Prepare for List {
-    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         self.items.prepare(ctx)?;
         self.space_after.get_or_insert(ctx.options.spacing[0].arm);
         Ok(())
@@ -86,10 +86,10 @@ fn a_coordinate_into_an_unknown_tree_fails_the_walk_with_its_handle() {
     let handle = encode_handle(sittir_core::types::TreeId(9), sittir_core::types::NodeIndex(2));
     let mut slot: SlotValue<Leaf> =
         SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(9), sittir_core::types::NodeIndex(2), sittir_core::types::NodeIndex(3), Span { start: 0, end: 1 }));
-    assert_eq!(
+    assert!(matches!(
         slot.prepare(&ctx(&options, &sources)),
-        Err(CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(9) })
-    );
+        Err(RenderError::Coordinate(e)) if e == CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(9) }
+    ));
 }
 
 #[test]
@@ -101,7 +101,7 @@ fn a_span_outside_its_tree_fails_the_walk() {
         SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(1), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start: 0, end: 5 }));
     assert!(matches!(
         slot.prepare(&ctx(&options, &sources)),
-        Err(CoordinateError::BadSpan { handle: h, .. }) if h == handle
+        Err(RenderError::Coordinate(CoordinateError::BadSpan { handle: h, .. })) if h == handle
     ));
 }
 
@@ -114,10 +114,10 @@ fn a_nested_container_is_walked_to_the_bottom() {
     let sources = Sources(HashMap::new());
     let handle = encode_handle(sittir_core::types::TreeId(4), sittir_core::types::NodeIndex(1));
     let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(4), sittir_core::types::NodeIndex(1), sittir_core::types::NodeIndex(2), Span { start: 0, end: 1 }))]));
-    assert_eq!(
+    assert!(matches!(
         nested.prepare(&ctx(&options, &sources)),
-        Err(CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(4) })
-    );
+        Err(RenderError::Coordinate(e)) if e == CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(4) }
+    ));
 }
 
 use sittir_core::options::{ArmSite, EdgeArm, Edged, Edges, EdgeSite, Side, SiteSpec};
@@ -397,7 +397,7 @@ fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges()
 }
 
 impl Prepare for Seatable {
-    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), RenderError> {
         Ok(())
     }
 }
@@ -591,7 +591,7 @@ struct Spanned {
     edges: Edges,
 }
 impl Prepare for Spanned {
-    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), RenderError> {
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut Edges> {

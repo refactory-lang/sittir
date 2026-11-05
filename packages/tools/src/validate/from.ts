@@ -31,6 +31,7 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	factoryArgs,
 	slotKeyOf,
 	nodeToConfig,
 	loadNodeModel,
@@ -188,6 +189,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let unitKinds: ReadonlySet<string> = new Set();
+	let delimiterTokens: ReadonlySet<string> = new Set();
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -211,6 +213,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		const model = await loadNodeModel(grammar);
 		factoryShapes = model.factoryShapes;
 		unitKinds = model.unitKinds;
+		delimiterTokens = model.delimiterTokens;
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
@@ -415,12 +418,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 							readTree !== undefined && isCoordinate(value) ? readNode(readTree, value) : value
 						);
 					} else {
-						// Config-shaped factories with flank capture take `(config,
-						// options)` — factories without options ignore the extra argument.
-						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
-							config,
-							separatedListFactoryOptions(readData, factorySlots[readKind])
-						);
+						factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...factoryArgs(readKind, 'config', config, readData, { factorySlots }));
 					}
 				} else if (shape === 'constant') {
 					factoryResult = factory as AnyUntypedNode;
@@ -534,6 +532,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		}
 
 		for (const kind of collectKinds(tree1.rootNode, occurrenceKind)) {
+			if (delimiterTokens.has(kind)) continue;
 			if (!(kind in fromMap) || !(kind in factoryMap)) {
 				if (!excludedKinds.has(kind)) {
 					excludedKinds.add(kind);

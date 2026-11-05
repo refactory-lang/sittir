@@ -38,10 +38,12 @@ export function newKeySetterClearsWithNoArgument(arm: T.LastMatchArm.Parsed): st
 	return arm.$with.condition().$render() + arm.$with.condition(engine.build.identifier('d')).$render();
 }
 
-export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): void {
-	if (block._match_block_arms === undefined) return;
-	block.arms();
-	block.lastArm();
+export function aMatchBlocksArmsAreOneListEndingWithTheLastArm(arms: T.MatchBlockArms.Parsed): void {
+	type Arms = ReturnType<typeof arms.arms>;
+	type Last = Arms extends readonly [...unknown[], infer L] ? L : never;
+	type Before = Arms extends readonly [...infer R, unknown] ? R[number] : never;
+	expectTrue<Equals<Last extends { readonly $type: infer K } ? K : never, T.LastMatchArm['$type']>>();
+	expectTrue<Equals<Extract<Before, { readonly $type: T.LastMatchArm['$type'] }>, never>>();
 }
 
 export function wholeGroupBySlotOrFlattenedKeysCompile(): void {
@@ -64,20 +66,6 @@ export function aRequiredSeatHasOneShape(arm: T.LastMatchArm.Bound): void {
 	expectTrue<Equals<Extract<ReturnType<typeof arm.pattern>, { readonly $type: T.MatchPattern['$type'] }>, never>>();
 }
 
-export function anOptionalSeatNarrowsOnItsStoredProperty(block: T.MatchBlock.Bound): void {
-	if (block._match_block_arms !== undefined) {
-		expectTrue<Equals<undefined extends ReturnType<typeof block.matchBlockArms> ? true : false, false>>();
-	} else {
-		// @ts-expect-error an absent group has no flattened getters
-		block.lastArm();
-	}
-}
-
-export function aFlattenedFieldNarrowsItsSiblings(block: T.MatchBlock.Parsed): void {
-	if (block.arms !== undefined) {
-		block.arms();
-		block.lastArm();
-	} else {
-		expectTrue<Equals<typeof block.lastArm, undefined>>();
-	}
+export function anAbsentArmListReadsAsAbsent(block: T.MatchBlock.Parsed): void {
+	expectTrue<Equals<undefined extends ReturnType<typeof block.matchBlockArms> ? true : false, true>>();
 }

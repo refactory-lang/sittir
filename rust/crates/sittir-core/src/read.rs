@@ -725,6 +725,14 @@ pub trait ReadNode: Sized {
         let _ = (grammar, display);
         None
     }
+    /// The delimiter flags the read stamps on the list the cursor is on
+    /// (`delimiter`); `None` for a node that is no list with an optional
+    /// flank, or one this native node does not admit. The cursor ends where
+    /// it started.
+    fn delimiter(cursor: &mut TreeCursor<'_>) -> Option<crate::types::Delimiter> {
+        let _ = cursor;
+        None
+    }
     /// The id the read stores for the node the cursor is on when it stores
     /// the node as a unit (an enum kind's member, a choice's unit variant),
     /// resolved as the read resolves it; `None` for a node it stores as a

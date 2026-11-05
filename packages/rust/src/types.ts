@@ -7276,7 +7276,7 @@ export interface MatchExpression {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly body: readonly MatchArm[];
+		readonly body: readonly [...MatchArm[], LastMatchArm] | readonly [];
 	};
 	readonly __slotHints__?: {
 		readonly subject: SlotHint<NonNullable<T.MatchExpression.Config>['subject']>;
@@ -7292,15 +7292,11 @@ export interface MatchBlock {
 	readonly __slotNames__?: {
 		readonly _match_block_arms: 'matchBlockArms';
 	};
+	readonly __looseHints__?: {
+		readonly match_block_arms?: readonly [...MatchArm[], LastMatchArm] | readonly [];
+	};
 	readonly __slotHints__?: {
 		readonly matchBlockArms: SlotHint<T.MatchBlockArms, true>;
-		readonly $flat: FlatHint<
-			'matchBlockArms',
-			T.MatchBlockArms,
-			{ readonly arms: 'arms'; readonly lastArm: 'lastArm' },
-			true,
-			'_match_block_arms'
-		>;
 	};
 	readonly matchBlockArms: () => MatchBlockArms | undefined;
 }
@@ -7919,6 +7915,15 @@ export interface RawStringLiteral {
 		readonly rawStringLiteralStart: SlotHint<T.RawStringLiteralStart>;
 		readonly stringContent: SlotHint<T.RawStringLiteralContent>;
 		readonly rawStringLiteralEnd: SlotHint<T.RawStringLiteralEnd>;
+		readonly $flat:
+			| FlatHint<
+					'rawStringLiteralStart',
+					T.RawStringLiteralStart,
+					{ readonly prefix: 'prefix' },
+					false,
+					'_raw_string_literal_start'
+			  >
+			| FlatHint<'rawStringLiteralEnd', T.RawStringLiteralEnd, {}, false, '_raw_string_literal_end'>;
 	};
 	readonly rawStringLiteralStart: () => RawStringLiteralStart;
 	readonly stringContent: () => RawStringLiteralContent;
@@ -10617,18 +10622,42 @@ export interface TypeArgument {
 
 export interface MatchBlockArms {
 	readonly $type: TSKindId.MatchBlockArms;
-	readonly _arms: readonly MatchArm[];
-	readonly _last_arm: LastMatchArm;
+	readonly _arms: readonly [...MatchArm[], LastMatchArm];
 	readonly __slotNames__?: {
 		readonly _arms: 'arms';
-		readonly _last_arm: 'lastArm';
 	};
 	readonly __slotHints__?: {
-		readonly arms: SlotHint<T.MatchArm[], true, true>;
-		readonly lastArm: SlotHint<T.LastMatchArm>;
+		readonly arms: SlotHint<[...T.MatchArm[], T.LastMatchArm], false, true>;
 	};
-	readonly arms: () => readonly MatchArm[];
-	readonly lastArm: () => LastMatchArm;
+	readonly arms: () => readonly [...MatchArm[], LastMatchArm];
+}
+
+export interface RawStringLiteralStart {
+	readonly $type: TSKindId.RawStringLiteralStart;
+	readonly _prefix: 'r' | 'br' | 'cr';
+	readonly _hashes: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _hashes: 'hashes';
+	};
+	readonly __slotHints__?: {
+		readonly prefix: SlotHint<'r' | 'br' | 'cr'>;
+		readonly hashes: SlotHint<string>;
+	};
+	readonly prefix: () => 'r' | 'br' | 'cr';
+	readonly hashes: () => string;
+}
+
+export interface RawStringLiteralEnd {
+	readonly $type: TSKindId.RawStringLiteralEnd;
+	readonly _hashes: string;
+	readonly __slotNames__?: {
+		readonly _hashes: 'hashes';
+	};
+	readonly __slotHints__?: {
+		readonly hashes: SlotHint<string>;
+	};
+	readonly hashes: () => string;
 }
 
 export interface TraitInterfaceDeclarationBody {
@@ -11244,8 +11273,6 @@ export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type OuterDocCommentMarker = TSKindId.OuterDocCommentMarker;
 export type InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
-export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
-export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type DocComment = Terminal<TSKindId.DocComment, string>;
 export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type Tight = TSKindId.Tight;
@@ -14699,6 +14726,7 @@ export namespace MatchBlockArms {
 			readonly after?: LayoutKindId;
 			readonly arms?: {
 				readonly end?: LayoutKindId;
+				readonly lastMatchArm?: { readonly after?: LayoutKindId };
 				readonly matchArmBlockEnding?: { readonly after?: LayoutKindId };
 				readonly matchArmWithComma?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
@@ -18095,6 +18123,34 @@ export interface MatchBlockArmsNs extends NodeNs<
 	readonly BuildArgs: MatchBlockArms.BuildArgs;
 	readonly LooseArgs: MatchBlockArms.LooseArgs;
 }
+export interface RawStringLiteralStartNs extends NodeNs<
+	RawStringLiteralStart,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	RawStringLiteralStart.Bound,
+	never,
+	never,
+	RawStringLiteralStart.Parsed,
+	never
+> {
+	readonly BuildArgs: RawStringLiteralStart.BuildArgs;
+	readonly LooseArgs: RawStringLiteralStart.LooseArgs;
+}
+export interface RawStringLiteralEndNs extends NodeNs<
+	RawStringLiteralEnd,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	RawStringLiteralEnd.Bound,
+	never,
+	never,
+	RawStringLiteralEnd.Parsed,
+	never
+> {
+	readonly BuildArgs: RawStringLiteralEnd.BuildArgs;
+	readonly LooseArgs: RawStringLiteralEnd.LooseArgs;
+}
 export interface TraitInterfaceDeclarationBodyNs extends NodeNs<
 	TraitInterfaceDeclarationBody,
 	LeafScalarMap,
@@ -18394,18 +18450,6 @@ export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContent.Bound,
 	TSKindId.RawStringLiteralContent
 > {}
-export interface RawStringLiteralStartNs extends LeafNs<
-	RawStringLiteralStart,
-	string,
-	RawStringLiteralStart.Bound,
-	TSKindId.RawStringLiteralStart
-> {}
-export interface RawStringLiteralEndNs extends LeafNs<
-	RawStringLiteralEnd,
-	string,
-	RawStringLiteralEnd.Bound,
-	TSKindId.RawStringLiteralEnd
-> {}
 export interface DocCommentNs extends LeafNs<DocComment, string, DocComment.Bound, TSKindId.DocComment> {}
 export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContent,
@@ -18639,6 +18683,8 @@ export interface NamespaceMap {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
+	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
+	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBodyNs;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBodyNs;
 	[TSKindId.Argument]: ArgumentNs;
@@ -18689,8 +18735,6 @@ export interface NamespaceMap {
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
-	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
-	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.DocComment]: DocCommentNs;
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
@@ -18920,6 +18964,8 @@ export interface BoundByKindId {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Bound;
 	[TSKindId.TypeArgument]: TypeArgument.Bound;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Bound;
+	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Bound;
+	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Bound;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Bound;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Bound;
 	[TSKindId.Argument]: Argument.Bound;
@@ -18944,8 +18990,6 @@ export interface BoundByKindId {
 	[TSKindId.FloatLiteral]: FloatLiteral.Bound;
 	[TSKindId.StringContent]: StringContent.Bound;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Bound;
-	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Bound;
-	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Bound;
 	[TSKindId.DocComment]: DocComment.Bound;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Bound;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Bound;
@@ -19175,6 +19219,8 @@ export interface ParsedByKindId {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Parsed;
 	[TSKindId.TypeArgument]: TypeArgument.Parsed;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Parsed;
+	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Parsed;
+	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Parsed;
 	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Parsed;
 	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Parsed;
 	[TSKindId.Argument]: Argument.Parsed;
@@ -19199,8 +19245,6 @@ export interface ParsedByKindId {
 	[TSKindId.FloatLiteral]: FloatLiteral.Parsed;
 	[TSKindId.StringContent]: StringContent.Parsed;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Parsed;
-	[TSKindId.RawStringLiteralStart]: RawStringLiteralStart.Parsed;
-	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Parsed;
 	[TSKindId.DocComment]: DocComment.Parsed;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Parsed;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Parsed;
@@ -19586,6 +19630,8 @@ export interface TypeKeyOf {
 	[TSKindId.AttributedOrderedField]: 'attributedOrderedField';
 	[TSKindId.TypeArgument]: 'typeArgument';
 	[TSKindId.MatchBlockArms]: 'matchBlockArms';
+	[TSKindId.RawStringLiteralStart]: 'rawStringLiteralStart';
+	[TSKindId.RawStringLiteralEnd]: 'rawStringLiteralEnd';
 	[TSKindId.TraitInterfaceDeclarationBody]: 'traitInterfaceDeclarationBody';
 	[TSKindId.ExtensionDeclarationBody]: 'extensionDeclarationBody';
 	[TSKindId.Argument]: 'argument';
@@ -19636,8 +19682,6 @@ export interface TypeKeyOf {
 	[TSKindId.FloatLiteral]: 'floatLiteral';
 	[TSKindId.StringContent]: 'stringContent';
 	[TSKindId.RawStringLiteralContent]: 'rawStringLiteralContent';
-	[TSKindId.RawStringLiteralStart]: 'rawStringLiteralStart';
-	[TSKindId.RawStringLiteralEnd]: 'rawStringLiteralEnd';
 	[TSKindId.DocComment]: 'docComment';
 	[TSKindId.BlockCommentContent]: 'blockCommentContent';
 	[TSKindId.ErrorSentinel]: 'errorSentinel';
@@ -22076,16 +22120,15 @@ export namespace MatchExpression {
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	interface BoundSurface extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
+		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.MatchBlock, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
+		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
-			Parsed,
+			this,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -22093,11 +22136,10 @@ export namespace MatchBlock {
 		>;
 		readonly $snapshot: () => Snapshot<T.MatchBlock['$type']>;
 	}
-	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.MatchBlock, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value?: Admit<T.MatchBlockArms> | T.MatchBlockArms.BuildArgs[0]];
-	export type LooseArgs = [value?: T.MatchBlock.Loose | T.MatchBlockArms.LooseArgs[0]];
+	export type BuildArgs = [value?: Admit<T.MatchBlockArms>] | T.MatchBlockArms.BuildArgs;
+	export type LooseArgs = [value?: T.MatchBlock.Loose] | T.MatchBlockArms.LooseArgs;
 	export type Kind = TSKindId.MatchBlock;
 }
 export namespace LastMatchArm {
@@ -22845,15 +22887,16 @@ export namespace StringLiteral {
 }
 export namespace RawStringLiteral {
 	export type Config = ConfigFor<TSKindId.RawStringLiteral>;
-	export interface Bound extends BoundOf<T.RawStringLiteral, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.RawStringLiteral, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.RawStringLiteral['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.RawStringLiteral, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.RawStringLiteral, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.RawStringLiteral, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.RawStringLiteral['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -22861,10 +22904,29 @@ export namespace RawStringLiteral {
 		>;
 		readonly $snapshot: () => Snapshot<T.RawStringLiteral['$type']>;
 	}
+	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.RawStringLiteral, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.RawStringLiteral>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RawStringLiteral>;
-	export type BuildArgs = [config: ConfigOf<T.RawStringLiteral>];
-	export type LooseArgs = [config: T.RawStringLiteral.Loose];
+	export type BuildArgs = [
+		config: OmitEach<
+			NonNullable<
+				OmitEach<NonNullable<ConfigOf<T.RawStringLiteral>>, 'rawStringLiteralStart'> & {
+					prefix: T.RawStringLiteralStart.BuildArgs[0];
+				}
+			>,
+			'rawStringLiteralEnd'
+		>
+	];
+	export type LooseArgs = [
+		config: OmitEach<
+			NonNullable<
+				OmitEach<NonNullable<T.RawStringLiteral.Loose>, 'rawStringLiteralStart'> & {
+					prefix: T.RawStringLiteralStart.LooseArgs[0];
+				}
+			>,
+			'rawStringLiteralEnd'
+		>
+	];
 	export type Kind = TSKindId.RawStringLiteral;
 }
 export namespace LineComment {
@@ -26518,9 +26580,78 @@ export namespace MatchBlockArms {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockArms>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockArms>;
-	export type BuildArgs = [config: ConfigOf<T.MatchBlockArms>];
-	export type LooseArgs = [config: T.MatchBlockArms.Loose];
+	export type BuildArgs = [...children: Admit<[...T.MatchArm[], T.LastMatchArm]>];
+	export type LooseArgs =
+		| [
+				...children: [
+					...(T.MatchBlockArms.Loose | LooseValue<T.MatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[],
+					T.MatchBlockArms.Loose | LooseValue<T.LastMatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				]
+		  ]
+		| [
+				children: Readonly<
+					[
+						...LooseValue<T.MatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[],
+						LooseValue<T.LastMatchArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					]
+				>
+		  ];
 	export type Kind = TSKindId.MatchBlockArms;
+}
+export namespace RawStringLiteralStart {
+	export type Config = OmitEach<ConfigFor<TSKindId.RawStringLiteralStart>, 'hashes'>;
+	export type Options = { readonly hashes?: string };
+	export interface Bound extends BoundOf<T.RawStringLiteralStart, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RawStringLiteralStart['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.RawStringLiteralStart, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RawStringLiteralStart['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.RawStringLiteralStart['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.RawStringLiteralStart>, 'hashes'> | string;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.RawStringLiteralStart>, 'hashes'>;
+	export type BuildArgs = [value: Admit<'r' | 'br' | 'cr'>, options?: T.RawStringLiteralStart.Options];
+	export type LooseArgs = [value: T.RawStringLiteralStart.Loose, options?: T.RawStringLiteralStart.Options];
+	export type Kind = TSKindId.RawStringLiteralStart;
+}
+export namespace RawStringLiteralEnd {
+	export type Config = OmitEach<ConfigFor<TSKindId.RawStringLiteralEnd>, 'hashes'>;
+	export type Options = { readonly hashes?: string };
+	export interface Bound extends BoundOf<T.RawStringLiteralEnd, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RawStringLiteralEnd['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.RawStringLiteralEnd, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RawStringLiteralEnd['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.RawStringLiteralEnd['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.RawStringLiteralEnd>, 'hashes'> | string;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.RawStringLiteralEnd>, 'hashes'>;
+	export type BuildArgs = [
+		config?: Partial<OmitRegistered<ConfigOf<T.RawStringLiteralEnd>, 'hashes'>>,
+		options?: T.RawStringLiteralEnd.Options
+	];
+	export type LooseArgs = [config?: T.RawStringLiteralEnd.Loose, options?: T.RawStringLiteralEnd.Options];
+	export type Kind = TSKindId.RawStringLiteralEnd;
 }
 export namespace TraitInterfaceDeclarationBody {
 	export type Config = ConfigFor<TSKindId.TraitInterfaceDeclarationBody>;
@@ -27422,42 +27553,6 @@ export namespace RawStringLiteralContent {
 	export type LooseArgs = RawStringLiteralContentNs['LooseArgs'];
 	export type Kind = TSKindId.RawStringLiteralContent;
 }
-export namespace RawStringLiteralStart {
-	export type Config = RawStringLiteralStartNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.RawStringLiteralStart;
-		readonly $named: true;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.RawStringLiteralStart;
-		readonly $named: true;
-		$text(): string;
-	}
-	export type Loose = RawStringLiteralStartNs['Loose'];
-	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
-	export type Kind = TSKindId.RawStringLiteralStart;
-}
-export namespace RawStringLiteralEnd {
-	export type Config = RawStringLiteralEndNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.RawStringLiteralEnd;
-		readonly $named: true;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.RawStringLiteralEnd;
-		readonly $named: true;
-		$text(): string;
-	}
-	export type Loose = RawStringLiteralEndNs['Loose'];
-	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
-	export type Kind = TSKindId.RawStringLiteralEnd;
-}
 export namespace DocComment {
 	export type Config = DocCommentNs['Config'];
 	export interface Bound extends NodeMethods, HoldsSource {
@@ -27685,9 +27780,9 @@ export namespace EmptyFieldInitializerList {
 		readonly $trivia: TriviaSetterOf<EmptyFieldInitializerList.Parsed> & InnerTrivia<EmptyFieldInitializerList.Parsed>;
 	};
 }
-export type EmptyMatchBlock = MatchBlock.Bound & {
-	readonly $trivia: TriviaSetterOf<EmptyMatchBlock> & InnerTrivia<EmptyMatchBlock>;
-};
+export interface EmptyMatchBlock extends MatchBlock.Bound {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
 export namespace EmptyMatchBlock {
 	export type Parsed = MatchBlock.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyMatchBlock.Parsed> & InnerTrivia<EmptyMatchBlock.Parsed>;

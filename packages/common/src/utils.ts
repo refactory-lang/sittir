@@ -15,6 +15,7 @@ import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-en
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
+export { spelledMember } from './spelled.ts';
 export { nodeJSON } from './node-json.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
@@ -543,6 +544,11 @@ export function isNodeOfKind(v: unknown, kind: number): boolean {
 
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
+}
+
+export function preferredFacet<V>(token: V, facet: string, preference: string | undefined): V {
+	if (preference === undefined) return token;
+	return (token as { readonly $with: Readonly<Record<string, (value: string) => V>> }).$with[facet]!(preference);
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {

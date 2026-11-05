@@ -5,8 +5,22 @@ export namespace Pattern {
 	export interface Complex<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
 		readonly $kind: 'pattern.complex';
-		readonly imaginary: V.Literal.Number.Any<G>;
-		readonly real: V.Literal.Number.Any<G>;
+		readonly imaginary:
+			| V.Literal.Number.Float.Any<G>
+			| V.Literal.Number.Integer<G>
+			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Binary<G>
+			| V.Literal.Number.Integer.Hex<G>
+			| V.Literal.Number.Integer.Imaginary<G>
+			| V.Literal.Number.Integer.Octal<G>;
+		readonly real:
+			| V.Literal.Number.Float.Any<G>
+			| V.Literal.Number.Integer<G>
+			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Binary<G>
+			| V.Literal.Number.Integer.Hex<G>
+			| V.Literal.Number.Integer.Imaginary<G>
+			| V.Literal.Number.Integer.Octal<G>;
 		readonly sign?: boolean;
 	}
 	export namespace Complex {

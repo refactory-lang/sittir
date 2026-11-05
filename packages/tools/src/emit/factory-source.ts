@@ -252,28 +252,35 @@ function textLeafValue(v: unknown): string | undefined {
 	return Object.keys(v).some((key) => key.startsWith('_')) ? undefined : v.$text;
 }
 
+function keyOwner(kind: string, property: string, ctx: PrintContext): string {
+	if (ctx.slotStorage?.[kind]?.[property] !== undefined) return kind;
+	const groups = Object.values(ctx.seats?.[kind] ?? {}).flatMap((byKind) => Object.values(byKind).filter((seat) => seat.shape === 'flatten').map((seat) => seat.kind));
+	return groups.find((group) => ctx.slotStorage?.[group]?.[property] !== undefined) ?? kind;
+}
+
 function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unknown {
 	if (!isPlainObject(config)) return config;
 	const out: Record<string, unknown> = {};
 	for (const [property, value] of Object.entries(config)) {
-		if (ctx.slotStorage?.[kind]?.[property] === 'boolean') {
+		const owner = keyOwner(kind, property, ctx);
+		if (ctx.slotStorage?.[owner]?.[property] === 'boolean') {
 			out[property] = value === undefined || value === false || value === null ? undefined : true;
 			continue;
 		}
-		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
-		const storage = ctx.slotStorage?.[kind]?.[property];
+		const kinds = ctx.slotKinds?.[owner]?.[property] ?? [];
+		const storage = ctx.slotStorage?.[owner]?.[property];
 		const wrap = (v: unknown): unknown => {
 			const text = textLeafValue(v);
 			if (text === undefined) return v;
-			if (bareTextAdmitted(kind, property, text, ctx)) return text;
-			return printVerbatimText(text, textLeafOfSlot(kind, property, text, ctx), ctx, kinds, storage);
+			if (bareTextAdmitted(owner, property, text, ctx)) return text;
+			return printVerbatimText(text, textLeafOfSlot(owner, property, text, ctx), ctx, kinds, storage);
 		};
 		out[property] = loosenAt(kind, property, Array.isArray(value) ? value.map(wrap) : wrap(value), ctx);
 	}
 	return out;
 }
 
-const BRANCH_MODEL_TYPES: ReadonlySet<string> = new Set(['branch', 'envelope', 'polymorph', 'list']);
+const BRANCH_MODEL_TYPES: ReadonlySet<string> = new Set(['branch', 'lexedPattern', 'envelope', 'polymorph', 'list']);
 
 function expandSlotKinds(kinds: readonly string[], facts: ModelFacts, ctx: PrintContext): string[] {
 	const out: string[] = [];
@@ -546,6 +553,7 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 				out = { ...(out as Record<string, unknown>), [key]: wrapTextLeaves(seat.kind, value, ctx) };
 				continue;
 			}
+			if (seat.shape === 'flatten') continue;
 			out = wrapTextLeaves(seat.kind, out, ctx);
 		}
 	}
@@ -628,6 +636,11 @@ export function printingFactoryMap(
 				}
 				case 'direct':
 				case 'forwarded': {
+					const target = ctx.facts.forwardsTo[kind];
+					if (target !== undefined && ctx.irPathOfKind(target) === undefined && (realShapes[target] === 'spread' || realShapes[target] === 'elements')) {
+						const argSource = args.map((a) => printValue(wrapDirectArg(target, a, ctx), ctx, 0)).join(', ');
+						return new Printed(id, `${spelled()}(${argSource})`, kind, argSource, { elements: { items: args } });
+					}
 					const placed = placeDirectArg(kind, args[0], ctx);
 					const value = placed.loose;
 					const ownedList = ownedListArgs(kind, value, ctx);

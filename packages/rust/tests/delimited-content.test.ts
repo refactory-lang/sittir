@@ -5,28 +5,46 @@ import { createEngine } from '@sittir/common';
 const rs = await createEngine(rust);
 const b = rs.build;
 
-const raw = (start: string, content: string, end: string) =>
-	b.rawStringLiteral({
-		rawStringLiteralStart: b.rawStringLiteralStart(start),
-		stringContent: b.rawStringLiteralContent(content),
-		rawStringLiteralEnd: b.rawStringLiteralEnd(end)
-	});
+const raw = (prefix: 'r' | 'br' | 'cr', content: string) => String(b.rawStringLiteral({ prefix, stringContent: b.rawStringLiteralContent(content) }).$render());
 
-describe('a raw string whose content or hashes would not read back as one literal', () => {
+describe('a built raw string takes the shortest hash run its content fits', () => {
 	it.each([
-		['content closes it early', 'r"', 'x" + y + r"', '"'],
-		['a longer close than open', 'r#"', 'x', '"##'],
-		['a shorter close than open', 'r##"', 'x', '"#']
-	])('refuses %s', (_why, start, content, end) => {
-		expect(() => raw(start, content, end)).toThrow(/raw_string_literal: content .* cannot sit between/);
+		['r', 'abc', 'r"abc"'],
+		['r', 'a#b', 'r"a#b"'],
+		['r', 'a"b', 'r#"a"b"#'],
+		['br', 'a"#b', 'br##"a"#b"##'],
+		['cr', 'foo #"# bar', 'cr##"foo #"# bar"##'],
+		['r', 'x" + y + r"', 'r#"x" + y + r""#']
+	] as const)('%s %j renders %j', (prefix, content, expected) => {
+		expect(raw(prefix, content)).toBe(expected);
 	});
+});
 
-	it.each([
-		['r"', 'abc', '"'],
-		['r#"', 'a#b', '"#'],
-		['r##"', 'foo #"# bar', '"##']
-	])('accepts %j %j %j', (start, content, end) => {
-		expect(raw(start, content, end).$render()).toBe(`${start}${content}${end}`);
+describe('a read raw string keeps the hashes it was read with while its content fits them', () => {
+	it.each(['fn f() { let x = r##"a"##; }\n', 'fn f() { let x = br#"a"b"#; }\n'])('round-trips %j', (source) => {
+		expect(rs.render(rs.parse(source)).toString()).toBe(source);
+	});
+});
+
+describe('a hash run carried from a read', () => {
+	const read = (source: string) =>
+		(rs.parse(source) as unknown as { statements(): readonly { value(): { readonly $with: { stringContent(content: unknown): { $render(): unknown } } } }[] }).statements()[0]!.value();
+
+	it('stays while the edited content fits it, and grows when the content gains its closer', () => {
+		const string = read('const X: &str = r#"a"#;\n');
+		expect(String(string.$with.stringContent(b.rawStringLiteralContent('b')).$render())).toBe('r#"b"#');
+		expect(String(string.$with.stringContent(b.rawStringLiteralContent('x"#y')).$render())).toBe('r##"x"#y"##');
+	});
+});
+
+describe("a raw string's prefix reads as its member and builds back", () => {
+	it.each(['r"a"', 'br#"a"b"#', 'cr##"a"#b"##'])('%s', (source) => {
+		const read = (rs.parse(`const X: &str = ${source};\n`) as unknown as {
+			statements(): readonly { value(): { prefix(): 'r' | 'br' | 'cr'; stringContent(): { $text(): string } } }[];
+		}).statements()[0]!.value();
+		expect(source.startsWith(read.prefix())).toBe(true);
+		const built = b.rawStringLiteral({ prefix: read.prefix(), stringContent: b.rawStringLiteralContent(read.stringContent().$text()) });
+		expect(String(built.$render())).toBe(source);
 	});
 });
 

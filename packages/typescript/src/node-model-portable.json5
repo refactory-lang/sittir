@@ -3368,7 +3368,8 @@
                 "decorator"
               ],
               "terminals": []
-            }
+            },
+            "list": true
           }
         ]
       }
@@ -10039,6 +10040,27 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.call.construct.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "present",
+                  "slots": {
+                    "256": 2
+                  }
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -15379,9 +15401,45 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.yield.delegate",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  414
+                ],
+                "slots": {
+                  "236": 0
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "yield_expression",
+              "slot": "expression"
+            },
+            {
+              "owner": "yield_expression_delegate",
+              "slot": "expression"
+            }
+          ]
+        },
         {
           "name": "expression",
           "route": "slot",
@@ -15406,28 +15464,6 @@
     },
     "yield_expression_delegate": {
       "vocab": "expression.yield.delegate",
-      "read": [
-        {
-          "vocab": "expression.yield.delegate",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "yield_expression_delegate",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -15460,9 +15496,9 @@
       },
       {
         "depth": 4,
-        "paths": 68,
-        "kinds": 24,
-        "refinements": 40
+        "paths": 69,
+        "kinds": 25,
+        "refinements": 41
       },
       {
         "depth": 5,

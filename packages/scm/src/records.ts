@@ -7,7 +7,7 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
 	ProgramNode: { words: 4, definitions: { word: 2, width: 2, run: 5 } },
-	EscapeSequenceNode: { words: 6, content: { word: 2, width: 4 } },
+	EscapeSequenceNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	IdentifierNode: { words: 2 },
 	ImmediateIdentifierNode: { words: 2 },
 	CaptureNode: { words: 7, name: { word: 2, width: 5 } },
@@ -15,7 +15,7 @@ export const records = {
 	ImmediateStringNode: { words: 7, string_content: { word: 2, width: 5 } },
 	StringContentNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
 	ParametersNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	CommentNode: { words: 6, content: { word: 2, width: 4 } },
+	CommentNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	ListNode: { words: 6, definitions: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
 	GroupingNode: { words: 6, grouping_group: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
 	MissingNodeNode: { words: 9, name: { word: 2, width: 5 }, elements: { word: 7, width: 2, run: 5 } },

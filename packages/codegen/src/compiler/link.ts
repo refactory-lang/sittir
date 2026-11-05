@@ -60,7 +60,7 @@ import type {
 	DisplayUnions
 } from './types.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
-import { structureTokenInterior } from './token-interior.ts';
+import { stampSpellings, structureTokenInterior } from './token-interior.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -209,6 +209,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	Object.assign(rules, stamped);
 
 	structureTokenInterior(rules, linkCtx.diagnostics);
+	stampSpellings(rules, raw.spellings);
 
 	const groupsConfig = raw.groups ?? {};
 	if (Object.keys(groupsConfig).length > 0) {
@@ -857,6 +858,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
+	spellings: renameMap(raw.spellings),
 		groups:
 			raw.groups === undefined
 				? undefined

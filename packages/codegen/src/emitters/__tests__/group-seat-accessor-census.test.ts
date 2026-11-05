@@ -1,10 +1,9 @@
-import { collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
+import type { KindEnumEntry } from '../kind-discriminant.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
-import { compileGrammar } from '../../compiler/compile.ts';
-import { grammarPackage } from '../../grammars.ts';
 import { AssembledList } from '../../compiler/model/node-map.ts';
+import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
 import { elementConfigsOf, groupSeatHints, listSlotHints } from '../factories.ts';
 
 const read = (grammar: string, file: string): string => readFileSync(`packages/${grammar}/src/${file}`, 'utf8');
@@ -41,14 +40,14 @@ const flatStamps = (source: string): ReadonlyMap<string, readonly string[]> =>
 	);
 
 const GRAMMARS = ['rust', 'python', 'typescript'] as const;
-const nodeMaps: Record<string, Awaited<ReturnType<typeof compileGrammar>>['nodeMap']> = {};
+const nodeMaps: Record<string, Awaited<ReturnType<typeof emitReadyModel>>['nodeMap']> = {};
 const kindEntriesOf: Record<string, readonly KindEnumEntry[]> = {};
 
 for (const grammar of GRAMMARS) {
 	beforeAll(async () => {
-		const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage(grammar) });
+		const { nodeMap, kindEntries } = await emitReadyModel(grammar);
 		nodeMaps[grammar] = nodeMap;
-		kindEntriesOf[grammar] = collectKindEntries(nodeMap, generatedIdTables);
+		kindEntriesOf[grammar] = kindEntries;
 	}, FULL_PIPELINE_TIMEOUT);
 }
 
@@ -83,9 +82,9 @@ describe('a group seat flattens exactly the group fields its config surface name
 					}
 				}
 			}
-			const hints = seated.flatMap(({ hints }) => hints);
+			const keyed = seated.flatMap(({ hints }) => hints).filter((hint) => hint.keys.length > 0);
 			for (const file of ['wrap.ts', 'factories/raw.ts']) {
-				expect([...read(grammar, file).matchAll(/const readGroup_\w+ = /g)]).toHaveLength(hints.length);
+				expect([...read(grammar, file).matchAll(/const readGroup_\w+ = /g)]).toHaveLength(keyed.length);
 			}
 		});
 	}

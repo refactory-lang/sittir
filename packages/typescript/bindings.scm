@@ -271,6 +271,7 @@
 (call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
 (new_expression constructor: (_)? @function) @expression.call.new
+(new_expression !arguments) @expression.call.new.bare
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract

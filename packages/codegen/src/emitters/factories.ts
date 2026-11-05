@@ -8,7 +8,7 @@ import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../d
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
+import { buildableMembersOf, delimiterPreferenceOf, holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes, spelledReadOf } from '../compiler/model/node-map.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
@@ -57,7 +57,11 @@ import {
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
+	arrayTypeOf,
 	DELIMITER_IMPORT,
+	finalSeatOf,
+	parenthesizeUnion,
+	slotListTypeOf,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -114,7 +118,8 @@ import {
 	refuseUndeclared,
 	refusingParam,
 	withTrailingParam,
-	type RefusingParams
+	type RefusingParams,
+	spelledReadImports
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -155,6 +160,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 		}
 		if (node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
+		if (delimiterPreferenceOf(node) !== undefined) imports.add('preferredFacet');
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		if (numericSlotKeys(node).length > 0 || numericLeafShape(kind, node) !== undefined) imports.add('numberText');
@@ -1021,14 +1027,17 @@ export function restSetterType(
 	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	if (!isMultiple(f)) return undefined;
-	const elemType = withHoles(
+	return slotListTypeOf(
 		f,
-		resolveFieldStorageInfo(f, nodeMap).kind === 'verbatim'
-			? constructionFieldElementType(f, nodeMap, kindEntries)
-			: `NonNullable<NonNullable<${configType}>['${f.propertyName}']>[number]`
+		(s) =>
+			withHoles(
+				s,
+				resolveFieldStorageInfo(s, nodeMap).kind === 'verbatim'
+					? constructionFieldElementType(s, nodeMap, kindEntries)
+					: `NonNullable<NonNullable<${configType}>['${s.propertyName}']>[number]`
+			),
+		'mutable'
 	);
-	if (isNonEmpty(f)) return `NonEmptyArray<${elemType}>`;
-	return `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`;
 }
 
 export function slotSetter(
@@ -1057,7 +1066,7 @@ function fieldCarryingBuiltTypeSurface(
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [
-			{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, withHoles(spreadFacts.slot, surface.elementType!)), optional: false, rest: true },
+			{ name: spreadFacts.slot.propertyName, input: slotListTypeOf(spreadFacts.slot, (s) => withHoles(s, spreadElementType(s, nodeMap, kindEntries)), 'mutable'), optional: false, rest: true },
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	} else if (singleField) {
@@ -1163,11 +1172,18 @@ export function builtTypeSurfaceOf(
 	}
 }
 
+function buildableSpellingType(slot: AssembledNonterminal): string | undefined {
+	return buildableMembersOf(slot)?.map((member) => JSON.stringify(member)).join(' | ');
+}
+
 export function constructionChildElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
+	const [sole] = node.children;
+	const spelled = node.children.length === 1 && sole !== undefined ? buildableSpellingType(sole) : undefined;
+	if (spelled !== undefined) return spelled;
 	const base = childElementType(node, nodeMap, kindEntries);
 	const admitted = admittedTypes(node.children, nodeMap);
 	return admitted.length === 0 ? base : `(${[base, ...admitted].join(' | ')})`;
@@ -1178,6 +1194,8 @@ export function constructionFieldElementType(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
+	const spelled = buildableSpellingType(f);
+	if (spelled !== undefined) return spelled;
 	const type = withAdmittedTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	const shape = numericSlotShape(f);
 	return shape === undefined ? type : `${type} | ${numberInputType(shape)}`;
@@ -1365,7 +1383,10 @@ function registeredSlotSource(
 	if (slot.registeredOption === 'choice') {
 		return storedSlotValueExpr(slot, blankFromInput(hasBlankArm(slot), `options?.${slot.propertyName}`), nodeMap, kindEntries, node.typeName, true);
 	}
-	const value = `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
+	const value =
+		slot.delimiterRole !== undefined || slot.optionDefaultArm === undefined
+			? `options?.${slot.propertyName}`
+			: `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
 	const present = (peers ?? [])
 		.map((name) => node.slots.find((candidate) => candidate.name === name))
@@ -1380,7 +1401,8 @@ export function omitRegistered(type: string, node: { readonly slots: readonly As
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
-	const registered = registeredSlots(node);
+	const preference = delimiterPreferenceOf(node);
+	const registered = [...registeredSlots(node), ...(preference === undefined ? [] : [preference.facet])];
 	if (registered.length === 0) return undefined;
 	return `{ ${registered.map((slot) => `readonly ${slot.propertyName}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}${hasBlankArm(slot) ? ' | null' : ''}`).join('; ')} }`;
 }
@@ -1410,6 +1432,10 @@ function resolveFactorySurface(
 	};
 }
 
+function spreadElementType(slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
+	return constructionChildElementType({ children: [slot] }, nodeMap, kindEntries);
+}
+
 function resolveConfigFactorySurface(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
@@ -1419,19 +1445,21 @@ function resolveConfigFactorySurface(
 		isAuthoredCompound(node) && factoryTakesSpreadChildren(node, nodeMap) ? soleSlotFacts(node, nodeMap) : null;
 	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 	if (spreadFacts) {
-		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
+		const elementType = spreadElementType(spreadFacts.slot, nodeMap, kindEntries);
 		const looseChild = childElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const looseElement = [...new Set([looseChild, coercedChildElementType(spreadFacts.slot, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
+			const looseElementOf = (s: AssembledNonterminal): string =>
+				[...new Set([childElementType({ children: [s] }, nodeMap, kindEntries), coercedChildElementType(s, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
+			const strictOf = (s: AssembledNonterminal): string => spreadElementType(s, nodeMap, kindEntries);
 			const param = refusingWhole(
 				{
 					label: 'children',
 					optional: false,
 					rest: true,
-					strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
-					looseType: elementsTypeOf(nonEmpty, looseElement),
-					rowLooseType: elementsTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`),
+					strictType: slotListTypeOf(spreadFacts.slot, (s) => (nonEmpty ? admitNodes(strictOf(s)) : strictOf(s)), 'mutable'),
+					looseType: slotListTypeOf(spreadFacts.slot, looseElementOf, 'mutable'),
+					rowLooseType: slotListTypeOf(spreadFacts.slot, (s) => `T.${node.typeName}.Loose | ${looseElementOf(s)}`, 'mutable'),
 					...(nonEmpty ? {} : { admitsNodes: true as const })
 				}
 			);
@@ -1672,6 +1700,7 @@ export function constructorSurface(
 		}
 		case 'envelope':
 		case 'branch':
+		case 'lexedPattern':
 		case 'polymorph':
 		case 'alias': {
 			if (target instanceof AssembledSupertype) return undefined;
@@ -1735,7 +1764,13 @@ export function compoundStructureRow(
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
-	return structureRow(node.kind, { required, single, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
+	const final = stored.flatMap((f) => {
+		const seat = finalSeatOf(f);
+		if (seat === undefined) return [];
+		const label = `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`;
+		return [[f.storageKey, label, slotNodeKindIds(seat.rest, nodeMap) ?? [], slotNodeKindIds(seat.last, nodeMap) ?? []] as const];
+	});
+	return structureRow(node.kind, { required, single, nonEmpty, final, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
 }
 
 function slotStorageChecks(
@@ -1838,12 +1873,11 @@ function emitFieldCarryingFactory(
 
 	if (spreadFacts) {
 		slotsToEmit = emittedSlots(slots, spreadFacts, registeredSet);
-		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		setters = [
-			{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
+			{ name: setter, params: `...vs: ${slotListTypeOf(spreadFacts.slot, (s) => admitNodes(spreadElementType(s, nodeMap, kindEntries)), 'mutable')}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
 			...spellingWith((patch) => `${fn}(${patch}, ...children)`)
 		];
 	} else if (singleField) {
@@ -1860,9 +1894,13 @@ function emitFieldCarryingFactory(
 		];
 	} else {
 		const configAccess = 'config';
-		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
+		const preference = delimiterPreferenceOf(node);
+		valueSourceFor = (f) => {
+			const stored = slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
+			return f === preference?.open ? `preferredFacet(${stored}, ${JSON.stringify(preference.facet.propertyName)}, options?.${preference.facet.propertyName})` : stored;
+		};
 		setters = [];
-		const optionsArg = registered.length === 0 ? '' : ', options';
+		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
@@ -2210,25 +2248,6 @@ function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): st
 	return `T.${node.typeName}.Config`;
 }
 
-function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
-	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
-}
-
-function hasTopLevelUnion(type: string): boolean {
-	let depth = 0;
-	for (let i = 0; i < type.length; i++) {
-		const ch = type[i]!;
-		if (ch === '<' || ch === '(' || ch === '{' || ch === '[') depth++;
-		else if (ch === '>' || ch === ')' || ch === '}' || ch === ']') depth--;
-		else if (depth === 0 && type.startsWith(' | ', i)) return true;
-	}
-	return false;
-}
-
-function parenthesizeUnion(elemType: string): string {
-	return hasTopLevelUnion(elemType) ? `(${elemType})` : elemType;
-}
-
 export function listOptionKeys(surface: {
 	readonly hasSeparatorKindOption: boolean;
 	readonly hasDelimiterOption: boolean;
@@ -2554,7 +2573,7 @@ function storedAccessor(
 	nodeMap: NodeMap
 ): StoredAccessor {
 	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
-	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
+	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one', ...(spelledReadOf(slot) === undefined ? {} : { slot }) };
 }
 
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly string[] {
@@ -2629,7 +2648,7 @@ export function separatedListSurface(
 	}
 	const strictElemType = admitNodes(elemType);
 	const elemTypeForArray = strictElemType;
-	const elementsType = elementsTypeOf(node.nonEmpty, strictElemType);
+	const elementsType = arrayTypeOf(node.nonEmpty, strictElemType, 'mutable');
 	return {
 		elemType,
 		storageElemType: baseElemType,
@@ -2637,10 +2656,10 @@ export function separatedListSurface(
 		strictElemType,
 		looseElemTypeForArray: parenthesizeUnion(looseElemType),
 		elementsType,
-		rawElementsType: elementsTypeOf(node.nonEmpty, elemType),
+		rawElementsType: arrayTypeOf(node.nonEmpty, elemType, 'mutable'),
 		...listOptionParts(node, nodeMap, kindEntries),
 		wrapper,
-		storageElementsType: node.nonEmpty ? `NonEmptyArray<${baseElemType}>` : `${parenthesizeUnion(baseElemType)}[]`
+		storageElementsType: arrayTypeOf(node.nonEmpty, baseElemType, 'mutable')
 	};
 }
 
@@ -2752,15 +2771,20 @@ function emitSeparatedListFactory(
 		}
 		lines.push('  const _separator = options.separator;');
 	}
+	const soleTrailing = hasDelimiterOption && node.singleElementNeedsTrailing;
 	if (hasDelimiterOption) {
 		lines.push('  const _delimiter = options.delimiter;');
+	}
+	if (soleTrailing) {
+		lines.push(`  if (elements.length === 1 && _delimiter === Delimiter.None) throw new Error('${node.kind}: one element always spells its trailing separator, so its delimiter is never None');`);
 	}
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	{
 		const view = listSelfViewParts(plan.viewPlan!, contentStorageKey, contentAccessorName, 'factory');
 		const optionsArg = hasOptions ? 'options, ' : '';
-		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
+		const carried = soleTrailing ? '(vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options), ' : optionsArg;
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${carried}...vs)` }];
 		if (hasSeparatorKindOption) {
 			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: `${fn}({ ...options, separator: v }, ...elements)` });
 		}
@@ -2880,7 +2904,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'nodeJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'nodeJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
@@ -2964,6 +2988,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'envelope':
 			case 'branch':
+			case 'lexedPattern':
 				this.emitBranch(node);
 				break;
 			case 'polymorph':

@@ -42,13 +42,17 @@ export type StepAnchor = 'first' | 'last' | 'only';
 /**
  * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
  * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
- * `holds` evaluates. An `is` leaf tests the kinds of the values its slot holds, or the stamped kind of the node itself, and a
- * `child` step evaluates its condition on the nodes its slot holds, narrowed by its anchor.
+ * `holds` evaluates. An `is` leaf tests the kinds of the values its slot holds, or the stamped kind of the node itself, a
+ * `count` leaf holds when its slot holds at least `min` values, a `delimiter` leaf holds when the node is a list whose
+ * delimiter flags hold one of `delimiter`'s (`Delimiter`), and a `child` step evaluates its condition on the nodes its slot
+ * holds, narrowed by its anchor.
  */
 export type QueryPlan<S extends QuerySubject = SlotSubject> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
 	| ({ readonly op: 'present' } & SlotSubject)
+	| ({ readonly op: 'count'; readonly min: number } & SlotSubject)
+	| { readonly op: 'delimiter'; readonly delimiter: number }
 	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotSubject)
 	| ({ readonly op: 'is'; readonly types: readonly number[] } & (S | SelfText))
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }

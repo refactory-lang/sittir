@@ -6,6 +6,7 @@ import { role as roleImpl } from './primitives/role.ts';
 import { refine as refineImpl, type FormMap, type RefinePlaceholder } from './primitives/refine.ts';
 import { edit as editImpl, replace as replaceImpl } from './transform/transform.ts';
 import { copy as copyImpl } from './primitives/copy.ts';
+import { spellings as spellingsImpl, type SpellingOptions, type SpellingRule } from './primitives/spellings.ts';
 import type { PatchMap } from './wire/wire.ts';
 import type {
 	FieldRule,
@@ -66,6 +67,9 @@ interface AuthoringRefine {
 	<R extends AuthoringRule>(original: R, forms: FormMap): R;
 }
 export const refine = refineImpl as unknown as AuthoringRefine;
+
+export type { SpellingOptions, SpellingRule } from './primitives/spellings.ts';
+export const spellings = spellingsImpl as unknown as (members: Readonly<Record<string, SpellingRule>>, options?: SpellingOptions) => AuthoringRule;
 
 interface AuthoringEdit {
 	<R extends AuthoringRule>(previous: R, ...sets: readonly PatchMap[]): R;

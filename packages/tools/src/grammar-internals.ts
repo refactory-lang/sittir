@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
 import type { ReparseHosts } from '@sittir/common';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
-import type { QuerySlots, TriviaFacts } from '@sittir/types';
+import type { PortableBuildTable, QuerySlots, TriviaFacts } from '@sittir/types';
 
 export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
 export type Hydrate = (value: unknown, tree: TreeHandle, depth?: number) => unknown;
@@ -26,6 +26,7 @@ export interface GrammarModules {
 	'consts.ts': { readonly TOKEN_INTERIORS: Readonly<Record<string, TokenInterior>> };
 	'reparse-hosts.ts': { readonly REPARSE_HOSTS: ReparseHosts };
 	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
+	'portable-build.ts': { readonly build: PortableBuildTable };
 }
 
 const DECLARED_EXPORTS = {
@@ -36,7 +37,8 @@ const DECLARED_EXPORTS = {
 	'ir-strict.ts': ['ir'],
 	'consts.ts': ['TOKEN_INTERIORS'],
 	'reparse-hosts.ts': ['REPARSE_HOSTS'],
-	'utils.ts': ['triviaFacts', 'querySlots']
+	'utils.ts': ['triviaFacts', 'querySlots'],
+	'portable-build.ts': ['build']
 } as const satisfies { readonly [K in keyof GrammarModules]: readonly (keyof GrammarModules[K] & string)[] };
 
 export type GrammarFile = keyof GrammarModules | 'node-model.json5';

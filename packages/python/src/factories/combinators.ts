@@ -50,23 +50,6 @@ export const importFromStatement$parenthesizedImportList =
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
 
-export const printStatementChevron$printChevronArguments =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'> & { printChevronArguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { printChevronArguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)(
-			{ ...rest, printChevronArguments: _c(child)(...seated) } as never,
-			options as never
-		);
-	};
-export const printStatementChevron$comma =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, printChevronArguments: value } as never, options as never);
-
 export const printStatement$chevron =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -75,24 +58,41 @@ export const printStatement$plain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const printStatement$chevron$printChevronArguments =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const printStatement$chevron$comma =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
-export const subscript$subscripts = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+export const string$flatten$stringStart =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = { prefix: 'prefix' };
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, stringStart: _c(child)(inner['prefix']) }, options);
+	};
+export const string$flatten$stringEnd =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config?: unknown, options?: unknown): ReturnType<PF> => {
+		const keys: Record<string, string> = {};
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config ?? {}))) {
+			if (Object.hasOwn(keys, key)) inner[keys[key]!] = value;
+			else rest[key] = value;
+		}
+		return _fwd<ReturnType<PF>>(parent, { ...rest, stringEnd: _c(child)(inner) }, options);
+	};
+
+export const subscript$index = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
 	return (config?: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['subscripts'];
+		const seat = _o(config)['index'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subscripts: _c(child)(...seat) }, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), index: _c(child)(...seat) }, options);
 	};
 };
 
@@ -123,18 +123,15 @@ export const namedExpression$identifier =
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
 
-export const matchStatement$subjects = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
+export const matchStatement$subject = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
 	return (config?: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['subjects'];
+		const seat = _o(config)['subject'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subjects: _c(child)(...seat) }, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subject: _c(child)(...seat) }, options);
 	};
 };
 

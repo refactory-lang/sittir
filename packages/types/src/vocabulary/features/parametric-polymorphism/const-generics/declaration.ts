@@ -6,6 +6,7 @@ export namespace Declaration {
 		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.type_parameter.value';
+			readonly const?: never;
 			readonly default?: G['slots']['declaration.type_parameter.value']['default'];
 			readonly name: G['identifier'];
 			readonly type: G['slots']['declaration.type_parameter.value']['type'];

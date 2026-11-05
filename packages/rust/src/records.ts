@@ -316,8 +316,8 @@ export const records = {
 	LineCommentNode: { words: 7, content: { word: 2, width: 5 } },
 	BlockCommentNode: { words: 7, content: { word: 2, width: 5 } },
 	IdentifierNode: { words: 2 },
-	ShebangNode: { words: 6, content: { word: 2, width: 4 } },
-	MetavariableNode: { words: 6, name: { word: 2, width: 4 } },
+	ShebangNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	MetavariableNode: { words: 10, name: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	MacroRulesNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	EnumVariantListElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	FieldDeclarationListElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
@@ -339,20 +339,65 @@ export const records = {
 	UseWildcardGroupNode: { words: 7, path: { word: 2, width: 5 } },
 	TokenRepetitionPatternTextNode: { words: 2 },
 	StringOpenNode: { words: 2 },
-	IntegerLiteralDecimalNode: { words: 10, content: { word: 2, width: 4 }, suffix: { word: 6, width: 4 } },
-	IntegerLiteralHexNode: { words: 10, content: { word: 2, width: 4 }, suffix: { word: 6, width: 4 } },
-	IntegerLiteralBinaryNode: { words: 10, content: { word: 2, width: 4 }, suffix: { word: 6, width: 4 } },
-	IntegerLiteralOctalNode: { words: 10, content: { word: 2, width: 4 }, suffix: { word: 6, width: 4 } },
-	CharLiteralPlainNode: { words: 7, byte: { word: 2, bit: 0 }, content: { word: 3, width: 4 } },
+	IntegerLiteralDecimalNode: {
+		words: 14,
+		content: { word: 2, width: 4 },
+		suffix: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	IntegerLiteralHexNode: {
+		words: 14,
+		content: { word: 2, width: 4 },
+		suffix: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	IntegerLiteralBinaryNode: {
+		words: 14,
+		content: { word: 2, width: 4 },
+		suffix: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	IntegerLiteralOctalNode: {
+		words: 14,
+		content: { word: 2, width: 4 },
+		suffix: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	CharLiteralPlainNode: {
+		words: 11,
+		byte: { word: 2, bit: 0 },
+		content: { word: 3, width: 4 },
+		verbatim: { word: 7, width: 4 }
+	},
 	CharLiteralEmptyNode: { words: 2 },
-	CharLiteralEscapedSimpleNode: { words: 7, byte: { word: 2, bit: 0 }, content: { word: 3, width: 4 } },
-	CharLiteralEscapedUnicodeFixedNode: { words: 7, byte: { word: 2, bit: 0 }, content: { word: 3, width: 4 } },
-	CharLiteralEscapedUnicodeBracedNode: { words: 7, byte: { word: 2, bit: 0 }, content: { word: 3, width: 4 } },
-	CharLiteralEscapedHexNode: { words: 7, byte: { word: 2, bit: 0 }, content: { word: 3, width: 4 } },
-	EscapeSequenceSimpleNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceUnicodeFixedNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceUnicodeBracedNode: { words: 6, content: { word: 2, width: 4 } },
-	EscapeSequenceHexNode: { words: 6, content: { word: 2, width: 4 } },
+	CharLiteralEscapedSimpleNode: {
+		words: 11,
+		byte: { word: 2, bit: 0 },
+		content: { word: 3, width: 4 },
+		verbatim: { word: 7, width: 4 }
+	},
+	CharLiteralEscapedUnicodeFixedNode: {
+		words: 11,
+		byte: { word: 2, bit: 0 },
+		content: { word: 3, width: 4 },
+		verbatim: { word: 7, width: 4 }
+	},
+	CharLiteralEscapedUnicodeBracedNode: {
+		words: 11,
+		byte: { word: 2, bit: 0 },
+		content: { word: 3, width: 4 },
+		verbatim: { word: 7, width: 4 }
+	},
+	CharLiteralEscapedHexNode: {
+		words: 11,
+		byte: { word: 2, bit: 0 },
+		content: { word: 3, width: 4 },
+		verbatim: { word: 7, width: 4 }
+	},
+	EscapeSequenceSimpleNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceUnicodeFixedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceUnicodeBracedNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
+	EscapeSequenceHexNode: { words: 10, content: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	ArrayExpressionSemiNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
@@ -531,12 +576,17 @@ export const records = {
 		type_: { word: 9, width: 5 }
 	},
 	TypeArgumentNode: { words: 12, content: { word: 2, width: 5 }, trait_bounds: { word: 7, width: 5 } },
-	MatchBlockArmsNode: { words: 9, arms: { word: 2, width: 2, run: 5 }, last_arm: { word: 4, width: 5 } },
+	MatchBlockArmsNode: { words: 4, arms: { word: 2, width: 2, run: 5 } },
 	FloatLiteralNode: { words: 2 },
 	StringContentNode: { words: 2 },
 	RawStringLiteralContentNode: { words: 2 },
-	RawStringLiteralStartNode: { words: 2 },
-	RawStringLiteralEndNode: { words: 2 },
+	RawStringLiteralStartNode: {
+		words: 14,
+		prefix: { word: 2, width: 4 },
+		hashes: { word: 6, width: 4 },
+		verbatim: { word: 10, width: 4 }
+	},
+	RawStringLiteralEndNode: { words: 10, hashes: { word: 2, width: 4 }, verbatim: { word: 6, width: 4 } },
 	DocCommentNode: { words: 2 },
 	BlockCommentContentNode: { words: 2 },
 	TraitInterfaceDeclarationBodyNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },

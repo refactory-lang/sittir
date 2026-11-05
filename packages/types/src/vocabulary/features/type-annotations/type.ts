@@ -62,7 +62,13 @@ export namespace Type {
 		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {
 			// claimed by t
 			readonly $kind: 'type.function.constructor';
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly parameters: (
+				| V.Declaration.Parameter<G>
+				| V.Declaration.Parameter.Private<G>
+				| V.Declaration.Parameter.Protected<G>
+				| V.Declaration.Parameter.Public<G>
+				| V.Declaration.Parameter.Receiver<G>
+			)[];
 			readonly type: G['slots']['type.function.constructor']['type'];
 		}
 	}
@@ -74,9 +80,6 @@ export namespace Type {
 		readonly type?: G['slots']['type.generic']['type'];
 		// r only
 		readonly typeArguments?: G['slots']['type.generic']['typeArguments'][];
-		// rt only
-		readonly typeParameter?: V.Declaration.TypeParameter<G>;
-		// p only
 	}
 	export namespace Generic {
 		export interface Turbofish<G extends GrammarContext<G>> extends SubKindOf<V.Type.Generic<G>> {
@@ -216,12 +219,6 @@ export namespace Type {
 		// claimed by pt
 		readonly $kind: 'type.rest';
 		readonly type: G['slots']['type.rest']['type'];
-	}
-	export namespace Rest {
-		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Type.Rest<G>> {
-			// claimed by p
-			readonly $kind: 'type.rest.map';
-		}
 	}
 	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t

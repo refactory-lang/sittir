@@ -79,14 +79,14 @@ describe('import_prefix', () => {
 describe('relative_import', () => {
 	it('factory produces correct type', () => {
 		const node = ir.relativeImport({
-			prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+			dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RelativeImport);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.relativeImport({
-			prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+			dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -178,7 +178,7 @@ describe('import_from_statement', () => {
 				$type: TSKindId.RelativeImport,
 				$text: 'test',
 				$named: true,
-				_prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+				_dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 			}) as any,
 			content: stampBuilt({ $type: TSKindId.WildcardImport, $text: '*', $named: true }) as any
 		});
@@ -191,7 +191,7 @@ describe('import_from_statement', () => {
 				$type: TSKindId.RelativeImport,
 				$text: 'test',
 				$named: true,
-				_prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+				_dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 			}) as any,
 			content: stampBuilt({ $type: TSKindId.WildcardImport, $text: '*', $named: true }) as any
 		});
@@ -207,7 +207,7 @@ describe('import_from_statement sub-factories', () => {
 				$type: TSKindId.RelativeImport,
 				$text: 'test',
 				$named: true,
-				_prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+				_dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportFromStatement);
@@ -221,7 +221,7 @@ describe('import_from_statement sub-factories', () => {
 				$type: TSKindId.RelativeImport,
 				$text: 'test',
 				$named: true,
-				_prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+				_dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 			}) as any,
 			content: [
 				stampBuilt({
@@ -242,7 +242,7 @@ describe('import_from_statement sub-factories', () => {
 				$type: TSKindId.RelativeImport,
 				$text: 'test',
 				$named: true,
-				_prefix: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
+				_dots: stampBuilt({ $type: TSKindId.ImportPrefix, $text: 'test', $named: true }) as any
 			}) as any,
 			content: stampBuilt({
 				$type: TSKindId.ImportList,
@@ -342,7 +342,7 @@ describe('print_statement', () => {
 					$named: true,
 					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any,
-				_print_chevron_arguments: stampBuilt({
+				_arguments: stampBuilt({
 					$type: TSKindId.PrintChevronArguments,
 					$text: 'test',
 					$named: true,
@@ -365,7 +365,7 @@ describe('print_statement', () => {
 					$named: true,
 					_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any,
-				_print_chevron_arguments: stampBuilt({
+				_arguments: stampBuilt({
 					$type: TSKindId.PrintChevronArguments,
 					$text: 'test',
 					$named: true,
@@ -404,33 +404,6 @@ describe('print_statement sub-factories', () => {
 		);
 		expect(node.$type).toBe(TSKindId.PrintStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementPlain);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('chevron.printChevronArguments builds the parent', () => {
-		const node = ir.printStatement.chevron.printChevronArguments({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			printChevronArguments: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('chevron.comma builds the parent', () => {
-		const node = ir.printStatement.chevron.comma({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.PrintStatementChevron);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1306,29 +1279,41 @@ describe('else_clause', () => {
 describe('match_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchStatement({
-			subjects: stampBuilt({
+			subject: stampBuilt({
 				$type: TSKindId.Subjects,
 				$text: 'test',
 				$named: true,
-				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
-			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
+			body: stampBuilt({ $type: TSKindId.MatchBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchStatement);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.matchStatement({
-			subjects: stampBuilt({
+			subject: stampBuilt({
 				$type: TSKindId.Subjects,
 				$text: 'test',
 				$named: true,
-				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
-			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
+			body: stampBuilt({ $type: TSKindId.MatchBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('match_block', () => {
+	it('factory produces correct type', () => {
+		const node = ir.matchBlock();
+		expect(node.$type).toBe(TSKindId.MatchBlock);
+		expectBuiltNode(node);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.matchBlock();
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1884,13 +1869,8 @@ describe('exec_statement', () => {
 describe('type_alias_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeAliasStatement({
-			left: stampBuilt({
-				$type: TSKindId.Type,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			right: stampBuilt({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -1902,13 +1882,8 @@ describe('type_alias_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.typeAliasStatement({
-			left: stampBuilt({
-				$type: TSKindId.Type,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			right: stampBuilt({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -2359,9 +2334,7 @@ describe('case_pattern sub-factories', () => {
 	});
 	it('keywordPattern.string builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.string({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2375,9 +2348,15 @@ describe('case_pattern sub-factories', () => {
 					$type: TSKindId.String,
 					$text: 'test',
 					$named: true,
-					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 					_content: [],
-					_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+					_string_end: stampBuilt({
+						$type: TSKindId.StringEnd,
+						$text: 'test',
+						$named: true,
+						_content: '\\n',
+						_quote: '"'
+					}) as any
 				}) as any
 			]
 		});
@@ -2624,10 +2603,7 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.string builds the parent', () => {
-		const node = ir.casePattern.simplePattern.string({
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
-		});
+		const node = ir.casePattern.simplePattern.string({});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2638,9 +2614,15 @@ describe('case_pattern sub-factories', () => {
 				$type: TSKindId.String,
 				$text: 'test',
 				$named: true,
-				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 				_content: [],
-				_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+				_string_end: stampBuilt({
+					$type: TSKindId.StringEnd,
+					$text: 'test',
+					$named: true,
+					_content: '\\n',
+					_quote: '"'
+				}) as any
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.CasePattern);
@@ -3068,9 +3050,7 @@ describe('key_value_pattern sub-factories', () => {
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
-			}) as any,
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		expect((node as any).key()).toBeDefined();
@@ -3095,9 +3075,15 @@ describe('key_value_pattern sub-factories', () => {
 					$type: TSKindId.String,
 					$text: 'test',
 					$named: true,
-					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 					_content: [],
-					_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+					_string_end: stampBuilt({
+						$type: TSKindId.StringEnd,
+						$text: 'test',
+						$named: true,
+						_content: '\\n',
+						_quote: '"'
+					}) as any
 				}) as any
 			]
 		});
@@ -3521,9 +3507,7 @@ describe('keyword_pattern sub-factories', () => {
 	});
 	it('string builds the parent', () => {
 		const node = ir.keywordPattern.string({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).pattern()).toBeDefined();
@@ -3537,9 +3521,15 @@ describe('keyword_pattern sub-factories', () => {
 					$type: TSKindId.String,
 					$text: 'test',
 					$named: true,
-					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+					_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 					_content: [],
-					_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+					_string_end: stampBuilt({
+						$type: TSKindId.StringEnd,
+						$text: 'test',
+						$named: true,
+						_content: '\\n',
+						_quote: '"'
+					}) as any
 				}) as any
 			]
 		});
@@ -4273,11 +4263,11 @@ describe('subscript', () => {
 	it('factory produces correct type', () => {
 		const node = ir.subscript({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			subscripts: stampBuilt({
+			index: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
 				$named: true,
-				_subscript: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.Subscript);
@@ -4286,11 +4276,11 @@ describe('subscript', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.subscript({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			subscripts: stampBuilt({
+			index: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
 				$named: true,
-				_subscript: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_elements: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any
 		});
 		const rendered = node.$render!();
@@ -4492,10 +4482,7 @@ describe('type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('splatType builds the parent', () => {
-		const node = ir.type.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.type.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4591,20 +4578,15 @@ describe('type sub-factories', () => {
 
 describe('splat_type', () => {
 	it('factory produces correct type', () => {
-		const node = ir.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.SplatType);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.splatType({
-			operator: '*',
-			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+		const node = ir.splatType(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 
@@ -5157,9 +5139,15 @@ describe('concatenated_string', () => {
 				$type: TSKindId.String,
 				$text: 'test',
 				$named: true,
-				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 				_content: [],
-				_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+				_string_end: stampBuilt({
+					$type: TSKindId.StringEnd,
+					$text: 'test',
+					$named: true,
+					_content: '\\n',
+					_quote: '"'
+				}) as any
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.ConcatenatedString);
@@ -5171,33 +5159,31 @@ describe('concatenated_string', () => {
 				$type: TSKindId.String,
 				$text: 'test',
 				$named: true,
-				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
+				_string_start: stampBuilt({ $type: TSKindId.StringStart, $text: 'test', $named: true, _quote: '"' }) as any,
 				_content: [],
-				_string_end: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
+				_string_end: stampBuilt({
+					$type: TSKindId.StringEnd,
+					$text: 'test',
+					$named: true,
+					_content: '\\n',
+					_quote: '"'
+				}) as any
 			}) as any
 		);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('"');
 	});
 });
 
 describe('string', () => {
 	it('factory produces correct type', () => {
-		const node = ir.string({
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
-		});
+		const node = ir.string({});
 		expect(node.$type).toBe(TSKindId.String);
 		expectBuiltNode(node);
 	});
-	it('render produces non-empty string', () => {
-		const node = ir.string({
-			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
-			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
+	it('render does not throw on minimal config', () => {
+		const node = ir.string({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -5582,6 +5568,78 @@ describe('format_specifier_text', () => {
 	});
 });
 
+describe('type_params', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParams(
+			stampBuilt({
+				$type: TSKindId.TypeParamsItems,
+				$text: 'test',
+				$named: true,
+				_item: [
+					stampBuilt({
+						$type: TSKindId.TypeParamTypeVar,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+					}) as any
+				]
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.TypeParams);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParams(
+			stampBuilt({
+				$type: TSKindId.TypeParamsItems,
+				$text: 'test',
+				$named: true,
+				_item: [
+					stampBuilt({
+						$type: TSKindId.TypeParamTypeVar,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+					}) as any
+				]
+			}) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('type_params_items', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamsItems(
+			...[
+				stampBuilt({
+					$type: TSKindId.TypeParamTypeVar,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$type).toBe(TSKindId.TypeParamsItems);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamsItems(
+			...[
+				stampBuilt({
+					$type: TSKindId.TypeParamTypeVar,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+				}) as any
+			]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('tuple_pattern_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tuplePatternElements(
@@ -5745,37 +5803,6 @@ describe('print_statement_chevron', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('print_statement_chevron sub-factories', () => {
-	it('printChevronArguments builds the parent', () => {
-		const node = ir.printStatementChevron.printChevronArguments({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any,
-			printChevronArguments: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-		expect((node as any).printChevronArguments()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('comma builds the parent', () => {
-		const node = ir.printStatementChevron.comma({
-			chevron: stampBuilt({
-				$type: TSKindId.Chevron,
-				$text: 'test',
-				$named: true,
-				_expression: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.PrintStatementChevron);
-		const seated = (node as any).printChevronArguments();
-		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Comma);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -6215,30 +6242,6 @@ describe('with_clause_paren', () => {
 	});
 });
 
-describe('match_block_block', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlockBlock();
-		expect(node.$type).toBe(TSKindId.MatchBlockBlock);
-		expectBuiltNode(node);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlockBlock();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('match_block_empty', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlockEmpty(stampBuilt({ $type: TSKindId.Newline, $text: '\n', $named: true }) as any);
-		expect(node.$type).toBe(TSKindId.MatchBlockEmpty);
-		expectBuiltNode(node);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlockEmpty(stampBuilt({ $type: TSKindId.Newline, $text: '\n', $named: true }) as any);
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
 describe('suite_inline', () => {
 	it('factory produces correct type', () => {
 		const node = ir.suiteInline(
@@ -6295,12 +6298,52 @@ describe('suite_empty', () => {
 	});
 });
 
-describe('string_start', () => {
+describe('type_param_type_var', () => {
 	it('factory produces correct type', () => {
-		const node = ir.stringStart('a"');
-		expect(node.$type).toBe(TSKindId.StringStart);
+		const node = ir.typeParamTypeVar({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.TypeParamTypeVar);
 		expectBuiltNode(node);
-		expect(node.$text()).toBe('a"');
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamTypeVar({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('type_param_type_var_tuple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamTypeVarTuple(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.TypeParamTypeVarTuple);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamTypeVarTuple(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('type_param_param_spec', () => {
+	it('factory produces correct type', () => {
+		const node = ir.typeParamParamSpec(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.TypeParamParamSpec);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.typeParamParamSpec(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 
@@ -6319,15 +6362,6 @@ describe('escape_interpolation', () => {
 		expect(node.$type).toBe(TSKindId.EscapeInterpolation);
 		expectBuiltNode(node);
 		expect(node.$text()).toBe('{{');
-	});
-});
-
-describe('string_end', () => {
-	it('factory produces correct type', () => {
-		const node = ir.stringEnd('\\"');
-		expect(node.$type).toBe(TSKindId.StringEnd);
-		expectBuiltNode(node);
-		expect(node.$text()).toBe('\\"');
 	});
 });
 

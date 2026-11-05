@@ -22,8 +22,9 @@ import {
 	dedupeValues,
 	extractSeparatorKindId,
 	extractSeparatorString,
-	mergeDelimiterMode,
 	isTerminalValue,
+	mergeDelimiterMode,
+	mergeSlotsByName,
 	mergeSourceRuleIds,
 	stampListFactsOnValues
 } from './model/node-map.ts';
@@ -128,34 +129,6 @@ function describeArmLeaf(m: SimplifiedRule): string {
 	const value = (m as { value?: string }).value;
 	if (typeof value === 'string') return JSON.stringify(value);
 	return m.type.toLowerCase();
-}
-
-function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
-	if (slots.length <= 1) return slots;
-	const out: AssembledNonterminal[] = [];
-	const namedIndexByName = new Map<string, number>();
-	for (const s of slots) {
-		if (s.isUnnamed) {
-			out.push(s);
-			continue;
-		}
-		const idx = namedIndexByName.get(s.name);
-		if (idx === undefined) {
-			namedIndexByName.set(s.name, out.length);
-			out.push(s);
-			continue;
-		}
-		const prev = out[idx]!;
-		out[idx] = prev.with({
-			values: dedupeValues([...prev.values, ...s.values]),
-			hasTrailingDelimiter: prev.hasTrailingDelimiter || s.hasTrailingDelimiter,
-			hasLeadingDelimiter: prev.hasLeadingDelimiter || s.hasLeadingDelimiter,
-			trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, s.trailingDelimiter]),
-			leadingDelimiter: mergeDelimiterMode([prev.leadingDelimiter, s.leadingDelimiter]),
-			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
-		});
-	}
-	return out;
 }
 
 function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[] {
@@ -442,7 +415,7 @@ function resolveMember(
 						});
 						if (unionSlotRouting) {
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
-								mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
+								mergeSlotsByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 							);
 							const restricted = {
 								...rule,
@@ -478,7 +451,7 @@ function resolveMember(
 					}
 				}
 				const armSlots = rule.members.map((m) =>
-					mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
+					mergeSlotsByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
 				return mergeChoiceArms(armSlots);
 			}

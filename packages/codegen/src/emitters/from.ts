@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
-import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import { hasOptionalElements, isBuilderTextLeaf, isDelimiterToken } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -23,6 +23,7 @@ type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
 import {
+	finalSeatOf,
 	DELIMITER_IMPORT,
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
@@ -1155,7 +1156,21 @@ function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly K
 	return ranked.sort((a, b) => a.rank - b.rank).map(({ check }) => check);
 }
 
-function emitResolveByKindHelper(lines: string[]): void {
+function delimiterTokenBuilds(nodeMap: NodeMap): string[] {
+	return [...nodeMap.nodes.values()].filter(isDelimiterToken).map((token) => {
+		const facet = (slot: AssembledNonterminal): string => `${JSON.stringify(slot.propertyName)}: bag[${JSON.stringify(slot.propertyName)}]`;
+		const inputs = token.configSlots;
+		const derived = token.slots.filter((slot) => slot.delimiterRole !== 'input');
+		const value = resolveSingleFieldFactorySlot(token, nodeMap) === undefined ? `{ ${inputs.map(facet).join(', ')} }` : `bag[${JSON.stringify(inputs[0]!.propertyName)}]`;
+		return `  ${JSON.stringify(token.kind)}: (bag) => (F.${token.rawFactoryName!} as (...args: unknown[]) => unknown)(${value}, { ${derived.map(facet).join(', ')} }),`;
+	});
+}
+
+function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
+	lines.push('const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {');
+	lines.push(...delimiterTokenBuilds(nodeMap));
+	lines.push('};');
+	lines.push('');
 	lines.push('function _isFromKind(k: string): k is keyof _FromMap {');
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
@@ -1185,6 +1200,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('}');
 	lines.push('');
 	lines.push('export function buildByKind(kind: string, ...input: unknown[]): unknown {');
+	lines.push('  if (Object.hasOwn(_DELIMITER_TOKENS, kind)) return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);');
 	lines.push('  if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);');
 	lines.push('  if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);');
 	lines.push('  return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);');
@@ -1431,6 +1447,7 @@ interface WrapChildrenEntry {
 	readonly kindIdExpr: string;
 	readonly elementKind: string | undefined;
 	readonly soleSlotOptional: boolean;
+	readonly forwardsFinalSeat: boolean;
 }
 
 function soleElementKindOf(node: AssembledNode, nodeMap: NodeMap): string | undefined {
@@ -1444,6 +1461,11 @@ function soleElementKindOf(node: AssembledNode, nodeMap: NodeMap): string | unde
 		kinds.add(kind);
 	}
 	return kinds.size === 1 ? [...kinds][0] : undefined;
+}
+
+function holdsFinalSeat(kind: string | undefined, nodeMap: NodeMap): boolean {
+	const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
+	return node !== undefined && node.slots.some((slot) => finalSeatOf(slot) !== undefined);
 }
 
 function collectWrapChildrenEntries(
@@ -1465,7 +1487,8 @@ function collectWrapChildrenEntries(
 			childSurface,
 			kindIdExpr: `TSKindId.${entry.member}`,
 			elementKind: soleElementKindOf(node, nodeMap),
-			soleSlotOptional: childSurface === 'direct' && soleSlotFacts(node, nodeMap)?.required === false
+			soleSlotOptional: childSurface === 'direct' && soleSlotFacts(node, nodeMap)?.required === false,
+			forwardsFinalSeat: childSurface === 'direct' && holdsFinalSeat(soleElementKindOf(node, nodeMap), nodeMap)
 		});
 	}
 	return entries;
@@ -1533,6 +1556,8 @@ function emitWrapWithChildrenTable(
 			lines.push(
 				`    case ${JSON.stringify(e.kind)}: return (F.${e.factoryName} as (...args: unknown[]) => unknown)(...children);`
 			);
+		} else if (e.forwardsFinalSeat) {
+			lines.push(`    case ${JSON.stringify(e.kind)}: return (F.${e.factoryName} as (child: unknown) => unknown)(children[0]);`);
 		} else {
 			lines.push(
 				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children[0] as Parameters<typeof F.${e.factoryName}>[0]);`
@@ -1613,7 +1638,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitResolveByKindHelper(lines);
+	emitResolveByKindHelper(lines, nodeMap);
 
 	lines.push(
 		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'

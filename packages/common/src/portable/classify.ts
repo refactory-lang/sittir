@@ -22,6 +22,11 @@ export type PortableClassifier = <T extends Node>(value: T | number) => string |
 export const hasKind = (value: unknown): value is Node =>
 	typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
 
+const delimiterOf = (item: unknown): readonly number[] => {
+	const stamped = hasKind(item) ? (item as { readonly delimiter?: unknown }).delimiter : undefined;
+	return typeof stamped === 'number' ? [stamped] : [];
+};
+
 const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 	switch (plan.op) {
 		case 'eq':
@@ -29,6 +34,8 @@ const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 		case 'is':
 			return 'self' in plan;
 		case 'present':
+		case 'count':
+		case 'delimiter':
 		case 'child':
 			return false;
 		case 'not':
@@ -118,7 +125,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		if (slot === undefined) return [];
 		const [accessor, , keyword, , keywordKind] = slot;
-		const items = slotItems(node, accessor);
+		const items = slotItems(node, accessor).filter((item) => item !== null);
 		if (keyword === undefined) return items;
 		const present = new Keyword(keyword, keywordKind);
 		return items.flatMap((item) => (item === true ? [present] : []));
@@ -161,7 +168,9 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		return {
 			texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
 			types: (subject) => subjects(subject).flatMap(typeOf),
-			children: (subject) => subjects(subject).filter(hasKind).map((child) => subjectsOf([child]))
+			children: (subject) => subjects(subject).filter(hasKind).map((child) => subjectsOf([child])),
+			count: (subject) => subjects(subject).length,
+			delimiters: () => reached.flatMap(delimiterOf)
 		};
 	};
 	const conditionHolds = (condition: PortableCondition, value: Node | number): boolean => {

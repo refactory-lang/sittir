@@ -4770,20 +4770,14 @@
     "fields": {
       "arms": {
         "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "match_arm",
-            "named": true
-          }
-        ]
-      },
-      "last_arm": {
-        "multiple": false,
         "required": true,
         "types": [
           {
             "type": "last_match_arm",
+            "named": true
+          },
+          {
+            "type": "match_arm",
             "named": true
           }
         ]

@@ -190,7 +190,8 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				astMismatches: [],
 				skips: [],
 				excluded: [],
-				trivia: []
+				trivia: [],
+				spellingNormalized: []
 			})
 			.mockResolvedValueOnce({
 				grammar: 'rust',
@@ -203,7 +204,8 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				astMismatches: [],
 				skips: [],
 				excluded: [],
-				trivia: []
+				trivia: [],
+				spellingNormalized: []
 			});
 	});
 

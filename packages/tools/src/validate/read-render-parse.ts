@@ -59,7 +59,10 @@ import {
 	type ValidatorSkip,
 	loadNativeEngine,
 	loadNativeRender,
-	kindViewOf
+	kindViewOf,
+	sameSpelledMeaning,
+	loadDelimiterSpellings,
+	type DelimiterSpelling
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -215,6 +218,8 @@ function extrasDiff(a: TSNode, b: TSNode): string | null {
 export interface AstTolerance {
 	readonly listSeparators: Readonly<Record<string, readonly string[]>>;
 	readonly tolerated: string[];
+	readonly delimiters?: Readonly<Record<string, DelimiterSpelling>>;
+	readonly normalized?: string[];
 }
 
 export function astStructuralDiff(
@@ -241,6 +246,11 @@ function structuralDiff(
 		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
 	if (a.isNamed && a.childCount === 0 && b.childCount === 0 && a.text !== b.text) {
+		const delimiter = tolerance?.delimiters?.[a.type];
+		if (delimiter !== undefined && sameSpelledMeaning(a.text, b.text, a.type, delimiter)) {
+			tolerance?.normalized?.push(`${path || a.type}: spelling ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`);
+			return null;
+		}
 		return `${path || a.type}: text ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`;
 	}
 	const aChildren = collectVisibleChildren(a);
@@ -356,6 +366,15 @@ export interface ReadRenderParseResult {
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
 	trivia: ValidatorSkip[];
+	spellingNormalized: SpellingNormalizedCandidate[];
+}
+
+export interface SpellingNormalizedCandidate {
+	readonly entry: string;
+	readonly kind: string;
+	readonly input: string;
+	readonly rendered: string;
+	readonly spellings: readonly string[];
 }
 
 /**
@@ -916,10 +935,11 @@ export async function validateReadRenderParse(
 	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
+	const { delimiterTokens } = await loadNodeModel(grammar);
 
 	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
 	if (readNode instanceof Error)
-		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [] };
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
@@ -942,6 +962,8 @@ export async function validateReadRenderParse(
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const trivia: ValidatorSkip[] = [];
+	const spellingNormalized: SpellingNormalizedCandidate[] = [];
+	const delimiters = await loadDelimiterSpellings(grammar);
 	// A read refused while an entry is walked or a candidate materialized
 	// fails that entry: no refusal is a warning.
 	let refused: AccessorThrowRecord[] = [];
@@ -1002,7 +1024,7 @@ export async function validateReadRenderParse(
 						// template filenames carry canonical spellings, so hidden minted
 						// kinds (whose display name differs) are admitted and probed
 						// against their own templates rather than silently skipped.
-						if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+						if (sourceKind === undefined || !ruleKinds.has(sourceKind) || delimiterTokens.has(sourceKind)) return;
 						const span = spanOf(w);
 						if (span == null) return;
 						const dedup = `${sourceKind}@${span.start}:${span.end}`;
@@ -1105,6 +1127,7 @@ export async function validateReadRenderParse(
 						writeSync(2, `[isolate-progress] ${grammar} ${String(kind)}\n`);
 					}
 					try {
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [] };
 						const outcome = renderReparse(
 							data,
 							renderedKind,
@@ -1112,7 +1135,7 @@ export async function validateReadRenderParse(
 							node1ForAst,
 							treeRoot,
 							renderReparseContext,
-							undefined,
+							tolerance,
 							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
 								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
 								: undefined
@@ -1175,6 +1198,8 @@ export async function validateReadRenderParse(
 							});
 						} else {
 							kindAstMatch = true;
+							if (tolerance.normalized!.length > 0)
+								spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered, spellings: tolerance.normalized! });
 							if (options.onFixture) {
 								// Success path (both re-parse OK + AST match OK) —
 								// emit a render fixture (UntypedNode → rendered) and a
@@ -1319,7 +1344,8 @@ export async function validateReadRenderParse(
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		skips,
 		excluded,
-		trivia
+		trivia,
+		spellingNormalized
 	};
 }
 

@@ -72,6 +72,23 @@ describe('holds', () => {
 		expect(holds({ op: 'child', slots: { [PARAMETERS]: 1 }, of: typed('u8') }, fn)).toBe(false);
 	});
 
+	it('holds a count leaf when the slot holds at least its minimum, and a delimiter leaf when a reached list is stamped with one of its flags', () => {
+		const ITEMS = { slots: { [DEF]: 2 } };
+		const list = (count: number, delimiter: number): PlanSubjects => ({ texts, count: (subject) => (subject.slots[DEF] === 2 ? count : 0), delimiters: () => [delimiter] });
+		expect(holds({ op: 'count', min: 2, ...ITEMS }, list(2, 0))).toBe(true);
+		expect(holds({ op: 'count', min: 2, ...ITEMS }, list(1, 0))).toBe(false);
+		expect(holds({ op: 'count', min: 1, ...NAME }, list(3, 0))).toBe(false);
+		expect(holds({ op: 'delimiter', delimiter: 2 }, list(1, 2))).toBe(true);
+		expect(holds({ op: 'delimiter', delimiter: 2 }, list(1, 3))).toBe(true);
+		expect(holds({ op: 'delimiter', delimiter: 2 }, list(1, 1))).toBe(false);
+		expect(holds({ op: 'delimiter', delimiter: 2 }, { texts, delimiters: () => [] })).toBe(false);
+	});
+
+	it('refuses a count or delimiter leaf when the caller reads no counts or stamps', () => {
+		expect(() => holds({ op: 'count', min: 1, ...NAME }, subjects)).toThrow(/count/);
+		expect(() => holds({ op: 'delimiter', delimiter: 2 }, subjects)).toThrow(/delimiter/);
+	});
+
 	it('spells true as an empty and, and false as an empty or', () => {
 		expect(holds({ op: 'and', of: [] }, subjects)).toBe(true);
 		expect(holds({ op: 'or', of: [] }, subjects)).toBe(false);

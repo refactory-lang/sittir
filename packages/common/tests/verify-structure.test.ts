@@ -10,11 +10,13 @@ const OTHER = 4;
 const LITERAL = 5;
 const SEMI = 6;
 const NEWLINE = 7;
+const ARMS = 8;
 
 const membership: KindMembership = { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] };
 
 const table: StructureTable = {
 	[BLOCK]: { kind: 'block', nonEmpty: [['_statements', 'block.statements']] },
+	[ARMS]: { kind: 'arms', final: [['_arms', 'arms.children', [CALL], [NAME]]] },
 	[CALL]: {
 		kind: 'call',
 		required: [['_callee', 'callee']],
@@ -47,6 +49,16 @@ describe('verifyStructure', () => {
 	it('refuses a required slot that holds no value, naming the slot and the kind', () => {
 		expect(() => verify(built(CALL, { _arguments: [] }))).toThrow("Missing required slot 'callee' on call");
 		expect(() => verify(built(CALL, { _callee: null, _arguments: [] }))).toThrow("Missing required slot 'callee' on call");
+	});
+
+	it('holds a list with a final seat to its repeated kinds, then its last kind', () => {
+		const call = () => built(CALL, { _callee: name() });
+		expect(() => verify(built(ARMS, { _arms: [call(), call(), name()] }))).not.toThrow();
+		expect(() => verify(built(ARMS, { _arms: [name()] }))).not.toThrow();
+		expect(() => verify(built(ARMS, { _arms: [call(), call()] }))).toThrow('arms.children: ends with a node of kind 3, not 2');
+		expect(() => verify(built(ARMS, { _arms: [call(), name(), call()] }))).toThrow('arms.children: holds a node of kind 3 at 1, before its last element; only 2 come before it');
+		expect(() => verify(built(ARMS, { _arms: [name(), name()] }))).toThrow('arms.children: holds a node of kind 3 at 0, before its last element; only 2 come before it');
+		expect(() => verify(built(ARMS, { _arms: [] }))).toThrow('arms.children: ends with a node of kind 3, and holds none');
 	});
 
 	it('refuses an empty non-empty list, and one that is absent', () => {

@@ -265,6 +265,11 @@ export function transitiveParseKinds<T extends PhaseName>(
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
+	readonly canonical?: string;
+	readonly readOnly?: true;
+	readonly singleLine?: true;
+	readonly interpolating?: true;
+	readonly escape?: string;
 	readonly resolvedKindId?: number;
 	readonly aliasedTo?: string;
 	readonly aliasedToId?: number;

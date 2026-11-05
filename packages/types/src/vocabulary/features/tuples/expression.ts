@@ -1,5 +1,5 @@
 import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Collection {
@@ -12,6 +12,7 @@ export namespace Expression {
 			export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.Tuple<G>> {
 				// claimed by p
 				readonly $kind: 'expression.collection.tuple.bare';
+				readonly trailingComma?: Flag;
 			}
 		}
 	}

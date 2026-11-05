@@ -275,7 +275,8 @@ function expressionsOf(node: PatternNode, origin: PatternOrigin): readonly Ancho
 function refuseLooseAnchors(parent: Visit, origin: PatternOrigin): void {
 	for (const v of parent.children) {
 		if (v.anchor === null && !joined(v)) continue;
-		if (tokenText(v) !== null) refuse(origin, 'an anchor next to a token: an anchor names the nodes it ties together');
+		if (tokenText(v) !== null && (joined(v) || captures(v).length === 0)) refuse(origin, 'an anchor next to a token: an anchor names the nodes it ties together');
+		if (tokenText(v) !== null) continue;
 		if (isGroup(v) || v.alternation !== null) refuse(origin, 'an anchor next to a grouping or an alternation ties no one node');
 		if (mayBeAbsent(v)) refuse(origin, 'an anchor next to a node the pattern makes optional ties nothing when the node is absent');
 	}
@@ -568,15 +569,17 @@ function memberFact(
 	const token = tokenText(v);
 	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	if (direct) {
-		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...of };
+		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...anchorOf(v), ...of };
 		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	}
 	const via: SlotSelector[] = [];
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== home; cursor = cursor.parent)
 		if (kindOf(cursor) !== null) via.push(selector(cursor));
-	if (token !== null) return { route: 'presence', owner: homeKind, name, token, via, ...of };
+	if (token !== null) return { route: 'presence', owner: homeKind, name, token, via, ...anchorOf(v), ...of };
 	return { route: 'nested', owner: homeKind, name, parent: owner, multiple: quantified(v), via, ...selector(v), ...of };
 }
+
+const anchorOf = (v: Visit): { readonly anchor?: Anchor } => (v.anchor === null || tokenText(v) === null ? {} : { anchor: v.anchor });
 
 function claimedHome(parent: Visit, top: Visit, claimed: ReadonlyMap<Visit, readonly number[]>): Visit {
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)
@@ -588,6 +591,7 @@ function containerFact(
 	kind: string,
 	element: Visit,
 	nodes: readonly Visit[],
+	tested: ReadonlySet<string>,
 	reason: string | null,
 	pattern: PatternOrigin
 ): ContainerFact {
@@ -598,7 +602,7 @@ function containerFact(
 		captures: nodes.flatMap((v) =>
 			captures(v)
 				.filter((name) => name !== 'element' && name !== DROPPED && !name.startsWith('_'))
-				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v) }))
+				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v), ...(tested.has(name) ? { tested: true as const } : {}) }))
 		),
 		dropped: nodes.filter((v) => captures(v).includes(DROPPED)).map(selector),
 		reason,
@@ -641,6 +645,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		}
 		return;
 	}
+	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
+	const tested = new Set(claimPredicates.flatMap((p) => [...(p.capture === null ? [] : [p.capture]), ...p.arguments.flatMap((a) => ('capture' in a ? [a.capture] : []))]));
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
 	const roots = nodes.filter((v) => atTop(v, top) && !(v === top && isGroup(v)) && holdsNode(v));
@@ -652,7 +658,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		element !== undefined &&
 		!captures(owner).some((name) => vocabCapture(owner, name) && !isTokenClass(name))
 	) {
-		facts.containers.push(containerFact(ownerKind, element, nodes, reasonOf(predicates), origin));
+		facts.containers.push(containerFact(ownerKind, element, nodes, tested, reasonOf(predicates), origin));
 		return;
 	}
 	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => vocabCapture(v, name) && !isTokenClass(name)));
@@ -660,7 +666,6 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const template = templateOf(predicate);
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
-	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
 	const claimed = new Map<Visit, number[]>();
 	for (const v of nodes) {
 		for (const name of captures(v)) {
@@ -678,7 +683,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
 			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
-			if (member !== null) members.push(member);
+			if (member !== null) members.push(tested.has(name) ? { ...member, tested: true } : member);
 		}
 		facts.members.push(...slotNamed(members));
 	}

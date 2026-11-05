@@ -7,7 +7,12 @@ export namespace Clause {
 			// claimed by r
 			readonly $kind: 'clause.bounds.higher_ranked';
 			readonly type: G['slots']['clause.bounds.higher_ranked']['type'];
-			readonly typeParameters: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+			readonly typeParameters: (
+				| V.Identifier.Metavariable<G>
+				| V.Declaration.TypeParameter<G>
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>
+			)[];
 		}
 	}
 }

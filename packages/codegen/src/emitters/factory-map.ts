@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, DelimiterFacetRole } from '../compiler/model/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { armIdOf } from './render-options-rs.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
@@ -29,6 +29,9 @@ export interface FactorySlotMeta {
 	readonly blank?: boolean;
 	readonly optionDefault?: number | string;
 	readonly separator?: { readonly default?: number };
+	readonly spellings?: Readonly<Record<string, string>>;
+	readonly delimiterRole?: DelimiterFacetRole;
+	readonly preferenceOf?: { readonly open: string; readonly facet: string };
 }
 
 export interface FactoryMapData {
@@ -141,7 +144,7 @@ function optionDefaultOf(
 	at: string
 ): Pick<FactorySlotMeta, 'optionDefault'> {
 	const value = slot.optionDefaultArm;
-	if (value === undefined) return {};
+	if (value === undefined || slot.delimiterRole !== undefined) return {};
 	if (slot.registeredOption === 'spelling') return { optionDefault: value };
 	return { optionDefault: armIdOf(kindEntries, { value, kind: slot.optionDefaultKind }, at) };
 }

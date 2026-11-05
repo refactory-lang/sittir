@@ -2,72 +2,126 @@
     "backend": "native",
     "baselineCounterChange": {
         "grammars": {
-            "rust": {
+            "python": {
                 "builtRenderParse": {
                     "cases": {
-                        "arguments_elements": {
-                            "from": 42,
-                            "to": 36
-                        },
-                        "attributed_argument": {
-                            "from": 21,
-                            "to": 4
+                        "constrained_type": {
+                            "from": 2,
+                            "to": 0
                         }
                     },
                     "from": {
-                        "pass": 3084,
-                        "total": 3084
+                        "pass": 2643,
+                        "total": 2643
                     },
                     "to": {
-                        "pass": 3089,
-                        "total": 3089
+                        "pass": 2661,
+                        "total": 2661
                     }
                 },
                 "factoryStorage": {
                     "cases": {
-                        "arguments_elements": {
-                            "from": 21,
-                            "to": 18
-                        },
-                        "attributed_argument": {
-                            "from": 21,
-                            "to": 4
+                        "constrained_type": {
+                            "from": 1,
+                            "to": 0
                         }
                     },
                     "from": {
-                        "pass": 1694,
-                        "total": 1694
+                        "pass": 1374,
+                        "total": 1374
                     },
                     "to": {
-                        "pass": 1698,
-                        "total": 1698
+                        "pass": 1383,
+                        "total": 1383
+                    }
+                },
+                "from": {
+                    "cases": {
+                        "constrained_type": {
+                            "from": 1,
+                            "to": 0
+                        },
+                        "string_end": {
+                            "from": 1,
+                            "to": 0
+                        },
+                        "string_start": {
+                            "from": 1,
+                            "to": 0
+                        }
+                    },
+                    "from": {
+                        "pass": 183,
+                        "total": 183
+                    },
+                    "to": {
+                        "pass": 185,
+                        "total": 185
                     }
                 },
                 "parityFixtures": {
                     "cases": {
-                        "arguments_elements": {
-                            "from": 38,
-                            "to": 32
+                        "constrained_type": {
+                            "from": 2,
+                            "to": 0
                         },
-                        "attributed_argument": {
-                            "from": 54,
-                            "to": 17
+                        "generic_type": {
+                            "from": 21,
+                            "to": 15
+                        },
+                        "splat_type": {
+                            "from": 9,
+                            "to": 3
+                        },
+                        "type": {
+                            "from": 72,
+                            "to": 52
+                        },
+                        "type_parameter": {
+                            "from": 22,
+                            "to": 15
+                        },
+                        "types": {
+                            "from": 22,
+                            "to": 15
                         }
                     },
                     "from": {
-                        "pass": 3805,
-                        "total": 3805
+                        "pass": 3746,
+                        "total": 3746
                     },
                     "to": {
-                        "pass": 3808,
-                        "total": 3808
+                        "pass": 3723,
+                        "total": 3723
+                    }
+                }
+            },
+            "rust": {
+                "from": {
+                    "cases": {
+                        "raw_string_literal_end": {
+                            "from": 1,
+                            "to": 0
+                        },
+                        "raw_string_literal_start": {
+                            "from": 1,
+                            "to": 0
+                        }
+                    },
+                    "from": {
+                        "pass": 258,
+                        "total": 258
+                    },
+                    "to": {
+                        "pass": 256,
+                        "total": 256
                     }
                 }
             }
         },
-        "reason": "A rust call argument reads as its own kind, argument, and arrays get their own element list. On master, call arguments and array elements shared one lift, arguments_elements, whose item was attributed_argument. The call side now holds argument, a copy of hidden _attributed_argument placed under call arguments, so the shared lift split: calls keep arguments_elements with argument items, and arrays keep attributed_argument under the new array_expression_list_elements. No node goes untested. The 21 corpus entries that held attributed_argument are the 18 that now hold argument and the 4 that still hold it, Attributes and Expressions holding both. The 21 that held arguments_elements are the 18 that still hold it and the 4 that hold array_expression_list_elements, again overlapping in Attributes and Expressions. built-render-parse counts two cases per entry for the lists (42 -> 36 + 8). The parity fixtures count each site, and there the move is exact: attributed_argument 54 -> 17 beside argument 37, and arguments_elements 38 -> 32 beside array_expression_list_elements 6."
+        "reason": "Python's declaration-site type parameters read as their own forms. On master, tree-sitter-python's type_parameter served both a generic type's arguments (list[int]) and a definition's or alias's parameters (def f[T]), and an alias head was a type: type Point[T] = ... read Point[T] as a generic_type, T: Hashable as a constrained_type, and *Ts and **P as splat_type. Those sites now hold type_params, type_params_items and the three type_param forms. No node goes untested: every lost case is a declaration-site misread, found by diffing the parity fixtures. The parity fixtures count each site: type_parameter 22 -> 15, types 22 -> 15 and generic_type 21 -> 15 lose the 7 parameter lists and the 6 alias heads, constrained_type 2 -> 0 its two bounds, splat_type 9 -> 3 the six starred declarations (the three left are argument sites, *Ts in tuple[...]), and type 72 -> 52 the 20 types those sites wrapped. The corpus entries holding T: Hashable and T: (int, str) lose constrained_type in from (1 -> 0), factory storage (1 -> 0) and the built render (2 -> 0, two cases per entry). A derived string delimiter has no from() input: a python string's quote and a rust raw string's hash run are derived from its content, so the delimiter tokens string_start and string_end (python) and raw_string_literal_start and raw_string_literal_end (rust) leave the from lane, as the kind lanes skip delimiter tokens by delimiterOf. Each held one from case (1 -> 0): python from 187 -> 185 (183 -> 185 against master), rust from 258 -> 256."
     },
-    "commit": "3101eca",
+    "commit": "a78b9fa",
     "grammars": {
         "python": {
             "kinds": [
@@ -173,8 +227,7 @@
                 "list_pattern_case_patterns",
                 "list_splat",
                 "list_splat_pattern",
-                "match_block_block",
-                "match_block_empty",
+                "match_block",
                 "match_statement",
                 "member_type",
                 "method_declaration",
@@ -210,6 +263,8 @@
                 "splat_type",
                 "string",
                 "string_content",
+                "string_end",
+                "string_start",
                 "subjects",
                 "subscript",
                 "subscripts",
@@ -224,7 +279,12 @@
                 "tuple_pattern_elements",
                 "type",
                 "type_alias_statement",
+                "type_param_param_spec",
+                "type_param_type_var",
+                "type_param_type_var_tuple",
                 "type_parameter",
+                "type_params",
+                "type_params_items",
                 "typed_default_parameter",
                 "typed_parameter",
                 "types",
@@ -277,7 +337,6 @@
                     "comprehension_clauses": 14,
                     "concatenated_string": 3,
                     "conditional_expression": 4,
-                    "constrained_type": 2,
                     "decorated_definition": 2,
                     "decorated_definition_class_declaration": 2,
                     "decorator": 5,
@@ -312,7 +371,7 @@
                     "function_definition": 35,
                     "future_import_statement": 3,
                     "generator_expression": 5,
-                    "generic_type": 21,
+                    "generic_type": 15,
                     "global_statement": 2,
                     "if_clause": 4,
                     "if_statement": 16,
@@ -334,7 +393,7 @@
                     "list_pattern_case_patterns": 33,
                     "list_splat": 14,
                     "list_splat_pattern": 10,
-                    "match_block_block": 19,
+                    "match_block": 19,
                     "match_statement": 19,
                     "method_declaration": 5,
                     "module": 115,
@@ -364,7 +423,7 @@
                     "slice": 4,
                     "slice_group": 1,
                     "splat_pattern_list": 5,
-                    "splat_type": 9,
+                    "splat_type": 3,
                     "string": 137,
                     "subjects": 19,
                     "subscript": 21,
@@ -377,12 +436,17 @@
                     "tuple_elements": 15,
                     "tuple_pattern": 4,
                     "tuple_pattern_elements": 4,
-                    "type": 72,
+                    "type": 52,
                     "type_alias_statement": 7,
-                    "type_parameter": 22,
+                    "type_param_param_spec": 3,
+                    "type_param_type_var": 5,
+                    "type_param_type_var_tuple": 3,
+                    "type_parameter": 15,
+                    "type_params": 7,
+                    "type_params_items": 7,
                     "typed_default_parameter": 2,
                     "typed_parameter": 7,
-                    "types": 22,
+                    "types": 15,
                     "unary_operator": 9,
                     "union_pattern": 10,
                     "union_type": 1,
@@ -398,12 +462,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3746,
-                "total": 3746
+                "pass": 3723,
+                "total": 3723
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2643,
+                    "astMatchPass": 2661,
                     "casesByKind": {
                         "_simple_pattern": 38,
                         "_simple_statements": 230,
@@ -440,7 +504,6 @@
                         "comprehension_clauses": 12,
                         "concatenated_string": 6,
                         "conditional_expression": 4,
-                        "constrained_type": 2,
                         "decorated_definition": 2,
                         "decorated_definition_class_declaration": 2,
                         "decorator": 2,
@@ -497,7 +560,7 @@
                         "list_pattern_case_patterns": 20,
                         "list_splat": 10,
                         "list_splat_pattern": 16,
-                        "match_block_block": 38,
+                        "match_block": 38,
                         "match_statement": 38,
                         "method_declaration": 6,
                         "module": 230,
@@ -542,7 +605,12 @@
                         "tuple_pattern_elements": 8,
                         "type": 18,
                         "type_alias_statement": 4,
+                        "type_param_param_spec": 4,
+                        "type_param_type_var": 4,
+                        "type_param_type_var_tuple": 4,
                         "type_parameter": 10,
+                        "type_params": 4,
+                        "type_params_items": 4,
                         "typed_default_parameter": 4,
                         "typed_parameter": 6,
                         "types": 10,
@@ -560,8 +628,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2643,
-                    "total": 2643
+                    "pass": 2661,
+                    "total": 2661
                 },
                 "coverage": {
                     "casesByKind": {
@@ -653,8 +721,7 @@
                         "list_pattern_case_patterns": 1,
                         "list_splat": 1,
                         "list_splat_pattern": 1,
-                        "match_block_block": 1,
-                        "match_block_empty": 1,
+                        "match_block": 1,
                         "match_statement": 1,
                         "member_type": 1,
                         "method_declaration": 1,
@@ -704,7 +771,12 @@
                         "tuple_pattern_elements": 1,
                         "type": 1,
                         "type_alias_statement": 1,
+                        "type_param_param_spec": 1,
+                        "type_param_type_var": 1,
+                        "type_param_type_var_tuple": 1,
                         "type_parameter": 1,
+                        "type_params": 1,
+                        "type_params_items": 1,
                         "typed_default_parameter": 1,
                         "typed_parameter": 1,
                         "types": 1,
@@ -722,11 +794,11 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 154,
-                    "total": 154
+                    "pass": 158,
+                    "total": 158
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1374,
+                    "astMatchPass": 1383,
                     "casesByKind": {
                         "_simple_pattern": 19,
                         "_simple_statements": 115,
@@ -763,7 +835,6 @@
                         "comprehension_clauses": 6,
                         "concatenated_string": 3,
                         "conditional_expression": 2,
-                        "constrained_type": 1,
                         "decorated_definition": 1,
                         "decorated_definition_class_declaration": 1,
                         "decorator": 1,
@@ -826,7 +897,7 @@
                         "list_pattern_case_patterns": 10,
                         "list_splat": 5,
                         "list_splat_pattern": 8,
-                        "match_block_block": 19,
+                        "match_block": 19,
                         "match_statement": 19,
                         "method_declaration": 3,
                         "module": 115,
@@ -873,7 +944,12 @@
                         "tuple_pattern_elements": 4,
                         "type": 9,
                         "type_alias_statement": 2,
+                        "type_param_param_spec": 2,
+                        "type_param_type_var": 2,
+                        "type_param_type_var_tuple": 2,
                         "type_parameter": 5,
+                        "type_params": 2,
+                        "type_params_items": 2,
                         "typed_default_parameter": 2,
                         "typed_parameter": 3,
                         "types": 5,
@@ -891,8 +967,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1374,
-                    "total": 1374
+                    "pass": 1383,
+                    "total": 1383
                 },
                 "from": {
                     "casesByKind": {
@@ -931,7 +1007,6 @@
                         "comprehension_clauses": 1,
                         "concatenated_string": 1,
                         "conditional_expression": 1,
-                        "constrained_type": 1,
                         "continue_statement": 1,
                         "decorated_definition": 1,
                         "decorated_definition_class_declaration": 1,
@@ -1006,7 +1081,7 @@
                         "list_pattern_case_patterns": 1,
                         "list_splat": 1,
                         "list_splat_pattern": 1,
-                        "match_block_block": 1,
+                        "match_block": 1,
                         "match_statement": 1,
                         "method_declaration": 1,
                         "module": 1,
@@ -1043,9 +1118,7 @@
                         "splat_type": 1,
                         "string": 1,
                         "string_content": 1,
-                        "string_end": 1,
                         "string_fragment": 1,
-                        "string_start": 1,
                         "subjects": 1,
                         "subscript": 1,
                         "subscripts": 1,
@@ -1062,7 +1135,12 @@
                         "type": 1,
                         "type_alias_statement": 1,
                         "type_conversion": 1,
+                        "type_param_param_spec": 1,
+                        "type_param_type_var": 1,
+                        "type_param_type_var_tuple": 1,
                         "type_parameter": 1,
+                        "type_params": 1,
+                        "type_params_items": 1,
                         "typed_default_parameter": 1,
                         "typed_parameter": 1,
                         "types": 1,
@@ -1082,8 +1160,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 183,
-                    "total": 183
+                    "pass": 185,
+                    "total": 185
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -1503,6 +1581,8 @@
                 "range_pattern_with_left",
                 "range_pattern_with_left_with_right",
                 "raw_string_literal",
+                "raw_string_literal_end",
+                "raw_string_literal_start",
                 "receiver_parameter_declaration",
                 "ref_pattern",
                 "reference_expression_bare",
@@ -2680,8 +2760,6 @@
                         "range_pattern_with_left_with_right": 1,
                         "raw_string_literal": 1,
                         "raw_string_literal_content": 1,
-                        "raw_string_literal_end": 1,
-                        "raw_string_literal_start": 1,
                         "receiver_parameter_declaration": 1,
                         "ref_pattern": 1,
                         "reference_expression_bare": 1,
@@ -2773,8 +2851,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 258,
-                    "total": 258
+                    "pass": 256,
+                    "total": 256
                 },
                 "roundtrip": {
                     "astMatchPass": 149,
@@ -4243,7 +4321,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26822,
-        "total": 26824
+        "pass": 26830,
+        "total": 26832
     }
 }

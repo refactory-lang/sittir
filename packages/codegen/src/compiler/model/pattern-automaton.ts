@@ -54,6 +54,10 @@ export class CharSet {
 		return other.minus(this).isEmpty();
 	}
 
+	meets(other: CharSet): boolean {
+		return !this.minus(other.complement()).isEmpty();
+	}
+
 	isEmpty(): boolean {
 		return this.ranges.length === 0;
 	}
@@ -458,6 +462,35 @@ export function dfaAccepts(dfa: PatternDfa, text: string): boolean {
 	return dfa.states[at]!.accepting;
 }
 
+export function includesNonEmpty(inner: PatternDfa, outer: PatternDfa): boolean {
+	const live = coaccessible(inner);
+	const seen = new Set<string>();
+	const stack: (readonly [number, number | undefined])[] = [[0, 0]];
+	const enter = (at: number, to: number | undefined): boolean => {
+		if (!live.has(at)) return true;
+		if (inner.states[at]!.accepting && (to === undefined || !outer.states[to]!.accepting)) return false;
+		const key = `${at} ${to ?? -1}`;
+		if (!seen.has(key)) {
+			seen.add(key);
+			stack.push([at, to]);
+		}
+		return true;
+	};
+	while (stack.length > 0) {
+		const [at, to] = stack.pop()!;
+		for (const edge of inner.states[at]!.edges) {
+			let rest = edge.set;
+			for (const other of to === undefined ? [] : outer.states[to]!.edges) {
+				if (!rest.meets(other.set)) continue;
+				if (!enter(edge.to, other.to)) return false;
+				rest = rest.minus(other.set);
+			}
+			if (!rest.isEmpty() && !enter(edge.to, undefined)) return false;
+		}
+	}
+	return true;
+}
+
 function reachableFrom(dfa: PatternDfa, seeds: readonly number[], keep: (set: CharSet) => boolean): Set<number> {
 	const seen = new Set<number>();
 	const stack = [...seeds];
@@ -489,7 +522,7 @@ export function crossesLine(dfa: PatternDfa): boolean {
 	const reached = reachableFrom(dfa, [0], () => true);
 	const afterBreak = reachableFrom(
 		dfa,
-		[...reached].flatMap((at) => dfa.states[at]!.edges.filter((edge) => !edge.set.minus(LINE_TERMINATORS.complement()).isEmpty()).map((edge) => edge.to)),
+		[...reached].flatMap((at) => dfa.states[at]!.edges.filter((edge) => edge.set.meets(LINE_TERMINATORS)).map((edge) => edge.to)),
 		() => true
 	);
 	return [...afterBreak].some((at) =>
@@ -498,7 +531,7 @@ export function crossesLine(dfa: PatternDfa): boolean {
 }
 
 export function requiresNonSpace(dfa: PatternDfa): boolean {
-	const spaceOnly = reachableFrom(dfa, [0], (set) => !set.minus(SPACE.complement()).isEmpty());
+	const spaceOnly = reachableFrom(dfa, [0], (set) => set.meets(SPACE));
 	return ![...spaceOnly].some((at) => dfa.states[at]!.accepting);
 }
 

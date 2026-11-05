@@ -1,6 +1,6 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { type BindingFacts, type ClaimFact, type MemberFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
@@ -34,6 +34,70 @@ describe('readVocabulary', () => {
 		for (const path of ['declaration.generic', 'declaration.parenthesized', 'declaration.bare']) {
 			expect(vocabulary.kinds.get(path)?.parent, path).toBe('declaration');
 			expect([...vocabulary.members(path).keys()], path).toEqual(['name']);
+		}
+	});
+
+	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
+		const vocabulary = await vocabularyIn(
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly name: string;',
+			'\treadonly parameters?: string[];',
+			'}',
+			'export interface Bare<G> extends SubKindOf<V.Declaration<G>> {',
+			"\treadonly $kind: 'declaration.bare';",
+			'\treadonly parameters?: never;',
+			'}'
+		);
+		expect([...vocabulary.members('declaration').keys()]).toEqual(['name', 'parameters']);
+		expect([...vocabulary.members('declaration.bare').keys()]).toEqual(['name']);
+	});
+
+	it('drops a member the feature that owns it narrows to never at a refinement, in every composition', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+		const write = (file: string, lines: readonly string[]): void => {
+			mkdirSync(dirname(join(dir, file)), { recursive: true });
+			writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+		};
+		write('declaration.ts', [
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'\treadonly name: string;',
+			'}',
+			'export namespace Declaration {',
+			'\texport interface Parameter<G> extends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: 'declaration.parameter';",
+			'\t}',
+			'\texport namespace Parameter {',
+			'\t\texport interface Rest<G> extends SubKindOf<V.Declaration.Parameter<G>> {',
+			"\t\t\treadonly $kind: 'declaration.parameter.rest';",
+			'\t\t}',
+			'\t}',
+			'}'
+		]);
+		write('features/bounded/index.ts', ["export type * from './declaration.ts';", 'export interface Bounded {', '\treadonly bounded: true;', '}']);
+		write('features/bounded/declaration.ts', [
+			'export namespace Declaration {',
+			'\texport interface Parameter<G> {',
+			'\t\treadonly bounds?: string[];',
+			'\t}',
+			'\texport namespace Parameter {',
+			'\t\texport interface Rest<G> {',
+			'\t\t\treadonly bounds?: never;',
+			'\t\t}',
+			'\t}',
+			'}'
+		]);
+		write('compositions.ts', ['export interface WithBounded extends Bounded {}', 'export interface WithoutBounded {}']);
+		try {
+			const vocabulary = await readVocabulary(dir);
+			for (const view of [vocabulary, vocabulary.composedAs('WithBounded')]) {
+				expect([...view.members('declaration.parameter').keys()]).toEqual(['bounds', 'name']);
+				expect([...view.members('declaration.parameter.rest').keys()]).toEqual(['name']);
+			}
+			expect([...vocabulary.composedAs('WithoutBounded').members('declaration.parameter.rest').keys()]).toEqual(['name']);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
 		}
 	});
 
@@ -369,6 +433,29 @@ describe('canonicalPaths', () => {
 const member = (name: string): MemberFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
 
 describe('canonicalFacts', () => {
+	it("drops a capture its pattern's predicates name where no path its claim reads declares it, and keeps one a path declares", async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+			"export interface Constant<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constant'; readonly name: string; }",
+			"export interface Constructor<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.constructor'; readonly body: string; }"
+		);
+		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
+		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
+		const named = (name: string, claims: readonly number[], tested?: true): MemberFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
+		const facts: BindingFacts = {
+			claims: [{ ...claim('declaration.constant'), kind: 'assignment' }, { ...claim('declaration.constructor'), kind: 'assignment' }],
+			members: [named('name', [0], true), named('name', [1], true), named('body', [1])],
+			containers: [],
+			templates: [],
+			unclaimed: []
+		};
+		const canonical = canonicalFacts(facts, vocabulary, new Map([['assignment', assignment]]));
+		expect(canonical.members.map((member) => [member.route === 'dropped' ? null : member.name, member.claims])).toEqual([
+			['name', [0]],
+			['body', [1]]
+		]);
+	});
+
 	it("hands on canonical claim paths, template paths and flag captures, so resolveFlags reads canonical names", async () => {
 		const vocabulary = await synonymVocabulary();
 		const facts: BindingFacts = {
@@ -378,7 +465,7 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
 			unclaimed: []
 		};
-		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, layout: false, seated: false, slots: [], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, shownAs: [] };
 		const model = new Map([['parameter', parameter]]);
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);
