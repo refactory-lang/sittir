@@ -40,6 +40,14 @@
                         "constrained_type": {
                             "from": 1,
                             "to": 0
+                        },
+                        "string_end": {
+                            "from": 1,
+                            "to": 0
+                        },
+                        "string_start": {
+                            "from": 1,
+                            "to": 0
                         }
                     },
                     "from": {
@@ -47,8 +55,8 @@
                         "total": 183
                     },
                     "to": {
-                        "pass": 187,
-                        "total": 187
+                        "pass": 185,
+                        "total": 185
                     }
                 },
                 "parityFixtures": {
@@ -87,11 +95,33 @@
                         "total": 3723
                     }
                 }
+            },
+            "rust": {
+                "from": {
+                    "cases": {
+                        "raw_string_literal_end": {
+                            "from": 1,
+                            "to": 0
+                        },
+                        "raw_string_literal_start": {
+                            "from": 1,
+                            "to": 0
+                        }
+                    },
+                    "from": {
+                        "pass": 258,
+                        "total": 258
+                    },
+                    "to": {
+                        "pass": 256,
+                        "total": 256
+                    }
+                }
             }
         },
-        "reason": "Python's declaration-site type parameters read as their own forms. On master, tree-sitter-python's type_parameter served both a generic type's arguments (list[int]) and a definition's or alias's parameters (def f[T]), and an alias head was a type: type Point[T] = ... read Point[T] as a generic_type, T: Hashable as a constrained_type, and *Ts and **P as splat_type. Those sites now hold type_params, type_params_items and the three type_param forms. No node goes untested: every lost case is a declaration-site misread, found by diffing the parity fixtures. The parity fixtures count each site: type_parameter 22 -> 15, types 22 -> 15 and generic_type 21 -> 15 lose the 7 parameter lists and the 6 alias heads, constrained_type 2 -> 0 its two bounds, splat_type 9 -> 3 the six starred declarations (the three left are argument sites, *Ts in tuple[...]), and type 72 -> 52 the 20 types those sites wrapped. The corpus entries holding T: Hashable and T: (int, str) lose constrained_type in from (1 -> 0), factory storage (1 -> 0) and the built render (2 -> 0, two cases per entry)."
+        "reason": "Python's declaration-site type parameters read as their own forms. On master, tree-sitter-python's type_parameter served both a generic type's arguments (list[int]) and a definition's or alias's parameters (def f[T]), and an alias head was a type: type Point[T] = ... read Point[T] as a generic_type, T: Hashable as a constrained_type, and *Ts and **P as splat_type. Those sites now hold type_params, type_params_items and the three type_param forms. No node goes untested: every lost case is a declaration-site misread, found by diffing the parity fixtures. The parity fixtures count each site: type_parameter 22 -> 15, types 22 -> 15 and generic_type 21 -> 15 lose the 7 parameter lists and the 6 alias heads, constrained_type 2 -> 0 its two bounds, splat_type 9 -> 3 the six starred declarations (the three left are argument sites, *Ts in tuple[...]), and type 72 -> 52 the 20 types those sites wrapped. The corpus entries holding T: Hashable and T: (int, str) lose constrained_type in from (1 -> 0), factory storage (1 -> 0) and the built render (2 -> 0, two cases per entry). A derived string delimiter has no from() input: a python string's quote and a rust raw string's hash run are derived from its content, so the delimiter tokens string_start and string_end (python) and raw_string_literal_start and raw_string_literal_end (rust) leave the from lane, as the kind lanes skip delimiter tokens by delimiterOf. Each held one from case (1 -> 0): python from 187 -> 185 (183 -> 185 against master), rust from 258 -> 256."
     },
-    "commit": "f7079cc",
+    "commit": "a78b9fa",
     "grammars": {
         "python": {
             "kinds": [
@@ -233,6 +263,8 @@
                 "splat_type",
                 "string",
                 "string_content",
+                "string_end",
+                "string_start",
                 "subjects",
                 "subscript",
                 "subscripts",
@@ -1086,9 +1118,7 @@
                         "splat_type": 1,
                         "string": 1,
                         "string_content": 1,
-                        "string_end": 1,
                         "string_fragment": 1,
-                        "string_start": 1,
                         "subjects": 1,
                         "subscript": 1,
                         "subscripts": 1,
@@ -1130,8 +1160,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 187,
-                    "total": 187
+                    "pass": 185,
+                    "total": 185
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -1551,6 +1581,8 @@
                 "range_pattern_with_left",
                 "range_pattern_with_left_with_right",
                 "raw_string_literal",
+                "raw_string_literal_end",
+                "raw_string_literal_start",
                 "receiver_parameter_declaration",
                 "ref_pattern",
                 "reference_expression_bare",
@@ -2728,8 +2760,6 @@
                         "range_pattern_with_left_with_right": 1,
                         "raw_string_literal": 1,
                         "raw_string_literal_content": 1,
-                        "raw_string_literal_end": 1,
-                        "raw_string_literal_start": 1,
                         "receiver_parameter_declaration": 1,
                         "ref_pattern": 1,
                         "reference_expression_bare": 1,
@@ -2821,8 +2851,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 258,
-                    "total": 258
+                    "pass": 256,
+                    "total": 256
                 },
                 "roundtrip": {
                     "astMatchPass": 149,
@@ -4291,7 +4321,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26834,
-        "total": 26836
+        "pass": 26830,
+        "total": 26832
     }
 }
