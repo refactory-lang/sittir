@@ -30,6 +30,21 @@ describe('the portable read', () => {
 		expect(python.is.portable.literal.boolean('True')).toBe(false);
 	});
 
+	it('reads a string\'s text and escapes by their paths, a format spec by its text, and builds them back', () => {
+		const source = 'x = f"a{{b\\n{c:>3}"';
+		expect(((firstOf(source) as Read).content as Read).value).toEqual({
+			$path: 'literal.string.interpolated',
+			elements: [
+				{ $path: 'literal.string.text', $value: 'a' },
+				{ $path: 'literal.string.escape', $value: '{{' },
+				{ $path: 'literal.string.text', $value: 'b' },
+				{ $path: 'literal.string.escape', content: 'n' },
+				{ $path: 'expression.interpolation', expression: 'c', formatSpecifier: { $path: 'expression.interpolation.format', elements: ['>3'] } }
+			]
+		});
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('reads a member through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
@@ -48,16 +63,16 @@ describe('the portable read', () => {
 		expect(roundTrip('a < b <= c')).toBe('a < b <= c\n');
 	});
 
-	it('carries a literal its seat would not build back from text, and reads digit separators and exponent spellings by value', () => {
-		expect(firstOf('x = 1j')).toMatchObject({ content: { value: { $type: python.kinds.IntegerDecimalImaginary } } });
+	it('reads a literal its seat would not build back from bare text as its path and text, and reads digit separators and exponent spellings by value', () => {
+		expect(firstOf('x = 1j')).toMatchObject({ content: { value: { $path: 'literal.number.integer.imaginary', $value: '1j' } } });
 		expect(roundTrip('x = 1j')).toBe('x = 1j\n');
 		expect(roundTrip('x = 0B1_1')).toBe('x = 0b11\n');
 		expect(roundTrip('x = 1e-3')).toBe('x = 1e-3\n');
 	});
 
-	it('carries a literal inside a pattern whose slot holds only containers, and builds it back', () => {
+	it('reads a literal inside a pattern whose slot holds only containers as its path and text, and builds it back', () => {
 		const source = 'match x:\n    case 3j as b1:\n        pass\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ pattern: { $path: 'pattern.as', pattern: { $type: python.kinds.IntegerDecimalImaginary }, name: 'b1' } }] });
+		expect(firstOf(source)).toMatchObject({ body: [{ pattern: { $path: 'pattern.as', pattern: { $path: 'literal.number.integer.imaginary', $value: '3j' }, name: 'b1' } }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 

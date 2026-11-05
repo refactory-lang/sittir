@@ -183,6 +183,12 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
+	it('reads a macro repetition\'s separator as its text, which the separator seat builds back', () => {
+		const source = 'macro_rules! m { ($($x:expr),*) => {}; }';
+		expect(readFirst(source)).toMatchObject({ rules: [{ left: { tokens: [{ $path: 'element.macro.token_repetition.pattern', separator: ',', operator: '*' }] } }] });
+		expect(roundTrip(source)).toContain('($($x:expr),*)');
+	});
+
 	it('builds a trait impl through the clause its implemented trait sits in, and refuses a method call given no callee', () => {
 		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
 		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');

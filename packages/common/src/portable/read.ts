@@ -1,7 +1,7 @@
 import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
 import { nodeText } from '../node-data.ts';
 import { hasKind, type PortableClassifier } from './classify.ts';
-import { tokenText } from './facts.ts';
+import { textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -223,7 +223,8 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		if (path === undefined || claimed.length === 0) {
 			const content = typeof value === 'number' ? undefined : seats?.find((seat) => seat.contents?.[kind] !== undefined)?.contents?.[kind];
 			const spelled = content === undefined ? undefined : textOf(accessed(value as object, content));
-			return tokenText(kind, seats) ?? spelled ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
+			const rebuilt = typeof value === 'number' || seats === undefined || !rebuilds(kind, seats) ? undefined : nodeText(value);
+			return tokenText(kind, seats) ?? spelled ?? rebuilt ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
 		}
 		const arms = typeof value === 'number' ? claimed : claimed.filter((arm) => !arm.presets.some((preset) => contradicts(value as Node, preset)));
 		if (arms.length === 0) return kept(value as Node, { reason: 'preset' }, carried);
@@ -242,10 +243,11 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 			const spelled = textOf(accessed(node, content));
 			return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
 		}
+		const textAt = (text: string | undefined): unknown =>
+			text === undefined ? kept(node, { reason: 'text' }, carried) : rebuilds(kind, seats) ? text : arms.every((arm) => textBuilt(table, arm)) ? { $path: path, $value: text } : kept(node, { reason: 'text' }, carried);
 		const text = nodeText(node);
-		if (text !== undefined) return rebuilds(kind, seats) ? text : kept(node, { reason: 'text' }, carried);
-		if (arms.every((arm) => arm.members.length === 0 && (arm.seated !== undefined || (arm.builder !== undefined && table.builders[arm.builder] === 'text'))))
-			return (rebuilds(kind, seats) ? textOf(node) : undefined) ?? kept(node, { reason: 'text' }, carried);
+		if (text !== undefined) return textAt(text);
+		if (arms.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))) return textAt(textOf(node));
 		const buildable = new Set(arms.flatMap((arm) => [...Object.keys(arm.flags), ...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : []))]));
 		const unbuilt = flagsOf(kind).filter((flag) => !buildable.has(flag) && flagHolds(node, flag));
 		if (unbuilt.length > 0) return kept(node, { reason: 'flags', flags: unbuilt }, carried);

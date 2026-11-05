@@ -1,4 +1,4 @@
-import type { PortableCondition, PortableReadEntry, PortableSeat } from '@sittir/types';
+import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableReadEntry, PortableSeat } from '@sittir/types';
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
@@ -27,6 +27,9 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 	}
 	return readable;
 }
+
+export const textBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
+	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
 const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
 
