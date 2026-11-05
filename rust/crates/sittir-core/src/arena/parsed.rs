@@ -159,6 +159,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 }
 
+/// A candidate whose coordinate needs its node: a parsed leaf, or a record
+/// written no further than its header. `at` places it among the candidates.
+struct CandidateRow {
+    index: NodeIndex,
+    kind: KindId,
+    span: crate::types::Span,
+    at: usize,
+    unhydrated: bool,
+}
+
 impl<G: RecordGrammar> ParsedTree<G> {
     /// The hydrated typed nodes below `index`, in stored field order, as
     /// the coordinates of their rows. Excludes unit cells and captured
@@ -189,6 +199,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
         let mut pending = vec![root];
         let mut seen = std::collections::HashSet::new();
         let mut candidates = Vec::new();
+        let mut rows = Vec::new();
         while let Some(cell) = pending.pop() {
             match cell {
                 Cell::Child {
@@ -204,13 +215,10 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     if root.cell.kind() != Some(kind) {
                         return Err(refused("candidate record kind", at.0));
                     }
-                    let mut coordinate = self
-                        .row_coordinate(row.index)
-                        .ok_or_else(|| refused("candidate row", row.index.0))?;
-                    coordinate.kind = Some(kind);
-                    coordinate.end = row.end;
-                    coordinate.span = row.span;
-                    candidates.push(coordinate);
+                    candidates.push(Some(NodeCoordinate {
+                        kind: Some(kind),
+                        ..NodeCoordinate::new(self.tree_id(), row.index, row.end, row.span)
+                    }));
                     let record = N::shape(kind)
                         .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
                     let first = pending.len();
@@ -222,36 +230,43 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     pending[first..].reverse();
                 }
                 Cell::Coordinate { kind, index, span } => {
-                    let node = crate::engine::node_at_index(self.tree(), index)
-                        .ok_or_else(|| refused("candidate row", index.0))?;
-                    if self.grammar().unit_id(&mut node.walk()).is_some() {
-                        continue;
-                    }
-                    let shape = N::shape(kind)
-                        .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
-                    if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
-                        return Err(refused("unhydrated candidate record", index.0));
-                    }
-                    let mut coordinate = self
-                        .row_coordinate(index)
-                        .ok_or_else(|| refused("candidate row", index.0))?;
-                    coordinate.kind = Some(kind);
-                    coordinate.span = span;
-                    candidates.push(coordinate);
+                    rows.push(CandidateRow { index, kind, span, at: candidates.len(), unhydrated: true });
+                    candidates.push(None);
                 }
                 Cell::ParsedLeaf { kind, span, row } => {
-                    let mut coordinate = self
-                        .row_coordinate(row)
-                        .ok_or_else(|| refused("candidate row", row.0))?;
-                    coordinate.kind = Some(kind);
-                    coordinate.span = span;
-                    candidates.push(coordinate);
+                    rows.push(CandidateRow { index: row, kind, span, at: candidates.len(), unhydrated: false });
+                    candidates.push(None);
                 }
                 Cell::Absent | Cell::Unit { .. } | Cell::ParsedText { .. } => {}
                 _ => return Err(refused("built cell in parsed candidates", index.0)),
             }
         }
-        Ok(candidates)
+        rows.sort_unstable_by_key(|row| row.index);
+        let read = self.read_ctx();
+        let mut cursor = self.tree().walk();
+        for row in rows {
+            if !crate::engine::names_node(self.tree(), row.index) {
+                return Err(refused("candidate row", row.index.0));
+            }
+            crate::read::goto_forward(&mut cursor, row.index);
+            let node = cursor.node();
+            if row.unhydrated {
+                if self.grammar().unit_id(&mut node.walk()).is_some() {
+                    continue;
+                }
+                let shape = N::shape(row.kind)
+                    .ok_or_else(|| refused("candidate record shape", u32::from(row.kind.0)))?;
+                if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
+                    return Err(refused("unhydrated candidate record", row.index.0));
+                }
+            }
+            candidates[row.at] = Some(NodeCoordinate {
+                kind: Some(row.kind),
+                span: row.span,
+                ..read.coordinate(&node, row.index)
+            });
+        }
+        Ok(candidates.into_iter().flatten().collect())
     }
 
     /// The record at `at` of the tree's arena, rendered as a render root

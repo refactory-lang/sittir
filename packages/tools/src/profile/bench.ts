@@ -28,6 +28,7 @@ import { readFileSync } from 'node:fs';
 import type { AnyUntypedNode } from '@sittir/types';
 import type { LanguageAPI, NativeLanguageEngine } from '@sittir/types';
 import { loadCorpusEntries, nativeLanguageEngineOf } from '../validate/common.ts';
+import { measureBuilt } from '../built.ts';
 import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
 
@@ -44,10 +45,6 @@ const N = (() => {
 })();
 
 const WARMUP_ITERATIONS = 1;
-
-function ensureBenchmarkNodeEnv(): void {
-	process.env.NODE_ENV ??= 'production';
-}
 
 export interface MemoryDelta {
 	/** Delta in heapUsed (bytes) */
@@ -248,7 +245,7 @@ function formatTable(results: BenchResult[]): string {
 }
 
 export async function run(_opts: BenchOptions): Promise<number> {
-	ensureBenchmarkNodeEnv();
+	measureBuilt('bench');
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
 	process.stderr.write(`bench-render: N=${N} iterations per grammar and workload\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
