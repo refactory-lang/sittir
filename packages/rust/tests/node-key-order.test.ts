@@ -10,7 +10,8 @@ const engine = nativeEngineOf(native);
 function firstStatement(source: string): object {
 	const { treeId } = JSON.parse(engine.parse(source)) as { treeId: number };
 	try {
-		return (engine.read(treeId, 0, Infinity) as { _statements: object[] })._statements[0]!;
+		const root: object = engine.read(treeId, 0, Infinity);
+		return (root as { _statements: object[] })._statements[0]!;
 	} finally {
 		native.disposeTree(treeId);
 	}

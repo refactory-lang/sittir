@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
-import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { coordinateOf, enterPath, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
@@ -33,12 +33,45 @@ export function snapshotOf(value: object): Snapshot {
 	return snapshotIn(value, undefined, undefined) as Snapshot;
 }
 
+interface SnapshotTask {
+	readonly value: unknown;
+	readonly holderByte: number | undefined;
+	readonly holderTree: SnapshotTree | undefined;
+	readonly holder: Record<string, unknown> | unknown[];
+	readonly key: string | number;
+}
+
+interface SnapshotWalk {
+	readonly work: (SnapshotTask | (() => void))[];
+	readonly path: Set<object>;
+}
+
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined): unknown {
-	if (Array.isArray(value)) return value.map((entry) => snapshotIn(entry, holderByte, holderTree));
+	const root: Record<string, unknown> = {};
+	const walk: SnapshotWalk = { work: [{ value, holderByte, holderTree, holder: root, key: 'value' }], path: new Set() };
+	while (walk.work.length > 0) {
+		const task = walk.work.pop()!;
+		if (typeof task === 'function') task();
+		else (task.holder as Record<string | number, unknown>)[task.key] = snapshotStep(task, walk);
+	}
+	return root.value;
+}
+
+function snapshotStep({ value, holderByte, holderTree }: SnapshotTask, walk: SnapshotWalk): unknown {
+	const { work, path } = walk;
+	if (Array.isArray(value)) {
+		enterPath(path, value);
+		work.push(() => path.delete(value));
+		const out = value.map(() => undefined) as unknown[];
+		const items: SnapshotTask[] = [];
+		value.forEach((entry, index) => items.push({ value: entry, holderByte, holderTree, holder: out, key: index }));
+		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]!);
+		return out;
+	}
 	if (!isRecord(value)) return value;
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
-	if (at === undefined || tree === undefined) return copyOf(value);
+	if (at === undefined || tree === undefined) return copyStep(value, walk);
 	const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
 	return detached(read, { tree, own: treeTokenOf(value) });
 }
@@ -75,7 +108,8 @@ function detached(read: unknown, from: Detaching): unknown {
 	return read;
 }
 
-function copyOf(value: Record<string, unknown>): Record<string, unknown> {
+function copyStep(value: Record<string, unknown>, { work, path }: SnapshotWalk): Record<string, unknown> {
+	enterPath(path, value);
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		const raw = value[key];
@@ -86,7 +120,20 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 		if (isStorageKey(key) || !isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
 		out[key] = raw;
 	}
-	for (const [key, stored] of storedSlotValues(value)) out[key] = snapshotIn(stored, undefined, undefined);
+	const children: SnapshotTask[] = [];
+	for (const [key, stored] of storedSlotValues(value)) {
+		out[key] = undefined;
+		children.push({ value: stored, holderByte: undefined, holderTree: undefined, holder: out, key });
+	}
+	work.push(() => {
+		finishCopy(value, out);
+		path.delete(value);
+	});
+	for (let at = children.length - 1; at >= 0; at -= 1) work.push(children[at]!);
+	return out;
+}
+
+function finishCopy(value: Record<string, unknown>, out: Record<string, unknown>): void {
 	const each = (entry: unknown) => snapshotIn(entry, undefined, undefined);
 	const sides = sidesOf(value);
 	const unitSides = unitSidesOf(value);
@@ -100,5 +147,4 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 		...(separator === undefined ? {} : { separator })
 	};
 	if (Object.keys(layout).length > 0) out.$_layout = layout;
-	return out;
 }

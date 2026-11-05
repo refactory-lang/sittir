@@ -1,11 +1,11 @@
 import type { AnyUntypedNode, EngineIdentity, Rendered, TriviaFacts } from '@sittir/types';
 import type { EngineHandle, LiveEngine } from '../../src/engine-scope.ts';
-import { holdReadTree } from '../../src/node-data.ts';
+import { asReadOutput, holdReadTree } from '../../src/node-data.ts';
 import { mintTreeToken } from '../../src/tree-token.ts';
 
 /** `data` marked as a read gives what it returns: read provenance and a tree token. */
 export function asRead<T extends object>(data: T): T {
-	holdReadTree(data, mintTreeToken(0));
+	holdReadTree(asReadOutput(data), mintTreeToken(0));
 	return data;
 }
 

@@ -1,7 +1,7 @@
 import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { type ChangedEdges, coordinateOf, holdReadTree, isRead, type KindView, listEdges, setTriviaOf, triviaOf } from './node-data.ts';
+import { type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -1065,22 +1065,31 @@ function isTextData(entry: unknown): entry is TextData {
 	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<TextData>).$type === 'number' && typeof (entry as Partial<TextData>).$text === 'string';
 }
 
-export function readEntries(table: object, entries: readonly unknown[], own?: TreeToken): unknown[] {
+export function readEntries(table: object, entries: readonly unknown[]): unknown[] {
+	for (const entry of entries) if (isCoordinate(entry)) readCoordinate(table, entry);
+	return builtEntries(entries, table);
+}
+
+export function readOwnEntries(table: object, entries: readonly ReadOutput[], own: TreeToken): unknown[] {
 	for (const entry of entries) {
 		if (isCoordinate(entry)) readCoordinate(table, entry, own);
-		else if (own !== undefined && !isBuiltEntry(entry)) holdReadTree(entry, own);
+		else if (!isBuiltEntry(entry)) holdReadTree(entry, own);
 	}
 	return builtEntries(entries, table);
 }
 
 export function readCoordinate(table: object, coordinate: NodeCoordinate, own?: TreeToken): NodeCoordinate {
 	const token = heldTree(table, decodeTree(coordinate.$treeHandle), own);
-	if (token !== undefined) holdReadTree(coordinate, token);
+	if (token !== undefined) holdReadCoordinate(coordinate, token);
 	return coordinate;
 }
 
-export function readUnits(table: object, units: readonly unknown[], own?: TreeToken): unknown[] {
-	return units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, (entries) => readEntries(table, entries, own)) }));
+export function readUnits(table: object, units: readonly unknown[]): unknown[] {
+	return units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, (entries) => readEntries(table, entries)) }));
+}
+
+export function readOwnUnits(table: object, units: readonly ReadOutput[], own: TreeToken): unknown[] {
+	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<ReadOutput>, (entries) => readOwnEntries(table, entries, own)) }));
 }
 
 function heldTree(table: object, treeId: number, own: TreeToken | undefined): TreeToken | undefined {
