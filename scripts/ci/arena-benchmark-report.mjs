@@ -146,9 +146,7 @@ export function mergeCorpusShards(shards, grammars) {
 		'grammar shard coverage differs'
 	);
 	assert.equal(shards.length, grammars.length, 'grammar shard coverage differs');
-	const construction = constructionOf(shards[0].report);
 	for (const shard of shards) {
-		assert.equal(constructionOf(shard.report), construction, 'shards must build with the same construction');
 		assert.equal(shard.report.options.grammars.length, 1, 'one grammar per runner required');
 		verify(shard.before, shard.after);
 		for (const field of [
@@ -172,12 +170,7 @@ export function mergeCorpusShards(shards, grammars) {
 			);
 		analyzeCorpus(shard.report);
 	}
-	return { mode: 'validation-storage-shards', options: { grammars, construction }, shards };
-}
-
-/** The construction a corpus report's arena arm builds with: objects unless the run named records. */
-export function constructionOf(report) {
-	return report.options?.construction ?? 'objects';
+	return { mode: 'validation-storage-shards', options: { grammars }, shards };
 }
 
 export function analyzeCorpus(data) {
@@ -318,11 +311,7 @@ export function summarize(data) {
 		'',
 		"Each row times its bucket's whole validator round trip: producing the nodes, rendering, reparsing and comparing. The factory and IR rows are therefore not construction measurements.",
 		'',
-		`${
-			constructionOf(data) === 'records'
-				? 'Factory and IR buckets build records on the arena arm and objects on the object arm.'
-				: 'Factory and IR buckets build objects under both storage settings.'
-		}`,
+		'Factory and IR buckets build records on the arena arm and objects on the object arm.',
 		''
 	];
 	if (data.shards)

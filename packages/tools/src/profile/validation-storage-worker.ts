@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import type { GrammarName } from '@sittir/codegen/grammars';
+import type { NodeStorage } from '@sittir/types';
 import { loadCorpusEntries, loadNativeEngine, useValidationNodeStorage } from '../validate/common.ts';
-import type { NodeConstruction } from '@sittir/types';
-import { nodeStorageOf } from '@sittir/common/engine';
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { RoundtripProfile } from '../validate/roundtrip-profile.ts';
@@ -12,22 +11,19 @@ import {
 	bucketFingerprint,
 	validationBuckets,
 	validationPhases,
-	type StorageMode,
 	type ValidationBucketSample,
 	type ValidationStorageRun
 } from './validation-storage.ts';
 
 export interface ValidationStorageOptions {
 	grammar: GrammarName;
-	storage: StorageMode;
-	construction?: NodeConstruction;
+	storage: NodeStorage;
 	warmup: number;
 	iterations: number;
 }
 
 export async function sampleValidationStorage(options: ValidationStorageOptions): Promise<ValidationStorageRun> {
-	const storage = nodeStorageOf({ nodeStorage: options.storage, nodeConstruction: options.construction });
-	useValidationNodeStorage(storage.nodeStorage);
+	useValidationNodeStorage(options.storage);
 	const engine = await loadNativeEngine(options.grammar);
 	const corpus = corpusFingerprint(loadCorpusEntries(options.grammar));
 	await collectGarbage();
@@ -85,7 +81,7 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 		peakRssBytes: process.resourceUsage().maxRSS * 1024,
 		...(built === undefined ? {} : { built: { chunks: built.chunks, counts: built.counts } })
 	};
-	return { grammar: options.grammar, storage: options.storage, construction: storage.nodeConstruction, pid: process.pid, corpus, buckets, memory };
+	return { grammar: options.grammar, storage: options.storage, pid: process.pid, corpus, buckets, memory };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

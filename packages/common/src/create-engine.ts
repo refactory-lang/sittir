@@ -13,6 +13,7 @@ import type {
 	LanguageIdentity,
 	LanguageHooks,
 	NativeEngineOptions,
+	NodeStorage,
 	ParseOptions,
 	PortableEngine,
 	PortableEngineOptions,
@@ -24,7 +25,7 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type ResolvedNodeStorage, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
@@ -34,7 +35,7 @@ import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
@@ -95,9 +96,9 @@ async function loadRecords<API extends LanguageAPI>(language: LanguageIdentity<A
 
 function nativeEngineOptions<API extends LanguageAPI>(
 	options: EngineOptions<API, BuilderMode> | undefined,
-	storage: ResolvedNodeStorage
+	nodeStorage: NodeStorage
 ): NativeEngineOptions<API['options']> {
-	return { ...(options?.render === undefined ? {} : { options: options.render }), ...storage };
+	return { ...(options?.render === undefined ? {} : { options: options.render }), nodeStorage };
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
@@ -227,7 +228,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	hooks: LanguageHooks<API>,
 	table: API['build'][M],
 	options: EngineOptions<API, M> | undefined,
-	storage: ResolvedNodeStorage,
+	storage: NodeStorage,
 	records: object | undefined
 ): Engine<API, M> {
 	const native = hooks.createNative(nativeEngineOptions(options, storage));
@@ -238,7 +239,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		trivia: hooks.trivia,
 		portable: hooks.portable
 	});
-	stampEngineStorage(identity, storage.nodeStorage);
+	stampEngineStorage(identity, storage);
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
@@ -369,11 +370,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	};
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
-	stampEngineStorage(frozen, storage.nodeStorage);
+	stampEngineStorage(frozen, storage);
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
 	if (records !== undefined) {
 		const built = nativeBuiltRecords(native);
-		if (built === undefined) throw new Error("nodeConstruction 'record' needs an addon built with the `arena` feature");
+		if (built === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 		const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
 		if (views === undefined) throw new Error(`the record builders of language "${language.name}" export no builtViews`);
 		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
@@ -434,7 +435,7 @@ export async function createEngine<API extends LanguageAPI>(
 	const storage = nodeStorageOf(options);
 	const [table, records] = await Promise.all([
 		loadTable(language, hooks, mode),
-		storage.nodeConstruction === 'record' ? loadRecords(language, hooks) : undefined
+		storage === 'arena' ? loadRecords(language, hooks) : undefined
 	]);
 	return assembleEngine(language, hooks, table, options, storage, records);
 }

@@ -1,12 +1,11 @@
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { roundtripPhases, type RoundtripProfile } from '../validate/roundtrip-profile.ts';
 import { median, type corpusFingerprint } from './storage-common.ts';
-import type { NodeConstruction } from '@sittir/types';
+import type { NodeStorage } from '@sittir/types';
 
 export const validationBuckets = ['read-render-parse', 'factory-render-parse', 'ir-render-parse'] as const;
 export const validationPhases = ['validator', ...roundtripPhases] as const;
 export type ValidationBucket = (typeof validationBuckets)[number];
-export type StorageMode = 'object' | 'arena';
 export interface ValidationBucketSample extends ReturnType<RoundtripProfile['finish']> {
 	bucket: ValidationBucket;
 	resultSha256: string;
@@ -15,8 +14,7 @@ export interface ValidationBucketSample extends ReturnType<RoundtripProfile['fin
 }
 export interface ValidationStorageRun {
 	grammar: GrammarName;
-	storage: StorageMode;
-	construction: NodeConstruction;
+	storage: NodeStorage;
 	pid: number;
 	corpus: ReturnType<typeof corpusFingerprint>;
 	buckets: ValidationBucketSample[];
@@ -45,7 +43,7 @@ export function summarizeValidationStorage(samples: readonly (ValidationStorageR
 		const first = rows[0]!;
 		if (JSON.stringify(first.buckets.map((bucket) => bucket.bucket)) !== JSON.stringify(validationBuckets))
 			throw new Error(`missing validation bucket for ${grammar}`);
-		const byMode = (storage: StorageMode) => rows.filter((row) => row.storage === storage);
+		const byMode = (storage: NodeStorage) => rows.filter((row) => row.storage === storage);
 		const fingerprint = (row: ValidationStorageRun, exactOutput = true) =>
 			JSON.stringify([
 				row.corpus,
@@ -58,7 +56,7 @@ export function summarizeValidationStorage(samples: readonly (ValidationStorageR
 			)
 				throw new Error(`validation workload mismatch for ${grammar}`);
 		}
-		const rounds = (storage: StorageMode) =>
+		const rounds = (storage: NodeStorage) =>
 			byMode(storage)
 				.map((row) => row.round)
 				.sort((a, b) => a - b);
@@ -80,7 +78,7 @@ export function summarizeValidationStorage(samples: readonly (ValidationStorageR
 			},
 			resultSha256: bucket.resultSha256,
 			timings: validationPhases.map((phase) => {
-				const values = (storage: StorageMode) =>
+				const values = (storage: NodeStorage) =>
 					byMode(storage).map((row) => median(row.buckets[index]!.timings[phase]));
 				const object = values('object'),
 					arena = values('arena');

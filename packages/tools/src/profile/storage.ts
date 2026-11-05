@@ -10,8 +10,6 @@ import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydrat
 import { median } from './storage-common.ts';
 import { summarizeValidationStorage, type ValidationStorageRun } from './validation-storage.ts';
 import type { ValidationStorageOptions } from './validation-storage-worker.ts';
-import type { NodeConstruction } from '@sittir/types';
-import { nodeStorageOf } from '@sittir/common/engine';
 export { median } from './storage-common.ts';
 
 const execute = promisify(execFile);
@@ -25,7 +23,6 @@ export interface StorageBenchOptions {
 	idleGate?: string;
 	output?: string;
 	validation?: boolean;
-	construction?: NodeConstruction;
 }
 
 function retainedMemory(rows: readonly { baseline: NodeJS.MemoryUsage; current: NodeJS.MemoryUsage }[]) {
@@ -107,11 +104,6 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
 	const nativeDepth = options.nativeDepth ?? 'all';
-	const construction = nodeStorageOf({ nodeStorage: options.validation ? 'arena' : 'object' }).nodeConstruction;
-	if (options.construction !== undefined) {
-		if (!options.validation) throw new Error('--construction applies only to validation profiles');
-		nodeStorageOf({ nodeStorage: 'arena', nodeConstruction: options.construction });
-	}
 	if (options.validation && (options.limit !== undefined || nativeDepth !== 'all'))
 		throw new Error(
 			'validation profiles use the complete deep corpus; --limit and finite --native-depth apply only to native hydration'
@@ -137,7 +129,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 					validationSamples.push(
 						await runWorker<ValidationStorageRun>(
 							'validation-storage',
-							{ grammar, storage, construction: storage === 'arena' ? construction : 'object', warmup, iterations },
+							{ grammar, storage, warmup, iterations },
 							round,
 							options.idleGate
 						)
@@ -194,8 +186,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			warmup,
 			iterations,
 			limit: options.limit ?? null,
-			nativeDepth,
-			construction
+			nativeDepth
 		},
 		...(options.validation ? { validationSummary, validationSamples } : { nativeSummary, nativeSamples })
 	};
