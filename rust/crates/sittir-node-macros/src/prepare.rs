@@ -191,6 +191,8 @@ mod tests {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
                 #[wire(key = "_items")]
                 #[slot(field = field::ITEMS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
                 pub items: Vec<SlotValue<ItemNode>>,

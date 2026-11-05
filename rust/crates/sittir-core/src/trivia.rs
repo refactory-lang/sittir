@@ -321,8 +321,8 @@ impl<T> Default for NodeTrivia<T> {
 }
 
 /// The trivia type of the grammar a node belongs to: what a coordinate
-/// of it carries as outside trivia. Codegen states it once per grammar
-/// (`grammar_trivia!`).
+/// of it carries as outside trivia, and whose frames its wire codec runs
+/// in. Codegen states it once per grammar (`grammar_nodes!`).
 pub trait HasTrivia {
     type Trivia: TriviaItem + HasTrivia<Trivia = Self::Trivia>;
 }
@@ -377,31 +377,37 @@ impl<T: FromTriviaText> FromTriviaText for Box<T> {
 /// What a grammar's trivia type provides to frame a coordinate: its render,
 /// its prepare walk, its heap count and, with the bindings, its wire decode.
 #[cfg(not(feature = "napi-bindings"))]
-pub trait TriviaItem: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static {}
+pub trait TriviaItem: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes {}
 
 #[cfg(not(feature = "napi-bindings"))]
-impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static> TriviaItem for T {}
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + crate::codec::Nodes> TriviaItem for T {}
 
 #[cfg(feature = "napi-bindings")]
 pub trait TriviaItem:
-    Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue
+    Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames
 {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue> TriviaItem
-    for T
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + HeapBytes + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::codec::Frames>
+    TriviaItem for T
 {
 }
 
 /// A test's trivia type, which never crosses the boundary: decoding one from
-/// JavaScript or encoding one to it refuses. Expands to nothing when this
-/// crate is built without napi bindings, like a derived node's codec
-/// (`napi_codec!`).
+/// JavaScript or encoding one to it refuses, and it holds no node. Its napi
+/// items expand to nothing when this crate is built without napi bindings,
+/// like a derived node's codec (`napi_codec!`).
 #[doc(hidden)]
 #[macro_export]
 macro_rules! refuse_napi_codec {
     ($trivia:ty) => {
+        impl $crate::codec::Parts<$trivia> for $trivia {
+            fn parts(self, _: &mut ::std::vec::Vec<<$trivia as $crate::codec::Nodes>::Whole>) {}
+        }
+        impl $crate::codec::Dismantle<$trivia> for $trivia {
+            fn dismantle(self, _: &mut ::std::vec::Vec<<$trivia as $crate::codec::Nodes>::Whole>) {}
+        }
         $crate::napi_codec! {
             impl $crate::__napi::bindgen_prelude::FromNapiValue for $trivia {
                 unsafe fn from_napi_value(_: $crate::__napi::sys::napi_env, _: $crate::__napi::sys::napi_value) -> $crate::__napi::Result<Self> {
@@ -411,6 +417,29 @@ macro_rules! refuse_napi_codec {
             impl $crate::__napi::bindgen_prelude::ToNapiValue for $trivia {
                 unsafe fn to_napi_value(_: $crate::__napi::sys::napi_env, _: Self) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
                     Err($crate::__napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+                }
+            }
+            $crate::nodeless_steps!($trivia; $trivia);
+            impl $crate::codec::Codec<$trivia> for $trivia {
+                type DecodeWait = ::core::convert::Infallible;
+                type EncodeWait = ::core::convert::Infallible;
+                unsafe fn decode(env: $crate::__napi::sys::napi_env, value: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::DecodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<Self, Self::DecodeWait>> {
+                    // SAFETY: this fn requires `value` to be live in `env`.
+                    unsafe { <Self as $crate::__napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value) }.map($crate::codec::Begun::Whole)
+                }
+                unsafe fn decoded(_: $crate::__napi::sys::napi_env, wait: Self::DecodeWait, _: <$trivia as $crate::codec::Nodes>::Whole, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::DecodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<Self, Self::DecodeWait>> {
+                    match wait {}
+                }
+                unsafe fn encode(self, env: $crate::__napi::sys::napi_env, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::EncodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<$crate::__napi::sys::napi_value, Self::EncodeWait>> {
+                    // SAFETY: this fn requires a live `env`.
+                    unsafe { <Self as $crate::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, self) }.map($crate::codec::Begun::Whole)
+                }
+                unsafe fn encoded(_: $crate::__napi::sys::napi_env, wait: Self::EncodeWait, _: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::EncodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<$crate::__napi::sys::napi_value, Self::EncodeWait>> {
+                    match wait {}
+                }
+                unsafe fn encode_whole(self, env: $crate::__napi::sys::napi_env) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
+                    // SAFETY: this fn requires a live `env`.
+                    unsafe { <Self as $crate::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, self) }
                 }
             }
         }
@@ -635,7 +664,7 @@ pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>, w: &
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
     for TriviaEntry<T>
 {
     /// A built record is `{ $type, $record }`, its kind and its address.
@@ -662,7 +691,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
     for NodeTrivia<T>
 {
     unsafe fn from_napi_value(
@@ -682,7 +711,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NodeTrivia<T> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for NodeTrivia<T> {
     /// `{ leading?, trailing?, inner? }`, each only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
@@ -698,7 +727,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
+impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
     /// The value's own form; a built record, its `{ $type, $record }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         match val {

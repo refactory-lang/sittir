@@ -10,43 +10,11 @@ use sittir_core::{SlotValue, Node};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
 use sittir_typescript::render::kind_ids as ts;
 
-/// The trivia type of every node these tests declare: a layout run, the one
-/// trivia the reads here build as a node, carries nothing and renders nothing.
-#[derive(Debug, Clone, PartialEq)]
-struct NoTrivia;
+mod no_trivia;
 
-impl sittir_core::render::Render for NoTrivia {
-    fn render(&self, _: &mut dyn sittir_core::render::RenderSink) -> sittir_core::render::RenderResult {
-        Ok(())
-    }
-}
+use no_trivia::NoTrivia;
 
-impl sittir_core::trivia::TriviaSeam for NoTrivia {}
-
-impl sittir_core::heap::HeapBytes for NoTrivia {
-    fn heap_bytes(&self) -> usize {
-        0
-    }
-}
-
-impl sittir_core::prepare::Prepare for NoTrivia {
-    fn prepare(&mut self, _: &sittir_core::prepare::RenderContext<'_>) -> Result<(), sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-impl sittir_core::trivia::FromTriviaText for NoTrivia {
-    fn from_text(_: sittir_core::trivia::TriviaText) -> Self {
-        NoTrivia
-    }
-
-    fn from_layout(_: sittir_core::trivia::TriviaText) -> Option<Self> {
-        Some(NoTrivia)
-    }
-}
-
-sittir_core::refuse_napi_codec!(NoTrivia);
-sittir_core::grammar_trivia!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
+sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Params, Block, Function, FunctionWithoutBody, ParamsWithoutTokenList, OneFunction, File, Inserted, Primitive, Type, Typed, Predefined, IsOrNot, TsIdent, TsNumber, Declarator, DeclarationKind, Terminator, Declaration, BlockTerminator, StatementBlock, Decimal, TypeIdent, NamedType, Named, Param, List, Owner, Name, TypeIdentOfChoice, NamedTypeOfChoice, NamedOfChoice);
 
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 
@@ -75,6 +43,8 @@ struct Block {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Vec<SlotValue<Function>>,
@@ -86,6 +56,8 @@ struct Function {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -104,6 +76,8 @@ struct FunctionWithoutBody {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -126,6 +100,8 @@ struct OneFunction {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statement")]
     #[slot(field = field::STATEMENTS)]
     statement: SlotValue<Function>,
@@ -137,6 +113,8 @@ struct File {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
     statements: Vec<SlotValue<Function>>,
@@ -456,6 +434,8 @@ struct Typed {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -596,6 +576,8 @@ struct Declarator {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
     name: SlotValue<TsIdent>,
@@ -628,6 +610,8 @@ struct Declaration {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
     kind: SlotValue<DeclarationKind>,
@@ -667,6 +651,8 @@ struct StatementBlock {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
     terminator: Option<SlotValue<BlockTerminator>>,
@@ -706,6 +692,8 @@ struct TypeIdent {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Ident>,
@@ -726,6 +714,8 @@ struct Named {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -784,6 +774,8 @@ struct List {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
     item: Vec<SlotValue<Param>>,
@@ -798,6 +790,8 @@ struct Owner {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     elements: Option<SlotValue<List>>,
@@ -850,6 +844,8 @@ struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Name>,
@@ -868,6 +864,8 @@ struct NamedOfChoice {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,

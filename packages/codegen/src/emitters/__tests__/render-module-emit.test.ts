@@ -409,11 +409,16 @@ describe('render options on nodes', () => {
 		);
 	});
 
-	it('the render entry prepares the tree through the context before dispatch', async () => {
+	it('the render entry prepares the tree through the context before dispatch, then releases it a level at a time', async () => {
 		const src = await getTypescriptNodeRs();
 		expect(src).toContain('pub fn render_node_parts(');
 		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
-		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;');
+		const entry = src.slice(src.indexOf('pub fn render_node_parts('));
+		const prepare = entry.indexOf('    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {');
+		const dispatch = entry.indexOf('        Ok(()) => render_node_dispatch(&node, ctx, recording),');
+		const release = entry.indexOf('    ::sittir_core::codec::release::<TriviaNode, _>(node);');
+		expect([prepare, dispatch, release].every((at) => at >= 0)).toBe(true);
+		expect(prepare < dispatch && dispatch < release).toBe(true);
 	});
 
 	it('every node carries base edges in its layout; a kind edge is prepared from its edge row and written through the sink', async () => {

@@ -354,46 +354,25 @@ unsafe fn raw_typeof(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_val
     Ok(value_type)
 }
 
+/// A slot's value decoded by the wire codec's loop (`codec::Codec`).
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const ADJACENT: bool>
-    ::napi::bindgen_prelude::FromNapiValue for SlotValue<T, ADJACENT>
+impl<T: crate::codec::WireNode, const ADJACENT: bool> ::napi::bindgen_prelude::FromNapiValue
+    for SlotValue<T, ADJACENT>
 {
-    /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
-    /// coordinate (its `$span` is required), anything else is the slot's own
-    /// node type, which decides for itself what it accepts. There is no
-    /// attempt-then-fallback.
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        let value_type = unsafe { node_value_type(env, napi_val)? };
-        if value_type == ::napi::ValueType::Object {
-            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-            if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord));
-            }
-        }
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        Ok(Self::Node(unsafe {
-            T::from_napi_value(env, napi_val)?
-        }))
+        unsafe { crate::codec::decode::<T::Trivia, Self>(env, napi_val) }
     }
 }
 
+/// A slot's value encoded by the wire codec's loop (`codec::Codec`).
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
+impl<T: crate::codec::WireNode, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
     for SlotValue<T, ADJACENT>
 {
-    /// A node writes itself; a coordinate writes the object the decoder
-    /// reads back as one.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        match val {
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Node(node) => unsafe { T::to_napi_value(env, node) },
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Coord(coord) => unsafe { coordinate_to_napi(env, &coord) },
-        }
+        // SAFETY: napi calls `to_napi_value` with a live `env`.
+        unsafe { crate::codec::encode::<T::Trivia, Self>(env, val) }
     }
 }
 

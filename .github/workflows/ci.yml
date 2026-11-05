@@ -500,6 +500,14 @@ jobs:
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # Each release addon just built, read from the unstripped copy its
+      # build keeps: the limit's count of its grammar's costliest whole-encode
+      # level, with the one-time frames, must fit ENCODE_STACK_BUDGET. Over
+      # it, the step fails with the costliest paths and the largest limit
+      # that fits. It only disassembles, so cross-compiled legs run it too.
+      - name: encode stack budget
+        shell: bash
+        run: npx tsx packages/cli/src/cli.ts tool encode-stack
       # `--no-default-features` is required for a bare `cargo test
       # --workspace`: sittir-{rust,typescript,python} default to
       # `napi-bindings` ON (needed for `napi build` above), and workspace

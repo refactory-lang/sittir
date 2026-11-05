@@ -8,8 +8,13 @@ use sittir_core::spacing::WordMatcher;
 use sittir_core::types::{ItemIndex, KindId};
 use sittir_core::view::{KindOf, KindTest, ListView, Slot, View};
 use sittir_core::{Node, SlotValue};
-use sittir_rust::render::node::{NodeLayout, TriviaNode};
 use sittir_rust::render::{field_ids as field, kind_ids as kind};
+
+mod no_trivia;
+
+use no_trivia::NoTrivia;
+
+type NodeLayout = sittir_core::layout::NodeLayout<NoTrivia>;
 
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(kind = kind::IDENTIFIER, text, fields = IdentFields)]
@@ -22,7 +27,7 @@ struct Ident {
     text: String,
 }
 
-sittir_core::grammar_trivia!(TriviaNode; Ident, Function);
+sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Function);
 
 impl KindOf for Ident {
     fn kind_in(&self, kinds: &[KindId]) -> bool {
@@ -42,6 +47,8 @@ struct Function {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<NodeLayout>>,
+    #[height]
+    height: u16,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     name: SlotValue<Ident>,
@@ -109,27 +116,15 @@ fn rendered(value: &dyn Render) -> String {
 
 #[test]
 fn a_body_generic_over_the_fields_trait_renders_the_native_node() {
-    let function = Function {
-        layout: None,
-        name: ident("f"),
-        parameters: vec![ident("a"), ident("b")],
-        return_type: Some(ident("T")),
-        separator: None,
-    };
+    let function = Function::new(None, ident("f"), vec![ident("a"), ident("b")], Some(ident("T")), None);
     assert_eq!(rendered(&function), "fn f(a,b)->T");
-    let bare = Function { parameters: vec![], return_type: None, ..function };
+    let bare = Function::new(None, ident("f"), vec![], None, None);
     assert_eq!(rendered(&bare), "fn f");
 }
 
 #[test]
 fn the_accessors_answer_the_fields() {
-    let function = Function {
-        layout: None,
-        name: ident("f"),
-        parameters: vec![ident("a")],
-        return_type: None,
-        separator: Some(KindId(4)),
-    };
+    let function = Function::new(None, ident("f"), vec![ident("a")], None, Some(KindId(4)));
     assert_eq!(FunctionFields::separator(&function), Some(KindId(4)));
     assert!(FunctionFields::name(&function).is_present());
     assert!(!FunctionFields::return_type(&function).is_present());
