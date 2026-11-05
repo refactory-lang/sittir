@@ -334,6 +334,7 @@ function spelledIn(kind: string, rule: LinkRule, fields: ReadonlyMap<string, rea
 			canonical: group.member,
 			...(group.readOnly ? { readOnly: true } : {}),
 			...(group.singleLine ? { singleLine: true } : {}),
+			...(group.interpolating ? { interpolating: true } : {}),
 			...(group.escape === undefined ? {} : { escape: group.escape })
 		} as LinkRule;
 	}

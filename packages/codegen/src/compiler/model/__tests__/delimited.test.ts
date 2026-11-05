@@ -5,7 +5,7 @@ import { ruleListParts } from '../../../dsl/rule-patterns.ts';
 import { recordUnguardedDelimiters } from '../../assemble.ts';
 import { fromAssembleWarning } from '../../diagnostics/grammar-diagnostics.ts';
 import { delimitedLeafVerdicts } from '../delimited.ts';
-import { AbstractAssembledCompound, AssembledLexedPattern, AssembleDiagnosticsCollector } from '../node-map.ts';
+import { AbstractAssembledCompound, AssembledLeaf, AssembledLexedPattern, AssembleDiagnosticsCollector } from '../node-map.ts';
 import { stampDelimiterFacets } from '../delimiter-facets.ts';
 import { FactoryEmitter } from '../../../emitters/factories.ts';
 import { emitReadyModel } from '../../../__tests__/helpers/emit-ready-model.ts';
@@ -71,6 +71,22 @@ describe('the derived delimiters of a composite', () => {
 			delimited: undefined,
 			facets: { open: 'raw_string_literal_start', close: 'raw_string_literal_end', arms: [], run: '#', closeLead: '"' }
 		});
+	}, COMPILE_TIMEOUT);
+});
+
+describe('the free text of a composite with derived delimiters', () => {
+	it('stamps the leaves that can hold another arm\'s opener and the characters they refuse', async () => {
+		const python = (await emitReadyModel('python')).nodeMap.nodes;
+		const string = python.get('string');
+		const freeText = string instanceof AbstractAssembledCompound ? string.freeText : undefined;
+		expect(freeText).toMatchObject({ leaves: ['string_fragment'], excluded: [[123, 123], [125, 125]], gate: { token: 'string_start', facet: 'prefix' } });
+		const anyCase = (members: readonly string[]) => members.flatMap((member) => [...member].reduce<string[]>((spellings, char) => spellings.flatMap((s) => [s + char.toLowerCase(), s + char.toUpperCase()]), ['']));
+		const eitherOrder = (member: string) => (member.length === 2 ? [member, [...member].reverse().join('')] : [member]);
+		expect([...freeText!.gate!.spellings].sort()).toEqual(anyCase(['f', 't', 'rf', 'rt'].flatMap(eitherOrder)).sort());
+		expect((python.get('string_fragment') as AssembledLeaf).freeText).toBe(true);
+		expect((python.get('escape_interpolation') as AssembledLeaf).freeText).toBeUndefined();
+		const raw = (await emitReadyModel('rust')).nodeMap.nodes.get('raw_string_literal');
+		expect(raw instanceof AbstractAssembledCompound ? raw.freeText : 'not a compound').toBeUndefined();
 	}, COMPILE_TIMEOUT);
 });
 

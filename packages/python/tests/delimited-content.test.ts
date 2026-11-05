@@ -22,7 +22,8 @@ describe('a built string takes the quote its content derives', () => {
 
 	it('keeps the prefix on the string it builds', () => {
 		expect(rendered(b.string({ prefix: 'rb', contents: content('x') }))).toBe('rb"x"');
-		expect(rendered(b.string({ prefix: 'f', contents: content('a{{b}}') }))).toBe('f"a{{b}}"');
+		const doubled = b.stringContent(b.stringFragment('a'), b.escapeInterpolation('{{'), b.stringFragment('b'), b.escapeInterpolation('}}'));
+		expect(rendered(b.string({ prefix: 'f', contents: [doubled] }))).toBe('f"a{{b}}"');
 	});
 
 	it('keeps a preferred quote while the content fits it, and falls back when it no longer does', () => {
@@ -51,6 +52,40 @@ const readString = (source: string): ReadString =>
 	(py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
 
 const contentOf = (string: ReadString): string => string.contents().map(String).join('') + (string.stringEnd().content() ?? '');
+
+describe("an interpolating string's built free text", () => {
+	it.each(['f', 't', 'Rf', 'rt'])('refuses a brace under the %s prefix, naming the leaf', (prefix) => {
+		expect(() => rendered(b.string({ prefix: prefix as never, contents: content('{evil()}') }))).toThrow(
+			'string: its built string_fragment text holds `{`, which would open another part of it'
+		);
+	});
+
+	it('refuses a brace under an opaque prefix', () => {
+		const read = readString('bf"y"') as unknown as { prefix(): string | undefined; readonly $with: { contents(...items: unknown[]): { $render(): unknown } } };
+		expect(read.prefix()).toBeUndefined();
+		expect(() => rendered(read.$with.contents(...content('a}')))).toThrow('holds `}`');
+	});
+
+	it('keeps an interpolation and a doubled brace, which are their own parts', () => {
+		const contents = [b.stringContent(b.stringFragment('a')), b.interpolation({ expression: 'x' }), b.stringContent(b.escapeInterpolation('{{'))];
+		expect(rendered(b.string({ prefix: 'f', contents }))).toBe('f"a{x}{{"');
+	});
+
+	it.each([
+		['no prefix', undefined, '{x}', '"{x}"'],
+		['a format template', undefined, '{} and {0:>3}', '"{} and {0:>3}"'],
+		['a bytes prefix', 'b', '\\N{WINKING FACE}', 'b"\\N{WINKING FACE}"'],
+		['a raw prefix', 'r', '{x}', 'r"{x}"']
+	] as const)('builds braces as text under %s', (_why, prefix, text, built) => {
+		expect(rendered(b.string({ ...(prefix === undefined ? {} : { prefix }), contents: content(text) }))).toBe(built);
+	});
+
+	it('rebuilds the text of a read bytes string with a named escape', () => {
+		const source = 'b"\\x12\\N{WINKING FACE}"';
+		const read = readString(source);
+		expect(rendered(b.string({ prefix: 'b', contents: content(contentOf(read)) }))).toBe(source);
+	});
+});
 
 describe('a raw string whose content is only escape pairs reads the pairs as content and builds them back', () => {
 	it.each([

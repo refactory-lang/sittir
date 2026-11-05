@@ -785,7 +785,7 @@ function isImmediateLeaf(node: AssembledNode): boolean {
 }
 
 function leafEdgesCall(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string | undefined {
-	if (node instanceof AssembledLeaf && kindId !== undefined && leafEdgesOf(node, nodeMap) !== undefined) {
+	if (node instanceof AssembledLeaf && kindId !== undefined && (node.freeText === true || leafEdgesOf(node, nodeMap) !== undefined)) {
 		return `w.leaf_kind(::sittir_core::types::KindId(${kindId}));`;
 	}
 	return undefined;
@@ -3302,7 +3302,7 @@ function prepareStructImpl(
 		}
 		body.push(...optionDefaultFills(plan, node, choices));
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
-		body.push(...delimiterFill(node));
+		body.push(...delimiterFill(node, kindEntries));
 	}
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${structName} {`,
@@ -3492,7 +3492,7 @@ function renderNodeDataStruct(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), nodeMap, choices, kindEntries));
-	lines.push(...delimiterTokenImpl(structName, node));
+	lines.push(...delimiterTokenImpl(structName, node, nodeMap));
 	return lines;
 }
 
@@ -3506,9 +3506,16 @@ function rustChar(text: string | undefined): string {
 	return `Some('${text === '\\' || text === "'" ? `\\${text}` : text}')`;
 }
 
-function delimiterFill(node: AssembledNode): string[] {
+function delimiterFill(node: AssembledNode, kindEntries: readonly KindEnumEntry[]): string[] {
 	if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return [];
 	const facts = node.delimiterFacets;
+	const freeText = (node.freeText?.leaves ?? []).map((leaf) => {
+		const id = findKindEntry(kindEntries, leaf)?.id;
+		if (id === undefined) throw new Error(`render-module: '${node.kind}''s free-text leaf '${leaf}' has no kind id`);
+		return `::sittir_core::delimiters::FreeTextLeaf { kind: ::sittir_core::types::KindId(${id}), name: ${rustStr(leaf)} }`;
+	});
+	const excluded = (node.freeText?.excluded ?? []).map(([lo, hi]) => `(${lo}, ${hi})`);
+	const gate = node.freeText?.gate === undefined ? 'None' : `Some(&[${node.freeText.gate.spellings.map(rustStr).join(', ')}])`;
 	const field = (name: string): string => {
 		const slot = node.slots.find((candidate) => candidate.name === name);
 		if (slot === undefined) throw new Error(`render-module: '${node.kind}' is delimited in '${name}', which is none of its slots`);
@@ -3522,12 +3529,14 @@ function delimiterFill(node: AssembledNode): string[] {
 			return isNodeRequired(slot) ? `::sittir_core::render::Render::render(&${ident}, w)?;` : `if let Some(item) = &${ident} { ::sittir_core::render::Render::render(item, w)?; }`;
 		});
 	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStr(arm.text)}, single_line: ${arm.singleLine} }`);
-	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)} }`;
+	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], gate: ${gate} }`;
 	return [`        ::sittir_core::delimiters::fill(&mut ${field(facts.open)}, &mut ${field(facts.close)}, &${spec}, ctx, |w| { ${[...content, 'Ok(())'].join(' ')} })?;`];
 }
 
-function delimiterTokenImpl(structName: string, node: AssembledNode): string[] {
+function delimiterTokenImpl(structName: string, node: AssembledNode, nodeMap: NodeMap): string[] {
 	if (!isDelimiterToken(node)) return [];
+	const owner = nodeMap.nodes.get(node.delimiterOf);
+	const gate = owner instanceof AbstractAssembledCompound && owner.freeText?.gate?.token === node.kind ? node.slots.find((slot) => slot.name === owner.freeText!.gate!.facet) : undefined;
 	const facet = node.slots.filter((slot) => slot.delimiterRole === 'preferred' || slot.delimiterRole === 'run' || slot.delimiterRole === 'mirror');
 	if (facet.length !== 1) throw new Error(`render-module: delimiter token '${node.kind}' derives ${facet.length} facets`);
 	const ident = rustFieldIdent(facet[0]!.storageName);
@@ -3538,6 +3547,7 @@ function delimiterTokenImpl(structName: string, node: AssembledNode): string[] {
 		`    fn set_facet(&mut self, text: String) { self.${ident} = Some(text); }`,
 		...(content === undefined ? [] : [`    fn content(&self) -> Option<&str> { self.${rustFieldIdent(content.storageName)}.as_deref() }`]),
 		`    fn opaque(&self) -> bool { self.verbatim.is_some() }`,
+		...(gate === undefined ? [] : [`    fn gate(&self) -> Option<&str> { self.${rustFieldIdent(gate.storageName)}.as_deref() }`]),
 		`}`,
 		''
 	];

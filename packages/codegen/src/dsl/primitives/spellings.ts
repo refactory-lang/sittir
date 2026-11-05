@@ -5,6 +5,7 @@ export interface SpellingRule {
 	readonly order?: true;
 	readonly readOnly?: true;
 	readonly singleLine?: true;
+	readonly interpolating?: true;
 }
 
 export interface SpellingOptions {
@@ -16,6 +17,7 @@ export interface SpellingGroup {
 	readonly spellings: readonly string[];
 	readonly readOnly: boolean;
 	readonly singleLine: boolean;
+	readonly interpolating: boolean;
 	readonly escape?: string;
 }
 
@@ -45,6 +47,7 @@ export function spellings(members: Readonly<Record<string, SpellingRule>>, optio
 		spellings: closureOf(member, rule),
 		readOnly: rule.readOnly === true,
 		singleLine: rule.singleLine === true,
+		interpolating: rule.interpolating === true,
 		...(options.escape === undefined ? {} : { escape: options.escape })
 	}));
 	const owner = new Map<string, string>();

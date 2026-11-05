@@ -17971,7 +17971,7 @@ impl ::sittir_core::prepare::Prepare for StringNode {
         self.string_start.prepare(ctx)?;
         self.content.prepare(ctx)?;
         self.string_end.prepare(ctx)?;
-        ::sittir_core::delimiters::fill(&mut self.string_start, &mut self.string_end, &::sittir_core::delimiters::DelimiterSpec { kind: "string", arms: &[::sittir_core::delimiters::DelimiterArm { text: "\"", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "'", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "\"\"\"", single_line: false }, ::sittir_core::delimiters::DelimiterArm { text: "'''", single_line: false }], run: None, close_lead: "", escape: Some('\\') }, ctx, |w| { for item in &self.content { ::sittir_core::render::Render::render(item, w)?; } Ok(()) })?;
+        ::sittir_core::delimiters::fill(&mut self.string_start, &mut self.string_end, &::sittir_core::delimiters::DelimiterSpec { kind: "string", arms: &[::sittir_core::delimiters::DelimiterArm { text: "\"", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "'", single_line: true }, ::sittir_core::delimiters::DelimiterArm { text: "\"\"\"", single_line: false }, ::sittir_core::delimiters::DelimiterArm { text: "'''", single_line: false }], run: None, close_lead: "", escape: Some('\\'), free_text: &[::sittir_core::delimiters::FreeTextLeaf { kind: ::sittir_core::types::KindId(120), name: "string_fragment" }], excluded: &[(123, 123), (125, 125)], gate: Some(&["f", "F", "t", "T", "rf", "rF", "Rf", "RF", "fr", "fR", "Fr", "FR", "rt", "rT", "Rt", "RT", "tr", "tR", "Tr", "TR"]) }, ctx, |w| { for item in &self.content { ::sittir_core::render::Render::render(item, w)?; } Ok(()) })?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22258,6 +22258,7 @@ impl ::sittir_core::delimiters::DelimiterToken for StringStartNode {
     fn facet(&self) -> Option<&str> { self.quote.as_deref() }
     fn set_facet(&mut self, text: String) { self.quote = Some(text); }
     fn opaque(&self) -> bool { self.verbatim.is_some() }
+    fn gate(&self) -> Option<&str> { self.prefix.as_deref() }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]

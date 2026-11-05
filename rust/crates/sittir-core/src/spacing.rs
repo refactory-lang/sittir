@@ -230,6 +230,21 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The edge chain of the coordinate whose boundary is being placed
     /// (`RenderSink::boundary`), kept to reuse its allocation.
     edge_levels: Vec<crate::render::EdgeLevel>,
+    /// The free-text leaves whose built text is checked (`with_leaf_probe`).
+    probe: Option<LeafProbe<'a>>,
+    /// The kind of the leaf whose text comes next, while a probe is attached.
+    probe_kind: Option<crate::types::KindId>,
+    /// The first probed leaf whose text held a refused character.
+    probe_hit: Option<(&'a crate::delimiters::FreeTextLeaf, char)>,
+}
+
+/// The free-text leaves a render checks, and the characters their built text
+/// may not hold. Text a leaf reads from its source (`RenderSink::slice`) is
+/// not checked.
+#[derive(Debug, Clone, Copy)]
+pub struct LeafProbe<'a> {
+    pub leaves: &'a [crate::delimiters::FreeTextLeaf],
+    pub excluded: &'a [(u32, u32)],
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -321,7 +336,34 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             open_before: 0,
             recorder: None,
             edge_levels: Vec::new(),
+            probe: None,
+            probe_kind: None,
+            probe_hit: None,
         }
+    }
+
+    /// Check the built text of the probe's leaves as it is written.
+    #[must_use]
+    pub fn with_leaf_probe(mut self, probe: LeafProbe<'a>) -> Self {
+        self.probe = Some(probe);
+        self
+    }
+
+    /// The first probed leaf whose built text held a refused character, and
+    /// that character.
+    #[must_use]
+    pub fn leaf_probe_hit(&self) -> Option<(&'a crate::delimiters::FreeTextLeaf, char)> {
+        self.probe_hit
+    }
+
+    fn probe_text(&mut self, text: &str) {
+        let (Some(probe), Some(kind)) = (self.probe, self.probe_kind.take()) else { return };
+        if self.probe_hit.is_some() {
+            return;
+        }
+        let Some(leaf) = probe.leaves.iter().find(|leaf| leaf.kind == kind) else { return };
+        let refused = text.chars().find(|char| probe.excluded.iter().any(|&(lo, hi)| (lo..=hi).contains(&u32::from(*char))));
+        self.probe_hit = refused.map(|char| (leaf, char));
     }
 
     /// Records the line breaks the render writes at each gap into
@@ -934,6 +976,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
+        self.probe_text(s);
         let s = crate::line_endings::to_internal(if self.swallow_cr { crate::line_endings::without_swallowed_cr(s) } else { s });
         let s = s.as_ref();
         self.write_chunk(s)?;
@@ -948,6 +991,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn verbatim(&mut self, before: &str, text: &str, after: &str) -> crate::render::RenderResult {
+        self.probe_kind = None;
         let breaks = self.held_breaks();
         if !breaks {
             self.clear_payload();
@@ -973,6 +1017,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn leaf_kind(&mut self, kind: crate::types::KindId) {
+        if self.probe.is_some() {
+            self.probe_kind = Some(kind);
+        }
         if let Some((leading, trailing)) = self.table.and_then(|table| table.leaf_edges_of(kind)) {
             self.leaf_edges(leading, trailing);
         }
@@ -1160,6 +1207,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.close(coord.span.end);
             recorder.wrote_slice(coord.index);
         }
+        self.probe_kind = None;
         self.end_leaf();
         Ok(())
     }

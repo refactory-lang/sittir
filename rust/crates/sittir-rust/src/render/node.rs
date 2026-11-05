@@ -23608,7 +23608,7 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralNode {
         self.raw_string_literal_start.prepare(ctx)?;
         self.string_content.prepare(ctx)?;
         self.raw_string_literal_end.prepare(ctx)?;
-        ::sittir_core::delimiters::fill(&mut self.raw_string_literal_start, &mut self.raw_string_literal_end, &::sittir_core::delimiters::DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None }, ctx, |w| { ::sittir_core::render::Render::render(&self.string_content, w)?; Ok(()) })?;
+        ::sittir_core::delimiters::fill(&mut self.raw_string_literal_start, &mut self.raw_string_literal_end, &::sittir_core::delimiters::DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, free_text: &[], excluded: &[], gate: None }, ctx, |w| { ::sittir_core::render::Render::render(&self.string_content, w)?; Ok(()) })?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {

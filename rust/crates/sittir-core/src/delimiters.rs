@@ -5,7 +5,8 @@
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{Render, RenderError, RenderResult, RenderSink};
 use crate::slot::SlotValue;
-use crate::spacing::{SpacingWriter, WordMatcher};
+use crate::spacing::{LeafProbe, SpacingWriter, WordMatcher};
+use crate::types::KindId;
 
 /// One opening arm a derived delimiter may take, in preference order.
 #[derive(Debug)]
@@ -29,6 +30,20 @@ pub struct DelimiterSpec {
     pub close_lead: &'static str,
     /// The character that pairs with the one after it inside the content.
     pub escape: Option<char>,
+    /// The leaves whose built text is free: each may hold none of `excluded`,
+    /// the characters that open the composite's other content arms.
+    pub free_text: &'static [FreeTextLeaf],
+    pub excluded: &'static [(u32, u32)],
+    /// The opener's spellings under which the free text is checked; `None`
+    /// checks it under every opener. An opaque opener is always checked.
+    pub gate: Option<&'static [&'static str]>,
+}
+
+/// A leaf of a composite's content whose built text is free.
+#[derive(Debug)]
+pub struct FreeTextLeaf {
+    pub kind: KindId,
+    pub name: &'static str,
 }
 
 /// A token that carries a derived delimiter facet.
@@ -42,6 +57,11 @@ pub trait DelimiterToken: Prepare {
     }
     /// The token read as opaque text: its delimiters are its source's.
     fn opaque(&self) -> bool;
+    /// The text of the facet that decides whether the content's free text is
+    /// checked (a python string's prefix), when the token holds one.
+    fn gate(&self) -> Option<&str> {
+        None
+    }
 }
 
 /// Why no delimiter fits a composite's content.
@@ -53,7 +73,7 @@ pub struct DelimiterRefusal {
 
 impl std::fmt::Display for DelimiterRefusal {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}: no delimiter fits its content: {}", self.kind, self.reason)
+        write!(f, "{}: {}", self.kind, self.reason)
     }
 }
 
@@ -110,7 +130,7 @@ pub fn choose(spec: &DelimiterSpec, content: &str, carried: Option<&str>) -> Res
         return (0..=content.chars().count() + 1)
             .map(|n| run.to_string().repeat(n))
             .find(|facet| fits(spec, content, facet))
-            .ok_or_else(|| DelimiterRefusal { kind: spec.kind, reason: format!("every run of `{run}` closes inside it") });
+            .ok_or_else(|| DelimiterRefusal { kind: spec.kind, reason: format!("no delimiter fits its content: every run of `{run}` closes inside it") });
     }
     spec.arms
         .iter()
@@ -125,10 +145,10 @@ fn ends_unpaired(content: &str, escape: Option<char>) -> bool {
 
 fn refusal_reason(spec: &DelimiterSpec, content: &str) -> String {
     if ends_unpaired(content, spec.escape) {
-        return format!("it ends in an unpaired `{}`, which would escape any closer", spec.escape.unwrap_or_default());
+        return format!("no delimiter fits its content: it ends in an unpaired `{}`, which would escape any closer", spec.escape.unwrap_or_default());
     }
     format!(
-        "each of {} occurs in it outside an escape pair, or cannot enclose its line break",
+        "no delimiter fits its content: each of {} occurs in it outside an escape pair, or cannot enclose its line break",
         spec.arms.iter().map(|arm| format!("`{}`", arm.text)).collect::<Vec<_>>().join(", ")
     )
 }
@@ -191,11 +211,24 @@ impl<F: Fn(&mut dyn RenderSink) -> RenderResult> Render for Content<F> {
     }
 }
 
-fn rendered(content: &dyn Render, ctx: &RenderContext<'_>) -> Result<String, RenderError> {
+fn checks_free_text<T: DelimiterToken>(spec: &DelimiterSpec, opener: &T) -> bool {
+    !spec.free_text.is_empty()
+        && spec.gate.is_none_or(|spellings| opener.opaque() || opener.gate().is_some_and(|gate| spellings.contains(&gate)))
+}
+
+fn rendered(content: &dyn Render, spec: &DelimiterSpec, checked: bool, ctx: &RenderContext<'_>) -> Result<String, RenderError> {
     let mut out = String::new();
-    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_options(ctx.options).with_sources(ctx.sources);
+    let probe = LeafProbe { leaves: if checked { spec.free_text } else { &[] }, excluded: spec.excluded };
+    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_options(ctx.options).with_sources(ctx.sources).with_leaf_probe(probe);
     content.render(&mut w)?;
     w.finish()?;
+    if let Some((leaf, char)) = w.leaf_probe_hit() {
+        return Err(RenderError::Delimiter(DelimiterRefusal {
+            kind: spec.kind,
+            reason: format!("its built {} text holds `{char}`, which would open another part of it", leaf.name),
+        }));
+    }
+    drop(w);
     Ok(out)
 }
 
@@ -212,10 +245,11 @@ pub fn fill<O: DelimiterToken, C: DelimiterToken, const OA: bool, const CA: bool
     let open_held = held(open, ctx);
     let close_held = held(close, ctx);
     let (Some(opener), Some(closer)) = (token(open, &open_held), token(close, &close_held)) else { return Ok(()) };
+    let rendered = rendered(&Content(content), spec, checks_free_text(spec, opener), ctx)?;
     if opener.opaque() || closer.opaque() {
         return Ok(());
     }
-    let text = format!("{}{}", rendered(&Content(content), ctx)?, closer.content().unwrap_or(""));
+    let text = format!("{rendered}{}", closer.content().unwrap_or(""));
     let facet = choose(spec, &text, opener.facet()).map_err(RenderError::Delimiter)?;
     set(open, open_held, &facet, ctx)?;
     set(close, close_held, &facet, ctx)
@@ -236,9 +270,13 @@ mod tests {
         run: None,
         close_lead: "",
         escape: Some('\\'),
+        free_text: &[],
+        excluded: &[],
+        gate: None,
     };
 
-    const RAW: DelimiterSpec = DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None };
+    const RAW: DelimiterSpec =
+        DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, free_text: &[], excluded: &[], gate: None };
 
     #[test]
     fn the_preferred_arm_takes_content_it_fits() {

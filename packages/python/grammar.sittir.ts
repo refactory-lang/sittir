@@ -30,15 +30,17 @@ import {
 
 const ANY_CASE_EITHER_ORDER = { case: true, order: true } as const;
 
+const INTERPOLATING = { ...ANY_CASE_EITHER_ORDER, interpolating: true } as const;
+
 const STRING_PREFIXES = {
 	r: ANY_CASE_EITHER_ORDER,
 	b: ANY_CASE_EITHER_ORDER,
-	f: ANY_CASE_EITHER_ORDER,
-	t: ANY_CASE_EITHER_ORDER,
+	f: INTERPOLATING,
+	t: INTERPOLATING,
 	u: ANY_CASE_EITHER_ORDER,
 	rb: ANY_CASE_EITHER_ORDER,
-	rf: ANY_CASE_EITHER_ORDER,
-	rt: ANY_CASE_EITHER_ORDER,
+	rf: INTERPOLATING,
+	rt: INTERPOLATING,
 	ur: { case: true, readOnly: true }
 } as const;
 

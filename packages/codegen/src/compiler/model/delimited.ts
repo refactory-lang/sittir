@@ -9,9 +9,10 @@ import {
 	wordCharPredicate,
 	type AssembledNode,
 	type Delimited,
-	type DelimiterEnd
+	type DelimiterEnd,
+	type FreeText
 } from './node-map.ts';
-import { CharSet, LINE_TERMINATORS, admitsInside, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { CharSet, LINE_TERMINATORS, admitsInside, dfaAccepts, leadingChars, patternDfa } from './pattern-automaton.ts';
 import { delimiterOwners } from './delimiter-facets.ts';
 
 function firstChars(text: string): CharSet {
@@ -163,33 +164,75 @@ export interface DelimitedGrammarFacts {
 	readonly externals: ReadonlySet<string>;
 }
 
+interface ContentArms {
+	readonly open: DelimiterEnd;
+	readonly close: DelimiterEnd;
+	readonly closing: CharSet;
+	readonly arms: readonly RenderRule[];
+	readonly freeTextLeaves: readonly number[];
+}
+
+function contentArmsOf(node: AbstractAssembledCompound, facts: DelimitedFacts, nodes: ReadonlyMap<string, AssembledNode>): ContentArms | undefined {
+	const rule = node.renderRule;
+	if (rule.type !== SEQ || rule.members.length < 3) return undefined;
+	const open = endOf(rule.members[0]!, nodes);
+	const close = endOf(rule.members.at(-1)!, nodes);
+	if (open === undefined || close === undefined) return undefined;
+	const arms = rule.members.slice(1, -1).flatMap((member) => facts.alternatives(member));
+	const freeTextLeaves = arms.map((arm) => (facts.isText(arm) ? facts.variableLeaves(arm) : 0));
+	if (!freeTextLeaves.some((leaves) => leaves > 0)) return undefined;
+	return { open, close, closing: facts.leadersOfRule(rule.members.at(-1)!), arms, freeTextLeaves };
+}
+
+function hazardousArms(content: ContentArms, facts: DelimitedFacts): { readonly hazardous: readonly boolean[]; readonly otherLeaders: CharSet } {
+	const armLeaders = content.arms.map((arm) => facts.leadersOfRule(arm));
+	const hazardous = content.arms.map((_, i) => content.freeTextLeaves[i] === 1 && !armLeaders[i]!.minus(content.closing.complement()).isEmpty());
+	return { hazardous, otherLeaders: armLeaders.reduce((all, leaders, i) => (hazardous[i] ? all : all.union(leaders)), CharSet.EMPTY) };
+}
+
 function delimitedVerdictOf(
 	node: AbstractAssembledCompound,
 	facts: DelimitedFacts,
 	nodes: ReadonlyMap<string, AssembledNode>,
 	isWordChar: (char: string) => boolean
 ): { readonly delimited?: Delimited; readonly skipped?: { readonly closer: string | undefined; readonly content: readonly RenderRule[] } } | undefined {
-	const rule = node.renderRule;
-	if (rule.type !== SEQ || rule.members.length < 3) return undefined;
-	const open = endOf(rule.members[0]!, nodes);
-	const close = endOf(rule.members.at(-1)!, nodes);
-	if (open === undefined || close === undefined) return undefined;
-	const closing = facts.leadersOfRule(rule.members.at(-1)!);
-	const content = rule.members.slice(1, -1);
-	const arms = content.flatMap((member) => facts.alternatives(member));
-	const freeTextLeaves = arms.map((arm) => (facts.isText(arm) ? facts.variableLeaves(arm) : 0));
-	if (!freeTextLeaves.some((leaves) => leaves > 0)) return undefined;
+	const content = contentArmsOf(node, facts, nodes);
+	if (content === undefined) return undefined;
+	const { open, close, closing, arms, freeTextLeaves } = content;
 	const skipped = { closer: close.text, content: arms.filter((_, i) => freeTextLeaves[i]! > 0) };
 	if (holdsWordChar(closing, isWordChar)) return { skipped };
-	const armLeaders = arms.map((arm) => facts.leadersOfRule(arm));
-	const hazardous = arms.map((_, i) => freeTextLeaves[i] === 1 && !armLeaders[i]!.minus(closing.complement()).isEmpty());
+	const { hazardous, otherLeaders } = hazardousArms(content, facts);
 	if (!hazardous.some(Boolean)) return { skipped };
-	const excluded = armLeaders.reduce(
-		(all, leaders, i) => (hazardous[i] ? all : all.union(leaders)),
-		closing.union(LINE_TERMINATORS)
-	);
+	const excluded = otherLeaders.union(closing).union(LINE_TERMINATORS);
 	const nodeKinds = arms.flatMap((arm) => (arm.type === SYMBOL && !facts.isText(arm) ? [arm.name] : []));
 	return { delimited: { open, close, excluded: excluded.ranges, nodeKinds, varying: open.slot !== undefined || close.slot !== undefined } };
+}
+
+function acceptsAlone(pattern: string | undefined, chars: CharSet): boolean {
+	const dfa = pattern === undefined ? undefined : patternDfa(pattern);
+	if (dfa === undefined || chars.size() > WORD_PROBE_LIMIT) return true;
+	return chars.ranges.some(([lo, hi]) => {
+		for (let code = lo; code <= hi; code++) if (dfaAccepts(dfa, String.fromCodePoint(code))) return true;
+		return false;
+	});
+}
+
+export function freeTextOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<string, AssembledNode>, escape: string | undefined): FreeText | undefined {
+	const facts = new DelimitedFacts(nodes);
+	const content = contentArmsOf(node, facts, nodes);
+	if (content === undefined) return undefined;
+	const { hazardous, otherLeaders: leaders } = hazardousArms(content, facts);
+	const otherLeaders = escape === undefined ? leaders : leaders.minus(CharSet.chars(escape));
+	if (otherLeaders.isEmpty()) return undefined;
+	const leaves = [
+		...new Set(
+			content.arms
+				.filter((_, i) => hazardous[i])
+				.flatMap((arm) => facts.textLeaves(arm))
+				.flatMap((leaf) => (leaf.name !== undefined && acceptsAlone(leaf.pattern, otherLeaders) ? [leaf.name] : []))
+		)
+	];
+	return leaves.length === 0 ? undefined : { leaves, excluded: otherLeaders.ranges };
 }
 
 function reservedTexts(reserved: ReservedWordsets | undefined, nodes: ReadonlyMap<string, AssembledNode>): ReadonlySet<string> {

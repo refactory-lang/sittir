@@ -240,6 +240,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly canonical?: string;
 	readonly readOnly?: true;
 	readonly singleLine?: true;
+	readonly interpolating?: true;
 	readonly escape?: string;
 	readonly pattern?: string;
 	readonly resolvedKind?: string;
@@ -281,13 +282,14 @@ export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: stri
 	return v.value !== undefined;
 }
 
-type SpelledFacts = Pick<NodeRef, 'canonical' | 'readOnly' | 'singleLine' | 'escape'>;
+type SpelledFacts = Pick<NodeRef, 'canonical' | 'readOnly' | 'singleLine' | 'interpolating' | 'escape'>;
 
 function spelledFactsOf(rule: SpelledFacts): SpelledFacts {
 	return {
 		...(rule.canonical === undefined ? {} : { canonical: rule.canonical }),
 		...(rule.readOnly === true ? { readOnly: true } : {}),
 		...(rule.singleLine === true ? { singleLine: true } : {}),
+		...(rule.interpolating === true ? { interpolating: true } : {}),
 		...(rule.escape === undefined ? {} : { escape: rule.escape })
 	};
 }
@@ -1769,6 +1771,18 @@ export interface DelimiterFacets {
 	readonly escape?: string;
 }
 
+export interface FreeTextGate {
+	readonly token: string;
+	readonly facet: string;
+	readonly spellings: readonly string[];
+}
+
+export interface FreeText {
+	readonly leaves: readonly string[];
+	readonly excluded: readonly (readonly [number, number])[];
+	readonly gate?: FreeTextGate;
+}
+
 export interface Delimited {
 	readonly open: DelimiterEnd;
 	readonly close: DelimiterEnd;
@@ -1785,6 +1799,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	delimited?: Delimited;
 	delimiterFacets?: DelimiterFacets;
 	delimiterPreference?: DelimiterPreference;
+	freeText?: FreeText;
 	delimiterOf?: string;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
@@ -2160,6 +2175,8 @@ export function branchClassFor(kind: string, simplifiedRule: SimplifiedRule, ctx
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
+	freeText?: true;
+
 	get immediate(): boolean {
 		return 'immediate' in this.rule && this.rule.immediate === true;
 	}

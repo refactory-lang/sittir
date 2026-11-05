@@ -268,6 +268,7 @@ export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly canonical?: string;
 	readonly readOnly?: true;
 	readonly singleLine?: true;
+	readonly interpolating?: true;
 	readonly escape?: string;
 	readonly resolvedKindId?: number;
 	readonly aliasedTo?: string;

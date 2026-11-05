@@ -1,7 +1,9 @@
 import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../types/rule.ts';
+import { freeTextOf } from './delimited.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledLeaf,
 	AssembledLexedPattern,
 	isNodeRef,
 	isPatternValue,
@@ -13,7 +15,8 @@ import {
 	type DelimiterArm,
 	type DelimiterFacetRole,
 	type DelimiterFacets,
-	type DelimiterPreference
+	type DelimiterPreference,
+	type FreeTextGate
 } from './node-map.ts';
 import type { NodeMap } from '../types.ts';
 
@@ -115,6 +118,15 @@ function preferenceOf(openSlot: AssembledNonterminal, open: AssembledLexedPatter
 	return facet === undefined ? undefined : { open: openSlot, token: open, facet };
 }
 
+function gateOf(open: AssembledLexedPattern): FreeTextGate | undefined {
+	const gates = open.slots.filter((slot) => slot.delimiterRole === 'input' && slot.values.some((value) => value.interpolating === true));
+	if (gates.length > 1) throw new Error(`delimiters: '${open.kind}' gates its free text on ${gates.length} facets, where one may`);
+	const facet = gates[0];
+	return facet === undefined
+		? undefined
+		: { token: open.kind, facet: facet.name, spellings: facet.values.filter((value) => value.interpolating === true).map((value) => value.value!) };
+}
+
 function factsOf(node: AbstractAssembledCompound, open: AssembledLexedPattern, close: AssembledLexedPattern): DelimiterFacets {
 	const [openSlot, closeSlot] = slotsOf(node, open, close);
 	const facet = derivedFacetOf(node.kind, open);
@@ -160,5 +172,12 @@ export function stampDelimiterFacets(nodeMap: NodeMap): void {
 		stampRoles(node.kind, close, (slot) => closeRole(slot, open));
 		node.delimiterFacets = factsOf(node, open, close);
 		node.delimiterPreference = preferenceOf(slotsOf(node, open, close)[0], open);
+		const freeText = freeTextOf(node, nodeMap.nodes, node.delimiterFacets.escape);
+		const gate = gateOf(open);
+		node.freeText = freeText === undefined || gate === undefined ? freeText : { ...freeText, gate };
+		for (const leaf of node.freeText?.leaves ?? []) {
+			const text = nodeMap.nodes.get(leaf);
+			if (text instanceof AssembledLeaf) text.freeText = true;
+		}
 	}
 }
