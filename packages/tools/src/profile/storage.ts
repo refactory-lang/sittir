@@ -7,6 +7,7 @@ import { promisify } from 'node:util';
 import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { nativePhases, type HydrationDepth } from './native-hydration.ts';
 import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
+import { measureBuilt } from '../built.ts';
 import { median } from './storage-common.ts';
 import { summarizeValidationStorage, type ValidationStorageRun } from './validation-storage.ts';
 import type { ValidationStorageOptions } from './validation-storage-worker.ts';
@@ -83,13 +84,12 @@ async function runWorker<T>(
 	process.stderr.write(
 		`bench-storage: ${args.grammar} round ${round + 1} ${'storage' in args ? args.storage : 'native'}\n`
 	);
-	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
-	const worker = new URL(`./${workerName}-worker.${extension}`, import.meta.url);
-	const { stdout } = await execute(
-		process.execPath,
-		['--expose-gc', '--import', 'tsx', fileURLToPath(worker), JSON.stringify(args)],
-		{ maxBuffer: 8 * 1024 * 1024, timeout: 300_000, env: { ...process.env, NODE_ENV: 'production' } }
-	);
+	const worker = new URL(`./${workerName}-worker.js`, import.meta.url);
+	const { stdout } = await execute(process.execPath, ['--expose-gc', fileURLToPath(worker), JSON.stringify(args)], {
+		maxBuffer: 8 * 1024 * 1024,
+		timeout: 300_000,
+		env: { ...process.env, NODE_ENV: 'production' }
+	});
 	return { ...JSON.parse(stdout), round, idle };
 }
 
@@ -99,6 +99,7 @@ function integer(name: string, value: number, minimum: number): number {
 }
 
 export async function run(options: StorageBenchOptions): Promise<number> {
+	measureBuilt('bench-storage');
 	const rounds = integer('rounds', options.rounds ?? 5, 1);
 	const warmup = integer('warmup', options.warmup ?? 2, 0);
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
@@ -149,7 +150,6 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	}
 	const nativeSummary = summarizeNativeHydration(nativeSamples);
 	const validationSummary = summarizeValidationStorage(validationSamples);
-	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
 	const harness = createHash('sha256').update(await readFile(fileURLToPath(import.meta.url)));
 	const harnessFiles = options.validation
 		? [
@@ -162,7 +162,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 				'../validate/common'
 			]
 		: ['storage-common', 'native-hydration-worker', 'native-hydration'];
-	for (const file of harnessFiles) harness.update(await readFile(new URL(`./${file}.${extension}`, import.meta.url)));
+	for (const file of harnessFiles) harness.update(await readFile(new URL(`./${file}.js`, import.meta.url)));
 	const report = {
 		schemaVersion: options.validation ? 4 : 3,
 		mode: options.validation ? 'validation-storage' : 'native-hydration',

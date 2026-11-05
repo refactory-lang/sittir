@@ -8,7 +8,6 @@ import { bench } from './bench.ts';
 import { benchStorage } from './bench-storage.ts';
 import { bootstrapGrammar } from './bootstrap-grammar.ts';
 import { fetchCorpus } from './fetch-corpus.ts';
-import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
@@ -58,7 +57,6 @@ export const toolModules: readonly CommandModule[] = [
 	assembleShapeCensus,
 	astDiff,
 	bench,
-	benchCodemod,
 	benchStorage,
 	bootstrapGrammar,
 	fetchCorpus,

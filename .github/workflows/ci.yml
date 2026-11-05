@@ -316,12 +316,14 @@ jobs:
         run: |
           cp -R /tmp/054-bindings/. ./
           find packages -path "*/native/*.node" -print
+      - name: Build the packages the metrics run measures
+        run: pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
       - name: Collect fresh metrics (native backend)
         run: |
           SITTIR_BACKEND=native SITTIR_METRICS=1 \
-            npx tsx packages/tools/src/scripts/collect-baseline.ts > /dev/null
+            node packages/tools/dist/scripts/collect-baseline.js > /dev/null
       - name: Check perf baseline (warn-only window)
-        run: pnpm exec tsx packages/cli/src/cli.ts tool check-perf
+        run: node packages/cli/dist/cli.js tool check-perf
       - name: Upload metrics artifact for inspection
         if: always()
         uses: actions/upload-artifact@v4

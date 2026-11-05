@@ -1,5 +1,6 @@
 import { nativeEngineOf, type BaselineRun, type LayoutWork, type NativeEngineLike, type NativeModuleLike, type StoredLayout } from '@sittir/common/engine';
 import { treeOf } from '@sittir/common/utils';
+import { requireGrammarModule } from '../grammar-internals.ts';
 import { loadCorpusEntries } from './common.ts';
 
 /** A run of a corpus entry that no region's record reaches: at render it keeps its source class. */
@@ -26,15 +27,9 @@ export interface LayoutRunsResult {
 	readonly refused: readonly LayoutRefusal[];
 }
 
-interface NativeBackend {
-	readonly name: string;
-	readonly native?: NativeModuleLike;
-}
-
-export async function nativeBackendOf(grammar: string): Promise<Required<NativeBackend>['native']> {
-	const { getActiveBackend } = (await import(`../../../${grammar}/src/backend.ts`)) as { getActiveBackend: () => NativeBackend };
-	const status = getActiveBackend();
-	if (status.name !== 'native' || status.native === undefined) throw new Error(`the native backend of '${grammar}' is not active`);
+export async function nativeBackendOf(grammar: string): Promise<NativeModuleLike> {
+	const status = (await requireGrammarModule(grammar, 'backend.ts')).getActiveBackend();
+	if (status.name !== 'native') throw new Error(`the native backend of '${grammar}' is not active`);
 	return status.native;
 }
 

@@ -180,20 +180,6 @@ Native render benchmark over the corpus
 pnpm exec tsx packages/cli/src/cli.ts tool bench [options]
 ```
 
-### `tool bench-codemod`
-
-Benchmark codemod on a corpus directory
-
-**Arguments**
-
-- `corpus-dir` (required) — Corpus directory to benchmark
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
-```
-
 ### `tool bench-storage`
 
 Measure native workflows or paired backend validation buckets
