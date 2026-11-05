@@ -163,6 +163,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (slot.checksReserved === true) imports.add('rejectReservedText');
+			if (isMultiple(slot) && hasOptionalElements(slot)) imports.add('admitHoles');
 			if (slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 			if (splicedEnvelopeOf(slot, nodeMap) !== undefined) imports.add('admitSplicedEnvelope');
 		}
@@ -795,7 +796,8 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
-	const unspliced = splicedEnvelopeAdmission(f, expr, nodeMap, kindEntries, typeName);
+	const holed = isMultiple(f) && hasOptionalElements(f) ? `admitHoles(${expr}, '${typeName}.${f.propertyName}')` : expr;
+	const unspliced = splicedEnvelopeAdmission(f, holed, nodeMap, kindEntries, typeName);
 	const admitted = keywordTextRejection(f, unspliced, nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
@@ -1051,8 +1053,8 @@ export interface BuiltTypeSurface {
 	readonly maxArgs: number | undefined;
 }
 
-function withHoles(f: { values: readonly NodeOrTerminal[] }, elemType: string): string {
-	return hasOptionalElements(f) ? `${elemType} | undefined` : elemType;
+export function withHoles(f: { values: readonly NodeOrTerminal[] }, elemType: string): string {
+	return hasOptionalElements(f) ? `${elemType} | null` : elemType;
 }
 
 export function restSetterType(

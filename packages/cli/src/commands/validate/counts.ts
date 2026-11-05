@@ -19,20 +19,16 @@ export const counts: CommandModule = {
 				)
 			)
 			.addOption(
-				new Option('--construction <construction>', 'Deprecated: assert object construction for object storage, or record construction for arena storage')
-			)
-			.addOption(
 				new Option('--_isolate-worker', 'Internal: run as an isolation worker for a single grammar')
 					.hideHelp()
 					.default(false)
 			)
-			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string; construction?: string }) => {
-				const { runCountsCli, parseConstruction, parseNodeStorage } = await import('@sittir/tools');
+			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string }) => {
+				const { runCountsCli, parseNodeStorage } = await import('@sittir/tools');
 				await runCountsCli(grammars, 'native', {
 					isolate: opts.isolate,
 					isolateWorker: opts._isolateWorker,
-					nodeStorage: parseNodeStorage(opts.nodeStorage),
-					construction: opts.construction === undefined ? undefined : parseConstruction(opts.construction)
+					nodeStorage: parseNodeStorage(opts.nodeStorage)
 				});
 			});
 	}

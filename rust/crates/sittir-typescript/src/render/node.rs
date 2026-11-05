@@ -22983,9 +22983,9 @@ pub struct ProgramNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_hash_bang_line")]
-    #[slot(field = field::HASH_BANG_LINE, word = 2, width = 4, inline = 4, forms = 8, built = 2)]
-    pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineNode>>,
+    #[wire(key = "_shebang")]
+    #[slot(field = field::SHEBANG, word = 2, width = 4, inline = 4, forms = 8, built = 2)]
+    pub shebang: Option<::sittir_core::SlotValue<HashBangLineNode>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS, word = 6, width = 1, run = 4, forms = 3, built = 3, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
@@ -23052,8 +23052,8 @@ fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout, overlay);
-    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.hash_bang_line, overlay), ::sittir_core::prepare::EdgeItems::first_item(&parts.statements, overlay)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
-    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.statements, overlay), ::sittir_core::prepare::EdgeItems::last_item(&parts.hash_bang_line, overlay)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.shebang, overlay), ::sittir_core::prepare::EdgeItems::first_item(&parts.statements, overlay)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
+    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.statements, overlay), ::sittir_core::prepare::EdgeItems::last_item(&parts.shebang, overlay)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
     let stamped = ::sittir_core::prepare::LayoutTarget::flanks(&parts.layout, overlay);
     let flanks = ::sittir_core::prepare::root_flanks(first, last, stamped, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
     ::sittir_core::prepare::fill_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);
@@ -23061,7 +23061,7 @@ fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_PROGRAM_STATEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.hash_bang_line, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.shebang, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statements, overlay, ctx)?;
     Ok(())
 }
@@ -30521,9 +30521,9 @@ pub struct InstantiationExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION, word = 2, width = 4, forms = 3, built = 2)]
-    pub expression: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_function")]
+    #[slot(field = field::FUNCTION, word = 2, width = 4, forms = 3, built = 2)]
+    pub function: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_type_arguments")]
     #[slot(field = field::TYPE_ARGUMENTS, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
@@ -30587,7 +30587,7 @@ fn prepare_instantiation_expression<N: InstantiationExpressionPrepare + ?Sized>(
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(307), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.function, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_arguments, overlay, ctx)?;
     Ok(())
 }
@@ -50634,7 +50634,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
 
 
 fn render_program<N: ProgramFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let hash_bang_line = View::new(node.hash_bang_line(), "{}");
+    let shebang = View::new(node.shebang(), "{}");
     let statements = ListView {
         items: node.statements(),
         template: "{}",
@@ -50649,7 +50649,7 @@ fn render_program<N: ProgramFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
     };
     w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_hash_bang_line", ::sittir_core::types::ItemIndex(0), w, |w| hash_bang_line.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_shebang", ::sittir_core::types::ItemIndex(0), w, |w| shebang.render(w))?;
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     statements.render(w)?;
     w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52039,10 +52039,10 @@ fn render_satisfies_expression<N: SatisfiesExpressionFields + ?Sized>(node: &N, 
 }
 
 fn render_instantiation_expression<N: InstantiationExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = node.expression();
+    let function = node.function();
     let type_arguments = node.type_arguments();
     w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_function", ::sittir_core::types::ItemIndex(0), w, |w| function.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_arguments", ::sittir_core::types::ItemIndex(0), w, |w| type_arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

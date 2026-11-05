@@ -80,7 +80,7 @@ it.each([
 	['trailing', 'leading'],
 	['leading', 'trailing']
 ] as const)('a refused %s-to-%s leaf side update keeps the new comment releasable', async (oldSide, newSide) => {
-	using engine = await python.createEngine({ nodeStorage: 'arena', nodeConstruction: 'record' });
+	using engine = await python.createEngine({ nodeStorage: 'arena' });
 	for (let n = 0; n < 128; n++) {
 		const leaf = engine.build.identifier('x');
 		const old = engine.build.comment('# old');

@@ -285,6 +285,14 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 		]);
 	});
 
+	it('places a claim through a group lift under the owner the lift sits in, so a claim at the alias the owner shows turns unplaced', () => {
+		const shown = [{ kind: 'alias', from: 'attributed_argument', to: 'argument', scope: 'arguments' }] as const;
+		const placed = { claims: [claim('argument', 'attributed_argument', { toplevel: false, within: ['arguments_elements', 'arguments'] })], members: [], containers: [], templates: [], unclaimed: [] };
+		const row = (facts: BindingFacts) => facts.claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel]);
+		expect(row(bindFacts(placed, same, undefined, boundNameAt(same, shown, new Set(['arguments_elements']))))).toEqual([['argument', 'argument', [], true]]);
+		expect(row(bindFacts(placed, same, undefined, boundNameAt(same, shown)))).toEqual([['argument', 'attributed_argument', ['arguments_elements', 'arguments'], false]]);
+	});
+
 	it('names a claim at a site that shows its kind under two names by the name its own path binds to, and refuses one whose path names neither', () => {
 		const beside = [...aliases.slice(0, 2), { kind: 'alias', from: 'function_item', to: 'constructor_declaration', scope: 'impl_body' }] as const;
 		const placed = (vocab: string) => claim(vocab, 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] });

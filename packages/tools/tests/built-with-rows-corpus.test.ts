@@ -7,12 +7,11 @@ import { describe, expect, it } from 'vitest';
 import { isNode, snapshotOf, storedSlotValues } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
-import { useValidationConstruction, useValidationNodeStorage } from '../src/validate/common.ts';
+import { useValidationNodeStorage } from '../src/validate/common.ts';
 import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { structureOf } from '../../../examples/helpers.ts';
 
 useValidationNodeStorage('arena');
-useValidationConstruction('record');
 
 type Setters = Readonly<Record<string, (...args: unknown[]) => unknown>>;
 

@@ -20,6 +20,7 @@ export const GRAMMAR_LAYERS = ['sittir', 'top'] as const;
 export type GrammarLayer = (typeof GRAMMAR_LAYERS)[number];
 export const BASE_ENTRY = 'base.ts';
 export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
+export const PORTABLE_TYPE_TESTS = 'tests/*.portable.test-d.ts';
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
 export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
 
@@ -137,7 +138,6 @@ export const NATIVE_LOADER = 'index.cjs';
 export const NATIVE_TYPINGS = 'index.d.ts';
 
 export const NATIVE_TARGETS = [
-	'x86_64-apple-darwin',
 	'aarch64-apple-darwin',
 	'x86_64-unknown-linux-gnu',
 	'x86_64-unknown-linux-musl',

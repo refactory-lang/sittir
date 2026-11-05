@@ -16,7 +16,7 @@ async function itemsOf(grammar: string, nodeStorage: 'object' | 'arena', source:
 	return items;
 }
 
-describe("a list's empty element is undefined on either wire", () => {
+describe("a list's empty element is null on either wire", () => {
 	for (const nodeStorage of ['object', 'arena'] as const) {
 		for (const [grammar, source, kind] of [
 			['regex', 'a||b', 'alternation'],
@@ -24,8 +24,8 @@ describe("a list's empty element is undefined on either wire", () => {
 		] as const) {
 			it(`${grammar} ${JSON.stringify(source)} (${nodeStorage})`, async () => {
 				const items = await itemsOf(grammar, nodeStorage, source, kind);
-				expect(items).toContain(undefined);
-				expect(items).not.toContain(null);
+				expect(items).toContain(null);
+				expect(items).not.toContain(undefined);
 			});
 		}
 	}

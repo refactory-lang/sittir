@@ -68,7 +68,6 @@ Per-grammar raw pass/total counts for all four validators
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
 - `--node-storage <storage>` — Node backend: parsed/built objects (object), or arena views with record builders (arena) (default: `object`)
-- `--construction <construction>` — Deprecated: assert object construction for object storage, or record construction for arena storage
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -211,7 +210,6 @@ Measure native workflows or paired backend validation buckets
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
-- `--construction <construction>` — Deprecated: validation profiles pair object storage/builders with arena storage/record builders; only record is accepted
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 

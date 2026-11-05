@@ -49,6 +49,7 @@ import {
 	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
+	admitHoles,
 	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
@@ -148,25 +149,24 @@ export const _delimited_buildCommentBlock: DelimitedSpec = {
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram<
-	HashBangLineSlot extends T.Program.Config['hashBangLine'],
+	ShebangSlot extends T.Program.Config['shebang'],
 	StatementsSlot extends T.Program.Config['statements']
 >(
-	config?: RefusingConfig<Partial<T.Program.Config>, { hashBangLine: HashBangLineSlot; statements: StatementsSlot }>
+	config?: RefusingConfig<Partial<T.Program.Config>, { shebang: ShebangSlot; statements: StatementsSlot }>
 ): T.Program.Bound;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Bound {
 	currentHandle()?.admit(TSKindId.Program, [config]);
-	const _hash_bang_line = config.hashBangLine;
+	const _shebang = config.shebang;
 	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'program', { hashBangLine: _hash_bang_line, statements: _statements });
+	if (handle !== undefined) admitChildren(handle, 'program', { shebang: _shebang, statements: _statements });
 	const node = {
 		$type: TSKindId.Program as const,
-		_hash_bang_line,
+		_shebang,
 		_statements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		hashBangLine: () => hydrateStoredSlot(node, '_hash_bang_line'),
+		shebang: () => hydrateStoredSlot(node, '_shebang'),
 		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -177,8 +177,8 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		hashBangLine: (value?: Admit<T.HashBangLine>) =>
-			rebuilt(node, handle, () => buildProgram({ ...config, hashBangLine: value })),
+		shebang: (value?: Admit<T.HashBangLine>) =>
+			rebuilt(node, handle, () => buildProgram({ ...config, shebang: value })),
 		statements: (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
 			rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) })),
 		[RECEIVER]: node
@@ -2098,7 +2098,12 @@ export function buildObject(
 ): T.Object.Bound {
 	currentHandle()?.admit(TSKindId.Object, children);
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
-		rejectReservedText(children, 'Object.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'Object.properties'),
+			'Object.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2154,7 +2159,12 @@ export function buildObjectPattern(
 ): T.ObjectPattern.Bound {
 	currentHandle()?.admit(TSKindId.ObjectPattern, children);
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
-		rejectReservedText(children, 'ObjectPattern.properties', TSKindId.Identifier, _reservedWords_buildIdentifier),
+		rejectReservedText(
+			admitHoles(children, 'ObjectPattern.properties'),
+			'ObjectPattern.properties',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]]
 	);
 	const handle = currentHandle();
@@ -2306,7 +2316,12 @@ export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
 ): T.Array.Bound;
 export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
-	const _elements = rejectReservedText(children, 'Array.elements', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _elements = rejectReservedText(
+		admitHoles(children, 'Array.elements'),
+		'Array.elements',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array', { elements: _elements });
 	const node = {
@@ -2343,7 +2358,7 @@ export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPatte
 ): T.ArrayPattern.Bound;
 export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
-	const _elements = children;
+	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'array_pattern', { elements: _elements });
 	const node = {
@@ -4164,7 +4179,7 @@ export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[
 export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
-		children,
+		admitHoles(children, 'Arguments.elements'),
 		'Arguments.elements',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
@@ -5091,35 +5106,32 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 }
 
 export function buildInstantiationExpression<
-	ExpressionSlot extends T.InstantiationExpression.Config['expression'],
+	FunctionSlot extends T.InstantiationExpression.Config['function'],
 	TypeArgumentsSlot extends T.InstantiationExpression.Config['typeArguments']
 >(
-	config: RefusingConfig<
-		T.InstantiationExpression.Config,
-		{ expression: ExpressionSlot; typeArguments: TypeArgumentsSlot }
-	>
+	config: RefusingConfig<T.InstantiationExpression.Config, { function: FunctionSlot; typeArguments: TypeArgumentsSlot }>
 ): T.InstantiationExpression.Bound;
 export function buildInstantiationExpression(
 	config: T.InstantiationExpression.Config
 ): T.InstantiationExpression.Bound {
 	currentHandle()?.admit(TSKindId.InstantiationExpression, [config]);
-	const _expression = rejectReservedText(
-		kindIdStorage<NonNullable<T.InstantiationExpression['_expression']>>(config.expression),
-		'InstantiationExpression.expression',
+	const _function = rejectReservedText(
+		kindIdStorage<NonNullable<T.InstantiationExpression['_function']>>(config.function),
+		'InstantiationExpression.function',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'instantiation_expression', { expression: _expression, typeArguments: _type_arguments });
+		admitChildren(handle, 'instantiation_expression', { function: _function, typeArguments: _type_arguments });
 	const node = {
 		$type: TSKindId.InstantiationExpression as const,
-		_expression,
+		_function,
 		_type_arguments,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		expression: () => hydrateStoredSlot(node, '_expression'),
+		function: () => hydrateStoredSlot(node, '_function'),
 		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5130,8 +5142,8 @@ export function buildInstantiationExpression(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		expression: (value: Admit<NonNullable<T.InstantiationExpression.Config>['expression']>) =>
-			rebuilt(node, handle, () => buildInstantiationExpression({ ...config, expression: value })),
+		function: (value: Admit<NonNullable<T.InstantiationExpression.Config>['function']>) =>
+			rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value })),
 		typeArguments: (...args: unknown[]) =>
 			rebuilt(node, handle, () =>
 				listSlotWith(

@@ -5353,7 +5353,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 						kind: TSKindId.Arguments as const,
 						optional: false,
 						make: buildArguments,
-						element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
+						element: { keys: ['attributeItems', 'expression'], make: buildArgument }
 					},
 					(value: Admit<T.Arguments>) => buildCallExpression({ ...config, arguments: value })
 				)
@@ -5372,11 +5372,11 @@ export function buildArguments(): T.EmptyArguments;
 export function buildArguments<V extends Admit<T.ArgumentsElements>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildArguments>;
-export function buildArguments<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArguments<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArguments>;
-export function buildArguments<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArguments<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
@@ -5455,7 +5455,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 						kind: TSKindId.ArgumentsElements as const,
 						optional: true,
 						make: buildArgumentsElements,
-						element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
+						element: { keys: ['attributeItems', 'expression'], make: buildArgument }
 					},
 					(value?: Admit<T.ArgumentsElements>) => _buildArguments(value)
 				)
@@ -9263,19 +9263,19 @@ function _buildTypeArgumentsElements(
 }
 
 const buildArgumentsElements$wrapper = {
-	kind: TSKindId.AttributedArgument,
+	kind: TSKindId.Argument,
 	content: 'expression',
 	decorations: ['attributeItems']
 };
-export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArgumentsElements>;
-export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedArgument | T.Expression>)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Argument | T.Expression>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -9284,23 +9284,19 @@ export function buildArgumentsElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		Admit<T.AttributedArgument | T.Expression>
-	>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Argument | T.Expression>>;
 	return _buildArgumentsElements(elements, options);
 }
 function _buildArgumentsElements(
-	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	elements: NonEmptyArray<Admit<T.Argument | T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentsElements.Bound {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, elements);
 	const _mapped = elements.map(
-		(e): T.AttributedArgument =>
-			(isNodeOfKind(e, TSKindId.AttributedArgument)
+		(e): T.Argument =>
+			(isNodeOfKind(e, TSKindId.Argument)
 				? (e as unknown)
-				: buildAttributedArgument({ expression: e } as Parameters<
-						typeof buildAttributedArgument
-					>[0])) as T.AttributedArgument
+				: buildArgument({ expression: e } as Parameters<typeof buildArgument>[0])) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -9360,8 +9356,8 @@ function _buildArgumentsElements(
 			rebuilt(node, handle, () =>
 				elementsWith(
 					args,
-					{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
-					(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) => buildArgumentsElements(options, ...vs)
+					{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildArgument },
+					(...vs: NonEmptyArray<Admit<T.Argument | T.Expression>>) => buildArgumentsElements(options, ...vs)
 				)
 			),
 		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -10798,12 +10794,12 @@ export function buildArrayExpressionList(
 				listSlotWith(
 					args,
 					{
-						kind: TSKindId.ArgumentsElements as const,
+						kind: TSKindId.ArrayExpressionListElements as const,
 						optional: true,
-						make: buildArgumentsElements,
+						make: buildArrayExpressionListElements,
 						element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 					},
-					(value?: Admit<T.ArgumentsElements>) => buildArrayExpressionList({ ...config, elements: value })
+					(value?: Admit<T.ArrayExpressionListElements>) => buildArrayExpressionList({ ...config, elements: value })
 				)
 			),
 		[RECEIVER]: node
@@ -14254,6 +14250,166 @@ export function buildExtensionDeclarationBody(
 	return node as unknown as T.ExtensionDeclarationBody.Bound;
 }
 
+export function buildArgument<
+	AttributeItemsSlot extends T.Argument.Config['attributeItems'],
+	ExpressionSlot extends T.Argument.Config['expression']
+>(
+	config: RefusingConfig<T.Argument.Config, { attributeItems: AttributeItemsSlot; expression: ExpressionSlot }>
+): T.Argument.Bound;
+export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
+	currentHandle()?.admit(TSKindId.Argument, [config]);
+	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
+	const node = {
+		$type: TSKindId.Argument as const,
+		_attribute_item,
+		_expression,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		attributeItems: () => hydrateStoredSlots(node, '_attribute_item'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		attributeItems: (...values: Admit<T.AttributeItem[]>) =>
+			rebuilt(node, handle, () => buildArgument({ ...config, attributeItems: restItems('attributeItems', values) })),
+		expression: (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
+			rebuilt(node, handle, () => buildArgument({ ...config, expression: value })),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
+	};
+	return node as unknown as T.Argument.Bound;
+}
+
+const buildArrayExpressionListElements$wrapper = {
+	kind: TSKindId.AttributedArgument,
+	content: 'expression',
+	decorations: ['attributeItems']
+};
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedArgument | T.Expression>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		Admit<T.AttributedArgument | T.Expression>
+	>;
+	return _buildArrayExpressionListElements(elements, options);
+}
+function _buildArrayExpressionListElements(
+	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ArrayExpressionListElements.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
+	const _mapped = elements.map(
+		(e): T.AttributedArgument =>
+			(isNodeOfKind(e, TSKindId.AttributedArgument)
+				? (e as unknown)
+				: buildAttributedArgument({ expression: e } as Parameters<
+						typeof buildAttributedArgument
+					>[0])) as T.AttributedArgument
+	);
+	const _item = _mapped;
+	const _delimiter = options.delimiter;
+	const listedItems = storedElements(_item);
+	const listedLength = listedItems.length;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+	const node = {
+		$type: TSKindId.ArrayExpressionListElements as const,
+		_item,
+		_delimiter,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		items: () => hydrateStoredSlots(node, '_item'),
+		length: listedLength,
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		items: (...args: unknown[]) =>
+			rebuilt(node, handle, () =>
+				elementsWith(
+					args,
+					{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
+					(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) =>
+						buildArrayExpressionListElements(options, ...vs)
+				)
+			),
+		delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+			rebuilt(node, handle, () => buildArrayExpressionListElements({ ...options, delimiter: v }, ...elements)),
+		[RECEIVER]: node
+	};
+	node.$trivia = {
+		leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+		trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+		[RECEIVER]: node
+	};
+	holdBuiltItems(node, elements, buildArrayExpressionListElements$wrapper);
+	return node as unknown as T.ArrayExpressionListElements.Bound;
+}
+
 export function buildReceiverParameterDeclaration<TypeSlot extends T.ReceiverParameterDeclaration.Config['type']>(
 	config: RefusingConfig<T.ReceiverParameterDeclaration.Config, { type: TypeSlot }>
 ): T.ReceiverParameterDeclaration.Bound;
@@ -15230,6 +15386,8 @@ export type FluentKindMap = {
 	_dedent: T.Dedent;
 	trait_interface_declaration_body: T.TraitInterfaceDeclarationBody.Bound;
 	extension_declaration_body: T.ExtensionDeclarationBody.Bound;
+	argument: T.Argument.Bound;
+	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
@@ -15508,6 +15666,8 @@ export const _factoryMap = {
 	_dedent: buildDedent,
 	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
 	extension_declaration_body: buildExtensionDeclarationBody,
+	argument: buildArgument,
+	array_expression_list_elements: buildArrayExpressionListElements,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,

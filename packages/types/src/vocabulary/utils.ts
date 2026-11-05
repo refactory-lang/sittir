@@ -5,6 +5,12 @@ export type SubKindOf<T extends { readonly $kind: string }> = {
 };
 
 /**
+ * A kind that is a token, typed as its text, declaring the flags its texts carry: `T` itself. The flags name the kind's flag segments,
+ * which claims and portable guards use, without adding a member to the text.
+ */
+export type Flagged<T, F extends string> = [F] extends [never] ? T : T;
+
+/**
  * An owner refined by one value of an axis many owners share: the owner's members, with a `$kind` beneath the owner's,
  * and the members the value's kind adds.
  */
@@ -18,6 +24,14 @@ export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { 
  * member by member.
  */
 export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
+
+/**
+ * `T` as one form a build accepts: the members `R` given, and the members `A` left out. A path whose forms differ by
+ * what they need is the union of its forms, so a build the types admit is one the runtime picks a form for.
+ */
+export type RequiredBy<T, R extends PropertyKey, A extends PropertyKey = never> = Omit<T, (R | A) & keyof T> & {
+	readonly [P in R & keyof T]-?: Exclude<T[P], undefined>;
+} & { readonly [P in A & keyof T]?: never };
 
 declare const flag: unique symbol;
 

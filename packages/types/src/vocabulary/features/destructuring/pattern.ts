@@ -54,8 +54,6 @@ export namespace Pattern {
 			readonly $kind: 'pattern.tuple.bare';
 		}
 	}
-	export interface Wildcard<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.wildcard';
-	}
+	// claimed by r
+	export type Wildcard<G extends GrammarContext<G>> = G['texts']['pattern.wildcard'];
 }

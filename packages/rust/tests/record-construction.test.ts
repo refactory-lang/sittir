@@ -65,6 +65,13 @@ describe('record construction', () => {
 		}
 	});
 
+	it('takes how it stores built nodes from its storage alone, ignoring a construction key as it ignores any key it does not know', async () => {
+		using objectEngine = await rust.createEngine({ nodeStorage: 'object', nodeConstruction: 'record' } as never);
+		expect(recordOf(build(objectEngine))).toBeUndefined();
+		using arenaEngine = await rust.createEngine({ nodeConstruction: 'object' } as never);
+		expect(recordOf(build(arenaEngine))).toBeTypeOf('number');
+	});
+
 	it('builds a view of a record, and reads back the tree the object builders build', () => {
 		const object = build(objects);
 		const record = build(records);

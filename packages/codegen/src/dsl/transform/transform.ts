@@ -63,6 +63,10 @@ import {
 	wireQueueRename,
 	wireRefuse,
 	wireAliasTargetIssue,
+	wireSiteFlipIssue,
+	wireBindingEffectCount,
+	wireRecordSiteAlias,
+	wireCopyOf,
 	wireAliasSite,
 	wireGetLiftBody,
 	wireElementSlotOf,
@@ -801,12 +805,77 @@ function replacingDollar(key: string): unknown {
 
 function resolveAt(patch: PatchValue, member: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	refuseSameSite(member, key);
+	const since = wireBindingEffectCount();
 	const resolved = resolvePatch(patch, member, key, enclosing);
+	const aliasEdit = aliasEditOf(member, resolved);
+	if (aliasEdit !== undefined) {
+		refuseFlippedSite(aliasEdit, key);
+		recordSiteAlias(aliasEdit, since);
+	}
 	return wireNoteInlineWrite(wireIsInsideCopy() && replacesMember(patch) ? carriedLabel(resolved, member, wireAutomaticVariants()) : resolved);
 }
 
 function replacesMember(patch: PatchValue): boolean {
 	return typeof patch === 'function' || (typeof (patch as { type?: unknown }).type === 'string' && !('__sittirPlaceholder' in patch));
+}
+
+interface SiteShape {
+	readonly type?: unknown;
+	readonly name?: unknown;
+	readonly named?: unknown;
+	readonly value?: unknown;
+	readonly content?: SiteShape;
+}
+
+const siteShapeOf = (rule: RuntimeRule): SiteShape => (isEnrichShapedFieldWrapper(rule) ? rule.content : rule) as SiteShape;
+
+function rootStorage(name: string): string {
+	for (let copy = wireCopyOf(name); copy !== undefined; copy = wireCopyOf(name)) name = copy.source;
+	return name;
+}
+
+function siteStorage(shape: SiteShape): string | undefined {
+	const stored = shape.type === 'ALIAS' ? shape.content : shape;
+	return isSymbolType(stored?.type) && typeof stored.name === 'string' ? rootStorage(stored.name) : undefined;
+}
+
+function siteDisplay(shape: SiteShape): string | undefined {
+	if (isSymbolType(shape.type) && typeof shape.name === 'string') return shape.name;
+	return shape.type === 'ALIAS' && shape.named === true && typeof shape.value === 'string' ? shape.value : undefined;
+}
+
+interface AliasEdit {
+	readonly before: string;
+	readonly after: string;
+}
+
+function aliasEditOf(member: RuntimeRule, resolved: RuntimeRule): AliasEdit | undefined {
+	const replaced = siteShapeOf(member);
+	const shown = siteShapeOf(resolved);
+	if (shown.type !== 'ALIAS') return undefined;
+	const storage = siteStorage(replaced);
+	if (storage === undefined || storage !== siteStorage(shown)) return undefined;
+	const before = siteDisplay(replaced);
+	const after = siteDisplay(shown);
+	return before === undefined || after === undefined ? undefined : { before, after };
+}
+
+function recordSiteAlias({ before, after }: AliasEdit, since: number): void {
+	if (before === after) return;
+	const site = wireAliasSite();
+	wireRecordSiteAlias(since, { kind: 'alias', from: before, to: after, ...(site === undefined ? {} : { site }) });
+}
+
+function refuseFlippedSite({ before, after }: AliasEdit, key: string): void {
+	const issue = wireSiteFlipIssue(before, after);
+	if (issue === undefined) return;
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'alias-target-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}' at '${key}': alias '${before}' → '${after}': ${issue}`,
+		details: { kind: owner, from: before, to: after }
+	});
 }
 
 function refuseSameSite(member: RuntimeRule, key: string): void {
@@ -918,7 +987,7 @@ export function recordAlias(from: string, to: string): void {
 }
 
 function refuseAliasTarget(from: string, to: string): void {
-	const issue = wireAliasTargetIssue(from, to);
+	const issue = wireAliasTargetIssue(to);
 	if (issue === undefined) return;
 	const owner = wireGetCurrentRuleKind() ?? '';
 	wireRefuse({

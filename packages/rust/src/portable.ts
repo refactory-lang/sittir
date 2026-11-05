@@ -6,6 +6,7 @@ import type { RustNode } from './types.js';
 import { querySlots } from './utils.js';
 
 export interface PortableIds {
+	argument: TSKindId.Argument;
 	attribute: TSKindId.Attribute | TSKindId.AttributeItem | TSKindId.InnerAttributeItem;
 	'attribute.content': TSKindId.Attribute;
 	'attribute.inner': TSKindId.InnerAttributeItem;
@@ -120,26 +121,31 @@ export interface PortableIds {
 	'declaration.constant.private': TSKindId.ConstItem;
 	'declaration.constant.public': TSKindId.ConstItem;
 	'declaration.constant.public.internal': TSKindId.ConstItem;
+	'declaration.constant.public.parent': TSKindId.ConstItem;
 	'declaration.constant.public.restricted': TSKindId.ConstItem;
 	'declaration.enum': TSKindId.EnumItem;
 	'declaration.enum.private': TSKindId.EnumItem;
 	'declaration.enum.public': TSKindId.EnumItem;
 	'declaration.enum.public.internal': TSKindId.EnumItem;
+	'declaration.enum.public.parent': TSKindId.EnumItem;
 	'declaration.enum.public.restricted': TSKindId.EnumItem;
 	'declaration.enum_member': TSKindId.EnumVariant;
 	'declaration.enum_member.private': TSKindId.EnumVariant;
 	'declaration.enum_member.public': TSKindId.EnumVariant;
 	'declaration.enum_member.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.struct': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.private': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.struct.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.private': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.public.parent': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple.public.restricted': TSKindId.EnumVariant;
 	'declaration.extension': TSKindId.ImplItemBody | TSKindId.ImplItemSemi;
 	'declaration.extension.conformance': TSKindId.ImplItemBody;
@@ -147,22 +153,26 @@ export interface PortableIds {
 	'declaration.field.private': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.public.parent': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public.internal': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.public.parent': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public.restricted': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.signature': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.private': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.internal': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.public.parent': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.restricted': TSKindId.FunctionSignatureItem;
 	'declaration.interface': TSKindId.TraitItem;
 	'declaration.interface.trait': TSKindId.TraitItem;
 	'declaration.interface.trait.private': TSKindId.TraitItem;
 	'declaration.interface.trait.public': TSKindId.TraitItem;
 	'declaration.interface.trait.public.internal': TSKindId.TraitItem;
+	'declaration.interface.trait.public.parent': TSKindId.TraitItem;
 	'declaration.interface.trait.public.restricted': TSKindId.TraitItem;
 	'declaration.macro':
 		| TSKindId.MacroDefinition
@@ -176,11 +186,13 @@ export interface PortableIds {
 	'declaration.method.private': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public.internal': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.public.parent': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.public.restricted': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.private': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public.internal': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.public.parent': TSKindId.SignatureMethodDeclaration;
 	'declaration.method.signature.public.restricted': TSKindId.SignatureMethodDeclaration;
 	'declaration.module':
 		| TSKindId.ForeignModItem
@@ -193,6 +205,7 @@ export interface PortableIds {
 	'declaration.module.private': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public.internal': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.parent': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.module.public.restricted': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.parameter':
 		| TSKindId.ClosureParameter
@@ -210,22 +223,26 @@ export interface PortableIds {
 	'declaration.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public.internal': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.parent': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.public.restricted': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public.internal': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.public.parent': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public.restricted': TSKindId.StructItemTuple;
 	'declaration.struct.unit': TSKindId.StructItemUnit;
 	'declaration.struct.unit.private': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public.internal': TSKindId.StructItemUnit;
+	'declaration.struct.unit.public.parent': TSKindId.StructItemUnit;
 	'declaration.struct.unit.public.restricted': TSKindId.StructItemUnit;
 	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
 	'declaration.type_alias.associated': TSKindId.AssociatedType;
 	'declaration.type_alias.private': TSKindId.TypeItem;
 	'declaration.type_alias.public': TSKindId.TypeItem;
 	'declaration.type_alias.public.internal': TSKindId.TypeItem;
+	'declaration.type_alias.public.parent': TSKindId.TypeItem;
 	'declaration.type_alias.public.restricted': TSKindId.TypeItem;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
 	'declaration.type_parameter.lifetime': TSKindId.LifetimeParameter;
@@ -234,11 +251,13 @@ export interface PortableIds {
 	'declaration.union.private': TSKindId.UnionItem;
 	'declaration.union.public': TSKindId.UnionItem;
 	'declaration.union.public.internal': TSKindId.UnionItem;
+	'declaration.union.public.parent': TSKindId.UnionItem;
 	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
 	'declaration.variable.private': TSKindId.StaticItem;
 	'declaration.variable.public': TSKindId.StaticItem;
 	'declaration.variable.public.internal': TSKindId.StaticItem;
+	'declaration.variable.public.parent': TSKindId.StaticItem;
 	'declaration.variable.public.restricted': TSKindId.StaticItem;
 	element:
 		| TSKindId.BaseFieldInitializer
@@ -611,6 +630,7 @@ export interface PortableIds {
 	'modifier.visibility.private': TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.internal': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
+	'modifier.visibility.public.parent': TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.restricted': TSKindId.VisibilityModifierPub;
 	pattern:
 		| TSKindId.CapturedPattern
@@ -680,10 +700,12 @@ export interface PortableIds {
 	'statement.import.package.private': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.internal': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.public.parent': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.restricted': TSKindId.ExternCrateDeclaration;
 	'statement.import.private': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public.internal': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
+	'statement.import.public.parent': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.public.restricted': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.loop': TSKindId.ForExpression | TSKindId.LoopExpression | TSKindId.WhileExpression;
 	'statement.loop.for_each': TSKindId.ForExpression;
@@ -784,7 +806,459 @@ export interface PortableIds {
 	'type.unit': TSKindId.UnitType;
 }
 
+export interface PortableTexts {
+	argument: never;
+	attribute: never;
+	'attribute.content': never;
+	'attribute.inner': never;
+	clause: never;
+	'clause.bounds': never;
+	'clause.bounds.higher_ranked': never;
+	'clause.bounds.removed': never;
+	'clause.bounds.use': never;
+	'clause.case': never;
+	'clause.case.match': never;
+	'clause.else': never;
+	'clause.import': never;
+	'clause.import.alias': never;
+	'clause.import.list': never;
+	'clause.import.list.scoped': never;
+	'clause.import.wildcard': never;
+	'clause.let': never;
+	'clause.let.chain': never;
+	'clause.lifetimes': never;
+	'clause.macro': never;
+	'clause.macro.rule': never;
+	'clause.where': never;
+	'clause.where.predicate': never;
+	comment: never;
+	'comment.block': never;
+	'comment.block.doc': never;
+	'comment.block.doc.inner': never;
+	'comment.line': never;
+	'comment.line.doc': never;
+	'comment.line.doc.inner': never;
+	'comment.text': never;
+	declaration: never;
+	'declaration.constant': never;
+	'declaration.constant.private': never;
+	'declaration.constant.public': never;
+	'declaration.constant.public.internal': never;
+	'declaration.constant.public.parent': never;
+	'declaration.constant.public.restricted': never;
+	'declaration.enum': never;
+	'declaration.enum.private': never;
+	'declaration.enum.public': never;
+	'declaration.enum.public.internal': never;
+	'declaration.enum.public.parent': never;
+	'declaration.enum.public.restricted': never;
+	'declaration.enum_member': never;
+	'declaration.enum_member.private': never;
+	'declaration.enum_member.public': never;
+	'declaration.enum_member.public.internal': never;
+	'declaration.enum_member.public.parent': never;
+	'declaration.enum_member.public.restricted': never;
+	'declaration.enum_member.struct': never;
+	'declaration.enum_member.struct.private': never;
+	'declaration.enum_member.struct.public': never;
+	'declaration.enum_member.struct.public.internal': never;
+	'declaration.enum_member.struct.public.parent': never;
+	'declaration.enum_member.struct.public.restricted': never;
+	'declaration.enum_member.tuple': never;
+	'declaration.enum_member.tuple.private': never;
+	'declaration.enum_member.tuple.public': never;
+	'declaration.enum_member.tuple.public.internal': never;
+	'declaration.enum_member.tuple.public.parent': never;
+	'declaration.enum_member.tuple.public.restricted': never;
+	'declaration.extension': never;
+	'declaration.extension.conformance': never;
+	'declaration.field': never;
+	'declaration.field.private': never;
+	'declaration.field.public': never;
+	'declaration.field.public.internal': never;
+	'declaration.field.public.parent': never;
+	'declaration.field.public.restricted': never;
+	'declaration.function': never;
+	'declaration.function.private': never;
+	'declaration.function.public': never;
+	'declaration.function.public.internal': never;
+	'declaration.function.public.parent': never;
+	'declaration.function.public.restricted': never;
+	'declaration.function.signature': never;
+	'declaration.function.signature.private': never;
+	'declaration.function.signature.public': never;
+	'declaration.function.signature.public.internal': never;
+	'declaration.function.signature.public.parent': never;
+	'declaration.function.signature.public.restricted': never;
+	'declaration.interface': never;
+	'declaration.interface.trait': never;
+	'declaration.interface.trait.private': never;
+	'declaration.interface.trait.public': never;
+	'declaration.interface.trait.public.internal': never;
+	'declaration.interface.trait.public.parent': never;
+	'declaration.interface.trait.public.restricted': never;
+	'declaration.macro': never;
+	'declaration.macro.brace': never;
+	'declaration.macro.bracket': never;
+	'declaration.macro.paren': never;
+	'declaration.method': never;
+	'declaration.method.private': never;
+	'declaration.method.public': never;
+	'declaration.method.public.internal': never;
+	'declaration.method.public.parent': never;
+	'declaration.method.public.restricted': never;
+	'declaration.method.signature': never;
+	'declaration.method.signature.private': never;
+	'declaration.method.signature.public': never;
+	'declaration.method.signature.public.internal': never;
+	'declaration.method.signature.public.parent': never;
+	'declaration.method.signature.public.restricted': never;
+	'declaration.module': never;
+	'declaration.module.foreign': never;
+	'declaration.module.private': never;
+	'declaration.module.public': never;
+	'declaration.module.public.internal': never;
+	'declaration.module.public.parent': never;
+	'declaration.module.public.restricted': never;
+	'declaration.parameter': never;
+	'declaration.parameter.receiver': never;
+	'declaration.parameter.variadic': never;
+	'declaration.struct': never;
+	'declaration.struct.private': never;
+	'declaration.struct.public': never;
+	'declaration.struct.public.internal': never;
+	'declaration.struct.public.parent': never;
+	'declaration.struct.public.restricted': never;
+	'declaration.struct.tuple': never;
+	'declaration.struct.tuple.private': never;
+	'declaration.struct.tuple.public': never;
+	'declaration.struct.tuple.public.internal': never;
+	'declaration.struct.tuple.public.parent': never;
+	'declaration.struct.tuple.public.restricted': never;
+	'declaration.struct.unit': never;
+	'declaration.struct.unit.private': never;
+	'declaration.struct.unit.public': never;
+	'declaration.struct.unit.public.internal': never;
+	'declaration.struct.unit.public.parent': never;
+	'declaration.struct.unit.public.restricted': never;
+	'declaration.type_alias': never;
+	'declaration.type_alias.associated': never;
+	'declaration.type_alias.private': never;
+	'declaration.type_alias.public': never;
+	'declaration.type_alias.public.internal': never;
+	'declaration.type_alias.public.parent': never;
+	'declaration.type_alias.public.restricted': never;
+	'declaration.type_parameter': never;
+	'declaration.type_parameter.lifetime': never;
+	'declaration.type_parameter.value': never;
+	'declaration.union': never;
+	'declaration.union.private': never;
+	'declaration.union.public': never;
+	'declaration.union.public.internal': never;
+	'declaration.union.public.parent': never;
+	'declaration.union.public.restricted': never;
+	'declaration.variable': never;
+	'declaration.variable.private': never;
+	'declaration.variable.public': never;
+	'declaration.variable.public.internal': never;
+	'declaration.variable.public.parent': never;
+	'declaration.variable.public.restricted': never;
+	element:
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis';
+	'element.macro':
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis';
+	'element.macro.fragment':
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis';
+	'element.macro.token_binding': never;
+	'element.macro.token_repetition': never;
+	'element.macro.token_repetition.pattern': never;
+	'element.macro.token_tree': never;
+	'element.macro.token_tree.brace': never;
+	'element.macro.token_tree.bracket': never;
+	'element.macro.token_tree.delimited': never;
+	'element.macro.token_tree.delimited.brace': never;
+	'element.macro.token_tree.delimited.bracket': never;
+	'element.macro.token_tree.delimited.paren': never;
+	'element.macro.token_tree.paren': never;
+	'element.macro.token_tree.pattern': never;
+	'element.macro.token_tree.pattern.brace': never;
+	'element.macro.token_tree.pattern.bracket': never;
+	'element.macro.token_tree.pattern.paren': never;
+	'element.struct': never;
+	'element.struct.base': never;
+	'element.struct.field': never;
+	'element.type_argument': never;
+	'element.type_binding': never;
+	expression: '()';
+	'expression.assignment': never;
+	'expression.assignment.compound': never;
+	'expression.assignment.compound.add': never;
+	'expression.assignment.compound.bitwise_and': never;
+	'expression.assignment.compound.bitwise_or': never;
+	'expression.assignment.compound.bitwise_xor': never;
+	'expression.assignment.compound.divide': never;
+	'expression.assignment.compound.modulo': never;
+	'expression.assignment.compound.multiply': never;
+	'expression.assignment.compound.shift_left': never;
+	'expression.assignment.compound.shift_right': never;
+	'expression.assignment.compound.subtract': never;
+	'expression.await': never;
+	'expression.binary': never;
+	'expression.binary.arithmetic': never;
+	'expression.binary.arithmetic.add': never;
+	'expression.binary.arithmetic.divide': never;
+	'expression.binary.arithmetic.modulo': never;
+	'expression.binary.arithmetic.multiply': never;
+	'expression.binary.arithmetic.subtract': never;
+	'expression.binary.bitwise': never;
+	'expression.binary.bitwise.and': never;
+	'expression.binary.bitwise.or': never;
+	'expression.binary.bitwise.xor': never;
+	'expression.binary.comparison': never;
+	'expression.binary.comparison.equal': never;
+	'expression.binary.comparison.greater': never;
+	'expression.binary.comparison.greater_equal': never;
+	'expression.binary.comparison.less': never;
+	'expression.binary.comparison.less_equal': never;
+	'expression.binary.comparison.not_equal': never;
+	'expression.binary.logical': never;
+	'expression.binary.logical.and': never;
+	'expression.binary.logical.or': never;
+	'expression.binary.shift': never;
+	'expression.binary.shift.left': never;
+	'expression.binary.shift.right': never;
+	'expression.block': never;
+	'expression.block.async': never;
+	'expression.block.const': never;
+	'expression.block.generator': never;
+	'expression.block.try': never;
+	'expression.block.unsafe': never;
+	'expression.call': never;
+	'expression.call.macro': never;
+	'expression.call.member': never;
+	'expression.call.qualified': never;
+	'expression.cast': never;
+	'expression.cast.conversion': never;
+	'expression.collection': never;
+	'expression.collection.list': never;
+	'expression.collection.list.repeat': never;
+	'expression.collection.struct': never;
+	'expression.collection.tuple': never;
+	'expression.instantiation': never;
+	'expression.lambda': never;
+	'expression.member': never;
+	'expression.parenthesized': never;
+	'expression.propagate': never;
+	'expression.range': never;
+	'expression.range.exclusive': never;
+	'expression.range.inclusive': never;
+	'expression.range.inclusive.legacy': never;
+	'expression.reference': never;
+	'expression.subscript': never;
+	'expression.unary': never;
+	'expression.unary.deref': never;
+	'expression.unary.negation': never;
+	'expression.unary.not': never;
+	'expression.unit': '()';
+	'expression.yield': never;
+	file: never;
+	identifier: 'crate' | 'self' | 'super';
+	'identifier.label': never;
+	'identifier.lifetime': never;
+	'identifier.metavariable': never;
+	'identifier.qualified': never;
+	'identifier.receiver': 'self';
+	literal: never;
+	'literal.boolean': never;
+	'literal.boolean.false': never;
+	'literal.boolean.true': never;
+	'literal.character': never;
+	'literal.number': never;
+	'literal.number.float': never;
+	'literal.number.integer': never;
+	'literal.number.integer.binary': never;
+	'literal.number.integer.hex': never;
+	'literal.number.integer.octal': never;
+	'literal.number.negative': never;
+	'literal.string': never;
+	'literal.string.bytes': never;
+	'literal.string.c': never;
+	'literal.string.escape': never;
+	'literal.string.raw': never;
+	'literal.string.text': never;
+	modifier: 'crate';
+	'modifier.extern': never;
+	'modifier.visibility': 'crate';
+	'modifier.visibility.private': never;
+	'modifier.visibility.public': 'crate';
+	'modifier.visibility.public.internal': 'crate';
+	'modifier.visibility.public.parent': never;
+	'modifier.visibility.public.restricted': never;
+	pattern: '..' | '_';
+	'pattern.as': never;
+	'pattern.generic': never;
+	'pattern.list': never;
+	'pattern.mutable': never;
+	'pattern.or': never;
+	'pattern.range': never;
+	'pattern.range.exclusive': never;
+	'pattern.range.inclusive': never;
+	'pattern.range.inclusive.legacy': never;
+	'pattern.reference': never;
+	'pattern.reference.value': never;
+	'pattern.struct': '..';
+	'pattern.struct.field': never;
+	'pattern.struct.rest': '..';
+	'pattern.tuple': never;
+	'pattern.wildcard': '_';
+	statement: ';';
+	'statement.block': never;
+	'statement.break': never;
+	'statement.continue': never;
+	'statement.empty': ';';
+	'statement.expression': never;
+	'statement.if': never;
+	'statement.import': never;
+	'statement.import.package': never;
+	'statement.import.package.private': never;
+	'statement.import.package.public': never;
+	'statement.import.package.public.internal': never;
+	'statement.import.package.public.parent': never;
+	'statement.import.package.public.restricted': never;
+	'statement.import.private': never;
+	'statement.import.public': never;
+	'statement.import.public.internal': never;
+	'statement.import.public.parent': never;
+	'statement.import.public.restricted': never;
+	'statement.loop': never;
+	'statement.loop.for_each': never;
+	'statement.loop.while': never;
+	'statement.match': never;
+	'statement.return': never;
+	type:
+		| '!'
+		| '()'
+		| 'bool'
+		| 'char'
+		| 'f32'
+		| 'f64'
+		| 'i128'
+		| 'i16'
+		| 'i32'
+		| 'i64'
+		| 'i8'
+		| 'isize'
+		| 'str'
+		| 'u128'
+		| 'u16'
+		| 'u32'
+		| 'u64'
+		| 'u8'
+		| 'usize';
+	'type.abstract': never;
+	'type.array': never;
+	'type.bounded': never;
+	'type.bracketed': never;
+	'type.dynamic': never;
+	'type.function': never;
+	'type.generic': never;
+	'type.generic.turbofish': never;
+	'type.pointer': never;
+	'type.primitive':
+		| '!'
+		| 'bool'
+		| 'char'
+		| 'f32'
+		| 'f64'
+		| 'i128'
+		| 'i16'
+		| 'i32'
+		| 'i64'
+		| 'i8'
+		| 'isize'
+		| 'str'
+		| 'u128'
+		| 'u16'
+		| 'u32'
+		| 'u64'
+		| 'u8'
+		| 'usize';
+	'type.primitive.boolean': 'bool';
+	'type.primitive.character': 'char';
+	'type.primitive.floating': 'f32' | 'f64';
+	'type.primitive.floating.float32': 'f32';
+	'type.primitive.floating.float64': 'f64';
+	'type.primitive.integral':
+		| 'i128'
+		| 'i16'
+		| 'i32'
+		| 'i64'
+		| 'i8'
+		| 'isize'
+		| 'u128'
+		| 'u16'
+		| 'u32'
+		| 'u64'
+		| 'u8'
+		| 'usize';
+	'type.primitive.integral.int128': 'i128' | 'u128';
+	'type.primitive.integral.int16': 'i16' | 'u16';
+	'type.primitive.integral.int32': 'i32' | 'u32';
+	'type.primitive.integral.int64': 'i64' | 'u64';
+	'type.primitive.integral.int8': 'i8' | 'u8';
+	'type.primitive.integral.size': 'isize' | 'usize';
+	'type.primitive.never': '!';
+	'type.primitive.string': 'str';
+	'type.qualified': never;
+	'type.reference': never;
+	'type.tuple': never;
+	'type.unit': '()';
+}
+
 export interface PortableKindsAt {
+	argument: { readonly $path: 'argument' };
 	attribute: {
 		readonly $path: 'attribute';
 		readonly content: PortableKindsAt['attribute.content'];
@@ -879,9 +1353,11 @@ export interface PortableKindsAt {
 	'declaration.constant.public': {
 		readonly $path: 'declaration.constant.public';
 		readonly internal: PortableKindsAt['declaration.constant.public.internal'];
+		readonly parent: PortableKindsAt['declaration.constant.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.constant.public.restricted'];
 	};
 	'declaration.constant.public.internal': { readonly $path: 'declaration.constant.public.internal' };
+	'declaration.constant.public.parent': { readonly $path: 'declaration.constant.public.parent' };
 	'declaration.constant.public.restricted': { readonly $path: 'declaration.constant.public.restricted' };
 	'declaration.enum': {
 		readonly $path: 'declaration.enum';
@@ -892,9 +1368,11 @@ export interface PortableKindsAt {
 	'declaration.enum.public': {
 		readonly $path: 'declaration.enum.public';
 		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
 	};
 	'declaration.enum.public.internal': { readonly $path: 'declaration.enum.public.internal' };
+	'declaration.enum.public.parent': { readonly $path: 'declaration.enum.public.parent' };
 	'declaration.enum.public.restricted': { readonly $path: 'declaration.enum.public.restricted' };
 	'declaration.enum_member': {
 		readonly $path: 'declaration.enum_member';
@@ -907,9 +1385,11 @@ export interface PortableKindsAt {
 	'declaration.enum_member.public': {
 		readonly $path: 'declaration.enum_member.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.public.restricted'];
 	};
 	'declaration.enum_member.public.internal': { readonly $path: 'declaration.enum_member.public.internal' };
+	'declaration.enum_member.public.parent': { readonly $path: 'declaration.enum_member.public.parent' };
 	'declaration.enum_member.public.restricted': { readonly $path: 'declaration.enum_member.public.restricted' };
 	'declaration.enum_member.struct': {
 		readonly $path: 'declaration.enum_member.struct';
@@ -920,11 +1400,13 @@ export interface PortableKindsAt {
 	'declaration.enum_member.struct.public': {
 		readonly $path: 'declaration.enum_member.struct.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.struct.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': {
 		readonly $path: 'declaration.enum_member.struct.public.internal';
 	};
+	'declaration.enum_member.struct.public.parent': { readonly $path: 'declaration.enum_member.struct.public.parent' };
 	'declaration.enum_member.struct.public.restricted': {
 		readonly $path: 'declaration.enum_member.struct.public.restricted';
 	};
@@ -937,9 +1419,11 @@ export interface PortableKindsAt {
 	'declaration.enum_member.tuple.public': {
 		readonly $path: 'declaration.enum_member.tuple.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.enum_member.tuple.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
 	};
 	'declaration.enum_member.tuple.public.internal': { readonly $path: 'declaration.enum_member.tuple.public.internal' };
+	'declaration.enum_member.tuple.public.parent': { readonly $path: 'declaration.enum_member.tuple.public.parent' };
 	'declaration.enum_member.tuple.public.restricted': {
 		readonly $path: 'declaration.enum_member.tuple.public.restricted';
 	};
@@ -957,9 +1441,11 @@ export interface PortableKindsAt {
 	'declaration.field.public': {
 		readonly $path: 'declaration.field.public';
 		readonly internal: PortableKindsAt['declaration.field.public.internal'];
+		readonly parent: PortableKindsAt['declaration.field.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
 	};
 	'declaration.field.public.internal': { readonly $path: 'declaration.field.public.internal' };
+	'declaration.field.public.parent': { readonly $path: 'declaration.field.public.parent' };
 	'declaration.field.public.restricted': { readonly $path: 'declaration.field.public.restricted' };
 	'declaration.function': {
 		readonly $path: 'declaration.function';
@@ -971,9 +1457,11 @@ export interface PortableKindsAt {
 	'declaration.function.public': {
 		readonly $path: 'declaration.function.public';
 		readonly internal: PortableKindsAt['declaration.function.public.internal'];
+		readonly parent: PortableKindsAt['declaration.function.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.function.public.restricted'];
 	};
 	'declaration.function.public.internal': { readonly $path: 'declaration.function.public.internal' };
+	'declaration.function.public.parent': { readonly $path: 'declaration.function.public.parent' };
 	'declaration.function.public.restricted': { readonly $path: 'declaration.function.public.restricted' };
 	'declaration.function.signature': {
 		readonly $path: 'declaration.function.signature';
@@ -984,11 +1472,13 @@ export interface PortableKindsAt {
 	'declaration.function.signature.public': {
 		readonly $path: 'declaration.function.signature.public';
 		readonly internal: PortableKindsAt['declaration.function.signature.public.internal'];
+		readonly parent: PortableKindsAt['declaration.function.signature.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': {
 		readonly $path: 'declaration.function.signature.public.internal';
 	};
+	'declaration.function.signature.public.parent': { readonly $path: 'declaration.function.signature.public.parent' };
 	'declaration.function.signature.public.restricted': {
 		readonly $path: 'declaration.function.signature.public.restricted';
 	};
@@ -1005,9 +1495,11 @@ export interface PortableKindsAt {
 	'declaration.interface.trait.public': {
 		readonly $path: 'declaration.interface.trait.public';
 		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
+		readonly parent: PortableKindsAt['declaration.interface.trait.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
 	};
 	'declaration.interface.trait.public.internal': { readonly $path: 'declaration.interface.trait.public.internal' };
+	'declaration.interface.trait.public.parent': { readonly $path: 'declaration.interface.trait.public.parent' };
 	'declaration.interface.trait.public.restricted': { readonly $path: 'declaration.interface.trait.public.restricted' };
 	'declaration.macro': {
 		readonly $path: 'declaration.macro';
@@ -1028,9 +1520,11 @@ export interface PortableKindsAt {
 	'declaration.method.public': {
 		readonly $path: 'declaration.method.public';
 		readonly internal: PortableKindsAt['declaration.method.public.internal'];
+		readonly parent: PortableKindsAt['declaration.method.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.method.public.restricted'];
 	};
 	'declaration.method.public.internal': { readonly $path: 'declaration.method.public.internal' };
+	'declaration.method.public.parent': { readonly $path: 'declaration.method.public.parent' };
 	'declaration.method.public.restricted': { readonly $path: 'declaration.method.public.restricted' };
 	'declaration.method.signature': {
 		readonly $path: 'declaration.method.signature';
@@ -1041,9 +1535,11 @@ export interface PortableKindsAt {
 	'declaration.method.signature.public': {
 		readonly $path: 'declaration.method.signature.public';
 		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
+		readonly parent: PortableKindsAt['declaration.method.signature.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
 	};
 	'declaration.method.signature.public.internal': { readonly $path: 'declaration.method.signature.public.internal' };
+	'declaration.method.signature.public.parent': { readonly $path: 'declaration.method.signature.public.parent' };
 	'declaration.method.signature.public.restricted': {
 		readonly $path: 'declaration.method.signature.public.restricted';
 	};
@@ -1058,9 +1554,11 @@ export interface PortableKindsAt {
 	'declaration.module.public': {
 		readonly $path: 'declaration.module.public';
 		readonly internal: PortableKindsAt['declaration.module.public.internal'];
+		readonly parent: PortableKindsAt['declaration.module.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.module.public.restricted'];
 	};
 	'declaration.module.public.internal': { readonly $path: 'declaration.module.public.internal' };
+	'declaration.module.public.parent': { readonly $path: 'declaration.module.public.parent' };
 	'declaration.module.public.restricted': { readonly $path: 'declaration.module.public.restricted' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
@@ -1080,9 +1578,11 @@ export interface PortableKindsAt {
 	'declaration.struct.public': {
 		readonly $path: 'declaration.struct.public';
 		readonly internal: PortableKindsAt['declaration.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.public.restricted'];
 	};
 	'declaration.struct.public.internal': { readonly $path: 'declaration.struct.public.internal' };
+	'declaration.struct.public.parent': { readonly $path: 'declaration.struct.public.parent' };
 	'declaration.struct.public.restricted': { readonly $path: 'declaration.struct.public.restricted' };
 	'declaration.struct.tuple': {
 		readonly $path: 'declaration.struct.tuple';
@@ -1093,9 +1593,11 @@ export interface PortableKindsAt {
 	'declaration.struct.tuple.public': {
 		readonly $path: 'declaration.struct.tuple.public';
 		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.tuple.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
 	};
 	'declaration.struct.tuple.public.internal': { readonly $path: 'declaration.struct.tuple.public.internal' };
+	'declaration.struct.tuple.public.parent': { readonly $path: 'declaration.struct.tuple.public.parent' };
 	'declaration.struct.tuple.public.restricted': { readonly $path: 'declaration.struct.tuple.public.restricted' };
 	'declaration.struct.unit': {
 		readonly $path: 'declaration.struct.unit';
@@ -1106,9 +1608,11 @@ export interface PortableKindsAt {
 	'declaration.struct.unit.public': {
 		readonly $path: 'declaration.struct.unit.public';
 		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
+		readonly parent: PortableKindsAt['declaration.struct.unit.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
 	};
 	'declaration.struct.unit.public.internal': { readonly $path: 'declaration.struct.unit.public.internal' };
+	'declaration.struct.unit.public.parent': { readonly $path: 'declaration.struct.unit.public.parent' };
 	'declaration.struct.unit.public.restricted': { readonly $path: 'declaration.struct.unit.public.restricted' };
 	'declaration.type_alias': {
 		readonly $path: 'declaration.type_alias';
@@ -1121,9 +1625,11 @@ export interface PortableKindsAt {
 	'declaration.type_alias.public': {
 		readonly $path: 'declaration.type_alias.public';
 		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type_alias.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.public.internal': { readonly $path: 'declaration.type_alias.public.internal' };
+	'declaration.type_alias.public.parent': { readonly $path: 'declaration.type_alias.public.parent' };
 	'declaration.type_alias.public.restricted': { readonly $path: 'declaration.type_alias.public.restricted' };
 	'declaration.type_parameter': {
 		readonly $path: 'declaration.type_parameter';
@@ -1141,9 +1647,11 @@ export interface PortableKindsAt {
 	'declaration.union.public': {
 		readonly $path: 'declaration.union.public';
 		readonly internal: PortableKindsAt['declaration.union.public.internal'];
+		readonly parent: PortableKindsAt['declaration.union.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
 	};
 	'declaration.union.public.internal': { readonly $path: 'declaration.union.public.internal' };
+	'declaration.union.public.parent': { readonly $path: 'declaration.union.public.parent' };
 	'declaration.union.public.restricted': { readonly $path: 'declaration.union.public.restricted' };
 	'declaration.variable': {
 		readonly $path: 'declaration.variable';
@@ -1154,9 +1662,11 @@ export interface PortableKindsAt {
 	'declaration.variable.public': {
 		readonly $path: 'declaration.variable.public';
 		readonly internal: PortableKindsAt['declaration.variable.public.internal'];
+		readonly parent: PortableKindsAt['declaration.variable.public.parent'];
 		readonly restricted: PortableKindsAt['declaration.variable.public.restricted'];
 	};
 	'declaration.variable.public.internal': { readonly $path: 'declaration.variable.public.internal' };
+	'declaration.variable.public.parent': { readonly $path: 'declaration.variable.public.parent' };
 	'declaration.variable.public.restricted': { readonly $path: 'declaration.variable.public.restricted' };
 	element: {
 		readonly $path: 'element';
@@ -1468,9 +1978,11 @@ export interface PortableKindsAt {
 	'modifier.visibility.public': {
 		readonly $path: 'modifier.visibility.public';
 		readonly internal: PortableKindsAt['modifier.visibility.public.internal'];
+		readonly parent: PortableKindsAt['modifier.visibility.public.parent'];
 		readonly restricted: PortableKindsAt['modifier.visibility.public.restricted'];
 	};
 	'modifier.visibility.public.internal': { readonly $path: 'modifier.visibility.public.internal' };
+	'modifier.visibility.public.parent': { readonly $path: 'modifier.visibility.public.parent' };
 	'modifier.visibility.public.restricted': { readonly $path: 'modifier.visibility.public.restricted' };
 	pattern: {
 		readonly $path: 'pattern';
@@ -1549,17 +2061,21 @@ export interface PortableKindsAt {
 	'statement.import.package.public': {
 		readonly $path: 'statement.import.package.public';
 		readonly internal: PortableKindsAt['statement.import.package.public.internal'];
+		readonly parent: PortableKindsAt['statement.import.package.public.parent'];
 		readonly restricted: PortableKindsAt['statement.import.package.public.restricted'];
 	};
 	'statement.import.package.public.internal': { readonly $path: 'statement.import.package.public.internal' };
+	'statement.import.package.public.parent': { readonly $path: 'statement.import.package.public.parent' };
 	'statement.import.package.public.restricted': { readonly $path: 'statement.import.package.public.restricted' };
 	'statement.import.private': { readonly $path: 'statement.import.private' };
 	'statement.import.public': {
 		readonly $path: 'statement.import.public';
 		readonly internal: PortableKindsAt['statement.import.public.internal'];
+		readonly parent: PortableKindsAt['statement.import.public.parent'];
 		readonly restricted: PortableKindsAt['statement.import.public.restricted'];
 	};
 	'statement.import.public.internal': { readonly $path: 'statement.import.public.internal' };
+	'statement.import.public.parent': { readonly $path: 'statement.import.public.parent' };
 	'statement.import.public.restricted': { readonly $path: 'statement.import.public.restricted' };
 	'statement.loop': {
 		readonly $path: 'statement.loop';
@@ -1637,13 +2153,24 @@ export interface PortableKindsAt {
 }
 
 export interface PortableIsAt {
-	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId> & {
+	argument: PortableGuard<PortableIds['argument'], RustNode, TSKindId, PortableTexts['argument']> & {};
+	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId, PortableTexts['attribute']> & {
 		readonly content: PortableIsAt['attribute.content'];
 		readonly inner: PortableIsAt['attribute.inner'];
 	};
-	'attribute.content': PortableGuard<PortableIds['attribute.content'], RustNode, TSKindId> & {};
-	'attribute.inner': PortableGuard<PortableIds['attribute.inner'], RustNode, TSKindId> & {};
-	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId> & {
+	'attribute.content': PortableGuard<
+		PortableIds['attribute.content'],
+		RustNode,
+		TSKindId,
+		PortableTexts['attribute.content']
+	> & {};
+	'attribute.inner': PortableGuard<
+		PortableIds['attribute.inner'],
+		RustNode,
+		TSKindId,
+		PortableTexts['attribute.inner']
+	> & {};
+	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId, PortableTexts['clause']> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly else: PortableIsAt['clause.else'];
@@ -1653,64 +2180,138 @@ export interface PortableIsAt {
 		readonly macro: PortableIsAt['clause.macro'];
 		readonly where: PortableIsAt['clause.where'];
 	};
-	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode, TSKindId> & {
+	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode, TSKindId, PortableTexts['clause.bounds']> & {
 		readonly higher_ranked: PortableIsAt['clause.bounds.higher_ranked'];
 		readonly removed: PortableIsAt['clause.bounds.removed'];
 		readonly use: PortableIsAt['clause.bounds.use'];
 	};
-	'clause.bounds.higher_ranked': PortableGuard<PortableIds['clause.bounds.higher_ranked'], RustNode, TSKindId> & {};
-	'clause.bounds.removed': PortableGuard<PortableIds['clause.bounds.removed'], RustNode, TSKindId> & {};
-	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use'], RustNode, TSKindId> & {};
-	'clause.case': PortableGuard<PortableIds['clause.case'], RustNode, TSKindId> & {
+	'clause.bounds.higher_ranked': PortableGuard<
+		PortableIds['clause.bounds.higher_ranked'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.bounds.higher_ranked']
+	> & {};
+	'clause.bounds.removed': PortableGuard<
+		PortableIds['clause.bounds.removed'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.bounds.removed']
+	> & {};
+	'clause.bounds.use': PortableGuard<
+		PortableIds['clause.bounds.use'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.bounds.use']
+	> & {};
+	'clause.case': PortableGuard<PortableIds['clause.case'], RustNode, TSKindId, PortableTexts['clause.case']> & {
 		readonly match: PortableIsAt['clause.case.match'];
 	};
-	'clause.case.match': PortableGuard<PortableIds['clause.case.match'], RustNode, TSKindId> & {};
-	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode, TSKindId> & {};
-	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode, TSKindId> & {
+	'clause.case.match': PortableGuard<
+		PortableIds['clause.case.match'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.case.match']
+	> & {};
+	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode, TSKindId, PortableTexts['clause.else']> & {};
+	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode, TSKindId, PortableTexts['clause.import']> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly list: PortableIsAt['clause.import.list'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias'], RustNode, TSKindId> & {};
-	'clause.import.list': PortableGuard<PortableIds['clause.import.list'], RustNode, TSKindId> & {
-		readonly scoped: PortableIsAt['clause.import.list.scoped'];
-	};
-	'clause.import.list.scoped': PortableGuard<PortableIds['clause.import.list.scoped'], RustNode, TSKindId> & {};
-	'clause.import.wildcard': PortableGuard<PortableIds['clause.import.wildcard'], RustNode, TSKindId> & {};
-	'clause.let': PortableGuard<PortableIds['clause.let'], RustNode, TSKindId> & {
+	'clause.import.alias': PortableGuard<
+		PortableIds['clause.import.alias'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.import.alias']
+	> & {};
+	'clause.import.list': PortableGuard<
+		PortableIds['clause.import.list'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.import.list']
+	> & { readonly scoped: PortableIsAt['clause.import.list.scoped'] };
+	'clause.import.list.scoped': PortableGuard<
+		PortableIds['clause.import.list.scoped'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.import.list.scoped']
+	> & {};
+	'clause.import.wildcard': PortableGuard<
+		PortableIds['clause.import.wildcard'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.import.wildcard']
+	> & {};
+	'clause.let': PortableGuard<PortableIds['clause.let'], RustNode, TSKindId, PortableTexts['clause.let']> & {
 		readonly chain: PortableIsAt['clause.let.chain'];
 	};
-	'clause.let.chain': PortableGuard<PortableIds['clause.let.chain'], RustNode, TSKindId> & {};
-	'clause.lifetimes': PortableGuard<PortableIds['clause.lifetimes'], RustNode, TSKindId> & {};
-	'clause.macro': PortableGuard<PortableIds['clause.macro'], RustNode, TSKindId> & {
+	'clause.let.chain': PortableGuard<
+		PortableIds['clause.let.chain'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.let.chain']
+	> & {};
+	'clause.lifetimes': PortableGuard<
+		PortableIds['clause.lifetimes'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.lifetimes']
+	> & {};
+	'clause.macro': PortableGuard<PortableIds['clause.macro'], RustNode, TSKindId, PortableTexts['clause.macro']> & {
 		readonly rule: PortableIsAt['clause.macro.rule'];
 	};
-	'clause.macro.rule': PortableGuard<PortableIds['clause.macro.rule'], RustNode, TSKindId> & {};
-	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode, TSKindId> & {
+	'clause.macro.rule': PortableGuard<
+		PortableIds['clause.macro.rule'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.macro.rule']
+	> & {};
+	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode, TSKindId, PortableTexts['clause.where']> & {
 		readonly predicate: PortableIsAt['clause.where.predicate'];
 	};
-	'clause.where.predicate': PortableGuard<PortableIds['clause.where.predicate'], RustNode, TSKindId> & {};
-	comment: PortableGuard<PortableIds['comment'], RustNode, TSKindId> & {
+	'clause.where.predicate': PortableGuard<
+		PortableIds['clause.where.predicate'],
+		RustNode,
+		TSKindId,
+		PortableTexts['clause.where.predicate']
+	> & {};
+	comment: PortableGuard<PortableIds['comment'], RustNode, TSKindId, PortableTexts['comment']> & {
 		readonly block: PortableIsAt['comment.block'];
 		readonly line: PortableIsAt['comment.line'];
 		readonly text: PortableIsAt['comment.text'];
 	};
-	'comment.block': PortableGuard<PortableIds['comment.block'], RustNode, TSKindId> & {
+	'comment.block': PortableGuard<PortableIds['comment.block'], RustNode, TSKindId, PortableTexts['comment.block']> & {
 		readonly doc: PortableIsAt['comment.block.doc'];
 	};
-	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc'], RustNode, TSKindId> & {
-		readonly inner: PortableIsAt['comment.block.doc.inner'];
-	};
-	'comment.block.doc.inner': PortableGuard<PortableIds['comment.block.doc.inner'], RustNode, TSKindId> & {};
-	'comment.line': PortableGuard<PortableIds['comment.line'], RustNode, TSKindId> & {
+	'comment.block.doc': PortableGuard<
+		PortableIds['comment.block.doc'],
+		RustNode,
+		TSKindId,
+		PortableTexts['comment.block.doc']
+	> & { readonly inner: PortableIsAt['comment.block.doc.inner'] };
+	'comment.block.doc.inner': PortableGuard<
+		PortableIds['comment.block.doc.inner'],
+		RustNode,
+		TSKindId,
+		PortableTexts['comment.block.doc.inner']
+	> & {};
+	'comment.line': PortableGuard<PortableIds['comment.line'], RustNode, TSKindId, PortableTexts['comment.line']> & {
 		readonly doc: PortableIsAt['comment.line.doc'];
 	};
-	'comment.line.doc': PortableGuard<PortableIds['comment.line.doc'], RustNode, TSKindId> & {
-		readonly inner: PortableIsAt['comment.line.doc.inner'];
-	};
-	'comment.line.doc.inner': PortableGuard<PortableIds['comment.line.doc.inner'], RustNode, TSKindId> & {};
-	'comment.text': PortableGuard<PortableIds['comment.text'], RustNode, TSKindId> & {};
-	declaration: PortableGuard<PortableIds['declaration'], RustNode, TSKindId> & {
+	'comment.line.doc': PortableGuard<
+		PortableIds['comment.line.doc'],
+		RustNode,
+		TSKindId,
+		PortableTexts['comment.line.doc']
+	> & { readonly inner: PortableIsAt['comment.line.doc.inner'] };
+	'comment.line.doc.inner': PortableGuard<
+		PortableIds['comment.line.doc.inner'],
+		RustNode,
+		TSKindId,
+		PortableTexts['comment.line.doc.inner']
+	> & {};
+	'comment.text': PortableGuard<PortableIds['comment.text'], RustNode, TSKindId, PortableTexts['comment.text']> & {};
+	declaration: PortableGuard<PortableIds['declaration'], RustNode, TSKindId, PortableTexts['declaration']> & {
 		readonly constant: PortableIsAt['declaration.constant'];
 		readonly enum: PortableIsAt['declaration.enum'];
 		readonly enum_member: PortableIsAt['declaration.enum_member'];
@@ -1728,45 +2329,98 @@ export interface PortableIsAt {
 		readonly union: PortableIsAt['declaration.union'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.constant': PortableGuard<PortableIds['declaration.constant'], RustNode, TSKindId> & {
+	'declaration.constant': PortableGuard<
+		PortableIds['declaration.constant'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.constant']
+	> & {
 		readonly private: PortableIsAt['declaration.constant.private'];
 		readonly public: PortableIsAt['declaration.constant.public'];
 	};
-	'declaration.constant.private': PortableGuard<PortableIds['declaration.constant.private'], RustNode, TSKindId> & {};
-	'declaration.constant.public': PortableGuard<PortableIds['declaration.constant.public'], RustNode, TSKindId> & {
+	'declaration.constant.private': PortableGuard<
+		PortableIds['declaration.constant.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.constant.private']
+	> & {};
+	'declaration.constant.public': PortableGuard<
+		PortableIds['declaration.constant.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.constant.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.constant.public.internal'];
+		readonly parent: PortableIsAt['declaration.constant.public.parent'];
 		readonly restricted: PortableIsAt['declaration.constant.public.restricted'];
 	};
 	'declaration.constant.public.internal': PortableGuard<
 		PortableIds['declaration.constant.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.constant.public.internal']
+	> & {};
+	'declaration.constant.public.parent': PortableGuard<
+		PortableIds['declaration.constant.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.constant.public.parent']
 	> & {};
 	'declaration.constant.public.restricted': PortableGuard<
 		PortableIds['declaration.constant.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.constant.public.restricted']
 	> & {};
-	'declaration.enum': PortableGuard<PortableIds['declaration.enum'], RustNode, TSKindId> & {
+	'declaration.enum': PortableGuard<
+		PortableIds['declaration.enum'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum']
+	> & {
 		readonly private: PortableIsAt['declaration.enum.private'];
 		readonly public: PortableIsAt['declaration.enum.public'];
 	};
-	'declaration.enum.private': PortableGuard<PortableIds['declaration.enum.private'], RustNode, TSKindId> & {};
-	'declaration.enum.public': PortableGuard<PortableIds['declaration.enum.public'], RustNode, TSKindId> & {
+	'declaration.enum.private': PortableGuard<
+		PortableIds['declaration.enum.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum.private']
+	> & {};
+	'declaration.enum.public': PortableGuard<
+		PortableIds['declaration.enum.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.enum.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
 	};
 	'declaration.enum.public.internal': PortableGuard<
 		PortableIds['declaration.enum.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum.public.internal']
+	> & {};
+	'declaration.enum.public.parent': PortableGuard<
+		PortableIds['declaration.enum.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum.public.parent']
 	> & {};
 	'declaration.enum.public.restricted': PortableGuard<
 		PortableIds['declaration.enum.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum.public.restricted']
 	> & {};
-	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member'], RustNode, TSKindId> & {
+	'declaration.enum_member': PortableGuard<
+		PortableIds['declaration.enum_member'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member']
+	> & {
 		readonly private: PortableIsAt['declaration.enum_member.private'];
 		readonly public: PortableIsAt['declaration.enum_member.public'];
 		readonly struct: PortableIsAt['declaration.enum_member.struct'];
@@ -1775,342 +2429,637 @@ export interface PortableIsAt {
 	'declaration.enum_member.private': PortableGuard<
 		PortableIds['declaration.enum_member.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.private']
 	> & {};
-	'declaration.enum_member.public': PortableGuard<PortableIds['declaration.enum_member.public'], RustNode, TSKindId> & {
+	'declaration.enum_member.public': PortableGuard<
+		PortableIds['declaration.enum_member.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.public.restricted'];
 	};
 	'declaration.enum_member.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.public.internal']
+	> & {};
+	'declaration.enum_member.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.public.parent']
 	> & {};
 	'declaration.enum_member.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.public.restricted']
 	> & {};
-	'declaration.enum_member.struct': PortableGuard<PortableIds['declaration.enum_member.struct'], RustNode, TSKindId> & {
+	'declaration.enum_member.struct': PortableGuard<
+		PortableIds['declaration.enum_member.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct']
+	> & {
 		readonly private: PortableIsAt['declaration.enum_member.struct.private'];
 		readonly public: PortableIsAt['declaration.enum_member.struct.public'];
 	};
 	'declaration.enum_member.struct.private': PortableGuard<
 		PortableIds['declaration.enum_member.struct.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.private']
 	> & {};
 	'declaration.enum_member.struct.public': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.struct.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.public.internal']
+	> & {};
+	'declaration.enum_member.struct.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.struct.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.public.parent']
 	> & {};
 	'declaration.enum_member.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.struct.public.restricted']
 	> & {};
-	'declaration.enum_member.tuple': PortableGuard<PortableIds['declaration.enum_member.tuple'], RustNode, TSKindId> & {
+	'declaration.enum_member.tuple': PortableGuard<
+		PortableIds['declaration.enum_member.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple']
+	> & {
 		readonly private: PortableIsAt['declaration.enum_member.tuple.private'];
 		readonly public: PortableIsAt['declaration.enum_member.tuple.public'];
 	};
 	'declaration.enum_member.tuple.private': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.private']
 	> & {};
 	'declaration.enum_member.tuple.public': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.enum_member.tuple.public.parent'];
 		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
 	};
 	'declaration.enum_member.tuple.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.public.internal']
+	> & {};
+	'declaration.enum_member.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.enum_member.tuple.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.public.parent']
 	> & {};
 	'declaration.enum_member.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.enum_member.tuple.public.restricted']
 	> & {};
-	'declaration.extension': PortableGuard<PortableIds['declaration.extension'], RustNode, TSKindId> & {
-		readonly conformance: PortableIsAt['declaration.extension.conformance'];
-	};
+	'declaration.extension': PortableGuard<
+		PortableIds['declaration.extension'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.extension']
+	> & { readonly conformance: PortableIsAt['declaration.extension.conformance'] };
 	'declaration.extension.conformance': PortableGuard<
 		PortableIds['declaration.extension.conformance'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.extension.conformance']
 	> & {};
-	'declaration.field': PortableGuard<PortableIds['declaration.field'], RustNode, TSKindId> & {
+	'declaration.field': PortableGuard<
+		PortableIds['declaration.field'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.field']
+	> & {
 		readonly private: PortableIsAt['declaration.field.private'];
 		readonly public: PortableIsAt['declaration.field.public'];
 	};
-	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private'], RustNode, TSKindId> & {};
-	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public'], RustNode, TSKindId> & {
+	'declaration.field.private': PortableGuard<
+		PortableIds['declaration.field.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.field.private']
+	> & {};
+	'declaration.field.public': PortableGuard<
+		PortableIds['declaration.field.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.field.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.field.public.internal'];
+		readonly parent: PortableIsAt['declaration.field.public.parent'];
 		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
 	};
 	'declaration.field.public.internal': PortableGuard<
 		PortableIds['declaration.field.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.field.public.internal']
+	> & {};
+	'declaration.field.public.parent': PortableGuard<
+		PortableIds['declaration.field.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.field.public.parent']
 	> & {};
 	'declaration.field.public.restricted': PortableGuard<
 		PortableIds['declaration.field.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.field.public.restricted']
 	> & {};
-	'declaration.function': PortableGuard<PortableIds['declaration.function'], RustNode, TSKindId> & {
+	'declaration.function': PortableGuard<
+		PortableIds['declaration.function'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function']
+	> & {
 		readonly private: PortableIsAt['declaration.function.private'];
 		readonly public: PortableIsAt['declaration.function.public'];
 		readonly signature: PortableIsAt['declaration.function.signature'];
 	};
-	'declaration.function.private': PortableGuard<PortableIds['declaration.function.private'], RustNode, TSKindId> & {};
-	'declaration.function.public': PortableGuard<PortableIds['declaration.function.public'], RustNode, TSKindId> & {
+	'declaration.function.private': PortableGuard<
+		PortableIds['declaration.function.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.private']
+	> & {};
+	'declaration.function.public': PortableGuard<
+		PortableIds['declaration.function.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.function.public.internal'];
+		readonly parent: PortableIsAt['declaration.function.public.parent'];
 		readonly restricted: PortableIsAt['declaration.function.public.restricted'];
 	};
 	'declaration.function.public.internal': PortableGuard<
 		PortableIds['declaration.function.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.public.internal']
+	> & {};
+	'declaration.function.public.parent': PortableGuard<
+		PortableIds['declaration.function.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.public.parent']
 	> & {};
 	'declaration.function.public.restricted': PortableGuard<
 		PortableIds['declaration.function.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.public.restricted']
 	> & {};
-	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature'], RustNode, TSKindId> & {
+	'declaration.function.signature': PortableGuard<
+		PortableIds['declaration.function.signature'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.signature']
+	> & {
 		readonly private: PortableIsAt['declaration.function.signature.private'];
 		readonly public: PortableIsAt['declaration.function.signature.public'];
 	};
 	'declaration.function.signature.private': PortableGuard<
 		PortableIds['declaration.function.signature.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.signature.private']
 	> & {};
 	'declaration.function.signature.public': PortableGuard<
 		PortableIds['declaration.function.signature.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.signature.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.function.signature.public.internal'];
+		readonly parent: PortableIsAt['declaration.function.signature.public.parent'];
 		readonly restricted: PortableIsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': PortableGuard<
 		PortableIds['declaration.function.signature.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.signature.public.internal']
+	> & {};
+	'declaration.function.signature.public.parent': PortableGuard<
+		PortableIds['declaration.function.signature.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.function.signature.public.parent']
 	> & {};
 	'declaration.function.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.function.signature.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.function.signature.public.restricted']
 	> & {};
-	'declaration.interface': PortableGuard<PortableIds['declaration.interface'], RustNode, TSKindId> & {
-		readonly trait: PortableIsAt['declaration.interface.trait'];
-	};
-	'declaration.interface.trait': PortableGuard<PortableIds['declaration.interface.trait'], RustNode, TSKindId> & {
+	'declaration.interface': PortableGuard<
+		PortableIds['declaration.interface'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.interface']
+	> & { readonly trait: PortableIsAt['declaration.interface.trait'] };
+	'declaration.interface.trait': PortableGuard<
+		PortableIds['declaration.interface.trait'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.interface.trait']
+	> & {
 		readonly private: PortableIsAt['declaration.interface.trait.private'];
 		readonly public: PortableIsAt['declaration.interface.trait.public'];
 	};
 	'declaration.interface.trait.private': PortableGuard<
 		PortableIds['declaration.interface.trait.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.interface.trait.private']
 	> & {};
 	'declaration.interface.trait.public': PortableGuard<
 		PortableIds['declaration.interface.trait.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.interface.trait.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
+		readonly parent: PortableIsAt['declaration.interface.trait.public.parent'];
 		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
 	};
 	'declaration.interface.trait.public.internal': PortableGuard<
 		PortableIds['declaration.interface.trait.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.interface.trait.public.internal']
+	> & {};
+	'declaration.interface.trait.public.parent': PortableGuard<
+		PortableIds['declaration.interface.trait.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.interface.trait.public.parent']
 	> & {};
 	'declaration.interface.trait.public.restricted': PortableGuard<
 		PortableIds['declaration.interface.trait.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.interface.trait.public.restricted']
 	> & {};
-	'declaration.macro': PortableGuard<PortableIds['declaration.macro'], RustNode, TSKindId> & {
+	'declaration.macro': PortableGuard<
+		PortableIds['declaration.macro'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.macro']
+	> & {
 		readonly brace: PortableIsAt['declaration.macro.brace'];
 		readonly bracket: PortableIsAt['declaration.macro.bracket'];
 		readonly paren: PortableIsAt['declaration.macro.paren'];
 	};
-	'declaration.macro.brace': PortableGuard<PortableIds['declaration.macro.brace'], RustNode, TSKindId> & {};
-	'declaration.macro.bracket': PortableGuard<PortableIds['declaration.macro.bracket'], RustNode, TSKindId> & {};
-	'declaration.macro.paren': PortableGuard<PortableIds['declaration.macro.paren'], RustNode, TSKindId> & {};
-	'declaration.method': PortableGuard<PortableIds['declaration.method'], RustNode, TSKindId> & {
+	'declaration.macro.brace': PortableGuard<
+		PortableIds['declaration.macro.brace'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.macro.brace']
+	> & {};
+	'declaration.macro.bracket': PortableGuard<
+		PortableIds['declaration.macro.bracket'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.macro.bracket']
+	> & {};
+	'declaration.macro.paren': PortableGuard<
+		PortableIds['declaration.macro.paren'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.macro.paren']
+	> & {};
+	'declaration.method': PortableGuard<
+		PortableIds['declaration.method'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method']
+	> & {
 		readonly private: PortableIsAt['declaration.method.private'];
 		readonly public: PortableIsAt['declaration.method.public'];
 		readonly signature: PortableIsAt['declaration.method.signature'];
 	};
-	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private'], RustNode, TSKindId> & {};
-	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public'], RustNode, TSKindId> & {
+	'declaration.method.private': PortableGuard<
+		PortableIds['declaration.method.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.private']
+	> & {};
+	'declaration.method.public': PortableGuard<
+		PortableIds['declaration.method.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.method.public.internal'];
+		readonly parent: PortableIsAt['declaration.method.public.parent'];
 		readonly restricted: PortableIsAt['declaration.method.public.restricted'];
 	};
 	'declaration.method.public.internal': PortableGuard<
 		PortableIds['declaration.method.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.public.internal']
+	> & {};
+	'declaration.method.public.parent': PortableGuard<
+		PortableIds['declaration.method.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.public.parent']
 	> & {};
 	'declaration.method.public.restricted': PortableGuard<
 		PortableIds['declaration.method.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.public.restricted']
 	> & {};
-	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature'], RustNode, TSKindId> & {
+	'declaration.method.signature': PortableGuard<
+		PortableIds['declaration.method.signature'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.signature']
+	> & {
 		readonly private: PortableIsAt['declaration.method.signature.private'];
 		readonly public: PortableIsAt['declaration.method.signature.public'];
 	};
 	'declaration.method.signature.private': PortableGuard<
 		PortableIds['declaration.method.signature.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.signature.private']
 	> & {};
 	'declaration.method.signature.public': PortableGuard<
 		PortableIds['declaration.method.signature.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.signature.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
+		readonly parent: PortableIsAt['declaration.method.signature.public.parent'];
 		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
 	};
 	'declaration.method.signature.public.internal': PortableGuard<
 		PortableIds['declaration.method.signature.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.signature.public.internal']
+	> & {};
+	'declaration.method.signature.public.parent': PortableGuard<
+		PortableIds['declaration.method.signature.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.method.signature.public.parent']
 	> & {};
 	'declaration.method.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.method.signature.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.method.signature.public.restricted']
 	> & {};
-	'declaration.module': PortableGuard<PortableIds['declaration.module'], RustNode, TSKindId> & {
+	'declaration.module': PortableGuard<
+		PortableIds['declaration.module'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module']
+	> & {
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
 		readonly private: PortableIsAt['declaration.module.private'];
 		readonly public: PortableIsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign'], RustNode, TSKindId> & {};
-	'declaration.module.private': PortableGuard<PortableIds['declaration.module.private'], RustNode, TSKindId> & {};
-	'declaration.module.public': PortableGuard<PortableIds['declaration.module.public'], RustNode, TSKindId> & {
+	'declaration.module.foreign': PortableGuard<
+		PortableIds['declaration.module.foreign'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module.foreign']
+	> & {};
+	'declaration.module.private': PortableGuard<
+		PortableIds['declaration.module.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module.private']
+	> & {};
+	'declaration.module.public': PortableGuard<
+		PortableIds['declaration.module.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.module.public.internal'];
+		readonly parent: PortableIsAt['declaration.module.public.parent'];
 		readonly restricted: PortableIsAt['declaration.module.public.restricted'];
 	};
 	'declaration.module.public.internal': PortableGuard<
 		PortableIds['declaration.module.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.module.public.internal']
+	> & {};
+	'declaration.module.public.parent': PortableGuard<
+		PortableIds['declaration.module.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.module.public.parent']
 	> & {};
 	'declaration.module.public.restricted': PortableGuard<
 		PortableIds['declaration.module.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.module.public.restricted']
 	> & {};
-	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter'], RustNode, TSKindId> & {
+	'declaration.parameter': PortableGuard<
+		PortableIds['declaration.parameter'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.parameter']
+	> & {
 		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
 	'declaration.parameter.receiver': PortableGuard<
 		PortableIds['declaration.parameter.receiver'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.parameter.receiver']
 	> & {};
 	'declaration.parameter.variadic': PortableGuard<
 		PortableIds['declaration.parameter.variadic'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.parameter.variadic']
 	> & {};
-	'declaration.struct': PortableGuard<PortableIds['declaration.struct'], RustNode, TSKindId> & {
+	'declaration.struct': PortableGuard<
+		PortableIds['declaration.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct']
+	> & {
 		readonly private: PortableIsAt['declaration.struct.private'];
 		readonly public: PortableIsAt['declaration.struct.public'];
 		readonly tuple: PortableIsAt['declaration.struct.tuple'];
 		readonly unit: PortableIsAt['declaration.struct.unit'];
 	};
-	'declaration.struct.private': PortableGuard<PortableIds['declaration.struct.private'], RustNode, TSKindId> & {};
-	'declaration.struct.public': PortableGuard<PortableIds['declaration.struct.public'], RustNode, TSKindId> & {
+	'declaration.struct.private': PortableGuard<
+		PortableIds['declaration.struct.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.private']
+	> & {};
+	'declaration.struct.public': PortableGuard<
+		PortableIds['declaration.struct.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.public.restricted'];
 	};
 	'declaration.struct.public.internal': PortableGuard<
 		PortableIds['declaration.struct.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.public.internal']
+	> & {};
+	'declaration.struct.public.parent': PortableGuard<
+		PortableIds['declaration.struct.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.public.parent']
 	> & {};
 	'declaration.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.public.restricted']
 	> & {};
-	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple'], RustNode, TSKindId> & {
+	'declaration.struct.tuple': PortableGuard<
+		PortableIds['declaration.struct.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.tuple']
+	> & {
 		readonly private: PortableIsAt['declaration.struct.tuple.private'];
 		readonly public: PortableIsAt['declaration.struct.tuple.public'];
 	};
 	'declaration.struct.tuple.private': PortableGuard<
 		PortableIds['declaration.struct.tuple.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.private']
 	> & {};
 	'declaration.struct.tuple.public': PortableGuard<
 		PortableIds['declaration.struct.tuple.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.public']
 	> & {
 		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.tuple.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
 	};
 	'declaration.struct.tuple.public.internal': PortableGuard<
 		PortableIds['declaration.struct.tuple.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.public.internal']
+	> & {};
+	'declaration.struct.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.struct.tuple.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.public.parent']
 	> & {};
 	'declaration.struct.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.tuple.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.tuple.public.restricted']
 	> & {};
-	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit'], RustNode, TSKindId> & {
+	'declaration.struct.unit': PortableGuard<
+		PortableIds['declaration.struct.unit'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.unit']
+	> & {
 		readonly private: PortableIsAt['declaration.struct.unit.private'];
 		readonly public: PortableIsAt['declaration.struct.unit.public'];
 	};
 	'declaration.struct.unit.private': PortableGuard<
 		PortableIds['declaration.struct.unit.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.unit.private']
 	> & {};
-	'declaration.struct.unit.public': PortableGuard<PortableIds['declaration.struct.unit.public'], RustNode, TSKindId> & {
+	'declaration.struct.unit.public': PortableGuard<
+		PortableIds['declaration.struct.unit.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.unit.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
+		readonly parent: PortableIsAt['declaration.struct.unit.public.parent'];
 		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
 	};
 	'declaration.struct.unit.public.internal': PortableGuard<
 		PortableIds['declaration.struct.unit.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.unit.public.internal']
+	> & {};
+	'declaration.struct.unit.public.parent': PortableGuard<
+		PortableIds['declaration.struct.unit.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.struct.unit.public.parent']
 	> & {};
 	'declaration.struct.unit.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.unit.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.struct.unit.public.restricted']
 	> & {};
-	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias'], RustNode, TSKindId> & {
+	'declaration.type_alias': PortableGuard<
+		PortableIds['declaration.type_alias'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type_alias']
+	> & {
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
 		readonly private: PortableIsAt['declaration.type_alias.private'];
 		readonly public: PortableIsAt['declaration.type_alias.public'];
@@ -2118,102 +3067,192 @@ export interface PortableIsAt {
 	'declaration.type_alias.associated': PortableGuard<
 		PortableIds['declaration.type_alias.associated'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_alias.associated']
 	> & {};
 	'declaration.type_alias.private': PortableGuard<
 		PortableIds['declaration.type_alias.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_alias.private']
 	> & {};
-	'declaration.type_alias.public': PortableGuard<PortableIds['declaration.type_alias.public'], RustNode, TSKindId> & {
+	'declaration.type_alias.public': PortableGuard<
+		PortableIds['declaration.type_alias.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type_alias.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
+		readonly parent: PortableIsAt['declaration.type_alias.public.parent'];
 		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.public.internal': PortableGuard<
 		PortableIds['declaration.type_alias.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_alias.public.internal']
+	> & {};
+	'declaration.type_alias.public.parent': PortableGuard<
+		PortableIds['declaration.type_alias.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type_alias.public.parent']
 	> & {};
 	'declaration.type_alias.public.restricted': PortableGuard<
 		PortableIds['declaration.type_alias.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_alias.public.restricted']
 	> & {};
-	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter'], RustNode, TSKindId> & {
+	'declaration.type_parameter': PortableGuard<
+		PortableIds['declaration.type_parameter'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type_parameter']
+	> & {
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
 		readonly value: PortableIsAt['declaration.type_parameter.value'];
 	};
 	'declaration.type_parameter.lifetime': PortableGuard<
 		PortableIds['declaration.type_parameter.lifetime'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_parameter.lifetime']
 	> & {};
 	'declaration.type_parameter.value': PortableGuard<
 		PortableIds['declaration.type_parameter.value'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.type_parameter.value']
 	> & {};
-	'declaration.union': PortableGuard<PortableIds['declaration.union'], RustNode, TSKindId> & {
+	'declaration.union': PortableGuard<
+		PortableIds['declaration.union'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.union']
+	> & {
 		readonly private: PortableIsAt['declaration.union.private'];
 		readonly public: PortableIsAt['declaration.union.public'];
 	};
-	'declaration.union.private': PortableGuard<PortableIds['declaration.union.private'], RustNode, TSKindId> & {};
-	'declaration.union.public': PortableGuard<PortableIds['declaration.union.public'], RustNode, TSKindId> & {
+	'declaration.union.private': PortableGuard<
+		PortableIds['declaration.union.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.union.private']
+	> & {};
+	'declaration.union.public': PortableGuard<
+		PortableIds['declaration.union.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.union.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.union.public.internal'];
+		readonly parent: PortableIsAt['declaration.union.public.parent'];
 		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
 	};
 	'declaration.union.public.internal': PortableGuard<
 		PortableIds['declaration.union.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.union.public.internal']
+	> & {};
+	'declaration.union.public.parent': PortableGuard<
+		PortableIds['declaration.union.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.union.public.parent']
 	> & {};
 	'declaration.union.public.restricted': PortableGuard<
 		PortableIds['declaration.union.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.union.public.restricted']
 	> & {};
-	'declaration.variable': PortableGuard<PortableIds['declaration.variable'], RustNode, TSKindId> & {
+	'declaration.variable': PortableGuard<
+		PortableIds['declaration.variable'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.variable']
+	> & {
 		readonly private: PortableIsAt['declaration.variable.private'];
 		readonly public: PortableIsAt['declaration.variable.public'];
 	};
-	'declaration.variable.private': PortableGuard<PortableIds['declaration.variable.private'], RustNode, TSKindId> & {};
-	'declaration.variable.public': PortableGuard<PortableIds['declaration.variable.public'], RustNode, TSKindId> & {
+	'declaration.variable.private': PortableGuard<
+		PortableIds['declaration.variable.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.variable.private']
+	> & {};
+	'declaration.variable.public': PortableGuard<
+		PortableIds['declaration.variable.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.variable.public']
+	> & {
 		readonly internal: PortableIsAt['declaration.variable.public.internal'];
+		readonly parent: PortableIsAt['declaration.variable.public.parent'];
 		readonly restricted: PortableIsAt['declaration.variable.public.restricted'];
 	};
 	'declaration.variable.public.internal': PortableGuard<
 		PortableIds['declaration.variable.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.variable.public.internal']
+	> & {};
+	'declaration.variable.public.parent': PortableGuard<
+		PortableIds['declaration.variable.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.variable.public.parent']
 	> & {};
 	'declaration.variable.public.restricted': PortableGuard<
 		PortableIds['declaration.variable.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['declaration.variable.public.restricted']
 	> & {};
-	element: PortableGuard<PortableIds['element'], RustNode, TSKindId> & {
+	element: PortableGuard<PortableIds['element'], RustNode, TSKindId, PortableTexts['element']> & {
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
 		readonly type_argument: PortableIsAt['element.type_argument'];
 		readonly type_binding: PortableIsAt['element.type_binding'];
 	};
-	'element.macro': PortableGuard<PortableIds['element.macro'], RustNode, TSKindId> & {
+	'element.macro': PortableGuard<PortableIds['element.macro'], RustNode, TSKindId, PortableTexts['element.macro']> & {
 		readonly fragment: PortableIsAt['element.macro.fragment'];
 		readonly token_binding: PortableIsAt['element.macro.token_binding'];
 		readonly token_repetition: PortableIsAt['element.macro.token_repetition'];
 		readonly token_tree: PortableIsAt['element.macro.token_tree'];
 	};
-	'element.macro.fragment': PortableGuard<PortableIds['element.macro.fragment'], RustNode, TSKindId> & {};
-	'element.macro.token_binding': PortableGuard<PortableIds['element.macro.token_binding'], RustNode, TSKindId> & {};
-	'element.macro.token_repetition': PortableGuard<PortableIds['element.macro.token_repetition'], RustNode, TSKindId> & {
-		readonly pattern: PortableIsAt['element.macro.token_repetition.pattern'];
-	};
+	'element.macro.fragment': PortableGuard<
+		PortableIds['element.macro.fragment'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.macro.fragment']
+	> & {};
+	'element.macro.token_binding': PortableGuard<
+		PortableIds['element.macro.token_binding'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.macro.token_binding']
+	> & {};
+	'element.macro.token_repetition': PortableGuard<
+		PortableIds['element.macro.token_repetition'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.macro.token_repetition']
+	> & { readonly pattern: PortableIsAt['element.macro.token_repetition.pattern'] };
 	'element.macro.token_repetition.pattern': PortableGuard<
 		PortableIds['element.macro.token_repetition.pattern'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_repetition.pattern']
 	> & {};
-	'element.macro.token_tree': PortableGuard<PortableIds['element.macro.token_tree'], RustNode, TSKindId> & {
+	'element.macro.token_tree': PortableGuard<
+		PortableIds['element.macro.token_tree'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.macro.token_tree']
+	> & {
 		readonly brace: PortableIsAt['element.macro.token_tree.brace'];
 		readonly bracket: PortableIsAt['element.macro.token_tree.bracket'];
 		readonly delimited: PortableIsAt['element.macro.token_tree.delimited'];
@@ -2223,17 +3262,20 @@ export interface PortableIsAt {
 	'element.macro.token_tree.brace': PortableGuard<
 		PortableIds['element.macro.token_tree.brace'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.brace']
 	> & {};
 	'element.macro.token_tree.bracket': PortableGuard<
 		PortableIds['element.macro.token_tree.bracket'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.bracket']
 	> & {};
 	'element.macro.token_tree.delimited': PortableGuard<
 		PortableIds['element.macro.token_tree.delimited'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.delimited']
 	> & {
 		readonly brace: PortableIsAt['element.macro.token_tree.delimited.brace'];
 		readonly bracket: PortableIsAt['element.macro.token_tree.delimited.bracket'];
@@ -2242,27 +3284,32 @@ export interface PortableIsAt {
 	'element.macro.token_tree.delimited.brace': PortableGuard<
 		PortableIds['element.macro.token_tree.delimited.brace'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.delimited.brace']
 	> & {};
 	'element.macro.token_tree.delimited.bracket': PortableGuard<
 		PortableIds['element.macro.token_tree.delimited.bracket'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.delimited.bracket']
 	> & {};
 	'element.macro.token_tree.delimited.paren': PortableGuard<
 		PortableIds['element.macro.token_tree.delimited.paren'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.delimited.paren']
 	> & {};
 	'element.macro.token_tree.paren': PortableGuard<
 		PortableIds['element.macro.token_tree.paren'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.paren']
 	> & {};
 	'element.macro.token_tree.pattern': PortableGuard<
 		PortableIds['element.macro.token_tree.pattern'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.pattern']
 	> & {
 		readonly brace: PortableIsAt['element.macro.token_tree.pattern.brace'];
 		readonly bracket: PortableIsAt['element.macro.token_tree.pattern.bracket'];
@@ -2271,27 +3318,52 @@ export interface PortableIsAt {
 	'element.macro.token_tree.pattern.brace': PortableGuard<
 		PortableIds['element.macro.token_tree.pattern.brace'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.pattern.brace']
 	> & {};
 	'element.macro.token_tree.pattern.bracket': PortableGuard<
 		PortableIds['element.macro.token_tree.pattern.bracket'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.pattern.bracket']
 	> & {};
 	'element.macro.token_tree.pattern.paren': PortableGuard<
 		PortableIds['element.macro.token_tree.pattern.paren'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['element.macro.token_tree.pattern.paren']
 	> & {};
-	'element.struct': PortableGuard<PortableIds['element.struct'], RustNode, TSKindId> & {
-		readonly base: PortableIsAt['element.struct.base'];
-		readonly field: PortableIsAt['element.struct.field'];
-	};
-	'element.struct.base': PortableGuard<PortableIds['element.struct.base'], RustNode, TSKindId> & {};
-	'element.struct.field': PortableGuard<PortableIds['element.struct.field'], RustNode, TSKindId> & {};
-	'element.type_argument': PortableGuard<PortableIds['element.type_argument'], RustNode, TSKindId> & {};
-	'element.type_binding': PortableGuard<PortableIds['element.type_binding'], RustNode, TSKindId> & {};
-	expression: PortableGuard<PortableIds['expression'], RustNode, TSKindId> & {
+	'element.struct': PortableGuard<
+		PortableIds['element.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.struct']
+	> & { readonly base: PortableIsAt['element.struct.base']; readonly field: PortableIsAt['element.struct.field'] };
+	'element.struct.base': PortableGuard<
+		PortableIds['element.struct.base'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.struct.base']
+	> & {};
+	'element.struct.field': PortableGuard<
+		PortableIds['element.struct.field'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.struct.field']
+	> & {};
+	'element.type_argument': PortableGuard<
+		PortableIds['element.type_argument'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.type_argument']
+	> & {};
+	'element.type_binding': PortableGuard<
+		PortableIds['element.type_binding'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.type_binding']
+	> & {};
+	expression: PortableGuard<PortableIds['expression'], RustNode, TSKindId, PortableTexts['expression']> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly await: PortableIsAt['expression.await'];
 		readonly binary: PortableIsAt['expression.binary'];
@@ -2311,10 +3383,18 @@ export interface PortableIsAt {
 		readonly unit: PortableIsAt['expression.unit'];
 		readonly yield: PortableIsAt['expression.yield'];
 	};
-	'expression.assignment': PortableGuard<PortableIds['expression.assignment'], RustNode, TSKindId> & {
-		readonly compound: PortableIsAt['expression.assignment.compound'];
-	};
-	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound'], RustNode, TSKindId> & {
+	'expression.assignment': PortableGuard<
+		PortableIds['expression.assignment'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.assignment']
+	> & { readonly compound: PortableIsAt['expression.assignment.compound'] };
+	'expression.assignment.compound': PortableGuard<
+		PortableIds['expression.assignment.compound'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.assignment.compound']
+	> & {
 		readonly add: PortableIsAt['expression.assignment.compound.add'];
 		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
 		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
@@ -2329,62 +3409,87 @@ export interface PortableIsAt {
 	'expression.assignment.compound.add': PortableGuard<
 		PortableIds['expression.assignment.compound.add'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.add']
 	> & {};
 	'expression.assignment.compound.bitwise_and': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_and'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_and']
 	> & {};
 	'expression.assignment.compound.bitwise_or': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_or'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_or']
 	> & {};
 	'expression.assignment.compound.bitwise_xor': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_xor'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.bitwise_xor']
 	> & {};
 	'expression.assignment.compound.divide': PortableGuard<
 		PortableIds['expression.assignment.compound.divide'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.divide']
 	> & {};
 	'expression.assignment.compound.modulo': PortableGuard<
 		PortableIds['expression.assignment.compound.modulo'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.modulo']
 	> & {};
 	'expression.assignment.compound.multiply': PortableGuard<
 		PortableIds['expression.assignment.compound.multiply'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.multiply']
 	> & {};
 	'expression.assignment.compound.shift_left': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_left'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.shift_left']
 	> & {};
 	'expression.assignment.compound.shift_right': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_right'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.shift_right']
 	> & {};
 	'expression.assignment.compound.subtract': PortableGuard<
 		PortableIds['expression.assignment.compound.subtract'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.assignment.compound.subtract']
 	> & {};
-	'expression.await': PortableGuard<PortableIds['expression.await'], RustNode, TSKindId> & {};
-	'expression.binary': PortableGuard<PortableIds['expression.binary'], RustNode, TSKindId> & {
+	'expression.await': PortableGuard<
+		PortableIds['expression.await'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.await']
+	> & {};
+	'expression.binary': PortableGuard<
+		PortableIds['expression.binary'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary']
+	> & {
 		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
 		readonly logical: PortableIsAt['expression.binary.logical'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 	};
-	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic'], RustNode, TSKindId> & {
+	'expression.binary.arithmetic': PortableGuard<
+		PortableIds['expression.binary.arithmetic'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic']
+	> & {
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableIsAt['expression.binary.arithmetic.modulo'];
@@ -2394,37 +3499,67 @@ export interface PortableIsAt {
 	'expression.binary.arithmetic.add': PortableGuard<
 		PortableIds['expression.binary.arithmetic.add'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.add']
 	> & {};
 	'expression.binary.arithmetic.divide': PortableGuard<
 		PortableIds['expression.binary.arithmetic.divide'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.divide']
 	> & {};
 	'expression.binary.arithmetic.modulo': PortableGuard<
 		PortableIds['expression.binary.arithmetic.modulo'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.modulo']
 	> & {};
 	'expression.binary.arithmetic.multiply': PortableGuard<
 		PortableIds['expression.binary.arithmetic.multiply'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.multiply']
 	> & {};
 	'expression.binary.arithmetic.subtract': PortableGuard<
 		PortableIds['expression.binary.arithmetic.subtract'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.arithmetic.subtract']
 	> & {};
-	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise'], RustNode, TSKindId> & {
+	'expression.binary.bitwise': PortableGuard<
+		PortableIds['expression.binary.bitwise'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise']
+	> & {
 		readonly and: PortableIsAt['expression.binary.bitwise.and'];
 		readonly or: PortableIsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
-	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and'], RustNode, TSKindId> & {};
-	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or'], RustNode, TSKindId> & {};
-	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor'], RustNode, TSKindId> & {};
-	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison'], RustNode, TSKindId> & {
+	'expression.binary.bitwise.and': PortableGuard<
+		PortableIds['expression.binary.bitwise.and'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.and']
+	> & {};
+	'expression.binary.bitwise.or': PortableGuard<
+		PortableIds['expression.binary.bitwise.or'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.or']
+	> & {};
+	'expression.binary.bitwise.xor': PortableGuard<
+		PortableIds['expression.binary.bitwise.xor'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.bitwise.xor']
+	> & {};
+	'expression.binary.comparison': PortableGuard<
+		PortableIds['expression.binary.comparison'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.comparison']
+	> & {
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
@@ -2435,192 +3570,520 @@ export interface PortableIsAt {
 	'expression.binary.comparison.equal': PortableGuard<
 		PortableIds['expression.binary.comparison.equal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.equal']
 	> & {};
 	'expression.binary.comparison.greater': PortableGuard<
 		PortableIds['expression.binary.comparison.greater'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.greater']
 	> & {};
 	'expression.binary.comparison.greater_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.greater_equal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.greater_equal']
 	> & {};
 	'expression.binary.comparison.less': PortableGuard<
 		PortableIds['expression.binary.comparison.less'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.less']
 	> & {};
 	'expression.binary.comparison.less_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.less_equal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.less_equal']
 	> & {};
 	'expression.binary.comparison.not_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.not_equal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.binary.comparison.not_equal']
 	> & {};
-	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical'], RustNode, TSKindId> & {
+	'expression.binary.logical': PortableGuard<
+		PortableIds['expression.binary.logical'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.logical']
+	> & {
 		readonly and: PortableIsAt['expression.binary.logical.and'];
 		readonly or: PortableIsAt['expression.binary.logical.or'];
 	};
-	'expression.binary.logical.and': PortableGuard<PortableIds['expression.binary.logical.and'], RustNode, TSKindId> & {};
-	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or'], RustNode, TSKindId> & {};
-	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift'], RustNode, TSKindId> & {
+	'expression.binary.logical.and': PortableGuard<
+		PortableIds['expression.binary.logical.and'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.logical.and']
+	> & {};
+	'expression.binary.logical.or': PortableGuard<
+		PortableIds['expression.binary.logical.or'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.logical.or']
+	> & {};
+	'expression.binary.shift': PortableGuard<
+		PortableIds['expression.binary.shift'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.shift']
+	> & {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 	};
-	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left'], RustNode, TSKindId> & {};
-	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right'], RustNode, TSKindId> & {};
-	'expression.block': PortableGuard<PortableIds['expression.block'], RustNode, TSKindId> & {
+	'expression.binary.shift.left': PortableGuard<
+		PortableIds['expression.binary.shift.left'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.shift.left']
+	> & {};
+	'expression.binary.shift.right': PortableGuard<
+		PortableIds['expression.binary.shift.right'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.binary.shift.right']
+	> & {};
+	'expression.block': PortableGuard<
+		PortableIds['expression.block'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block']
+	> & {
 		readonly async: PortableIsAt['expression.block.async'];
 		readonly const: PortableIsAt['expression.block.const'];
 		readonly generator: PortableIsAt['expression.block.generator'];
 		readonly try: PortableIsAt['expression.block.try'];
 		readonly unsafe: PortableIsAt['expression.block.unsafe'];
 	};
-	'expression.block.async': PortableGuard<PortableIds['expression.block.async'], RustNode, TSKindId> & {};
-	'expression.block.const': PortableGuard<PortableIds['expression.block.const'], RustNode, TSKindId> & {};
-	'expression.block.generator': PortableGuard<PortableIds['expression.block.generator'], RustNode, TSKindId> & {};
-	'expression.block.try': PortableGuard<PortableIds['expression.block.try'], RustNode, TSKindId> & {};
-	'expression.block.unsafe': PortableGuard<PortableIds['expression.block.unsafe'], RustNode, TSKindId> & {};
-	'expression.call': PortableGuard<PortableIds['expression.call'], RustNode, TSKindId> & {
+	'expression.block.async': PortableGuard<
+		PortableIds['expression.block.async'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block.async']
+	> & {};
+	'expression.block.const': PortableGuard<
+		PortableIds['expression.block.const'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block.const']
+	> & {};
+	'expression.block.generator': PortableGuard<
+		PortableIds['expression.block.generator'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block.generator']
+	> & {};
+	'expression.block.try': PortableGuard<
+		PortableIds['expression.block.try'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block.try']
+	> & {};
+	'expression.block.unsafe': PortableGuard<
+		PortableIds['expression.block.unsafe'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.block.unsafe']
+	> & {};
+	'expression.call': PortableGuard<
+		PortableIds['expression.call'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.call']
+	> & {
 		readonly macro: PortableIsAt['expression.call.macro'];
 		readonly member: PortableIsAt['expression.call.member'];
 		readonly qualified: PortableIsAt['expression.call.qualified'];
 	};
-	'expression.call.macro': PortableGuard<PortableIds['expression.call.macro'], RustNode, TSKindId> & {};
-	'expression.call.member': PortableGuard<PortableIds['expression.call.member'], RustNode, TSKindId> & {};
-	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified'], RustNode, TSKindId> & {};
-	'expression.cast': PortableGuard<PortableIds['expression.cast'], RustNode, TSKindId> & {
-		readonly conversion: PortableIsAt['expression.cast.conversion'];
-	};
-	'expression.cast.conversion': PortableGuard<PortableIds['expression.cast.conversion'], RustNode, TSKindId> & {};
-	'expression.collection': PortableGuard<PortableIds['expression.collection'], RustNode, TSKindId> & {
+	'expression.call.macro': PortableGuard<
+		PortableIds['expression.call.macro'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.call.macro']
+	> & {};
+	'expression.call.member': PortableGuard<
+		PortableIds['expression.call.member'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.call.member']
+	> & {};
+	'expression.call.qualified': PortableGuard<
+		PortableIds['expression.call.qualified'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.call.qualified']
+	> & {};
+	'expression.cast': PortableGuard<
+		PortableIds['expression.cast'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.cast']
+	> & { readonly conversion: PortableIsAt['expression.cast.conversion'] };
+	'expression.cast.conversion': PortableGuard<
+		PortableIds['expression.cast.conversion'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.cast.conversion']
+	> & {};
+	'expression.collection': PortableGuard<
+		PortableIds['expression.collection'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.collection']
+	> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly struct: PortableIsAt['expression.collection.struct'];
 		readonly tuple: PortableIsAt['expression.collection.tuple'];
 	};
-	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list'], RustNode, TSKindId> & {
-		readonly repeat: PortableIsAt['expression.collection.list.repeat'];
-	};
+	'expression.collection.list': PortableGuard<
+		PortableIds['expression.collection.list'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.collection.list']
+	> & { readonly repeat: PortableIsAt['expression.collection.list.repeat'] };
 	'expression.collection.list.repeat': PortableGuard<
 		PortableIds['expression.collection.list.repeat'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.collection.list.repeat']
 	> & {};
-	'expression.collection.struct': PortableGuard<PortableIds['expression.collection.struct'], RustNode, TSKindId> & {};
-	'expression.collection.tuple': PortableGuard<PortableIds['expression.collection.tuple'], RustNode, TSKindId> & {};
-	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation'], RustNode, TSKindId> & {};
-	'expression.lambda': PortableGuard<PortableIds['expression.lambda'], RustNode, TSKindId> & {};
-	'expression.member': PortableGuard<PortableIds['expression.member'], RustNode, TSKindId> & {};
-	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized'], RustNode, TSKindId> & {};
-	'expression.propagate': PortableGuard<PortableIds['expression.propagate'], RustNode, TSKindId> & {};
-	'expression.range': PortableGuard<PortableIds['expression.range'], RustNode, TSKindId> & {
+	'expression.collection.struct': PortableGuard<
+		PortableIds['expression.collection.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.collection.struct']
+	> & {};
+	'expression.collection.tuple': PortableGuard<
+		PortableIds['expression.collection.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.collection.tuple']
+	> & {};
+	'expression.instantiation': PortableGuard<
+		PortableIds['expression.instantiation'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.instantiation']
+	> & {};
+	'expression.lambda': PortableGuard<
+		PortableIds['expression.lambda'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.lambda']
+	> & {};
+	'expression.member': PortableGuard<
+		PortableIds['expression.member'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.member']
+	> & {};
+	'expression.parenthesized': PortableGuard<
+		PortableIds['expression.parenthesized'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.parenthesized']
+	> & {};
+	'expression.propagate': PortableGuard<
+		PortableIds['expression.propagate'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.propagate']
+	> & {};
+	'expression.range': PortableGuard<
+		PortableIds['expression.range'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.range']
+	> & {
 		readonly exclusive: PortableIsAt['expression.range.exclusive'];
 		readonly inclusive: PortableIsAt['expression.range.inclusive'];
 	};
-	'expression.range.exclusive': PortableGuard<PortableIds['expression.range.exclusive'], RustNode, TSKindId> & {};
-	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive'], RustNode, TSKindId> & {
-		readonly legacy: PortableIsAt['expression.range.inclusive.legacy'];
-	};
+	'expression.range.exclusive': PortableGuard<
+		PortableIds['expression.range.exclusive'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.range.exclusive']
+	> & {};
+	'expression.range.inclusive': PortableGuard<
+		PortableIds['expression.range.inclusive'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.range.inclusive']
+	> & { readonly legacy: PortableIsAt['expression.range.inclusive.legacy'] };
 	'expression.range.inclusive.legacy': PortableGuard<
 		PortableIds['expression.range.inclusive.legacy'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['expression.range.inclusive.legacy']
 	> & {};
-	'expression.reference': PortableGuard<PortableIds['expression.reference'], RustNode, TSKindId> & {};
-	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], RustNode, TSKindId> & {};
-	'expression.unary': PortableGuard<PortableIds['expression.unary'], RustNode, TSKindId> & {
+	'expression.reference': PortableGuard<
+		PortableIds['expression.reference'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.reference']
+	> & {};
+	'expression.subscript': PortableGuard<
+		PortableIds['expression.subscript'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.subscript']
+	> & {};
+	'expression.unary': PortableGuard<
+		PortableIds['expression.unary'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.unary']
+	> & {
 		readonly deref: PortableIsAt['expression.unary.deref'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
 		readonly not: PortableIsAt['expression.unary.not'];
 	};
-	'expression.unary.deref': PortableGuard<PortableIds['expression.unary.deref'], RustNode, TSKindId> & {};
-	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation'], RustNode, TSKindId> & {};
-	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not'], RustNode, TSKindId> & {};
-	'expression.unit': PortableGuard<PortableIds['expression.unit'], RustNode, TSKindId> & {};
-	'expression.yield': PortableGuard<PortableIds['expression.yield'], RustNode, TSKindId> & {};
-	file: PortableGuard<PortableIds['file'], RustNode, TSKindId> & {};
-	identifier: PortableGuard<PortableIds['identifier'], RustNode, TSKindId> & {
+	'expression.unary.deref': PortableGuard<
+		PortableIds['expression.unary.deref'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.unary.deref']
+	> & {};
+	'expression.unary.negation': PortableGuard<
+		PortableIds['expression.unary.negation'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.unary.negation']
+	> & {};
+	'expression.unary.not': PortableGuard<
+		PortableIds['expression.unary.not'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.unary.not']
+	> & {};
+	'expression.unit': PortableGuard<
+		PortableIds['expression.unit'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.unit']
+	> & {};
+	'expression.yield': PortableGuard<
+		PortableIds['expression.yield'],
+		RustNode,
+		TSKindId,
+		PortableTexts['expression.yield']
+	> & {};
+	file: PortableGuard<PortableIds['file'], RustNode, TSKindId, PortableTexts['file']> & {};
+	identifier: PortableGuard<PortableIds['identifier'], RustNode, TSKindId, PortableTexts['identifier']> & {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly lifetime: PortableIsAt['identifier.lifetime'];
 		readonly metavariable: PortableIsAt['identifier.metavariable'];
 		readonly qualified: PortableIsAt['identifier.qualified'];
 		readonly receiver: PortableIsAt['identifier.receiver'];
 	};
-	'identifier.label': PortableGuard<PortableIds['identifier.label'], RustNode, TSKindId> & {};
-	'identifier.lifetime': PortableGuard<PortableIds['identifier.lifetime'], RustNode, TSKindId> & {};
-	'identifier.metavariable': PortableGuard<PortableIds['identifier.metavariable'], RustNode, TSKindId> & {};
-	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], RustNode, TSKindId> & {};
-	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], RustNode, TSKindId> & {};
-	literal: PortableGuard<PortableIds['literal'], RustNode, TSKindId> & {
+	'identifier.label': PortableGuard<
+		PortableIds['identifier.label'],
+		RustNode,
+		TSKindId,
+		PortableTexts['identifier.label']
+	> & {};
+	'identifier.lifetime': PortableGuard<
+		PortableIds['identifier.lifetime'],
+		RustNode,
+		TSKindId,
+		PortableTexts['identifier.lifetime']
+	> & {};
+	'identifier.metavariable': PortableGuard<
+		PortableIds['identifier.metavariable'],
+		RustNode,
+		TSKindId,
+		PortableTexts['identifier.metavariable']
+	> & {};
+	'identifier.qualified': PortableGuard<
+		PortableIds['identifier.qualified'],
+		RustNode,
+		TSKindId,
+		PortableTexts['identifier.qualified']
+	> & {};
+	'identifier.receiver': PortableGuard<
+		PortableIds['identifier.receiver'],
+		RustNode,
+		TSKindId,
+		PortableTexts['identifier.receiver']
+	> & {};
+	literal: PortableGuard<PortableIds['literal'], RustNode, TSKindId, PortableTexts['literal']> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly character: PortableIsAt['literal.character'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly string: PortableIsAt['literal.string'];
 	};
-	'literal.boolean': PortableGuard<PortableIds['literal.boolean'], RustNode, TSKindId> & {
-		readonly false: PortableIsAt['literal.boolean.false'];
-		readonly true: PortableIsAt['literal.boolean.true'];
-	};
-	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false'], RustNode, TSKindId> & {};
-	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true'], RustNode, TSKindId> & {};
-	'literal.character': PortableGuard<PortableIds['literal.character'], RustNode, TSKindId> & {};
-	'literal.number': PortableGuard<PortableIds['literal.number'], RustNode, TSKindId> & {
+	'literal.boolean': PortableGuard<
+		PortableIds['literal.boolean'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.boolean']
+	> & { readonly false: PortableIsAt['literal.boolean.false']; readonly true: PortableIsAt['literal.boolean.true'] };
+	'literal.boolean.false': PortableGuard<
+		PortableIds['literal.boolean.false'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.boolean.false']
+	> & {};
+	'literal.boolean.true': PortableGuard<
+		PortableIds['literal.boolean.true'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.boolean.true']
+	> & {};
+	'literal.character': PortableGuard<
+		PortableIds['literal.character'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.character']
+	> & {};
+	'literal.number': PortableGuard<
+		PortableIds['literal.number'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number']
+	> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
 		readonly negative: PortableIsAt['literal.number.negative'];
 	};
-	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], RustNode, TSKindId> & {};
-	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer'], RustNode, TSKindId> & {
+	'literal.number.float': PortableGuard<
+		PortableIds['literal.number.float'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.float']
+	> & {};
+	'literal.number.integer': PortableGuard<
+		PortableIds['literal.number.integer'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.integer']
+	> & {
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly hex: PortableIsAt['literal.number.integer.hex'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 	};
-	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary'], RustNode, TSKindId> & {};
-	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex'], RustNode, TSKindId> & {};
-	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], RustNode, TSKindId> & {};
-	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], RustNode, TSKindId> & {};
-	'literal.string': PortableGuard<PortableIds['literal.string'], RustNode, TSKindId> & {
+	'literal.number.integer.binary': PortableGuard<
+		PortableIds['literal.number.integer.binary'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.binary']
+	> & {};
+	'literal.number.integer.hex': PortableGuard<
+		PortableIds['literal.number.integer.hex'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.hex']
+	> & {};
+	'literal.number.integer.octal': PortableGuard<
+		PortableIds['literal.number.integer.octal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.integer.octal']
+	> & {};
+	'literal.number.negative': PortableGuard<
+		PortableIds['literal.number.negative'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.number.negative']
+	> & {};
+	'literal.string': PortableGuard<
+		PortableIds['literal.string'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string']
+	> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly c: PortableIsAt['literal.string.c'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
-	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes'], RustNode, TSKindId> & {};
-	'literal.string.c': PortableGuard<PortableIds['literal.string.c'], RustNode, TSKindId> & {};
-	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], RustNode, TSKindId> & {};
-	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw'], RustNode, TSKindId> & {};
-	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], RustNode, TSKindId> & {};
-	modifier: PortableGuard<PortableIds['modifier'], RustNode, TSKindId> & {
+	'literal.string.bytes': PortableGuard<
+		PortableIds['literal.string.bytes'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.bytes']
+	> & {};
+	'literal.string.c': PortableGuard<
+		PortableIds['literal.string.c'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.c']
+	> & {};
+	'literal.string.escape': PortableGuard<
+		PortableIds['literal.string.escape'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.escape']
+	> & {};
+	'literal.string.raw': PortableGuard<
+		PortableIds['literal.string.raw'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.raw']
+	> & {};
+	'literal.string.text': PortableGuard<
+		PortableIds['literal.string.text'],
+		RustNode,
+		TSKindId,
+		PortableTexts['literal.string.text']
+	> & {};
+	modifier: PortableGuard<PortableIds['modifier'], RustNode, TSKindId, PortableTexts['modifier']> & {
 		readonly extern: PortableIsAt['modifier.extern'];
 		readonly visibility: PortableIsAt['modifier.visibility'];
 	};
-	'modifier.extern': PortableGuard<PortableIds['modifier.extern'], RustNode, TSKindId> & {};
-	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility'], RustNode, TSKindId> & {
+	'modifier.extern': PortableGuard<
+		PortableIds['modifier.extern'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.extern']
+	> & {};
+	'modifier.visibility': PortableGuard<
+		PortableIds['modifier.visibility'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.visibility']
+	> & {
 		readonly private: PortableIsAt['modifier.visibility.private'];
 		readonly public: PortableIsAt['modifier.visibility.public'];
 	};
-	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private'], RustNode, TSKindId> & {};
-	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public'], RustNode, TSKindId> & {
+	'modifier.visibility.private': PortableGuard<
+		PortableIds['modifier.visibility.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.visibility.private']
+	> & {};
+	'modifier.visibility.public': PortableGuard<
+		PortableIds['modifier.visibility.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.visibility.public']
+	> & {
 		readonly internal: PortableIsAt['modifier.visibility.public.internal'];
+		readonly parent: PortableIsAt['modifier.visibility.public.parent'];
 		readonly restricted: PortableIsAt['modifier.visibility.public.restricted'];
 	};
 	'modifier.visibility.public.internal': PortableGuard<
 		PortableIds['modifier.visibility.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['modifier.visibility.public.internal']
+	> & {};
+	'modifier.visibility.public.parent': PortableGuard<
+		PortableIds['modifier.visibility.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['modifier.visibility.public.parent']
 	> & {};
 	'modifier.visibility.public.restricted': PortableGuard<
 		PortableIds['modifier.visibility.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['modifier.visibility.public.restricted']
 	> & {};
-	pattern: PortableGuard<PortableIds['pattern'], RustNode, TSKindId> & {
+	pattern: PortableGuard<PortableIds['pattern'], RustNode, TSKindId, PortableTexts['pattern']> & {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
 		readonly list: PortableIsAt['pattern.list'];
@@ -2632,37 +4095,81 @@ export interface PortableIsAt {
 		readonly tuple: PortableIsAt['pattern.tuple'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
-	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode, TSKindId> & {};
-	'pattern.generic': PortableGuard<PortableIds['pattern.generic'], RustNode, TSKindId> & {};
-	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode, TSKindId> & {};
-	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable'], RustNode, TSKindId> & {};
-	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode, TSKindId> & {};
-	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode, TSKindId> & {
+	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode, TSKindId, PortableTexts['pattern.as']> & {};
+	'pattern.generic': PortableGuard<
+		PortableIds['pattern.generic'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.generic']
+	> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode, TSKindId, PortableTexts['pattern.list']> & {};
+	'pattern.mutable': PortableGuard<
+		PortableIds['pattern.mutable'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.mutable']
+	> & {};
+	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode, TSKindId, PortableTexts['pattern.or']> & {};
+	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode, TSKindId, PortableTexts['pattern.range']> & {
 		readonly exclusive: PortableIsAt['pattern.range.exclusive'];
 		readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 	};
-	'pattern.range.exclusive': PortableGuard<PortableIds['pattern.range.exclusive'], RustNode, TSKindId> & {};
-	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive'], RustNode, TSKindId> & {
-		readonly legacy: PortableIsAt['pattern.range.inclusive.legacy'];
-	};
+	'pattern.range.exclusive': PortableGuard<
+		PortableIds['pattern.range.exclusive'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.range.exclusive']
+	> & {};
+	'pattern.range.inclusive': PortableGuard<
+		PortableIds['pattern.range.inclusive'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.range.inclusive']
+	> & { readonly legacy: PortableIsAt['pattern.range.inclusive.legacy'] };
 	'pattern.range.inclusive.legacy': PortableGuard<
 		PortableIds['pattern.range.inclusive.legacy'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['pattern.range.inclusive.legacy']
 	> & {};
-	'pattern.reference': PortableGuard<PortableIds['pattern.reference'], RustNode, TSKindId> & {
-		readonly value: PortableIsAt['pattern.reference.value'];
-	};
-	'pattern.reference.value': PortableGuard<PortableIds['pattern.reference.value'], RustNode, TSKindId> & {};
-	'pattern.struct': PortableGuard<PortableIds['pattern.struct'], RustNode, TSKindId> & {
-		readonly field: PortableIsAt['pattern.struct.field'];
-		readonly rest: PortableIsAt['pattern.struct.rest'];
-	};
-	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], RustNode, TSKindId> & {};
-	'pattern.struct.rest': PortableGuard<PortableIds['pattern.struct.rest'], RustNode, TSKindId> & {};
-	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {};
-	'pattern.wildcard': PortableGuard<PortableIds['pattern.wildcard'], RustNode, TSKindId> & {};
-	statement: PortableGuard<PortableIds['statement'], RustNode, TSKindId> & {
+	'pattern.reference': PortableGuard<
+		PortableIds['pattern.reference'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.reference']
+	> & { readonly value: PortableIsAt['pattern.reference.value'] };
+	'pattern.reference.value': PortableGuard<
+		PortableIds['pattern.reference.value'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.reference.value']
+	> & {};
+	'pattern.struct': PortableGuard<
+		PortableIds['pattern.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.struct']
+	> & { readonly field: PortableIsAt['pattern.struct.field']; readonly rest: PortableIsAt['pattern.struct.rest'] };
+	'pattern.struct.field': PortableGuard<
+		PortableIds['pattern.struct.field'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.struct.field']
+	> & {};
+	'pattern.struct.rest': PortableGuard<
+		PortableIds['pattern.struct.rest'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.struct.rest']
+	> & {};
+	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId, PortableTexts['pattern.tuple']> & {};
+	'pattern.wildcard': PortableGuard<
+		PortableIds['pattern.wildcard'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.wildcard']
+	> & {};
+	statement: PortableGuard<PortableIds['statement'], RustNode, TSKindId, PortableTexts['statement']> & {
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
@@ -2674,68 +4181,158 @@ export interface PortableIsAt {
 		readonly match: PortableIsAt['statement.match'];
 		readonly return: PortableIsAt['statement.return'];
 	};
-	'statement.block': PortableGuard<PortableIds['statement.block'], RustNode, TSKindId> & {};
-	'statement.break': PortableGuard<PortableIds['statement.break'], RustNode, TSKindId> & {};
-	'statement.continue': PortableGuard<PortableIds['statement.continue'], RustNode, TSKindId> & {};
-	'statement.empty': PortableGuard<PortableIds['statement.empty'], RustNode, TSKindId> & {};
-	'statement.expression': PortableGuard<PortableIds['statement.expression'], RustNode, TSKindId> & {};
-	'statement.if': PortableGuard<PortableIds['statement.if'], RustNode, TSKindId> & {};
-	'statement.import': PortableGuard<PortableIds['statement.import'], RustNode, TSKindId> & {
+	'statement.block': PortableGuard<
+		PortableIds['statement.block'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.block']
+	> & {};
+	'statement.break': PortableGuard<
+		PortableIds['statement.break'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.break']
+	> & {};
+	'statement.continue': PortableGuard<
+		PortableIds['statement.continue'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.continue']
+	> & {};
+	'statement.empty': PortableGuard<
+		PortableIds['statement.empty'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.empty']
+	> & {};
+	'statement.expression': PortableGuard<
+		PortableIds['statement.expression'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.expression']
+	> & {};
+	'statement.if': PortableGuard<PortableIds['statement.if'], RustNode, TSKindId, PortableTexts['statement.if']> & {};
+	'statement.import': PortableGuard<
+		PortableIds['statement.import'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import']
+	> & {
 		readonly package: PortableIsAt['statement.import.package'];
 		readonly private: PortableIsAt['statement.import.private'];
 		readonly public: PortableIsAt['statement.import.public'];
 	};
-	'statement.import.package': PortableGuard<PortableIds['statement.import.package'], RustNode, TSKindId> & {
+	'statement.import.package': PortableGuard<
+		PortableIds['statement.import.package'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.package']
+	> & {
 		readonly private: PortableIsAt['statement.import.package.private'];
 		readonly public: PortableIsAt['statement.import.package.public'];
 	};
 	'statement.import.package.private': PortableGuard<
 		PortableIds['statement.import.package.private'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.package.private']
 	> & {};
 	'statement.import.package.public': PortableGuard<
 		PortableIds['statement.import.package.public'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.package.public']
 	> & {
 		readonly internal: PortableIsAt['statement.import.package.public.internal'];
+		readonly parent: PortableIsAt['statement.import.package.public.parent'];
 		readonly restricted: PortableIsAt['statement.import.package.public.restricted'];
 	};
 	'statement.import.package.public.internal': PortableGuard<
 		PortableIds['statement.import.package.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.package.public.internal']
+	> & {};
+	'statement.import.package.public.parent': PortableGuard<
+		PortableIds['statement.import.package.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.package.public.parent']
 	> & {};
 	'statement.import.package.public.restricted': PortableGuard<
 		PortableIds['statement.import.package.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.package.public.restricted']
 	> & {};
-	'statement.import.private': PortableGuard<PortableIds['statement.import.private'], RustNode, TSKindId> & {};
-	'statement.import.public': PortableGuard<PortableIds['statement.import.public'], RustNode, TSKindId> & {
+	'statement.import.private': PortableGuard<
+		PortableIds['statement.import.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.private']
+	> & {};
+	'statement.import.public': PortableGuard<
+		PortableIds['statement.import.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.public']
+	> & {
 		readonly internal: PortableIsAt['statement.import.public.internal'];
+		readonly parent: PortableIsAt['statement.import.public.parent'];
 		readonly restricted: PortableIsAt['statement.import.public.restricted'];
 	};
 	'statement.import.public.internal': PortableGuard<
 		PortableIds['statement.import.public.internal'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.public.internal']
+	> & {};
+	'statement.import.public.parent': PortableGuard<
+		PortableIds['statement.import.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.import.public.parent']
 	> & {};
 	'statement.import.public.restricted': PortableGuard<
 		PortableIds['statement.import.public.restricted'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['statement.import.public.restricted']
 	> & {};
-	'statement.loop': PortableGuard<PortableIds['statement.loop'], RustNode, TSKindId> & {
+	'statement.loop': PortableGuard<
+		PortableIds['statement.loop'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.loop']
+	> & {
 		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
-	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each'], RustNode, TSKindId> & {};
-	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while'], RustNode, TSKindId> & {};
-	'statement.match': PortableGuard<PortableIds['statement.match'], RustNode, TSKindId> & {};
-	'statement.return': PortableGuard<PortableIds['statement.return'], RustNode, TSKindId> & {};
-	type: PortableGuard<PortableIds['type'], RustNode, TSKindId> & {
+	'statement.loop.for_each': PortableGuard<
+		PortableIds['statement.loop.for_each'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.loop.for_each']
+	> & {};
+	'statement.loop.while': PortableGuard<
+		PortableIds['statement.loop.while'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.loop.while']
+	> & {};
+	'statement.match': PortableGuard<
+		PortableIds['statement.match'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.match']
+	> & {};
+	'statement.return': PortableGuard<
+		PortableIds['statement.return'],
+		RustNode,
+		TSKindId,
+		PortableTexts['statement.return']
+	> & {};
+	type: PortableGuard<PortableIds['type'], RustNode, TSKindId, PortableTexts['type']> & {
 		readonly abstract: PortableIsAt['type.abstract'];
 		readonly array: PortableIsAt['type.array'];
 		readonly bounded: PortableIsAt['type.bounded'];
@@ -2750,18 +4347,33 @@ export interface PortableIsAt {
 		readonly tuple: PortableIsAt['type.tuple'];
 		readonly unit: PortableIsAt['type.unit'];
 	};
-	'type.abstract': PortableGuard<PortableIds['type.abstract'], RustNode, TSKindId> & {};
-	'type.array': PortableGuard<PortableIds['type.array'], RustNode, TSKindId> & {};
-	'type.bounded': PortableGuard<PortableIds['type.bounded'], RustNode, TSKindId> & {};
-	'type.bracketed': PortableGuard<PortableIds['type.bracketed'], RustNode, TSKindId> & {};
-	'type.dynamic': PortableGuard<PortableIds['type.dynamic'], RustNode, TSKindId> & {};
-	'type.function': PortableGuard<PortableIds['type.function'], RustNode, TSKindId> & {};
-	'type.generic': PortableGuard<PortableIds['type.generic'], RustNode, TSKindId> & {
+	'type.abstract': PortableGuard<PortableIds['type.abstract'], RustNode, TSKindId, PortableTexts['type.abstract']> & {};
+	'type.array': PortableGuard<PortableIds['type.array'], RustNode, TSKindId, PortableTexts['type.array']> & {};
+	'type.bounded': PortableGuard<PortableIds['type.bounded'], RustNode, TSKindId, PortableTexts['type.bounded']> & {};
+	'type.bracketed': PortableGuard<
+		PortableIds['type.bracketed'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.bracketed']
+	> & {};
+	'type.dynamic': PortableGuard<PortableIds['type.dynamic'], RustNode, TSKindId, PortableTexts['type.dynamic']> & {};
+	'type.function': PortableGuard<PortableIds['type.function'], RustNode, TSKindId, PortableTexts['type.function']> & {};
+	'type.generic': PortableGuard<PortableIds['type.generic'], RustNode, TSKindId, PortableTexts['type.generic']> & {
 		readonly turbofish: PortableIsAt['type.generic.turbofish'];
 	};
-	'type.generic.turbofish': PortableGuard<PortableIds['type.generic.turbofish'], RustNode, TSKindId> & {};
-	'type.pointer': PortableGuard<PortableIds['type.pointer'], RustNode, TSKindId> & {};
-	'type.primitive': PortableGuard<PortableIds['type.primitive'], RustNode, TSKindId> & {
+	'type.generic.turbofish': PortableGuard<
+		PortableIds['type.generic.turbofish'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.generic.turbofish']
+	> & {};
+	'type.pointer': PortableGuard<PortableIds['type.pointer'], RustNode, TSKindId, PortableTexts['type.pointer']> & {};
+	'type.primitive': PortableGuard<
+		PortableIds['type.primitive'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive']
+	> & {
 		readonly boolean: PortableIsAt['type.primitive.boolean'];
 		readonly character: PortableIsAt['type.primitive.character'];
 		readonly floating: PortableIsAt['type.primitive.floating'];
@@ -2769,23 +4381,45 @@ export interface PortableIsAt {
 		readonly never: PortableIsAt['type.primitive.never'];
 		readonly string: PortableIsAt['type.primitive.string'];
 	};
-	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean'], RustNode, TSKindId> & {};
-	'type.primitive.character': PortableGuard<PortableIds['type.primitive.character'], RustNode, TSKindId> & {};
-	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating'], RustNode, TSKindId> & {
+	'type.primitive.boolean': PortableGuard<
+		PortableIds['type.primitive.boolean'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.boolean']
+	> & {};
+	'type.primitive.character': PortableGuard<
+		PortableIds['type.primitive.character'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.character']
+	> & {};
+	'type.primitive.floating': PortableGuard<
+		PortableIds['type.primitive.floating'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.floating']
+	> & {
 		readonly float32: PortableIsAt['type.primitive.floating.float32'];
 		readonly float64: PortableIsAt['type.primitive.floating.float64'];
 	};
 	'type.primitive.floating.float32': PortableGuard<
 		PortableIds['type.primitive.floating.float32'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['type.primitive.floating.float32']
 	> & {};
 	'type.primitive.floating.float64': PortableGuard<
 		PortableIds['type.primitive.floating.float64'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['type.primitive.floating.float64']
 	> & {};
-	'type.primitive.integral': PortableGuard<PortableIds['type.primitive.integral'], RustNode, TSKindId> & {
+	'type.primitive.integral': PortableGuard<
+		PortableIds['type.primitive.integral'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral']
+	> & {
 		readonly int128: PortableIsAt['type.primitive.integral.int128'];
 		readonly int16: PortableIsAt['type.primitive.integral.int16'];
 		readonly int32: PortableIsAt['type.primitive.integral.int32'];
@@ -2796,22 +4430,69 @@ export interface PortableIsAt {
 	'type.primitive.integral.int128': PortableGuard<
 		PortableIds['type.primitive.integral.int128'],
 		RustNode,
-		TSKindId
+		TSKindId,
+		PortableTexts['type.primitive.integral.int128']
 	> & {};
-	'type.primitive.integral.int16': PortableGuard<PortableIds['type.primitive.integral.int16'], RustNode, TSKindId> & {};
-	'type.primitive.integral.int32': PortableGuard<PortableIds['type.primitive.integral.int32'], RustNode, TSKindId> & {};
-	'type.primitive.integral.int64': PortableGuard<PortableIds['type.primitive.integral.int64'], RustNode, TSKindId> & {};
-	'type.primitive.integral.int8': PortableGuard<PortableIds['type.primitive.integral.int8'], RustNode, TSKindId> & {};
-	'type.primitive.integral.size': PortableGuard<PortableIds['type.primitive.integral.size'], RustNode, TSKindId> & {};
-	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never'], RustNode, TSKindId> & {};
-	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string'], RustNode, TSKindId> & {};
-	'type.qualified': PortableGuard<PortableIds['type.qualified'], RustNode, TSKindId> & {};
-	'type.reference': PortableGuard<PortableIds['type.reference'], RustNode, TSKindId> & {};
-	'type.tuple': PortableGuard<PortableIds['type.tuple'], RustNode, TSKindId> & {};
-	'type.unit': PortableGuard<PortableIds['type.unit'], RustNode, TSKindId> & {};
+	'type.primitive.integral.int16': PortableGuard<
+		PortableIds['type.primitive.integral.int16'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral.int16']
+	> & {};
+	'type.primitive.integral.int32': PortableGuard<
+		PortableIds['type.primitive.integral.int32'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral.int32']
+	> & {};
+	'type.primitive.integral.int64': PortableGuard<
+		PortableIds['type.primitive.integral.int64'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral.int64']
+	> & {};
+	'type.primitive.integral.int8': PortableGuard<
+		PortableIds['type.primitive.integral.int8'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral.int8']
+	> & {};
+	'type.primitive.integral.size': PortableGuard<
+		PortableIds['type.primitive.integral.size'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.integral.size']
+	> & {};
+	'type.primitive.never': PortableGuard<
+		PortableIds['type.primitive.never'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.never']
+	> & {};
+	'type.primitive.string': PortableGuard<
+		PortableIds['type.primitive.string'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.primitive.string']
+	> & {};
+	'type.qualified': PortableGuard<
+		PortableIds['type.qualified'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.qualified']
+	> & {};
+	'type.reference': PortableGuard<
+		PortableIds['type.reference'],
+		RustNode,
+		TSKindId,
+		PortableTexts['type.reference']
+	> & {};
+	'type.tuple': PortableGuard<PortableIds['type.tuple'], RustNode, TSKindId, PortableTexts['type.tuple']> & {};
+	'type.unit': PortableGuard<PortableIds['type.unit'], RustNode, TSKindId, PortableTexts['type.unit']> & {};
 }
 
 export interface PortableKinds {
+	readonly argument: PortableKindsAt['argument'];
 	readonly attribute: PortableKindsAt['attribute'];
 	readonly clause: PortableKindsAt['clause'];
 	readonly comment: PortableKindsAt['comment'];
@@ -2828,6 +4509,7 @@ export interface PortableKinds {
 }
 
 export interface PortableIs {
+	readonly argument: PortableIsAt['argument'];
 	readonly attribute: PortableIsAt['attribute'];
 	readonly clause: PortableIsAt['clause'];
 	readonly comment: PortableIsAt['comment'];
@@ -2845,6 +4527,7 @@ export interface PortableIs {
 
 const table: PortableTable = {
 	paths: {
+		argument: { ids: [TSKindId.Argument], exact: false },
 		attribute: { ids: [TSKindId.Attribute, TSKindId.AttributeItem, TSKindId.InnerAttributeItem], exact: true },
 		'attribute.content': { ids: [TSKindId.Attribute], exact: true },
 		'attribute.inner': { ids: [TSKindId.InnerAttributeItem], exact: true },
@@ -2979,26 +4662,31 @@ const table: PortableTable = {
 		'declaration.constant.private': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.internal': { ids: [TSKindId.ConstItem], exact: false },
+		'declaration.constant.public.parent': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.restricted': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumItem], exact: true },
 		'declaration.enum.private': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public.internal': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.enum.public.parent': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum.public.restricted': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum_member': { ids: [TSKindId.EnumVariant], exact: true },
 		'declaration.enum_member.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.private': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.extension': { ids: [TSKindId.ImplItemBody, TSKindId.ImplItemSemi], exact: true },
 		'declaration.extension.conformance': { ids: [TSKindId.ImplItemBody], exact: false },
@@ -3006,6 +4694,10 @@ const table: PortableTable = {
 		'declaration.field.private': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
 		'declaration.field.public': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
 		'declaration.field.public.internal': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.field.public.parent': {
 			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
 			exact: false
 		},
@@ -3020,6 +4712,10 @@ const table: PortableTable = {
 			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
 			exact: false
 		},
+		'declaration.function.public.parent': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
 		'declaration.function.public.restricted': {
 			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
 			exact: false
@@ -3028,12 +4724,14 @@ const table: PortableTable = {
 		'declaration.function.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.public.parent': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.interface': { ids: [TSKindId.TraitItem], exact: true },
 		'declaration.interface.trait': { ids: [TSKindId.TraitItem], exact: true },
 		'declaration.interface.trait.private': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public.internal': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.interface.trait.public.parent': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.interface.trait.public.restricted': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.macro': {
 			ids: [
@@ -3060,6 +4758,10 @@ const table: PortableTable = {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
+		'declaration.method.public.parent': {
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
+			exact: false
+		},
 		'declaration.method.public.restricted': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
@@ -3068,6 +4770,7 @@ const table: PortableTable = {
 		'declaration.method.signature.private': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public.internal': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.method.signature.public.parent': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.method.signature.public.restricted': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.module': {
 			ids: [
@@ -3087,6 +4790,7 @@ const table: PortableTable = {
 		'declaration.module.private': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public.internal': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.parent': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.module.public.restricted': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.parameter': {
 			ids: [
@@ -3119,6 +4823,10 @@ const table: PortableTable = {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
+		'declaration.struct.public.parent': {
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
 		'declaration.struct.public.restricted': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
@@ -3127,17 +4835,20 @@ const table: PortableTable = {
 		'declaration.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public.internal': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.struct.tuple.public.parent': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public.restricted': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
 		'declaration.struct.unit.private': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public.internal': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.struct.unit.public.parent': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.struct.unit.public.restricted': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
 		'declaration.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
 		'declaration.type_alias.private': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public.internal': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type_alias.public.parent': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_alias.public.restricted': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_parameter': {
 			ids: [TSKindId.ConstParameter, TSKindId.LifetimeParameter, TSKindId.TypeParameter],
@@ -3149,11 +4860,13 @@ const table: PortableTable = {
 		'declaration.union.private': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.union.public.parent': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
 		'declaration.variable.private': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public.internal': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.parent': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
@@ -3618,6 +5331,7 @@ const table: PortableTable = {
 			ids: [TSKindId.CrateVisibilityModifier, TSKindId.VisibilityModifierPub],
 			exact: false
 		},
+		'modifier.visibility.public.parent': { ids: [TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.restricted': { ids: [TSKindId.VisibilityModifierPub], exact: false },
 		pattern: {
 			ids: [
@@ -3705,6 +5419,7 @@ const table: PortableTable = {
 		'statement.import.package.private': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package.public.parent': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.private': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
 		'statement.import.public': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
@@ -3712,6 +5427,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
 			exact: false
 		},
+		'statement.import.public.parent': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
 		'statement.import.public.restricted': {
 			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
 			exact: false
@@ -3830,6 +5546,13 @@ const table: PortableTable = {
 		[TSKindId.BlockCommentContent]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LetChain]: [{ path: 'clause.let.chain', within: [], test: [] }],
 		[TSKindId.AbstractType]: [{ path: 'type.abstract', within: [], test: [] }],
+		[TSKindId.Argument]: [
+			{
+				path: 'argument',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [190], slots: { '437': 0 } } }]
+			}
+		],
 		[TSKindId.ArrayExpression]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayExpressionList]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayExpressionSemi]: [
@@ -3857,7 +5580,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -3880,6 +5603,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.field.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
@@ -3887,8 +5628,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -3905,7 +5651,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
-					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -3913,6 +5659,7 @@ const table: PortableTable = {
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BaseFieldInitializer]: [{ path: 'element.struct.base', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
+			{ path: 'expression.binary', within: [], test: [] },
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
@@ -4002,11 +5749,11 @@ const table: PortableTable = {
 				path: 'expression.binary.logical.or',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '270': 1 } } }]
-			},
-			{ path: 'expression.binary', within: [], test: [] }
+			}
 		],
 		[TSKindId.Block]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.BlockComment]: [
+			{ path: 'comment.block', within: [], test: [] },
 			{
 				path: 'comment.block.doc',
 				within: [],
@@ -4016,8 +5763,7 @@ const table: PortableTable = {
 				path: 'comment.block.doc.inner',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [403], slots: { '340': 0 } } }]
-			},
-			{ path: 'comment.block', within: [], test: [] }
+			}
 		],
 		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -4029,6 +5775,7 @@ const table: PortableTable = {
 		[TSKindId.BracketedType]: [{ path: 'type.bracketed', within: [], test: [] }],
 		[TSKindId.BreakExpression]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.CallExpression]: [
+			{ path: 'expression.call', within: [], test: [] },
 			{
 				path: 'expression.call.member',
 				within: [],
@@ -4038,8 +5785,7 @@ const table: PortableTable = {
 				path: 'expression.call.qualified',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], slots: { '276': 0 } } }]
-			},
-			{ path: 'expression.call', within: [], test: [] }
+			}
 		],
 		[TSKindId.CapturedPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.CharKeyword]: [
@@ -4127,7 +5873,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4150,6 +5896,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.constant.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.constant.public.restricted',
 				within: [],
 				test: [
@@ -4157,8 +5921,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4175,7 +5944,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
-					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.constant', within: [], test: [] }
@@ -4216,7 +5985,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4239,6 +6008,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.enum.public.restricted',
 				within: [],
 				test: [
@@ -4246,8 +6033,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4264,7 +6056,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
-					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.enum', within: [], test: [] }
@@ -4284,7 +6076,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
@@ -4309,6 +6101,25 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.tuple.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
+				]
+			},
+			{
 				path: 'declaration.enum_member.tuple.public.restricted',
 				within: [],
 				test: [
@@ -4316,8 +6127,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
@@ -4336,7 +6152,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
@@ -4361,6 +6177,25 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.struct.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
+				]
+			},
+			{
 				path: 'declaration.enum_member.struct.public.restricted',
 				within: [],
 				test: [
@@ -4368,8 +6203,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
@@ -4388,7 +6228,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4411,6 +6251,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.enum_member.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.enum_member.public.restricted',
 				within: [],
 				test: [
@@ -4418,8 +6276,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4437,7 +6300,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
@@ -4455,7 +6318,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
@@ -4472,7 +6335,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{
@@ -4510,7 +6373,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4533,6 +6396,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'statement.import.package.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'statement.import.package.public.restricted',
 				within: [],
 				test: [
@@ -4540,8 +6421,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4558,7 +6444,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
-					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import.package', within: [], test: [] }
@@ -4577,6 +6463,7 @@ const table: PortableTable = {
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
 		[TSKindId.FieldDeclaration]: [
+			{ path: 'declaration.field', within: [], test: [] },
 			{
 				path: 'declaration.field.private',
 				within: [],
@@ -4591,7 +6478,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4614,6 +6501,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.field.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
@@ -4621,8 +6526,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4639,10 +6549,9 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
-					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.field', within: [], test: [] }
+			}
 		],
 		[TSKindId.FieldExpression]: [{ path: 'expression.member', within: [], test: [] }],
 		[TSKindId.FieldIdentifier]: [{ path: 'identifier', within: [], test: [] }],
@@ -4671,7 +6580,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4694,6 +6603,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.function.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.function.public.restricted',
 				within: [],
 				test: [
@@ -4701,8 +6628,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4719,7 +6651,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function', within: [], test: [] }
@@ -4739,7 +6671,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4762,6 +6694,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.function.signature.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.function.signature.public.restricted',
 				within: [],
 				test: [
@@ -4769,8 +6719,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4787,7 +6742,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function.signature', within: [], test: [] }
@@ -4826,7 +6781,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.extension.conformance',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [376, 375], slots: { '377': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [375], slots: { '377': 2 } } }]
 			},
 			{ path: 'declaration.extension', within: [], test: [] }
 		],
@@ -4850,6 +6805,7 @@ const table: PortableTable = {
 		[TSKindId.LifetimeKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.LifetimeParameter]: [{ path: 'declaration.type_parameter.lifetime', within: [], test: [] }],
 		[TSKindId.LineComment]: [
+			{ path: 'comment.line', within: [], test: [] },
 			{
 				path: 'comment.line.doc',
 				within: [],
@@ -4859,8 +6815,7 @@ const table: PortableTable = {
 				path: 'comment.line.doc.inner',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [401], slots: { '337': 0 } } }]
-			},
-			{ path: 'comment.line', within: [], test: [] }
+			}
 		],
 		[TSKindId.LineCommentExtraSlashes]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LineCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
@@ -4894,8 +6849,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '477': 4 } }],
-						plan: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } }
+						via: [{ slots: { '480': 4 } }],
+						plan: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } }
 					}
 				]
 			},
@@ -4903,29 +6858,30 @@ const table: PortableTable = {
 				path: 'declaration.method',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '477': 4 } }], plan: { op: 'is', types: [439], slots: { '230': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 4 } }], plan: { op: 'is', types: [441], slots: { '230': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '477': 4 } }, { slots: { '230': 0 } }, { slots: { '439': 0 } }],
-						plan: { op: 'is', types: [231], slots: { '438': 1 } }
+						via: [{ slots: { '480': 4 } }, { slots: { '230': 0 } }, { slots: { '441': 0 } }],
+						plan: { op: 'is', types: [231], slots: { '440': 1 } }
 					}
 				]
 			},
+			{ path: 'declaration.method', within: [], test: [] },
 			{
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '477': 0 } } },
-					{ up: 0, via: [{ slots: { '477': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '477': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '477': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4933,17 +6889,35 @@ const table: PortableTable = {
 				path: 'declaration.method.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '477': 0 } } },
-					{ up: 0, via: [{ slots: { '477': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '477': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '477': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
 						plan: { op: 'is', types: [126], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4951,12 +6925,17 @@ const table: PortableTable = {
 				path: 'declaration.method.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '477': 0 } } },
-					{ up: 0, via: [{ slots: { '477': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '477': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4964,19 +6943,18 @@ const table: PortableTable = {
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '477': 0 } } },
-					{ up: 0, via: [{ slots: { '477': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '477': 0 } } },
-					{ up: 0, via: [{ slots: { '477': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
+					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.method', within: [], test: [] }
+			}
 		],
 		[TSKindId.ModItem]: [{ path: 'declaration.module', within: [], test: [] }],
 		[TSKindId.ModItemExternal]: [
@@ -4994,7 +6972,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5017,6 +6995,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.module.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
@@ -5024,8 +7020,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5042,7 +7043,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
-					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5062,7 +7063,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5085,6 +7086,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.module.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
@@ -5092,8 +7111,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5110,7 +7134,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
-					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5136,7 +7160,6 @@ const table: PortableTable = {
 		[TSKindId.PointerType]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeConst]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeMut]: [{ path: 'type.pointer', within: [], test: [] }],
-		[TSKindId.ScopedIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.QualifiedType]: [{ path: 'type.qualified', within: [], test: [] }],
 		[TSKindId.RangeExpression]: [{ path: 'expression.range', within: [], test: [] }],
 		[TSKindId.RangeExpressionBare]: [
@@ -5218,8 +7241,8 @@ const table: PortableTable = {
 		[TSKindId.RawStringLiteral]: [{ path: 'literal.string.raw', within: [], test: [] }],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
-			{ path: 'declaration.parameter', within: [], test: [] },
-			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+			{ path: 'declaration.parameter.receiver', within: [], test: [] },
+			{ path: 'declaration.parameter', within: [], test: [] }
 		],
 		[TSKindId.RefPattern]: [{ path: 'pattern.reference', within: [], test: [] }],
 		[TSKindId.ReferenceExpression]: [{ path: 'expression.reference', within: [], test: [] }],
@@ -5232,6 +7255,7 @@ const table: PortableTable = {
 		[TSKindId.RemainingFieldPattern]: [{ path: 'pattern.struct.rest', within: [], test: [] }],
 		[TSKindId.RemovedTraitBound]: [{ path: 'clause.bounds.removed', within: [], test: [] }],
 		[TSKindId.ReturnExpression]: [{ path: 'statement.return', within: [], test: [] }],
+		[TSKindId.ScopedIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
@@ -5247,26 +7271,27 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '480': 4 } }],
-						plan: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } }
+						via: [{ slots: { '483': 4 } }],
+						plan: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } }
 					}
 				]
 			},
+			{ path: 'declaration.method.signature', within: [], test: [] },
 			{
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
-					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5274,17 +7299,35 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
-					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
 						plan: { op: 'is', types: [126], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5292,12 +7335,17 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
-					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '480': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '483': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5305,19 +7353,18 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
-					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
-					{ up: 0, via: [{ slots: { '480': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
+					{ up: 0, via: [{ slots: { '483': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
-			},
-			{ path: 'declaration.method.signature', within: [], test: [] }
+			}
 		],
 		[TSKindId.SlicePattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
@@ -5336,7 +7383,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5359,6 +7406,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.variable.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.variable.public.restricted',
 				within: [],
 				test: [
@@ -5366,8 +7431,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5384,7 +7454,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
-					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -5401,6 +7471,7 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '"', slots: { '332': 0 } } }]
 			},
+			{ path: 'literal.string', within: [], test: [] },
 			{
 				path: 'literal.string.bytes',
 				within: [],
@@ -5410,8 +7481,7 @@ const table: PortableTable = {
 				path: 'literal.string.c',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'c"', slots: { '332': 0 } } }]
-			},
-			{ path: 'literal.string', within: [], test: [] }
+			}
 		],
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
@@ -5430,7 +7500,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5453,6 +7523,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.public.restricted',
 				within: [],
 				test: [
@@ -5460,8 +7548,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5478,7 +7571,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
-					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct', within: [], test: [] }
@@ -5498,7 +7591,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5521,6 +7614,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.tuple.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.tuple.public.restricted',
 				within: [],
 				test: [
@@ -5528,8 +7639,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5546,7 +7662,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
-					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.tuple', within: [], test: [] },
@@ -5567,7 +7683,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5590,6 +7706,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.struct.unit.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.struct.unit.public.restricted',
 				within: [],
 				test: [
@@ -5597,8 +7731,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5615,7 +7754,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
-					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.unit', within: [], test: [] },
@@ -5668,7 +7807,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5691,6 +7830,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.interface.trait.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.interface.trait.public.restricted',
 				within: [],
 				test: [
@@ -5698,8 +7855,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5716,7 +7878,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
-					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.interface.trait', within: [], test: [] }
@@ -5752,7 +7914,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5775,6 +7937,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.type_alias.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.type_alias.public.restricted',
 				within: [],
 				test: [
@@ -5782,8 +7962,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5800,7 +7985,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
-					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.type_alias', within: [], test: [] }
@@ -5827,6 +8012,7 @@ const table: PortableTable = {
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.UnaryExpression]: [
+			{ path: 'expression.unary', within: [], test: [] },
 			{
 				path: 'expression.unary.negation',
 				within: [],
@@ -5841,8 +8027,7 @@ const table: PortableTable = {
 				path: 'expression.unary.deref',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '267': 0 } } }]
-			},
-			{ path: 'expression.unary', within: [], test: [] }
+			}
 		],
 		[TSKindId.UnionItem]: [
 			{
@@ -5859,7 +8044,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5882,6 +8067,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.union.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'declaration.union.public.restricted',
 				within: [],
 				test: [
@@ -5889,8 +8092,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5907,7 +8115,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
-					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.union', within: [], test: [] }
@@ -5932,7 +8140,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [478], slots: { '380': 0 } }
+						plan: { op: 'is', types: [481], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5955,6 +8163,24 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'statement.import.public.parent',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
 				path: 'statement.import.public.restricted',
 				within: [],
 				test: [
@@ -5962,8 +8188,13 @@ const table: PortableTable = {
 					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
 						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125, 379], slots: { '380': 0 } }
+						plan: { op: 'is', types: [379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5980,7 +8211,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
-					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [474], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import', within: [], test: [] }
@@ -5999,7 +8230,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
-					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [478], slots: { '380': 0 } } }
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [481], slots: { '380': 0 } } }
 				]
 			},
 			{
@@ -6011,7 +8242,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'modifier.visibility.public.restricted',
+				path: 'modifier.visibility.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
@@ -6187,7 +8418,8 @@ const table: PortableTable = {
 		[TSKindId.StructKeyword]: 'struct',
 		[TSKindId.RawKeyword]: 'raw',
 		[TSKindId.MacroRulesBang]: 'macro_rules!'
-	}
+	},
+	literals: [TSKindId.FalseKeyword, TSKindId.TrueKeyword]
 };
 
 export const queryFlags: QueryFlags = Object.freeze({
@@ -6235,15 +8467,15 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', slots: { '378': 0 } } },
 	[TSKindId.LetDeclaration]: { mutable: { op: 'present', slots: { '223': 0 } } },
 	[TSKindId.MethodDeclaration]: {
-		async: { op: 'child', slots: { '477': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
-		const: { op: 'child', slots: { '477': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
-		unsafe: { op: 'child', slots: { '477': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
-		default: { op: 'child', slots: { '477': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
-		static: { op: 'child', slots: { '477': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
+		async: { op: 'child', slots: { '480': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '480': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '480': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '480': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
+		static: { op: 'child', slots: { '480': 4 }, of: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } } }
 	},
 	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], slots: { '233': 0 } } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
-	[TSKindId.ReceiverParameterDeclaration]: { mutable: { op: 'is', types: [57], slots: { '437': 0 } } },
+	[TSKindId.ReceiverParameterDeclaration]: { mutable: { op: 'is', types: [57], slots: { '439': 0 } } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawConst]: { raw: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
@@ -6251,7 +8483,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
 	[TSKindId.SignatureMethodDeclaration]: {
-		static: { op: 'child', slots: { '480': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
+		static: { op: 'child', slots: { '483': 4 }, of: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } } }
 	},
 	[TSKindId.StaticItem]: {
 		mutable: { op: 'present', slots: { '206': 2 } },
@@ -7144,27 +9376,38 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	435: {
 		declarations: {
-			async: { types: [], kinds: [477] },
+			async: { types: [], kinds: [480] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [477] },
-			default: { types: [], kinds: [477] },
+			const: { types: [], kinds: [480] },
+			default: { types: [], kinds: [480] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { types: [206], kinds: [477, 480] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 477] }
+			static: { types: [206], kinds: [480, 483] },
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
 		}
 	},
 	436: {
 		declarations: {
-			async: { types: [], kinds: [477] },
+			async: { types: [], kinds: [480] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [477] },
-			default: { types: [], kinds: [477] },
+			const: { types: [], kinds: [480] },
+			default: { types: [], kinds: [480] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { types: [206], kinds: [477] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 477] }
+			static: { types: [206], kinds: [480] },
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
 		}
 	},
 	437: {
+		expression: {
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
+		}
+	},
+	439: {
 		type: {
 			exclusive: { types: [], kinds: [252] },
 			unsafe: { types: [], kinds: [242] },
@@ -7172,9 +9415,9 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	438: { content: { mutable: { types: [], kinds: [231, 437] } } },
-	473: { content: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
-	477: {
+	440: { content: { mutable: { types: [], kinds: [231, 439] } } },
+	476: { content: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	480: {
 		returnType: {
 			exclusive: { types: [], kinds: [252] },
 			unsafe: { types: [], kinds: [242] },
@@ -7182,7 +9425,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	480: {
+	483: {
 		returnType: {
 			exclusive: { types: [], kinds: [252] },
 			unsafe: { types: [], kinds: [242] },
@@ -7687,6 +9930,11 @@ declare module './types.js' {
 	interface ExtensionDeclarationBody {
 		readonly __slotFlags__?: {
 			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'static' | 'unsafe';
+		};
+	}
+	interface Argument {
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ReceiverParameterDeclaration {

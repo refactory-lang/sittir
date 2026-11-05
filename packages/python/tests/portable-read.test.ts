@@ -11,6 +11,24 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it('reads the wildcard case pattern as the wildcard pattern, by its text', () => {
+		const source = 'match x:\n    case _:\n        pass\n';
+		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'clause.case.match', pattern: '_' }] });
+		expect(roundTrip(source)).toBe(source);
+		expect(python.is.portable.pattern.wildcard('_')).toBe(true);
+	});
+
+	it('reads True, None and the ellipsis as their path and value, `pass` as its text, and builds them back', () => {
+		const value = (source: string) => ((firstOf(source) as Read).content as Read).value;
+		expect(value('x = True')).toEqual({ $path: 'literal.boolean.true', $value: true });
+		expect(value('x = None')).toEqual({ $path: 'literal.null' });
+		expect(value('x = ...')).toEqual({ $path: 'literal.ellipsis' });
+		expect(firstOf('pass')).toBe('pass');
+		for (const source of ['x = True', 'x = None', 'x = ...', 'pass']) expect(roundTrip(source)).toBe(`${source}\n`);
+		// @ts-expect-error a value token reads as its path and value, so its guard takes no text
+		expect(python.is.portable.literal.boolean('True')).toBe(false);
+	});
+
 	it('reads a member through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
@@ -45,5 +63,10 @@ describe('the portable read', () => {
 		expect(firstOf('@d\ndef f():\n    pass\n')).toMatchObject({ $path: 'declaration.function', name: 'f', decorators });
 		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.class', name: 'C', decorators });
 		for (const source of ['@d\ndef f():\n    pass\n', '@d\nclass C:\n    pass\n', 'class C:\n    @staticmethod\n    def m():\n        pass\n']) expect(roundTrip(source)).toBe(source);
+	});
+
+	it.each(['except* A:', 'except* A as e:', 'except* (A, B):'])('builds an exception group handler %j back in its spelling', (handler) => {
+		const source = `try:\n    pass\n${handler}\n    pass\n`;
+		expect(roundTrip(source)).toBe(source);
 	});
 });

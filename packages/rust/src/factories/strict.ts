@@ -268,6 +268,8 @@ export {
 	buildDedent,
 	buildTraitInterfaceDeclarationBody,
 	buildExtensionDeclarationBody,
+	buildArgument,
+	buildArrayExpressionListElements,
 	buildReceiverParameterDeclaration,
 	buildAttributedParameterReceiver,
 	buildParametersElementsReceiver,
@@ -345,12 +347,12 @@ export const typeArguments$seated: Seat<
 export const argumentsElements$seated: Seat<
 	T.ArgumentsElements.BuildArgs,
 	ReturnType<typeof F.buildArgumentsElements>
-> = K.argumentsElements$items(F.buildArgumentsElements, F.buildAttributedArgument);
+> = K.argumentsElements$items(F.buildArgumentsElements, F.buildArgument);
 
 export const arguments_$seated: EmptyForm<
 	T.EmptyArguments,
 	Seat<T.Arguments.BuildArgs, ReturnType<typeof F.buildArguments>>
-> = withEmptyForm(K.arguments_$items(F.buildArguments, F.buildAttributedArgument));
+> = withEmptyForm(K.arguments_$items(F.buildArguments, F.buildArgument));
 
 export const tupleExpression$seated: Seat<
 	T.TupleExpression.BuildArgs,
@@ -382,10 +384,15 @@ export const parametersElements$seated: Seat<
 	ReturnType<typeof F.buildParametersElements>
 > = K.parametersElements$items(F.buildParametersElements, F.buildAttributedParameter);
 
+export const arrayExpressionListElements$seated: Seat<
+	T.ArrayExpressionListElements.BuildArgs,
+	ReturnType<typeof F.buildArrayExpressionListElements>
+> = K.arrayExpressionListElements$items(F.buildArrayExpressionListElements, F.buildAttributedArgument);
+
 export const arrayExpressionList$seated: EmptyForm<
 	T.EmptyArrayExpressionList,
 	Seat<T.ArrayExpressionList.BuildArgs, ReturnType<typeof F.buildArrayExpressionList>>
-> = withEmptyForm(K.arrayExpressionList$elements(F.buildArrayExpressionList, argumentsElements$seated));
+> = withEmptyForm(K.arrayExpressionList$elements(F.buildArrayExpressionList, arrayExpressionListElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.BuildArgs,

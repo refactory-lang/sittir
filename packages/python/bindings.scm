@@ -198,6 +198,7 @@
 (splat_pattern_dictionary name: (_) @pattern)
 (class_pattern name: (_) @type arguments: (_)? @fields) @pattern.struct
 (keyword_pattern value: (_) @pattern) @pattern.struct.field
+(wildcard_pattern) @pattern.wildcard
 (complex_pattern) @pattern.complex
 (complex_pattern operator: "+") @pattern.complex.add
 (complex_pattern operator: "-") @pattern.complex.subtract

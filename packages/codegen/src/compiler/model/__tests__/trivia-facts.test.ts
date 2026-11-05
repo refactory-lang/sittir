@@ -135,7 +135,7 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'elements', precedingTokens: 1, slots: ['_elements'] }]);
 		expect(innerGapsOf(rust, 'function_item')).toEqual([]);
 		expect(innerGapsOf(rust, 'source_file')).toEqual([{ key: 'statements', precedingTokens: 0, slots: ['_shebang', '_statements'] }]);
-		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0, slots: ['_hash_bang_line', '_statements'] }]);
+		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0, slots: ['_shebang', '_statements'] }]);
 	});
 
 	it('gives no inner gap where tree-sitter cannot lex an extra, or where the node cannot be empty', async () => {

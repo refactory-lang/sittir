@@ -6,7 +6,7 @@
 use sittir_core::engine::{NodeRead, ParsedTree};
 use sittir_core::read::Depth;
 use sittir_core::types::NodeIndex;
-use sittir_rust::render::node::{ArgumentsNode, AttributedArgumentNode, FieldInitializerListElementsItemNodeSlot, FieldInitializerListNode};
+use sittir_rust::render::node::{ArgumentNode, ArgumentsNode, FieldInitializerListElementsItemNodeSlot, FieldInitializerListNode};
 use sittir_parity_tests::parsed_rust;
 use sittir_rust::RustGrammar;
 
@@ -60,7 +60,7 @@ fn a_wrapper_item_arrives_with_its_own_slots_read() {
     for (item, coord) in inline.iter().zip(plain.iter()) {
         let index = coord.coord().expect("a coordinate").index;
         let wrapper = item.node().expect("a wrapper arrives read");
-        assert_eq!(wrapper, &node::<AttributedArgumentNode>(&tree, index, two), "wrapper {index:?} reads as its own read a level deeper does");
+        assert_eq!(wrapper, &node::<ArgumentNode>(&tree, index, two), "wrapper {index:?} reads as its own read a level deeper does");
         assert!(wrapper.expression.node().is_some(), "wrapper {index:?} holds its content read");
         assert!(wrapper.attribute_item.iter().all(|attribute| attribute.node().is_some()), "wrapper {index:?} holds its decorations read");
     }

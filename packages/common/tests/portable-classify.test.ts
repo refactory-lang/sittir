@@ -49,6 +49,7 @@ const ROWS: PortableRows = {
 			'declaration.property': { ids: [FIELD], exact: false }
 		},
 		fixedText: { [PLUS]: '+', [TRUE]: 'true', [FALSE]: 'false' },
+		literals: [],
 		entries: {
 			[FUNCTION]: [
 				{
@@ -166,6 +167,7 @@ describe('classifierOf conditions through a list', () => {
 				'method.static': { ids: [METHOD], exact: false }
 			},
 			fixedText: {},
+			literals: [],
 			entries: {
 				[METHOD]: [
 					{
@@ -256,6 +258,7 @@ describe('classifierOf refinements', () => {
 				'declaration.constructor': { ids: [METHOD], exact: false }
 			},
 			fixedText: {},
+			literals: [],
 			entries: {
 				[METHOD]: [
 					{ path: 'declaration.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'new', slots: { [METHOD]: 0 } } }] },

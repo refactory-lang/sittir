@@ -6,10 +6,8 @@ export namespace Element {
 		readonly $kind: 'element.macro';
 	}
 	export namespace Macro {
-		export interface Fragment<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
-			// claimed by r
-			readonly $kind: 'element.macro.fragment';
-		}
+		// claimed by r
+		export type Fragment<G extends GrammarContext<G>> = G['texts']['element.macro.fragment'];
 		export interface TokenBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_binding';

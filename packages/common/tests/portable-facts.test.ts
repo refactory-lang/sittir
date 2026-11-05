@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { portablePathHasFacts } from '../src/portable/facts.ts';
+import { portablePathHasFacts, readableEntries } from '../src/portable/facts.ts';
 
 describe('portablePathHasFacts', () => {
 	it('holds when the read path names every fact of the guard path, in order, other facts between', () => {
@@ -51,5 +51,34 @@ describe('portablePathHasFacts', () => {
 
 	it('holds for no read path when there is none', () => {
 		expect(portablePathHasFacts('declaration', undefined)).toBe(false);
+	});
+});
+
+describe('readableEntries', () => {
+	const entry = (path: string, test: readonly { readonly up: number }[] = [], within: readonly unknown[] = []) => ({ path, test, within });
+	const paths = (entries: readonly { readonly path: string }[]) => entries.map(({ path }) => path);
+
+	it('passes over an entry that an unconditional entry refines, whatever their order', () => {
+		expect(paths(readableEntries([entry('declaration.parameter'), entry('declaration.parameter.receiver')]))).toEqual(['declaration.parameter.receiver']);
+		expect(paths(readableEntries([entry('declaration.parameter.receiver'), entry('declaration.parameter')]))).toEqual(['declaration.parameter.receiver']);
+	});
+
+	it('keeps an entry a conditional entry refines, since the refinement may not hold', () => {
+		expect(paths(readableEntries([entry('declaration.parameter.private', [{ up: 0 }]), entry('declaration.parameter')]))).toEqual([
+			'declaration.parameter.private',
+			'declaration.parameter'
+		]);
+	});
+
+	it('stops at an unconditional entry nothing refines, since it always reads first', () => {
+		expect(paths(readableEntries([entry('declaration.parameter.receiver'), entry('declaration.parameter.private', [{ up: 0 }])]))).toEqual([
+			'declaration.parameter.receiver'
+		]);
+	});
+
+	it('leaves out an entry that depends on where the node sits', () => {
+		expect(paths(readableEntries([entry('declaration.method', [], [7]), entry('declaration.function.inner', [{ up: 1 }]), entry('declaration.function')]))).toEqual([
+			'declaration.function'
+		]);
 	});
 });

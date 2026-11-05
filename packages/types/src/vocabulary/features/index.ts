@@ -30,6 +30,7 @@ export type { DefaultArguments } from './default-arguments/index.ts';
 export type { DeferredExecution } from './deferred-execution/index.ts';
 export type { Destructuring } from './destructuring/index.ts';
 export type { DynamicScope } from './dynamic-scope/index.ts';
+export type { Elisions } from './elisions/index.ts';
 export type { Encapsulation } from './encapsulation/index.ts';
 export type { Enumerations } from './enumerations/index.ts';
 export type { ErrorPropagation } from './error-propagation/index.ts';

@@ -13,7 +13,7 @@ const CASES = [
 	{ list: 'TypeParametersElements', wrapper: 'AttributedTypeParameter', build: 'typeParametersElements', source: 'fn f<#[a] T, U>() {}\n' },
 	{ list: 'ParametersElements', wrapper: 'AttributedParameter', build: 'parametersElements', source: 'fn f(#[a] x: u8, y: u8) {}\n' },
 	{ list: 'TypeArgumentsElements', wrapper: 'TypeArgument', build: 'typeArgumentsElements', source: 'type A = Foo<T: Copy, U>;\n' },
-	{ list: 'ArgumentsElements', wrapper: 'AttributedArgument', build: 'argumentsElements', source: 'fn main() { f(#[a] x, y); }\n' }
+	{ list: 'ArgumentsElements', wrapper: 'Argument', build: 'argumentsElements', source: 'fn main() { f(#[a] x, y); }\n' }
 ] as const;
 
 const SKIP = new Set(['toString', 'toJSON', 'separator', 'delimiter']);
