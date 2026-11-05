@@ -186,7 +186,7 @@ function contentArmsOf(node: AbstractAssembledCompound, facts: DelimitedFacts, n
 
 function hazardousArms(content: ContentArms, facts: DelimitedFacts): { readonly hazardous: readonly boolean[]; readonly otherLeaders: CharSet } {
 	const armLeaders = content.arms.map((arm) => facts.leadersOfRule(arm));
-	const hazardous = content.arms.map((_, i) => content.freeTextLeaves[i] === 1 && !armLeaders[i]!.minus(content.closing.complement()).isEmpty());
+	const hazardous = content.arms.map((_, i) => content.freeTextLeaves[i] === 1 && armLeaders[i]!.meets(content.closing));
 	return { hazardous, otherLeaders: armLeaders.reduce((all, leaders, i) => (hazardous[i] ? all : all.union(leaders)), CharSet.EMPTY) };
 }
 
@@ -232,7 +232,12 @@ export function freeTextOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<s
 				.flatMap((leaf) => (leaf.name !== undefined && acceptsAlone(leaf.pattern, otherLeaders) ? [leaf.name] : []))
 		)
 	];
-	return leaves.length === 0 ? undefined : { leaves, excluded: otherLeaders.ranges };
+	if (leaves.length === 0) return undefined;
+	const candidates = content.arms.flatMap((arm, i) =>
+		hazardous[i] ? facts.textLeaves(arm).flatMap((leaf) => (leaf.name === undefined ? [] : [leaf.name])) : arm.type === SYMBOL ? [arm.name] : []
+	);
+	const opened = [...new Set(candidates)].filter((kind) => !leaves.includes(kind) && facts.leadersOfKind(kind).meets(otherLeaders));
+	return { leaves, excluded: otherLeaders.ranges, opened };
 }
 
 export function contentLeavesOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<string, AssembledNode>, pattern: string): readonly string[] {

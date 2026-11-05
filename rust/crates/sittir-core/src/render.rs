@@ -112,6 +112,14 @@ pub trait SourceTable {
         None
     }
 
+    /// Visits the node a coordinate names and each node under it, in source
+    /// order, with its kind and source text; a visit that answers `false`
+    /// skips that node's children. A table of bare sources knows no nodes and
+    /// visits none.
+    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        let _ = (coord, visit);
+    }
+
     /// The byte offsets of the lines under the node a coordinate names that
     /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
     /// re-indented to its new column leaves these lines as they are. A table
@@ -286,6 +294,11 @@ pub trait RenderSink {
     fn leaf_kind(&mut self, kind: KindId) {
         let _ = kind;
     }
+    /// A node of `kind` begins its body; `exit_kind` ends the one begun last.
+    fn enter_kind(&mut self, kind: KindId) {
+        let _ = kind;
+    }
+    fn exit_kind(&mut self) {}
     fn leaf_edges(&mut self, leading: crate::layout_kinds::LayoutKinds, trailing: crate::layout_kinds::LayoutKinds) {
         let _ = (leading, trailing);
     }

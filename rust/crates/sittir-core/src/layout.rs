@@ -376,7 +376,14 @@ pub fn render_framed<F: Framing + ?Sized>(
     w.open_frame(origin);
     let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED));
     let outer = line_terminated.then(|| w.swallow_cr(true));
-    body(w)?;
+    if let Some(kind) = kind {
+        w.enter_kind(kind);
+    }
+    let written = body(w);
+    if kind.is_some() {
+        w.exit_kind();
+    }
+    written?;
     if let Some(outer) = outer {
         w.swallow_cr(outer);
     }

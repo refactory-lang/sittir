@@ -1368,6 +1368,10 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.0.kind_of(coord)
     }
 
+    fn for_each_descendant(&self, coord: &NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        self.0.for_each_descendant(coord, visit);
+    }
+
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
         self.0.line_starts_inside_tokens(coord)
     }
@@ -1595,6 +1599,22 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         node_at_index(&self.own(coord.tree)?.tree, coord.index).map(|node| crate::read::grammar_id(&node))
     }
 
+    fn for_each_descendant(&self, coord: &NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        fn walk(node: tree_sitter::Node<'_>, source: &str, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+            if !visit(crate::read::grammar_id(&node), source.get(crate::types::Span::of(&node).range()).unwrap_or("")) {
+                return;
+            }
+            let mut cursor = node.walk();
+            for child in node.children(&mut cursor) {
+                walk(child, source, visit);
+            }
+        }
+        let Some(tree) = self.own(coord.tree) else { return };
+        if let Some(node) = node_at_index(&tree.tree, coord.index) {
+            walk(node, &tree.source, visit);
+        }
+    }
+
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
         let Some(tree) = self.own(coord.tree) else { return Vec::new() };
         node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, coord.index, &tree.source))
@@ -1730,6 +1750,12 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
         self.get(&coord.tree)?.kind_of(coord)
+    }
+
+    fn for_each_descendant(&self, coord: &NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        if let Some(tree) = self.get(&coord.tree) {
+            tree.for_each_descendant(coord, visit);
+        }
     }
 
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {

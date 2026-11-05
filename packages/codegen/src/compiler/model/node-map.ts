@@ -1781,6 +1781,7 @@ export interface FreeTextGate {
 export interface FreeText {
 	readonly leaves: readonly string[];
 	readonly excluded: readonly (readonly [number, number])[];
+	readonly opened: readonly string[];
 	readonly gate?: FreeTextGate;
 }
 

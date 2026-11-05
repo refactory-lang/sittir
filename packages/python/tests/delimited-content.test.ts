@@ -56,7 +56,7 @@ const contentOf = (string: ReadString): string => string.contents().map(String).
 describe("an interpolating string's built free text", () => {
 	it.each(['f', 't', 'Rf', 'rt'])('refuses a brace under the %s prefix, naming the leaf', (prefix) => {
 		expect(() => rendered(b.string({ prefix: prefix as never, contents: content('{evil()}') }))).toThrow(
-			'string: its built string_fragment text holds `{`, which would open another part of it'
+			'string: its string_fragment text holds `{`, which would open another part of it'
 		);
 	});
 
@@ -88,6 +88,47 @@ describe("an interpolating string's built free text", () => {
 		const source = 'b"\\x12\\N{WINKING FACE}"';
 		const read = readString(source);
 		expect(rendered(b.string({ prefix: 'b', contents: content(contentOf(read)) }))).toBe(source);
+	});
+});
+
+describe("a string's read content is checked under the prefix it is seated under", () => {
+	type Seated = ReadString & { readonly $with: { prefix(prefix: string): { $render(): unknown }; contents(...items: unknown[]): { $render(): unknown } } };
+	const seated = (source: string) => readString(source) as unknown as Seated;
+
+	it('refuses read text that would interpolate under an f prefix', () => {
+		const read = seated('"{marker()}"');
+		const refusal = 'string: its string_fragment text holds `{`, which would open another part of it';
+		expect(() => rendered(b.string({ prefix: 'f', contents: read.contents() as never }))).toThrow(refusal);
+		expect(() => rendered(read.$with.prefix('f'))).toThrow(refusal);
+	});
+
+	it.each([`f'{"{x}"}'`, `f'{d["{"]}'`, `f"{f'{x}'}"`, `f"a{{b}}{x:>{w}}"`])('rebuilds %s, whose braces belong to its interpolations', (source) => {
+		const read = seated(source);
+		expect(rendered(read.$with.contents(...read.contents()))).toBe(source);
+		expect(rendered(b.string({ prefix: 'f', contents: read.contents() as never }))).toBe(source);
+	});
+
+	it.each([
+		['b', 'the `b` prefix'],
+		[undefined, 'no prefix']
+	] as const)('refuses an interpolation under %s, naming it', (prefix, under) => {
+		const contents = [b.interpolation({ expression: 'x' })];
+		expect(() => rendered(b.string({ ...(prefix === undefined ? {} : { prefix }), contents }))).toThrow(`string: its interpolation is no part of it under ${under}`);
+	});
+
+	it('refuses a doubled brace under a bytes prefix, where it would read as two braces', () => {
+		const contents = [b.stringContent(b.escapeInterpolation('{{'))];
+		expect(() => rendered(b.string({ prefix: 'b', contents }))).toThrow('string: its escape_interpolation is no part of it under the `b` prefix');
+	});
+
+	it('refuses a read interpolation reseated under a bytes prefix', () => {
+		expect(() => rendered(seated('f"{x}"').$with.prefix('b'))).toThrow('string: its interpolation is no part of it under the `b` prefix');
+		expect(() => rendered(seated('f"a{{b"').$with.prefix('b'))).toThrow('string: its escape_interpolation is no part of it under the `b` prefix');
+	});
+
+	it.each(['"{x}"', 'b"{x}"', 'r"{x}"', 'u"{x}"', 'f"{x}"', 'bf"y"'])('keeps %s as read', (source) => {
+		const read = seated(source);
+		expect(rendered(read.$with.contents(...read.contents()))).toBe(source);
 	});
 });
 

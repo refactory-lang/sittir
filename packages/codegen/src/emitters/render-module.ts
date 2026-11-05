@@ -3509,11 +3509,14 @@ function rustChar(text: string | undefined): string {
 function delimiterFill(node: AssembledNode, kindEntries: readonly KindEnumEntry[]): string[] {
 	if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return [];
 	const facts = node.delimiterFacets;
-	const freeText = (node.freeText?.leaves ?? []).map((leaf) => {
-		const id = findKindEntry(kindEntries, leaf)?.id;
-		if (id === undefined) throw new Error(`render-module: '${node.kind}''s free-text leaf '${leaf}' has no kind id`);
-		return `::sittir_core::delimiters::FreeTextLeaf { kind: ::sittir_core::types::KindId(${id}), name: ${rustStr(leaf)} }`;
-	});
+	const kindId = (kind: string, role: string): number => {
+		const id = findKindEntry(kindEntries, kind)?.id;
+		if (id === undefined) throw new Error(`render-module: '${node.kind}''s ${role} '${kind}' has no kind id`);
+		return id;
+	};
+	const contentKind = (role: string) => (kind: string) => `::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(${kindId(kind, role)}), name: ${rustStr(kind)} }`;
+	const freeText = (node.freeText?.leaves ?? []).map(contentKind('free-text leaf'));
+	const opened = (node.freeText?.opened ?? []).map(contentKind('opened content arm'));
 	const excluded = (node.freeText?.excluded ?? []).map(([lo, hi]) => `(${lo}, ${hi})`);
 	const gate = node.freeText?.gate === undefined ? 'None' : `Some(&[${node.freeText.gate.spellings.map(rustStr).join(', ')}])`;
 	const field = (name: string): string => {
@@ -3529,7 +3532,7 @@ function delimiterFill(node: AssembledNode, kindEntries: readonly KindEnumEntry[
 			return isNodeRequired(slot) ? `::sittir_core::render::Render::render(&${ident}, w)?;` : `if let Some(item) = &${ident} { ::sittir_core::render::Render::render(item, w)?; }`;
 		});
 	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStr(arm.text)}, single_line: ${arm.singleLine} }`);
-	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], gate: ${gate} }`;
+	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, id: ::sittir_core::types::KindId(${kindId(node.kind, 'own kind')}), free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], opened: &[${opened.join(', ')}], gate: ${gate} }`;
 	return [`        ::sittir_core::delimiters::fill(&mut ${field(facts.open)}, &mut ${field(facts.close)}, &${spec}, ctx, |w| { ${[...content, 'Ok(())'].join(' ')} })?;`];
 }
 
