@@ -21,7 +21,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_store::{Place, TriviaStore};
-use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
+use crate::trivia_table::{Assigned, Placement, TriviaSide};
 use crate::types::{ChildPosition, KindId, NodeIndex, RunId, TreeHandle, TreeId};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -417,9 +417,6 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// What the parse read off the source's layout: the tree's layer of the
     /// render options (`InferredOptions`).
     inferred: crate::options::InferredOptions,
-    /// The spaces one indentation level spans in the source: the unit's,
-    /// else the engine unit's when the source indents by tabs.
-    level_width: u32,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
@@ -427,8 +424,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The source's row starts, built on the first snapshot and shared by
     /// every later one.
     lines: std::sync::OnceLock<crate::points::LineTable>,
-    /// The tree's trivia, assigned on the first read of a side.
-    trivia: std::sync::OnceLock<TriviaTable>,
+    /// The tree's trivia, placed a region at a time on the first read of a
+    /// side the region holds.
+    trivia: Placement,
     /// The tree's depth members, found on its first depth move
     /// (`depth_move_from`).
     depth_members: std::sync::OnceLock<crate::trivia_table::DepthMembers>,
@@ -657,7 +655,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
             tree: _,
             source,
             inferred,
-            level_width: _,
             tree_id,
             lines,
             trivia,
@@ -682,7 +679,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             + source.heap_bytes()
             + inferred.heap_bytes()
             + lines.get().map_or(0, HeapBytes::heap_bytes)
-            + trivia.get().map_or(0, HeapBytes::heap_bytes)
+            + trivia.heap_bytes()
             + depth_members.get().map_or(0, HeapBytes::heap_bytes)
             + read_options.heap_bytes()
             + tables
@@ -1160,11 +1157,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// its baseline is: from the last text before it that is not whitespace,
     /// back to the run before it at most.
     fn run_text(&self, at: RunId) -> &str {
-        let table = self.trivia_table();
-        let run = table.run(at);
-        let floor = at.get().checked_sub(1).map_or(0, |before| table.run(RunId(before)).end.min(run.start)) as usize;
-        let from = self.source[..run.start as usize].trim_end().len().max(floor);
-        &self.source[from..run.end as usize]
+        &self.source[self.trivia.run_from(at) as usize..self.trivia.run(at).end as usize]
     }
 
     /// The separator before the node at `index` as an item of its parent's
@@ -1270,7 +1263,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// what the read-time options write there (`baseline_gap`).
     pub fn baseline_runs(&self, whole: bool) -> Result<Vec<(crate::trivia_table::LayoutRun, Option<crate::baseline::Tally>)>, String> {
         let mut lookups = self.lookups();
-        self.trivia_table().runs().iter().map(|&run| Ok((run, lookups.baseline_gap(run, whole)?))).collect()
+        self.placed_trivia().runs().into_iter().map(|(_, run)| Ok((run, lookups.baseline_gap(run, whole)?))).collect()
     }
 
     /// How much of its layout the tree stores apart from its read-time
@@ -1285,7 +1278,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             (layouts + slots.layouts.iter().filter(|layout| !layout.is_empty()).count(), separators + slots.separators.len())
         });
         crate::layout::StoredLayout {
-            deviations: count(self.trivia_table().run_ids().filter(|&at| lookups.deviation(at).is_some()).count()),
+            deviations: count(self.placed_trivia().runs().into_iter().filter(|&(at, _)| lookups.deviation(at).is_some()).count()),
             slots: count(slots.0),
             separators: count(slots.1),
         }
@@ -1301,12 +1294,17 @@ impl<G: EngineGrammar> ParsedTree<G> {
         })
     }
 
-    /// The tree's trivia table, assigned on first use.
-    pub fn trivia_table(&self) -> &TriviaTable {
-        self.trivia.get_or_init(|| {
-            self.grew();
-            TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width)
-        })
+    /// What the tree's trivia placement reads: its tree, source and row
+    /// starts.
+    fn trivia_source(&self) -> crate::trivia_table::Source<'_> {
+        crate::trivia_table::Source { tree: &self.tree, source: &self.source, lines: self.lines() }
+    }
+
+    /// The tree's trivia with every region placed.
+    pub fn placed_trivia(&self) -> &Placement {
+        self.grew();
+        self.trivia.place_all(self.trivia_source());
+        &self.trivia
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1336,7 +1334,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `TriviaTable::adjacency`) is no layout: it is an entry of the source,
     /// as an `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
-        let assigned = self.trivia_table().side(index, side);
+        self.grew();
+        let assigned = self.trivia.side(self.trivia_source(), &mut |at| nodes.node(at), index, side);
         if assigned.is_empty() {
             return Vec::new();
         }
@@ -1363,7 +1362,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .map(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
-                            let adjacent = self.trivia_table().adjacency(at);
+                            let adjacent = self.trivia.adjacency(self.trivia_source(), &mut |index| nodes.node(index), at);
                             let text = TriviaText::of_source(kind, &self.source, span, adjacent, None);
                             SideEntry::Source { entry: entry(SlotValue::Node(G::Trivia::from_text(text))), kind, span, adjacent }
                         })
@@ -1378,7 +1377,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .and_then(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
-                            let adjacent = self.trivia_table().adjacency(at);
+                            let adjacent = self.trivia.adjacency(self.trivia_source(), &mut |index| nodes.node(index), at);
                             let member = entry(SlotValue::Node(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
                             Some(if member.is_layout() { SideEntry::Layout(member) } else { SideEntry::Source { entry: member, kind, span, adjacent } })
                         })
@@ -1534,7 +1533,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     /// adjacency is its one carrier.
     fn deviation(&mut self, at: RunId) -> Option<G::Trivia> {
         let tree = self.tree;
-        if tree.trivia_table().run(at).spelled {
+        if tree.trivia.run(at).spelled {
             return None;
         }
         let text = tree.run_text(at);
@@ -1547,7 +1546,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     /// baseline's whitespace as a layout class reads it (`Tally::spelling`).
     fn baseline_class(&mut self, at: RunId) -> Option<KindId> {
         let tree = self.tree;
-        let gap = self.baseline_gap(tree.trivia_table().run(at), false).ok().flatten()?;
+        let gap = self.baseline_gap(tree.trivia.run(at), false).ok().flatten()?;
         tree.layout_kind(&gap.spelling())
     }
 
@@ -1558,7 +1557,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
     #[allow(clippy::option_option, reason = "`None` outside a slot's gaps; `Some(None)` inside one that no baseline reaches")]
     fn slot_class(&mut self, at: RunId) -> Option<Option<KindId>> {
         use crate::list_slots::SlotSide;
-        let run = self.tree.trivia_table().run(at);
+        let run = self.tree.trivia.run(at);
         if !run.carries {
             return None;
         }
@@ -1587,18 +1586,19 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         if let Some(slots) = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        let table = tree.trivia_table();
-        let runs = table.runs();
-        let run_at = |start: u32, end: u32| {
-            let from = runs.partition_point(|run| run.start < start);
-            runs[from..].iter().take_while(|run| run.start == start).position(|run| run.end == end).map(|at| RunId(crate::types::narrow(from + at)))
-        };
+        tree.grew();
+        tree.trivia.cover(tree.trivia_source(), &mut |at| self.node(at), index, TriviaSide::Inner);
+        let table = &tree.trivia;
+        let run_at = |start: u32, end: u32| table.run_at(start, end);
         self.goto(index);
         let slots = tree.grammar.slot_routes(&mut self.cursor).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed, run_at));
         let mut measured = NodeSlots::default();
         for (slot, SlotGaps { key, gaps }) in slots.iter().enumerate() {
             let mut side = |side: SlotSide, of: fn(&SlotGap) -> Option<RunId>| {
-                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| table.run(at).carries && !table.run(at).spelled).collect();
+                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| {
+                    let run = table.run(at);
+                    run.carries && !run.spelled
+                }).collect();
                 measured.runs.extend(carried.iter().map(|&at| (at, (slot, side))));
                 let classes: Vec<(KindId, KindId)> = carried.iter().filter_map(|&at| Some((tree.layout_kind(tree.run_text(at))?, self.baseline_class(at)?))).collect();
                 let baseline = classes.first()?.1;
@@ -1929,14 +1929,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// frames itself where the list is read as a node. The coordinate's bytes
     /// hold each item's.
     fn frame_levels<E>(&self, index: crate::types::NodeIndex, mut entries: impl FnMut(crate::types::NodeIndex, TriviaSide) -> Vec<E>) -> Vec<[Vec<E>; 3]> {
-        let table = self.trivia_table();
         let mut levels = vec![[entries(index, TriviaSide::Leading), entries(index, TriviaSide::Trailing), entries(index, TriviaSide::Inner)]];
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
-            let mut item = table.edge_item(index, side);
+            let mut item = self.trivia.edge_item(self.trivia_source(), &mut |at| node_at_index(&self.tree, at), index, side);
             while let Some(at) = item {
                 let held = entries(at, side);
                 levels.push(if side == TriviaSide::Leading { [held, Vec::new(), Vec::new()] } else { [Vec::new(), held, Vec::new()] });
-                item = table.edge_item(at, side);
+                item = self.trivia.edge_item(self.trivia_source(), &mut |index| node_at_index(&self.tree, index), at, side);
             }
         }
         levels
@@ -2116,10 +2115,9 @@ impl<G: EngineGrammar> Engine<G> {
             tree,
             source: Arc::from(source),
             inferred,
-            level_width,
             tree_id,
             lines: std::sync::OnceLock::new(),
-            trivia: std::sync::OnceLock::new(),
+            trivia: Placement::new(self.grammar.surface_kinds(), level_width),
             depth_members: std::sync::OnceLock::new(),
             read_options,
             records: std::sync::Mutex::default(),
@@ -3059,7 +3057,7 @@ mod tests {
     #[test]
     fn a_structure_only_read_records_no_region_and_a_side_read_records_its_runs_region() {
         let (tree, root) = parsed("fn f() {\n    x;\n}\nfn g() {}\n");
-        tree.trivia_table();
+        tree.placed_trivia();
         walk(&tree, root, &[], None, 8);
         assert_eq!(tree.records_rendered(), 0);
         tree.trivia_side(index_of_kind(&tree, "function_item", 1), TriviaSide::Leading);

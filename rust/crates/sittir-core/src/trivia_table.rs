@@ -34,6 +34,9 @@ use crate::heap::HeapBytes;
 use crate::types::{KindId, NodeIndex, RunId, Span};
 use std::collections::BTreeMap;
 
+mod place;
+pub use place::{Lookup, Placement, Source};
+
 /// A side of a node that holds trivia: before its first token, after its
 /// last, or, for a node with no named child, between its own tokens.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -562,7 +565,7 @@ impl Nodes {
 }
 
 /// Where the assignment puts an entry of a gap.
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Place {
     Side(NodeIndex, TriviaSide),
     Unowned,
