@@ -38937,7 +38937,7 @@ const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is no
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TildeNode>() == 0, "TildeNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 104, "TriviaNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 120, "TriviaNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TrueNode>() == 8, "TrueNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
