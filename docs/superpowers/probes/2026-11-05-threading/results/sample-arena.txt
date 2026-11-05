@@ -1,0 +1,53 @@
+main thread self samples: 12690
+entry                                        addon      v8  malloc     jit  kernel   other   total   share
+_RNvCscenOk7CTBgV_17sittir_typescript28rec    4648      35     503       0      35     289    5510   43.4%
+(outside napi)                                   0    1684      82     148     660     114    2688   21.2%
+_RNvCscenOk7CTBgV_17sittir_typescript27ren    1518      24      61       0       5      18    1626   12.8%
+_RNvCscenOk7CTBgV_17sittir_typescript25hyd    1370       2      90       0       1      43    1506   11.9%
+parse_c_callback                              1076      24      36       0       3      17    1156    9.1%
+_RNvCscenOk7CTBgV_17sittir_typescript23dis      75       0     121       0       7       1     204    1.6%
+all                                           8687    1769     893     148     711     482   12690
+
+_RNvCscenOk7CTBgV_17sittir_typescript28record_candidates_c_c
+    2674 addon   ts_tree_cursor_child_iterator_next
+    1116 addon   ts_tree_cursor_goto_descendant
+     288 other   _platform_memmove
+     142 addon   _RNvMs1_Nt5alloc3vecINtB5_3VechE17extend_from_slice17sittir_typescript
+     129 malloc  _xzm_free
+      91 addon   _RINvMs_NtNt11sittir_core5arena6parsedINtNtB9_6engine10ParsedTreeNt17sittir_typescript17TypeScriptGrammarE17re
+      80 malloc  xzm_malloc_zone_malloc_type_realloc
+      67 malloc  _xzm_xzone_malloc_tiny
+      64 addon   _RINvXs6_NtCsFUD1xnTcGl_10serde_json3serINtB6_8CompoundQINtNt5alloc3vec3VechENtB6_16CompactFormatterENtNt10ser
+
+(outside napi)
+     335 kernel  kevent
+     172 kernel  __psynch_cvwait
+     148 jit     ???
+     124 v8      v8::internal::JSDataObjectBuilder::BuildFromIterator<v8::internal::JsonParser<unsigned char>::NamedPropertyIte
+     108 kernel  __open
+     102 v8      v8::internal::JsonParser<unsigned char>::ParseJsonNumberAsDoubleOrSmi(double*, int*)
+      98 v8      v8::internal::JsonParser<unsigned char>::ParseJsonObject(v8::internal::Handle<v8::internal::Map>)
+      80 v8      v8::internal::Factory::AllocateRawWithAllocationSite(v8::internal::DirectHandle<v8::internal::Map>, v8::intern
+      54 v8      <deduplicated_symbol>
+
+_RNvCscenOk7CTBgV_17sittir_typescript27render_candidate_c_ca
+     335 addon   ts_tree_cursor_child_iterator_next
+     203 addon   <deduplicated_symbol>
+     113 addon   ts_tree_cursor_goto_sibling_internal
+      96 addon   ts_tree_cursor_goto_first_child_internal
+      60 addon   _RNCNvMse_Nt11sittir_core12trivia_tableNtB7_11TriviaTable6assignsc_0B9_
+      48 addon   _RNvNt11sittir_core12trivia_table4walk
+      40 addon   ts_tree_cursor_current_node
+      38 addon   _RNvMs8_Nt11sittir_core12trivia_tableNtB5_5Nodes6common
+      34 addon   _RNvXs1_NtNtNt4core3ops8function5implsQNCNvMs6_Nt11sittir_core6pointsNtBW_9LineTable3new0INtB7_5FnMutTRTjhEEE8
+
+_RNvCscenOk7CTBgV_17sittir_typescript25hydrate_record_c_call
+     311 addon   ts_tree_cursor_child_iterator_next
+     120 addon   _RNvXsf_NtNt4core5slice3cmpNtNt11sittir_core5types6KindIdNtB5_13SliceContains14slice_contains17sittir_typescri
+      99 addon   ts_tree_cursor_goto_sibling_internal
+      57 addon   ts_tree_cursor_goto_first_child_internal
+      44 addon   <deduplicated_symbol>
+      43 addon   ts_tree_cursor_current_field_id
+      37 addon   ts_tree_cursor_current_node
+      30 addon   ts_node_symbol
+      30 other   _platform_memset

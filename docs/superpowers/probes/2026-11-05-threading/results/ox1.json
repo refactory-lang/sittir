@@ -1,0 +1,211 @@
+{
+ "files": 2410,
+ "cpuCount": 14,
+ "rows": [
+  {
+   "tool": "oxfmt-check",
+   "threads": 1,
+   "rep": 0,
+   "wallSeconds": 0.4878838751465082,
+   "userSeconds": 0.43,
+   "sysSeconds": 0.11,
+   "peakRssBytes": 221593600,
+   "exit": 1,
+   "summary": [
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendAsyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendSyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/codegen/src/clusters/ClusterFile.ts (0ms)"
+   ]
+  },
+  {
+   "tool": "oxfmt-check",
+   "threads": 2,
+   "rep": 0,
+   "wallSeconds": 0.30711870826780796,
+   "userSeconds": 0.5,
+   "sysSeconds": 0.13,
+   "peakRssBytes": 271024128,
+   "exit": 1,
+   "summary": [
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendAsyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendSyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/codegen/src/clusters/ClusterFile.ts (0ms)"
+   ]
+  },
+  {
+   "tool": "oxfmt-check",
+   "threads": 4,
+   "rep": 0,
+   "wallSeconds": 0.2506994581781328,
+   "userSeconds": 0.68,
+   "sysSeconds": 0.17,
+   "peakRssBytes": 293076992,
+   "exit": 1,
+   "summary": [
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendAsyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendSyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/codegen/src/clusters/ClusterFile.ts (0ms)"
+   ]
+  },
+  {
+   "tool": "oxfmt-check",
+   "threads": 8,
+   "rep": 0,
+   "wallSeconds": 0.2656934168189764,
+   "userSeconds": 0.95,
+   "sysSeconds": 0.24,
+   "peakRssBytes": 337100800,
+   "exit": 1,
+   "summary": [
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendAsyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendSyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/codegen/src/clusters/ClusterFile.ts (0ms)"
+   ]
+  },
+  {
+   "tool": "oxfmt-check",
+   "threads": 14,
+   "rep": 0,
+   "wallSeconds": 0.32987370900809765,
+   "userSeconds": 1.48,
+   "sysSeconds": 0.35,
+   "peakRssBytes": 378388480,
+   "exit": 1,
+   "summary": [
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendAsyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/chip-testing/src/storage/StorageBackendSyncJsonFile.ts (0ms)",
+    "/Users/pmouli/GitHub.nosync/matter.js/codegen/src/clusters/ClusterFile.ts (0ms)"
+   ]
+  },
+  {
+   "tool": "oxlint-default",
+   "threads": 1,
+   "rep": 0,
+   "wallSeconds": 0.3828417919576168,
+   "userSeconds": 0.27,
+   "sysSeconds": 0.07,
+   "peakRssBytes": 100646912,
+   "exit": 0,
+   "summary": [
+    "Finished in 244ms on 2410 files with 93 rules using 1 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-default",
+   "threads": 2,
+   "rep": 0,
+   "wallSeconds": 0.2487745420075953,
+   "userSeconds": 0.27,
+   "sysSeconds": 0.06,
+   "peakRssBytes": 113016832,
+   "exit": 0,
+   "summary": [
+    "Finished in 118ms on 2410 files with 93 rules using 2 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-default",
+   "threads": 4,
+   "rep": 0,
+   "wallSeconds": 0.23802908277139068,
+   "userSeconds": 0.28,
+   "sysSeconds": 0.08,
+   "peakRssBytes": 117686272,
+   "exit": 0,
+   "summary": [
+    "Finished in 100ms on 2410 files with 93 rules using 4 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-default",
+   "threads": 8,
+   "rep": 0,
+   "wallSeconds": 0.18514670804142952,
+   "userSeconds": 0.27,
+   "sysSeconds": 0.08,
+   "peakRssBytes": 133169152,
+   "exit": 0,
+   "summary": [
+    "Finished in 53ms on 2410 files with 93 rules using 8 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-default",
+   "threads": 14,
+   "rep": 0,
+   "wallSeconds": 0.18365704221650958,
+   "userSeconds": 0.3,
+   "sysSeconds": 0.11,
+   "peakRssBytes": 146489344,
+   "exit": 0,
+   "summary": [
+    "Finished in 51ms on 2410 files with 93 rules using 14 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-one-rule",
+   "threads": 1,
+   "rep": 0,
+   "wallSeconds": 0.25209375005215406,
+   "userSeconds": 0.17,
+   "sysSeconds": 0.06,
+   "peakRssBytes": 91160576,
+   "exit": 0,
+   "summary": [
+    "Finished in 123ms on 2410 files with 1 rules using 1 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-one-rule",
+   "threads": 2,
+   "rep": 0,
+   "wallSeconds": 0.20229391707107425,
+   "userSeconds": 0.17,
+   "sysSeconds": 0.06,
+   "peakRssBytes": 103694336,
+   "exit": 0,
+   "summary": [
+    "Finished in 71ms on 2410 files with 1 rules using 2 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-one-rule",
+   "threads": 4,
+   "rep": 0,
+   "wallSeconds": 0.1833651252090931,
+   "userSeconds": 0.17,
+   "sysSeconds": 0.09,
+   "peakRssBytes": 120438784,
+   "exit": 0,
+   "summary": [
+    "Finished in 51ms on 2410 files with 1 rules using 4 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-one-rule",
+   "threads": 8,
+   "rep": 0,
+   "wallSeconds": 0.17441920889541507,
+   "userSeconds": 0.18,
+   "sysSeconds": 0.12,
+   "peakRssBytes": 131530752,
+   "exit": 0,
+   "summary": [
+    "Finished in 44ms on 2410 files with 1 rules using 8 threads."
+   ]
+  },
+  {
+   "tool": "oxlint-one-rule",
+   "threads": 14,
+   "rep": 0,
+   "wallSeconds": 0.16684974962845445,
+   "userSeconds": 0.18,
+   "sysSeconds": 0.13,
+   "peakRssBytes": 146079744,
+   "exit": 0,
+   "summary": [
+    "Finished in 37ms on 2410 files with 1 rules using 14 threads."
+   ]
+  }
+ ]
+}

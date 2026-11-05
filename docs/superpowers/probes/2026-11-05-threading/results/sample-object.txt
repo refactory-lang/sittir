@@ -1,0 +1,53 @@
+main thread self samples: 12546
+entry                                        addon      v8  malloc     jit  kernel   other   total   share
+(outside napi)                                   1    5190      58    1101     568     106    7024   56.0%
+_RNvCscenOk7CTBgV_17sittir_typescript15rea    1421    1831     270       1      15     133    3671   29.3%
+_RNvCscenOk7CTBgV_17sittir_typescript17ren     851      19      48       0       3      40     961    7.7%
+parse_c_callback                               729      20      36       0       1      15     801    6.4%
+_RNvCscenOk7CTBgV_17sittir_typescript23dis      34       0      51       0       3       0      88    0.7%
+new_c_callback                                   1       0       0       0       0       0       1    0.0%
+all                                           3037    7060     463    1102     590     294   12546
+
+(outside napi)
+    1101 jit     ???
+     366 v8      Builtins_FindOrderedHashMapEntry
+     334 v8      v8::internal::ScavengerCollector::CollectGarbage()
+     289 kernel  __psynch_cvwait
+     254 v8      Builtins_WeakCollectionSet
+     247 v8      v8::internal::HashTable<v8::internal::EphemeronHashTable, v8::internal::EphemeronHashTableShape>::Rehash(v8::i
+     187 v8      Builtins_LoadIC_Megamorphic
+     177 v8      v8::internal::Handle<v8::internal::OrderedHashSet>::MaybeType v8::internal::OrderedHashSet::Add<v8::internal::
+     170 v8      v8::internal::Scavenger::ScavengeObject<v8::internal::FullHeapObjectSlot>(v8::internal::FullHeapObjectSlot, v8
+
+_RNvCscenOk7CTBgV_17sittir_typescript15read_c_callback
+     218 addon   ts_tree_cursor_child_iterator_next
+     151 v8      v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Utf8DecoderBase(v8::base::Vector<unsigned char const
+     114 v8      v8::internal::JSObject::MigrateToMap(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::JSObject
+     102 v8      v8::internal::(anonymous namespace)::UpdateDescriptorForValue(v8::internal::Isolate*, v8::internal::DirectHand
+      85 addon   _RNvXsf_NtNt4core5slice3cmpNtNt11sittir_core5types6KindIdNtB5_13SliceContains14slice_contains17sittir_typescri
+      81 v8      v8::internal::TransitionArray::SearchName(v8::internal::Tagged<v8::internal::Name>, bool, int*)
+      78 v8      v8::internal::JSObject::WriteToField(v8::internal::InternalIndex, v8::internal::PropertyDetails, v8::internal:
+      76 v8      napi_define_properties
+      71 v8      v8::internal::FieldIndex::FieldIndex(bool, int, v8::internal::FieldIndex::Encoding, int, int)
+
+_RNvCscenOk7CTBgV_17sittir_typescript17render_c_callback
+     176 addon   ts_tree_cursor_child_iterator_next
+     138 addon   <deduplicated_symbol>
+      58 addon   ts_tree_cursor_goto_sibling_internal
+      55 addon   ts_tree_cursor_goto_first_child_internal
+      34 other   _platform_memmove
+      32 addon   _RNvNt11sittir_core12trivia_table4walk
+      31 addon   _RNvMs8_Nt11sittir_core12trivia_tableNtB5_5Nodes6common
+      28 addon   _RNCNvMse_Nt11sittir_core12trivia_tableNtB7_11TriviaTable6assignsc_0B9_
+      23 addon   _RNvXs1_NtNtNt4core3ops8function5implsQNCNvMs6_Nt11sittir_core6pointsNtBW_9LineTable3new0INtB7_5FnMutTRTjhEEE8
+
+parse_c_callback
+     199 addon   ts_parser_parse
+     100 addon   ts_subtree_summarize_children
+      79 addon   ts_lexer__advance
+      59 addon   ts_lex
+      55 addon   stack__iter
+      55 addon   ts_stack_push
+      31 addon   ts_language_next_state
+      23 addon   ts_parser__reduce
+      18 v8      unibrow::Utf8::Encode<unsigned short>(v8::base::Vector<unsigned short const>, char*, unsigned long, bool, bool
