@@ -413,3 +413,84 @@ Section 1's tree has about 148 new features: about 95 sub-features and about 53 
 ### Recommendation
 
 **Option 2**, at 86 features (83 after the one-item merges), against about 148 today. If that's still too many, the next step is option 3 for the 18 single-grammar core cells only, with the user's word. Splitting the 58 feature cells further by meaning should wait for a grammar that holds part of one.
+
+## 5. The nine-language scrub
+
+The cuts above follow the differences between three grammars. This section tests them against six more languages, so the cuts follow language families instead. The rule for real grammars doesn't change. The six only decide where to cut and how to name.
+
+### Sources and method
+
+**The matrix** is [`2026-11-05-portable-features-matrix.tsv`](2026-11-05-portable-features-matrix.tsv). It has one row per vocabulary kind (628) and per feature-owned or core-gap member (233), with nine columns. Each cell is H (has), L (lacks) or D (different shape).
+
+- **Measured: python, rust and typescript,** from their bindings.
+- **Measured: go and c,** from probe bindings on `probe/feature-scrub`. Each language was bootstrapped with `tool bootstrap-grammar` and left unstable. Its `bindings.scm` claims the vocabulary content the language has, and `derive()` gives the held set.
+  - A measured cell is H when the grammar claims the path, or routes the member. Otherwise the paper judgment decides between L and D.
+  - Go makes 140 claims (162 kinds held), and C makes 112 (130 kinds held).
+- **Paper: java and c#** (bootstrap blocked by core defects, see below), **swift and c++.** These are language knowledge, checked against each upstream grammar's `node-types.json` and `grammar.json` at the pinned tag. Spot-checked witness nodes all exist, except two. C++ has no `module` or `import` node, because it uses `#include`, a different shape. Java's text blocks lex as an ordinary `string_literal`. The judgments are rules, so each cell traces to one: `docs/superpowers/probes/2026-11-05-feature-scrub/paper_rules.py` on the probe branch.
+- **Pins** (each a tagged release of the maintained repo): go v0.25.0, java v0.23.5, c-sharp v0.23.5 and c v0.24.2 (npm had only 0.24.1, so the git tag); c++ v0.23.4 and swift 0.7.3 (alex-pinkus). Downloaded files went into their own directories, and nothing from them was run. Bootstrap's `pnpm install` left every new package's build script unapproved.
+- **Calibration of paper against measured.** The paper rules agree with the measured claims on 92% of rows for Go and 94% for C.
+  - Go's disagreements:
+    - visibility by capitalization is claimed (paper said "different shape"), and the compiler enforces it, so measured is right;
+    - `++` and `--` are claimed though they're statements;
+    - labels are on labeled statements (paper said loops).
+  - The rest are the probe bindings' gaps: number-literal facets, `left`/`right`, receivers and a few members. They're measurement gaps, not language facts, and they show up as splits charged to Go and C below.
+
+### Bootstrap blockers
+
+| Language | Blocker | Class |
+|---|---|---|
+| all four | `bootstrap-grammar` writes `grammar.sittir.ts` importing the upstream grammar directly. Every other grammar imports it through `base.ts`, and `tree-sitter generate` fails with `ERR_MODULE_NOT_FOUND …/base.ts`. Worked around by writing `base.ts` by hand. | core (tooling: the bootstrap template is behind the package layout) |
+| all four | Emit throws until the grammar declares `options.indent`, and the template declares none. A plain `gen` (without `--all`) fails on a missing `.sittir/resolutions.json`, because the transpile and generate chain runs only under `--all`. | core (tooling) |
+| go | Allowed for the probe: `unclassifiable-shape` ×2, `union-slot-mixed-row`, `separator-default-undeclared` ×7, `dropped-token` ×4 | authoring |
+| go | `--all` stops in the render-module emitter with a raw `Error: 'chan<-' is stored as a kind id, but no fixed-literal kind was collected for it`. Measured without the render module. | core |
+| java | A raw `Error: display name: 'decimal_integer_literal_arm1' is not a kind of this grammar` while collecting grammar diagnostics, so there's no model. Java is on paper. | core |
+| c# | `layer-not-enrich-fixpoint`: enrich changes `subpattern_arm` on a second pass. With that allowed, the template emitter throws `emitRule: PATTERN with no field name and no lookupSlot hit for kind 'namespace_declaration'`. C# is on paper. | core (two defects) |
+| c | Allowed for the probe: `storagename-collision` (type_definition, type_descriptor), `display-union-mixed` (primitive_type), `dropped-token` (case_statement) | authoring |
+| go, c bindings | A kind with only refining claims whose paths share no parent (`type_spec`, `pointer_expression`) must claim the kind itself | authoring |
+
+### Re-cutting option 2 against nine languages
+
+A cell is a (feature or core area, holder set over python, rust and typescript) piece, as in option 2. A fourth grammar *splits* a cell when it holds part of it.
+- **Families:** C-procedural is go and c. C-family object-oriented is java, c# and c++. Swift stands alone.
+- **The ceiling:** splits in parent and core cells (8 to 17 per language) can't be avoided by any cut of sub-features, so the comparison counts sub-feature cells.
+
+| Cut | Features | Each real grammar holds | Sub-feature cells a fourth grammar splits (go, java, c#, c, swift, c++) |
+|---|---|---|---|
+| Option 2, cut by the three grammars | 83 | python 31, rust 30, typescript 38 | 20, 26, 32, 13, 33, 25 (149 in all) |
+| **Option 2 with targeted family splits (recommended)** | **104** | python 45, rust 38, typescript 45 | **12, 15, 21, 9, 21, 16 (94)** |
+| Option 2 with every sub-feature cell split by family | 162 | python 51, rust 63, typescript 81 | 3, 7, 18, 4, 0, 15 (47) |
+| Every cell by its full nine-language signature | 334 | — | 7 to 35 per language when that language is held out of the cut |
+
+The **targeted** cut splits a cell by family only where that saves at least two splits per feature it adds. That's 15 cells: +21 features, −55 splits. It's the knee. Past it, each added feature saves about one split, so cutting more pays now for languages that may never be bootstrapped. A split costs the same later as it does now. The family lines it draws:
+- **Core operators** (python and typescript): `~` and unary `+` (C-family, held by all six) part from `**` and `in` (held by none).
+- **Python-only operators:** identity (`is`, which Swift's `===` shares) parts from comparators and chains.
+- **Comments:** block comments (all of the C family) part from doc comments (c, swift and c++ conventions) and from rust's inner doc comments.
+- **Declarations:** fields, modifiers and attribute content (every C-family language) part from bodiless function signatures (go). `declaration.constant` (go and c#) parts from `argument`.
+- **Structs:** the struct declaration (C family and swift) parts from struct literals and fields (C-procedural: go and c) and from rust's tuple and unit structs.
+- **Destructuring:** the wildcard `_` (java, c# and swift) parts from tuple patterns (swift).
+- **Imports:** wildcard imports (go, java and c++) part from aliases (go and c#).
+- **ParametricPolymorphism, python's piece:** variadic type parameters (swift's and c++'s packs) part from ParamSpec and from generic constructors.
+- **Literals, python's piece:** triple-quoted strings (java text blocks, c# and swift) part from implicit concatenation (c and c++) and from `...`.
+- **Expressions:** map literals (go, c# and swift) part from set literals and `**` spreads.
+
+The name for each comes from its family, for example `CFamilyUnaryOperators`, `BlockComments`, `MultilineStrings` and `WildcardImports`.
+
+### Coverage: which language the current three cover worst
+
+- **Measured:** the claims name 74% of Go's upstream node kinds and 52% of C's.
+  - Go's misses are mostly list containers, plus constructs the vocabulary has no content for: channels, `go`, `select`, send and receive (ConcurrencySyntax is marker-only), `defer` (DeferredExecution is marker-only), `goto`, `fallthrough`, type sets (`~T`, unions in constraints) and `iota`.
+  - C's misses are mostly the preprocessor and the MS and GNU extensions, plus `sizeof`, `alignof`, `offsetof`, `goto`, bitfields and designators.
+- **Rows held:** C# holds the most vocabulary rows of the six (402), so the three cover its constructs broadly, but its cells cut differently: 21 splits.
+- **Swift is covered worst.** It has the most splits under every cut (33, then 21), and its defining constructs have no vocabulary home or a misaligned one: optionals and `if let`/`guard let`, `guard`, `defer`, protocol extensions and conformance, property wrappers, result builders, actors, key paths, `inout`, `some` and `any`. **Swift is the likely first language to bootstrap**, and C# is next.
+- **Go is the cheapest fourth grammar:** 12 splits under the recommended cut, almost all in the C-procedural family.
+
+### Recommendation
+
+The **targeted family cut: 104 features**, against 83 for option 2 cut by three grammars and about 148 for section 1.
+- **Real grammars:** python holds 45 sub-features, rust 38 and typescript 45.
+- **A fourth grammar** splits 9 to 21 sub-feature cells, against 13 to 33 before.
+- **Every name is a family line,** not a set of grammars.
+
+Two findings go with it:
+- ConcurrencySyntax and DeferredExecution, today marker-only, are where Go's (and later Swift's) concurrency and `defer` belong.
+- The bootstrap template is behind the package layout. Fixing it (`base.ts`, an `indent` option, the chain outside `--all`) is a small tooling task that every future bootstrap pays for otherwise.
