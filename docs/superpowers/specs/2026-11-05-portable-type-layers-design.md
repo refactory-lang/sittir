@@ -31,6 +31,7 @@ These layers are hard to follow and to change. They also give the wrong answer a
 - **Features keep gating through G.** A grammar's feature set is part of its map, so a member a grammar lacks is explained by the missing feature.
 - **Content is only added, never subtracted.** A feature is the unit of addition: a grammar that has a feature holds every path and member in it. Where a grammar would hold only part of a feature, the feature is decomposed into sub-features along that line, and the grammar has the ones it fully holds. The core counts the same way: core content a grammar lacks moves into a feature. So G carries no list of paths and no removed members.
 - **No generic language holds every feature.** Agnostic code targets the core or a standard composition: authored feature packages, such as object-oriented or c-like, that combine standard feature sets. A grammar's feature set is made of packages, single features and its own language features.
+- **Features nest and compose without limit.** A feature extends any number of features, at any depth. A standard composition is a feature with no content of its own, so features and compositions are one concept. Folders are where a feature's files live. They don't limit what it extends.
 - **A language ships its own features.** What only one language has, its conventions and edge cases, forms language features. They're generated and shipped with the grammar package, and they work like vocabulary features: the grammar's feature set includes them, and they're additions only. Content already in the shared vocabulary stays there, including content only one grammar claims today. Language features cover only what the vocabulary doesn't have.
 - **A grammar's composition states what the language has.** It stays authored, and a guard holds the grammar's claims equal to it. Each gap is closed before the work lands: by writing the missing claim where the language has the construct, or by splitting the feature where it doesn't.
 - **Read types are honest.** Where the portable reader returns a raw low-level node for a claimed kind, the read type says so.
@@ -98,9 +99,10 @@ These layers are hard to follow and to change. They also give the wrong answer a
 
 ### Standard compositions (authored)
 
-- **Packages:** a standard composition is an authored package of vocabulary features, and it may include other packages. Examples are object-oriented and c-like.
+- **Packages are features.** A standard composition is an authored feature with no content of its own that extends the features it combines, any of which may themselves be compositions. Examples are object-oriented and c-like.
+- **Composition is unlimited.** Any feature extends any number of features at any depth. A piece that needs two parents (protected constructors, say) extends both.
 - **Where they live:** packages are part of the shared vocabulary, beside the features they combine.
-- **Membership:** a grammar has a package when it has every feature in it. A grammar's feature set names the packages it has, plus single features and its language features.
+- **Membership:** a grammar has a feature when it holds the feature's own content and every feature it extends. A grammar's feature set is itself a composition: the features it has, its language features included.
 - **Content outside a composition:** under a composition, a value whose path lies outside it reads as its nearest ancestor inside the composition, as `SubKindOf` makes a refinement assignable to its parent today. Content with no ancestor there reads as an opaque member of its namespace. That covers paths in language features and paths in vocabulary features the composition doesn't include.
 
 ### Language features (generated, shipped with the grammar)

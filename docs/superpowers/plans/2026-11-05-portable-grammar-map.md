@@ -48,6 +48,7 @@
   - Python's convention-spelled features get claims by name or decorator, in their own task.
   - Shape mismatches move to a sub-feature the language lacks (tracked as an issue).
   - Marker-only features count as trivially held.
+  - Features compose without limit: a feature extends any number of features, at any depth. Packages are features with no content of their own. A grammar holds a feature when it holds the feature's own content and every feature it extends.
 
 ## Review Focus
 
@@ -71,8 +72,10 @@
   - each sub-feature that's split out, with its folder under `packages/types/src/vocabulary/features/`, its paths and members, and the parent it extends;
   - each grammar's held set after the split.
 
-  It covers Visibility on both axes, struct patterns as Structs' parent, the moves for call type arguments and loop labels, and every lacked cluster from the inventory (TypeAnnotations, Modules, Destructuring, ParametricPolymorphism, BoundedQuantification, StringInterpolation, RawStrings, ResourceManagement, python Classes and Accessors). A path needing two pieces names which folder it sits in under the nesting rule.
-- [ ] **Step 2: Standard packages.** Propose the first packages (object-oriented, c-like, and any others the compositions suggest) as feature lists, with each grammar's membership.
+  It covers Visibility on both axes, struct patterns as Structs' parent, the moves for call type arguments and loop labels, and every lacked cluster from the inventory (TypeAnnotations, Modules, Destructuring, ParametricPolymorphism, BoundedQuantification, StringInterpolation, RawStrings, ResourceManagement, python Classes and Accessors).
+
+  Features form a graph, not a tree: a feature extends any number of features at any depth. A piece that needs two pieces extends both, and its folder is only where its files live.
+- [ ] **Step 2: Standard packages.** Propose the first packages (object-oriented, c-like, and any others the compositions suggest), each as a feature with no content of its own that extends the features it combines, with each grammar's membership.
 - [ ] **Step 3: The Python mapping.** For Visibility (`_x`, `__x`), Accessors (`@property`), AbstractClasses (`ABC`, `@abstractmethod`), ExplicitOverrides (`@override`) and NullableTypes (`X | None`, `Optional[X]`), give each claim and the vocabulary fact it states. Flag any construct Python doesn't state.
 - [ ] **Step 4: Commit the note to master** (docs only), and send it to brainstorm. Brainstorm takes it to the maintainer. Wait for approval.
 
@@ -109,10 +112,10 @@
 
 **Interfaces:**
 - Produces (in `map.ts`):
-  - `interface GrammarMap { readonly features: string; readonly overrides: object; readonly inputs: object }`;
+  - `interface GrammarMap { readonly features: object; readonly overrides: object; readonly inputs: object }`. Here `features` is the grammar's composition interface (today's `V.PythonFeatures` and its siblings), and "has F" is `G['features'] extends F`, so gating works at any depth of composition;
   - `type Slot<G extends GrammarMap, P extends string, M extends string, D> = P extends keyof G['overrides'] ? M extends keyof G['overrides'][P] ? G['overrides'][P][M] : D : D`;
   - `type Fits<G extends GrammarMap>`: a mapped check over the keys `G['overrides']` actually holds. Each must name a vocabulary path and member, and its type must be assignable to that member's default under `G`. It resolves to `true` or to an error type naming the path and member;
-  - `type Contract<F extends string>`: a `GrammarMap` with `features: F` and no overrides;
+  - `type Contract<F extends object>`: a `GrammarMap` with `features: F` and no overrides;
   - `type Assert<T extends true> = T`.
 - Every default admits `V.Unmapped`, so an override holding an unclaimed kind fits it. `V.Unmapped<'<grammar>:<kind>'>` resolves to that kind's low-level parsed node type, replacing the phantom shape.
 - Produces (emitter): `emitGrammarMap(input: PortableTypedInput, exact: ExactSlots): string`. It writes `export interface <Grammar>Map extends GrammarMap`, with an override entry only where the exact set differs from the member's default, and ends with `type _fits = Assert<Fits<<Grammar>Map>>`.
@@ -211,8 +214,8 @@
 ### Task 7: Standard packages and `PortableEngine<C>`
 
 **Files:**
-- Create: `packages/types/src/vocabulary/packages.ts` (the approved packages)
-- Modify: `@sittir/types`, adding `PortableEngine<C extends string = never>`, where `never`, no features, is the core
+- Create: the approved packages, each a feature folder under `packages/types/src/vocabulary/features/` with no content of its own
+- Modify: `@sittir/types`, adding `PortableEngine<C extends object = {}>`, where `{}`, no features, is the core
 - Test: `packages/types/tests/portable-engine.test-d.ts`
 
 **Interfaces:**
