@@ -816,6 +816,91 @@ describe('imageOf', () => {
 		expect([read.int32(0x1004), read.int32(0x1008)]).toEqual([-12, undefined]);
 		expect([read.threadLocal(0x2008), read.threadLocal(0x1004), read.threadLocal(0x2018)]).toEqual([true, false, false]);
 	});
+
+	it('sizes each ELF function by its symbol, leaving out a symbol sized 0 and one that is no function', () => {
+		const symtab = 0x100;
+		const bytes = Buffer.alloc(symtab + 6 * 24);
+		bytes.writeUInt32LE(0x464c457f, 0);
+		bytes[4] = 2;
+		bytes[5] = 1;
+		bytes.writeBigUInt64LE(0x40n, 0x28);
+		bytes.writeUInt16LE(0x40, 0x3a);
+		bytes.writeUInt16LE(1, 0x3c);
+		bytes.writeUInt32LE(2, 0x40 + 4);
+		bytes.writeBigUInt64LE(BigInt(symtab), 0x40 + 0x18);
+		bytes.writeBigUInt64LE(5n * 24n, 0x40 + 0x20);
+		bytes.writeBigUInt64LE(24n, 0x40 + 0x38);
+		const symbol = (at: number, info: number, address: number, size: number) => {
+			const entry = symtab + at * 24;
+			bytes[entry + 4] = info;
+			bytes.writeBigUInt64LE(BigInt(address), entry + 8);
+			bytes.writeBigUInt64LE(BigInt(size), entry + 16);
+		};
+		symbol(0, 0x02, 0x1000, 0x5c);
+		symbol(1, 0x12, 0x1000, 0x5c);
+		symbol(2, 0x02, 0x2000, 0);
+		symbol(3, 0x00, 0x3000, 0);
+		symbol(4, 0x01, 0x4000, 8);
+		symbol(5, 0x02, 0x5000, 0x10);
+		expect([...imageOf(bytes).extents!]).toEqual([[0x1000, 0x5c]]);
+		expect(imageOf(peImage()).extents).toBeUndefined();
+	});
+});
+
+describe('function extents', () => {
+	const STEP = '<sittir_x::Node as sittir_core::codec::wire::Steps<sittir_x::TriviaNode>>::decode_step';
+	const NEXT = '<sittir_x::Node as sittir_core::codec::wire::Steps<sittir_x::TriviaNode>>::encode_step';
+	const STUB = 'e843419@0005_000085da_344';
+	const at = (address: number, ins: string): string => `    ${address.toString(16)}: \t${ins}`;
+	const label = (address: number, name: string): string => `${address.toString(16).padStart(16, '0')} <${name}>:`;
+	const erratum = [
+		...ARM_ELF,
+		label(0x1000, STEP),
+		at(0x1000, 'stp x29, x30, [sp, #-0x10]!'),
+		at(0x1004, `b 0x1100 <${STUB}>`),
+		at(0x1008, 'mov w8, #0x2'),
+		at(0x100c, 'bl 0x2000 <core::panicking::panic_in_cleanup>'),
+		at(0x1010, `b 0x2100 <${NEXT}>`),
+		label(0x1100, STUB),
+		at(0x1100, 'ldr q0, [x8, #0x5b0]'),
+		at(0x1104, `b 0x1008 <${STEP}+0x8>`),
+		at(0x1108, 'udf #0x0'),
+		label(0x2000, 'core::panicking::panic_in_cleanup'),
+		at(0x2000, 'ret'),
+		label(0x2100, NEXT),
+		at(0x2100, 'ret')
+	];
+	const sized = new Map([
+		[0x1000, 0x10],
+		[0x1100, 8],
+		[0x2000, 4],
+		[0x2100, 4]
+	]);
+
+	it('ends an ELF function where its symbol ends, so a linker stub block after it adds no tail call', async () => {
+		const dis = await disassemble(erratum, { ...image(), extents: sized });
+		expect(names(dis, named(dis, STEP).tails)).toEqual([STUB]);
+		expect(names(dis, named(dis, STEP).calls)).toEqual(['core::panicking::panic_in_cleanup']);
+		expect(named(dis, STEP).unresolved).toEqual([]);
+		expect(named(dis, STUB)).toMatchObject({ frame: 0, calls: new Set(), tails: new Set(), unresolved: [] });
+		const unsized = await disassemble(erratum, image());
+		expect(names(unsized, named(unsized, STEP).tails).sort()).toEqual([NEXT, STUB].sort());
+	});
+
+	it('extends a function its symbol table gives no size to the next label', async () => {
+		const dis = await disassemble(erratum, { ...image(), extents: new Map([...sized].filter(([start]) => start !== 0x1000)) });
+		expect(names(dis, named(dis, STEP).tails).sort()).toEqual([NEXT, STUB].sort());
+	});
+
+	it.each(['b', 'bl', 'cbz x0,'])('reads a %s into code that no function owns as unread', async (op) => {
+		const dis = await disassemble(
+			[...erratum, label(0x3000, 'sittir_x::f'), at(0x3000, `${op} 0x1010 <${STEP}+0x10>`), at(0x3004, 'ret')],
+			{ ...image(), extents: new Map([...sized, [0x3000, 8]]) }
+		);
+		const f = named(dis, 'sittir_x::f');
+		expect(f.unresolved.map((site) => site.ins)).toEqual([`${op} 0x1010 <${STEP}+0x10>`]);
+		expect([...f.calls, ...f.tails]).toEqual([]);
+	});
 });
 
 const PE_BASE = 0x180000000;
