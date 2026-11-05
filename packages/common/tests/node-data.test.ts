@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carryPlace, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
+import { markEdited, detachCoordinates, carryPlace, holdReadTree, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
@@ -285,5 +285,27 @@ describe("a rebuilt list item's changed edges", () => {
 	it('names the changed edge on the content a rebuilt wrapper holds, not on the wrapper', () => {
 		const wrapper = { $type: ATTRIBUTED, _content: b };
 		expect(second(other, wrapper).$_layout).toBeUndefined();
+	});
+});
+
+describe('holding a tree', () => {
+	const CYCLE = 'a node tree holds itself: a value is its own descendant';
+
+	it('refuses, by name, a copy that holds itself', () => {
+		const node: { $type: number; _items: unknown[] } = { $type: 1, _items: [] };
+		node._items.push(node);
+		expect(() => holdTree(node, mintTreeToken(1))).toThrow(CYCLE);
+	});
+
+	it('holds a child two slots share, through both', () => {
+		const shared = { $type: 2 };
+		const token = mintTreeToken(1);
+		holdTree({ $type: 1, _left: shared, _right: shared }, token);
+		expect(treeTokenOf(shared)).toBe(token);
+	});
+
+	it("walks unchecked only what a read returned", () => {
+		// @ts-expect-error a tree a caller built is not a read's output
+		holdReadTree({ $type: 1 }, mintTreeToken(1));
 	});
 });

@@ -14,13 +14,13 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { readStub, recordOf } from './record-view.ts';
-import { readEntries, readUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
+import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
@@ -127,7 +127,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live, `index` is past its last node, or the grammar's model has no
 	 *   route for a child, naming the kind, the child and the index.
 	 */
-	read(treeId: number, index: number, depth?: number): TNode;
+	read(treeId: number, index: number, depth?: number): TNode & ReadOutput;
 	/**
 	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
 	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
@@ -144,7 +144,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws when the tree is not live, `index` is past its last node, or `side` is none of the three.
 	 */
-	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
+	triviaSide(treeId: number, index: number, side: TriviaSideName): ReadOutput[];
 	/**
 	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
 	 *
@@ -158,7 +158,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	unitSides(treeId: number, index: number): unknown[];
+	unitSides(treeId: number, index: number): ReadOutput[];
 	/**
 	 * The stored layout of each list slot of the node at descendant `index` of tree `treeId` that
 	 * stores any: each `{ slot, before?, after?, separator? }`, by its slot's wire key.
@@ -640,9 +640,9 @@ export function createNativeEngine<
 				},
 				options: parsed.options,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-				triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
+				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
-				unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
+				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
 				separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
