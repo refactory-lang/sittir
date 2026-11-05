@@ -37,6 +37,17 @@ describe('a hash run carried from a read', () => {
 	});
 });
 
+describe("a raw string's prefix reads as its member and builds back", () => {
+	it.each(['r"a"', 'br#"a"b"#', 'cr##"a"#b"##'])('%s', (source) => {
+		const read = (rs.parse(`const X: &str = ${source};\n`) as unknown as {
+			statements(): readonly { value(): { prefix(): 'r' | 'br' | 'cr'; stringContent(): { $text(): string } } }[];
+		}).statements()[0]!.value();
+		expect(source.startsWith(read.prefix())).toBe(true);
+		const built = b.rawStringLiteral({ prefix: read.prefix(), stringContent: b.rawStringLiteralContent(read.stringContent().$text()) });
+		expect(String(built.$render())).toBe(source);
+	});
+});
+
 describe('a block comment whose content would end it early', () => {
 	it('refuses content that closes the comment', () => {
 		expect(() => b.blockComment(b.blockCommentRegular(' a */ fn x() {} /* b '))).toThrow(/block_comment: content .* cannot sit between/);

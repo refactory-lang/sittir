@@ -132,6 +132,39 @@ describe("a string's read content is checked under the prefix it is seated under
 	});
 });
 
+describe("a string's prefix reads as its canonical member", () => {
+	it.each([
+		['"x"', undefined],
+		['rb"x"', 'rb'],
+		['BR"x"', 'rb'],
+		['bR"x"', 'rb'],
+		['Rb"x"', 'rb'],
+		['F"x"', 'f'],
+		['fR"{x}"', 'rf'],
+		['T"x"', 't'],
+		['U"x"', 'u'],
+		['UR"x"', 'ur'],
+		['bf"x"', undefined]
+	] as const)('%s reads %j', (source, member) => {
+		const read = readString(source);
+		expect(read.prefix()).toBe(member);
+		expect(py.render(py.parse(`${source}\n`)).toString()).toBe(`${source}\n`);
+	});
+
+	it.each([
+		['BR"x"', 'rb"x"'],
+		['Rf"{x}"', 'rf"{x}"'],
+		["F'a'", 'f"a"']
+	] as const)('rebuilds %s through the builder in canonical spelling', (source, built) => {
+		const read = readString(source) as unknown as { prefix(): 'rb' | 'rf' | 'f'; contents(): never };
+		expect(rendered(b.string({ prefix: read.prefix(), contents: read.contents() }))).toBe(built);
+	});
+
+	it('reads a built spelling as its member', () => {
+		expect(b.string({ prefix: 'Rb', contents: content('x') }).prefix()).toBe('rb');
+	});
+});
+
 describe('a raw string whose content is only escape pairs reads the pairs as content and builds them back', () => {
 	it.each([
 		['r"\\\\"', 'r', 'r"\\\\"'],

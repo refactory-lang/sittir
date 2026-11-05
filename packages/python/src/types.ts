@@ -5701,46 +5701,7 @@ export interface StringStart {
 		readonly prefix: SlotHint<'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt', true>;
 		readonly quote: SlotHint<'"' | "'" | '"""' | "'''">;
 	};
-	readonly prefix: () =>
-		| 'r'
-		| 'R'
-		| 'b'
-		| 'B'
-		| 'f'
-		| 'F'
-		| 't'
-		| 'T'
-		| 'u'
-		| 'U'
-		| 'rb'
-		| 'rB'
-		| 'Rb'
-		| 'RB'
-		| 'br'
-		| 'bR'
-		| 'Br'
-		| 'BR'
-		| 'rf'
-		| 'rF'
-		| 'Rf'
-		| 'RF'
-		| 'fr'
-		| 'fR'
-		| 'Fr'
-		| 'FR'
-		| 'rt'
-		| 'rT'
-		| 'Rt'
-		| 'RT'
-		| 'tr'
-		| 'tR'
-		| 'Tr'
-		| 'TR'
-		| 'ur'
-		| 'uR'
-		| 'Ur'
-		| 'UR'
-		| undefined;
+	readonly prefix: () => 'r' | 'b' | 'f' | 't' | 'u' | 'rb' | 'rf' | 'rt' | 'ur' | undefined;
 	readonly quote: () => '"' | "'" | '"""' | "'''" | '`';
 }
 

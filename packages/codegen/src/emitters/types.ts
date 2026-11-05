@@ -90,7 +90,8 @@ import {
 	importLocalName,
 	isDeclaredSupertype,
 	needsNonEmptyHoist,
-	quoteKey
+	quoteKey,
+	spelledReadType
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -1042,7 +1043,7 @@ function emitInterface(
 			} else if (hasBlankArm(f)) {
 				lines.push(`  readonly ${propName}: () => ${slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries).input} | undefined;`);
 			} else {
-				lines.push(`  readonly ${propName}: () => ${storageType}${opt ? ' | undefined' : ''};`);
+				lines.push(`  readonly ${propName}: () => ${spelledReadType(f) ?? storageType}${opt ? ' | undefined' : ''};`);
 			}
 		}
 	}

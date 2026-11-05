@@ -45,8 +45,8 @@ describe('the string claims and the prefix enum agree', () => {
 		expect(claimsOf('u"x"')).toContain('literal.string.unicode');
 	});
 
-	it('reads every spelling in the enum by its facets', () => {
-		for (const { value } of prefixes) expect(stringOf(`${value}"x"`).prefix()).toBe(value);
+	it('reads every spelling in the enum as its member', () => {
+		for (const { value, canonical } of prefixes) expect(stringOf(`${value}"x"`).prefix()).toBe(canonical ?? value);
 	});
 
 	describe('a read-only spelling, which is read and never built', () => {

@@ -5,7 +5,11 @@
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
+import type * as T from '../src/types.ts';
 import { ir } from '../src/ir-strict.ts';
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
 
 export function rawStringPrefixes(): void {
 	const stringContent = ir.rawStringLiteralContent('x');
@@ -18,4 +22,9 @@ export function rawStringPrefixes(): void {
 	ir.rawStringLiteral({ prefix: 'R', stringContent });
 	// @ts-expect-error the hash run is derived, never an input
 	ir.rawStringLiteral({ prefix: 'r', hashes: '#', stringContent });
+}
+
+export function aReadPrefixIsAMember(read: T.RawStringLiteral.Parsed): void {
+	expectTrue<Equals<ReturnType<typeof read.prefix>, NonNullable<Parameters<typeof ir.rawStringLiteral>[0]['prefix']>>>();
+	ir.rawStringLiteral({ prefix: read.prefix(), stringContent: ir.rawStringLiteralContent('x') });
 }

@@ -13,6 +13,7 @@ import {
 	isBuilderlessPunctuationLeaf,
 	isHiddenPresenceMarker,
 	isDelimiterToken,
+	spelledReadOf,
 	storageKindIdByNameOf
 } from '../compiler/model/node-map.ts';
 import type {
@@ -1073,6 +1074,21 @@ export function blankFromInput(blank: boolean, expr: string): string {
 
 export function blankForRead(blank: boolean, expr: string): string {
 	return blank ? `blankArmRead(${expr})` : expr;
+}
+
+export function spelledReadImports(nodeMap: NodeMap): readonly string[] {
+	return [...nodeMap.nodes.values()].some((node) => node.slots.some((slot) => spelledReadOf(slot) !== undefined)) ? ['spelledMember'] : [];
+}
+
+export function spelledReadExpr(slot: AssembledNonterminal, expr: string): string {
+	const spelled = spelledReadOf(slot);
+	return spelled === undefined ? expr : `spelledMember(${expr}, ${JSON.stringify(spelled.spellings)})`;
+}
+
+export function spelledReadType(slot: AssembledNonterminal): string | undefined {
+	return spelledReadOf(slot)
+		?.members.map((member) => JSON.stringify(member))
+		.join(' | ');
 }
 
 export interface LeadingOptions {

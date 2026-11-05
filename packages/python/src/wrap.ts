@@ -35,7 +35,8 @@ import {
 	triviaSide,
 	triviaInner,
 	blankArmRead,
-	blankArmStored
+	blankArmStored,
+	spelledMember
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -5800,47 +5801,80 @@ export function wrapStringStart(data: T.StringStart, tree: TreeHandle): T.String
 		...data,
 		$type: TSKindId.StringStart as const,
 		prefix() {
-			return hydrateSlot<
-				| 'r'
-				| 'R'
-				| 'b'
-				| 'B'
-				| 'f'
-				| 'F'
-				| 't'
-				| 'T'
-				| 'u'
-				| 'U'
-				| 'rb'
-				| 'rB'
-				| 'Rb'
-				| 'RB'
-				| 'br'
-				| 'bR'
-				| 'Br'
-				| 'BR'
-				| 'rf'
-				| 'rF'
-				| 'Rf'
-				| 'RF'
-				| 'fr'
-				| 'fR'
-				| 'Fr'
-				| 'FR'
-				| 'rt'
-				| 'rT'
-				| 'Rt'
-				| 'RT'
-				| 'tr'
-				| 'tR'
-				| 'Tr'
-				| 'TR'
-				| 'ur'
-				| 'uR'
-				| 'Ur'
-				| 'UR'
-				| undefined
-			>(this, '_prefix', tree);
+			return spelledMember(
+				hydrateSlot<
+					| 'r'
+					| 'R'
+					| 'b'
+					| 'B'
+					| 'f'
+					| 'F'
+					| 't'
+					| 'T'
+					| 'u'
+					| 'U'
+					| 'rb'
+					| 'rB'
+					| 'Rb'
+					| 'RB'
+					| 'br'
+					| 'bR'
+					| 'Br'
+					| 'BR'
+					| 'rf'
+					| 'rF'
+					| 'Rf'
+					| 'RF'
+					| 'fr'
+					| 'fR'
+					| 'Fr'
+					| 'FR'
+					| 'rt'
+					| 'rT'
+					| 'Rt'
+					| 'RT'
+					| 'tr'
+					| 'tR'
+					| 'Tr'
+					| 'TR'
+					| 'ur'
+					| 'uR'
+					| 'Ur'
+					| 'UR'
+					| undefined
+				>(this, '_prefix', tree),
+				{
+					R: 'r',
+					B: 'b',
+					F: 'f',
+					T: 't',
+					U: 'u',
+					rB: 'rb',
+					Rb: 'rb',
+					RB: 'rb',
+					br: 'rb',
+					bR: 'rb',
+					Br: 'rb',
+					BR: 'rb',
+					rF: 'rf',
+					Rf: 'rf',
+					RF: 'rf',
+					fr: 'rf',
+					fR: 'rf',
+					Fr: 'rf',
+					FR: 'rf',
+					rT: 'rt',
+					Rt: 'rt',
+					RT: 'rt',
+					tr: 'rt',
+					tR: 'rt',
+					Tr: 'rt',
+					TR: 'rt',
+					uR: 'ur',
+					Ur: 'ur',
+					UR: 'ur'
+				}
+			);
 		},
 		quote() {
 			return hydrateSlot<'"' | "'" | '"""' | "'''" | '`'>(this, '_quote', tree);

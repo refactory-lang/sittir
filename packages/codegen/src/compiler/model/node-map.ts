@@ -298,9 +298,28 @@ export function memberOf(v: NodeOrTerminal): string | undefined {
 	return v.canonical ?? v.value;
 }
 
-export function buildableMembersOf(slot: { readonly values: readonly NodeOrTerminal[] }): readonly string[] | undefined {
+type SpelledSlot = { readonly values: readonly NodeOrTerminal[] };
+
+function memberValuesOf(slot: SpelledSlot): readonly (NodeRef & { value: string })[] | undefined {
 	if (!slot.values.some((v) => v.canonical !== undefined || v.readOnly === true)) return undefined;
-	return slot.values.filter((v): v is NodeRef & { value: string } => isTerminalValue(v) && memberOf(v) === v.value && v.readOnly !== true).map((v) => v.value);
+	return slot.values.filter((v): v is NodeRef & { value: string } => isTerminalValue(v) && memberOf(v) === v.value);
+}
+
+export function buildableMembersOf(slot: SpelledSlot): readonly string[] | undefined {
+	return memberValuesOf(slot)
+		?.filter((v) => v.readOnly !== true)
+		.map((v) => v.value);
+}
+
+export interface SpelledRead {
+	readonly members: readonly string[];
+	readonly spellings: Readonly<Record<string, string>>;
+}
+
+export function spelledReadOf(slot: SpelledSlot): SpelledRead | undefined {
+	const members = memberValuesOf(slot);
+	const spellings = slot.values.flatMap((v) => (isTerminalValue(v) && memberOf(v) !== v.value ? [[v.value, memberOf(v)!] as const] : []));
+	return members === undefined || spellings.length === 0 ? undefined : { members: members.map((v) => v.value), spellings: Object.fromEntries(spellings) };
 }
 
 export function isPatternValue(v: NodeOrTerminal): v is NodeRef & { pattern: string } {

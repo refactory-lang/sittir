@@ -482,6 +482,10 @@ export function groupField(group: object | undefined, field: string): unknown {
 	return (group as Members | undefined)?.[field]?.call(group);
 }
 
+export function spelledMember<T>(text: T, spellings: Readonly<Record<string, string>>): T {
+	return (typeof text === 'string' ? (spellings[text] ?? text) : text) as T;
+}
+
 /**
  * A seated key's `$with` setter. Through a present group it writes the group's own field; with no
  * value it leaves the group absent; with a value it builds an absent group from that field alone

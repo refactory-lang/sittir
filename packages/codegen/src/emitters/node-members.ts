@@ -1,5 +1,7 @@
 import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { spelledReadExpr } from './shared.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
@@ -16,6 +18,7 @@ export interface StoredAccessor {
 	readonly name: string;
 	readonly read: string;
 	readonly hydrates?: 'one' | 'many';
+	readonly slot?: AssembledNonterminal;
 }
 
 export interface NodeMemberSpec {
@@ -38,7 +41,8 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 
 function accessorRead(accessor: StoredAccessor): string {
 	if (accessor.hydrates === undefined) return accessor.read;
-	return `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+	const read = `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+	return accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
 }
 
 export function withEntry(entry: SetterEntry): string {

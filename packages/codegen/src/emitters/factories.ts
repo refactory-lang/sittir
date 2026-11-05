@@ -8,7 +8,7 @@ import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../d
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { buildableMembersOf, delimiterPreferenceOf, holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
+import { buildableMembersOf, delimiterPreferenceOf, holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes, spelledReadOf } from '../compiler/model/node-map.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
@@ -118,7 +118,8 @@ import {
 	refuseUndeclared,
 	refusingParam,
 	withTrailingParam,
-	type RefusingParams
+	type RefusingParams,
+	spelledReadImports
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -2572,7 +2573,7 @@ function storedAccessor(
 	nodeMap: NodeMap
 ): StoredAccessor {
 	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
-	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
+	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one', ...(spelledReadOf(slot) === undefined ? {} : { slot }) };
 }
 
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly string[] {
@@ -2903,7 +2904,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'nodeJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'nodeJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
