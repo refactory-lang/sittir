@@ -47582,6 +47582,64 @@
               "$type": 248,
               "_string_start": {
                 "$type": 119,
+                "_prefix": "ur",
+                "_quote": "'"
+              },
+              "_content": [
+                {
+                  "$type": 249,
+                  "_elements": [
+                    {
+                      "$type": 120,
+                      "$text": "bye"
+                    }
+                  ]
+                }
+              ],
+              "_string_end": {
+                "$type": 122,
+                "_content": "",
+                "_quote": "'"
+              }
+            }
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "ur'bye'\n",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "UR'bye'",
+    "pattern": "_simple_statements",
+    "edits": [],
+    "expectedSourceOut": "ur'bye'\n",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline))",
+    "wrappedText": "ur'bye'\n\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "_simple_statements",
+    "input": {
+      "$type": 130,
+      "_elements": {
+        "$type": 260,
+        "_item": [
+          {
+            "$type": 142,
+            "_content": {
+              "$type": 248,
+              "_string_start": {
+                "$type": 119,
                 "_prefix": "b",
                 "_quote": "'"
               },
@@ -47623,6 +47681,64 @@
     "expectedSourceOut": "b'sup'\n",
     "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline))",
     "wrappedText": "b'sup'\n\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "_simple_statements",
+    "input": {
+      "$type": 130,
+      "_elements": {
+        "$type": 260,
+        "_item": [
+          {
+            "$type": 142,
+            "_content": {
+              "$type": 248,
+              "_string_start": {
+                "$type": 119,
+                "_prefix": "b",
+                "_quote": "\""
+              },
+              "_content": [
+                {
+                  "$type": 249,
+                  "_elements": [
+                    {
+                      "$type": 120,
+                      "$text": "sup"
+                    }
+                  ]
+                }
+              ],
+              "_string_end": {
+                "$type": 122,
+                "_content": "",
+                "_quote": "\""
+              }
+            }
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "b\"sup\"\n",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "B\"sup\"",
+    "pattern": "_simple_statements",
+    "edits": [],
+    "expectedSourceOut": "b\"sup\"\n",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline))",
+    "wrappedText": "b\"sup\"\n\n",
     "wrappedOffset": 0
   },
   {
@@ -48317,6 +48433,61 @@
             "$type": 248,
             "_string_start": {
               "$type": 119,
+              "_prefix": "ur",
+              "_quote": "'"
+            },
+            "_content": [
+              {
+                "$type": 249,
+                "_elements": [
+                  {
+                    "$type": 120,
+                    "$text": "bye"
+                  }
+                ]
+              }
+            ],
+            "_string_end": {
+              "$type": 122,
+              "_content": "",
+              "_quote": "'"
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "ur'bye'",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "UR'bye'",
+    "pattern": "simple_statements_elements",
+    "edits": [],
+    "expectedSourceOut": "ur'bye'",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "wrappedText": "ur'bye'\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "simple_statements_elements",
+    "input": {
+      "$type": 260,
+      "_item": [
+        {
+          "$type": 142,
+          "_content": {
+            "$type": 248,
+            "_string_start": {
+              "$type": 119,
               "_prefix": "b",
               "_quote": "'"
             },
@@ -48357,6 +48528,61 @@
     "expectedSourceOut": "b'sup'",
     "expectedReparseTree": "(simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
     "wrappedText": "b'sup'\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "simple_statements_elements",
+    "input": {
+      "$type": 260,
+      "_item": [
+        {
+          "$type": 142,
+          "_content": {
+            "$type": 248,
+            "_string_start": {
+              "$type": 119,
+              "_prefix": "b",
+              "_quote": "\""
+            },
+            "_content": [
+              {
+                "$type": 249,
+                "_elements": [
+                  {
+                    "$type": 120,
+                    "$text": "sup"
+                  }
+                ]
+              }
+            ],
+            "_string_end": {
+              "$type": 122,
+              "_content": "",
+              "_quote": "\""
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "b\"sup\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "B\"sup\"",
+    "pattern": "simple_statements_elements",
+    "edits": [],
+    "expectedSourceOut": "b\"sup\"",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "wrappedText": "b\"sup\"\n",
     "wrappedOffset": 0
   },
   {
@@ -49012,6 +49238,55 @@
         "$type": 248,
         "_string_start": {
           "$type": 119,
+          "_prefix": "ur",
+          "_quote": "'"
+        },
+        "_content": [
+          {
+            "$type": 249,
+            "_elements": [
+              {
+                "$type": 120,
+                "$text": "bye"
+              }
+            ]
+          }
+        ],
+        "_string_end": {
+          "$type": 122,
+          "_content": "",
+          "_quote": "'"
+        }
+      }
+    },
+    "expectedOutput": "ur'bye'",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "UR'bye'",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "ur'bye'",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))",
+    "wrappedText": "ur'bye'",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "expression_statement",
+    "input": {
+      "$type": 142,
+      "_content": {
+        "$type": 248,
+        "_string_start": {
+          "$type": 119,
           "_prefix": "b",
           "_quote": "'"
         },
@@ -49049,6 +49324,55 @@
     "expectedSourceOut": "b'sup'",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))",
     "wrappedText": "b'sup'",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "expression_statement",
+    "input": {
+      "$type": 142,
+      "_content": {
+        "$type": 248,
+        "_string_start": {
+          "$type": 119,
+          "_prefix": "b",
+          "_quote": "\""
+        },
+        "_content": [
+          {
+            "$type": 249,
+            "_elements": [
+              {
+                "$type": 120,
+                "$text": "sup"
+              }
+            ]
+          }
+        ],
+        "_string_end": {
+          "$type": 122,
+          "_content": "",
+          "_quote": "\""
+        }
+      }
+    },
+    "expectedOutput": "b\"sup\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "B\"sup\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "b\"sup\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))",
+    "wrappedText": "b\"sup\"",
     "wrappedOffset": 0
   },
   {
@@ -49648,6 +49972,52 @@
       "$type": 248,
       "_string_start": {
         "$type": 119,
+        "_prefix": "ur",
+        "_quote": "'"
+      },
+      "_content": [
+        {
+          "$type": 249,
+          "_elements": [
+            {
+              "$type": 120,
+              "$text": "bye"
+            }
+          ]
+        }
+      ],
+      "_string_end": {
+        "$type": 122,
+        "_content": "",
+        "_quote": "'"
+      }
+    },
+    "expectedOutput": "ur'bye'",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "UR'bye'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "ur'bye'",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
+    "wrappedText": "_ = (ur'bye')",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "string",
+    "input": {
+      "$type": 248,
+      "_string_start": {
+        "$type": 119,
         "_prefix": "b",
         "_quote": "'"
       },
@@ -49684,6 +50054,52 @@
     "expectedSourceOut": "b'sup'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
     "wrappedText": "_ = (b'sup')",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "string",
+    "input": {
+      "$type": 248,
+      "_string_start": {
+        "$type": 119,
+        "_prefix": "b",
+        "_quote": "\""
+      },
+      "_content": [
+        {
+          "$type": 249,
+          "_elements": [
+            {
+              "$type": 120,
+              "$text": "sup"
+            }
+          ]
+        }
+      ],
+      "_string_end": {
+        "$type": 122,
+        "_content": "",
+        "_quote": "\""
+      }
+    },
+    "expectedOutput": "b\"sup\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "B\"sup\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "b\"sup\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
+    "wrappedText": "_ = (b\"sup\")",
     "wrappedOffset": 5
   },
   {
@@ -50724,6 +51140,69 @@
               "$type": 248,
               "_string_start": {
                 "$type": 119,
+                "_prefix": "rf",
+                "_quote": "\""
+              },
+              "_content": [
+                {
+                  "$type": 249,
+                  "_elements": [
+                    253
+                  ]
+                },
+                {
+                  "$type": 250,
+                  "_expression": {
+                    "$type": 95,
+                    "$text": "0"
+                  },
+                  "_debug": false
+                }
+              ],
+              "_string_end": {
+                "$type": 122,
+                "_content": "",
+                "_quote": "\""
+              }
+            }
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "rf\"\\{0}\"\n",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "fr\"\\{0}\"",
+    "pattern": "_simple_statements",
+    "edits": [],
+    "expectedSourceOut": "rf\"\\{0}\"\n",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (not_escape_sequence)) content: (interpolation expression: (integer_decimal_plain)) string_end: (string_end)))) (newline))",
+    "wrappedText": "rf\"\\{0}\"\n\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "_simple_statements",
+    "input": {
+      "$type": 130,
+      "_elements": {
+        "$type": 260,
+        "_item": [
+          {
+            "$type": 142,
+            "_content": {
+              "$type": 248,
+              "_string_start": {
+                "$type": 119,
                 "_prefix": "r",
                 "_quote": "\""
               },
@@ -51054,6 +51533,66 @@
             "$type": 248,
             "_string_start": {
               "$type": 119,
+              "_prefix": "rf",
+              "_quote": "\""
+            },
+            "_content": [
+              {
+                "$type": 249,
+                "_elements": [
+                  253
+                ]
+              },
+              {
+                "$type": 250,
+                "_expression": {
+                  "$type": 95,
+                  "$text": "0"
+                },
+                "_debug": false
+              }
+            ],
+            "_string_end": {
+              "$type": 122,
+              "_content": "",
+              "_quote": "\""
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "rf\"\\{0}\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "fr\"\\{0}\"",
+    "pattern": "simple_statements_elements",
+    "edits": [],
+    "expectedSourceOut": "rf\"\\{0}\"",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (not_escape_sequence)) content: (interpolation expression: (integer_decimal_plain)) string_end: (string_end))))",
+    "wrappedText": "rf\"\\{0}\"\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "simple_statements_elements",
+    "input": {
+      "$type": 260,
+      "_item": [
+        {
+          "$type": 142,
+          "_content": {
+            "$type": 248,
+            "_string_start": {
+              "$type": 119,
               "_prefix": "r",
               "_quote": "\""
             },
@@ -51353,6 +51892,60 @@
         "$type": 248,
         "_string_start": {
           "$type": 119,
+          "_prefix": "rf",
+          "_quote": "\""
+        },
+        "_content": [
+          {
+            "$type": 249,
+            "_elements": [
+              253
+            ]
+          },
+          {
+            "$type": 250,
+            "_expression": {
+              "$type": 95,
+              "$text": "0"
+            },
+            "_debug": false
+          }
+        ],
+        "_string_end": {
+          "$type": 122,
+          "_content": "",
+          "_quote": "\""
+        }
+      }
+    },
+    "expectedOutput": "rf\"\\{0}\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "fr\"\\{0}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "rf\"\\{0}\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content elements: (not_escape_sequence)) content: (interpolation expression: (integer_decimal_plain)) string_end: (string_end)))",
+    "wrappedText": "rf\"\\{0}\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "expression_statement",
+    "input": {
+      "$type": 142,
+      "_content": {
+        "$type": 248,
+        "_string_start": {
+          "$type": 119,
           "_prefix": "r",
           "_quote": "\""
         },
@@ -51619,6 +52212,57 @@
     "expectedSourceOut": "ur\"\\n\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
     "wrappedText": "_ = (ur\"\\n\")",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "string",
+    "input": {
+      "$type": 248,
+      "_string_start": {
+        "$type": 119,
+        "_prefix": "rf",
+        "_quote": "\""
+      },
+      "_content": [
+        {
+          "$type": 249,
+          "_elements": [
+            253
+          ]
+        },
+        {
+          "$type": 250,
+          "_expression": {
+            "$type": 95,
+            "$text": "0"
+          },
+          "_debug": false
+        }
+      ],
+      "_string_end": {
+        "$type": 122,
+        "_content": "",
+        "_quote": "\""
+      }
+    },
+    "expectedOutput": "rf\"\\{0}\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "fr\"\\{0}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "rf\"\\{0}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (not_escape_sequence)) content: (interpolation expression: (integer_decimal_plain)) string_end: (string_end))",
+    "wrappedText": "_ = (rf\"\\{0}\")",
     "wrappedOffset": 5
   },
   {
@@ -63745,6 +64389,81 @@
               "$type": 248,
               "_string_start": {
                 "$type": 119,
+                "_prefix": "rt",
+                "_quote": "\""
+              },
+              "_content": [
+                {
+                  "$type": 249,
+                  "_elements": [
+                    {
+                      "$type": 120,
+                      "$text": "Path: "
+                    }
+                  ]
+                },
+                {
+                  "$type": 250,
+                  "_expression": {
+                    "$type": 1,
+                    "$text": "path"
+                  },
+                  "_debug": false
+                },
+                {
+                  "$type": 249,
+                  "_elements": [
+                    {
+                      "$type": 120,
+                      "$text": "\\n"
+                    }
+                  ]
+                }
+              ],
+              "_string_end": {
+                "$type": 122,
+                "_content": "",
+                "_quote": "\""
+              }
+            }
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "rt\"Path: {path}\\n\"\n",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tr\"Path: {path}\\n\"",
+    "pattern": "_simple_statements",
+    "edits": [],
+    "expectedSourceOut": "rt\"Path: {path}\\n\"\n",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline))",
+    "wrappedText": "rt\"Path: {path}\\n\"\n\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "_simple_statements",
+    "input": {
+      "$type": 130,
+      "_elements": {
+        "$type": 260,
+        "_item": [
+          {
+            "$type": 142,
+            "_content": {
+              "$type": 248,
+              "_string_start": {
+                "$type": 119,
                 "_prefix": "t",
                 "_quote": "\"\"\""
               },
@@ -64174,6 +64893,78 @@
             "$type": 248,
             "_string_start": {
               "$type": 119,
+              "_prefix": "rt",
+              "_quote": "\""
+            },
+            "_content": [
+              {
+                "$type": 249,
+                "_elements": [
+                  {
+                    "$type": 120,
+                    "$text": "Path: "
+                  }
+                ]
+              },
+              {
+                "$type": 250,
+                "_expression": {
+                  "$type": 1,
+                  "$text": "path"
+                },
+                "_debug": false
+              },
+              {
+                "$type": 249,
+                "_elements": [
+                  {
+                    "$type": 120,
+                    "$text": "\\n"
+                  }
+                ]
+              }
+            ],
+            "_string_end": {
+              "$type": 122,
+              "_content": "",
+              "_quote": "\""
+            }
+          }
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "rt\"Path: {path}\\n\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tr\"Path: {path}\\n\"",
+    "pattern": "simple_statements_elements",
+    "edits": [],
+    "expectedSourceOut": "rt\"Path: {path}\\n\"",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "wrappedText": "rt\"Path: {path}\\n\"\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "simple_statements_elements",
+    "input": {
+      "$type": 260,
+      "_item": [
+        {
+          "$type": 142,
+          "_content": {
+            "$type": 248,
+            "_string_start": {
+              "$type": 119,
               "_prefix": "t",
               "_quote": "\"\"\""
             },
@@ -64581,6 +65372,72 @@
         "$type": 248,
         "_string_start": {
           "$type": 119,
+          "_prefix": "rt",
+          "_quote": "\""
+        },
+        "_content": [
+          {
+            "$type": 249,
+            "_elements": [
+              {
+                "$type": 120,
+                "$text": "Path: "
+              }
+            ]
+          },
+          {
+            "$type": 250,
+            "_expression": {
+              "$type": 1,
+              "$text": "path"
+            },
+            "_debug": false
+          },
+          {
+            "$type": 249,
+            "_elements": [
+              {
+                "$type": 120,
+                "$text": "\\n"
+              }
+            ]
+          }
+        ],
+        "_string_end": {
+          "$type": 122,
+          "_content": "",
+          "_quote": "\""
+        }
+      }
+    },
+    "expectedOutput": "rt\"Path: {path}\\n\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tr\"Path: {path}\\n\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "rt\"Path: {path}\\n\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end)))",
+    "wrappedText": "rt\"Path: {path}\\n\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "expression_statement",
+    "input": {
+      "$type": 142,
+      "_content": {
+        "$type": 248,
+        "_string_start": {
+          "$type": 119,
           "_prefix": "t",
           "_quote": "\"\"\""
         },
@@ -64955,6 +65812,69 @@
     "expectedSourceOut": "t\"a {b:2} {c:34.5}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier elements: (format_specifier_text))) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier elements: (format_specifier_text))) string_end: (string_end))",
     "wrappedText": "_ = (t\"a {b:2} {c:34.5}\")",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "string",
+    "input": {
+      "$type": 248,
+      "_string_start": {
+        "$type": 119,
+        "_prefix": "rt",
+        "_quote": "\""
+      },
+      "_content": [
+        {
+          "$type": 249,
+          "_elements": [
+            {
+              "$type": 120,
+              "$text": "Path: "
+            }
+          ]
+        },
+        {
+          "$type": 250,
+          "_expression": {
+            "$type": 1,
+            "$text": "path"
+          },
+          "_debug": false
+        },
+        {
+          "$type": 249,
+          "_elements": [
+            {
+              "$type": 120,
+              "$text": "\\n"
+            }
+          ]
+        }
+      ],
+      "_string_end": {
+        "$type": 122,
+        "_content": "",
+        "_quote": "\""
+      }
+    },
+    "expectedOutput": "rt\"Path: {path}\\n\"",
+    "options": {
+      "module": {
+        "before": 116
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tr\"Path: {path}\\n\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "rt\"Path: {path}\\n\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end))",
+    "wrappedText": "_ = (rt\"Path: {path}\\n\")",
     "wrappedOffset": 5
   },
   {

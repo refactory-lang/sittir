@@ -33,6 +33,8 @@ export interface ValidationRun {
 	readRenderParseShallowPass: number;
 	readRenderParseShallowTotal: number;
 	readRenderParseShallowAstMatchPass: number;
+	readRenderParseSpellingNormalized?: number;
+	readRenderParseShallowSpellingNormalized?: number;
 	factoryStoragePass: number;
 	factoryStorageTotal: number;
 	factoryStorageAstMatchPass: number;

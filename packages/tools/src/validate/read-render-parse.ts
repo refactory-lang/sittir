@@ -61,6 +61,7 @@ import {
 	loadNativeRender,
 	kindViewOf,
 	sameSpelledMeaning,
+	loadDelimiterSpellings,
 	type DelimiterSpelling
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
@@ -365,6 +366,15 @@ export interface ReadRenderParseResult {
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
 	trivia: ValidatorSkip[];
+	spellingNormalized: SpellingNormalizedCandidate[];
+}
+
+export interface SpellingNormalizedCandidate {
+	readonly entry: string;
+	readonly kind: string;
+	readonly input: string;
+	readonly rendered: string;
+	readonly spellings: readonly string[];
 }
 
 /**
@@ -929,7 +939,7 @@ export async function validateReadRenderParse(
 
 	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
 	if (readNode instanceof Error)
-		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [] };
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
@@ -952,6 +962,8 @@ export async function validateReadRenderParse(
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const trivia: ValidatorSkip[] = [];
+	const spellingNormalized: SpellingNormalizedCandidate[] = [];
+	const delimiters = await loadDelimiterSpellings(grammar);
 	// A read refused while an entry is walked or a candidate materialized
 	// fails that entry: no refusal is a warning.
 	let refused: AccessorThrowRecord[] = [];
@@ -1115,6 +1127,7 @@ export async function validateReadRenderParse(
 						writeSync(2, `[isolate-progress] ${grammar} ${String(kind)}\n`);
 					}
 					try {
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [] };
 						const outcome = renderReparse(
 							data,
 							renderedKind,
@@ -1122,7 +1135,7 @@ export async function validateReadRenderParse(
 							node1ForAst,
 							treeRoot,
 							renderReparseContext,
-							undefined,
+							tolerance,
 							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
 								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
 								: undefined
@@ -1185,6 +1198,8 @@ export async function validateReadRenderParse(
 							});
 						} else {
 							kindAstMatch = true;
+							if (tolerance.normalized!.length > 0)
+								spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered, spellings: tolerance.normalized! });
 							if (options.onFixture) {
 								// Success path (both re-parse OK + AST match OK) —
 								// emit a render fixture (UntypedNode → rendered) and a
@@ -1329,7 +1344,8 @@ export async function validateReadRenderParse(
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		skips,
 		excluded,
-		trivia
+		trivia,
+		spellingNormalized
 	};
 }
 
