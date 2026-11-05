@@ -10,7 +10,7 @@ use sittir_core::layout::LayoutWork;
 use sittir_core::read::{Depth, ReadNode, SnapshotCtx};
 use sittir_core::types::NodeIndex;
 use sittir_rust::render::AnyNode;
-use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain};
+use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain, wide_unit_blocks};
 use sittir_rust::RustGrammar;
 
 /// Lists inside lists, each with runs and comments beside its items.
@@ -96,6 +96,19 @@ fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
         })
     });
     assert_ne!(one, 0, "the snapshot renders a record");
+    assert_eq!(four - two, 2 * (two - one), "bytes tallied at 100, 200 and 400 levels: {one}, {two}, {four}");
+}
+
+#[test]
+fn the_record_of_blocks_under_a_wide_indentation_unit_tallies_the_unit_once() {
+    let [one, two, four] = [100, 200, 400].map(|levels| {
+        on_deep_stack(move || {
+            let tree = parsed_rust(&wide_unit_blocks(levels));
+            assert_eq!(tree.inferred().indent.as_ref().map(String::len), Some(levels), "the unit is the line's indentation");
+            tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+            tree.records_scanned()
+        })
+    });
     assert_eq!(four - two, 2 * (two - one), "bytes tallied at 100, 200 and 400 levels: {one}, {two}, {four}");
 }
 

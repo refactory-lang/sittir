@@ -2,15 +2,16 @@
 //! depth doubles it, where a cost quadratic in the depth would quadruple it.
 //! The chain is timed on one line and with a line for each token, since the
 //! lines a run breaks to cost work of their own, and as nested blocks: a
-//! brace a line, each line indented a level deeper than the one before, and
-//! all opened on one deeply indented line. An unoptimized build checks each
-//! line's indentation a recording render counts against its text
-//! (`SpacingWriter::with_recording`), work that grows with the line's depth,
-//! so it times the blocks optimized alone. The test binary holds this one
-//! test, so no other test shares its process.
+//! brace a line, each line indented a level deeper than the one before; all
+//! opened on one deeply indented line; and under an indentation unit as wide
+//! as the chain is deep. An unoptimized build checks each line's
+//! indentation a recording render counts against its text
+//! (`SpacingWriter::with_recording`), work that grows with the line's
+//! depth, so it times the blocks optimized alone. The test binary holds this
+//! one test, so no other test shares its process.
 
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{block_chain, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain};
+use sittir_parity_tests::{block_chain, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, wide_unit_blocks};
 use sittir_rust::render::AnyNode;
 use std::time::{Duration, Instant};
 
@@ -27,7 +28,7 @@ type Chain = (&'static str, fn(usize) -> String);
 const CHAINS: [Chain; 2] = [("on one line", tuple_chain), ("a line for each token", multiline_tuple_chain)];
 
 /// The chains of nested blocks, timed in an optimized build alone.
-const BLOCKS: [Chain; 2] = [("nested blocks", block_chain), ("blocks opened on one indented line", indented_block_line)];
+const BLOCKS: [Chain; 3] = [("nested blocks", block_chain), ("blocks opened on one indented line", indented_block_line), ("blocks under a wide indentation unit", wide_unit_blocks)];
 
 /// One snapshot of `chain`'s chain of `levels`, each of a fresh parse, so no
 /// cache a tree keeps answers for an earlier one.

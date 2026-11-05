@@ -194,8 +194,8 @@ impl Baseline {
     }
 
     /// The bytes of text the recording render tallied a character at a
-    /// time: all it wrote but the indentation it paid by count
-    /// (`Recorder::indented`).
+    /// time: all it wrote but the indentation it paid by count, and its
+    /// indentation unit once (`Recorder::indented`).
     #[must_use]
     pub fn scanned(&self) -> u64 {
         self.scanned
@@ -244,6 +244,9 @@ pub struct Recorder<'a> {
     /// The first byte the run written last opens and the tally ended before
     /// it, until the next text (`wrote_run`).
     before_run: Option<(u32, Tally)>,
+    /// The indentation unit the render pays lines in, and its tally, from
+    /// the first payment (`indented`).
+    unit: Option<(&'a str, Tally)>,
 }
 
 impl<'a> Recorder<'a> {
@@ -261,22 +264,38 @@ impl<'a> Recorder<'a> {
             counting: true,
             text_before: Tally::default(),
             before_run: None,
+            unit: None,
         }
     }
 
     /// Text reached the output, or the run being deferred.
     pub fn emitted(&mut self, s: &str) {
-        self.baseline.scanned += s.len() as u64;
-        self.tallied(Tally::of(s));
+        let tally = self.scan(s);
+        self.tallied(tally);
     }
 
     /// A line's indentation reached the output, `levels` copies of `unit`,
-    /// counted rather than written: what it tallies. The unit holds no line
-    /// break (`SpacingWriter::with_indent`).
-    pub fn indented(&mut self, unit: &str, levels: usize) -> Tally {
-        let tally = Tally::of(unit).times(crate::types::narrow(levels));
-        self.tallied(tally);
-        tally
+    /// counted rather than written: what it tallies. The unit is tallied
+    /// once, at the first payment, and every payment brings the same one:
+    /// the writer's, which holds no line break (`SpacingWriter::with_indent`).
+    pub fn indented(&mut self, unit: &'a str, levels: usize) -> Tally {
+        let tally = if let Some((tallied, tally)) = self.unit {
+            debug_assert!(std::ptr::eq(tallied, unit), "a recording render pays every line in one unit: {tallied:?}, then {unit:?}");
+            tally
+        } else {
+            let tally = self.scan(unit);
+            self.unit = Some((unit, tally));
+            tally
+        };
+        let paid = tally.times(crate::types::narrow(levels));
+        self.tallied(paid);
+        paid
+    }
+
+    /// The tally of `s`, read a character at a time (`Baseline::scanned`).
+    fn scan(&mut self, s: &str) -> Tally {
+        self.baseline.scanned += s.len() as u64;
+        Tally::of(s)
     }
 
     fn tallied(&mut self, tally: Tally) {

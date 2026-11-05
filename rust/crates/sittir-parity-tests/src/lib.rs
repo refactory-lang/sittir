@@ -228,6 +228,15 @@ pub fn indented_block_line(levels: usize) -> String {
     format!("fn a() {{\n  a;\n}}\nfn b() {{\n  b;\n}}\nfn f() {{\n{}{}\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
 }
 
+/// `levels` rust blocks, each holding the one before it, all opened on one
+/// line indented `levels` spaces, the source's one indentation step: its
+/// unit is `levels` spaces wide, and every block's line in a render from
+/// its templates is indented in it.
+#[must_use]
+pub fn wide_unit_blocks(levels: usize) -> String {
+    format!("fn f(){{\n{}{}\nx\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
+}
+
 /// What `f` answers, run on a thread whose 64 MiB stack every read these
 /// tests make of a deep tree fits on, a 64,000-level chain included.
 ///
