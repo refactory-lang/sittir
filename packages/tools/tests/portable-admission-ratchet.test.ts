@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { computePortableAdmission, formatAdmission } from '../src/index.ts';
 
-const CEILING = { overAdmitting: 3, untyped: 45 } as const;
+const CEILING = { overAdmitting: 3, untyped: 45, ownSlots: 52 } as const;
 
 describe('portable admission ratchet', () => {
-	it(`${CEILING.overAdmitting} vocabulary sites admit a kind no read gives, and ${CEILING.untyped} read sites admit unknown`, async () => {
+	it(`${CEILING.overAdmitting} vocabulary sites admit a kind no read gives, ${CEILING.untyped} read sites admit unknown, and ${CEILING.ownSlots} own slots hold a kind their reads never give`, async () => {
 		const report = await computePortableAdmission();
 		const shown = formatAdmission(report);
 		for (const [name, ceiling] of Object.entries(CEILING)) {

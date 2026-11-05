@@ -156,6 +156,14 @@ function armsOf(node: ts.TypeNode, slots: ReadonlyMap<string, Declared>): Arm[] 
 	return out;
 }
 
+function readsUnder(yields: ReadonlyMap<string, ReadonlySet<string>>, path: string, member: string): ReadonlySet<string> | undefined {
+	const under = [...yields].filter(([key]) => {
+		const [at, name] = key.split('#');
+		return name === member && (at === path || at!.startsWith(`${path}.`));
+	});
+	return under.length === 0 ? undefined : new Set(under.flatMap(([, kinds]) => [...kinds]));
+}
+
 const vocabViewName = (type: ts.TypeNode | undefined): string | undefined =>
 	/VocabViews\[['"]([^'"]+)['"]\]/.exec(type?.getText() ?? '')?.[1];
 
@@ -235,7 +243,7 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 					if (!n.getText().startsWith('Ctx[')) kindsOf(checker, checker.getTypeFromTypeNode(n), held);
 				};
 				visit(slot.type);
-				const read = yields.get(`${nameOf(path.name)}#${nameOf(slot.name)}`);
+				const read = readsUnder(yields, nameOf(path.name), nameOf(slot.name));
 				if (read === undefined) continue;
 				const excess = [...held].filter((kind) => !read.has(kind)).sort();
 				if (excess.length > 0) ownSlots.push({ grammar, member: `${nameOf(path.name)}.${nameOf(slot.name)}`, excess });
