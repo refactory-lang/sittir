@@ -1,0 +1,735 @@
+[
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between _expression, qualified_type on '.' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_expression",
+          "qualified_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_expression"
+        ],
+        [
+          "qualified_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'.'",
+        "interpretations": [
+          "_expression",
+          "qualified_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between _simple_type, _expression on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_simple_type",
+          "_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_simple_type"
+        ],
+        [
+          "_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "_simple_type",
+          "_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between _simple_type, generic_type, _expression on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_simple_type",
+          "generic_type",
+          "_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_simple_type"
+        ],
+        [
+          "generic_type"
+        ],
+        [
+          "_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "_simple_type",
+          "generic_type",
+          "_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between _simple_type, generic_type on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_simple_type",
+          "generic_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_simple_type"
+        ],
+        [
+          "generic_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "negated_type"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "_simple_type",
+          "generic_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between field_declarations on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "field_declarations"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "field_declarations",
+          "field_declaration_list_group"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'struct'",
+          "'{'",
+          "field_declaration"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "field_declarations",
+          "field_declarations"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between import_specs on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "import_specs"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "import_specs",
+          "import_spec_list_group"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'import'",
+          "'('",
+          "import_spec"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "import_specs",
+          "import_specs"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between interface_elems on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "interface_elems"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "interface_elems",
+          "interface_type_group"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'interface'",
+          "'{'",
+          "method_elem"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "interface_elems",
+          "interface_elems"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between parameter_declaration, _simple_type on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "parameter_declaration",
+          "_simple_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "parameter_declaration"
+        ],
+        [
+          "_simple_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'func'",
+          "'('",
+          "identifier"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "parameter_declaration",
+          "_simple_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between statements on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "statements"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "statements",
+          "statement_list_arm",
+          "statement_list"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "_statement"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "statements",
+          "statements"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between type_declaration_elements on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_declaration_elements"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "type_declaration_elements"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'type'",
+          "'('",
+          "type_alias"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "type_declaration_elements",
+          "type_declaration_elements"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between type_parameter_declaration, _expression on '*' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_parameter_declaration",
+          "_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_parameter_declaration"
+        ],
+        [
+          "_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'type'",
+          "identifier",
+          "'['",
+          "identifier"
+        ],
+        "lookahead": "'*'",
+        "interpretations": [
+          "type_parameter_declaration",
+          "_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between type_parameter_declaration, _simple_type, _expression on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_parameter_declaration",
+          "_simple_type",
+          "_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_parameter_declaration"
+        ],
+        [
+          "_simple_type"
+        ],
+        [
+          "_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'type'",
+          "identifier",
+          "'['",
+          "identifier"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "type_parameter_declaration",
+          "_simple_type",
+          "_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "go",
+    "message": "conflict between type_parameter_declaration, _simple_type, generic_type, _expression on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_parameter_declaration",
+          "_simple_type",
+          "generic_type",
+          "_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_parameter_declaration"
+        ],
+        [
+          "_simple_type"
+        ],
+        [
+          "generic_type"
+        ],
+        [
+          "_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'type'",
+          "identifier",
+          "'['",
+          "identifier"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "type_parameter_declaration",
+          "_simple_type",
+          "generic_type",
+          "_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "go",
+    "ownerKind": "var_spec",
+    "message": "[collect-slots] kind 'var_spec': choice rule:var_spec:root routes 1 unnamed-nonterminal arm(s) [var_spec_arm] into one union slot alongside 1 label-routed arm(s) [field(value):expression_list]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "value"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "field_declaration",
+    "message": "[collect-slots] kind 'field_declaration': member rule:field_declaration:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:field_declaration:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "field_declaration",
+    "message": "[collect-slots] kind 'field_declaration': choice rule:field_declaration:root is a singular mixed row — structured named arm(s) [seq[2](identifier _type)] alongside union arm(s) [field_declaration_arm]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "canProceed": false
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "slice_expression",
+    "message": "[collect-slots] kind 'slice_expression': member rule:slice_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:slice_expression:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "var_spec_list",
+    "slotName": "var_spec",
+    "message": "kind 'var_spec_list': var_spec chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (var_spec_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "import_specs",
+    "slotName": "item",
+    "message": "kind 'import_specs': item chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (item_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "type_declaration_elements",
+    "slotName": "item",
+    "message": "kind 'type_declaration_elements': item chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (item_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "field_declarations",
+    "slotName": "item",
+    "message": "kind 'field_declarations': item chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (item_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "interface_elems",
+    "slotName": "item",
+    "message": "kind 'interface_elems': item chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (item_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "statements",
+    "slotName": "item",
+    "message": "kind 'statements': item chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (item_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "separator-default-undeclared",
+    "severity": "error",
+    "grammar": "go",
+    "ownerKind": "const_declaration_arm",
+    "slotName": "const_spec",
+    "message": "kind 'const_declaration_arm': const_spec chooses its separator per instance (source_file_text, semi, null) and declares no default.",
+    "proposal": "Declare the default separator kind under options: (const_spec_separator).",
+    "canProceed": false,
+    "details": {
+      "arms": [
+        "source_file_text",
+        "semi",
+        "null"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "accessor-class-clash",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "accessor 'content' holds single (import_declaration, const_declaration, var_declaration, var_spec, type_declaration, statement_list, for_statement, call_expression, literal_element, escape_sequence_arm1, escape_sequence_arm2, escape_sequence_arm3, escape_sequence_arm4, escape_sequence_arm5, int_literal_arm1, int_literal_arm4, int_literal_arm5, float_literal_arm1, float_literal_arm3, float_literal_arm4_arm1, float_literal_arm4_arm2, float_literal_arm4_arm3, imaginary_literal_arm1, imaginary_literal_arm2, imaginary_literal_arm4, imaginary_literal_arm5, imaginary_literal_arm6, imaginary_literal_arm7, imaginary_literal_arm8, imaginary_literal_arm9, imaginary_literal_arm10_arm1, imaginary_literal_arm10_arm2, imaginary_literal_arm10_arm3, rune_literal_arm1, rune_literal_arm2_arm1, rune_literal_arm2_arm2, rune_literal_arm2_arm3, rune_literal_arm2_arm4, comment_arm1, comment_arm2, package_identifier, field_identifier, type_identifier, label_name); choice (rune_literal_arm2_arm5); rename the choice side, or name the slot for what it holds",
+    "details": {
+      "name": "content",
+      "classes": {
+        "single": [
+          "import_declaration",
+          "const_declaration",
+          "var_declaration",
+          "var_spec",
+          "type_declaration",
+          "statement_list",
+          "for_statement",
+          "call_expression",
+          "literal_element",
+          "escape_sequence_arm1",
+          "escape_sequence_arm2",
+          "escape_sequence_arm3",
+          "escape_sequence_arm4",
+          "escape_sequence_arm5",
+          "int_literal_arm1",
+          "int_literal_arm4",
+          "int_literal_arm5",
+          "float_literal_arm1",
+          "float_literal_arm3",
+          "float_literal_arm4_arm1",
+          "float_literal_arm4_arm2",
+          "float_literal_arm4_arm3",
+          "imaginary_literal_arm1",
+          "imaginary_literal_arm2",
+          "imaginary_literal_arm4",
+          "imaginary_literal_arm5",
+          "imaginary_literal_arm6",
+          "imaginary_literal_arm7",
+          "imaginary_literal_arm8",
+          "imaginary_literal_arm9",
+          "imaginary_literal_arm10_arm1",
+          "imaginary_literal_arm10_arm2",
+          "imaginary_literal_arm10_arm3",
+          "rune_literal_arm1",
+          "rune_literal_arm2_arm1",
+          "rune_literal_arm2_arm2",
+          "rune_literal_arm2_arm3",
+          "rune_literal_arm2_arm4",
+          "comment_arm1",
+          "comment_arm2",
+          "package_identifier",
+          "field_identifier",
+          "type_identifier",
+          "label_name"
+        ],
+        "choice": [
+          "rune_literal_arm2_arm5"
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,27 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-c-sharp",
+	"version": "0.23.5",
+	"ref": "v0.23.5",
+	"commit": "cac6d5fb595f5811a076336682d5d595ac1c9e85",
+	"files": [
+		"attributes.txt",
+		"classes.txt",
+		"contextual-keywords.txt",
+		"enums.txt",
+		"expressions.txt",
+		"identifiers.txt",
+		"interfaces.txt",
+		"literals.txt",
+		"preprocessor.txt",
+		"query-syntax.txt",
+		"records.txt",
+		"source-file-structure.txt",
+		"statements.txt",
+		"structs.txt",
+		"type-events.txt",
+		"type-fields.txt",
+		"type-methods.txt",
+		"type-operators.txt",
+		"type-properties.txt"
+	]
+}

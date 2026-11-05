@@ -87,6 +87,22 @@ importers:
         specifier: ^0.27.1
         version: 0.27.1
 
+  packages/c:
+    dependencies:
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tree-sitter-c:
+        specifier: github:tree-sitter/tree-sitter-c#v0.24.2
+        version: https://codeload.github.com/tree-sitter/tree-sitter-c/tar.gz/b780e47fc780ddc8da13afa35a3f4ed5c157823d(tree-sitter@0.22.4)
+
   packages/cli:
     dependencies:
       '@sittir/codegen':
@@ -155,6 +171,54 @@ importers:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
+
+  packages/csharp:
+    dependencies:
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tree-sitter-csharp:
+        specifier: npm:tree-sitter-c-sharp@^0.23.5
+        version: tree-sitter-c-sharp@0.23.5
+
+  packages/go:
+    dependencies:
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tree-sitter-go:
+        specifier: ^0.25.0
+        version: 0.25.0
+
+  packages/java:
+    dependencies:
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tree-sitter-java:
+        specifier: ^0.23.5
+        version: 0.23.5
 
   packages/python:
     dependencies:
@@ -225,12 +289,24 @@ importers:
       '@ast-grep/wasm':
         specifier: ^0.42.1
         version: 0.42.1(web-tree-sitter@0.27.1)
+      '@sittir/c':
+        specifier: workspace:*
+        version: link:../c
       '@sittir/codegen':
         specifier: workspace:*
         version: link:../codegen
       '@sittir/common':
         specifier: workspace:*
         version: link:../common
+      '@sittir/csharp':
+        specifier: workspace:*
+        version: link:../csharp
+      '@sittir/go':
+        specifier: workspace:*
+        version: link:../go
+      '@sittir/java':
+        specifier: workspace:*
+        version: link:../java
       '@sittir/python':
         specifier: workspace:*
         version: link:../python
@@ -2571,8 +2647,25 @@ packages:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
 
+  tree-sitter-c-sharp@0.23.5:
+    resolution: {integrity: sha512-xJGOeXPMmld0nES5+080N/06yY6LQi+KWGWV4LfZaZe6srJPtUtfhIbRSN7EZN6IaauzW28v6W4QHFwmeUW6HQ==}
+    peerDependencies:
+      tree-sitter: ^0.25.0
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
   tree-sitter-c@0.24.1:
     resolution: {integrity: sha512-lkYwWN3SRecpvaeqmFKkuPNR3ZbtnvHU+4XAEEkJdrp3JfSp2pBrhXOtvfsENUneye76g889Y0ddF2DM0gEDpA==}
+    peerDependencies:
+      tree-sitter: ^0.22.4
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
+  tree-sitter-c@https://codeload.github.com/tree-sitter/tree-sitter-c/tar.gz/b780e47fc780ddc8da13afa35a3f4ed5c157823d:
+    resolution: {tarball: https://codeload.github.com/tree-sitter/tree-sitter-c/tar.gz/b780e47fc780ddc8da13afa35a3f4ed5c157823d}
+    version: 0.24.2
     peerDependencies:
       tree-sitter: ^0.22.4
     peerDependenciesMeta:
@@ -2588,6 +2681,14 @@ packages:
     resolution: {integrity: sha512-APBc/Dq3xz/e35Xpkhb1blu5UgW+2E3RyGWawZSCNcbGwa7jhSQPS8KsUupuzBla8PCo8+lz9W/JDJjmfRa2tw==}
     peerDependencies:
       tree-sitter: ^0.25.0
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
+  tree-sitter-java@0.23.5:
+    resolution: {integrity: sha512-Yju7oQ0Xx7GcUT01mUglPP+bYfvqjNCGdxqigTnew9nLGoII42PNVP3bHrYeMxswiCRM0yubWmN5qk+zsg0zMA==}
+    peerDependencies:
+      tree-sitter: ^0.21.1
     peerDependenciesMeta:
       tree-sitter:
         optional: true
@@ -4680,16 +4781,33 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
+  tree-sitter-c-sharp@0.23.5:
+    dependencies:
+      node-addon-api: 8.9.2
+      node-gyp-build: 4.8.4
+
   tree-sitter-c@0.24.1:
     dependencies:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
+
+  tree-sitter-c@https://codeload.github.com/tree-sitter/tree-sitter-c/tar.gz/b780e47fc780ddc8da13afa35a3f4ed5c157823d(tree-sitter@0.22.4):
+    dependencies:
+      node-addon-api: 8.9.2
+      node-gyp-build: 4.8.4
+    optionalDependencies:
+      tree-sitter: 0.22.4
 
   tree-sitter-cli@0.27.1: {}
 
   tree-sitter-go@0.25.0:
     dependencies:
       node-addon-api: 8.7.0
+      node-gyp-build: 4.8.4
+
+  tree-sitter-java@0.23.5:
+    dependencies:
+      node-addon-api: 8.9.2
       node-gyp-build: 4.8.4
 
   tree-sitter-javascript@0.25.0:

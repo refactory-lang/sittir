@@ -26,8 +26,12 @@
 	},
 	"dependencies": {
 		"@ast-grep/wasm": "^0.42.1",
+		"@sittir/c": "workspace:*",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
+		"@sittir/csharp": "workspace:*",
+		"@sittir/go": "workspace:*",
+		"@sittir/java": "workspace:*",
 		"@sittir/python": "workspace:*",
 		"@sittir/regex": "workspace:*",
 		"@sittir/rust": "workspace:*",

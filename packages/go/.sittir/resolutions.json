@@ -1,0 +1,22 @@
+{
+	"grammarHash": "66c906e670a1e22752b7abc8cb39f7086c4492895e3d9dc90a793bf83e123d54",
+	"resolutions": [
+		{"resolution":{"kind":"AddConflict","symbols":["_expression","qualified_type"]},"step":"upstream-declared","sourceChains":[["_expression"],["qualified_type"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'.'","interpretations":["_expression","qualified_type"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","_expression"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["_expression"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'('","interpretations":["_simple_type","_expression"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","generic_type","_expression"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["generic_type"],["_expression"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'['","interpretations":["_simple_type","generic_type","_expression"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","generic_type"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["generic_type"]],"conflict":{"symbolSequence":["negated_type"],"lookahead":"'['","interpretations":["_simple_type","generic_type"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["field_declarations"]},"step":"default","sourceChains":[["field_declarations","field_declaration_list_group"]],"conflict":{"symbolSequence":["'struct'","'{'","field_declaration"],"lookahead":"';'","interpretations":["field_declarations","field_declarations"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["import_specs"]},"step":"default","sourceChains":[["import_specs","import_spec_list_group"]],"conflict":{"symbolSequence":["'import'","'('","import_spec"],"lookahead":"';'","interpretations":["import_specs","import_specs"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["interface_elems"]},"step":"default","sourceChains":[["interface_elems","interface_type_group"]],"conflict":{"symbolSequence":["'interface'","'{'","method_elem"],"lookahead":"';'","interpretations":["interface_elems","interface_elems"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["parameter_declaration","_simple_type"]},"step":"upstream-declared","sourceChains":[["parameter_declaration"],["_simple_type"]],"conflict":{"symbolSequence":["'func'","'('","identifier"],"lookahead":"','","interpretations":["parameter_declaration","_simple_type"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["statements"]},"step":"default","sourceChains":[["statements","statement_list_arm","statement_list"]],"conflict":{"symbolSequence":["'{'","_statement"],"lookahead":"';'","interpretations":["statements","statements"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["type_declaration_elements"]},"step":"default","sourceChains":[["type_declaration_elements"]],"conflict":{"symbolSequence":["'type'","'('","type_alias"],"lookahead":"';'","interpretations":["type_declaration_elements","type_declaration_elements"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["type_parameter_declaration","_expression"]},"step":"upstream-declared","sourceChains":[["type_parameter_declaration"],["_expression"]],"conflict":{"symbolSequence":["'type'","identifier","'['","identifier"],"lookahead":"'*'","interpretations":["type_parameter_declaration","_expression"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["type_parameter_declaration","_simple_type","_expression"]},"step":"upstream-declared","sourceChains":[["type_parameter_declaration"],["_simple_type"],["_expression"]],"conflict":{"symbolSequence":["'type'","identifier","'['","identifier"],"lookahead":"'('","interpretations":["type_parameter_declaration","_simple_type","_expression"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["type_parameter_declaration","_simple_type","generic_type","_expression"]},"step":"upstream-declared","sourceChains":[["type_parameter_declaration"],["_simple_type"],["generic_type"],["_expression"]],"conflict":{"symbolSequence":["'type'","identifier","'['","identifier"],"lookahead":"'['","interpretations":["type_parameter_declaration","_simple_type","generic_type","_expression"]}}
+	],
+	"bound": {
+		"grammarHash": "66c906e670a1e22752b7abc8cb39f7086c4492895e3d9dc90a793bf83e123d54",
+		"resolutions": []
+	}
+}
