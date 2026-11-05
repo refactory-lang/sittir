@@ -483,7 +483,7 @@ export function groupField(group: object | undefined, field: string): unknown {
 }
 
 export function spelledMember<T>(text: T, spellings: Readonly<Record<string, string>>): T {
-	return (typeof text === 'string' ? (spellings[text] ?? text) : text) as T;
+	return (typeof text === 'string' && Object.hasOwn(spellings, text) ? spellings[text] : text) as T;
 }
 
 /**
