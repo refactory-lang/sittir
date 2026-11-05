@@ -13,8 +13,7 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'float_scientific scalar',
 		'if_statement unread',
 		'key_value_pattern unclaimed',
-		'string preset',
-		'string unread'
+		'string preset'
 	],
 	rust: [
 		'array_expression_list unread',

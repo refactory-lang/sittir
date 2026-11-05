@@ -30,6 +30,22 @@ describe('the portable read', () => {
 		expect(python.is.portable.literal.boolean('True')).toBe(false);
 	});
 
+	it.each([
+		['r"\\\\"', 'literal.string.raw', '\\\\'],
+		['r"a\\\\"', 'literal.string.raw', 'a\\\\'],
+		['rb"\\\\"', 'literal.string.bytes.raw', '\\\\']
+	])('reads the escape pairs a raw string\'s closer holds as its text, and builds %s back', (string, path, text) => {
+		const source = `x = ${string}`;
+		expect(((firstOf(source) as Read).content as Read).value).toEqual({ $path: path, elements: [{ $path: 'literal.string.text', $value: text }] });
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('reads a non-raw string\'s escape pair as its escape, not as text', () => {
+		const source = 'x = "\\\\"';
+		expect(((firstOf(source) as Read).content as Read).value).toEqual({ $path: 'literal.string', elements: [{ $path: 'literal.string.escape', content: '\\' }] });
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('reads a string\'s text and escapes by their paths, a format spec by its text, and builds them back', () => {
 		const source = 'x = f"a{{b\\n{c:>3}"';
 		expect(((firstOf(source) as Read).content as Read).value).toEqual({

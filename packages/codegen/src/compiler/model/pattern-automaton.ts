@@ -458,6 +458,35 @@ export function dfaAccepts(dfa: PatternDfa, text: string): boolean {
 	return dfa.states[at]!.accepting;
 }
 
+export function includesNonEmpty(inner: PatternDfa, outer: PatternDfa): boolean {
+	const live = coaccessible(inner);
+	const seen = new Set<string>();
+	const stack: (readonly [number, number | undefined])[] = [[0, 0]];
+	const enter = (at: number, to: number | undefined): boolean => {
+		if (!live.has(at)) return true;
+		if (inner.states[at]!.accepting && (to === undefined || !outer.states[to]!.accepting)) return false;
+		const key = `${at} ${to ?? -1}`;
+		if (!seen.has(key)) {
+			seen.add(key);
+			stack.push([at, to]);
+		}
+		return true;
+	};
+	while (stack.length > 0) {
+		const [at, to] = stack.pop()!;
+		for (const edge of inner.states[at]!.edges) {
+			let rest = edge.set;
+			for (const other of to === undefined ? [] : outer.states[to]!.edges) {
+				if (rest.minus(other.set.complement()).isEmpty()) continue;
+				if (!enter(edge.to, other.to)) return false;
+				rest = rest.minus(other.set);
+			}
+			if (!rest.isEmpty() && !enter(edge.to, undefined)) return false;
+		}
+	}
+	return true;
+}
+
 function reachableFrom(dfa: PatternDfa, seeds: readonly number[], keep: (set: CharSet) => boolean): Set<number> {
 	const seen = new Set<number>();
 	const stack = [...seeds];

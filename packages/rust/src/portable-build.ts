@@ -50787,7 +50787,11 @@ export const build: PortableBuildTable = {
 		'483': ['name', 'returnType']
 	},
 	delimiters: {
-		'159': ['prefix'],
-		'161': []
+		'159': {
+			meaning: ['prefix']
+		},
+		'161': {
+			meaning: []
+		}
 	}
 };

@@ -1,6 +1,6 @@
 import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../types/rule.ts';
-import { freeTextOf } from './delimited.ts';
+import { contentLeavesOf, freeTextOf } from './delimited.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledLeaf,
@@ -127,6 +127,16 @@ function gateOf(open: AssembledLexedPattern): FreeTextGate | undefined {
 		: { token: open.kind, facet: facet.name, spellings: facet.values.filter((value) => value.interpolating === true).map((value) => value.value!) };
 }
 
+function stampContentLeaves(node: AbstractAssembledCompound, close: AssembledLexedPattern, nodes: Nodes): void {
+	for (const facet of close.slots.filter((slot) => slot.delimiterRole === 'content')) {
+		const pattern = facet.values.find(isPatternValue)?.pattern;
+		const leaves = pattern === undefined ? [] : contentLeavesOf(node, nodes, pattern);
+		if (leaves.length !== 1)
+			throw new Error(`delimiters: '${node.kind}''s closer '${close.kind}' holds content in '${facet.name}', which ${leaves.length === 0 ? 'no content leaf' : `${leaves.length} content leaves (${leaves.join(', ')})`} reads, where one reads it`);
+		facet.contentLeaf = leaves[0]!;
+	}
+}
+
 function factsOf(node: AbstractAssembledCompound, open: AssembledLexedPattern, close: AssembledLexedPattern): DelimiterFacets {
 	const [openSlot, closeSlot] = slotsOf(node, open, close);
 	const facet = derivedFacetOf(node.kind, open);
@@ -172,6 +182,7 @@ export function stampDelimiterFacets(nodeMap: NodeMap): void {
 		stampRoles(node.kind, close, (slot) => closeRole(slot, open));
 		node.delimiterFacets = factsOf(node, open, close);
 		node.delimiterPreference = preferenceOf(slotsOf(node, open, close)[0], open);
+		stampContentLeaves(node, close, nodeMap.nodes);
 		const freeText = freeTextOf(node, nodeMap.nodes, node.delimiterFacets.escape);
 		const gate = gateOf(open);
 		node.freeText = freeText === undefined || gate === undefined ? freeText : { ...freeText, gate };

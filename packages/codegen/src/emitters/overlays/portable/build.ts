@@ -5,6 +5,7 @@ import type {
 	PortableCallShape,
 	PortableContainer,
 	PortableDecimalParts,
+	PortableDelimiterToken,
 	PortableMount,
 	PortableFlagStep,
 	PortableKeyedMount,
@@ -1209,7 +1210,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		.flatMap((token) => {
 			const id = typeOf(token.kind);
 			const meaning = token.slots.filter((slot) => slot.delimiterRole === 'input' || slot.delimiterRole === 'content').map((slot) => slot.propertyName);
-			return id === undefined ? [] : [[id, meaning] as const];
+			const facet = token.slots.find((slot) => slot.contentLeaf !== undefined);
+			const reads = facet?.contentLeaf === undefined ? undefined : typeOf(facet.contentLeaf);
+			if (facet !== undefined && reads === undefined) throw new Error(`portable build: '${token.kind}' holds content its leaf '${facet.contentLeaf}' reads, which has no kind id`);
+			const entry: PortableDelimiterToken = { meaning, ...(facet === undefined || reads === undefined ? {} : { content: { facet: facet.propertyName, reads } }) };
+			return id === undefined ? [] : [[id, entry] as const];
 		})
 		.sort(([a], [b]) => a - b);
 	return {

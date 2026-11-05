@@ -15711,7 +15711,15 @@ export const build: PortableBuildTable = {
 		'351': ['expression']
 	},
 	delimiters: {
-		'119': ['prefix'],
-		'122': ['content']
+		'119': {
+			meaning: ['prefix']
+		},
+		'122': {
+			meaning: ['content'],
+			content: {
+				facet: 'content',
+				reads: 120
+			}
+		}
 	}
 };

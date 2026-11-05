@@ -12,7 +12,7 @@ import {
 	type DelimiterEnd,
 	type FreeText
 } from './node-map.ts';
-import { CharSet, LINE_TERMINATORS, admitsInside, dfaAccepts, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { CharSet, LINE_TERMINATORS, admitsInside, dfaAccepts, includesNonEmpty, leadingChars, patternDfa } from './pattern-automaton.ts';
 import { delimiterOwners } from './delimiter-facets.ts';
 
 function firstChars(text: string): CharSet {
@@ -233,6 +233,21 @@ export function freeTextOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<s
 		)
 	];
 	return leaves.length === 0 ? undefined : { leaves, excluded: otherLeaders.ranges };
+}
+
+export function contentLeavesOf(node: AbstractAssembledCompound, nodes: ReadonlyMap<string, AssembledNode>, pattern: string): readonly string[] {
+	const facts = new DelimitedFacts(nodes);
+	const content = contentArmsOf(node, facts, nodes);
+	const facet = patternDfa(pattern);
+	if (content === undefined || facet === undefined) return [];
+	return [
+		...new Set(
+			content.arms.flatMap((arm) => facts.textLeaves(arm)).flatMap((leaf) => {
+				const dfa = leaf.name === undefined || leaf.pattern === undefined ? undefined : patternDfa(leaf.pattern);
+				return dfa !== undefined && includesNonEmpty(facet, dfa) ? [leaf.name!] : [];
+			})
+		)
+	];
 }
 
 function reservedTexts(reserved: ReservedWordsets | undefined, nodes: ReadonlyMap<string, AssembledNode>): ReadonlySet<string> {

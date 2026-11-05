@@ -1257,6 +1257,7 @@ export class AssembledNonterminal {
 	optionDefaultKind?: string;
 	registeredOption?: 'spelling' | 'choice';
 	delimiterRole?: DelimiterFacetRole;
+	contentLeaf?: string;
 	effectiveWordsets?: readonly string[];
 	checksReserved?: boolean;
 	splicedEnvelope?: string;

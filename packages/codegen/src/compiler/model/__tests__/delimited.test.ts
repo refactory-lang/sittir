@@ -4,7 +4,7 @@ import { compileGrammar } from '../../compile.ts';
 import { ruleListParts } from '../../../dsl/rule-patterns.ts';
 import { recordUnguardedDelimiters } from '../../assemble.ts';
 import { fromAssembleWarning } from '../../diagnostics/grammar-diagnostics.ts';
-import { delimitedLeafVerdicts } from '../delimited.ts';
+import { contentLeavesOf, delimitedLeafVerdicts } from '../delimited.ts';
 import { AbstractAssembledCompound, AssembledLeaf, AssembledLexedPattern, AssembleDiagnosticsCollector } from '../node-map.ts';
 import { stampDelimiterFacets } from '../delimiter-facets.ts';
 import { FactoryEmitter } from '../../../emitters/factories.ts';
@@ -87,6 +87,18 @@ describe('the free text of a composite with derived delimiters', () => {
 		expect((python.get('escape_interpolation') as AssembledLeaf).freeText).toBeUndefined();
 		const raw = (await emitReadyModel('rust')).nodeMap.nodes.get('raw_string_literal');
 		expect(raw instanceof AbstractAssembledCompound ? raw.freeText : 'not a compound').toBeUndefined();
+	}, COMPILE_TIMEOUT);
+});
+
+describe('the content a closer holds', () => {
+	it('stamps a closer\'s content facet with the one content leaf whose pattern holds every text the facet can', async () => {
+		const python = (await emitReadyModel('python')).nodeMap.nodes;
+		const end = python.get('string_end');
+		if (!(end instanceof AssembledLexedPattern)) throw new Error('string_end is not a lexed pattern');
+		expect(Object.fromEntries(end.slots.map((slot) => [slot.name, slot.contentLeaf]))).toEqual({ content: 'string_fragment', quote: undefined });
+		const string = python.get('string');
+		if (!(string instanceof AbstractAssembledCompound)) throw new Error('string is not a compound');
+		expect(contentLeavesOf(string, python, '\\{\\{')).toEqual(['escape_interpolation', 'string_fragment']);
 	}, COMPILE_TIMEOUT);
 });
 

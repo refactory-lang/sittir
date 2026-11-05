@@ -254,10 +254,19 @@ export interface PortableValueBuild {
 }
 
 /**
+ * A delimiter token's facets that carry meaning (`meaning`), and its content facet with the kind of the content leaf that reads its text
+ * (`content`): a closer can hold the end of its composite's content.
+ */
+export interface PortableDelimiterToken {
+	readonly meaning: readonly string[];
+	readonly content?: { readonly facet: string; readonly reads: number };
+}
+
+/**
  * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, at
  * a path with no arms of its own, the paths a `$value` builds through (`values`), and, by kind id, the accessors of the slots that can hold a
- * token read by its interior (`tokens`), and, by delimiter token kind id, the accessors of its facets that carry meaning (`delimiters`): a
- * delimiter's other facets are spelled from its content, so reading none of them loses nothing.
+ * token read by its interior (`tokens`), and, by delimiter token kind id, its facets that carry meaning (`delimiters`): a delimiter's other
+ * facets are spelled from its content, so reading none of them loses nothing.
  */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
@@ -265,7 +274,7 @@ export interface PortableBuildTable {
 	readonly paths: Readonly<Record<string, PortableBuildPath>>;
 	readonly values?: Readonly<Record<string, PortableValueBuild>>;
 	readonly tokens?: Readonly<Record<number, readonly string[]>>;
-	readonly delimiters?: Readonly<Record<number, readonly string[]>>;
+	readonly delimiters?: Readonly<Record<number, PortableDelimiterToken>>;
 }
 
 /**
