@@ -881,10 +881,23 @@ function meet(a: Held | undefined, b: Held | undefined): Held | undefined {
 	);
 }
 
-function tableTargets(image: Image, table: number, index: ReadonlyMap<number, number>): number[] {
+function tableStarts(isa: Isa, body: readonly Instruction[], tables: readonly TableJump[]): readonly number[] {
+	const bases = new Set(tables.map(({ base }) => base));
+	const starts = new Set<number>();
+	let state = NOTHING_HELD;
+	for (const { ins } of body) {
+		for (const [reg, value] of isa.sets(state, ins))
+			if (value.kind === 'address' && bases.has(reg)) for (const at of value.at) starts.add(at);
+		state = held(isa, state, ins);
+	}
+	return [...starts];
+}
+
+function tableTargets(image: Image, table: number, end: number, index: ReadonlyMap<number, number>): number[] {
 	const targets: number[] = [];
-	for (let entry = image.int32(table); entry !== undefined; entry = image.int32(table + 4 * targets.length)) {
-		const target = index.get(table + entry);
+	for (let at = table; at < end; at += 4) {
+		const entry = image.int32(at);
+		const target = entry === undefined ? undefined : index.get(table + entry);
 		if (target === undefined) break;
 		targets.push(target);
 	}
@@ -932,14 +945,19 @@ function heldStates(isa: Isa, body: readonly Instruction[], image: Image): reado
 	const jumps = direct.flatMap(({ jump }, at) => (jump ? [at] : []));
 	const tables = jumps.flatMap((jump) => isa.table(body, jump) ?? []);
 	const graph = (resolved: Tables) => direct.map(({ next }, at) => resolved.get(at) ?? next);
-	const resolve = (into: readonly (Held | undefined)[]): Map<number, readonly number[]> =>
-		new Map(
-			tables.flatMap(({ jump, entry, base }) => {
-				const value = single(into[entry]?.get(base), 'address');
-				const targets = value === undefined ? [] : tableTargets(image, value, index);
+	const starts = tableStarts(isa, body, tables);
+	const resolve = (into: readonly (Held | undefined)[]): Map<number, readonly number[]> => {
+		const bases = tables.map(({ entry, base }) => single(into[entry]?.get(base), 'address'));
+		const ends = [...starts, ...bases.filter((base) => base !== undefined)];
+		return new Map(
+			tables.flatMap(({ jump }, at) => {
+				const value = bases[at];
+				if (value === undefined) return [];
+				const targets = tableTargets(image, value, Math.min(...ends.filter((end) => end > value)), index);
 				return targets.length ? [[jump, targets] as const] : [];
 			})
 		);
+	};
 	const agrees = (a: Tables, b: Tables, jump: number): boolean => a.get(jump)?.join() === b.get(jump)?.join();
 	let resolved: Tables = new Map();
 	for (let round = 0; round < TABLE_ROUNDS; round++) {
