@@ -279,7 +279,6 @@ struct State {
     members: CountedMap<NodeIndex>,
     framed: CountedMap<NodeIndex>,
     settled: CountedMap<(NodeIndex, TriviaSide)>,
-    sides: BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>,
     unowned: BTreeMap<Order, NodeIndex>,
     runs: Vec<Placed>,
     order: BTreeMap<(u32, u32, Order), RunId>,
@@ -307,6 +306,11 @@ pub struct Source<'t> {
 /// reader's own lookup, which moves from where it last read.
 pub type Lookup<'n, 't> = &'n mut dyn FnMut(NodeIndex) -> Option<tree_sitter::Node<'t>>;
 
+/// The sides one call placed, by node and side, each side's entries in
+/// source order: every entry a side holds, since a side is placed with the
+/// region that holds it, once.
+pub type PlacedSides = BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>;
+
 impl Placement {
     /// The placement of a tree whose grammar's surface kinds are `kinds`
     /// and whose indentation level is `unit` spaces wide.
@@ -317,23 +321,18 @@ impl Placement {
 
     fn with<'t, R>(&self, source: Source<'t>, nodes: Option<Lookup<'_, 't>>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, lookup: nodes, nodes: HashMap::new(), kids: HashMap::new(), plans: HashMap::new() };
+        let mut placer = Placer { source, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, lookup: nodes, nodes: HashMap::new(), kids: HashMap::new(), plans: HashMap::new(), placed: PlacedSides::new() };
         f(&mut placer)
     }
 
-    /// The entries the assignment gives `side` of the node at `index`, in
-    /// source order, its region placed first.
-    #[must_use]
-    pub fn side<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) -> Vec<Assigned> {
+    /// The region that holds `side` of the node at `index`, placed. The
+    /// sides it placed go to `fill`, before any other read finds the region
+    /// placed; a region placed before hands over none.
+    pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide, fill: impl FnOnce(PlacedSides)) {
         self.with(source, Some(nodes), |placer| {
             placer.cover(index, side);
-            placer.state.sides.get(&(index, side)).cloned().unwrap_or_default()
-        })
-    }
-
-    /// The region that holds `side` of the node at `index`, placed.
-    pub fn cover<'t>(&self, source: Source<'t>, nodes: Lookup<'_, 't>, index: NodeIndex, side: TriviaSide) {
-        self.with(source, Some(nodes), |placer| placer.cover(index, side));
+            placer.hand_over(fill);
+        });
     }
 
     /// The item the list node at `index` passes the extras and `ERROR`s of
@@ -384,10 +383,12 @@ impl Placement {
         self.state.lock().unwrap_or_else(PoisonError::into_inner).runs[id.index()].from
     }
 
-    /// Place every region of the tree.
-    pub fn place_all(&self, source: Source<'_>) {
+    /// Place every region of the tree, the sides placed handed to `fill`
+    /// as `cover` hands them.
+    pub fn place_all(&self, source: Source<'_>, fill: impl FnOnce(PlacedSides)) {
         self.with(source, None, |placer| {
             placer.place_all();
+            placer.hand_over(fill);
         });
     }
 
@@ -410,12 +411,6 @@ impl Placement {
     #[must_use]
     pub fn unowned(&self) -> Vec<NodeIndex> {
         self.state.lock().unwrap_or_else(PoisonError::into_inner).unowned.values().copied().collect()
-    }
-
-    /// Every side placed so far, by node and side.
-    #[must_use]
-    pub fn sides(&self) -> BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>> {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).sides.clone()
     }
 
     /// The children the placement has stepped through.
@@ -442,11 +437,19 @@ struct Placer<'t, 's, 'l> {
     nodes: HashMap<NodeIndex, tree_sitter::Node<'t>>,
     kids: HashMap<NodeIndex, Arc<[Kid]>>,
     plans: HashMap<Gap, Arc<Plan>>,
+    placed: PlacedSides,
 }
 
 impl<'t> Placer<'t, '_, '_> {
     fn text(&self) -> &'t str {
         self.source.source
+    }
+
+    fn hand_over(&mut self, fill: impl FnOnce(PlacedSides)) {
+        let placed = std::mem::take(&mut self.placed);
+        if !placed.is_empty() {
+            fill(placed);
+        }
     }
 
     fn len(&self) -> u32 {
@@ -908,7 +911,7 @@ impl<'t> Placer<'t, '_, '_> {
 
     fn push(&mut self, place: Place, entry: Assigned, order: Order) {
         match place {
-            Place::Side(node, side) => self.state.sides.entry((node, side)).or_default().push(entry),
+            Place::Side(node, side) => self.placed.entry((node, side)).or_default().push(entry),
             Place::Unowned => {
                 if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
                     self.state.unowned.insert(order, index);
@@ -1693,7 +1696,6 @@ impl HeapBytes for State {
             members,
             framed,
             settled,
-            sides,
             unowned,
             runs,
             order,
@@ -1720,7 +1722,6 @@ impl HeapBytes for State {
             + members.heap_bytes()
             + framed.heap_bytes()
             + settled.heap_bytes()
-            + sides.heap_bytes()
             + unowned.heap_bytes()
             + runs.heap_bytes()
             + order.heap_bytes()

@@ -425,7 +425,8 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// every later one.
     lines: std::sync::OnceLock<crate::points::LineTable>,
     /// The tree's trivia, placed a region at a time on the first read of a
-    /// side the region holds.
+    /// side the region holds, the sides it places filled into `written`
+    /// as the tree's assigned rows (`cover_side`).
     trivia: Placement,
     /// The tree's depth members, found on its first depth move
     /// (`depth_move_from`).
@@ -450,7 +451,8 @@ pub struct ParsedTree<G: EngineGrammar> {
     grown: std::sync::atomic::AtomicBool,
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
-    /// The sides a write set, in the store of the engine that parsed the tree.
+    /// The tree's sides in the store of the engine that parsed it: the ones
+    /// a write set, and the ones its placement assigned.
     written: TriviaStore<G::Trivia>,
     /// The tree's records, each written on its node's first read, and those
     /// no cell names, which it holds by row (`tree_arena`): made on the
@@ -1300,11 +1302,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
         crate::trivia_table::Source { tree: &self.tree, source: &self.source, lines: self.lines() }
     }
 
-    /// The tree's trivia with every region placed.
+    /// The tree's trivia with every region placed, its sides filled into
+    /// the store.
     pub fn placed_trivia(&self) -> &Placement {
         self.grew();
-        self.trivia.place_all(self.trivia_source());
+        self.trivia.place_all(self.trivia_source(), |placed| self.written.fill(self.tree_id, placed));
         &self.trivia
+    }
+
+    /// The region that holds `side` of the node at `index` placed, each
+    /// node it reads found through `nodes`, the sides it placed filled into
+    /// the store.
+    fn cover_side<'t>(&'t self, nodes: crate::trivia_table::Lookup<'_, 't>, index: crate::types::NodeIndex, side: TriviaSide) {
+        self.grew();
+        self.trivia.cover(self.trivia_source(), nodes, index, side, |placed| self.written.fill(self.tree_id, placed));
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -1334,8 +1345,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `TriviaTable::adjacency`) is no layout: it is an entry of the source,
     /// as an `ERROR` is.
     fn assigned_side<'t, N: Nodes<'t>>(&'t self, nodes: &mut N, index: crate::types::NodeIndex, side: TriviaSide, deviation: Option<Deviation<N, G::Trivia>>) -> Vec<SideEntry<G::Trivia>> {
-        self.grew();
-        let assigned = self.trivia.side(self.trivia_source(), &mut |at| nodes.node(at), index, side);
+        self.cover_side(&mut |at| nodes.node(at), index, side);
+        let assigned = self.written.assigned(Place::Row { tree: self.tree_id, row: index }, side).unwrap_or_default();
         if assigned.is_empty() {
             return Vec::new();
         }
@@ -1396,7 +1407,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         node_at_index(&self.tree, index).is_some_and(|node| crate::trivia_table::is_empty(&node))
     }
 
-    /// The store of the sides a write set, the engine's that parsed the tree.
+    /// The store of the tree's sides, the engine's that parsed it: the ones
+    /// a write set, and the ones its placement assigned.
     pub fn written(&self) -> &TriviaStore<G::Trivia> {
         &self.written
     }
@@ -1586,8 +1598,7 @@ impl<'t, G: EngineGrammar> Lookups<'t, G> {
         if let Some(slots) = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        tree.grew();
-        tree.trivia.cover(tree.trivia_source(), &mut |at| self.node(at), index, TriviaSide::Inner);
+        tree.cover_side(&mut |at| self.node(at), index, TriviaSide::Inner);
         let table = &tree.trivia;
         let run_at = |start: u32, end: u32| table.run_at(start, end);
         self.goto(index);
@@ -3116,6 +3127,45 @@ mod tests {
         let block = index_of_kind(&tree, "block", 0);
         tree.write_trivia_side(block, TriviaSide::Inner, Vec::new()).expect("a side write");
         assert!(tree.edited_within(block, false));
+    }
+
+    #[test]
+    fn a_written_side_shadows_the_assigned_one_and_the_source_s_own_view_still_reads_the_source() {
+        for read_first in [true, false] {
+            let (tree, _) = parsed("// c\nfn f() {}\n");
+            let f = index_of_kind(&tree, "function_item", 0);
+            let comment = index_of_kind(&tree, "line_comment", 0);
+            if read_first {
+                assert_eq!(tree.trivia_side(f, TriviaSide::Leading).len(), 2, "the comment and its line break");
+            }
+            let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+            tree.write_trivia_side(f, TriviaSide::Leading, vec![note.clone()]).expect("a side write");
+            assert_eq!(tree.trivia_side(f, TriviaSide::Leading), [note], "the side reads the write alone");
+            let source: Vec<TriviaEntry<TestTrivia>> = tree.assigned_side(&mut tree.tree(), f, TriviaSide::Leading, None).into_iter().map(SideEntry::into_entry).collect();
+            let [entry] = source.as_slice() else { panic!("the source's own view reads the comment alone: {source:?}") };
+            assert!(matches!(entry.value(), Some(SlotValue::Coord(coord)) if coord.index == comment), "the comment: {entry:?}");
+        }
+    }
+
+    #[test]
+    fn an_unedited_tree_s_edit_checks_walk_none_of_the_rows_its_reads_filled() {
+        let (tree, _) = parsed("mod m {\n    // c\n    fn f() { a(); }\n}\nfn g() {}\n");
+        let count = crate::read::descendant_count(&tree.tree().root_node());
+        for index in (0..count).map(NodeIndex::new) {
+            for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
+                let _ = tree.trivia_side(index, side);
+            }
+        }
+        let store = tree.written().clone();
+        assert!(store.assigned_len() > 0, "the reads filled the source's sides");
+        let coordinates: Vec<NodeCoordinate> = (0..count).map(|at| coordinate(&tree, NodeIndex::new(at))).collect();
+        let walked = store.edit_walks();
+        let trees = table(tree);
+        let sources = ReadTrees::new(&trees);
+        for at in &coordinates {
+            assert!(sources.renders_as_source(at), "nothing was written under {at:?}");
+        }
+        assert_eq!(store.edit_walks(), walked, "no check walked an assigned row");
     }
 
     #[test]

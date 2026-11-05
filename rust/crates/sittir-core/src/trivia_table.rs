@@ -35,7 +35,7 @@ use crate::types::{KindId, NodeIndex, RunId, Span};
 use std::collections::BTreeMap;
 
 mod place;
-pub use place::{Lookup, Placement, Source};
+pub use place::{Lookup, PlacedSides, Placement, Source};
 
 /// A side of a node that holds trivia: before its first token, after its
 /// last, or, for a node with no named child, between its own tokens.

@@ -1,18 +1,23 @@
-//! The sides of trivia a writer set, for every node an engine renders: one
-//! store per engine, keyed by the node's place and the side. A side reads as
-//! what the store holds, else, for a parsed node, what its tree's trivia table
-//! assigned from the source (`ParsedTree::side_entries`).
+//! The sides of trivia for every node an engine renders: one store per
+//! engine, keyed by the node's place and the side. It holds the sides a
+//! writer set, and apart from them the sides the placement of a parsed tree
+//! assigned from its source, filled a region at a time as reads reach them.
+//! A side reads as what a write set, else, for a parsed node, what the
+//! placement assigned (`ParsedTree::side_entries`).
 //!
 //! Written trivia is a layout overlay: setting or replacing a side never
-//! edits a node or a record. The store is outside every record, so a record
-//! that shares a child never sees another record's sides.
+//! edits a node or a record, and never removes what the placement assigned
+//! the side, which the source's own view still reads. The store is outside
+//! every record, so a record that shares a child never sees another
+//! record's sides.
 
 use crate::heap::HeapBytes;
 use std::collections::{BTreeMap, HashMap};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, PoisonError, RwLock};
 
 use crate::trivia::TriviaEntry;
-use crate::trivia_table::TriviaSide;
+use crate::trivia_table::{Assigned, TriviaSide};
 use crate::types::{NodeIndex, TreeId};
 
 /// Where a node's sides are kept.
@@ -50,10 +55,31 @@ pub struct Site<H> {
     pub item: crate::types::ItemIndex,
 }
 
-type Sides<T> = BTreeMap<(Place, TriviaSide), Vec<TriviaEntry<T>>>;
+type Key = (Place, TriviaSide);
 
-/// One engine's written sides. Every handle cloned from it shares them: the
-/// engine holds one, and each tree it parses another.
+/// A store's rows: the sides writes set, and the sides the placement of a
+/// parsed tree assigned (`TriviaStore::fill`). Which table holds a row is
+/// whether a write set it.
+#[derive(Debug)]
+struct Sides<T> {
+    written: BTreeMap<Key, Vec<TriviaEntry<T>>>,
+    assigned: BTreeMap<Key, Vec<Assigned>>,
+}
+
+impl<T> Default for Sides<T> {
+    fn default() -> Self {
+        Self { written: BTreeMap::new(), assigned: BTreeMap::new() }
+    }
+}
+
+/// The bytes a row holding `value` takes: its key, its value and the
+/// value's heap.
+fn row_bytes<V: HeapBytes>(value: &V) -> usize {
+    std::mem::size_of::<(Key, V)>() + value.heap_bytes()
+}
+
+/// One engine's sides. Every handle cloned from it shares them: the engine
+/// holds one, and each tree it parses another.
 ///
 /// A built node's entries live as long as the engine's built arena, which
 /// only appends, so no record's address is reused while its entries are
@@ -62,9 +88,12 @@ type Sides<T> = BTreeMap<(Place, TriviaSide), Vec<TriviaEntry<T>>>;
 #[derive(Debug)]
 pub struct TriviaStore<T> {
     sides: Arc<RwLock<Sides<T>>>,
-    /// The bytes each tree's rows of `sides` take, its entries' heap
-    /// included, kept at every write (`insert`) and dropped with the tree.
+    /// The bytes each tree's rows take, written and assigned, their entries'
+    /// heap included, kept at every write (`insert`) and fill and dropped
+    /// with the tree.
     tree_bytes: Arc<std::sync::Mutex<HashMap<TreeId, usize>>>,
+    /// The rows the edit checks have walked (`edit_walks`).
+    edit_walks: Arc<AtomicU64>,
     /// The chunks of the arena the engine's builders write, which a record
     /// entry this store answers renders from.
     #[cfg(feature = "arena")]
@@ -80,6 +109,7 @@ impl<T> Clone for TriviaStore<T> {
         Self {
             sides: Arc::clone(&self.sides),
             tree_bytes: Arc::clone(&self.tree_bytes),
+            edit_walks: Arc::clone(&self.edit_walks),
             #[cfg(feature = "arena")]
             built: Arc::clone(&self.built),
             #[cfg(all(feature = "arena", feature = "napi-bindings"))]
@@ -114,8 +144,9 @@ impl<T> TriviaStore<T> {
     #[cfg_attr(not(feature = "arena"), allow(unused_variables, reason = "only the arena build has a built arena"))]
     pub fn with_kind_bits(kind_bits: u32) -> Self {
         Self {
-            sides: Arc::new(RwLock::new(BTreeMap::new())),
+            sides: Arc::default(),
             tree_bytes: Arc::default(),
+            edit_walks: Arc::default(),
             #[cfg(feature = "arena")]
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, no_shape))),
             #[cfg(all(feature = "arena", feature = "napi-bindings"))]
@@ -129,8 +160,9 @@ impl<T> TriviaStore<T> {
     #[must_use]
     pub fn for_records(kind_bits: u32, shape: crate::arena::ShapeOf) -> Self {
         Self {
-            sides: Arc::new(RwLock::new(BTreeMap::new())),
+            sides: Arc::default(),
             tree_bytes: Arc::default(),
+            edit_walks: Arc::default(),
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))),
             #[cfg(feature = "napi-bindings")]
             buffers: Arc::default(),
@@ -177,6 +209,13 @@ fn rows(tree: TreeId, index: NodeIndex, end: NodeIndex) -> std::ops::Range<(Plac
     (Place::Row { tree, row: index }, TriviaSide::Leading)..(Place::Row { tree, row: end }, TriviaSide::Leading)
 }
 
+/// `tree`'s rows of `table`, removed.
+fn drop_rows<V>(table: &mut BTreeMap<Key, V>, tree: TreeId) -> Vec<V> {
+    let first = (Place::Row { tree, row: NodeIndex::ROOT }, TriviaSide::Leading);
+    let keys: Vec<Key> = table.range(first..).take_while(|((place, _), _)| matches!(place, Place::Row { tree: t, .. } if *t == tree)).map(|(&key, _)| key).collect();
+    keys.into_iter().filter_map(|key| table.remove(&key)).collect()
+}
+
 impl<T: Clone> TriviaStore<T> {
     #[must_use]
     pub fn new() -> Self {
@@ -211,7 +250,36 @@ impl<T: Clone> TriviaStore<T> {
     /// side with nothing.
     #[must_use]
     pub fn side(&self, place: Place, side: TriviaSide) -> Option<Vec<TriviaEntry<T>>> {
-        self.read().get(&(place, side)).map(|entries| self.answered(entries))
+        self.read().written.get(&(place, side)).map(|entries| self.answered(entries))
+    }
+
+    /// The entries the placement of the node's tree assigned `side` of the
+    /// parsed node at `place` (`fill`), whether or not a write set the side
+    /// since; `None` when the placement assigned the side none, or has not
+    /// placed its region.
+    #[must_use]
+    pub fn assigned(&self, place: Place, side: TriviaSide) -> Option<Vec<Assigned>> {
+        self.read().assigned.get(&(place, side)).cloned()
+    }
+
+    /// The sides the placement of `tree` placed in one call, as the
+    /// assigned rows of its nodes, each entry after any its row held.
+    pub fn fill(&self, tree: TreeId, placed: crate::trivia_table::PlacedSides) {
+        let (mut added, mut removed) = (0, 0);
+        {
+            let mut sides = self.write();
+            for ((row, side), entries) in placed {
+                match sides.assigned.entry((Place::Row { tree, row }, side)) {
+                    std::collections::btree_map::Entry::Vacant(row) => added += row_bytes(row.insert(entries)),
+                    std::collections::btree_map::Entry::Occupied(mut row) => {
+                        removed += row_bytes(row.get());
+                        row.get_mut().extend(entries);
+                        added += row_bytes(row.get());
+                    }
+                }
+            }
+        }
+        self.count(tree, added, removed);
     }
 
     /// The sides writes gave the node at `place`, as its trivia, or `None`
@@ -219,7 +287,7 @@ impl<T: Clone> TriviaStore<T> {
     #[must_use]
     pub fn sides(&self, place: Place) -> Option<crate::trivia::NodeTrivia<T>> {
         let sides = self.read();
-        let side = |side| sides.get(&(place, side)).map(|entries| self.answered(entries));
+        let side = |side| sides.written.get(&(place, side)).map(|entries| self.answered(entries));
         let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then_some(trivia)
     }
@@ -231,7 +299,7 @@ impl<T: Clone> TriviaStore<T> {
     pub fn units(&self, holder: crate::arena::Address) -> Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> {
         let first = (Place::Unit(Site { holder, word: 0, item: crate::types::ItemIndex(0) }), TriviaSide::Leading);
         let mut units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> = Vec::new();
-        for ((place, side), entries) in self.read().range(first..) {
+        for ((place, side), entries) in self.read().written.range(first..) {
             let Place::Unit(site) = *place else { break };
             if site.holder != holder {
                 break;
@@ -272,8 +340,8 @@ impl<T: Clone> TriviaStore<T> {
         let released = {
             let mut sides = self.write();
             let first = (Place::Unit(Site { holder, word: 0, item: crate::types::ItemIndex(0) }), TriviaSide::Leading);
-            let held: Vec<_> = sides.range(first..).take_while(|((place, _), _)| matches!(place, Place::Unit(site) if site.holder == holder)).map(|(&key, _)| key).collect();
-            held.into_iter().filter_map(|key| sides.remove(&key)).flat_map(|entries| held_records(&entries)).collect::<Vec<_>>()
+            let held: Vec<_> = sides.written.range(first..).take_while(|((place, _), _)| matches!(place, Place::Unit(site) if site.holder == holder)).map(|(&key, _)| key).collect();
+            held.into_iter().filter_map(|key| sides.written.remove(&key)).flat_map(|entries| held_records(&entries)).collect::<Vec<_>>()
         };
         for (word, item, trivia) in units {
             let place = Place::Unit(Site { holder, word, item });
@@ -303,6 +371,7 @@ impl<T: Clone> TriviaStore<T> {
                 .into_iter()
                 .flat_map(|start| {
                     sides
+                        .written
                         .range((start, TriviaSide::Leading)..)
                         .map_while(move |(&(place, side), entries)| match (place, start) {
                             (Place::Unit(site), Place::Unit(_)) if site.holder == from => Some((Place::Unit(Site { holder: to, ..site }), site.word, side, entries)),
@@ -320,7 +389,7 @@ impl<T: Clone> TriviaStore<T> {
         }
         let mut sides = self.write();
         for (place, side, entries) in copied {
-            sides.insert((place, side), entries);
+            sides.written.insert((place, side), entries);
         }
         Ok(())
     }
@@ -352,21 +421,24 @@ impl<T: Clone> TriviaStore<T> {
         let tree = match place {
             Place::Row { tree, row: _ } => tree,
             #[cfg(feature = "arena")]
-            Place::Record(_) | Place::Unit(_) | Place::Leaf(_) => return self.write().insert((place, side), entries),
+            Place::Record(_) | Place::Unit(_) | Place::Leaf(_) => return self.write().written.insert((place, side), entries),
         };
-        let row = |entries: &Vec<TriviaEntry<T>>| std::mem::size_of::<((Place, TriviaSide), Vec<TriviaEntry<T>>)>() + entries.heap_bytes();
-        let added = row(&entries);
-        let replaced = self.write().insert((place, side), entries);
-        let removed = replaced.as_ref().map_or(0, row);
-        let mut bytes = self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner);
-        let count = bytes.entry(tree).or_default();
-        *count = (*count + added).saturating_sub(removed);
+        let added = row_bytes(&entries);
+        let replaced = self.write().written.insert((place, side), entries);
+        self.count(tree, added, replaced.as_ref().map_or(0, row_bytes));
         replaced
     }
 
+    fn count(&self, tree: TreeId, added: usize, removed: usize) {
+        let mut bytes = self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner);
+        let count = bytes.entry(tree).or_default();
+        *count = (*count + added).saturating_sub(removed);
+    }
+
     /// The bytes `tree`'s rows of the store take (`tree_bytes`). A row is
-    /// written through its tree (`ParsedTree::write_trivia_side`), which
-    /// marks itself grown, so its next report counts them.
+    /// written through its tree (`ParsedTree::write_trivia_side`), and
+    /// filled through the tree's reads, each of which marks the tree grown,
+    /// so its next report counts them.
     #[must_use]
     pub fn tree_bytes(&self, tree: TreeId) -> usize {
         self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner).get(&tree).copied().unwrap_or(0)
@@ -433,14 +505,14 @@ impl<T: Clone> TriviaStore<T> {
     fn drop_record(&self, at: crate::arena::Address) -> Vec<crate::arena::Address> {
         let mut sides = self.write();
         let first = Site { holder: at, word: 0, item: crate::types::ItemIndex(0) };
-        let mut keys: Vec<_> = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().map(|side| (Place::Record(at), side)).filter(|key| sides.contains_key(key)).collect();
+        let mut keys: Vec<_> = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().map(|side| (Place::Record(at), side)).filter(|key| sides.written.contains_key(key)).collect();
         for start in [Place::Unit(first), Place::Leaf(first)] {
-            keys.extend(sides.range((start, TriviaSide::Leading)..).map_while(|(&(place, side), _)| match (place, start) {
+            keys.extend(sides.written.range((start, TriviaSide::Leading)..).map_while(|(&(place, side), _)| match (place, start) {
                 (Place::Unit(site), Place::Unit(_)) | (Place::Leaf(site), Place::Leaf(_)) if site.holder == at => Some((place, side)),
                 _ => None,
             }));
         }
-        keys.into_iter().filter_map(|key| sides.remove(&key)).flat_map(|entries| held_records(&entries)).collect()
+        keys.into_iter().filter_map(|key| sides.written.remove(&key)).flat_map(|entries| held_records(&entries)).collect()
     }
 
     /// A store over this one's built arena that holds `sides` alone, as the
@@ -456,6 +528,7 @@ impl<T: Clone> TriviaStore<T> {
         let store = Self {
             sides: Arc::default(),
             tree_bytes: Arc::default(),
+            edit_walks: Arc::default(),
             built: Arc::clone(&self.built),
             #[cfg(feature = "napi-bindings")]
             buffers: Arc::clone(&self.buffers),
@@ -472,23 +545,34 @@ impl<T: Clone> TriviaStore<T> {
 
     /// Whether a write set a side of a node in rows `[index, end)` of `tree`:
     /// of a descendant of the node at `index`, or of that node's own `inner`,
-    /// and of its own leading and trailing too when `own_sides` is set.
+    /// and of its own leading and trailing too when `own_sides` is set. It
+    /// walks the written rows alone (`edit_walks`).
     #[must_use]
     pub fn edited_within(&self, tree: TreeId, index: NodeIndex, end: NodeIndex, own_sides: bool) -> bool {
         let own = Place::Row { tree, row: index };
-        self.read().range(rows(tree, index, end)).any(|(&(place, side), _)| place != own || own_sides || side == TriviaSide::Inner)
+        let mut walked = 0;
+        let edited = self.read().written.range(rows(tree, index, end)).inspect(|_| walked += 1).any(|(&(place, side), _)| place != own || own_sides || side == TriviaSide::Inner);
+        self.edit_walks.fetch_add(walked, Ordering::Relaxed);
+        edited
     }
 
-    /// Drop every side written on a node of `tree`, and release the built
-    /// records they held. A record the release refuses is left counted.
-    /// Answers whether a side it dropped held a built record.
+    /// The rows the edit checks (`edited_within`) have walked so far, every
+    /// tree's: a diagnostic a test compares.
+    #[must_use]
+    pub fn edit_walks(&self) -> u64 {
+        self.edit_walks.load(Ordering::Relaxed)
+    }
+
+    /// Drop every side of a node of `tree`, written and assigned, and
+    /// release the built records the written ones held. A record the
+    /// release refuses is left counted. Answers whether a side it dropped
+    /// held a built record.
     #[must_use]
     pub fn drop_tree(&self, tree: TreeId) -> bool {
         let dropped: Vec<Vec<TriviaEntry<T>>> = {
             let mut sides = self.write();
-            let first = (Place::Row { tree, row: NodeIndex::ROOT }, TriviaSide::Leading);
-            let keys: Vec<_> = sides.range(first..).take_while(|((place, _), _)| matches!(place, Place::Row { tree: t, .. } if *t == tree)).map(|(&key, _)| key).collect();
-            keys.into_iter().filter_map(|key| sides.remove(&key)).collect()
+            drop(drop_rows(&mut sides.assigned, tree));
+            drop_rows(&mut sides.written, tree)
         };
         self.tree_bytes.lock().unwrap_or_else(PoisonError::into_inner).remove(&tree);
         #[cfg(feature = "arena")]
@@ -505,10 +589,16 @@ impl<T: Clone> TriviaStore<T> {
         }
     }
 
-    /// The sides the store holds, every place's.
+    /// The written sides the store holds, every place's.
     #[cfg(test)]
     pub(crate) fn len(&self) -> usize {
-        self.read().len()
+        self.read().written.len()
+    }
+
+    /// The assigned sides the store holds, every tree's.
+    #[cfg(test)]
+    pub(crate) fn assigned_len(&self) -> usize {
+        self.read().assigned.len()
     }
 
     /// How many handles of the store are held.
@@ -560,6 +650,26 @@ mod tests {
         assert!(!store.edited_within(TreeId(2), NodeIndex::new(3), end, true), "another tree's rows");
         store.write_side(row(1, 6), TriviaSide::Inner, Vec::new());
         assert!(store.edited_within(tree, NodeIndex::new(6), end, false), "a node's own inner is within it");
+    }
+
+    #[test]
+    fn assigned_rows_read_apart_from_written_ones_and_no_edit_check_walks_them() {
+        let store = TriviaStore::<TriviaText>::new();
+        let (tree, end) = (TreeId(1), NodeIndex::new(9));
+        let depth = || vec![Assigned::Depth(1)];
+        store.fill(tree, crate::trivia_table::PlacedSides::from([((NodeIndex::new(4), TriviaSide::Leading), depth()), ((NodeIndex::new(6), TriviaSide::Inner), depth())]));
+        assert_eq!(store.assigned(row(1, 4), TriviaSide::Leading), Some(depth()));
+        assert_eq!(store.assigned(row(1, 4), TriviaSide::Trailing), None);
+        assert_eq!(store.side(row(1, 4), TriviaSide::Leading), None, "an assigned row is no write");
+        assert_eq!(store.tree_bytes(tree), 2 * row_bytes(&depth()), "the tree counts its assigned rows");
+        assert!(!store.edited_within(tree, NodeIndex::ROOT, end, true));
+        assert_eq!((store.edit_walks(), store.len()), (0, 0), "the check walked no assigned row");
+        store.write_side(row(1, 6), TriviaSide::Inner, vec![entry("// w")]);
+        assert!(store.edited_within(tree, NodeIndex::ROOT, end, true));
+        assert_eq!(store.edit_walks(), 1, "it walks the written row");
+        assert_eq!(store.assigned(row(1, 6), TriviaSide::Inner), Some(depth()), "a write shadows the assigned row and keeps it");
+        assert!(!store.drop_tree(tree));
+        assert_eq!((store.assigned_len(), store.len(), store.tree_bytes(tree)), (0, 0, 0), "a dropped tree's rows of both kinds leave");
     }
 
     #[test]
