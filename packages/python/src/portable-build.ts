@@ -193,7 +193,8 @@ export const build: PortableBuildTable = {
 		forInClause: ['trailingComma'],
 		integerBinary: ['radixPrefix'],
 		integerHex: ['radixPrefix'],
-		integerOctal: ['radixPrefix']
+		integerOctal: ['radixPrefix'],
+		string: ['quote']
 	},
 	paths: {
 		'argument.named': {
@@ -11176,6 +11177,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'b'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -11296,6 +11310,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'rb'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -11805,6 +11832,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 't'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -11925,6 +11965,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'rt'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -11985,6 +12038,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'f'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -12105,6 +12171,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'rf'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -12152,7 +12231,21 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
+						}
+					],
 					flags: {},
 					when: []
 				}
@@ -12271,6 +12364,19 @@ export const build: PortableBuildTable = {
 								}
 							],
 							text: 'r'
+						},
+						{
+							steps: [
+								{
+									key: 'stringStart',
+									flatten: true
+								},
+								{
+									key: 'quote'
+								}
+							],
+							text: '"""',
+							among: ['"""', "'''"]
 						}
 					],
 					flags: {},
@@ -15712,7 +15818,44 @@ export const build: PortableBuildTable = {
 	},
 	delimiters: {
 		'119': {
-			meaning: ['prefix']
+			meaning: ['prefix'],
+			spellings: {
+				prefix: {
+					R: 'r',
+					B: 'b',
+					F: 'f',
+					T: 't',
+					U: 'u',
+					rB: 'rb',
+					Rb: 'rb',
+					RB: 'rb',
+					br: 'rb',
+					bR: 'rb',
+					Br: 'rb',
+					BR: 'rb',
+					rF: 'rf',
+					Rf: 'rf',
+					RF: 'rf',
+					fr: 'rf',
+					fR: 'rf',
+					Fr: 'rf',
+					FR: 'rf',
+					rT: 'rt',
+					Rt: 'rt',
+					RT: 'rt',
+					tr: 'rt',
+					tR: 'rt',
+					Tr: 'rt',
+					TR: 'rt',
+					uR: 'ur',
+					Ur: 'ur',
+					UR: 'ur'
+				}
+			},
+			readOnly: {
+				prefix: ['ur'],
+				quote: ['`']
+			}
 		},
 		'122': {
 			meaning: ['content'],

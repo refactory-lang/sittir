@@ -14642,6 +14642,44 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.string.bytes.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^br",
+                "slots": {
+                  "333": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.c.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^cr",
+                "slots": {
+                  "333": 0
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -22932,9 +22970,9 @@
       },
       {
         "depth": 4,
-        "paths": 106,
-        "kinds": 59,
-        "refinements": 80
+        "paths": 108,
+        "kinds": 60,
+        "refinements": 82
       },
       {
         "depth": 5,

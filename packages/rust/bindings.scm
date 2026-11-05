@@ -432,6 +432,8 @@
 ((string_literal string_open: (_) @_open) @literal.string.bytes (#eq? @_open "b\""))
 ((string_literal string_open: (_) @_open) @literal.string.c (#eq? @_open "c\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
+((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.bytes.raw (#match? @_p "^br"))
+((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.c.raw (#match? @_p "^cr"))
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (string_content) @literal.string.text

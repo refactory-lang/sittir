@@ -1366,11 +1366,17 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Literal.String.Text<G>
 				| string;
 		};
+		readonly 'literal.string.bytes.raw': {
+			readonly content: V.Literal.String.Text<G>;
+		};
+		readonly 'literal.string.c.raw': {
+			readonly content: V.Literal.String.Text<G>;
+		};
 		readonly 'literal.string.escape': {
 			readonly content: unknown;
 		};
 		readonly 'literal.string.raw': {
-			readonly content: unknown;
+			readonly content: V.Literal.String.Text<G>;
 		};
 		readonly 'pattern.as': {
 			readonly pattern: unknown | G['pattern'];

@@ -7,7 +7,7 @@ import { slotItems } from '../query-holds.ts';
 type Node = { readonly $type: number };
 
 export type PortableCarry =
-	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' }
+	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' | 'readOnly' }
 	| { readonly reason: 'flags'; readonly flags: readonly string[] }
 	| { readonly reason: 'unread'; readonly slot: string };
 
@@ -187,13 +187,16 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		return arm.scalar === 'float' ? floatOf(text) : integerOf(text);
 	};
 	const armsAt = (path: string, kind: number): readonly PortableBuildArm[] => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === kind);
+	const canonicalOf = (token: unknown, facet: string, text: string): string => (hasKind(token) ? (table.delimiters?.[token.$type]?.spellings?.[facet]?.[text] ?? text) : text);
 	const contradicts = (node: Node, preset: PortablePreset): boolean => {
 		if ((preset.text === undefined && preset.kind === undefined) || preset.steps.at(-1)?.mounted !== undefined) return false;
 		const held = walk(node, stepHops(preset.steps));
 		if (held === undefined || Array.isArray(held)) return false;
 		if (preset.text !== undefined) {
 			const text = textOf(held);
-			return text !== undefined && text !== preset.text;
+			if (text === undefined) return false;
+			const member = canonicalOf(walk(node, stepHops(preset.steps.slice(0, -1))), preset.steps.at(-1)!.key, text);
+			return !(preset.among ?? [preset.text]).includes(member);
 		}
 		const kind = kindOfValue(held);
 		return kind !== undefined && kind !== preset.kind;
@@ -205,6 +208,18 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 	const facetText = (token: object, facet: string): string | undefined => {
 		const held = accessed(token, facet);
 		return typeof held === 'string' ? held : textOf(held);
+	};
+	const readOnlyHolders = new Map<number, boolean>();
+	const readOnlySpelled = (node: Node): boolean => {
+		if (table.delimiters === undefined || readOnlyHolders.get(node.$type) === false) return false;
+		const tokens = slotsOf(node).flatMap(([, items]) => items.flatMap((item) => (hasKind(item) && table.delimiters?.[item.$type]?.readOnly !== undefined ? [item] : [])));
+		readOnlyHolders.set(node.$type, tokens.length > 0);
+		return tokens.some((token) =>
+			Object.entries(table.delimiters?.[token.$type]?.readOnly ?? {}).some(([facet, members]) => {
+				const text = facetText(token, facet);
+				return text !== undefined && members.includes(canonicalOf(token, facet, text));
+			})
+		);
 	};
 	const closerContent = (node: Node, arms: readonly PortableBuildArm[], structure: Record<string, unknown>): void => {
 		for (const [slot, items] of slotsOf(node))
@@ -240,6 +255,7 @@ export function portableReader({ table, classify, flagHolds, flagsOf, textOf, sl
 		if (kind === undefined) return value;
 		if (typeof value !== 'number' && (opaque(value) || (table.tokens?.[kind] ?? []).some((accessor) => slotItems(value as object, accessor).some(opaque))))
 			return kept(value as Node, { reason: 'opaque' }, carried);
+		if (typeof value !== 'number' && readOnlySpelled(value as Node)) return kept(value as Node, { reason: 'readOnly' }, carried);
 		const path = classify(typeof value === 'number' ? value : (value as Node));
 		const claimed = path === undefined ? [] : armsAt(path, kind);
 		if (path === undefined || claimed.length === 0) {

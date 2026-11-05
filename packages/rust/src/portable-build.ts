@@ -45166,6 +45166,60 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'literal.string.bytes.raw': {
+			root: true,
+			arms: [
+				{
+					kind: 333,
+					builder: 'rawStringLiteral',
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'stringContent'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [333, 'stringContent'],
+									kinds: [160],
+									leaf: 'rawStringLiteralContent',
+									texts: [160],
+									pattern: {
+										source: '^(?:(?:[\\s\\S]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'rawStringLiteralStart',
+									flatten: true
+								},
+								{
+									key: 'prefix'
+								}
+							],
+							text: 'br'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
+				}
+			]
+		},
 		'literal.string.c': {
 			root: true,
 			arms: [
@@ -45211,6 +45265,60 @@ export const build: PortableBuildTable = {
 					],
 					flags: {},
 					when: []
+				}
+			]
+		},
+		'literal.string.c.raw': {
+			root: true,
+			arms: [
+				{
+					kind: 333,
+					builder: 'rawStringLiteral',
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'stringContent'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [333, 'stringContent'],
+									kinds: [160],
+									leaf: 'rawStringLiteralContent',
+									texts: [160],
+									pattern: {
+										source: '^(?:(?:[\\s\\S]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'rawStringLiteralStart',
+									flatten: true
+								},
+								{
+									key: 'prefix'
+								}
+							],
+							text: 'cr'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
 				}
 			]
 		},

@@ -151,11 +151,12 @@ export interface PortableMemberStep {
 	readonly reads?: readonly number[];
 }
 
-/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node; with `among`, the canonical members a read may hold there without contradicting it, of which `text` is the one built), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
 export interface PortablePreset {
 	readonly steps: readonly PortableSlotStep[];
 	readonly kind?: number;
 	readonly text?: string;
+	readonly among?: readonly string[];
 	readonly builder?: string;
 }
 
@@ -254,12 +255,15 @@ export interface PortableValueBuild {
 }
 
 /**
- * A delimiter token's facets that carry meaning (`meaning`), and its content facet with the kind of the content leaf that reads its text
- * (`content`): a closer can hold the end of its composite's content.
+ * A delimiter token's facets that carry meaning (`meaning`); its content facet with the kind of the content leaf that reads its text
+ * (`content`), since a closer can hold the end of its composite's content; by spelled facet, each spelling that is not its own canonical
+ * member mapped to that member (`spellings`); and by spelled facet, the canonical members that are read and never built (`readOnly`).
  */
 export interface PortableDelimiterToken {
 	readonly meaning: readonly string[];
 	readonly content?: { readonly facet: string; readonly reads: number };
+	readonly spellings?: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	readonly readOnly?: Readonly<Record<string, readonly string[]>>;
 }
 
 /**

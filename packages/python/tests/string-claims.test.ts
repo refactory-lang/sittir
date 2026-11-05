@@ -49,6 +49,33 @@ describe('the string claims and the prefix enum agree', () => {
 		for (const { value } of prefixes) expect(stringOf(`${value}"x"`).prefix()).toBe(value);
 	});
 
+	describe('a read-only spelling, which is read and never built', () => {
+		const carriesOf = async (source: string): Promise<readonly string[]> => {
+			const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
+			const reasons: string[] = [];
+			runtime.read(runtime.engine.parse(`${source}\n`), (_node, carry) => reasons.push(carry.reason));
+			return reasons;
+		};
+		const readOnly = prefixes.filter((prefix) => prefix.readOnly === true).map((prefix) => prefix.value);
+
+		it('carries each read-only prefix spelling and the backtick under readOnly', async () => {
+			expect(readOnly.sort()).toEqual(['UR', 'Ur', 'uR', 'ur']);
+			for (const prefix of readOnly) expect(await carriesOf(`${prefix}"x"`)).toEqual(['readOnly']);
+			expect(await carriesOf('`x`')).toEqual(['readOnly']);
+		});
+
+		it('carries no other spelling, under any quote, and reads each one back with the claims it was read with', async () => {
+			const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
+			for (const { value: prefix } of prefixes.filter((spelled) => spelled.readOnly !== true))
+				for (const { value: quote } of quotes) {
+					const source = `${prefix}${quote}x${quote}`;
+					expect(await carriesOf(source)).toEqual([]);
+					const rebuilt = String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(`${source}\n`)) as never) as never));
+					expect(claimsOf(rebuilt.trimEnd())).toEqual(claimsOf(source));
+				}
+		});
+	});
+
 	describe('a spelling a claim matches outside the enum', () => {
 		it.each(['bf', 'rr', 'ub'])('%s reads opaque, keeps its source bytes and is carried whole', async (spelling) => {
 			const engine = await createEngine(python, { api: 'strict' });

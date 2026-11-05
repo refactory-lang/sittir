@@ -40,6 +40,11 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
+	it.each(['f"""a"{b}c"""', 't"""\nwith {v}\n"""', 'b"""a\nb"""', 'rf"""{x}"""'])('builds the multiline string %s back multiline, by its claim\'s quote', (string) => {
+		const source = `x = ${string}`;
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('reads a non-raw string\'s escape pair as its escape, not as text', () => {
 		const source = 'x = "\\\\"';
 		expect(((firstOf(source) as Read).content as Read).value).toEqual({ $path: 'literal.string', elements: [{ $path: 'literal.string.escape', content: '\\' }] });

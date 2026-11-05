@@ -35,6 +35,8 @@ import {
 	isMultiple,
 	isNodeRef,
 	isRequired,
+	isTerminalValue,
+	memberOf as canonicalMemberOf,
 	slotFilledWhenOmitted,
 	storageKindOfRef,
 	valueParseKindsOf,
@@ -223,7 +225,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const shape = shapes[node.kind];
 		if (shape === undefined) throw new Error(`portable build: ${kind} has a builder path but no call shape`);
 		const key = register(path.join('.'), shape);
-		const options = registeredSlots(node).map((slot) => slot.propertyName);
+		const preference = node instanceof AbstractAssembledCompound ? node.delimiterPreference?.facet.propertyName : undefined;
+		const options = [...registeredSlots(node).map((slot) => slot.propertyName), ...(preference === undefined ? [] : [preference])];
 		if (options.length > 0) optionKeys.set(key, options);
 		return key;
 	};
@@ -670,27 +673,27 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			site.path.length === path.length && seats.length > 0 && seats.every((seat) => seat.kinds.size > 0 && [...seat.kinds].every((held) => tested.includes(held)));
 		return reaching.every(fills) ? only.name : undefined;
 	};
-	const tokenTexts = (token: AbstractAssembledCompound, member: string | null): readonly string[] => {
-		const parts = (rule: RenderRule): readonly string[] => {
-			if (rule.type === SEQ) return rule.members.reduce<readonly string[]>((texts, part) => parts(part).flatMap((text) => texts.map((head) => head + text)), ['']);
+	const tokenText = (token: AbstractAssembledCompound, input: string | null, preferred: string | null): string => {
+		const part = (rule: RenderRule): string => {
+			if (rule.type === SEQ) return rule.members.map(part).join('');
 			const slot = rule.fieldName === undefined ? undefined : token.slots.find((candidate) => candidate.fieldName === rule.fieldName);
-			if (slot?.delimiterRole === 'input') return [member ?? ''];
-			if (slot?.delimiterRole === 'preferred') return buildableMembersOf(slot) ?? [];
-			if (slot !== undefined) return [''];
-			if (rule.type === STRING) return [rule.value];
-			return 'content' in rule && rule.content !== undefined ? parts(rule.content as RenderRule) : [''];
+			if (slot?.delimiterRole === 'input') return input ?? '';
+			if (slot?.delimiterRole === 'preferred') return preferred ?? '';
+			if (slot !== undefined) return '';
+			if (rule.type === STRING) return rule.value;
+			return 'content' in rule && rule.content !== undefined ? part(rule.content as RenderRule) : '';
 		};
-		return parts(token.renderRule);
+		return part(token.renderRule);
 	};
-	const prefixPreset = (kind: string, entry: ReadEntry): Placed | undefined => {
+	const delimiterPresets = (kind: string, entry: ReadEntry): readonly Placed[] => {
 		const node = nodeOf(kind);
-		if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return undefined;
+		if (!(node instanceof AbstractAssembledCompound) || node.delimiterFacets === undefined) return [];
 		const open = node.delimiterFacets.open;
 		const opener = node.slots.find((slot) => slot.name === open)?.values.find(isNodeRef);
 		const token = opener === undefined ? undefined : nodeMap.nodes.get(storageKindOfRef(opener.node));
-		if (!isDelimiterToken(token)) return undefined;
+		if (!isDelimiterToken(token)) return [];
 		const input = token.slots.find((slot) => slot.delimiterRole === 'input');
-		if (input === undefined) return undefined;
+		const preferred = token.slots.find((slot) => slot.delimiterRole === 'preferred');
 		const onToken = (predicate: ReadEntry['claim']['predicates'][number]): boolean =>
 			predicate.operator === 'match' && predicate.subject !== null && held(kind, predicate.subject)?.[0]?.slot === open;
 		const spelled = [...(routes.readEntries.get(kind) ?? [])]
@@ -698,9 +701,21 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			.sort((a, b) => b.claim.predicates.length - a.claim.predicates.length || a.index - b.index);
 		const winner = (text: string): string | undefined =>
 			spelled.find((other) => other.claim.predicates.every((predicate) => predicate.arguments.some((argument) => 'text' in argument && new RegExp(argument.text).test(text))))?.vocab;
-		const candidates = [...(isRequired(input) ? [] : [null]), ...(buildableMembersOf(input) ?? [])];
-		const member = candidates.find((candidate) => tokenTexts(token, candidate).some((text) => winner(text) === entry.vocab));
-		return member === undefined || member === null ? undefined : placedText([{ owner: kind, slot: open }, { owner: token.kind, slot: input.name }], member);
+		const inputs = input === undefined ? [null] : [...(isRequired(input) ? [] : [null]), ...(buildableMembersOf(input) ?? [])];
+		const preferences = preferred === undefined ? [null] : (buildableMembersOf(preferred) ?? []);
+		const won = inputs.flatMap((member) => preferences.flatMap((preference) => (winner(tokenText(token, member, preference)) === entry.vocab ? [[member, preference] as const] : [])));
+		const wonInputs = [...new Set(won.map(([member]) => member))];
+		const wonPreferences = [...new Set(won.map(([, preference]) => preference))];
+		if (won.length !== wonInputs.length * wonPreferences.length)
+			throw new Error(`portable build: ${entry.vocab} claims ${token.kind} by spellings that are no product of its facets' members`);
+		const presetAt = (facet: AssembledNonterminal | undefined, members: readonly (string | null)[], satisfied: boolean): readonly Placed[] => {
+			const among = members.flatMap((member) => (member === null ? [] : [member]));
+			const [first] = among;
+			if (facet === undefined || first === undefined || among.length < members.length || satisfied) return [];
+			const placed = placedText([{ owner: kind, slot: open }, { owner: token.kind, slot: facet.name }], first);
+			return placed === undefined ? [] : [among.length === 1 ? placed : { ...placed, preset: { ...placed.preset, among } }];
+		};
+		return [...presetAt(input, wonInputs, false), ...presetAt(preferred, wonPreferences, preferred?.optionDefaultArm !== undefined && wonPreferences.includes(preferred.optionDefaultArm))];
 	};
 	const armsOf = (kind: string, entry: ReadEntry): Arm[] => {
 		const node = nodeOf(kind);
@@ -738,7 +753,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		});
 		const tested = new Set<string>();
 		const claimed = [
-			...[prefixPreset(kind, entry)].filter((placed) => placed !== undefined),
+			...delimiterPresets(kind, entry),
 			...entry.pins.flatMap((pin) => {
 				const path = held(kind, { up: 0, down: [{ field: pin.slot, kind: null, after: null, anchor: null }] });
 				const placed = path === undefined ? undefined : placedText(path, pin.text);
@@ -1213,7 +1228,28 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const facet = token.slots.find((slot) => slot.contentLeaf !== undefined);
 			const reads = facet?.contentLeaf === undefined ? undefined : typeOf(facet.contentLeaf);
 			if (facet !== undefined && reads === undefined) throw new Error(`portable build: '${token.kind}' holds content its leaf '${facet.contentLeaf}' reads, which has no kind id`);
-			const entry: PortableDelimiterToken = { meaning, ...(facet === undefined || reads === undefined ? {} : { content: { facet: facet.propertyName, reads } }) };
+			const spelledFacets = token.slots.filter((slot) => slot.delimiterRole === 'input' || slot.delimiterRole === 'preferred');
+			const spellings = Object.fromEntries(
+				spelledFacets.flatMap((slot) => {
+					const pairs = slot.values.filter(isTerminalValue).flatMap((value) => {
+						const member = canonicalMemberOf(value);
+						return member !== undefined && member !== value.value ? [[value.value, member] as const] : [];
+					});
+					return pairs.length === 0 ? [] : [[slot.propertyName, Object.fromEntries(pairs)] as const];
+				})
+			);
+			const readOnly = Object.fromEntries(
+				spelledFacets.flatMap((slot) => {
+					const members = [...new Set(slot.values.filter((value) => isTerminalValue(value) && value.readOnly === true).flatMap((value) => canonicalMemberOf(value) ?? []))].sort();
+					return members.length === 0 ? [] : [[slot.propertyName, members] as const];
+				})
+			);
+			const entry: PortableDelimiterToken = {
+				meaning,
+				...(facet === undefined || reads === undefined ? {} : { content: { facet: facet.propertyName, reads } }),
+				...(Object.keys(spellings).length === 0 ? {} : { spellings }),
+				...(Object.keys(readOnly).length === 0 ? {} : { readOnly })
+			};
 			return id === undefined ? [] : [[id, entry] as const];
 		})
 		.sort(([a], [b]) => a - b);

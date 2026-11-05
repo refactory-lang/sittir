@@ -189,6 +189,15 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toContain('($($x:expr),*)');
 	});
 
+	it.each([
+		['r#"abc"#', 'literal.string.raw', 'r"abc"'],
+		['br#"abc"#', 'literal.string.bytes.raw', 'br"abc"'],
+		['cr##"a"#b"##', 'literal.string.c.raw', 'cr##"a"#b"##']
+	])('reads the raw string %s as %s and builds it back with the shortest hash run its content takes', (string, path, built) => {
+		expect(readFirst(`const X: () = ${string};\n`)).toMatchObject({ value: { $path: path } });
+		expect(roundTrip(`const X: () = ${string};\n`)).toBe(`const X: () = ${built};\n`);
+	});
+
 	it('builds a trait impl through the clause its implemented trait sits in, and refuses a method call given no callee', () => {
 		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
 		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');

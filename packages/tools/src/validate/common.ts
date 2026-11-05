@@ -659,6 +659,7 @@ function regexOfLiteral(literal: string): RegExp {
 
 export interface DelimiterFacet {
 	readonly role: DelimiterFacetRole;
+	readonly accessor: string;
 	readonly spellings?: Readonly<Record<string, string>>;
 }
 
@@ -670,7 +671,20 @@ export interface DelimiterSpelling {
 export async function loadDelimiterSpellings(grammar: string): Promise<Readonly<Record<string, DelimiterSpelling>>> {
 	const { delimiterFacets } = await loadNodeModel(grammar);
 	const interiors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS as Readonly<Record<string, TokenInterior>>;
-	return Object.fromEntries(Object.entries(delimiterFacets).flatMap(([kind, facets]) => (interiors[kind] === undefined ? [] : [[kind, { interior: interiors[kind]!, facets }] as const])));
+	const table = (await importGrammarModule(grammar, 'portable-build.ts'))?.build;
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	const spelled = (kind: string, facets: Readonly<Record<string, DelimiterFacet>>): Readonly<Record<string, DelimiterFacet>> => {
+		const token = table?.delimiters?.[kindIdFromName(kind)];
+		return Object.fromEntries(
+			Object.entries(facets).map(([name, facet]) => {
+				const spellings = token?.spellings?.[facet.accessor];
+				return [name, spellings === undefined ? facet : { ...facet, spellings }] as const;
+			})
+		);
+	};
+	return Object.fromEntries(
+		Object.entries(delimiterFacets).flatMap(([kind, facets]) => (interiors[kind] === undefined ? [] : [[kind, { interior: interiors[kind]!, facets: spelled(kind, facets) }] as const]))
+	);
 }
 
 export function sameSpelledMeaning(left: string, right: string, kind: string, spelling: DelimiterSpelling): boolean {
@@ -792,10 +806,9 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.delimiterOf !== undefined) {
 			delimiterTokens.add(node.kind);
 			delimiterFacets[node.kind] = Object.fromEntries(
-				(node.slots ?? []).flatMap((slot) => {
-					const spellings = factorySlotMetaOf(slot).spellings;
-					return slot.delimiterRole === undefined ? [] : [[slot.name, { role: slot.delimiterRole, ...(spellings === undefined ? {} : { spellings }) }] as const];
-				})
+				(node.slots ?? []).flatMap((slot) =>
+					slot.delimiterRole === undefined ? [] : [[slot.name, { role: slot.delimiterRole, accessor: factorySlotMetaOf(slot).propertyName }] as const]
+				)
 			);
 		}
 	}

@@ -7,5 +7,13 @@ export namespace Literal {
 			// claimed by r
 			readonly $kind: 'literal.string.c';
 		}
+		export namespace C {
+			export interface Raw<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.C<G>> {
+				// claimed by r
+				readonly $kind: 'literal.string.c.raw';
+				readonly content: G['slots']['literal.string.c.raw']['content'];
+				// r only
+			}
+		}
 	}
 }

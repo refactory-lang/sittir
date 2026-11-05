@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 9,
-	rust: 13,
+	python: 8,
+	rust: 11,
 	typescript: 8
 };
 
@@ -13,7 +13,7 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'float_scientific scalar',
 		'if_statement unread',
 		'key_value_pattern unclaimed',
-		'string preset'
+		'string readOnly'
 	],
 	rust: [
 		'array_expression_list unread',
@@ -26,7 +26,6 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 		'integer_literal_hex scalar',
 		'integer_literal_octal scalar',
 		'method_declaration flags',
-		'raw_string_literal preset',
 		'use_wildcard_group unclaimed'
 	],
 	typescript: ['extends_clause_single unclaimed', 'for_header_lhs unclaimed']

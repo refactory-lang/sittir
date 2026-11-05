@@ -473,6 +473,7 @@ export const vocabularyPaths = Object.freeze([
 	'literal.string.bytes.raw',
 	'literal.string.bytes.raw.multiline',
 	'literal.string.c',
+	'literal.string.c.raw',
 	'literal.string.concatenated',
 	'literal.string.escape',
 	'literal.string.interpolated',

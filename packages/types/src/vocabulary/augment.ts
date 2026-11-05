@@ -2613,6 +2613,10 @@ declare module './literal.ts' {
 					| V.Literal.String.Bytes.Raw.Multiline<G>;
 			}
 			interface C<G extends GrammarContext<G>> extends cStrings.Literal.String.C<G> {}
+			namespace C {
+				interface Raw<G extends GrammarContext<G>> extends cStrings.Literal.String.C.Raw<G> {}
+				type Any<G extends GrammarContext<G>> = V.Literal.String.C<G> | V.Literal.String.C.Raw<G>;
+			}
 			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
 			namespace Interpolated {
 				interface Deferred<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
@@ -2667,6 +2671,7 @@ declare module './literal.ts' {
 				| V.Literal.String.Bytes.Raw<G>
 				| V.Literal.String.Bytes.Raw.Multiline<G>
 				| V.Literal.String.C<G>
+				| V.Literal.String.C.Raw<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Interpolated<G>
@@ -2715,6 +2720,7 @@ declare module './literal.ts' {
 			| V.Literal.String.Bytes.Raw<G>
 			| V.Literal.String.Bytes.Raw.Multiline<G>
 			| V.Literal.String.C<G>
+			| V.Literal.String.C.Raw<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.Interpolated<G>
