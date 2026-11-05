@@ -6,7 +6,6 @@ const EXPECTED = [
 	'assemble-shape-census',
 	'ast-diff',
 	'bench',
-	'bench-codemod',
 	'bench-storage',
 	'bindings-inventory',
 	'bootstrap-grammar',

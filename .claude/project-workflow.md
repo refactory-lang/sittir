@@ -30,9 +30,11 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `inspect-type`, `inspect-refs`, `compare-overrides` — inspection tools
 - `walk`, `exercise` — round-trip exercise harnesses
 
+Timing tools (`bench`, `bench-storage`, `trivia-timing`, and `check-baseline --collect --metrics`) measure built code: run `pnpm build`, then `node packages/cli/dist/cli.js tool <tool> [flags]`. Under tsx (which forces esbuild's `keepNames`) or against a build older than its sources, they refuse to run.
+
 Validator entry points live under `sittir validate` (not `tool`): `validate counts` — per-grammar validator pass/total (rrp / shallow / factory-rp + AST match); `validate history [n]` — objective before/after comparison of recorded runs; `validate probe-factory`; `validate trace-rt`.
 
-When adding a new diagnostic, implement it as `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`, re-export it from `packages/tools/src/index.ts` (`export { run as <camelName>, type <Name>Options }`), add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts` (using the option mixins from `packages/cli/src/framework/options.ts`), and register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`.
+When adding a new diagnostic, implement it as `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`, re-export it from `packages/tools/src/index.ts` (`export { run as <camelName>, type <Name>Options }`), add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts` (using the option mixins from `packages/cli/src/framework/options.ts`), and register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`. A tool that times work calls `measureBuilt(<name>)` (`packages/tools/src/built.ts`) before it measures.
 
 ## Specs and branches
 

@@ -14,6 +14,7 @@ export type {
 	RenderOptions,
 	RenderOptionValues,
 	ParseOptions,
+	BackendStatusLike,
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
 	EngineHandle,

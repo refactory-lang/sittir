@@ -710,6 +710,37 @@ pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex)
     climbed
 }
 
+/// Moves a cursor forward in preorder to the node at `index`, numbered from
+/// the node the cursor was created at, which lies at or past the node it is
+/// on. Each subtree the move passes is stepped over whole, by its descendant
+/// count, and each node it enters holds `index`, so over moves to rising
+/// indexes a cursor enters every node at most once and steps over each at
+/// most once. Answers the moves it made.
+pub fn goto_forward(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
+    let goal = index.index();
+    debug_assert!(offset_of(cursor) as usize <= goal, "a forward move to {goal} from {}", offset_of(cursor));
+    let mut moves = 0;
+    loop {
+        let at = offset_of(cursor) as usize;
+        if at == goal {
+            return moves;
+        }
+        moves += 1;
+        if goal < at + descendant_count(&cursor.node()) as usize {
+            if !cursor.goto_first_child() {
+                return moves;
+            }
+            continue;
+        }
+        while !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                return moves;
+            }
+            moves += 1;
+        }
+    }
+}
+
 /// What the first pass learns about one child.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Child {
