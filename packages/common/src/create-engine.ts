@@ -35,7 +35,7 @@ import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
@@ -374,7 +374,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
 	if (records !== undefined) {
 		const built = nativeBuiltRecords(native);
-		if (built === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+		if (built === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 		const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
 		if (views === undefined) throw new Error(`the record builders of language "${language.name}" export no builtViews`);
 		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
